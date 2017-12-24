@@ -3,7 +3,6 @@
  */
 package org.openecomp.core.tools.exportinfo;
 
-import com.amdocs.zusammen.datatypes.SessionContext;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
@@ -32,20 +31,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.createDirectories;
 
 
-public class ExportDataCommand {
+public final class ExportDataCommand {
     private static final Logger logger = LoggerFactory.getLogger(ExportDataCommand.class);
     public static final String JOIN_DELIMITER = "$#";
     public static final String JOIN_DELIMITER_SPILTTER = "\\$\\#";
     public static final String MAP_DELIMITER = "!@";
     public static final String MAP_DELIMITER_SPLITTER = "\\!\\@";
-    public static final String EXPORT_FILE_NAME = "ITEM_EXPORT";
+    public static final int THREAD_POOL_SIZE = 4;
 
-    public static void exportData(SessionContext sessionContext, String filterItem) {
+    private ExportDataCommand() {
+    }
+
+    public static void exportData(String filterItem) {
+        ExecutorService executor = null;
         try {
             CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
             final Set<String> filteredItems = Sets.newHashSet(filterItem);
@@ -59,18 +65,19 @@ public class ExportDataCommand {
                 queries = (Map<String, List<String>>) yaml.load(is);
             }
             List<String> queriesList = queries.get("queries");
-            List<String> itempsColumns = queries.get("item_columns");
+            List<String> itemsColumns = queries.get("item_columns");
             Set<String> vlms = new HashSet<>();
             CountDownLatch doneQueries = new CountDownLatch(queriesList.size());
+            executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
             for (int i = 0; i < queriesList.size(); i++) {
-                executeQuery(queriesList.get(i), fis, itempsColumns.get(i), vlms, doneQueries);
+                executeQuery(queriesList.get(i), fis, itemsColumns.get(i), vlms, doneQueries, executor);
             }
             doneQueries.await();
             if (!vlms.isEmpty()) {
                 CountDownLatch doneVmls = new CountDownLatch(queriesList.size());
 
                 for (int i = 0; i < queriesList.size(); i++) {
-                    executeQuery(queriesList.get(i), vlms, itempsColumns.get(i), null, doneVmls);
+                    executeQuery(queriesList.get(i), vlms, itemsColumns.get(i), null, doneVmls, executor);
                 }
 
                 doneVmls.await();
@@ -79,13 +86,17 @@ public class ExportDataCommand {
             FileUtils.forceDelete(rootDir.toFile());
         } catch (Exception ex) {
             Utils.logError(logger, ex);
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
         }
 
     }
 
 
     private static boolean executeQuery(final String query, final Set<String> filteredItems, final String filteredColumn,
-                                        final Set<String> vlms, final CountDownLatch donequerying) {
+                                        final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
         Session session = CassandraSessionFactory.getSession();
         ResultSetFuture resultSetFuture = session.executeAsync(query);
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
@@ -100,11 +111,11 @@ public class ExportDataCommand {
                 Utils.logError(logger, "Query failed :" + query, t);
                 donequerying.countDown();
             }
-        });
+        }, executor);
         return true;
     }
 
-    private static void zipPath(Path rootDir) throws Exception {
+    private static void zipPath(Path rootDir) throws IOException {
         LocalDateTime date = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         String dateStr = date.format(formatter);

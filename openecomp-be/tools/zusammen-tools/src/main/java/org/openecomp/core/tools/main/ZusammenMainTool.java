@@ -42,7 +42,7 @@ public class ZusammenMainTool {
         SetHealingFlag.populateHealingTable(ToolsUtil.getParam("v",args));
         break;
       case EXPORT:
-        ExportDataCommand.exportData(context,ToolsUtil.getParam("i",args));
+        ExportDataCommand.exportData(ToolsUtil.getParam("i",args));
         break;
       case IMPORT:
         ImportDataCommand.execute(context, ToolsUtil.getParam("f",args));
