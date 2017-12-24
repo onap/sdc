@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8dcbe871",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatResourceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:07:13Z",
+      "side": 1,
+      "message": "I think the purpose of calling ValidationUtil.validateManifest() was to collect errors/warnings. So removing it may not be a good solution. On the other hand, looking at the unit test the code still works as expected. Please explain why this block was redundant.",
+      "revId": "f1fcfe3765ccbb40f95099a6f6f447122d3b7cee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4dc5e059",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatResourceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:07:13Z",
+      "side": 1,
+      "message": "As a rule of thumb, the word \"And\" in a method name indicates too many responsibilities. Please check if the method does too much.",
+      "revId": "f1fcfe3765ccbb40f95099a6f6f447122d3b7cee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_eda14caa",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatResourceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:07:13Z",
+      "side": 1,
+      "message": "Don\u0027t split the declaration and initialization in this case.",
+      "revId": "f1fcfe3765ccbb40f95099a6f6f447122d3b7cee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2dc89473",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatResourceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:07:13Z",
+      "side": 1,
+      "message": "This should be a constant - used many times in the code.",
+      "range": {
+        "startLine": 215,
+        "startChar": 38,
+        "endLine": 215,
+        "endChar": 48
+      },
+      "revId": "f1fcfe3765ccbb40f95099a6f6f447122d3b7cee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0da7d8be",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatResourceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:07:13Z",
+      "side": 1,
+      "message": "The code is difficult to follow because of the multiple casting expressions. Please consider re-writing it.",
+      "revId": "f1fcfe3765ccbb40f95099a6f6f447122d3b7cee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
