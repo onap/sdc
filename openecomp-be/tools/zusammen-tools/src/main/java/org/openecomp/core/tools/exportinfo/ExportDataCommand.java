@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.createDirectories;
@@ -62,15 +64,16 @@ public class ExportDataCommand {
             List<String> itempsColumns = queries.get("item_columns");
             Set<String> vlms = new HashSet<>();
             CountDownLatch doneQueries = new CountDownLatch(queriesList.size());
+            Executor executor = Executors.newFixedThreadPool(4);
             for (int i = 0; i < queriesList.size(); i++) {
-                executeQuery(queriesList.get(i), fis, itempsColumns.get(i), vlms, doneQueries);
+                executeQuery(queriesList.get(i), fis, itempsColumns.get(i), vlms, doneQueries,executor);
             }
             doneQueries.await();
             if (!vlms.isEmpty()) {
                 CountDownLatch doneVmls = new CountDownLatch(queriesList.size());
 
                 for (int i = 0; i < queriesList.size(); i++) {
-                    executeQuery(queriesList.get(i), vlms, itempsColumns.get(i), null, doneVmls);
+                    executeQuery(queriesList.get(i), vlms, itempsColumns.get(i), null, doneVmls,executor);
                 }
 
                 doneVmls.await();
@@ -85,7 +88,7 @@ public class ExportDataCommand {
 
 
     private static boolean executeQuery(final String query, final Set<String> filteredItems, final String filteredColumn,
-                                        final Set<String> vlms, final CountDownLatch donequerying) {
+                                        final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
         Session session = CassandraSessionFactory.getSession();
         ResultSetFuture resultSetFuture = session.executeAsync(query);
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
@@ -100,11 +103,11 @@ public class ExportDataCommand {
                 Utils.logError(logger, "Query failed :" + query, t);
                 donequerying.countDown();
             }
-        });
+        },executor);
         return true;
     }
 
-    private static void zipPath(Path rootDir) throws Exception {
+    private static void zipPath(Path rootDir) throws IOException {
         LocalDateTime date = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         String dateStr = date.format(formatter);
