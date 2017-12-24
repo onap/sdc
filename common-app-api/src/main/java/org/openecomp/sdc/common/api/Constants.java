@@ -140,4 +140,7 @@ public interface Constants {
 	//external HealthCheck components
 	public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";
 	public static final String HC_COMPONENT_DCAE = "DCAE";
+	
+	//Designer BL
+	public static final String DESIGNER_BL_COMPONENT = "designerStatusBL";
 }
