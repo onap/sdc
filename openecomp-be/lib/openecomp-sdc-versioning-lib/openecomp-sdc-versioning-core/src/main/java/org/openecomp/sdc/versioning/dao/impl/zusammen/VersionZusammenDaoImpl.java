@@ -7,6 +7,7 @@ import com.amdocs.zusammen.datatypes.item.ItemVersion;
 import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
 import com.amdocs.zusammen.datatypes.item.SynchronizationStatus;
+import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -18,6 +19,7 @@ import org.openecomp.sdc.versioning.dao.types.SynchronizationState;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -110,18 +112,27 @@ public class VersionZusammenDaoImpl implements VersionDao {
 
   @Override
   public void revert(String itemId, Version version, String revisionId) {
-    zusammenAdaptor.revert(createSessionContext(), itemId, version.getId(), revisionId);
+    zusammenAdaptor.revert(createSessionContext(), new Id(itemId), new Id(version.getId()),
+        new Id(revisionId));
   }
 
   @Override
   public List<Revision> listRevisions(String itemId, Version version) {
-    return zusammenAdaptor.listRevisions(createSessionContext(), itemId, version.getId());
+    ItemVersionRevisions itemVersionRevisions = zusammenAdaptor
+        .listRevisions(createSessionContext(), new Id(itemId), new Id(version.getId()));
+
+    return itemVersionRevisions == null || itemVersionRevisions.getItemVersionRevisions() == null ||
+        itemVersionRevisions.getItemVersionRevisions().isEmpty()
+        ? new ArrayList<>()
+        : itemVersionRevisions.getItemVersionRevisions().stream()
+            .map(this::convertRevision)
+            .sorted(this::compareRevisionsTime)
+            .collect(Collectors.toList());
   }
 
   private void updateVersionStatus(SessionContext context, Id itemId, Id versionId,
                                    VersionState versionState, ItemVersion itemVersion) {
-    if (versionState.getSynchronizationState() != SynchronizationState.UpToDate ||
-        versionState.isDirty()) {
+    if (versionState.getSynchronizationState() != SynchronizationState.UpToDate) {
       String versionStatus = zusammenAdaptor.getPublicVersion(context, itemId, versionId)
           .getData().getInfo().getProperty(ZusammenProperty.STATUS);
       itemVersion.getData().getInfo().addProperty(ZusammenProperty.STATUS, versionStatus);
@@ -161,5 +172,19 @@ public class VersionZusammenDaoImpl implements VersionDao {
             .withId("UNKNOWN_VERSION_STATE")
             .withMessage("Version state is unknown").build());
     }
+  }
+
+  private Revision convertRevision(
+      com.amdocs.zusammen.datatypes.itemversion.Revision zusammenRevision) {
+    Revision revision = new Revision();
+    revision.setId(zusammenRevision.getRevisionId().getValue());
+    revision.setTime(zusammenRevision.getTime());
+    revision.setUser(zusammenRevision.getUser());
+    revision.setMessage(zusammenRevision.getMessage());
+    return revision;
+  }
+
+  private int compareRevisionsTime(Revision revision1, Revision revision2) {
+    return revision1.getTime().before(revision2.getTime()) ? 1 : -1;
   }
 }

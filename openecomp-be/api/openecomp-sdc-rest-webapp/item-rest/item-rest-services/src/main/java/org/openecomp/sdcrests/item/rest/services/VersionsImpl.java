@@ -41,6 +41,7 @@ import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.ItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.SynchronizationState;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.RevisionIdNotFoundErrorBuilder;
@@ -63,6 +64,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
@@ -146,8 +148,19 @@ public class VersionsImpl implements Versions {
     GenericCollectionWrapper<RevisionDto> results = new GenericCollectionWrapper<>();
     MapRevisionToDto mapper = new MapRevisionToDto();
 
-    versioningManager.listRevisions(itemId, new Version(versionId))
-        .forEach(revision -> results.add(mapper.applyMapping(revision, RevisionDto.class)));
+    List<Revision> revisions = versioningManager.listRevisions(itemId, new Version(versionId));
+    /* When creating a new item an initial version is created with invalid data.
+       This revision is not an applicable revision. The logic of identifying this revision is:
+       1- only the first version of item has this issue
+       2- only in the first item version there are 2 revisions created
+       3- the second revision is in format "Initial <vlm/vsp>: <name of the vlm/vsp>"
+       4- only if a revision in this format exists we remove the first revision. */
+    if (revisions.size() > 1 &&
+        revisions.get(revisions.size() - 2).getMessage().matches("Initial .*:.*")) {
+      revisions.remove(revisions.size() - 1);
+    }
+
+    revisions.forEach(revision -> results.add(mapper.applyMapping(revision, RevisionDto.class)));
     return Response.ok(results).build();
   }
 
