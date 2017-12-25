@@ -36,6 +36,7 @@ import com.amdocs.zusammen.datatypes.item.ItemVersion;
 import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
 import com.amdocs.zusammen.datatypes.item.Resolution;
+import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -46,7 +47,6 @@ import org.openecomp.sdc.model.impl.zusammen.ServiceModelDaoZusammenImpl;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -55,7 +55,6 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -255,7 +254,7 @@ public class ServiceModelDaoFactoryTest {
                                                       ElementContext elementContext,
                                                       Id parentElementId, String elementName) {
 
-      if(elementName.equals(ElementType.VspModel.name())){
+      if (elementName.equals(ElementType.VspModel.name())) {
         return elementInfoMap.values();
       }
 
@@ -267,11 +266,11 @@ public class ServiceModelDaoFactoryTest {
                                                       ElementContext elementContext,
                                                       Id parentElementId, String elementName) {
 
-     if(elementName.equals(ElementType.Templates.name())){
-       return Optional.ofNullable(elementInfoMap.get("null" + elementName));
-     }else if(elementName.equals(ElementType.Artifacts.name())) {
-       return Optional.ofNullable(elementInfoMap.get("null" + elementName));
-     }
+      if (elementName.equals(ElementType.Templates.name())) {
+        return Optional.ofNullable(elementInfoMap.get("null" + elementName));
+      } else if (elementName.equals(ElementType.Artifacts.name())) {
+        return Optional.ofNullable(elementInfoMap.get("null" + elementName));
+      }
 
       return Optional.empty();
     }
@@ -382,14 +381,14 @@ public class ServiceModelDaoFactoryTest {
     }
 
     @Override
-    public void revert(SessionContext sessionContext, String itemId, String versionId,
-                       String revisionId) {
+    public void revert(SessionContext sessionContext, Id itemId, Id versionId,
+                       Id revisionId) {
 
     }
 
     @Override
-    public List<Revision> listRevisions(SessionContext sessionContext, String itemId,
-                                        String versionId) {
+    public ItemVersionRevisions listRevisions(SessionContext sessionContext, Id itemId,
+                                              Id versionId) {
       return null;
     }
 
