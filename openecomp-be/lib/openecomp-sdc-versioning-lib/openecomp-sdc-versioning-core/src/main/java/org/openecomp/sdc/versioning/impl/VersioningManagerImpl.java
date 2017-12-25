@@ -518,7 +518,7 @@ public class VersioningManagerImpl implements VersioningManager {
     versionDao.create(itemId, version);
     itemManager.updateVersionStatus(itemId, VersionStatus.Draft, null);
 
-    publish(itemId, version, String.format("Initial version: %s ", version.getName()));
+    publish(itemId, version, String.format("Create version: %s", version.getName()));
     return version;
   }
 
@@ -597,7 +597,6 @@ public class VersioningManagerImpl implements VersioningManager {
   @Override
   public List<Revision> listRevisions(String itemId, Version version) {
     return versionDao.listRevisions(itemId, version);
-
   }
 
   private void markAsCheckedOut(VersionInfoEntity versionInfoEntity, String checkingOutUser) {

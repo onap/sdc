@@ -21,6 +21,7 @@
 package org.openecomp.sdc.versioning.impl;
 
 
+import com.amdocs.zusammen.datatypes.Id;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,6 +40,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +54,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.openecomp.sdc.versioning.dao.impl.zusammen.TestUtil.createZusammenContext;
 import static org.openecomp.sdc.versioning.dao.types.SynchronizationState.OutOfSync;
 import static org.openecomp.sdc.versioning.dao.types.SynchronizationState.UpToDate;
 import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Certified;
@@ -70,6 +73,17 @@ public class VersioningManagerImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
+  }
+
+  @Test
+  public void testListWhenNone() throws Exception {
+    String itemId = "itemId";
+
+    doReturn(new ArrayList<>()).when(versionDaoMock).list(itemId);
+
+    List<Version> versions = versioningManager.list(itemId);
+
+    Assert.assertTrue(versions.isEmpty());
   }
 
   @Test
@@ -169,7 +183,8 @@ public class VersioningManagerImplTest {
 
     verify(versionDaoMock).create(itemId, requestedVersion);
     verify(itemManagerMock).updateVersionStatus(itemId, Draft, null);
-    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), anyString());
+    verify(versionDaoMock)
+        .publish(eq(itemId), eq(requestedVersion), eq("Create version: versionName"));
   }
 
   @Test
@@ -198,7 +213,7 @@ public class VersioningManagerImplTest {
 
     verify(versionDaoMock).create(itemId, requestedVersion);
     verify(itemManagerMock).updateVersionStatus(itemId, Draft, null);
-    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), anyString());
+    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), eq("Create version: 4.0"));
   }
 
   @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp =

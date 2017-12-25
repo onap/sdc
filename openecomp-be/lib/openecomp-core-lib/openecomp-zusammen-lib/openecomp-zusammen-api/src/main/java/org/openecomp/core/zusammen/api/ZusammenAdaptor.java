@@ -15,11 +15,10 @@ import com.amdocs.zusammen.datatypes.item.ItemVersion;
 import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
 import com.amdocs.zusammen.datatypes.item.Resolution;
+import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
-import org.openecomp.sdc.versioning.dao.types.Revision;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public interface ZusammenAdaptor {
@@ -95,11 +94,11 @@ public interface ZusammenAdaptor {
   void resolveElementConflict(SessionContext context, ElementContext elementContext,
                               ZusammenElement element, Resolution resolution);
 
+  void revert(SessionContext context, Id itemId, Id versionId, Id revisionId);
+
+  ItemVersionRevisions listRevisions(SessionContext context, Id itemId, Id versionId);
+
   Collection<HealthInfo> checkHealth(SessionContext context);
 
   String getVersion(SessionContext context);
-
-  void revert(SessionContext sessionContext, String itemId, String versionId, String revisionId);
-
-  List<Revision> listRevisions(SessionContext sessionContext, String itemId, String versionId);
 }
