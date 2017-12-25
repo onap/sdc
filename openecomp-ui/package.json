@@ -2,7 +2,7 @@
   "name": "dox-ui",
   "version": "1.0.0",
   "description": "",
-  "author": "ECOMP",
+  "author": "ONAP",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "start": "gulp dev && webpack-dev-server --progress",

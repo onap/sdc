@@ -9,8 +9,8 @@
     "start": "webpack-dev-server",
     "lint": "eslint . --ext .js --ext .jsx --cache"
   },
-  "author": "ECOMP",
-  "license": "SEE LICENSE IN LICENSE.TXT",
+  "author": "ONAP",
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "d3": "^3.5.16",
     "lodash": "^4.12.0",
