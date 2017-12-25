@@ -20,11 +20,9 @@ import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.db.ZusammenConnector;
-import org.openecomp.sdc.versioning.dao.types.Revision;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -108,7 +106,8 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
   }
 
   @Override
-  public Optional<ElementConflict> getElementConflict(SessionContext context, ElementContext elementContext,
+  public Optional<ElementConflict> getElementConflict(SessionContext context,
+                                                      ElementContext elementContext,
                                                       Id elementId) {
     return Optional.ofNullable(connector.getElementConflict(context, elementContext, elementId));
   }
@@ -184,7 +183,7 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
   @Override
   public Optional<ItemVersion> getFirstVersion(SessionContext context, Id itemId) {
     Collection<ItemVersion> versions = connector.listPublicVersions(context, itemId);
-    if (versions == null || versions.size() == 0) {
+    if (versions == null || versions.isEmpty()) {
       return Optional.empty();
     }
     List<ItemVersion> itemVersions = new ArrayList<>(versions);
@@ -242,18 +241,6 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
     connector.resetVersionHistory(context, itemId, versionId, changeRef);
   }
 
-  /*@Override
-  public void revertVersionToRevision(SessionContext context, Id itemId, Id versionId,
-                                      Id revisionId) {
-    connector.resetVersionRevision(context, itemId, versionId, revisionId);
-  }*/
-
-  /*@Override
-  public ItemVersionRevisions listVersionRevisions(SessionContext context, Id itemId, Id
-      versionId) {
-    return connector.listVersionRevisions(context, itemId, versionId);
-  }*/
-
   @Override
   public void publishVersion(SessionContext context, Id itemId, Id versionId, String message) {
     connector.publishVersion(context, itemId, versionId, message);
@@ -270,63 +257,23 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
   }
 
   @Override
+  public void revert(SessionContext context, Id itemId, Id versionId, Id revisionId) {
+    connector.revertVersionRevision(context, itemId, versionId, revisionId);
+  }
+
+  @Override
+  public ItemVersionRevisions listRevisions(SessionContext context, Id itemId, Id versionId) {
+    return connector.listVersionRevisions(context, itemId, versionId);
+  }
+
+  @Override
   public Collection<HealthInfo> checkHealth(SessionContext context) {
     return connector.checkHealth(context);
   }
 
   @Override
-  public String getVersion(SessionContext sessionContext) {
-    return connector.getVersion(sessionContext);
-  }
-
-  @Override
-  public void revert(SessionContext sessionContext, String itemId, String versionId,
-                     String revisionId) {
-    connector.revertVersionRevision(sessionContext, new Id(itemId), new Id(versionId),
-        new Id(revisionId));
-  }
-
-  @Override
-  public List<Revision> listRevisions(SessionContext sessionContext, String itemId,
-                                      String versionId) {
-    List<Revision> revisions = new ArrayList<>();
-    ItemVersionRevisions itemVersionRevisions =
-        connector.listVersionRevisions(sessionContext, new Id(itemId), new Id
-            (versionId));
-    if(itemVersionRevisions == null || itemVersionRevisions.getItemVersionRevisions()==null ||
-        itemVersionRevisions.getItemVersionRevisions().size()==0) {
-      return revisions;
-    }
-    else{
-      revisions =  itemVersionRevisions.getItemVersionRevisions().stream().map
-          (revision -> {
-        Revision rev = new Revision();
-        rev.setId(revision.getRevisionId().getValue());
-        rev.setTime(revision.getTime());
-        rev.setUser(revision.getUser());
-        rev.setMessage(revision.getMessage());
-        return rev;
-      }).collect(Collectors.toList());
-      revisions.sort(new Comparator<Revision>() {
-        @Override
-        public int compare(Revision o1, Revision o2) {
-          if(o1.getTime().before(o2.getTime())) return 1;
-          else return -1;
-        }
-      });
-      // when creating a new item an initial version is created with
-      // invalid data. this revision is not an applicable revision.
-      //the logic of identifying this revision is:
-      //1- only the first version of item has this issue
-      //2- only in the first item version there are 2 revisions created
-      //3- the second revision is in format "Initial {vlm/vsp}: {name of the vlm/vsp}
-      //4- only if a revision in this format exists we remove the first revision.
-      if(revisions.size()>1 && revisions.get(revisions.size()-2).getMessage().matches("Initial " +
-          ".*:.*")){
-        revisions.remove(revisions.size()-1);
-      }
-      return revisions;
-    }
+  public String getVersion(SessionContext context) {
+    return connector.getVersion(context);
   }
 
   private static void sortItemVersionListByModificationTimeDescOrder(
