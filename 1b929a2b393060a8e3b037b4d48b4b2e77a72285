@@ -1,0 +1,170 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_00a1dff7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/VersionsImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "As a rule of thumb, declare variables right before they are used.",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 53
+      },
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e09b93c7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/VersionsImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "revisions.size() is being called three times here. Do you think that storing it in local variable could improve the code?",
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a0a58b05",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-api/src/main/java/org/openecomp/core/zusammen/api/ZusammenAdaptor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "Multiple parameters of the same type in a row are error prone. It\u0027s very easy to swap them by mistake when calling the method.",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 86
+      },
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c0aa17d4",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/main/java/org/openecomp/sdc/versioning/dao/impl/zusammen/VersionZusammenDaoImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "If you don\u0027t expect the returned array to be modifiable by reference, use Collections.emptyList()",
+      "range": {
+        "startLine": 126,
+        "startChar": 10,
+        "endLine": 126,
+        "endChar": 27
+      },
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_80ac0fef",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/test/java/org/openecomp/sdc/versioning/dao/impl/zusammen/TestUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "I think we already have lots of code like this. Can it be reused here?",
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_40b6073f",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/test/java/org/openecomp/sdc/versioning/dao/impl/zusammen/VersionZusammenDaoImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "These can be made constants. Used many times in the code.",
+      "range": {
+        "startLine": 173,
+        "startChar": 0,
+        "endLine": 174,
+        "endChar": 35
+      },
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e082b351",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/test/java/org/openecomp/sdc/versioning/dao/impl/zusammen/VersionZusammenDaoImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "As a rule, unit tests must be very simple and test one thing at a time. That also means a single assertion statement per test.",
+      "range": {
+        "startLine": 346,
+        "startChar": 0,
+        "endLine": 350,
+        "endChar": 86
+      },
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0088ff6f",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/test/java/org/openecomp/sdc/versioning/dao/impl/zusammen/VersionZusammenDaoImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-25T14:24:34Z",
+      "side": 1,
+      "message": "Please see my previous comment.",
+      "revId": "1b929a2b393060a8e3b037b4d48b4b2e77a72285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
