@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.tosca.services;
 
 import org.yaml.snakeyaml.DumperOptions;
@@ -118,19 +134,15 @@ public class YamlUtil {
    */
   public Map<String, LinkedHashMap<String, Object>> yamlToMap(InputStream yamlContent) {
     Yaml yaml = new Yaml();
-    @SuppressWarnings("unchecked") Map<String, LinkedHashMap<String, Object>> yamlData =
-        (Map<String, LinkedHashMap<String, Object>>) yaml.load(yamlContent);
-    return yamlData;
+    return (Map<String, LinkedHashMap<String, Object>>) yaml.load(yamlContent);
   }
 
   /**
    * Object to yaml string.
-   *
-   * @param <T> the type parameter
    * @param obj the obj
    * @return the string
    */
-  public <T> String objectToYaml(Object obj) {
+  public String objectToYaml(Object obj) {
     DumperOptions options = new DumperOptions();
     options.setPrettyFlow(true);
     options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -179,7 +191,7 @@ public class YamlUtil {
         NodeTuple defaultNode =
             super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
 
-        return property.getName().equals("_default")
+        return "_default".equals(property.getName())
             ? new NodeTuple(representData("default"), defaultNode.getValueNode())
             : defaultNode;
       }
@@ -195,16 +207,17 @@ public class YamlUtil {
     @Override
     protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bnAccess)
         throws IntrospectionException {
-      return new LinkedHashSet<Property>(getPropertiesMap(type,
+      return new LinkedHashSet<>(getPropertiesMap(type,
           BeanAccess.FIELD).values());
     }
 
     @Override
     public Property getProperty(Class<?> type, String name) throws IntrospectionException {
-      if (name.equals("default")) {
-        name = "_default";
+      String updatedName = name;
+      if ("default".equals(updatedName)) {
+        updatedName = "_default";
       }
-      return super.getProperty(type, name);
+      return super.getProperty(type, updatedName);
     }
 
   }
