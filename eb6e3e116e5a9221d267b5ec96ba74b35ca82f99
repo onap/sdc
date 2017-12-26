@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_20589b55",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/services/YamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T09:46:43Z",
+      "side": 1,
+      "message": "Please make these to constants as they are used more than once.",
+      "range": {
+        "startLine": 194,
+        "startChar": 15,
+        "endLine": 194,
+        "endChar": 25
+      },
+      "revId": "eb6e3e116e5a9221d267b5ec96ba74b35ca82f99",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
