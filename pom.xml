@@ -37,8 +37,6 @@
 
 		<!-- Elastic Search mapper (reference the elastic search version actually). -->
 		<elastic-search.version>2.1.0</elastic-search.version>
-		<catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
-		<catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
 		<jetty.version>9.2.10.v20150310</jetty.version>
 
 		<!-- JSON and YAML Parsing -->
@@ -94,8 +92,8 @@
 		
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.jacoco.itReportPath>${project.basedir}/../target/it-jacoco.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${project.basedir}/target/it-jacoco.exec</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
 		<!-- Sonar properties -->
 		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
