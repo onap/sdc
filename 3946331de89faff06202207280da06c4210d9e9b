@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_607783d5",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/FileDataStructureHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T09:42:29Z",
+      "side": 1,
+      "message": "This could be final.",
+      "revId": "3946331de89faff06202207280da06c4210d9e9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
