@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_80096f33",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/NovaServerNamingConventionGuideLineValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T10:03:33Z",
+      "side": 1,
+      "message": "Why?",
+      "range": {
+        "startLine": 164,
+        "startChar": 34,
+        "endLine": 164,
+        "endChar": 43
+      },
+      "revId": "696f04ac9eb6e84ac3d8ddd9df45101d469e29e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
