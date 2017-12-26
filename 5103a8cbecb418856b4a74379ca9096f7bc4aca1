@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a3dd9544",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/globaltypes/GlobalTypesServiceTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T14:24:07Z",
+      "side": 1,
+      "message": "It can be final",
+      "revId": "5103a8cbecb418856b4a74379ca9096f7bc4aca1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_63e78d13",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/globaltypes/GlobalTypesServiceTemplates.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T14:24:07Z",
+      "side": 1,
+      "message": "Could have returned here without proceeding to the next condition.",
+      "revId": "5103a8cbecb418856b4a74379ca9096f7bc4aca1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_23f185cd",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/GlobalSubstitutionServiceTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T14:24:07Z",
+      "side": 1,
+      "message": "The strings here should be constants as they are used in other places.",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 57
+      },
+      "revId": "5103a8cbecb418856b4a74379ca9096f7bc4aca1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
