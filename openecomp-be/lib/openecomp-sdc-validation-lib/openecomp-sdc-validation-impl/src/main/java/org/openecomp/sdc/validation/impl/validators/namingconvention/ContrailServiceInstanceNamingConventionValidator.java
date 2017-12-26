@@ -1,5 +1,22 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
+import static java.util.Objects.nonNull;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -16,13 +33,10 @@ import org.openecomp.sdc.validation.util.ValidationUtil;
 
 import java.util.Map;
 
-import static java.util.Objects.nonNull;
 
-/**
- * Created by TALIO on 2/24/2017.
- */
 public class ContrailServiceInstanceNamingConventionValidator implements ResourceValidator {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private static final String AVAILABILITY_ZONE = "availability_zone";
   private static final ErrorMessageCode ERROR_CODE_NSI1 = new ErrorMessageCode("NSI1");
   private static final ErrorMessageCode ERROR_CODE_NSI2 = new ErrorMessageCode("NSI2");
 
@@ -37,25 +51,25 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
                                             GlobalValidationContext globalContext) {
 
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     String[] regexList = new String[]{"availability_zone_(\\d+)"};
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
     Object availabilityZoneMap =
-            resourceEntry.getValue().getProperties().containsKey("availability_zone") ? resourceEntry
-                    .getValue().getProperties().get("availability_zone") : null;
+            resourceEntry.getValue().getProperties().containsKey(AVAILABILITY_ZONE) ? resourceEntry
+                    .getValue().getProperties().get(AVAILABILITY_ZONE) : null;
 
     if (nonNull(availabilityZoneMap)) {
       if (availabilityZoneMap instanceof Map) {
-        String availabilityZoneName = ValidationUtil.getWantedNameFromPropertyValueGetParam
-                (availabilityZoneMap);
+        String availabilityZoneName = ValidationUtil
+                .getWantedNameFromPropertyValueGetParam (availabilityZoneMap);
 
-        if (availabilityZoneName != null) {
-          if (!ValidationUtil.evalPattern(availabilityZoneName, regexList)) {
+          if (availabilityZoneName != null && !ValidationUtil
+                  .evalPattern(availabilityZoneName, regexList)) {
             globalContext.addMessage(
                     fileName,
                     ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_NSI1,
@@ -66,18 +80,17 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
                     LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
                     LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
           }
-        }
       } else {
         globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_NSI2, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                                "availability_zone", resourceEntry.getKey()),
+                                AVAILABILITY_ZONE, resourceEntry.getKey()),
                 LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
                 LoggerErrorDescription.MISSING_GET_PARAM);
       }
     }
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
 }
