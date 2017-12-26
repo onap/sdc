@@ -22,6 +22,8 @@ package org.openecomp.core.utilities;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,6 +56,7 @@ public class CommonMethods {
       '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
   };
   private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
+  private static final Logger LOGGER = LoggerFactory.getLogger(CommonMethods.class);
 
   /**
    * Private default constructor to prevent instantiation of the class objects.
@@ -140,7 +143,7 @@ public class CommonMethods {
    * @return <tt>true</tt> - if the Object is null, <tt>false</tt> otherwise.
    */
   public static boolean isEmpty(byte[] byteArray) {
-    return (byteArray == null || byteArray.length == 0);
+    return byteArray == null || byteArray.length == 0;
   }
 
   /**
@@ -191,7 +194,7 @@ public class CommonMethods {
    */
   public static long[] toPrimitive(Long[] array) {
     if (array == null) {
-      return null;
+      return new long[0];
     }
 
     long[] result = new long[array.length];
@@ -233,8 +236,9 @@ public class CommonMethods {
 
   private static void long2string(long lng, StringBuilder buff) {
     for (int i = 0; i < 16; i++) {
-      long nextByte = lng & 0xF000000000000000L;
-      lng <<= 4;
+      long nextByte = lng;
+      nextByte = nextByte & 0xF000000000000000L;
+      nextByte <<= 4;
       boolean isNegative = nextByte < 0;
       nextByte = rightShift(nextByte, 60);
 
@@ -265,7 +269,7 @@ public class CommonMethods {
    */
   @SuppressWarnings("unchecked")
   public static <T> T[] concat(T[] left, T[] right) {
-    T[] res = null;
+    T[] res;
 
     if (isEmpty(left)) {
       res = right;
@@ -365,9 +369,7 @@ public class CommonMethods {
   public static <T> T newInstance(Class<T> cls) {
     try {
       return cls.newInstance();
-    } catch (InstantiationException exception) {
-      throw new RuntimeException(exception);
-    } catch (IllegalAccessException exception) {
+    } catch (InstantiationException | IllegalAccessException exception) {
       throw new RuntimeException(exception);
     }
   }
@@ -380,10 +382,8 @@ public class CommonMethods {
    */
   public static String getResourcesPath(String resourceName) {
     URL resourceUrl = CommonMethods.class.getClassLoader().getResource(resourceName);
-    String resourcePath = resourceUrl.getPath();
-    String dirPath = resourcePath.substring(0, resourcePath.lastIndexOf("/") + 1);
-
-    return dirPath;
+    return resourceUrl != null ? resourceUrl.getPath()
+        .substring(0, resourceUrl.getPath().lastIndexOf("/") + 1) : null;
   }
 
   /**
@@ -418,7 +418,7 @@ public class CommonMethods {
     try {
       sw.close();
     } catch (IOException exception) {
-      System.err.println(exception);
+      LOGGER.error("Error while printing stacktrace" + exception);
     }
     return str;
 
@@ -461,7 +461,7 @@ public class CommonMethods {
    */
   public static String collectionToCommaSeparatedString(Collection<String> elementCollection) {
     List<String> list = new ArrayList<>();
-    elementCollection.stream().forEach(element -> list.add(element));
+    list.addAll(elementCollection);
     return listToSeparatedString(list, ',');
   }
 
@@ -509,7 +509,7 @@ public class CommonMethods {
    */
   public static String duplicateStringWithDelimiter(String arg, char separator,
                                                     int numberOfDuplications) {
-    String res = null;
+    String res;
     StringBuilder sb = new StringBuilder();
 
     for (int i = 0; i < numberOfDuplications; i++) {
