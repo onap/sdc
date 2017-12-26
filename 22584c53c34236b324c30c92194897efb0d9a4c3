@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_402cc7ab",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/ContrailServiceTemplateNamingConventionValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T09:59:23Z",
+      "side": 1,
+      "message": "This is over-complicated and can be written in just one line, without all those variable declarations and assignments: \n\nreturn previousPropertyValueValue \u003d\u003d null ? currentPropVmType : previousPropertyValueValue;",
+      "range": {
+        "startLine": 224,
+        "startChar": 0,
+        "endLine": 230,
+        "endChar": 37
+      },
+      "revId": "22584c53c34236b324c30c92194897efb0d9a4c3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
