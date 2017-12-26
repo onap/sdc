@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_032c8998",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/test/java/org/openecomp/sdc/versioning/impl/ItemManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T10:49:58Z",
+      "side": 1,
+      "message": "This just screams to be a constant.",
+      "range": {
+        "startLine": 105,
+        "startChar": 15,
+        "endLine": 105,
+        "endChar": 23
+      },
+      "revId": "9acab8cb6debc2fe3c08ac23dbb32306522ae652",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
