@@ -3,6 +3,7 @@ package org.openecomp.sdc.versioning.types;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public class Item {
   private String name;
   private String description;
   private Map<String, Object> properties = new HashMap<>();
-  private Map<VersionStatus, Integer> versionStatusCounters = new HashMap<>();
+  private Map<VersionStatus, Integer> versionStatusCounters = new EnumMap<>(VersionStatus.class);
   private Date creationTime;
   private Date modificationTime;
 
