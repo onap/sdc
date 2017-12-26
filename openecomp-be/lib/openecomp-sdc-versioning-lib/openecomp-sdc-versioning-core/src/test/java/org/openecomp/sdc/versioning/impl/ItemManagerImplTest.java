@@ -100,17 +100,48 @@ public class ItemManagerImplTest {
   }
 
   @Test
+  public void testUpdateVersionStatusAddFirst() throws Exception {
+    Item item = new Item();
+    item.setId("itemId");
+    doReturn(item).when(itemDao).get(any(Item.class));
+
+    itemManager.updateVersionStatus("itemId", VersionStatus.Draft, null);
+
+    verify(itemDao).update(item);
+    Assert.assertEquals(item.getVersionStatusCounters().size(), 1);
+    Assert.assertEquals(item.getVersionStatusCounters().get(VersionStatus.Draft).intValue(), 1);
+  }
+
+  @Test
   public void testUpdateVersionStatus() throws Exception {
     Item item = new Item();
     item.setId("itemId");
     item.getVersionStatusCounters().put(VersionStatus.Certified, 2);
-    item.getVersionStatusCounters().put(VersionStatus.Draft, 5);
+    item.getVersionStatusCounters().put(VersionStatus.Draft, 3);
     doReturn(item).when(itemDao).get(any(Item.class));
 
     itemManager.updateVersionStatus("itemId", VersionStatus.Certified, VersionStatus.Draft);
+
     verify(itemDao).update(item);
+    Assert.assertEquals(item.getVersionStatusCounters().size(), 2);
     Assert.assertEquals(item.getVersionStatusCounters().get(VersionStatus.Certified).intValue(), 3);
-    Assert.assertEquals(item.getVersionStatusCounters().get(VersionStatus.Draft).intValue(), 4);
+    Assert.assertEquals(item.getVersionStatusCounters().get(VersionStatus.Draft).intValue(), 2);
+  }
+
+  @Test
+  public void testUpdateVersionStatusRemoveLast() throws Exception {
+    Item item = new Item();
+    item.setId("itemId");
+    item.getVersionStatusCounters().put(VersionStatus.Certified, 2);
+    item.getVersionStatusCounters().put(VersionStatus.Draft, 1);
+    doReturn(item).when(itemDao).get(any(Item.class));
+
+    itemManager.updateVersionStatus("itemId", VersionStatus.Certified, VersionStatus.Draft);
+
+    verify(itemDao).update(item);
+    Assert.assertEquals(item.getVersionStatusCounters().size(), 1);
+    Assert.assertEquals(item.getVersionStatusCounters().get(VersionStatus.Certified).intValue(), 3);
+    Assert.assertNull(item.getVersionStatusCounters().get(VersionStatus.Draft));
   }
 
   private Item createItem(String name, String type) {
