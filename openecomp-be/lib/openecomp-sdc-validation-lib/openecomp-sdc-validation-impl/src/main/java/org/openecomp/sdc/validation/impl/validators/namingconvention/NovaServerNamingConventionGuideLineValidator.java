@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
 import org.apache.commons.collections4.MapUtils;
@@ -37,7 +53,9 @@ import java.util.TreeMap;
 import static java.util.Objects.nonNull;
 
 public class NovaServerNamingConventionGuideLineValidator implements ResourceValidator {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private static final String AVAILABILITY_ZONE = "availability_zone";
+  private static final String SERVER = "Server";
   private static final ErrorMessageCode ERROR_CODE_NNS1 = new ErrorMessageCode("NNS1");
   private static final ErrorMessageCode ERROR_CODE_NNS2 = new ErrorMessageCode("NNS2");
   private static final ErrorMessageCode ERROR_CODE_NNS3 = new ErrorMessageCode("NNS3");
@@ -69,7 +87,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                         GlobalValidationContext globalContext) {
 
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     Map<String, String> uniqueResourcePortNetworkRole = new HashMap<>();
     //if no resources exist return
@@ -86,7 +104,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
             .forEach( entry -> validateNovaServerResourceType(entry.getKey(), fileName, envFileName,
                     entry, uniqueResourcePortNetworkRole, heatOrchestrationTemplate, globalContext));
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateNovaServerResourceType(String resourceId, String fileName,
@@ -96,7 +114,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                               HeatOrchestrationTemplate heatOrchestrationTemplate,
                                               GlobalValidationContext globalContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     validateNovaServerResourceMetaData(fileName, resourceId,
             heatOrchestrationTemplate.getResources().get(resourceId), globalContext);
@@ -105,7 +123,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     validateAvailabilityZoneName(fileName, resourceEntry, globalContext);
     validateNovaServerNameImageAndFlavor(fileName, envFileName, resourceEntry, globalContext);
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   @SuppressWarnings("unchecked")
@@ -113,7 +131,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                                   Resource resource,
                                                   GlobalValidationContext globalValidationContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     Map<String, Object> novaServerProp = resource.getProperties();
     Object novaServerPropMetadata;
@@ -130,23 +148,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                 LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
                 LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
       } else if (novaServerPropMetadata instanceof Map) {
-        TreeMap<String, Object> propertyMap = new TreeMap(new Comparator<String>() {
-
-          @Override
-          public int compare(String o1, String o2) {
-            return o1.compareToIgnoreCase(o2);
-          }
-
-          @Override
-          public boolean equals(Object obj) {
-            return false;
-          }
-
-          @Override
-          public int hashCode() {
-            return super.hashCode();
-          }
-        });
+        TreeMap<String, Object> propertyMap = new TreeMap((Comparator<String>) String::compareToIgnoreCase);
         propertyMap.putAll((Map) novaServerPropMetadata);
         if (!propertyMap.containsKey("vf_module_id")) {
           globalValidationContext.addMessage(
@@ -171,7 +173,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateNovaServerResourceNetworkUniqueRole(String fileName, String resourceId,
@@ -180,10 +182,8 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                                            GlobalValidationContext globalValidationContext) {
 
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
-    Object network;
-    String role = null;
 
     Object propertyNetworkValue =
             heatOrchestrationTemplate.getResources().get(resourceId).getProperties().get("networks");
@@ -193,37 +193,49 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                       globalValidationContext);
       for (String portResourceId : portResourceIdList) {
         Resource portResource = heatOrchestrationTemplate.getResources().get(portResourceId);
+
         if (portResource != null && portResource.getType()
                 .equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
-          Map portNetwork =
-                  getPortNetwork(fileName, resourceId, portResource, globalValidationContext);
-          if (Objects.nonNull(portNetwork)) {
-            network = portNetwork.get("get_param");
-            if (Objects.nonNull(network)) {
-              if (network instanceof String ){
-                role = getNetworkRole((String)network);
-              }else if (network instanceof List){
-                role = getNetworkRole((String)((List) network).get(0));
-              }
-              if (role != null && uniqueResourcePortNetworkRole.containsKey(role)) {
-                globalValidationContext.addMessage(
-                        fileName,
-                        ErrorLevel.WARNING,
-                        ErrorMessagesFormatBuilder.getErrorWithParameters(
-                                ERROR_CODE_NNS12, Messages.RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE
-                                        .getErrorMessage(), resourceId, role),
-                        LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
-                        LoggerErrorDescription.RESOURCE_UNIQUE_NETWORK_ROLE);
-              } else {
-                uniqueResourcePortNetworkRole.put(role, portResourceId);
-              }
-            }
-          }
+          validateUniqueResourcePortNetworkRole(fileName, resourceId,
+                  uniqueResourcePortNetworkRole, globalValidationContext,
+                  portResourceId, portResource);
         }
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
+  }
+
+  private void validateUniqueResourcePortNetworkRole(String fileName, String resourceId,
+                                      Map<String, String> uniqueResourcePortNetworkRole,
+                                      GlobalValidationContext globalValidationContext,
+                                      String portResourceId, Resource portResource) {
+    String role = null;
+    Object network;
+    Map portNetwork =
+            getPortNetwork(fileName, resourceId, portResource, globalValidationContext);
+    if (Objects.nonNull(portNetwork)) {
+      network = portNetwork.get("get_param");
+      if (Objects.nonNull(network)) {
+        if (network instanceof String ){
+          role = getNetworkRole((String)network);
+        }else if (network instanceof List){
+          role = getNetworkRole((String)((List) network).get(0));
+        }
+        if (role != null && uniqueResourcePortNetworkRole.containsKey(role)) {
+          globalValidationContext.addMessage(
+                  fileName,
+                  ErrorLevel.WARNING,
+                  ErrorMessagesFormatBuilder.getErrorWithParameters(
+                          ERROR_CODE_NNS12, Messages.RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE
+                                  .getErrorMessage(), resourceId, role),
+                  LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
+                  LoggerErrorDescription.RESOURCE_UNIQUE_NETWORK_ROLE);
+        } else {
+          uniqueResourcePortNetworkRole.put(role, portResourceId);
+        }
+      }
+    }
   }
 
   private List<String> getNovaNetworkPortResourceList(String filename, List propertyNetworkValue,
@@ -283,26 +295,25 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                             GlobalValidationContext globalContext) {
 
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     String[] regexList = new String[]{"availability_zone_(\\d+)"};
 
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
-    Object availabilityZoneMap =
-            resourceEntry.getValue().getProperties().containsKey("availability_zone") ? resourceEntry
-                    .getValue().getProperties().get("availability_zone") : null;
+    Object availabilityZoneMap =  resourceEntry.getValue().getProperties()
+            .get(AVAILABILITY_ZONE);
 
     if (nonNull(availabilityZoneMap)) {
       if (availabilityZoneMap instanceof Map) {
         String availabilityZoneName = ValidationUtil.getWantedNameFromPropertyValueGetParam
                 (availabilityZoneMap);
 
-        if (availabilityZoneName != null) {
-          if (!ValidationUtil.evalPattern(availabilityZoneName, regexList)) {
+          if (availabilityZoneName != null && !ValidationUtil
+                  .evalPattern(availabilityZoneName, regexList)) {
             globalContext.addMessage(
                     fileName,
                     ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
@@ -312,26 +323,25 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                     LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
                     LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
           }
-        }
       } else {
         globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(
                                 ERROR_CODE_NNS6, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                                "availability_zone", resourceEntry.getKey()),
+                                AVAILABILITY_ZONE, resourceEntry.getKey()),
                 LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
                 LoggerErrorDescription.MISSING_GET_PARAM);
       }
     }
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateNovaServerNameImageAndFlavor(String fileName, String envFileName,
                                                     Map.Entry<String, Resource> resourceEntry,
                                                     GlobalValidationContext globalContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     String novaName =
             validateNovaServerNamingConvention(fileName, envFileName, resourceEntry, globalContext);
@@ -347,21 +357,21 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               legalNovaNamingConventionMap, globalContext);
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private String validateNovaServerNamingConvention(String fileName, String envFileName,
                                                     Map.Entry<String, Resource> resourceEntry,
                                                     GlobalValidationContext globalContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return null;
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
     return checkIfNovaNameByGuidelines(fileName, envFileName, resourceEntry, globalContext);
   }
 
@@ -369,10 +379,10 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                                                    Map.Entry<String, Resource> resourceEntry,
                                                                    GlobalValidationContext globalContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return null;
     }
 
@@ -387,15 +397,14 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               isErrorExistWhenValidatingImageOrFlavorNames(fileName, imageOrFlavor, resourceEntry,
                       propertiesMap, globalContext);
       if (!isErrorInImageOrFlavor) {
-        Object nameValue = propertiesMap.get(imageOrFlavor.getKey()) == null ? null
-                : propertiesMap.get(imageOrFlavor.getKey());
+        Object nameValue = propertiesMap.get(imageOrFlavor.getKey());
         String imageOrFlavorName = ValidationUtil.getWantedNameFromPropertyValueGetParam
                 (nameValue);
         imageAndFlavorLegalNames.put(imageOrFlavor.getKey(), imageOrFlavorName);
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
     return imageAndFlavorLegalNames;
   }
 
@@ -432,8 +441,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                                                Map<String, Object> propertiesMap,
                                                                GlobalValidationContext globalContext) {
     String propertyName = propertyNameAndRegex.getKey();
-    Object nameValue =
-            propertiesMap.get(propertyName) == null ? null : propertiesMap.get(propertyName);
+    Object nameValue = propertiesMap.get(propertyName);
     String[] regexList = new String[]{propertyNameAndRegex.getValue()};
 
 
@@ -465,13 +473,11 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
   private Object getNovaServerName(Map.Entry<String, Resource> resourceEntry) {
     Object novaServerName = resourceEntry.getValue().getProperties().get("name");
     Map novaNameMap;
-    if (nonNull(novaServerName)) {
-      if (novaServerName instanceof Map) {
+      if (nonNull(novaServerName) && novaServerName instanceof Map) {
         novaNameMap = (Map) novaServerName;
-        return novaNameMap.get(ResourceReferenceFunctions.GET_PARAM.getFunction()) == null ? null
-                : novaNameMap.get(ResourceReferenceFunctions.GET_PARAM.getFunction());
+        return novaNameMap.get(ResourceReferenceFunctions.GET_PARAM.getFunction());
       }
-    }
+
     return null;
   }
 
@@ -502,22 +508,19 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
       Environment environment = ValidationUtil.validateEnvContent(envFileName, globalContext);
 
       if (environment != null && MapUtils.isNotEmpty(environment.getParameters())) {
-        Object novaServerNameEnvValue =
-                environment.getParameters().containsKey(novaServerName) ? environment.getParameters()
-                        .get(novaServerName) : null;
-        if (Objects.nonNull(novaServerNameEnvValue)) {
-          if (!DefinedHeatParameterTypes
+        Object novaServerNameEnvValue = environment.getParameters()
+                        .get(novaServerName);
+          if (Objects.nonNull(novaServerNameEnvValue) && !DefinedHeatParameterTypes
                   .isNovaServerEnvValueIsFromRightType(novaServerNameEnvValue)) {
             globalContext.addMessage(
                     fileName,
                     ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
                             ERROR_CODE_NNS9, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
-                            "Server", "Name",
+                            SERVER, "Name",
                             novaServerNameEnvValue.toString(), resourceEntry.getKey()),
                     LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
                     LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
           }
-        }
       }
     }
   }
@@ -535,7 +538,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder.getErrorWithParameters(
                       ERROR_CODE_NNS10, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
-                      "Server",
+                      SERVER,
                       "name", getParamNameList.toString(), resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
               LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
@@ -556,7 +559,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder.getErrorWithParameters(
                       ERROR_CODE_NNS10, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
-                      "Server",
+                      SERVER,
                       "name", novaName, resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
               LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
@@ -570,7 +573,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                                         Map<String, String> legalNovaNamingConventionNames,
                                                         GlobalValidationContext globalContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     List<String> vmNames = new LinkedList<>();
 
@@ -578,7 +581,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
       vmNames.add(getVmName(nameEntry.getValue(), nameEntry.getKey()));
     }
 
-    vmNames.removeIf(VMName -> VMName == null);
+    vmNames.removeIf(Objects::isNull);
 
     if (!isVmNameSync(vmNames)) {
       globalContext.addMessage(
@@ -590,7 +593,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
               LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
     }
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private String getVmName(String nameToGetVmNameFrom, String stringToGetIndexOf) {
