@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorlicense.impl;
@@ -68,6 +64,17 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
   private EntitlementPoolDao entitlementPoolDao;
   private LicenseKeyGroupDao licenseKeyGroupDao;
   private LimitDao limitDao;
+  private static final String VLM_ID = "VLM id";
+  private static final String EP_LKGID = "EP/LKGId";
+  private static final String VLM_ID_LKG_ID = "VLM id, LKG id";
+  private static final String VLM_ID_LA_ID = "VLM id, LA id";
+  private static final String VLM_ID_FG_ID = "VLM id, FG id";
+  private static final String VLM_ID_EP_ID = "VLM id, EP id";
+  private static final String EP_POOL_START_TIME = "T00:00:00Z";
+  private static final String EP_POOL_EXPIRY_TIME = "T23:59:59Z";
+  private static final  DateTimeFormatter FORMATTER
+          = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
+
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
@@ -90,11 +97,11 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public void validate(String vendorLicenseModelId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vendorLicenseModelId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, vendorLicenseModelId);
 
     vendorLicenseFacade.validate(vendorLicenseModelId, version);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", vendorLicenseModelId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, vendorLicenseModelId);
   }
 
   @Override
@@ -110,7 +117,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public void updateVendorLicenseModel(VendorLicenseModelEntity vendorLicenseModelEntity) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vendorLicenseModelEntity.getId());
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, vendorLicenseModelEntity.getId());
 
     String existingVendorName = vendorLicenseModelDao.get(vendorLicenseModelEntity).getVendorName();
 
@@ -118,7 +125,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         vendorLicenseModelEntity.getVendorName());
     vendorLicenseModelDao.update(vendorLicenseModelEntity);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", vendorLicenseModelEntity.getId());
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, vendorLicenseModelEntity.getId());
   }
 
   @Override
@@ -136,17 +143,17 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public Collection<LicenseAgreementEntity> listLicenseAgreements(String vlmId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, vlmId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, vlmId);
     return licenseAgreementDao.list(new LicenseAgreementEntity(vlmId, version, null));
   }
 
   @Override
   public LicenseAgreementEntity createLicenseAgreement(LicenseAgreementEntity licenseAgreement) {
     mdcDataDebugMessage
-        .debugEntryMessage("VLM id", licenseAgreement.getVendorLicenseModelId());
+        .debugEntryMessage(VLM_ID, licenseAgreement.getVendorLicenseModelId());
     mdcDataDebugMessage
-        .debugExitMessage("VLM id", licenseAgreement.getVendorLicenseModelId());
+        .debugExitMessage(VLM_ID, licenseAgreement.getVendorLicenseModelId());
     return vendorLicenseFacade.createLicenseAgreement(licenseAgreement);
   }
 
@@ -154,7 +161,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
   public void updateLicenseAgreement(LicenseAgreementEntity licenseAgreement,
                                      Set<String> addedFeatureGroupIds,
                                      Set<String> removedFeatureGroupIds) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", licenseAgreement
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_LA_ID, licenseAgreement
         .getVendorLicenseModelId(), licenseAgreement.getId());
 
     LicenseAgreementEntity retrieved = licenseAgreementDao.get(licenseAgreement);
@@ -177,7 +184,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     addFeatureGroupsToLicenseAgreementRef(addedFeatureGroupIds, licenseAgreement);
     removeFeatureGroupsToLicenseAgreementRef(removedFeatureGroupIds, licenseAgreement);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, LA id", licenseAgreement
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_LA_ID, licenseAgreement
         .getVendorLicenseModelId(), licenseAgreement.getId());
   }
 
@@ -185,14 +192,14 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
   public LicenseAgreementModel getLicenseAgreementModel(String vlmId, Version version,
                                                         String licenseAgreementId) {
 
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", vlmId, licenseAgreementId);
-    mdcDataDebugMessage.debugExitMessage("VLM id, LA id", vlmId, licenseAgreementId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_LA_ID, vlmId, licenseAgreementId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_LA_ID, vlmId, licenseAgreementId);
     return vendorLicenseFacade.getLicenseAgreementModel(vlmId, version, licenseAgreementId);
   }
 
   @Override
   public void deleteLicenseAgreement(String vlmId, Version version, String licenseAgreementId) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", vlmId, licenseAgreementId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_LA_ID, vlmId, licenseAgreementId);
 
     LicenseAgreementEntity input =
         new LicenseAgreementEntity(vlmId, version, licenseAgreementId);
@@ -207,21 +214,21 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         retrieved.getVendorLicenseModelId(), retrieved.getVersion().toString(),
         retrieved.getName());
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, LA id", vlmId, licenseAgreementId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_LA_ID, vlmId, licenseAgreementId);
   }
 
   @Override
   public Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, vlmId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, vlmId);
     return vendorLicenseFacade.listFeatureGroups(vlmId, version);
   }
 
   @Override
   public FeatureGroupEntity createFeatureGroup(FeatureGroupEntity featureGroup) {
     mdcDataDebugMessage
-        .debugEntryMessage("VLM id", featureGroup.getVendorLicenseModelId());
-    mdcDataDebugMessage.debugExitMessage("VLM id", featureGroup.getId());
+        .debugEntryMessage(VLM_ID, featureGroup.getVendorLicenseModelId());
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, featureGroup.getId());
     return vendorLicenseFacade.createFeatureGroup(featureGroup);
   }
 
@@ -231,7 +238,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
                                  Set<String> removedLicenseKeyGroups,
                                  Set<String> addedEntitlementPools,
                                  Set<String> removedEntitlementPools) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, FG id", featureGroup
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_FG_ID, featureGroup
         .getVendorLicenseModelId(), featureGroup.getId());
 
     FeatureGroupEntity retrieved = featureGroupDao.get(featureGroup);
@@ -264,23 +271,23 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     featureGroupDao.updateFeatureGroup(featureGroup, addedEntitlementPools, removedEntitlementPools,
         addedLicenseKeyGroups, removedLicenseKeyGroups);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, FG id", featureGroup
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_FG_ID, featureGroup
         .getVendorLicenseModelId(), featureGroup.getId());
   }
 
   @Override
   public FeatureGroupModel getFeatureGroupModel(FeatureGroupEntity featureGroup) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, FG id",
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_FG_ID,
         featureGroup.getVendorLicenseModelId(), featureGroup.getId());
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, FG id",
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_FG_ID,
         featureGroup.getVendorLicenseModelId(), featureGroup.getId());
     return vendorLicenseFacade.getFeatureGroupModel(featureGroup);
   }
 
   @Override
   public void deleteFeatureGroup(FeatureGroupEntity featureGroup) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, FG id",
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_FG_ID,
         featureGroup.getVendorLicenseModelId(), featureGroup.getId());
 
     FeatureGroupEntity retrieved = featureGroupDao.get(featureGroup);
@@ -304,29 +311,29 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         retrieved.getName());
 
     mdcDataDebugMessage
-        .debugExitMessage("VLM id, FG id",
+        .debugExitMessage(VLM_ID_FG_ID,
             featureGroup.getVendorLicenseModelId(), featureGroup.getId());
   }
 
   @Override
   public Collection<EntitlementPoolEntity> listEntitlementPools(String vlmId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, vlmId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, vlmId);
     return vendorLicenseFacade.listEntitlementPools(vlmId, version);
   }
 
   @Override
   public EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool) {
     mdcDataDebugMessage
-        .debugEntryMessage("VLM id", entitlementPool.getVendorLicenseModelId());
+        .debugEntryMessage(VLM_ID, entitlementPool.getVendorLicenseModelId());
     mdcDataDebugMessage
-        .debugExitMessage("VLM id", entitlementPool.getVendorLicenseModelId());
+        .debugExitMessage(VLM_ID, entitlementPool.getVendorLicenseModelId());
 
     entitlementPool.setStartDate(entitlementPool.getStartDate() != null ? (entitlementPool
-        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate() + "T00:00:00Z"
+        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate() + EP_POOL_START_TIME
         : null) : null);
     entitlementPool.setExpiryDate(entitlementPool.getExpiryDate() != null ? (entitlementPool
-        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate() + "T23:59:59Z"
+        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate() + EP_POOL_EXPIRY_TIME 
         : null) : null);
 
     validateCreateDate(entitlementPool.getStartDate(), entitlementPool.getExpiryDate(),
@@ -339,24 +346,15 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     mdcDataDebugMessage.debugEntryMessage("Start date and end date", startDate
         + "   " + expiryDate);
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
+  LocalDate parsedStartDate = parseLocalDate(startDate);
+  LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
 
-    if (startDate != null && expiryDate != null) {
-      if (LocalDate.parse(startDate, formatter).atStartOfDay().isBefore
-          (LocalDate.now().atStartOfDay()) || LocalDate.parse(expiryDate, formatter).atStartOfDay()
-          .isEqual(LocalDate.parse(startDate, formatter).atStartOfDay()) || LocalDate
-          .parse(expiryDate, formatter).isBefore(LocalDate.parse(startDate, formatter))) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
-        throw new CoreException(
-            new InvalidDateErrorBuilder(vendorLicenseModelId)
-                .build());
-      }
-    }
 
-    if (startDate != null && expiryDate == null) {
-      if (LocalDate.parse(startDate, formatter).atStartOfDay().isBefore
+    validateIfStartAndExpiryDateIsNotNull(startDate, expiryDate,
+            vendorLicenseModelId, parsedStartDate, parsedExpiryDate);
+
+    if (startDate != null && expiryDate == null
+                      && parsedStartDate.atStartOfDay().isBefore
           (LocalDate.now().atStartOfDay())) {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
@@ -364,7 +362,6 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         throw new CoreException(
             new InvalidDateErrorBuilder(vendorLicenseModelId)
                 .build());
-      }
     }
 
     if (startDate == null && expiryDate != null) {
@@ -380,24 +377,54 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     mdcDataDebugMessage.debugExitMessage(null);
   }
 
+  private void validateIfStartAndExpiryDateIsNotNull(String startDate, String expiryDate,
+                                                     String vendorLicenseModelId,
+                                                     LocalDate parsedStartDate,
+                                                     LocalDate parsedExpiryDate) {
+    if (startDate != null && expiryDate != null
+            && isValidatStartAndExpiryDate(parsedStartDate, parsedExpiryDate)) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
+      throw new CoreException(
+              new InvalidDateErrorBuilder(vendorLicenseModelId)
+                      .build());
+    }
+  }
+
+  private boolean isValidatStartAndExpiryDate(LocalDate parsedStartDate,
+                                              LocalDate parsedExpiryDate) {
+    return parsedStartDate.atStartOfDay().isBefore(LocalDate.now().atStartOfDay())
+    || parsedExpiryDate.atStartOfDay().isEqual(parsedStartDate.atStartOfDay())
+    || parsedExpiryDate.isBefore(parsedStartDate);
+  }
+
+  private static LocalDate parseLocalDate(String date) {
+    if (date == null || date.isEmpty()) {
+      return null;
+    }
+
+    return LocalDate.parse(date, FORMATTER );
+  }
+
   private void validateUpdateDate(String startDate, String expiryDate,
                                   String vendorLicenseModelId) {
     mdcDataDebugMessage.debugEntryMessage("Start date and end date", startDate
         + "   " + expiryDate);
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
+    LocalDate parsedStartDate = parseLocalDate(startDate);
+    LocalDate parsedExpiryDate = parseLocalDate(expiryDate);
 
-    if (startDate != null && expiryDate != null) {
-      if (LocalDate.parse(expiryDate, formatter).atStartOfDay()
-          .isEqual(LocalDate.parse(startDate, formatter).atStartOfDay()) ||
-          LocalDate.parse(expiryDate, formatter).isBefore(LocalDate.parse(startDate, formatter))) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
-        throw new CoreException(
-            new InvalidDateErrorBuilder(vendorLicenseModelId)
-                .build());
-      }
+    if (startDate != null && expiryDate != null
+            && (parsedExpiryDate.atStartOfDay()
+            .isEqual(parsedStartDate.atStartOfDay())
+            || parsedExpiryDate.isBefore(parsedStartDate ))) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.VALIDATE_DATE_RANGE,ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
+      throw new CoreException(
+              new InvalidDateErrorBuilder(vendorLicenseModelId)
+                      .build());
     }
 
     if (startDate == null && expiryDate != null) {
@@ -415,53 +442,51 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public void updateEntitlementPool(EntitlementPoolEntity entitlementPool) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, EP id", entitlementPool
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_EP_ID, entitlementPool
         .getVendorLicenseModelId(), entitlementPool.getId());
 
     entitlementPool.setStartDate(entitlementPool.getStartDate() != null ? (entitlementPool
-        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate() + "T00:00:00Z"
+        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate() + EP_POOL_START_TIME
         : null) : null);
     entitlementPool.setExpiryDate(entitlementPool.getExpiryDate() != null ? (entitlementPool
-        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate() + "T23:59:59Z"
+        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate() + EP_POOL_EXPIRY_TIME 
         : null) : null);
 
     validateUpdateDate(entitlementPool.getStartDate(), entitlementPool.getExpiryDate(),
         entitlementPool.getVendorLicenseModelId());
     vendorLicenseFacade.updateEntitlementPool(entitlementPool);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, EP id", entitlementPool
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_EP_ID, entitlementPool
         .getVendorLicenseModelId(), entitlementPool.getId());
   }
 
   @Override
   public EntitlementPoolEntity getEntitlementPool(EntitlementPoolEntity entitlementPool) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, EP id", entitlementPool
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_EP_ID, entitlementPool
         .getVendorLicenseModelId(), entitlementPool.getId());
 
     EntitlementPoolEntity retrieved = entitlementPoolDao.get(entitlementPool);
     VersioningUtil
         .validateEntityExistence(retrieved, entitlementPool, VendorLicenseModelEntity.ENTITY_TYPE);
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
     DateTimeFormatter targetFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     if (retrieved.getStartDate() != null) {
-      retrieved.setStartDate(LocalDate.parse(retrieved.getStartDate(), formatter).format
+      retrieved.setStartDate(LocalDate.parse(retrieved.getStartDate(), FORMATTER ).format
           (targetFormatter));
     }
 
     if (retrieved.getExpiryDate() != null) {
-      retrieved.setExpiryDate(LocalDate.parse(retrieved.getExpiryDate(), formatter).format
+      retrieved.setExpiryDate(LocalDate.parse(retrieved.getExpiryDate(), FORMATTER ).format
           (targetFormatter));
     }
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, EP id", entitlementPool
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_EP_ID, entitlementPool
         .getVendorLicenseModelId(), entitlementPool.getId());
     return retrieved;
   }
 
   @Override
   public void deleteEntitlementPool(EntitlementPoolEntity entitlementPool) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, EP id", entitlementPool
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_EP_ID, entitlementPool
         .getVendorLicenseModelId(), entitlementPool.getId());
 
     EntitlementPoolEntity retrieved = entitlementPoolDao.get(entitlementPool);
@@ -484,7 +509,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         retrieved.getVendorLicenseModelId(), retrieved.getVersion().toString(),
         retrieved.getName());
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, EP id", entitlementPool
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_EP_ID, entitlementPool
         .getVendorLicenseModelId(), entitlementPool.getId());
   }
 
@@ -496,24 +521,24 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public Collection<LicenseKeyGroupEntity> listLicenseKeyGroups(String vlmId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, vlmId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, vlmId);
     return vendorLicenseFacade.listLicenseKeyGroups(vlmId, version);
   }
 
   @Override
   public LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup) {
     mdcDataDebugMessage
-        .debugEntryMessage("VLM id", licenseKeyGroup.getVendorLicenseModelId());
+        .debugEntryMessage(VLM_ID, licenseKeyGroup.getVendorLicenseModelId());
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", licenseKeyGroup
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, licenseKeyGroup
         .getVendorLicenseModelId());
 
     licenseKeyGroup.setStartDate(licenseKeyGroup.getStartDate() != null ? (licenseKeyGroup
-        .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate() + "T00:00:00Z"
+        .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate() + EP_POOL_START_TIME
         : null) : null);
     licenseKeyGroup.setExpiryDate(licenseKeyGroup.getExpiryDate() != null ? (licenseKeyGroup
-        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + "T23:59:59Z"
+        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + EP_POOL_EXPIRY_TIME 
         : null) : null);
 
     validateCreateDate(licenseKeyGroup.getStartDate(), licenseKeyGroup.getExpiryDate(),
@@ -523,41 +548,41 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public void updateLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LKG id", licenseKeyGroup
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_LKG_ID, licenseKeyGroup
         .getVendorLicenseModelId(), licenseKeyGroup.getId());
 
     licenseKeyGroup.setStartDate(licenseKeyGroup.getStartDate() != null ? (licenseKeyGroup
-        .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate() + "T00:00:00Z"
+        .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate() + EP_POOL_START_TIME
         : null) : null);
     licenseKeyGroup.setExpiryDate(licenseKeyGroup.getExpiryDate() != null ? (licenseKeyGroup
-        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + "T23:59:59Z"
+        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate() + EP_POOL_EXPIRY_TIME 
         : null) : null);
 
     validateUpdateDate(licenseKeyGroup.getStartDate(), licenseKeyGroup.getExpiryDate(),
         licenseKeyGroup.getVendorLicenseModelId());
     vendorLicenseFacade.updateLicenseKeyGroup(licenseKeyGroup);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, LKG id", licenseKeyGroup
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_LKG_ID, licenseKeyGroup
         .getVendorLicenseModelId(), licenseKeyGroup.getId());
   }
 
   @Override
   public LicenseKeyGroupEntity getLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LKG id", licenseKeyGroup
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_LKG_ID, licenseKeyGroup
         .getVendorLicenseModelId(), licenseKeyGroup.getId());
 
     LicenseKeyGroupEntity retrieved = licenseKeyGroupDao.get(licenseKeyGroup);
     VersioningUtil
         .validateEntityExistence(retrieved, licenseKeyGroup, VendorLicenseModelEntity.ENTITY_TYPE);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, LKG id", licenseKeyGroup
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_LKG_ID, licenseKeyGroup
         .getVendorLicenseModelId(), licenseKeyGroup.getId());
     return retrieved;
   }
 
   @Override
   public void deleteLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LKG id", licenseKeyGroup
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID_LKG_ID, licenseKeyGroup
         .getVendorLicenseModelId(), licenseKeyGroup.getId());
 
     LicenseKeyGroupEntity retrieved = licenseKeyGroupDao.get(licenseKeyGroup);
@@ -580,17 +605,17 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         retrieved.getVendorLicenseModelId(), retrieved.getVersion().toString(),
         retrieved.getName());
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, LKG id", licenseKeyGroup
+    mdcDataDebugMessage.debugExitMessage(VLM_ID_LKG_ID, licenseKeyGroup
         .getVendorLicenseModelId(), licenseKeyGroup.getId());
   }
 
   @Override
   public LimitEntity createLimit(LimitEntity limit) {
     mdcDataDebugMessage
-        .debugEntryMessage("VLM id", limit.getVendorLicenseModelId(), "EP/LKGId", limit
+        .debugEntryMessage(VLM_ID, limit.getVendorLicenseModelId(), EP_LKGID, limit
             .getEpLkgId());
     mdcDataDebugMessage
-        .debugExitMessage("VLM id", limit.getVendorLicenseModelId(), "EP/LKGId", limit
+        .debugExitMessage(VLM_ID, limit.getVendorLicenseModelId(), EP_LKGID, limit
             .getEpLkgId());
     validateLimit(limit);
     LimitEntity createdLimit = vendorLicenseFacade.createLimit(limit);
@@ -630,8 +655,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP/LKGId", epLkgId);
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId, "EP/LKGId", epLkgId);
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, vlmId, EP_LKGID, epLkgId);
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, vlmId, EP_LKGID, epLkgId);
     return vendorLicenseFacade.listLimits(vlmId, version, epLkgId);
   }
 
@@ -659,14 +684,14 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
   @Override
   public void updateLimit(LimitEntity limit) {
     mdcDataDebugMessage
-        .debugEntryMessage("VLM id", limit.getVendorLicenseModelId(), "EP/LKGId", limit
+        .debugEntryMessage(VLM_ID, limit.getVendorLicenseModelId(), EP_LKGID, limit
             .getEpLkgId());
     getLimit(limit);
     validateLimit(limit);
     vendorLicenseFacade.updateLimit(limit);
     updateParentForLimit(limit);
     mdcDataDebugMessage
-        .debugExitMessage("VLM id", limit.getVendorLicenseModelId(), "EP/LKGId", limit
+        .debugExitMessage(VLM_ID, limit.getVendorLicenseModelId(), EP_LKGID, limit
             .getEpLkgId());
   }
 
@@ -676,8 +701,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public LimitEntity getLimit(LimitEntity limitEntity) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", limitEntity.getVendorLicenseModelId(),
-        "EP/LKGId", limitEntity.getEpLkgId());
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, limitEntity.getVendorLicenseModelId(),
+        EP_LKGID, limitEntity.getEpLkgId());
 
     if (!isLimitPresent(limitEntity)) {
       VersioningUtil
@@ -687,8 +712,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     VersioningUtil
         .validateEntityExistence(retrieved, limitEntity, VendorLicenseModelEntity.ENTITY_TYPE);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", limitEntity.getVendorLicenseModelId(),
-        "EP/LKGId", limitEntity.getEpLkgId());
+    mdcDataDebugMessage.debugExitMessage(VLM_ID, limitEntity.getVendorLicenseModelId(),
+        EP_LKGID, limitEntity.getEpLkgId());
     return retrieved;
   }
 
@@ -697,8 +722,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
    * captured in VLM XML
    */
   private void updateParentForLimit(LimitEntity limit) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", limit.getVendorLicenseModelId(),
-        "EP/LKGId", limit.getEpLkgId(), "Limit Parent ", limit.getParent());
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, limit.getVendorLicenseModelId(),
+        EP_LKGID, limit.getEpLkgId(), "Limit Parent ", limit.getParent());
     if ("EntitlementPool".equals(limit.getParent())) {
       EntitlementPoolEntity entitlementPoolEntity =
           entitlementPoolDao.get(new EntitlementPoolEntity(limit.getVendorLicenseModelId(),
@@ -713,8 +738,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
       vendorLicenseFacade.updateLicenseKeyGroup(licenseKeyGroupEntity);
     }
 
-    mdcDataDebugMessage.debugEntryMessage("VLM id", limit.getVendorLicenseModelId(),
-        "EP/LKGId", limit.getEpLkgId(), "Limit Parent ", limit.getParent());
+    mdcDataDebugMessage.debugEntryMessage(VLM_ID, limit.getVendorLicenseModelId(),
+        EP_LKGID, limit.getEpLkgId(), "Limit Parent ", limit.getParent());
   }
 
   protected void addFeatureGroupsToLicenseAgreementRef(Set<String> featureGroupIds,
