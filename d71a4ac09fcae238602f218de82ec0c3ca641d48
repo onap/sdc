@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e305ddc2",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/CommonMethods.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T13:45:51Z",
+      "side": 1,
+      "message": "Using SLF4J directly could be problematic in ONAP. In general, I don\u0027t think using a logger in an infrastructure utility class is a good idea.",
+      "revId": "d71a4ac09fcae238602f218de82ec0c3ca641d48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_63722d7e",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/CommonMethods.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T13:45:51Z",
+      "side": 1,
+      "message": "I\u0027m afraid you\u0027re breaking the contract here. Please make sure this doesn\u0027t affect any client code.",
+      "range": {
+        "startLine": 197,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 25
+      },
+      "revId": "d71a4ac09fcae238602f218de82ec0c3ca641d48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c31461f7",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/CommonMethods.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T13:45:51Z",
+      "side": 1,
+      "message": "All this can be replaced with just buff.append(Long.toHexString(lng).toUpperCase());",
+      "range": {
+        "startLine": 238,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 5
+      },
+      "revId": "d71a4ac09fcae238602f218de82ec0c3ca641d48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c35d41eb",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/CommonMethods.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T13:45:51Z",
+      "side": 1,
+      "message": "It\u0027s not an error printing the trace, but closing the writer. Can be ignored because there\u0027s nothing that can be done about it, let alone that close() has no effect in StringWriter (https://docs.oracle.com/javase/7/docs/api/java/io/StringWriter.html#close()). Frankly, I don\u0027t know why StringWriter is used here. Please replace it with StringBuilder and make sure there is a unit tests in place. (StringWriter would be used with an API that accepts a java.io.Writer, which is not the case here).",
+      "revId": "d71a4ac09fcae238602f218de82ec0c3ca641d48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a35835fb",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/CommonMethods.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T13:45:51Z",
+      "side": 1,
+      "message": "\u0027res\u0027 local variable is not needed here. Return sb.toString() without assigning it to a variable.",
+      "range": {
+        "startLine": 521,
+        "startChar": 1,
+        "endLine": 521,
+        "endChar": 24
+      },
+      "revId": "d71a4ac09fcae238602f218de82ec0c3ca641d48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
