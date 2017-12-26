@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_63f8ed7c",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/java/org/openecomp/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T16:34:24Z",
+      "side": 1,
+      "message": "This will fail if the list contains a null. As opposed to the original version.\n\nlist.stream().map(Objects::toString)",
+      "revId": "b7b2a6766e5a3e059230415ee9ee9fe3d57c529b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e32b9de9",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/java/org/openecomp/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1144,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T16:34:24Z",
+      "side": 1,
+      "message": "Can be replaced with isEmpty()",
+      "range": {
+        "startLine": 1144,
+        "startChar": 44,
+        "endLine": 1144,
+        "endChar": 58
+      },
+      "revId": "b7b2a6766e5a3e059230415ee9ee9fe3d57c529b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
