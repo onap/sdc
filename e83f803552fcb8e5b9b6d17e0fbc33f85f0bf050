@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0050ff30",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T09:44:51Z",
+      "side": 1,
+      "message": "Can\u0027t these classes be referenced directly? E.g. type.equals(org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition.class).",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 100
+      },
+      "revId": "e83f803552fcb8e5b9b6d17e0fbc33f85f0bf050",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
