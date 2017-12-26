@@ -43,8 +43,6 @@ import java.util.zip.ZipInputStream;
  */
 public class FileUtils {
 
-  //private final static Logger log = (Logger) LoggerFactory.getLogger(FileUtils.class.getName());
-
   /**
    * Allows to consume an input stream open against a resource with a given file name.
    *
@@ -56,7 +54,8 @@ public class FileUtils {
     Objects.requireNonNull(fileName);
 
     // the leading slash doesn't make sense and doesn't work when used with a class loader
-    URL resource = FileUtils.class.getClassLoader().getResource(fileName.startsWith("/") ? fileName.substring(1) : fileName);
+    URL resource = FileUtils.class.getClassLoader().getResource(fileName.startsWith("/")
+        ? fileName.substring(1) : fileName);
     if (resource == null) {
       throw new IllegalArgumentException("Resource not found: " + fileName);
     }
@@ -211,10 +210,10 @@ public class FileUtils {
       return FilenameUtils.getExtension(filename);
   }
 
-  public static String getNetworkPackageName(String filename){
+  public static String getNetworkPackageName(String filename) {
     String[] split = filename.split("\\.");
     String name = null;
-    if (split != null && split.length > 1){
+    if (split.length > 1) {
       name = split[0];
     }
     return name;
