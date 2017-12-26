@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_23c4253f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/errors/ComputeErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T15:54:36Z",
+      "side": 1,
+      "message": "Please stick to the coding conventions.",
+      "revId": "3da03d8fbc61277b975fd8cf50bfe1da5fbe3fd4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
