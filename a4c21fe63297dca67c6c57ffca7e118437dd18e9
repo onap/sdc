@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6320ed49",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-26T14:08:50Z",
+      "side": 1,
+      "message": "As a suggestion, compare this to the following and decide which version is the hardest to follow.\n\nreturn split.length \u003e 1 ? split[0] : null;\n\nor \n\nif (split.length \u003e 1) {\n    return split[0];\n} else {\n    return null;\n}",
+      "range": {
+        "startLine": 215,
+        "startChar": 0,
+        "endLine": 219,
+        "endChar": 16
+      },
+      "revId": "a4c21fe63297dca67c6c57ffca7e118437dd18e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
