@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.healing.healers;
@@ -25,8 +21,6 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.healing.interfaces.Healer;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDaoFactory;
@@ -42,11 +36,6 @@ import java.util.Optional;
 
 public class FileDataStructureHealer implements Healer {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
-  public FileDataStructureHealer() {
-  }
 
   @Override
   public Optional<FilesDataStructure> heal(String vspId,
@@ -93,7 +82,6 @@ public class FileDataStructureHealer implements Healer {
       healingResult =
           Optional.of(JsonUtil.json2Object(filesDataStructure, FilesDataStructure.class));
     } catch (Exception e) {
-      log.debug("", e);
       healingResult = Optional.empty();
     }
 
