@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
@@ -52,9 +48,10 @@ public class ProcessManagerImpl implements ProcessManager {
   private static final String PROCESS_ARTIFACT_NOT_EXIST_MSG =
       "Process artifact for process with Id %s does not exist for %s with Id %s and version %s";
 
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
 
-  private ProcessDao processDao;
+  private final ProcessDao processDao;
+  private static final String VSP_ID_COMPONENT_ID = "VSP id, component id";
 
   public ProcessManagerImpl(ProcessDao processDao) {
     this.processDao = processDao;
@@ -63,15 +60,15 @@ public class ProcessManagerImpl implements ProcessManager {
   @Override
   public Collection<ProcessEntity> listProcesses(String vspId, Version version,
                                                  String componentId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     return processDao.list(new ProcessEntity(vspId, version, componentId, null));
   }
 
   @Override
   public void deleteProcesses(String vspId, Version version, String componentId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ProcessEntity allProcesses = new ProcessEntity(vspId, version, componentId, null);
     Collection<ProcessEntity> processes = processDao.list(allProcesses);
@@ -89,12 +86,12 @@ public class ProcessManagerImpl implements ProcessManager {
       processDao.deleteAll(allProcesses);
     }
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   @Override
   public ProcessEntity createProcess(ProcessEntity process) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", process.getId(),
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, process.getId(),
         process.getComponentId());
     validateUniqueName(process.getVspId(), process.getVersion(), process.getComponentId(),
         process.getName());
@@ -103,7 +100,7 @@ public class ProcessManagerImpl implements ProcessManager {
     createUniqueName(process.getVspId(), process.getVersion(), process.getComponentId(),
         process.getName());
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", process.getId(),
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, process.getId(),
         process.getComponentId());
 
     return process;
@@ -112,20 +109,20 @@ public class ProcessManagerImpl implements ProcessManager {
   @Override
   public ProcessEntity getProcess(String vspId, Version version, String componentId,
                                   String processId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ProcessEntity retrieved =
         processDao.get(new ProcessEntity(vspId, version, componentId, processId));
     validateProcessExistence(vspId, version, componentId, processId, retrieved);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     return retrieved;
   }
 
   @Override
   public void updateProcess(ProcessEntity process) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", process.getId(),
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, process.getId(),
         process.getComponentId());
 
     ProcessEntity retrieved = processDao.get(process);
@@ -136,13 +133,13 @@ public class ProcessManagerImpl implements ProcessManager {
         retrieved.getName(), process.getName());
     processDao.update(process);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", process.getId(),
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, process.getId(),
         process.getComponentId());
   }
 
   @Override
   public void deleteProcess(String vspId, Version version, String componentId, String processId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ProcessEntity retrieved = getProcess(vspId, version, componentId, processId);
 
@@ -150,14 +147,14 @@ public class ProcessManagerImpl implements ProcessManager {
     deleteUniqueValue(retrieved.getVspId(), retrieved.getVersion(), retrieved.getComponentId(),
         retrieved.getName());
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
 
   @Override
   public File getProcessArtifact(String vspId, Version version, String componentId,
                                  String processId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ProcessEntity retrieved = getValidatedProcessArtifact(vspId, version, componentId, processId);
 
@@ -167,11 +164,11 @@ public class ProcessManagerImpl implements ProcessManager {
     } catch (IOException exception) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.GET_PROCESS_ARTIFACT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get process artifact");
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get process artifact" + exception);
       throw new CoreException(new UploadInvalidErrorBuilder().build());
     }
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     return file;
   }
@@ -179,26 +176,26 @@ public class ProcessManagerImpl implements ProcessManager {
   @Override
   public void deleteProcessArtifact(String vspId, Version version, String componentId,
                                     String processId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ProcessEntity retrieved = getValidatedProcessArtifact(vspId, version, componentId, processId);
 
     processDao.deleteArtifact(retrieved);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   @Override
   public void uploadProcessArtifact(InputStream artifactFile, String artifactFileName, String vspId,
                                     Version version, String componentId, String processId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ProcessEntity process = getProcess(vspId, version, componentId, processId);
     process.setArtifactName(artifactFileName);
     process.setArtifact(readArtifact(artifactFile));
     processDao.uploadArtifact(process);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   private ProcessEntity getValidatedProcessArtifact(String vspId, Version version,
@@ -221,7 +218,7 @@ public class ProcessManagerImpl implements ProcessManager {
     } catch (RuntimeException exception) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.UPLOAD_PROCESS_ARTIFACT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't upload process artifact");
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't upload process artifact" + exception);
       throw new CoreException(new UploadInvalidErrorBuilder().build());
     }
   }
