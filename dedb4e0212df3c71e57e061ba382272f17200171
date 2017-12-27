@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9e1d5012",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/globaltypes/GlobalTypesServiceTemplates.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T08:09:22Z",
+      "side": 1,
+      "message": "This is redundant",
+      "range": {
+        "startLine": 42,
+        "startChar": 35,
+        "endLine": 42,
+        "endChar": 42
+      },
+      "revId": "dedb4e0212df3c71e57e061ba382272f17200171",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3e1afc17",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/globaltypes/GlobalTypesServiceTemplates.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T08:09:22Z",
+      "side": 1,
+      "message": "Can be simplified.",
+      "range": {
+        "startLine": 111,
+        "startChar": 1,
+        "endLine": 116,
+        "endChar": 16
+      },
+      "revId": "dedb4e0212df3c71e57e061ba382272f17200171",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
