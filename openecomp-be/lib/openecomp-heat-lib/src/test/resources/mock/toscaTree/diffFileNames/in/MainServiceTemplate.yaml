@@ -1,0 +1,95 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+imports:
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+#Next section moved from GlobalSubstitutionTypesServiceTemplate
+node_types: 
+  org.openecomp.resource.vfc.VNF.vMME:
+    derived_from: tosca.nodes.Root
+    description: MME_VFC
+    properties:
+      vendor:
+        type: string
+        default: ERICSSON
+      csarVersion:
+        type: string
+        default: v1.0
+      csarProvider:
+        type: string
+        default: ERICSSON
+      id:
+        type: string
+        default: vMME
+      version:
+        type: string
+        default: v1.0
+      csarType:
+        type: string
+        default: NFAR
+    requirements:
+    - virtualLink:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.network.Linkable
+metadata:
+  invariantUUID: b638d948-297a-434c-84c1-7cbc08456c4e
+  UUID: cd6b68ae-c2af-4af4-ada0-d066b02519a0
+  name: ZTE-EPC-MME-VF
+  description: mme vf
+  type: VF
+  category: Generic
+  subcategory: Network Elements
+  resourceVendor: zte
+  resourceVendorRelease: '1.0'
+  resourceVendorModelNumber: ''
+topology_template:
+  inputs:
+    nf_naming:
+      type: org.openecomp.datatypes.Naming
+      default:
+        ecomp_generated_naming: true
+    nf_naming_code:
+      type: string
+      default: xxxxxx
+    nf_function:
+      type: string
+      default: xxxxxx
+    availability_zone_max_count:
+      type: integer
+      default: 1
+    nf_role:
+      type: string
+      default: xxxxxx
+    max_instances:
+      type: integer
+      default: 0
+    min_instances:
+      type: integer
+      default: 0
+    nf_type:
+      type: string
+      default: xxxxxx
+  node_templates:
+    MME-EPC-ZTE:
+      type: org.openecomp.resource.vfc.VNF.vMME
+      metadata:
+        invariantUUID: 2e7e44d1-c6fd-4a9b-8026-130c91b49fe2
+        UUID: fa6c6a48-9916-4089-ade0-68ae2b1c2b6d
+        customizationUUID: 0862b18b-a728-4455-975d-e4debd2719a0
+        version: '0.1'
+        name: ZTE-EPC-MME
+        description: MME VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+        resourceVendor: zte
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        vendor: ERICSSON
+        csarVersion: v1.0
+        csarProvider: ERICSSON
+        id: vMME
+        version: v1.0
+        csarType: NFAR
