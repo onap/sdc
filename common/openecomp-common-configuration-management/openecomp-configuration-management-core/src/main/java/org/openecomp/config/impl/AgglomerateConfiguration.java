@@ -21,10 +21,11 @@ public class AgglomerateConfiguration extends DatabaseConfiguration {
    * @return the property value
    */
   public Object getPropertyValue(String key) {
-    Object objToReturn = null;
+    Object objToReturn;
     objToReturn = store.get(key);
     if (objToReturn == null && !store.containsKey(key)) {
-      store.put(key, objToReturn = super.getProperty(key));
+      objToReturn = super.getProperty(key);
+      store.put(key, objToReturn);
     }
     return objToReturn;
   }
