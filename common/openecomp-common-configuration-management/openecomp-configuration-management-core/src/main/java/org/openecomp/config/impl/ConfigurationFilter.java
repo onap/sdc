@@ -17,6 +17,7 @@ public class ConfigurationFilter implements Filter {
 
   @Override
   public void init(FilterConfig paramFilterConfig) throws ServletException {
+    //Use the default behavior
   }
 
   @Override
@@ -32,6 +33,7 @@ public class ConfigurationFilter implements Filter {
 
   @Override
   public void destroy() {
+    //Use the default behavior
   }
 
 }
