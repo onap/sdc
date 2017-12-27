@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.server.filters;
@@ -38,12 +34,12 @@ import java.util.Base64;
 
 public class ActionAuthenticationFilter implements Filter {
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
   private boolean runningOnLocal = true;
 
   @Override
   public void destroy() {
-    // TODO Auto-generated method stub
+    // destroy() is not implemented for ActionAuthenticationFilter
 
   }
 
@@ -67,31 +63,8 @@ public class ActionAuthenticationFilter implements Filter {
           return;
         }
         if (username.startsWith("AUTH")) {
-          HttpServletRequestWrapper servletRequest = new HttpServletRequestWrapper(httpRequest) {
-            @Override
-            public java.lang.String getRemoteUser() {
-              return getUserPrincipal().getName();
-            }
-
-            @Override
-            public Principal getUserPrincipal() {
-              return () -> username.substring(0, username.indexOf("-"));
-            }
-
-            @Override
-            public boolean isUserInRole(String role) {
-              try {
-                ActionLibraryPrivilege requiredPrivilege =
-                    ActionLibraryPrivilege.getPrivilege(httpRequest.getMethod());
-                ActionLibraryPrivilege userPrivilege = ActionLibraryPrivilege
-                    .valueOf(username.substring(username.indexOf("-") + 1).toUpperCase());
-                return userPrivilege.ordinal() >= requiredPrivilege.ordinal();
-              } catch (Exception exception) {
-                log.debug("",exception);
-                return false;
-              }
-            }
-          };
+          HttpServletRequestWrapper servletRequest = new ActionHttpServletRequestWrapper
+              (httpRequest, username);
           arg2.doFilter(servletRequest, arg1);
         } else {
           setResponseStatus((HttpServletResponse) arg1, HttpServletResponse.SC_FORBIDDEN);
@@ -112,7 +85,41 @@ public class ActionAuthenticationFilter implements Filter {
 
   @Override
   public void init(FilterConfig arg0) throws ServletException {
-
+    //init() is not implemented for ActionAuthenticationFilter
   }
 
+  class ActionHttpServletRequestWrapper extends HttpServletRequestWrapper {
+    HttpServletRequest httpRequest;
+    String username;
+
+    ActionHttpServletRequestWrapper(HttpServletRequest httpRequest, String username) {
+      super(httpRequest);
+      this.httpRequest = httpRequest;
+      this.username = username;
+    }
+
+    @Override
+    public java.lang.String getRemoteUser() {
+      return getUserPrincipal().getName();
+    }
+
+    @Override
+    public Principal getUserPrincipal() {
+      return () -> username.substring(0, username.indexOf("-"));
+    }
+
+    @Override
+    public boolean isUserInRole(String role) {
+      try {
+        ActionLibraryPrivilege requiredPrivilege =
+            ActionLibraryPrivilege.getPrivilege(httpRequest.getMethod());
+        ActionLibraryPrivilege userPrivilege = ActionLibraryPrivilege
+            .valueOf(username.substring(username.indexOf("-") + 1).toUpperCase());
+        return userPrivilege.ordinal() >= requiredPrivilege.ordinal();
+      } catch (Exception exception) {
+        log.debug("", exception);
+        return false;
+      }
+    }
+  }
 }
