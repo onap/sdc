@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
@@ -31,12 +27,10 @@ import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.annotations.Metrics;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
-import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -63,27 +57,26 @@ import java.util.Optional;
 
 public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
-  private static final Logger logger =
+  private static final Logger LOGGER =
       LoggerFactory.getLogger(OrchestrationTemplateCandidateManagerImpl.class);
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
 
-  private VendorSoftwareProductInfoDao vspInfoDao;
-  private CandidateService candidateService;
-  private HealingManager healingManager;
+  private final VendorSoftwareProductInfoDao vspInfoDao;
+  private final CandidateService candidateService;
+  private static final String VSP_ID = "VSP id";
 
   public OrchestrationTemplateCandidateManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
-                                                   CandidateService candidateService,
-                                                   HealingManager healingManager) {
+                                                   CandidateService candidateService
+                                             ) {
     this.vspInfoDao = vspInfoDao;
     this.candidateService = candidateService;
-    this.healingManager = healingManager;
   }
 
   @Override
   @Metrics
   public UploadFileResponse upload(String vspId, Version version, InputStream fileToUpload,
                                    String fileSuffix, String networkPackageName) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
 
     OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
         OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(fileSuffix);
@@ -99,7 +92,7 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public OrchestrationTemplateActionResponse process(String vspId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
 
     OrchestrationTemplateCandidateData candidate = fetchCandidateDataEntity(vspId, version)
         .orElseThrow(
@@ -112,14 +105,14 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
 
     Optional<FilesDataStructure> candidateFileDataStructure =
         candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
     if (candidateFileDataStructure.isPresent()) {
       return candidateFileDataStructure;
     } else {
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       return Optional.empty();
     }
   }
@@ -127,7 +120,7 @@ public class OrchestrationTemplateCandidateManagerImpl
   @Override
   public ValidationResponse updateFilesDataStructure(String vspId, Version version,
                                                      FilesDataStructure fileDataStructure) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
 
     ValidationResponse response = new ValidationResponse();
     Optional<List<ErrorMessage>> validateErrors =
@@ -140,21 +133,21 @@ public class OrchestrationTemplateCandidateManagerImpl
         response.setUploadDataErrors(errorsMap, LoggerServiceName.Update_Manifest,
             LoggerTragetServiceName.VALIDATE_FILE_DATA_STRUCTURE);
 
-        mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+        MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
         return response;
       }
     }
     candidateService
         .updateOrchestrationTemplateCandidateFileDataStructure(vspId, version, fileDataStructure);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return response;
   }
 
   @Override
 
   public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException {
-    mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
 
     VspDetails vspDetails = getVspDetails(vspId, version);
 
@@ -164,9 +157,9 @@ public class OrchestrationTemplateCandidateManagerImpl
     if (!candidateDataEntity.isPresent()) {
       ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
           Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage());
-      logger.error(errorMessage.getMessage());
+      LOGGER.error(errorMessage.getMessage());
 
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       return Optional.empty();
     }
     OnboardingTypesEnum type =
@@ -177,7 +170,7 @@ public class OrchestrationTemplateCandidateManagerImpl
           .json2Object(candidateDataEntity.get().getFilesDataStructure(), FilesDataStructure.class);
       String manifest = candidateService.createManifest(vspDetails, structure);
 
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       return Optional.of(
           new ImmutablePair<>(OnboardingTypesEnum.ZIP.toString(), candidateService
               .replaceManifestInZip(candidateDataEntity.get().getContentData(),
@@ -200,36 +193,10 @@ public class OrchestrationTemplateCandidateManagerImpl
         .ofNullable(candidateService.getOrchestrationTemplateCandidate(vspId, version));
   }
 
-
-  // todo *************************** move to reusable place! *************************
-
-  private Map<String, Object> getHealingParamsAsMap(String vspId, Version version) {
-    Map<String, Object> healingParams = new HashMap<>();
-
-    healingParams.put(SdcCommon.VSP_ID, vspId);
-    healingParams.put(SdcCommon.VERSION, version);
-
-    return healingParams;
-  }
-
   private VspDetails getVspDetails(String vspId, Version version) {
-    VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
-/*    OrchestrationTemplateEntity orchestrationTemplateInfo =
-        orchestrationTemplateDao.getInfo(vspId, version);
-    vspDetails.setValidationData(orchestrationTemplateInfo.getValidationData());
-    vspDetails.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
-    vspDetails.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix());*/
-    return vspDetails;
+
+    return vspInfoDao.get(new VspDetails(vspId, version));
   }
 
-  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
-            vspId));
-      }
-    });
-  }
 
 }
