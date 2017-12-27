@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.upload.csar;
@@ -24,20 +20,13 @@ package org.openecomp.sdc.vendorsoftwareproduct.upload.csar;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openecomp.core.model.dao.ServiceModelDao;
-import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.healing.api.HealingManager;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.CandidateServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.ManifestCreatorNamingConventionImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -60,18 +49,8 @@ public class UploadCSARFileTest {
 
   public static final Version VERSION01 = new Version("0.1");
 
-  @Mock
-  private OrchestrationTemplateDao orchestrationTemplateDataDaoMock;
   @Spy
   private CandidateServiceImpl candidateService;
-  @Mock
-  private HealingManager healingManagerMock;
-  @Mock
-  private CompositionDataExtractor compositionDataExtractorMock;
-  @Mock
-  private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDaoMock;
-  @Mock
-  private CompositionEntityDataManager compositionEntityDataManagerMock;
   @Mock
   private VendorSoftwareProductInfoDao vspInfoDaoMock;
   @Mock
@@ -92,7 +71,7 @@ public class UploadCSARFileTest {
     MockitoAnnotations.initMocks(this);
     candidateService = new CandidateServiceImpl(manifestCreator, orchestrationTemplateCandidateDao);
     candidateManager = new OrchestrationTemplateCandidateManagerImpl(vspInfoDaoMock,
-        candidateService, healingManagerMock);
+        candidateService);
   }
 
   @Test
