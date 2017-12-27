@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,17 +58,18 @@ import java.util.Optional;
 import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_ERROR;
 
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
-  private Logger logger = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private CandidateService candidateService =
+  private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private final CandidateService candidateService =
       CandidateServiceFactory.getInstance().createInterface();
+  private static final String VSP_ID = "VSP id";
 
   @Override
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
                                                      OrchestrationTemplateCandidateData candidateData) {
     String vspId = vspDetails.getId();
     Version version = vspDetails.getVersion();
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_STARTED + vspId);
+    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_STARTED + vspId);
     OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent = OrchestrationUtil
@@ -60,7 +77,7 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
             candidateData.getContentData().array());
     if (!fileContent.isPresent()) {
       response.addStructureErrors(uploadFileResponse.getErrors());
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
           HEAT_VALIDATION_ERROR));
       return response;
@@ -75,7 +92,7 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
       response.addErrorMessageToMap(SdcCommon.UPLOAD_FILE,
           Messages.FOUND_UNASSIGNED_FILES.getErrorMessage(), ErrorLevel.ERROR);
 
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
           HEAT_VALIDATION_ERROR));
       return response;
@@ -118,10 +135,10 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         HEAT_VALIDATION_ERROR));
     if (MapUtils
         .isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, response.getErrors()))) {
-      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_COMPLETED + vspId);
+      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_COMPLETED + vspId);
     }
 
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_STARTED + vspId);
+    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_STARTED + vspId);
 
     TranslatorOutput translatorOutput =
         HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap);
@@ -135,10 +152,10 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     orchestrationUtil.updateVspComponentDependencies(vspId, version,
         vspComponentIdNameInfoBeforeProcess);
 
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
+    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     uploadFileResponse.addStructureErrors(uploadErrors);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return response;
   }
 
@@ -156,7 +173,7 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
 
     errorList.forEach(errorMessage -> {
       if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        logger.audit(
+        LOGGER.audit(
             AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(), vspId));
       }
     });
