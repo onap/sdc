@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar;
 
 import com.google.common.collect.ImmutableList;
@@ -25,13 +41,13 @@ import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CS
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.SOURCE_MF_ATTRIBUTE;
 
 public class OnboardingManifest {
-    private static final Logger logger = LoggerFactory.getLogger(OnboardingManifest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingManifest.class);
     private Map<String, String> metadata;
     private List<String> sources;
     private List<String> errors;
     private State state;
     private enum State {
-        Start, ProcessMetadata, ProcessSources, Error
+        START, PROCESS_METADATA, PROCESS_SOURCES, ERROR
     }
 
     public OnboardingManifest(InputStream is) {
@@ -44,7 +60,7 @@ public class OnboardingManifest {
     private void parseManifest(InputStream is) {
         try {
             ImmutableList<String> lines = readAllLines(is);
-            state = State.Start;
+            state = State.START;
 
             for (String line : lines) {
                 line = line.trim();
@@ -61,42 +77,56 @@ public class OnboardingManifest {
                 }
             }
         } catch (IOException e){
-            logger.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
             errors.add(Messages.MANIFEST_PARSER_INTERNAL.getErrorMessage());
         }
     }
 
     private State processLine(State state, String line) {
+        State newState = state;
         switch (state) {
-            case Start:
-                if (line.trim().equals(METADATA_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE)) {
-                    state = State.ProcessMetadata;
-                } else {
-                    reportError(line);
-                }
+            case START:
+                newState = startProcessLine(state, line);
                 break;
-            case ProcessMetadata:
-                String[] metaSplit = line.split(SEPERATOR_MF_ATTRIBUTE);
-                if (metaSplit.length < 2){
-                    reportError(line);
-                    break;
-                }
-                if (!metaSplit[0].equals(SOURCE_MF_ATTRIBUTE)){
-                    String value = line.replace(metaSplit[0] + SEPERATOR_MF_ATTRIBUTE, "").trim();
-                    metadata.put(metaSplit[0],value);
-                } else {
-                    state = State.ProcessSources;
-                    processSourceLine(line);
-                }
+            case PROCESS_METADATA:
+                newState = processMetaData(state, line);
                 break;
-            case ProcessSources:
+            case PROCESS_SOURCES:
                 processSourceLine(line);
 
                 break;
-            case Error:
+            case ERROR:
                 break;
+            default:
+        }
+        return newState;
+    }
 
-        } return state;
+    private State startProcessLine(State state, String line) {
+        State newState = state;
+        if (line.trim().equals(METADATA_MF_ATTRIBUTE + SEPERATOR_MF_ATTRIBUTE)) {
+            newState = State.PROCESS_METADATA;
+        } else {
+            reportError(line);
+        }
+        return newState;
+    }
+
+    private State processMetaData(State state, String line) {
+        State newState = state;
+        String[] metaSplit = line.split(SEPERATOR_MF_ATTRIBUTE);
+        if (metaSplit.length < 2){
+            reportError(line);
+            return state;
+        }
+        if (!metaSplit[0].equals(SOURCE_MF_ATTRIBUTE)){
+            String value = line.replace(metaSplit[0] + SEPERATOR_MF_ATTRIBUTE, "").trim();
+            metadata.put(metaSplit[0],value);
+        } else {
+            newState = State.PROCESS_SOURCES;
+            processSourceLine(line);
+        }
+        return newState;
     }
 
     private void processSourceLine(String line) {
@@ -110,7 +140,7 @@ public class OnboardingManifest {
 
     private void reportError(String line) {
         errors.add(getErrorWithParameters(Messages.MANIFEST_INVALID_LINE.getErrorMessage(), line));
-        state = State.Error;
+        state = State.ERROR;
     }
 
     private ImmutableList<String> readAllLines(InputStream is) throws IOException {
@@ -129,14 +159,14 @@ public class OnboardingManifest {
 
     public Map<String, String> getMetadata() {
         if (!isValid()){
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
         return ImmutableMap.copyOf(metadata);
     }
 
     public List<String> getSources() {
         if (!isValid()){
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return ImmutableList.copyOf(sources);
     }
