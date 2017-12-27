@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -25,7 +41,9 @@ public class ImageErrorBuilder {
       + "for VSP onboarded via HEAT.";
   private static final String VFC_IMAGE_DUPLICATE_VERSION_MSG = "Invalid request, Image with version %s"
           + " already exists for component with ID %s.";
+  private ImageErrorBuilder() {
 
+  }
 
   /**
    * Gets duplicate image name error builder.
@@ -74,7 +92,7 @@ public class ImageErrorBuilder {
     ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(VFC_IMAGE_INVALID_FORMAT);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(IMAGE_INVALID_FORMAT_MSG));
+    builder.withMessage(IMAGE_INVALID_FORMAT_MSG);
     return builder.build();
   }
 
