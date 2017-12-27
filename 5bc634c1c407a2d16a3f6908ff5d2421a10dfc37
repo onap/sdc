@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_392f76a3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/ActionAuthorizationFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T14:09:08Z",
+      "side": 1,
+      "message": "Why is it a method on its own? :)",
+      "range": {
+        "startLine": 51,
+        "startChar": 1,
+        "endLine": 53,
+        "endChar": 3
+      },
+      "revId": "5bc634c1c407a2d16a3f6908ff5d2421a10dfc37",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
