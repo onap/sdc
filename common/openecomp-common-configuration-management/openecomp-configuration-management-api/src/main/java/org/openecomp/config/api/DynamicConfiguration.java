@@ -83,14 +83,8 @@ public class DynamicConfiguration<T> {
           "Only Wrapper classes like Integer, Long, Double, "
               + "Boolean etc including String are supported.");
     }
-    DynamicConfiguration<List<K>> dynamicConfiguration = new DynamicConfiguration<>();
-    dynamicConfiguration.tenant = tenant;
-    dynamicConfiguration.namespace = namespace;
-    dynamicConfiguration.key = key;
-    dynamicConfiguration.clazz = getArrayClass(clazz);
-    dynamicConfiguration.defaultValue = Arrays.asList(defaultValue);
-    dynamicConfiguration.configuration = configuration;
-    return dynamicConfiguration;
+    return getDynamicConfiguration(tenant, namespace, key, getArrayClass(clazz),
+        Arrays.asList(defaultValue), configuration);
   }
 
   /**
@@ -100,28 +94,38 @@ public class DynamicConfiguration<T> {
    * @return the array class
    */
   public static Class getArrayClass(Class clazz) {
+    Class arrayClass = null;
     switch (clazz.getName()) {
       case "java.lang.Byte":
-        return Byte[].class;
+        arrayClass = Byte[].class;
+        break;
       case "java.lang.Short":
-        return Short[].class;
+        arrayClass = Short[].class;
+        break;
       case "java.lang.Integer":
-        return Integer[].class;
+        arrayClass = Integer[].class;
+        break;
       case "java.lang.Long":
-        return Long[].class;
+        arrayClass = Long[].class;
+        break;
       case "java.lang.Float":
-        return Float[].class;
+        arrayClass = Float[].class;
+        break;
       case "java.lang.Double":
-        return Double[].class;
+        arrayClass = Double[].class;
+        break;
       case "java.lang.Boolean":
-        return Boolean[].class;
+        arrayClass = Boolean[].class;
+        break;
       case "java.lang.Character":
-        return Character[].class;
+        arrayClass = Character[].class;
+        break;
       case "java.lang.String":
-        return String[].class;
+        arrayClass = String[].class;
+        break;
       default:
     }
-    return null;
+    return arrayClass;
   }
 
   /**
