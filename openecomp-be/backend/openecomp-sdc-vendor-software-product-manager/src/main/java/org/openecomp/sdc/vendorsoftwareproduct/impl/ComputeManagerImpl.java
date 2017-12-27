@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 
@@ -48,11 +64,14 @@ import java.util.Set;
 
 public class ComputeManagerImpl implements ComputeManager {
 
-  private static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private ComputeDao computeDao;
-  private CompositionEntityDataManager compositionEntityDataManager;
-  private VendorSoftwareProductInfoDao vspInfoDao;
-  private DeploymentFlavorDao deploymentFlavorDao;
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private final ComputeDao computeDao;
+  private final CompositionEntityDataManager compositionEntityDataManager;
+  private final VendorSoftwareProductInfoDao vspInfoDao;
+  private final DeploymentFlavorDao deploymentFlavorDao;
+  private static final  String VSP_ID_COMPONENT_ID = "VSP id, component id";
+  private static final  String VSP_ID_COMPONENT_ID_COMPUTE_ID
+          = "VSP id, component id, compute id";
 
   public ComputeManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                             ComputeDao computeDao,
@@ -66,8 +85,8 @@ public class ComputeManagerImpl implements ComputeManager {
 
   @Override
   public ComputeEntity createCompute(ComputeEntity compute) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id", compute.getVspId(), compute.getComponentId());
+    MDC_DATA_DEBUG_MESSAGE
+        .debugEntryMessage(VSP_ID_COMPONENT_ID, compute.getVspId(), compute.getComponentId());
 
     if (!vspInfoDao.isManual(compute.getVspId(), compute.getVersion())) {
       ErrorCode onboardingMethodUpdateErrorCode = NotSupportedHeatOnboardMethodErrorBuilder
@@ -88,8 +107,8 @@ public class ComputeManagerImpl implements ComputeManager {
           compute.getComputeCompositionData().getName());
     }
 
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", compute.getVspId(), compute.getComponentId());
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID, compute.getVspId(), compute.getComponentId());
 
     return compute;
   }
@@ -98,19 +117,19 @@ public class ComputeManagerImpl implements ComputeManager {
   @Override
   public Collection<ListComputeResponse> listComputes(String vspId, Version version,
                                                       String componentId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
     Collection<ComputeEntity> computes =
         computeDao.list(new ComputeEntity(vspId, version, componentId, null));
 
     Collection<ListComputeResponse> computeResponse =
         getListComputeResponse(vspId, version, computes);
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     return computeResponse;
   }
 
   private Collection<ListComputeResponse> getListComputeResponse(String vspId, Version version,
-                                                                 Collection<ComputeEntity> computes) {
+                                         Collection<ComputeEntity> computes) {
     Set<String> vspComputes = getComputeAssociatedWithDepFlavors(vspId, version);
     Collection<ListComputeResponse> computeResponse = new ArrayList<>();
     for (ComputeEntity computeEntity : computes) {
@@ -146,7 +165,7 @@ public class ComputeManagerImpl implements ComputeManager {
   public CompositionEntityResponse<ComputeData> getCompute(String vspId, Version version,
                                                            String componentId,
                                                            String computeFlavorId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id, compute id", vspId,
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID_COMPUTE_ID, vspId,
         componentId, computeFlavorId);
 
     ComputeEntity computeEntity = getValidatedCompute(vspId, version, componentId, computeFlavorId);
@@ -161,7 +180,7 @@ public class ComputeManagerImpl implements ComputeManager {
     response.setData(compute);
     response.setSchema(getComputeCompositionSchema(schemaInput));
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id, compute id", vspId,
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID_COMPUTE_ID, vspId,
         componentId, computeFlavorId);
 
     return response;
@@ -180,7 +199,7 @@ public class ComputeManagerImpl implements ComputeManager {
   @Override
   public QuestionnaireResponse getComputeQuestionnaire(String vspId, Version version, String
       componentId, String computeId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, componentId", vspId, componentId, computeId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP id, componentId", vspId, componentId, computeId);
 
     QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
     ComputeEntity computeQuestionnaire =
@@ -191,7 +210,7 @@ public class ComputeManagerImpl implements ComputeManager {
     questionnaireResponse.setData(computeQuestionnaire.getQuestionnaireData());
     questionnaireResponse.setSchema(getComputeQuestionnaireSchema(null));
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId, computeId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId, computeId);
 
     return questionnaireResponse;
   }
@@ -200,8 +219,8 @@ public class ComputeManagerImpl implements ComputeManager {
   @Override
   public void updateComputeQuestionnaire(String vspId, Version version, String componentId,
                                          String computeId, String questionnaireData) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id, compute id", vspId, componentId, computeId);
+    MDC_DATA_DEBUG_MESSAGE
+        .debugEntryMessage(VSP_ID_COMPONENT_ID_COMPUTE_ID, vspId, componentId, computeId);
 
     ComputeEntity retrieved = computeDao.get(new ComputeEntity(vspId, version, componentId,
         computeId));
@@ -210,14 +229,14 @@ public class ComputeManagerImpl implements ComputeManager {
 
     computeDao.updateQuestionnaireData(vspId, version, componentId, computeId, questionnaireData);
 
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id, compute id", vspId, componentId, computeId);
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID_COMPUTE_ID, vspId, componentId, computeId);
   }
 
   @Override
   public CompositionEntityValidationData updateCompute(ComputeEntity compute) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id", compute.getVspId(), compute.getComponentId(),
+    MDC_DATA_DEBUG_MESSAGE
+        .debugEntryMessage(VSP_ID_COMPONENT_ID, compute.getVspId(), compute.getComponentId(),
             compute.getId());
 
     ComputeEntity retrieved =
@@ -243,8 +262,8 @@ public class ComputeManagerImpl implements ComputeManager {
       computeDao.update(compute);
     }
 
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", compute.getVspId(), compute.getComponentId(),
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID, compute.getVspId(), compute.getComponentId(),
             compute.getId());
 
     return validationData;
@@ -278,10 +297,10 @@ public class ComputeManagerImpl implements ComputeManager {
   @Override
   public void deleteCompute(String vspId, Version version, String componentId,
                             String computeFlavorId) {
-    final String VSP_COMPOSITION_EDIT_NOT_ALLOWED_MSG =
+    final String vspCompositionEditNotAllowedMsg =
         "Composition entities may not be created / deleted for Vendor Software Product "
             + "whose entities were uploaded";
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id, compute id", vspId,
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID_COMPUTE_ID, vspId,
         componentId, computeFlavorId);
 
     if (!vspInfoDao.isManual(vspId, version)) {
@@ -291,7 +310,7 @@ public class ComputeManagerImpl implements ComputeManager {
       throw new CoreException(
           new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
               .withId(VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED)
-              .withMessage(VSP_COMPOSITION_EDIT_NOT_ALLOWED_MSG).build());
+              .withMessage(vspCompositionEditNotAllowedMsg).build());
     }
     ComputeEntity retrieved = getValidatedCompute(vspId, version, componentId, computeFlavorId);
     if (retrieved != null) {
@@ -301,7 +320,7 @@ public class ComputeManagerImpl implements ComputeManager {
           retrieved.getComputeCompositionData().getName());
     }
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id, compute id", vspId,
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID_COMPUTE_ID, vspId,
         componentId, computeFlavorId);
   }
 
@@ -340,15 +359,15 @@ public class ComputeManagerImpl implements ComputeManager {
   }
 
   protected String getComputeCompositionSchema(SchemaTemplateInput schemaInput) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-    mdcDataDebugMessage.debugExitMessage(null);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return SchemaGenerator
         .generate(SchemaTemplateContext.composition, CompositionEntityType.compute, schemaInput);
   }
 
   protected String getComputeQuestionnaireSchema(SchemaTemplateInput schemaInput) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-    mdcDataDebugMessage.debugExitMessage(null);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return SchemaGenerator
         .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.compute, schemaInput);
   }
