@@ -1,23 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.server.interceptors;
 
 
@@ -28,20 +23,20 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultOutput extends Response implements Serializable {
+public class DefaultOutput extends Response {
 
   private static final long serialVersionUID = 8061802931931401706L;
 
   private final int status;
-  private final transient Object entity;
+  private final Object entity;
   private MultivaluedMap<String, Object> metadata;
 
   public DefaultOutput(int s0, Object e0) {
@@ -49,6 +44,7 @@ public class DefaultOutput extends Response implements Serializable {
     this.entity = e0;
   }
 
+  @Override
   public Object getEntity() {
     return entity;
   }
@@ -74,7 +70,7 @@ public class DefaultOutput extends Response implements Serializable {
   }
 
   @Override
-  public boolean hasEntity() throws IllegalStateException {
+  public boolean hasEntity() {
     return false;
   }
 
@@ -85,6 +81,7 @@ public class DefaultOutput extends Response implements Serializable {
 
   @Override
   public void close() {
+    //close() is not implemented for DefaultOutput
   }
 
   @Override
@@ -104,7 +101,7 @@ public class DefaultOutput extends Response implements Serializable {
 
   @Override
   public Set<String> getAllowedMethods() {
-    return null;
+    return Collections.emptySet();
   }
 
   @Override
@@ -134,7 +131,7 @@ public class DefaultOutput extends Response implements Serializable {
 
   @Override
   public Set<Link> getLinks() {
-    return null;
+    return Collections.emptySet();
   }
 
   @Override
@@ -153,6 +150,7 @@ public class DefaultOutput extends Response implements Serializable {
     return null;
   }
 
+  @Override
   public int getStatus() {
     return status;
   }
@@ -166,6 +164,7 @@ public class DefaultOutput extends Response implements Serializable {
     this.metadata = meta;
   }
 
+  @Override
   public MultivaluedMap<String, Object> getMetadata() {
     // don't worry about cloning for now
     return metadata;
