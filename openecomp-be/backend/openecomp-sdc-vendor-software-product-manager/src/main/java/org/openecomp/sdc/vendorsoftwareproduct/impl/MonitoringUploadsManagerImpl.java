@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
@@ -62,10 +58,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private ComponentArtifactDao componentArtifactDao;
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private final ComponentArtifactDao componentArtifactDao;
   private static final Logger logger =
       LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
+  private static final String INVALID = "Invalid ";
+  private static final String VSP_ID_COMPONENT_ID = "VSP id, component id";
 
   MonitoringUploadsManagerImpl(ComponentArtifactDao componentArtifactDao) {
     this.componentArtifactDao = componentArtifactDao;
@@ -77,7 +75,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   @Override
   public void delete(String vspId, Version version, String componentId,
                      MonitoringUploadType monitoringUploadType) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ComponentMonitoringUploadEntity componentMonitoringUploadEntity =
         setValuesForComponentArtifactEntityUpload(vspId, version, null, componentId, null,
@@ -96,19 +94,19 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
 
     componentArtifactDao.delete(retrieved.get());
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   @Override
   public void upload(InputStream object, String filename, String vspId,
                      Version version, String componentId,
                      MonitoringUploadType type) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     if (object == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.UPLOAD_MONITORING_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid " + type
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), INVALID + type
               .toString() + " zip file");
       throw new CoreException(new MonitoringUploadErrorBuilder(
           Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()).build());
@@ -124,7 +122,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
         if (MapUtils.isNotEmpty(errors)) {
           MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
               LoggerTragetServiceName.UPLOAD_MONITORING_FILE, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid " + type
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), INVALID + type
                   .toString() + " zip file");
           throw new CoreException(
               new MonitoringUploadErrorBuilder(
@@ -138,12 +136,13 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
       } catch (Exception exception) {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.UPLOAD_MONITORING_FILE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid " + type.toString() + "zip file");
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), INVALID + type
+                        .toString() + "zip file" );
         throw new CoreException(new MonitoringUploadErrorBuilder(exception.getMessage()).build());
       }
     }
     logger.audit("Uploaded Monitoring File for component id:" + componentId + " ,vspId:" + vspId);
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   private void validateVesEventUpload(FileContentHandler upload,
@@ -175,12 +174,12 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
 
   @Override
   public MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     ComponentMonitoringUploadEntity current =
         new ComponentMonitoringUploadEntity(vspId, version, componentId, null);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     return setMonitoringUploadStatusValues(current);
   }
