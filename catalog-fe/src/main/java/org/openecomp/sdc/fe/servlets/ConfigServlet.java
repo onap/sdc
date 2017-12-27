@@ -33,11 +33,13 @@ import javax.ws.rs.container.TimeoutHandler;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.fe.config.Configuration;
+import org.openecomp.sdc.fe.impl.DesignerStatusBL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,11 +49,12 @@ import org.slf4j.LoggerFactory;
 @Path("/config")
 public class ConfigServlet extends BasicServlet {
 
+	private static final long serialVersionUID = 1L;
 	private static Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
 
-	@GET
-	@Path("/get")
-	@Produces(MediaType.APPLICATION_JSON)
+	//@GET
+	//@Path("/get")
+	//@Produces(MediaType.APPLICATION_JSON)
 	public String getConfig(@Context final HttpServletRequest request) {
 
 		String result = null;
@@ -82,8 +85,8 @@ public class ConfigServlet extends BasicServlet {
 
 	}
 
-	@GET
-	@Path("/asyncget")
+	//@GET
+	//@Path("/asyncget")
 	public void asyncGet(@Suspended final AsyncResponse asyncResponse) {
 
 		asyncResponse.setTimeoutHandler(new TimeoutHandler() {
@@ -111,4 +114,19 @@ public class ConfigServlet extends BasicServlet {
 		}).start();
 	}
 
+	@GET
+	@Path("/ui/designers")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDesignersConfiguration(@Context final HttpServletRequest request) {
+		String result = null;
+
+		ServletContext context = request.getSession().getServletContext();
+
+		DesignerStatusBL designerStatusBL = (DesignerStatusBL) context.getAttribute(Constants.DESIGNER_BL_COMPONENT);		
+
+		result = designerStatusBL.checkDesinerListAvailability();
+
+		return Response.status(Status.OK).entity(result).build();
+
+	}	
 }
