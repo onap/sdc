@@ -22,11 +22,16 @@ public final class ConfigurationDataSource {
   private static Set<String> validCallers = Collections.unmodifiableSet(new HashSet<>(
       Arrays.asList(ConfigurationUtils.class.getName(), CliConfigurationImpl.class.getName())));
 
+  private ConfigurationDataSource() {
+    //Hide constructor to prevent instantiation using the default implicit constructor
+  }
+
   static {
     try {
       configDBDatasource = initDataSource();
     } catch (Exception exception) {
-      System.err.println("Datasource initialization error. Configuration management will be using in-memory persistence.");
+      System.err.println("Datasource initialization error. Configuration management will be using"
+          + "in-memory persistence.");
     }
   }
 
@@ -83,7 +88,6 @@ public final class ConfigurationDataSource {
       Driver driver = Driver.class.cast(Class.forName(driverClassName).newInstance());
       return driver.acceptsURL(url);
     } catch (Exception exception) {
-      exception.printStackTrace();
       return false;
     }
   }
