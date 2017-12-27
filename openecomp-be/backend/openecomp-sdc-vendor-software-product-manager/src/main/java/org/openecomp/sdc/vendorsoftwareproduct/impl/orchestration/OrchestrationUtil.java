@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -68,38 +84,38 @@ public class OrchestrationUtil {
   public static final String ORCHESTRATION_CONFIG_NAMESPACE = "orchestration";
   public static final String ORCHESTRATION_IMPL_KEY = "orchestration_impl";
 
-  private NicDao nicDao;
-  private ComponentArtifactDao componentArtifactDao;
-  private ProcessDao processDao;
-  private OrchestrationTemplateDao orchestrationTemplateDataDao;
-  private ComponentDao componentDao;
-  private ServiceModelDao serviceModelDao;
-  private ComponentDependencyModelDao componentDependencyModelDao;
-  private CompositionEntityDataManager compositionEntityDataManager;
-  private CompositionDataExtractor compositionDataExtractor;
+  private final NicDao nicDao;
+  private final ComponentArtifactDao componentArtifactDao;
+  private final ProcessDao processDao;
+  private final OrchestrationTemplateDao orchestrationTemplateDataDao;
+  private final ComponentDao componentDao;
+  private final ServiceModelDao serviceModelDao;
+  private final ComponentDependencyModelDao componentDependencyModelDao;
+  private final CompositionEntityDataManager compositionEntityDataManager;
+  private final CompositionDataExtractor compositionDataExtractor;
 
   public OrchestrationUtil() {
     this(NicDaoFactory.getInstance().createInterface(),
-        MonitoringUploadDaoFactory.getInstance().createInterface(),
-        ProcessDaoFactory.getInstance().createInterface(),
-        OrchestrationTemplateDaoFactory.getInstance().createInterface(),
-        ComponentDaoFactory.getInstance().createInterface(),
-        ServiceModelDaoFactory.getInstance().createInterface(),
-        ComponentDependencyModelDaoFactory.getInstance().createInterface(),
-        CompositionEntityDataManagerFactory.getInstance().createInterface(),
-        CompositionDataExtractorFactory.getInstance().createInterface());
+            MonitoringUploadDaoFactory.getInstance().createInterface(),
+            ProcessDaoFactory.getInstance().createInterface(),
+            OrchestrationTemplateDaoFactory.getInstance().createInterface(),
+            ComponentDaoFactory.getInstance().createInterface(),
+            ServiceModelDaoFactory.getInstance().createInterface(),
+            ComponentDependencyModelDaoFactory.getInstance().createInterface(),
+            CompositionEntityDataManagerFactory.getInstance().createInterface(),
+            CompositionDataExtractorFactory.getInstance().createInterface());
   }
 
-  public OrchestrationUtil(
-      NicDao nicDao,
-      ComponentArtifactDao componentArtifactDao,
-      ProcessDao processDao,
-      OrchestrationTemplateDao orchestrationTemplateDataDao,
-      ComponentDao componentDao,
-      ServiceModelDao serviceModelDao,
-      ComponentDependencyModelDao componentDependencyModelDao,
-      CompositionEntityDataManager compositionEntityDataManager,
-      CompositionDataExtractor compositionDataExtractor) {
+  private OrchestrationUtil(
+          NicDao nicDao,
+          ComponentArtifactDao componentArtifactDao,
+          ProcessDao processDao,
+          OrchestrationTemplateDao orchestrationTemplateDataDao,
+          ComponentDao componentDao,
+          ServiceModelDao serviceModelDao,
+          ComponentDependencyModelDao componentDependencyModelDao,
+          CompositionEntityDataManager compositionEntityDataManager,
+          CompositionDataExtractor compositionDataExtractor) {
     this.nicDao = nicDao;
     this.componentArtifactDao = componentArtifactDao;
     this.processDao = processDao;
@@ -140,26 +156,15 @@ public class OrchestrationUtil {
 
     Collection<ComponentEntity> componentsCompositionAndQuestionnaire =
         componentDao.listCompositionAndQuestionnaire(vspId, version);
-    componentsCompositionAndQuestionnaire.forEach(componentEntity ->
-        backupComponentQuestionnaire(vspId, version, componentEntity, componentsQustanniare,
-            componentNicsQustanniare, componentMibList, componentProcesses, processArtifact));
-  }
-
-  private void backupComponentQuestionnaire(
-      String vspId, Version version,
-      ComponentEntity componentEntity,
-      Map<String, String> componentsQustanniare,
-      Map<String, Map<String, String>> componentNicsQustanniare,
-      Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList,
-      Map<String, Collection<ProcessEntity>> componentProcesses,
-      Map<String, ProcessEntity> processArtifact) {
-    String componentName = componentEntity.getComponentCompositionData().getName();
-    componentsQustanniare.put(componentName, componentEntity.getQuestionnaireData());
-    backupMibData(vspId, version, componentEntity, componentName, componentMibList);
-    backupProcess(vspId, version, componentEntity.getId(), componentName, componentProcesses,
-        processArtifact);
-    backupNicsQuestionnaire(vspId, version, componentEntity, componentName,
-        componentNicsQustanniare);
+    componentsCompositionAndQuestionnaire.forEach(componentEntity -> {
+      String componentName = componentEntity.getComponentCompositionData().getName();
+      componentsQustanniare.put(componentName, componentEntity.getQuestionnaireData());
+      backupMibData(vspId, version, componentEntity, componentName, componentMibList);
+      backupProcess(vspId, version, componentEntity.getId(), componentName, componentProcesses,
+              processArtifact);
+      backupNicsQuestionnaire(vspId, version, componentEntity, componentName,
+              componentNicsQustanniare);
+    });
   }
 
   private void backupMibData(String vspId, Version version, ComponentEntity componentEntity,
