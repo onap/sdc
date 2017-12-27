@@ -99,7 +99,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
   private String getConfigurationValue(ConfigurationQuery queryData) {
     try {
       if (queryData.isFallback()) {
-        return ConfigurationUtils.getCommaSaperatedList(
+        return ConfigurationUtils.getCommaSeparatedList(
             get(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
                 queryData.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT,
                 queryData.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT,
@@ -111,7 +111,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                 queryData.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT,
                 queryData.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT);
         return ConfigurationUtils
-            .getCommaSaperatedList(list == null ? Arrays.asList() : Arrays.asList(list));
+            .getCommaSeparatedList(list == null ? Arrays.asList() : Arrays.asList(list));
       }
     } catch (Exception exception) {
       exception.printStackTrace();
