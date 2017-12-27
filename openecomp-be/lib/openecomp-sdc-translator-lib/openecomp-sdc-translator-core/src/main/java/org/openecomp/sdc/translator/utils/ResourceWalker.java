@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.translator.utils;
 
 import org.apache.commons.io.IOUtils;
@@ -29,12 +45,18 @@ import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-/**
- * @author EVITALIY.
- * @since 02 Apr 17
- */
 public class ResourceWalker {
 
+  private ResourceWalker() {
+  }
+
+  /**
+   * Read resources from directory map.
+   *
+   * @param resourceDirectoryToStart the resource directory to start
+   * @return the map of file where key is file name and value is its data
+   * @throws Exception the exception
+   */
   public static Map<String, String> readResourcesFromDirectory(String resourceDirectoryToStart)
       throws
       Exception {
@@ -131,8 +153,11 @@ public class ResourceWalker {
       IOException {
 
     if (file.isDirectory()) {
-      for (File sub : file.listFiles()) {
-        traverseFile(sub, handler);
+      File[] files = file.listFiles();
+      if (files != null) {
+        for (File sub : files) {
+          traverseFile(sub, handler);
+        }
       }
     } else {
       try (FileInputStream stream = new FileInputStream(file)) {
