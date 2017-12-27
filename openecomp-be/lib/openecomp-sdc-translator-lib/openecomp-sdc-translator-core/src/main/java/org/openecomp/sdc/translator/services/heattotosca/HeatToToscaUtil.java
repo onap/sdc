@@ -18,6 +18,7 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
@@ -102,10 +103,13 @@ import java.util.stream.Collectors;
  */
 public class HeatToToscaUtil {
 
-  protected static Logger logger = (Logger) LoggerFactory.getLogger(HeatToToscaUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(HeatToToscaUtil.class);
+  public static final String FQ_NAME = "fq_name";
+  public static final String GET_PARAM = "get_param";
   protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private static final String forwarder = "forwarder";
-
+  private static final String FORWARDER = "forwarder";
+  private static final String GET_ATTR = "get_attr";
+  private static final String GET_RESOURCE = "get_resource";
 
   /**
    * Load and translate template data translator output.
@@ -233,38 +237,20 @@ public class HeatToToscaUtil {
     FileDataCollection fileDataCollection = new FileDataCollection();
     Map<String, FileData> filteredFiles = filterFileDataListByType(fileDataList, typeFilter);
     Set<String> referenced = new HashSet<>();
-    List<String> filenames = extractFilenamesFromFileDataList(filteredFiles.values());
 
     for (FileData fileData : filteredFiles.values()) {
       String fileName = fileData.getFile();
 
       if (FileData.isHeatFile(fileData.getType())) {
-        if (fileData.getBase() != null && fileData.getBase().equals(true)) {
+        if (fileData.getBase() != null && fileData.getBase()) {
           fileDataCollection.addBaseFiles(fileData);
         }
         HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
             .yamlToObject(translationContext.getFileContent(fileName),
                 HeatOrchestrationTemplate.class);
-        if (!MapUtils.isEmpty(heatOrchestrationTemplate.getResources())) {
-          for (Resource resource : heatOrchestrationTemplate.getResources().values()) {
-            if (filenames.contains(resource.getType())) {
-              handleNestedFile(translationContext, fileDataCollection, filteredFiles, referenced,
-                  resource.getType());
-            } else if (resource.getType()
-                .equals(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource())) {
-              Object resourceDef =
-                  resource.getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
-              Object innerTypeDef = ((Map) resourceDef).get("type");
-              if (innerTypeDef instanceof String) {
-                String internalResourceType = (String) innerTypeDef;
-                if (filenames.contains(internalResourceType)) {
-                  handleNestedFile(translationContext, fileDataCollection, filteredFiles,
-                      referenced,
-                      internalResourceType);
-                }
-              }
-            }
-          }
+        if (MapUtils.isNotEmpty(heatOrchestrationTemplate.getResources())) {
+          applyFilterOnFileCollection(heatOrchestrationTemplate, translationContext,
+              fileDataCollection, filteredFiles, referenced);
         }
 
       } else {
@@ -281,6 +267,42 @@ public class HeatToToscaUtil {
     }
     fileDataCollection.setAddOnFiles(filteredFiles.values());
     return fileDataCollection;
+  }
+
+  private static void applyFilterOnFileCollection(
+      HeatOrchestrationTemplate heatOrchestrationTemplate,
+      TranslationContext translationContext,
+      FileDataCollection fileDataCollection, Map<String, FileData> filteredFiles,
+      Set<String> referenced) {
+    List<String> filenames = extractFilenamesFromFileDataList(filteredFiles.values());
+
+    for (Resource resource : heatOrchestrationTemplate.getResources().values()) {
+      if (filenames.contains(resource.getType())) {
+        handleNestedFile(translationContext, fileDataCollection, filteredFiles, referenced,
+            resource.getType());
+      } else if (resource.getType()
+          .equals(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource())) {
+        handleResourceGrpNestedFile(resource, translationContext, fileDataCollection,
+            filteredFiles, filenames, referenced);
+      }
+    }
+  }
+
+  private static void handleResourceGrpNestedFile(Resource resource,
+                                                  TranslationContext translationContext,
+                                                  FileDataCollection fileDataCollection,
+                                                  Map<String, FileData> filteredFiles,
+                                                  List<String> filenames,
+                                                  Set<String> referenced) {
+    Object resourceDef = resource.getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
+    Object innerTypeDef = ((Map) resourceDef).get("type");
+    if (innerTypeDef instanceof String) {
+      String internalResourceType = (String) innerTypeDef;
+      if (filenames.contains(internalResourceType)) {
+        handleNestedFile(translationContext, fileDataCollection, filteredFiles,
+            referenced, internalResourceType);
+      }
+    }
   }
 
   private static void handleNestedFile(TranslationContext translationContext,
@@ -361,20 +383,7 @@ public class HeatToToscaUtil {
       Map.Entry<String, Object> entry = propMap.entrySet().iterator().next();
       entity = entry.getValue();
       String key = entry.getKey();
-      switch (key) {
-        case "get_resource":
-          referenceType = ReferenceType.GET_RESOURCE;
-          break;
-        case "get_param":
-          referenceType = ReferenceType.GET_PARAM;
-          break;
-        case "get_attr":
-          referenceType = ReferenceType.GET_ATTR;
-          break;
-        default:
-          referenceType = ReferenceType.OTHER;
-          break;
-      }
+      referenceType = getReferenceTypeFromAttachedResouce(key);
 
       if (!FunctionTranslationFactory.getInstance(entry.getKey()).isPresent()) {
         translatedId = null;
@@ -396,6 +405,26 @@ public class HeatToToscaUtil {
     return Optional.of(new AttachedResourceId(translatedId, entity, referenceType));
   }
 
+  private static ReferenceType getReferenceTypeFromAttachedResouce(String key) {
+    ReferenceType referenceType;
+    switch (key) {
+      case GET_RESOURCE:
+        referenceType = ReferenceType.GET_RESOURCE;
+        break;
+      case GET_PARAM:
+        referenceType = ReferenceType.GET_PARAM;
+        break;
+      case GET_ATTR:
+        referenceType = ReferenceType.GET_ATTR;
+        break;
+      default:
+        referenceType = ReferenceType.OTHER;
+        break;
+    }
+
+    return referenceType;
+  }
+
   /**
    * Gets contrail attached heat resource id.
    *
@@ -415,10 +444,9 @@ public class HeatToToscaUtil {
     if (attachedResource.isGetResource()) {
       return Optional.of((String) attachedResource.getEntityId());
     }
-    if (attachedResource.isGetAttr() && (attachedResource.getEntityId() instanceof List)
-        && ((List) attachedResource.getEntityId()).size() > 1
-        && ((List) attachedResource.getEntityId()).get(1).equals("fq_name")) {
-      return Optional.of((String) ((List) attachedResource.getEntityId()).get(0));
+
+    if (attachedResource.isGetAttr()) {
+      return getResourceId(attachedResource.getEntityId());
     }
 
     mdcDataDebugMessage.debugExitMessage(null, null);
@@ -446,13 +474,13 @@ public class HeatToToscaUtil {
       attachedPropertyVal = entry.getValue();
       String key = entry.getKey();
       switch (key) {
-        case "get_resource":
+        case GET_RESOURCE:
           referenceType = ReferenceType.GET_RESOURCE;
           break;
-        case "get_param":
+        case GET_PARAM:
           referenceType = ReferenceType.GET_PARAM;
           break;
-        case "get_attr":
+        case GET_ATTR:
           referenceType = ReferenceType.GET_ATTR;
           break;
         default:
@@ -493,7 +521,7 @@ public class HeatToToscaUtil {
   public static void mapBooleanList(NodeTemplate nodeTemplate, String propertyListKey) {
     Object listValue = nodeTemplate.getProperties().get(propertyListKey);
     if (listValue instanceof List) {
-      List booleanList = ((List) listValue);
+      List booleanList = (List) listValue;
       for (int i = 0; i < booleanList.size(); i++) {
         Object value = booleanList.get(i);
         if (value != null && !(value instanceof Map)) {
@@ -511,7 +539,9 @@ public class HeatToToscaUtil {
    * @return the boolean
    */
   public static boolean isYmlFileType(String filename) {
-    return (filename.indexOf("yaml") > 0 || filename.indexOf("yml") > 0);
+    String extension = FilenameUtils.getExtension(filename);
+    return "yaml".equalsIgnoreCase(extension)
+        || "yml".equalsIgnoreCase(extension);
   }
 
   /**
@@ -697,53 +727,53 @@ public class HeatToToscaUtil {
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
-    if (propertyValue == null) {
-      return Optional.empty();
-    }
-
-    Object value;
     if (propertyValue instanceof Map) {
-      if (((Map) propertyValue).containsKey("get_attr")) {
-        value = ((Map) propertyValue).get("get_attr");
-        if (value instanceof List) {
-          if (((List) value).size() == 2 && ((List) value).get(1).equals("fq_name")) {
-            if (((List) value).get(0) instanceof String) {
-              return Optional.of((String) ((List) value).get(0));
-            } else {
-              logger.warn("invalid format of 'get_attr' function - " + propertyValue.toString());
-            }
-          }
-        }
-      } else if (((Map) propertyValue).containsKey("get_resource")) {
-        value = ((Map) propertyValue).get("get_resource");
-        if (value instanceof String) {
-          return Optional.of((String) value);
-        } else {
-          logger.warn("invalid format of 'get_resource' function - " + propertyValue.toString());
-        }
+      if (((Map) propertyValue).containsKey(GET_ATTR)) {
+        return getResourceId(((Map) propertyValue).get(GET_ATTR));
+      } else if (((Map) propertyValue).containsKey(GET_RESOURCE)) {
+        return getHeatResourceIdFromResource((Map) propertyValue);
       } else {
-        Collection<Object> valCollection = ((Map) propertyValue).values();
-        for (Object entryValue : valCollection) {
-          Optional<String> ret = extractContrailGetResourceAttachedHeatResourceId(entryValue);
-          if (ret.isPresent()) {
-            return ret;
-          }
-
-        }
+        Collection valCollection = ((Map) propertyValue).values();
+        return evaluateHeatResourceId(valCollection);
       }
     } else if (propertyValue instanceof List) {
-      for (Object prop : (List) propertyValue) {
-        Optional<String> ret = extractContrailGetResourceAttachedHeatResourceId(prop);
-        if (ret.isPresent()) {
-          return ret;
-        }
-      }
+      return evaluateHeatResourceId((List) propertyValue);
     }
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
+  private static Optional<String> getResourceId(Object data) {
+    if (data instanceof List && CollectionUtils.size(data) > 1
+        && FQ_NAME.equals(((List) data).get(1))
+        && ((List) data).get(0) instanceof String) {
+      return Optional.of((String) ((List) data).get(0));
+    } else {
+      LOGGER.warn("invalid format of 'get_attr' function - " + data.toString());
+      return Optional.empty();
+    }
+  }
+
+  private static Optional<String> getHeatResourceIdFromResource(Map propertyValue) {
+    Object value = propertyValue.get(GET_RESOURCE);
+    if (value instanceof String) {
+      return Optional.of((String) value);
+    } else {
+      LOGGER.warn("invalid format of 'get_resource' function - " + propertyValue.toString());
+      return Optional.empty();
+    }
+  }
+
+  private static Optional<String> evaluateHeatResourceId(Collection propertyValue) {
+    for (Object prop : propertyValue) {
+      Optional<String> ret = extractContrailGetResourceAttachedHeatResourceId(prop);
+      if (ret.isPresent()) {
+        return ret;
+      }
+    }
+    return Optional.empty();
+  }
   /**
    * Gets tosca service model.
    *
@@ -1091,9 +1121,8 @@ public class HeatToToscaUtil {
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     ToscaServiceModel toscaServiceModel = HeatToToscaUtil
         .getToscaServiceModel(context, serviceTemplate.getMetadata());
-    NodeType flatNodeType = (NodeType) toscaAnalyzerService
+    return (NodeType) toscaAnalyzerService
         .getFlatEntity(ToscaElementTypes.NODE_TYPE, nodeTypeId, serviceTemplate, toscaServiceModel);
-    return flatNodeType;
   }
 
   /**
@@ -1290,7 +1319,7 @@ public class HeatToToscaUtil {
   }
 
   private static boolean shouldCapabilityNeedsToBeAdded(String capabilityKey) {
-    return !capabilityKey.contains(forwarder) || ToggleableFeature.FORWARDER_CAPABILITY.isActive();
+    return !capabilityKey.contains(FORWARDER) || ToggleableFeature.FORWARDER_CAPABILITY.isActive();
   }
 
   private static void addCapabilityToSubMapping(String templateName,
@@ -1315,32 +1344,33 @@ public class HeatToToscaUtil {
       TranslationContext context) {
     mdcDataDebugMessage.debugEntryMessage(null, null);
     List<Map<String, RequirementDefinition>> requirementList = new ArrayList<>();
-    NodeType flatNodeType =
-        getNodeTypeWithFlatHierarchy(type, serviceTemplate, context);
+    NodeType flatNodeType = getNodeTypeWithFlatHierarchy(type, serviceTemplate, context);
     List<String> requirementMapping;
 
-    if (flatNodeType.getRequirements() != null) {
-      for (Map<String, RequirementDefinition> requirementMap : flatNodeType.getRequirements()) {
-        for (Map.Entry<String, RequirementDefinition> requirementNodeEntry : requirementMap
-            .entrySet()) {
-          ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-          RequirementDefinition requirementNodeEntryValue = toscaExtensionYamlUtil
-              .yamlToObject(toscaExtensionYamlUtil.objectToYaml(requirementNodeEntry.getValue()),
-                  RequirementDefinition.class);
-          if (requirementNodeEntryValue.getOccurrences() == null) {
-            requirementNodeEntryValue.setOccurrences(new Object[]{1, 1});
-          }
-          Map<String, RequirementDefinition> requirementDef = new HashMap<>();
-          requirementDef.put(requirementNodeEntry.getKey(), requirementNodeEntryValue);
-          DataModelUtil.addRequirementToList(requirementList, requirementDef);
-          requirementMapping = new ArrayList<>();
-          requirementMapping.add(templateName);
-          requirementMapping.add(requirementNodeEntry.getKey());
-          requirementSubstitutionMapping
-              .put(requirementNodeEntry.getKey() + "_" + templateName, requirementMapping);
-          if (requirementNodeEntryValue.getNode() == null) {
-            requirementNodeEntryValue.setOccurrences(new Object[]{1, 1});
-          }
+    if (flatNodeType.getRequirements() == null) {
+      return requirementList;
+    }
+
+    for (Map<String, RequirementDefinition> requirementMap : flatNodeType.getRequirements()) {
+      for (Map.Entry<String, RequirementDefinition> requirementNodeEntry : requirementMap
+          .entrySet()) {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        RequirementDefinition requirementNodeEntryValue = toscaExtensionYamlUtil
+            .yamlToObject(toscaExtensionYamlUtil.objectToYaml(requirementNodeEntry.getValue()),
+                RequirementDefinition.class);
+        if (Objects.isNull(requirementNodeEntryValue.getOccurrences())) {
+          requirementNodeEntryValue.setOccurrences(new Object[]{1, 1});
+        }
+        Map<String, RequirementDefinition> requirementDef = new HashMap<>();
+        requirementDef.put(requirementNodeEntry.getKey(), requirementNodeEntryValue);
+        DataModelUtil.addRequirementToList(requirementList, requirementDef);
+        requirementMapping = new ArrayList<>();
+        requirementMapping.add(templateName);
+        requirementMapping.add(requirementNodeEntry.getKey());
+        requirementSubstitutionMapping
+            .put(requirementNodeEntry.getKey() + "_" + templateName, requirementMapping);
+        if (Objects.isNull(requirementNodeEntryValue.getNode())) {
+          requirementNodeEntryValue.setOccurrences(new Object[]{1, 1});
         }
       }
     }
