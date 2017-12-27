@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.datatypes.heattotosca;
@@ -26,7 +22,6 @@ import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
@@ -63,37 +58,6 @@ public class TranslationContext {
   private static Map<String, ImplementationConfiguration> supportedConsolidationComputeResources;
   private static Map<String, ImplementationConfiguration> supportedConsolidationPortResources;
   private static List<String> enrichPortResourceProperties;
-
-  static {
-    Configuration config = ConfigurationManager.lookup();
-    String propertyFileName = SdcCommon.HEAT_TO_TOSCA_MAPPING_CONF;
-    translationMapping =
-        config.generateMap(ConfigConstants.MAPPING_NAMESPACE, ConfigConstants.RESOURCE_MAPPING_KEY);
-    try {
-      globalServiceTemplates = GlobalTypesGenerator.getGlobalTypesServiceTemplate();
-    } catch (Exception exc) {
-      throw new RuntimeException("Failed to load GlobalTypes", exc);
-    }
-    nameExtractorImplMap = config.populateMap(ConfigConstants.TRANSLATOR_NAMESPACE,
-        ConfigConstants.NAMING_CONVENTION_EXTRACTOR_IMPL_KEY, ImplementationConfiguration.class);
-    supportedConsolidationComputeResources = config.populateMap(ConfigConstants
-        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-        .SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY, ImplementationConfiguration.class);
-    supportedConsolidationPortResources = config.populateMap(ConfigConstants
-        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-        .SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY, ImplementationConfiguration.class);
-    enrichPortResourceProperties = config.getAsStringValues(ConfigConstants
-        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-        .ENRICH_PORT_RESOURCE_PROP);
-
-  }
-
-  private ManifestFile manifest;
-
-  public static List<String> getEnrichPortResourceProperties() {
-    return enrichPortResourceProperties;
-  }
-
   private FileContentHandler files = new FileContentHandler();
   private Map<String, FileData.Type> manifestFiles = new HashMap<>();
   //Key - file name, value - file type
@@ -125,6 +89,35 @@ public class TranslationContext {
   private Set<String> serviceTemplatesWithoutNodeTemplateSection = new HashSet<>();
 
   private Set<String> nodeTemplateIdsPointingToStWithoutNodeTemplates = new HashSet<>();
+
+  static {
+    Configuration config = ConfigurationManager.lookup();
+    translationMapping =
+        config.generateMap(ConfigConstants.MAPPING_NAMESPACE, ConfigConstants.RESOURCE_MAPPING_KEY);
+    try {
+      globalServiceTemplates = GlobalTypesGenerator.getGlobalTypesServiceTemplate();
+    } catch (Exception exc) {
+      throw new RuntimeException("Failed to load GlobalTypes", exc);
+    }
+    nameExtractorImplMap = config.populateMap(ConfigConstants.TRANSLATOR_NAMESPACE,
+        ConfigConstants.NAMING_CONVENTION_EXTRACTOR_IMPL_KEY, ImplementationConfiguration.class);
+    supportedConsolidationComputeResources = config.populateMap(ConfigConstants
+        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
+        .SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY, ImplementationConfiguration.class);
+    supportedConsolidationPortResources = config.populateMap(ConfigConstants
+        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
+        .SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY, ImplementationConfiguration.class);
+    enrichPortResourceProperties = config.getAsStringValues(ConfigConstants
+        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
+        .ENRICH_PORT_RESOURCE_PROP);
+
+  }
+
+  private ManifestFile manifest;
+
+  public static List<String> getEnrichPortResourceProperties() {
+    return enrichPortResourceProperties;
+  }
 
   public static Map<String, ImplementationConfiguration>
   getSupportedConsolidationComputeResources() {
@@ -267,14 +260,14 @@ public class TranslationContext {
   }
 
   public Set<String> getAllTranslatedResourceIdsFromDiffNestedFiles(String
-                                                                        nestedHeatFileNameToSkip){
+                                                                        nestedHeatFileNameToSkip) {
     Set<String> allTranslatedResourceIds = new HashSet<>();
 
     this.translatedIds.entrySet().stream().filter(
         heatFileNameToTranslatedIdsEntry -> !heatFileNameToTranslatedIdsEntry.getKey()
-            .equals(nestedHeatFileNameToSkip)).forEach(heatFileNameToTranslatedIdsEntry -> {
-      allTranslatedResourceIds.addAll(heatFileNameToTranslatedIdsEntry.getValue().keySet());
-    });
+            .equals(nestedHeatFileNameToSkip)).forEach(heatFileNameToTranslatedIdsEntry ->
+      allTranslatedResourceIds.addAll(heatFileNameToTranslatedIdsEntry.getValue().keySet())
+    );
 
     return allTranslatedResourceIds;
   }
@@ -444,9 +437,9 @@ public class TranslationContext {
    */
   public String getUnifiedAbstractNodeTemplateId(ServiceTemplate serviceTemplate,
                                                  String nodeTemplateId) {
-    UnifiedSubstitutionData unifiedSubstitutionData =
+    UnifiedSubstitutionData unifiedSubsData =
         this.unifiedSubstitutionData.get(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
-    return unifiedSubstitutionData.getNodesRelatedAbstractNode().get(nodeTemplateId);
+    return unifiedSubsData.getNodesRelatedAbstractNode().get(nodeTemplateId);
   }
 
   /**
@@ -458,9 +451,9 @@ public class TranslationContext {
    */
   public String getUnifiedSubstitutionNodeTemplateId(ServiceTemplate serviceTemplate,
                                                      String nodeTemplateId) {
-    UnifiedSubstitutionData unifiedSubstitutionData =
+    UnifiedSubstitutionData unifiedSubsData =
         this.unifiedSubstitutionData.get(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
-    return unifiedSubstitutionData.getNodesRelatedSubstitutionServiceTemplateNode()
+    return unifiedSubsData.getNodesRelatedSubstitutionServiceTemplateNode()
         .get(nodeTemplateId);
   }
 
@@ -498,13 +491,6 @@ public class TranslationContext {
         .isComputeTypeHandledInServiceTemplate(computeType);
   }
 
-  public int getHandledNestedComputeNodeTemplateIndex(String serviceTemplateName,
-                                                      String nestedServiceTemplateName,
-                                                      String computeType){
-    return this.unifiedSubstitutionData.get(serviceTemplateName)
-        .getHandledNestedComputeNodeTemplateIndex(computeType);
-  }
-
   public boolean isNestedServiceTemplateWasHandled(String serviceTemplateName,
                                                    String nestedServiceTemplateFileName) {
     if (Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))) {
@@ -514,10 +500,10 @@ public class TranslationContext {
         .isNestedServiceTemplateWasHandled(nestedServiceTemplateFileName);
   }
 
-  public Set<String> getAllRelatedNestedNodeTypeIds(){
+  public Set<String> getAllRelatedNestedNodeTypeIds() {
     String globalName = "GlobalSubstitutionTypes";
-    if(Objects.isNull(this.unifiedSubstitutionData) ||
-        Objects.isNull(this.unifiedSubstitutionData.get(globalName))){
+    if (Objects.isNull(this.unifiedSubstitutionData)
+        || Objects.isNull(this.unifiedSubstitutionData.get(globalName))) {
       return new HashSet<>();
     }
 
