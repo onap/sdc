@@ -7,6 +7,7 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
+import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -71,8 +72,20 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
           .withCategory(ErrorCategory.SECURITY).build());
     }
 
+    if (permission.equals(PermissionTypes.Owner.name()) ){
+      if (addedUsersIds.size() == 1){
+        itemManager.updateOwner(itemId,addedUsersIds.iterator().next());
+    } else {
+        throw new CoreException(new ErrorCode.ErrorCodeBuilder()
+            .withMessage(Messages.PERMISSIONS_OWNER_ERROR.getErrorMessage())
+            .withId(Messages.PERMISSIONS_OWNER_ERROR.getErrorMessage())
+            .withCategory(ErrorCategory.SECURITY).build());
+      }
+    }
+
     permissionsServices
         .updateItemPermissions(itemId, permission, addedUsersIds, removedUsersIds);
+
     sendNotifications(itemId, permission, addedUsersIds, removedUsersIds, currentUser);
   }
 

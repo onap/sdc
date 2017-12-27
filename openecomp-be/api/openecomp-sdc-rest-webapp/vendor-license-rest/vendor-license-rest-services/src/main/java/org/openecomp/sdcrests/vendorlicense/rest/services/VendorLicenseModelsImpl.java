@@ -142,6 +142,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
     Item item = new Item();
     item.setType(ItemType.vlm.name());
+    item.setOwner(user);
     item.setName(request.getVendorName());
     item.setDescription(request.getDescription());
 

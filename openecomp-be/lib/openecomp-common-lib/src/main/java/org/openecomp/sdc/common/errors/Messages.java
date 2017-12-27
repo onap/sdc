@@ -40,6 +40,7 @@ public enum Messages {
   ZIP_NOT_EXIST("Zip file doesn't exist"),
 
   PERMISSIONS_ERROR("Permissions Error. The user does not have permission to perform this action."),
+  PERMISSIONS_OWNER_ERROR("Permissions Error. Only one owner is allowed."),
 
   ZIP_SHOULD_NOT_CONTAIN_FOLDERS("Zip file should not contain folders"),
   VES_ZIP_SHOULD_CONTAIN_YML_ONLY(
