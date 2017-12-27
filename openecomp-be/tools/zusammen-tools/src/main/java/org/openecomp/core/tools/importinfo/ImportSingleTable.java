@@ -114,7 +114,7 @@ public class ImportSingleTable {
                 byte[] decoded = Base64.getDecoder().decode(rowData);
                 String decodedStr = new String(decoded);
                 if (!StringUtils.isEmpty(decodedStr)) {
-                    String[] splitted = decodedStr.split(ExportDataCommand.JOIN_DELIMITER_SPILTTER);
+                    String[] splitted = decodedStr.split(ExportDataCommand.JOIN_DELIMITER_SPLITTER);
                     Set set = Sets.newHashSet(splitted);
                     set.remove("");
                     bind.setSet(i, set);
@@ -126,7 +126,7 @@ public class ImportSingleTable {
                 byte[] decodedMap = Base64.getDecoder().decode(rowData);
                 String mapStr = new String(decodedMap);
                 if (!StringUtils.isEmpty(mapStr)) {
-                    String[] splittedMap = mapStr.split(ExportDataCommand.JOIN_DELIMITER_SPILTTER);
+                    String[] splittedMap = mapStr.split(ExportDataCommand.JOIN_DELIMITER_SPLITTER);
                     Map<String, String> map = new HashMap<>();
                     for (String keyValue : splittedMap) {
                         String[] split = keyValue.split(ExportDataCommand.MAP_DELIMITER_SPLITTER);
