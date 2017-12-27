@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_79541e54",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/validation-rest/validation-rest-services/src/main/java/org/openecomp/sdcrests/validation/rest/Validation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T13:29:05Z",
+      "side": 1,
+      "message": "This is mapped to a REST API, so I\u0027m pretty sure it will have more methods.",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 20
+      },
+      "revId": "af687752dfe0ff3377953ffc6e265982d31b8bdd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
