@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d9bbf270",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessCsarHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T13:51:00Z",
+      "side": 1,
+      "message": "All capitals according to the coding conventions.",
+      "range": {
+        "startLine": 58,
+        "startChar": 33,
+        "endLine": 58,
+        "endChar": 49
+      },
+      "revId": "343454006f416c98f5d4e58767066f36727e64a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_79b09e8b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessCsarHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T13:51:00Z",
+      "side": 1,
+      "message": "Same here. Please don\u0027t forget to re-run static analysis after fixing violations.",
+      "range": {
+        "startLine": 60,
+        "startChar": 33,
+        "endLine": 60,
+        "endChar": 49
+      },
+      "revId": "343454006f416c98f5d4e58767066f36727e64a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
