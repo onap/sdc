@@ -1,22 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
+/*
+* Copyright © 2016-2017 European Support Limited
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+*
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package org.openecomp.sdc.vendorlicense.dao.types;
 
@@ -35,9 +31,9 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 @UDT(keyspace = "dox", name = "choice_or_other")
 public class ChoiceOrOther<E extends Enum<E>> {
 
-  public static final String CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID =
+  private static final String CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID =
       "MULTI_CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID";
-  public static final String CHOICE_OR_OTHER_INVALID_ENUM_MSG =
+  private static final String CHOICE_OR_OTHER_INVALID_ENUM_MSG =
       "Enum used as part of ChoiceOrOther type must contain the value 'Other'";
   public static final String OTHER_ENUM_VALUE = "Other";
 
@@ -48,9 +44,6 @@ public class ChoiceOrOther<E extends Enum<E>> {
   private String other;
 
   private String result;
-
-  public ChoiceOrOther() {
-  }
 
   /**
    * Instantiates a new Choice or other.
