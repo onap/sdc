@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
@@ -49,7 +45,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.NicCompositionSchemaInput;
@@ -63,12 +58,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NicManagerImpl implements NicManager {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
 
-  private NicDao nicDao;
-  private CompositionEntityDataManager compositionEntityDataManager;
-  private NetworkManager networkManager;
-  private VendorSoftwareProductInfoDao vspInfoDao;
+  private final NicDao nicDao;
+  private final CompositionEntityDataManager compositionEntityDataManager;
+  private final NetworkManager networkManager;
+  private final VendorSoftwareProductInfoDao vspInfoDao;
+  private static final String VSP_ID_COMPONENT_ID = "VSP id, component id";
 
   public NicManagerImpl(NicDao nicDao,
                         CompositionEntityDataManager compositionEntityDataManager,
@@ -82,7 +78,7 @@ public class NicManagerImpl implements NicManager {
 
   @Override
   public Collection<NicEntity> listNics(String vspId, Version version, String componentId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     Collection<NicEntity> nics = nicDao.list(new NicEntity(vspId, version, componentId, null));
 
@@ -95,7 +91,7 @@ public class NicManagerImpl implements NicManager {
       });
     }
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
 
     return nics;
   }
@@ -108,7 +104,7 @@ public class NicManagerImpl implements NicManager {
 
   @Override
   public NicEntity createNic(NicEntity nic) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", nic.getVspId(),
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, nic.getVspId(),
         nic.getComponentId());
 
     NicEntity createdNic;
@@ -125,8 +121,8 @@ public class NicManagerImpl implements NicManager {
       createdNic = compositionEntityDataManager.createNic(nic);
     }
 
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", nic.getVspId(), nic.getComponentId());
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID, nic.getVspId(), nic.getComponentId());
 
     return createdNic;
   }
@@ -139,10 +135,10 @@ public class NicManagerImpl implements NicManager {
     NetworkType networkType = nic.getNicCompositionData().getNetworkType();
     String networkDescription = nic.getNicCompositionData().getNetworkDescription();
 
-    if(!nic.getNicCompositionData().getName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
-    {
-      ErrorCode errorCode = NicErrorBuilder.getNicNameFormatErrorBuilder(nic
-              .getNicCompositionData().getName(), VendorSoftwareProductConstants.NAME_PATTERN);
+    if (!nic.getNicCompositionData().getName()
+            .matches(VendorSoftwareProductConstants.NAME_PATTERN)) {
+      ErrorCode errorCode = NicErrorBuilder
+              .getNicNameFormatErrorBuilder(VendorSoftwareProductConstants.NAME_PATTERN);
 
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
               LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
@@ -151,6 +147,40 @@ public class NicManagerImpl implements NicManager {
       throw new CoreException(errorCode);
     }
 
+    validateNics(nic, listNics);
+
+    if (networkType.equals(NetworkType.Internal)) {
+      validateInternalNetworkType(nic, networkId, networkDescription);
+
+    } else if (networkType.equals(NetworkType.External)
+            && !(networkId == null || networkId.isEmpty())) {
+        final ErrorCode nicNetworkIdNotAllowedExternalNetworkErrorBuilder =
+            new NicNetworkIdNotAllowedExternalNetworkErrorBuilder().build();
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(),
+            nicNetworkIdNotAllowedExternalNetworkErrorBuilder.message());
+        throw new CoreException(nicNetworkIdNotAllowedExternalNetworkErrorBuilder);
+    }
+  }
+
+  private void validateInternalNetworkType(NicEntity nic, String networkId,
+                                           String networkDescription) {
+    if (!(networkId == null || networkId.isEmpty())) {
+          networkManager.getNetwork(nic.getVspId(), nic.getVersion(), networkId);
+    }
+
+    if (!(networkDescription == null || networkDescription.isEmpty())) {
+      final ErrorCode nicNetworkDescriptionErrorBuilder =
+          NicInternalNetworkErrorBuilder.getNetworkDescriptionInternalNetworkErrorBuilder();
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), nicNetworkDescriptionErrorBuilder.message());
+      throw new CoreException(nicNetworkDescriptionErrorBuilder);
+    }
+  }
+
+  private void validateNics(NicEntity nic, Collection<NicEntity> listNics) {
     listNics.forEach(nicEntity -> {
       Nic nicdata = nicEntity.getNicCompositionData();
       if (nic.getNicCompositionData().getName().equalsIgnoreCase(nicdata.getName())) {
@@ -165,40 +195,12 @@ public class NicManagerImpl implements NicManager {
       }
 
     });
-
-    if (networkType.equals(NetworkType.Internal)) {
-      if (!(networkId == null || networkId.equals(""))) {
-        //NetworkEntity ne = getNetwork(nic.getVspId(), activeVersion, networkId);
-        final CompositionEntityResponse<Network> network =
-            networkManager.getNetwork(nic.getVspId(), nic.getVersion(), networkId);
-      }
-
-      if (!(networkDescription == null || networkDescription.equals(""))) {
-        final ErrorCode nicNetworkDescriptionErrorBuilder =
-            NicInternalNetworkErrorBuilder.getNetworkDescriptionInternalNetworkErrorBuilder();
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), nicNetworkDescriptionErrorBuilder.message());
-        throw new CoreException(nicNetworkDescriptionErrorBuilder);
-      }
-
-    } else if (networkType.equals(NetworkType.External)) {
-      if (!(networkId == null || networkId.equals(""))) {
-        final ErrorCode nicNetworkIdNotAllowedExternalNetworkErrorBuilder =
-            new NicNetworkIdNotAllowedExternalNetworkErrorBuilder().build();
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(),
-            nicNetworkIdNotAllowedExternalNetworkErrorBuilder.message());
-        throw new CoreException(nicNetworkIdNotAllowedExternalNetworkErrorBuilder);
-      }
-    }
   }
 
   @Override
   public CompositionEntityResponse<Nic> getNic(String vspId, Version version, String componentId,
                                                String nicId) {
-    mdcDataDebugMessage
+    MDC_DATA_DEBUG_MESSAGE
         .debugEntryMessage("VSP id, component id, nic id", vspId, componentId, nicId);
 
     NicEntity nicEntity = getValidatedNic(vspId, version, componentId, nicId);
@@ -216,8 +218,8 @@ public class NicManagerImpl implements NicManager {
     response.setData(nic);
     response.setSchema(getNicCompositionSchema(schemaInput));
 
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", vspId, componentId, nicId);
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId, nicId);
 
     return response;
   }
@@ -234,8 +236,8 @@ public class NicManagerImpl implements NicManager {
 
   @Override
   public void deleteNic(String vspId, Version version, String componentId, String nicId) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id", vspId, componentId, nicId);
+    MDC_DATA_DEBUG_MESSAGE
+        .debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId, nicId);
 
     if (!vspInfoDao.isManual(vspId, version)) {
       final ErrorCode deleteNicErrorBuilder =
@@ -250,14 +252,14 @@ public class NicManagerImpl implements NicManager {
     NicEntity nicEntity = getValidatedNic(vspId, version, componentId, nicId);
     nicDao.delete(nicEntity);
 
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", vspId, componentId, nicId);
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId, nicId);
   }
 
   @Override
   public CompositionEntityValidationData updateNic(NicEntity nic) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id", nic.getVspId(), nic.getComponentId(),
+    MDC_DATA_DEBUG_MESSAGE
+        .debugEntryMessage(VSP_ID_COMPONENT_ID, nic.getVspId(), nic.getComponentId(),
             nic.getId());
 
     NicEntity retrieved =
@@ -267,10 +269,10 @@ public class NicManagerImpl implements NicManager {
     schemaInput.setManual(vspInfoDao.isManual(nic.getVspId(), nic.getVersion()));
     schemaInput.setNic(retrieved.getNicCompositionData());
 
-    if(schemaInput.isManual() && !nic.getNicCompositionData().getName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
-    {
-      ErrorCode errorCode = NicErrorBuilder.getNicNameFormatErrorBuilder(nic
-              .getNicCompositionData().getName(), VendorSoftwareProductConstants.NAME_PATTERN);
+    if (schemaInput.isManual() && !nic.getNicCompositionData().getName()
+            .matches(VendorSoftwareProductConstants.NAME_PATTERN)) {
+      ErrorCode errorCode = NicErrorBuilder
+              .getNicNameFormatErrorBuilder(VendorSoftwareProductConstants.NAME_PATTERN);
 
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
               LoggerTragetServiceName.UPDATE_NIC, ErrorLevel.ERROR.name(),
@@ -284,8 +286,8 @@ public class NicManagerImpl implements NicManager {
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
       nicDao.update(nic);
     }
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", nic.getVspId(), nic.getComponentId(),
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID, nic.getVspId(), nic.getComponentId(),
             nic.getId());
 
     return validationData;
@@ -294,8 +296,8 @@ public class NicManagerImpl implements NicManager {
   @Override
   public QuestionnaireResponse getNicQuestionnaire(String vspId, Version version,
                                                    String componentId, String nicId) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id", vspId, componentId, nicId);
+    MDC_DATA_DEBUG_MESSAGE
+        .debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId, nicId);
 
     QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
     NicEntity nicQuestionnaire = nicDao.getQuestionnaireData(vspId, version, componentId, nicId);
@@ -305,8 +307,8 @@ public class NicManagerImpl implements NicManager {
     questionnaireResponse.setData(nicQuestionnaire.getQuestionnaireData());
     questionnaireResponse.setSchema(getNicQuestionnaireSchema(null));
 
-    mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", vspId, componentId, nicId);
+    MDC_DATA_DEBUG_MESSAGE
+        .debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId, nicId);
 
     return questionnaireResponse;
   }
@@ -314,13 +316,13 @@ public class NicManagerImpl implements NicManager {
   @Override
   public void updateNicQuestionnaire(String vspId, Version version, String componentId,
                                      String nicId, String questionnaireData) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId, nicId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId, nicId);
 
     getNic(vspId, version, componentId, nicId);
 
     nicDao.updateQuestionnaireData(vspId, version, componentId, nicId, questionnaireData);
 
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId, nicId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId, nicId);
   }
 
   protected String getNicQuestionnaireSchema(SchemaTemplateInput schemaInput) {
