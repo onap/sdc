@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
 import org.apache.commons.collections4.MapUtils;
@@ -37,15 +53,15 @@ import java.util.Optional;
 
 public class OrchestrationTemplateProcessCsarHandler
     implements OrchestrationTemplateProcessHandler {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
-  private CandidateService candidateService =
-      CandidateServiceFactory.getInstance().createInterface();
-  ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
+  private static final Logger LOGGER = LoggerFactory
+          .getLogger(OrchestrationTemplateProcessCsarHandler.class);
+  private final CandidateService candidateService = CandidateServiceFactory
+          .getInstance().createInterface();
+  private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
 
   @Override
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
-                                                     OrchestrationTemplateCandidateData candidateData) {
+                                  OrchestrationTemplateCandidateData candidateData) {
     LOGGER.audit(
         AuditMessages.AUDIT_MSG + AuditMessages.CSAR_VALIDATION_STARTED + vspDetails.getId());
 
@@ -102,11 +118,13 @@ public class OrchestrationTemplateProcessCsarHandler
             OnboardingTypesEnum.CSAR, errors);
 
     orchestrationUtil.deleteUploadDataAndContent(vspDetails.getId(), vspDetails.getVersion());
-    orchestrationUtil.saveUploadData(vspDetails, candidateData, zipByteArrayInputStream.get(),
-            fileContentHandler, tree);
+    zipByteArrayInputStream.ifPresent(byteArrayInputStream -> orchestrationUtil
+            .saveUploadData(vspDetails, candidateData, byteArrayInputStream,
+            fileContentHandler, tree));
 
     ToscaServiceModel toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
-    orchestrationUtil.saveServiceModel(vspDetails.getId(), vspDetails.getVersion(), toscaServiceModel,
+    orchestrationUtil.saveServiceModel(vspDetails.getId(),
+            vspDetails.getVersion(), toscaServiceModel,
         toscaServiceModel);
 
   }
