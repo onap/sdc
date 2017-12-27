@@ -126,9 +126,6 @@ public class ToscaConverterImpl implements ToscaConverter {
                                          GlobalSubstitutionServiceTemplate gsst) {
         try {
             ServiceTemplateReaderService readerService = new ServiceTemplateReaderServiceImpl(csarFiles.get(key));
-            if (readerService == null) {
-                return;
-            }
             Object nodeTypes = readerService.getNodeTypes();
             if (nodeTypes instanceof Map) {
                 Map<String, NodeType> nodeTypeMap = (Map<String, NodeType>) nodeTypes;
