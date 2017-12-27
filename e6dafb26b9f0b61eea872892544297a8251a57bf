@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d940d258",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ProcessManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T14:07:40Z",
+      "side": 1,
+      "message": "This doesn\u0027t help a bit :( This actually just calls excetion.toString(), losing a lot of useful info about the problem such as the stack trace. You should have passed the original exception as a cause to CoreException.\n\nthrow new CoreException(new UploadInvalidErrorBuilder().build(), exception);",
+      "range": {
+        "startLine": 221,
+        "startChar": 0,
+        "endLine": 222,
+        "endChar": 71
+      },
+      "revId": "e6dafb26b9f0b61eea872892544297a8251a57bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
