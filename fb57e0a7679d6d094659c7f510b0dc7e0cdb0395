@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d9ec52ca",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationProcessFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T13:16:42Z",
+      "side": 1,
+      "message": "String updatedFileSuffix \u003d fileSuffix.toLowerCase().trim();\n\nThe idea is not to \"write\" into a parameter, but you don\u0027t always need to copy it into a local variable.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 63
+      },
+      "revId": "fb57e0a7679d6d094659c7f510b0dc7e0cdb0395",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
