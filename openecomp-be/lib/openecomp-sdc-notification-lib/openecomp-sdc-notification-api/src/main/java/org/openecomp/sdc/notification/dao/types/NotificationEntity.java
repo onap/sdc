@@ -139,6 +139,10 @@ public class NotificationEntity {
       return true;
     }
 
+    if (other == null){
+      return false;
+    }
+
     if (Objects.equals(getClass(), other.getClass())) {
       return false;
     }
