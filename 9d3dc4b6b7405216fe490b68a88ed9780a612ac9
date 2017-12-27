@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_541a496f",
+        "filename": "openecomp-be/backend/openecomp-sdc-item-permissions-manager/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/ItemPermissionsManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-27T14:38:19Z",
+      "side": 1,
+      "message": "calls to notifications framework should always be last call. move this line after your code",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 77,
+        "endChar": 87
+      },
+      "revId": "9d3dc4b6b7405216fe490b68a88ed9780a612ac9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b4206d9c",
+        "filename": "openecomp-be/backend/openecomp-sdc-item-permissions-manager/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/ItemPermissionsManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-27T14:38:19Z",
+      "side": 1,
+      "message": "what if the permission is \u0027Owner\u0027 but there are more the one users? I think an exception should be thrown here. It cannot stay as it is",
+      "range": {
+        "startLine": 78,
+        "startChar": 4,
+        "endLine": 80,
+        "endChar": 5
+      },
+      "revId": "9d3dc4b6b7405216fe490b68a88ed9780a612ac9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_743ae5ce",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/main/java/org/openecomp/sdc/versioning/ItemManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-27T14:38:19Z",
+      "side": 1,
+      "message": "remove \u0027Item\u0027 from function name. The class context is already item",
+      "range": {
+        "startLine": 20,
+        "startChar": 13,
+        "endLine": 20,
+        "endChar": 18
+      },
+      "revId": "9d3dc4b6b7405216fe490b68a88ed9780a612ac9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b4570d02",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/main/java/org/openecomp/sdc/versioning/dao/impl/zusammen/ItemZusammenDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-27T14:38:19Z",
+      "side": 1,
+      "message": "why this are not part of the class",
+      "range": {
+        "startLine": 101,
+        "startChar": 4,
+        "endLine": 103,
+        "endChar": 53
+      },
+      "revId": "9d3dc4b6b7405216fe490b68a88ed9780a612ac9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
