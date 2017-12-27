@@ -46,6 +46,7 @@ public final class ConfigurationRepository {
   private Set<String> namespaces = new HashSet<>();
   private LinkedHashMap<String, ConfigurationHolder> store =
       new LinkedHashMap<String, ConfigurationHolder>(16, 0.75f, true) {
+        @Override
         protected boolean removeEldestEntry(Map.Entry eldest) {
           try {
             return size() > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
@@ -96,7 +97,7 @@ public final class ConfigurationRepository {
 
   private void populateTenantsNamespace(String key, boolean sourcedFromDb) {
     String[] array = key.split(Constants.KEY_ELEMENTS_DELEMETER);
-    if (!array[1].toUpperCase().equals(Constants.DB_NAMESPACE)) {
+    if (!array[1].equalsIgnoreCase(Constants.DB_NAMESPACE)) {
       if (!sourcedFromDb) {
         dbAccessible = false;
       }
@@ -118,7 +119,7 @@ public final class ConfigurationRepository {
         populateTenantsNamespace(iterator.next(), true);
       }
     } catch (Exception exception) {
-      //exception.printStackTrace();
+      //Log this later
     }
   }
 
@@ -151,7 +152,7 @@ public final class ConfigurationRepository {
    * @throws Exception the exception
    */
   public Configuration getConfigurationFor(String tenant, String namespace) throws Exception {
-    ConfigurationHolder config = null;
+    ConfigurationHolder config;
     String module = tenant + Constants.KEY_ELEMENTS_DELEMETER + namespace;
     config = store.get(module);
     if (config == null) {
@@ -196,11 +197,11 @@ public final class ConfigurationRepository {
     ConfigurationHolder holder = store.get(key);
     if (holder == null) {
       if (dbAccessible) {
-        store.put(key,
-            holder = new ConfigurationHolder(ConfigurationUtils.getDbConfigurationBuilder(key)));
+        holder = new ConfigurationHolder(ConfigurationUtils.getDbConfigurationBuilder(key));
       } else {
-        store.put(key, holder = new ConfigurationHolder(new CombinedConfiguration()));
+        holder = new ConfigurationHolder(new CombinedConfiguration());
       }
+      store.put(key, holder);
     }
     holder.addOverrideConfiguration(file.getAbsolutePath(),
         ConfigurationUtils.getConfigurationBuilder(file, true));
@@ -349,14 +350,13 @@ public final class ConfigurationRepository {
           > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
                   .getInt("config.refresh.interval")) {
         Timestamp temp = getLastUpdateTimestampFor(namespace);
-        if (temp != null) {
-          if (lastConfigChangeTimestamp == null
-              || temp.getTime() > lastConfigChangeTimestamp.getTime()) {
-            builder.resetResult();
-            config = builder.getConfiguration();
-            lastConfigChangeTimestamp = temp;
-            getEffectiveConfiguration(config, overrideConfiguration.values());
-          }
+        if ((temp != null)
+            && (lastConfigChangeTimestamp == null
+            || temp.getTime() > lastConfigChangeTimestamp.getTime())) {
+          builder.resetResult();
+          config = builder.getConfiguration();
+          lastConfigChangeTimestamp = temp;
+          getEffectiveConfiguration(config, overrideConfiguration.values());
         }
         lastConfigurationBuildTime = new Timestamp(System.currentTimeMillis());
       }
@@ -374,9 +374,9 @@ public final class ConfigurationRepository {
           cc.addConfiguration(b.getConfiguration());
         }
         cc.addConfiguration(configuration);
-        return composite = cc;
+        composite = cc;
+        return composite;
       } catch (Exception exception) {
-        exception.printStackTrace();
         return null;
       }
     }
@@ -398,7 +398,7 @@ public final class ConfigurationRepository {
           timestamp = new Timestamp(Long.valueOf(((ArrayList) collection).get(0).toString()));
         }
       } catch (Exception exception) {
-        exception.printStackTrace();
+        //Log this later
       }
 
       return timestamp;
