@@ -5,6 +5,7 @@ public class ItemDto {
   private String type;
   private String name;
   private String description;
+  private String owner;
 
   public String getId() {
     return id;
@@ -36,5 +37,13 @@ public class ItemDto {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getOwner() {
+    return owner;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
   }
 }

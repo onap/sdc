@@ -7,6 +7,7 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
+import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -74,6 +75,9 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
     permissionsServices
         .updateItemPermissions(itemId, permission, addedUsersIds, removedUsersIds);
     sendNotifications(itemId, permission, addedUsersIds, removedUsersIds, currentUser);
+    if (permission.equals(PermissionTypes.Owner.name()) && addedUsersIds.size() == 1){
+      itemManager.updateItemOwner(itemId,addedUsersIds.iterator().next());
+    }
   }
 
   private void sendNotifications(String itemId, String permission, Set<String> addedUsersIds,

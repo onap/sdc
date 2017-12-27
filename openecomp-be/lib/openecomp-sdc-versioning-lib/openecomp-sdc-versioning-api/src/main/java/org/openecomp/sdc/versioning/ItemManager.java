@@ -17,4 +17,6 @@ public interface ItemManager {
   void updateVersionStatus(String itemId, VersionStatus addedVersionStatus,
                            VersionStatus removedVersionStatus);
 
+  void updateItemOwner(String itemId, String owner);
+
 }
