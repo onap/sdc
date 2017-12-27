@@ -11,7 +11,7 @@ public interface Configuration {
   /**
    * The constant tenant.
    */
-  public static ThreadLocal<String> tenant = new ThreadLocal<String>();
+  public static ThreadLocal<String> tenant = new ThreadLocal<>();
 
   /**
    * Sets tenant id.
