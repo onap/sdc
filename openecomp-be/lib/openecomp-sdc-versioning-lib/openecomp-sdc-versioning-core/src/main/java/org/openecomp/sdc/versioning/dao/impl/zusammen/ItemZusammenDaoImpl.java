@@ -70,6 +70,9 @@ public class ItemZusammenDaoImpl implements ItemDao {
       case InfoPropertyName.ITEM_TYPE:
         item.setType((String) propertyValue);
         break;
+      case InfoPropertyName.ITEM_OWNER:
+        item.setOwner((String) propertyValue);
+        break;
       case InfoPropertyName.ITEM_VERSIONS_STATUSES:
         for (Map.Entry<String, Number> statusCounter :
             ((Map<String, Number>) propertyValue).entrySet()) {
@@ -87,6 +90,7 @@ public class ItemZusammenDaoImpl implements ItemDao {
     info.setName(item.getName());
     info.setDescription(item.getDescription());
     info.addProperty(InfoPropertyName.ITEM_TYPE, item.getType());
+    info.addProperty(InfoPropertyName.ITEM_OWNER,item.getOwner());
     info.addProperty(InfoPropertyName.ITEM_VERSIONS_STATUSES, item.getVersionStatusCounters());
     item.getProperties().entrySet()
         .forEach(property -> info.addProperty(property.getKey(), property.getValue()));
@@ -96,6 +100,7 @@ public class ItemZusammenDaoImpl implements ItemDao {
   private static final class InfoPropertyName {
     private static final String ITEM_TYPE = "item_type";
     private static final String ITEM_VERSIONS_STATUSES = "item_versions_statuses";
+    private static final String ITEM_OWNER = "Owner";
 
     private InfoPropertyName() {
       throw new IllegalStateException("Constants class");

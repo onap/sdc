@@ -65,4 +65,15 @@ public class ItemManagerImpl implements ItemManager {
     }
     itemDao.update(item);
   }
+
+  @Override
+  public void updateOwner(String itemId, String owner){
+    Item item = get(itemId);
+    if (item == null) {
+      return;
+    }
+
+    item.setOwner(owner);
+    itemDao.update(item);
+  }
 }

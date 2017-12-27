@@ -11,5 +11,6 @@ public class MapItemToDto extends MappingBase<Item, ItemDto> {
     target.setType(source.getType());
     target.setName(source.getName());
     target.setDescription(source.getDescription());
+    target.setOwner(source.getOwner());
   }
 }

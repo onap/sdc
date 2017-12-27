@@ -35,6 +35,7 @@ public class VspDetailsDto extends VspRequestDto {
   private String candidateOnboardingOrigin;
   private String onboardingOrigin;
   private String networkPackageName;
+  private String owner;
 
   public String getId() {
     return id;
@@ -82,5 +83,13 @@ public class VspDetailsDto extends VspRequestDto {
 
   public void setNetworkPackageName(String networkPackageName) {
     this.networkPackageName = networkPackageName;
+  }
+
+  public String getOwner() {
+    return owner;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
   }
 }

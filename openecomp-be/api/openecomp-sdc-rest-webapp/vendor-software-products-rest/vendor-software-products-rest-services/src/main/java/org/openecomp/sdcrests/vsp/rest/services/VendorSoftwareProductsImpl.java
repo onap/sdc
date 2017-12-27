@@ -158,6 +158,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       case Manual:
         Item item = new MapVspDescriptionDtoToItem().applyMapping(vspRequestDto, Item.class);
         item.setType(ItemType.vsp.name());
+        item.setOwner(user);
         item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
 
         UniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
