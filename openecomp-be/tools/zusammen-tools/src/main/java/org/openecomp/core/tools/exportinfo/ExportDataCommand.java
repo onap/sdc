@@ -42,7 +42,7 @@ import static java.nio.file.Files.createDirectories;
 public final class ExportDataCommand {
     private static final Logger logger = LoggerFactory.getLogger(ExportDataCommand.class);
     public static final String JOIN_DELIMITER = "$#";
-    public static final String JOIN_DELIMITER_SPILTTER = "\\$\\#";
+    public static final String JOIN_DELIMITER_SPLITTER = "\\$\\#";
     public static final String MAP_DELIMITER = "!@";
     public static final String MAP_DELIMITER_SPLITTER = "\\!\\@";
     public static final int THREAD_POOL_SIZE = 4;
@@ -54,33 +54,33 @@ public final class ExportDataCommand {
         ExecutorService executor = null;
         try {
             CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
-            final Set<String> filteredItems = Sets.newHashSet(filterItem);
             Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
             initDir(rootDir);
-            Set<String> fis = filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
-
-            Map<String, List<String>> queries;
-            Yaml yaml = new Yaml();
-            try (InputStream is = ExportDataCommand.class.getResourceAsStream("/queries.yaml")) {
-                queries = (Map<String, List<String>>) yaml.load(is);
-            }
-            List<String> queriesList = queries.get("queries");
-            List<String> itemsColumns = queries.get("item_columns");
-            Set<String> vlms = new HashSet<>();
-            CountDownLatch doneQueries = new CountDownLatch(queriesList.size());
-            executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-            for (int i = 0; i < queriesList.size(); i++) {
-                executeQuery(queriesList.get(i), fis, itemsColumns.get(i), vlms, doneQueries, executor);
-            }
-            doneQueries.await();
-            if (!vlms.isEmpty()) {
-                CountDownLatch doneVmls = new CountDownLatch(queriesList.size());
-
-                for (int i = 0; i < queriesList.size(); i++) {
-                    executeQuery(queriesList.get(i), vlms, itemsColumns.get(i), null, doneVmls, executor);
+            try(Session session = CassandraSessionFactory.getSession()) {
+                final Set<String> filteredItems = Sets.newHashSet(filterItem);
+                Set<String> fis = filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
+                Map<String, List<String>> queries;
+                Yaml yaml = new Yaml();
+                try (InputStream is = ExportDataCommand.class.getResourceAsStream("/queries.yaml")) {
+                    queries = (Map<String, List<String>>) yaml.load(is);
                 }
+                List<String> queriesList = queries.get("queries");
+                List<String> itemsColumns = queries.get("item_columns");
+                Set<String> vlms = new HashSet<>();
+                CountDownLatch doneQueries = new CountDownLatch(queriesList.size());
+                executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+                for (int i = 0; i < queriesList.size(); i++) {
+                    executeQuery(session, queriesList.get(i), fis, itemsColumns.get(i), vlms, doneQueries, executor);
+                }
+                doneQueries.await();
+                if (!vlms.isEmpty()) {
+                    CountDownLatch doneVmls = new CountDownLatch(queriesList.size());
+                    for (int i = 0; i < queriesList.size(); i++) {
+                        executeQuery(session, queriesList.get(i), vlms, itemsColumns.get(i), null, doneVmls, executor);
+                    }
 
-                doneVmls.await();
+                    doneVmls.await();
+                }
             }
             zipPath(rootDir);
             FileUtils.forceDelete(rootDir.toFile());
@@ -95,9 +95,8 @@ public final class ExportDataCommand {
     }
 
 
-    private static boolean executeQuery(final String query, final Set<String> filteredItems, final String filteredColumn,
+    private static boolean executeQuery(final Session session, final String query, final Set<String> filteredItems, final String filteredColumn,
                                         final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
-        Session session = CassandraSessionFactory.getSession();
         ResultSetFuture resultSetFuture = session.executeAsync(query);
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
             @Override
