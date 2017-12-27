@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b99f0603",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ComputeManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T13:45:06Z",
+      "side": 1,
+      "message": "Well, I don\u0027t see any value in declaring it as a final local variable miles away from where it\u0027s being actually used.\n\nI think .withMessage(\"Composition entities may not be created / deleted for Vendor Software Product \"\n            + \"whose entities were uploaded\").build();\n\nis perfectly fine, and you see right away what the message will be.",
+      "revId": "57ad25ab47ecc460edade0ebb0e98b53400ee9ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
