@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b4a5cd05",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/java/org/openecomp/config/impl/CliConfigurationImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T14:51:11Z",
+      "side": 1,
+      "message": "Configuration.lookup() should be stored in a local variable.",
+      "revId": "a12601c1cdd7acf16aff365b6bde73d8c8ac24b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
