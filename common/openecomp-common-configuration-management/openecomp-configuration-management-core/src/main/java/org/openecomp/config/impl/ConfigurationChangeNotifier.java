@@ -2,6 +2,8 @@ package org.openecomp.config.impl;
 
 import static org.openecomp.config.ConfigurationUtils.isArray;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.config.ConfigurationUtils;
 import org.openecomp.config.Constants;
 import org.openecomp.config.api.ConfigurationChangeListener;
@@ -29,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -53,9 +54,14 @@ public final class ConfigurationChangeNotifier {
       Collections.synchronizedMap(new HashMap<>());
 
   static {
-    if (!Thread.currentThread().getStackTrace()[2].getClassName()
-        .equals(ConfigurationImpl.class.getName())) {
-      throw new RuntimeException("Illegal access.");
+    try {
+      Class clazz = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
+      if (!clazz.getCanonicalName()
+          .equals(ConfigurationImpl.class.getCanonicalName())) {
+        throw new RuntimeException("Illegal access.");
+      }
+    } catch (ClassNotFoundException cfe) {
+      throw new RuntimeException("Class not found while loading change notifier");
     }
   }
 
@@ -102,58 +108,71 @@ public final class ConfigurationChangeNotifier {
       boolean isTenantLocation) {
     try {
       Set<Path> paths = watchForChange(location);
-      if (paths != null) {
-        for (Path path : paths) {
-          File file = path.toAbsolutePath().toFile();
-          String repositoryKey = null;
-          if (ConfigurationUtils.isConfig(file) && file.isFile()) {
-            if (isTenantLocation) {
-              Collection<File> tenantsRoot =
-                  ConfigurationUtils.getAllFiles(new File(location), false, true);
-              for (File tenantRoot : tenantsRoot) {
-                if (file.getAbsolutePath().startsWith(tenantRoot.getAbsolutePath())) {
-                  repositoryKey = ConfigurationUtils.getConfigurationRepositoryKey(
-                      (tenantRoot.getName() + Constants.TENANT_NAMESPACE_SAPERATOR
-                          + ConfigurationUtils.getNamespace(file))
-                          .split(Constants.TENANT_NAMESPACE_SAPERATOR));
-                }
-              }
-            } else {
-              repositoryKey = ConfigurationUtils.getConfigurationRepositoryKey(file);
-            }
-            AggregateConfiguration config = inMemoryConfig.get(repositoryKey);
-            if (config != null) {
-              LinkedHashMap origConfig = ConfigurationUtils.toMap(config.getFinalConfiguration());
-              config.addConfig(file);
-              LinkedHashMap latestConfig = ConfigurationUtils.toMap(config.getFinalConfiguration());
-              Map map = ConfigurationUtils.diff(origConfig, latestConfig);
-              String[] tenantNamespaceArray =
-                  repositoryKey.split(Constants.KEY_ELEMENTS_DELEMETER);
-              updateConfigurationValues(tenantNamespaceArray[0], tenantNamespaceArray[1], map);
-            }
-          } else {
-            for (String configKey : inMemoryConfig.keySet()) {
-              repositoryKey = configKey;
-              AggregateConfiguration config = inMemoryConfig.get(repositoryKey);
-              if (config.containsConfig(file)) {
-                LinkedHashMap origConfig = ConfigurationUtils.toMap(config.getFinalConfiguration());
-                config.removeConfig(file);
-                LinkedHashMap latestConfig =
-                        ConfigurationUtils.toMap(config.getFinalConfiguration());
-                Map map = ConfigurationUtils.diff(origConfig, latestConfig);
-                String[] tenantNamespaceArray =
-                        repositoryKey.split(Constants.KEY_ELEMENTS_DELEMETER);
-                updateConfigurationValues(tenantNamespaceArray[0], tenantNamespaceArray[1],
-                        map);
-              }
-            }
-          }
+      if (paths.isEmpty()) {
+        return;
+      }
+      for (Path path : paths) {
+        File file = path.toAbsolutePath().toFile();
+        if (ConfigurationUtils.isConfig(file) && file.isFile()) {
+          handleFileConfiguration(inMemoryConfig, file, location, isTenantLocation);
+        } else {
+          handleOtherConfiguration(inMemoryConfig, file);
         }
       }
     } catch (ClosedWatchServiceException exception) {
       // do nothing.
     } catch (Exception exception) {
-      exception.printStackTrace();
+      //Log this later
+    }
+  }
+
+  private void handleFileConfiguration(Map<String, AggregateConfiguration> inMemoryConfig,
+                                       File file, String location, boolean isTenantLocation)
+      throws Exception {
+    String repositoryKey;
+    repositoryKey = ConfigurationUtils.getConfigurationRepositoryKey(file);
+    if (isTenantLocation) {
+      Collection<File> tenantsRoot =
+          ConfigurationUtils.getAllFiles(new File(location), false, true);
+      for (File tenantRoot : tenantsRoot) {
+        if (file.getAbsolutePath().startsWith(tenantRoot.getAbsolutePath())) {
+          repositoryKey = ConfigurationUtils.getConfigurationRepositoryKey(
+              (tenantRoot.getName() + Constants.TENANT_NAMESPACE_SAPERATOR
+                  + ConfigurationUtils.getNamespace(file))
+                  .split(Constants.TENANT_NAMESPACE_SAPERATOR));
+        }
+      }
+    }
+    AggregateConfiguration config = inMemoryConfig.get(repositoryKey);
+    if (config != null) {
+      LinkedHashMap origConfig = ConfigurationUtils.toMap(config.getFinalConfiguration());
+      config.addConfig(file);
+      LinkedHashMap latestConfig = ConfigurationUtils.toMap(config.getFinalConfiguration());
+      Map map = ConfigurationUtils.diff(origConfig, latestConfig);
+      String[] tenantNamespaceArray =
+          repositoryKey.split(Constants.KEY_ELEMENTS_DELEMETER);
+      updateConfigurationValues(tenantNamespaceArray[0], tenantNamespaceArray[1], map);
+    }
+  }
+
+  private void handleOtherConfiguration(Map<String, AggregateConfiguration> inMemoryConfig,
+                                        File file)
+      throws Exception {
+    String repositoryKey;
+    for (String configKey : inMemoryConfig.keySet()) {
+      repositoryKey = configKey;
+      AggregateConfiguration config = inMemoryConfig.get(repositoryKey);
+      if (config.containsConfig(file)) {
+        LinkedHashMap origConfig = ConfigurationUtils.toMap(config.getFinalConfiguration());
+        config.removeConfig(file);
+        LinkedHashMap latestConfig =
+            ConfigurationUtils.toMap(config.getFinalConfiguration());
+        Map map = ConfigurationUtils.diff(origConfig, latestConfig);
+        String[] tenantNamespaceArray =
+            repositoryKey.split(Constants.KEY_ELEMENTS_DELEMETER);
+        updateConfigurationValues(tenantNamespaceArray[0], tenantNamespaceArray[1],
+            map);
+      }
     }
   }
 
@@ -175,20 +194,13 @@ public final class ConfigurationChangeNotifier {
   public void pollFilesystemAndUpdateNodeSpecificConfigurationIfRequired(String location) {
     try {
       Set<Path> paths = watchForChange(location);
-      if (paths != null) {
+      if (!paths.isEmpty()) {
         for (Path path : paths) {
-          File file = path.toAbsolutePath().toFile();
-
-          if (ConfigurationUtils.isConfig(file)) {
-            String repositoryKey = ConfigurationUtils.getConfigurationRepositoryKey(file);
-            ConfigurationRepository.lookup().populateOverrideConfigurtaion(repositoryKey, file);
-          } else {
-            ConfigurationRepository.lookup().removeOverrideConfigurtaion(file);
-          }
+          handleNodeSpecificConfigChangeForPath(path);
         }
       }
     } catch (Exception exception) {
-      exception.printStackTrace();
+      //Log this later
     }
   }
 
@@ -250,8 +262,8 @@ public final class ConfigurationChangeNotifier {
     List<NotificationData> list = store.get(key);
     if (list != null) {
       list.stream()
-              .filter(NotificationData::isChanged)
-              .forEach(notificationData -> notificationExecutor.submit(() -> sendNotification(notificationData)));
+          .filter(NotificationData::isChanged)
+          .forEach(notificationData -> notificationExecutor.submit(() -> sendNotification(notificationData)));
     }
   }
 
@@ -259,18 +271,32 @@ public final class ConfigurationChangeNotifier {
     try {
       notificationData.dispatchNotification();
     } catch (Exception exception) {
-      exception.printStackTrace();
+      //Log this later
+    }
+  }
+
+  private void handleNodeSpecificConfigChangeForPath(Path path) throws Exception {
+    File file = path.toAbsolutePath().toFile();
+    if (ConfigurationUtils.isConfig(file)) {
+      String repositoryKey = ConfigurationUtils.getConfigurationRepositoryKey(file);
+      ConfigurationRepository.lookup().populateOverrideConfigurtaion(repositoryKey, file);
+    } else {
+      ConfigurationRepository.lookup().removeOverrideConfigurtaion(file);
     }
   }
 
   private Set<Path> watchForChange(String location) throws Exception {
-    if (location == null || location.trim().length() == 0) {
-      return null;
+    Set<Path> toReturn = new HashSet<>();
+    if (StringUtils.isNotEmpty(location)) {
+      File file = new File(location);
+      if (file.exists()) {
+        toReturn = watchFileForChange(location, file);
+      }
     }
-    File file = new File(location);
-    if (!file.exists()) {
-      return null;
-    }
+    return toReturn;
+  }
+
+  private Set<Path> watchFileForChange(String location, File file) throws Exception {
     Path path = file.toPath();
     Set<Path> toReturn = new HashSet<>();
     try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
@@ -281,33 +307,46 @@ public final class ConfigurationChangeNotifier {
         dir.toPath().register(watchService, StandardWatchEventKinds.ENTRY_MODIFY,
             StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
       }
-      while (true) {
-        final WatchKey wk = watchService.take();
-        Thread.sleep(ConfigurationRepository.lookup()
-            .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-            .getLong("event.fetch.delay"));
-        for (WatchEvent<?> event : wk.pollEvents()) {
-          Object context = event.context();
-          if (context instanceof Path) {
-            File newFile = new File(((Path) wk.watchable()).toFile(), context.toString());
-            if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-              if (newFile.isDirectory()) {
-                newFile.toPath().register(watchService, StandardWatchEventKinds.ENTRY_MODIFY,
-                    StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
-                continue;
-              }
-            } else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-              if (newFile.isDirectory()) {
-                continue;
-              }
-            }
-            toReturn.add(newFile.toPath());
-          }
-        }
-        if (toReturn.isEmpty()) {
-          continue;
-        }
+      toReturn = listenAndFetchFileChangeEvents(watchService);
+    }
+    return toReturn;
+  }
+
+  private Set<Path> listenAndFetchFileChangeEvents(WatchService watchService) throws
+      Exception {
+    Set<Path> toReturn = null;
+    while (true) {
+      final WatchKey wk = watchService.take();
+      Thread.sleep(ConfigurationRepository.lookup()
+          .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
+          .getLong("event.fetch.delay"));
+      toReturn = handlePolledEvents(watchService, wk);
+      if (CollectionUtils.isNotEmpty(toReturn)) {
         break;
+      }
+    }
+    return toReturn;
+  }
+
+  private Set<Path> handlePolledEvents(WatchService watchService, WatchKey wk) throws Exception {
+    Set<Path> toReturn = new HashSet<>();
+    for (WatchEvent<?> event : wk.pollEvents()) {
+      Object context = event.context();
+      if (context instanceof Path) {
+        File newFile = new File(((Path) wk.watchable()).toFile(), context.toString());
+        boolean isFileChangeEvent = true;
+        if ((event.kind() == StandardWatchEventKinds.ENTRY_CREATE)
+            && newFile.isDirectory()) {
+          newFile.toPath().register(watchService, StandardWatchEventKinds.ENTRY_MODIFY,
+              StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
+          isFileChangeEvent = false;
+        } else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY
+            && newFile.isDirectory()) {
+          isFileChangeEvent = false;
+        }
+        if (isFileChangeEvent) {
+          toReturn.add(newFile.toPath());
+        }
       }
     }
     return toReturn;
@@ -376,12 +415,26 @@ public final class ConfigurationChangeNotifier {
         return false;
       }
       NotificationData nd = (NotificationData) obj;
-      return Objects.equals(tenant, nd.tenant)
-              && Objects.equals(namespace, nd.namespace)
-              && Objects.equals(key, nd.key)
-              && Objects.equals(myself, nd.myself)
-              && Objects.equals(currentValue, nd.currentValue) // it's either String or List<String>
-              && isArray == nd.isArray;
+      if (!Objects.equals(tenant, nd.tenant)) {
+        return false;
+      }
+      if (!Objects.equals(namespace, nd.namespace)) {
+        return false;
+      }
+      if (!Objects.equals(key, nd.key)) {
+        return false;
+      }
+      if (!Objects.equals(myself, nd.myself)) {
+        return false;
+      }
+      if (!Objects.equals(currentValue, nd.currentValue)) {
+        // it's either String or List<String>
+        return false;
+      }
+      if (!Objects.equals(isArray, nd.isArray)) {
+        return false;
+      }
+      return true;
     }
 
     @Override
@@ -390,29 +443,21 @@ public final class ConfigurationChangeNotifier {
     }
 
     /**
-     * Is changed boolean.
+     * Detects if the configuration has changed.
      *
-     * @return the boolean
+     * @return true if value is changed and false otherwise
      */
     public boolean isChanged() {
       Object latestValue;
       try {
         if (isArray) {
           latestValue = ConfigurationManager.lookup().getAsStringValues(tenant, namespace, key);
-        } else {
-          latestValue = ConfigurationManager.lookup().getAsString(tenant, namespace, key);
-        }
-        if (!isArray) {
-          return !currentValue.equals(latestValue);
-        } else {
           Collection<String> oldCollection = (Collection<String>) currentValue;
           Collection<String> newCollection = (Collection<String>) latestValue;
-          for (String val : oldCollection) {
-            if (!newCollection.remove(val)) {
-              return true;
-            }
-          }
-          return !newCollection.isEmpty();
+          return !CollectionUtils.isEqualCollection(oldCollection, newCollection);
+        } else {
+          latestValue = ConfigurationManager.lookup().getAsString(tenant, namespace, key);
+          return !currentValue.equals(latestValue);
         }
       } catch (Exception exception) {
         return false;
@@ -426,7 +471,7 @@ public final class ConfigurationChangeNotifier {
      */
     public void dispatchNotification() throws Exception {
       Method method = null;
-      Vector<Object> parameters = null;
+      List<Object> parameters = null;
       try {
         Object latestValue;
         if (isArray) {
@@ -437,29 +482,11 @@ public final class ConfigurationChangeNotifier {
         Method[] methods = myself.getClass().getDeclaredMethods();
         if (methods != null && methods.length > 0) {
           method = methods[0];
-          int paramCount = method.getParameterCount();
-          parameters = new Vector<>();
-          if (paramCount > 4) {
-            if (tenant.equals(Constants.DEFAULT_TENANT)) {
-              parameters.add(null);
-            } else {
-              parameters.add(tenant);
-            }
-          }
-          if (paramCount > 3) {
-            if (namespace.equals(Constants.DEFAULT_NAMESPACE)) {
-              parameters.add(null);
-            } else {
-              parameters.add(namespace);
-            }
-          }
-          parameters.add(key);
-          parameters.add(currentValue);
-          parameters.add(latestValue);
+          parameters = getMethodParameters(method, latestValue);
           method.setAccessible(true);
         }
       } catch (Exception exception) {
-        exception.printStackTrace();
+        //log this later
       } finally {
         isArray = isArray(tenant, namespace, key, Hint.DEFAULT.value());
         if (isArray) {
@@ -467,10 +494,33 @@ public final class ConfigurationChangeNotifier {
         } else {
           currentValue = ConfigurationManager.lookup().getAsString(tenant, namespace, key);
         }
-        if (method != null && parameters != null) {
+        if (method != null) {
           method.invoke(myself, parameters.toArray());
         }
       }
+    }
+
+    private List<Object> getMethodParameters(Method method, Object latestValue) {
+      int paramCount = method.getParameterCount();
+      List<Object> parameters = Collections.synchronizedList(new ArrayList<>());
+      if (paramCount > 4) {
+        if (tenant.equals(Constants.DEFAULT_TENANT)) {
+          parameters.add(null);
+        } else {
+          parameters.add(tenant);
+        }
+      }
+      if (paramCount > 3) {
+        if (namespace.equals(Constants.DEFAULT_NAMESPACE)) {
+          parameters.add(null);
+        } else {
+          parameters.add(namespace);
+        }
+      }
+      parameters.add(key);
+      parameters.add(currentValue);
+      parameters.add(latestValue);
+      return parameters;
     }
   }
 }
