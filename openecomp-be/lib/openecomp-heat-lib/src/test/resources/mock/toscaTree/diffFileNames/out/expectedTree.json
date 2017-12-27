@@ -1,0 +1,23 @@
+{
+  "nested": [
+    {
+      "fileName": "TOSCA-Metadata",
+      "nested": [
+        {
+          "fileName": "TOSCA.meta"
+        }
+      ]
+    },
+    {
+      "fileName": "MainServiceTemplate.yaml"
+    },
+    {
+      "fileName": "Definitions",
+      "nested": [
+        {
+          "fileName": "GlobalSubstitutionTypesServiceTemplate.yaml"
+        }
+      ]
+    }
+  ]
+}
