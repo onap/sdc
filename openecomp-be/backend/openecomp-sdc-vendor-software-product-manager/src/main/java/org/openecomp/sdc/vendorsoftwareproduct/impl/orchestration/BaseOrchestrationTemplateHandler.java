@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
 import org.apache.commons.collections4.MapUtils;
@@ -23,7 +39,8 @@ import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.ge
 public abstract class BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
   protected static final Logger logger =
       LoggerFactory.getLogger(BaseOrchestrationTemplateHandler.class);
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  protected static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final String VSP_ID = "VSP id";
 
   @Override
   public UploadFileResponse upload(VspDetails vspDetails, InputStream fileToUpload,
@@ -42,6 +59,22 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
 
     Optional<FileContentHandler> optionalContentMap =
         getFileContentMap(uploadFileResponse, uploadedFileData);
+    validateOptionalContentMap(vspDetails,
+            fileSuffix, networkPackageName,
+            candidateService, uploadFileResponse,
+            uploadedFileData, optionalContentMap);
+
+    mdcDataDebugMessage.debugExitMessage(VSP_ID, vspDetails.getId());
+    return uploadFileResponse;
+
+  }
+
+  private boolean validateOptionalContentMap(VspDetails vspDetails, String fileSuffix,
+                                             String networkPackageName,
+                                             CandidateService candidateService,
+                                             UploadFileResponse uploadFileResponse,
+                                             byte[] uploadedFileData,
+                                             Optional<FileContentHandler> optionalContentMap) {
     if (!optionalContentMap.isPresent()) {
       logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
           getHandlerType().toString()));
@@ -49,22 +82,17 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
           getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
               getHandlerType().toString())));
 
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
-      return uploadFileResponse;
+      mdcDataDebugMessage.debugExitMessage(VSP_ID, vspDetails.getId());
+      return true;
     }
 
     if (!MapUtils.isEmpty(uploadFileResponse.getErrors())) {
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
-      return uploadFileResponse;
+      mdcDataDebugMessage.debugExitMessage(VSP_ID, vspDetails.getId());
+      return true;
     }
-    if (updateCandidateData(vspDetails, uploadedFileData, optionalContentMap.get(), fileSuffix,
-        networkPackageName, candidateService, uploadFileResponse)) {
-      return uploadFileResponse;
-    }
-
-    mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
-    return uploadFileResponse;
-
+    return updateCandidateData(vspDetails, uploadedFileData,
+            optionalContentMap.get(), fileSuffix,
+            networkPackageName, candidateService, uploadFileResponse);
   }
 
   protected abstract boolean updateCandidateData(VspDetails vspDetails,
