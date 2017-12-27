@@ -12,12 +12,16 @@ public class NicErrorBuilder {
     private static final String NIC_NAME_FORMAT_MSG = "Field does not conform to predefined criteria"
             + ": name : must match %s";
 
+    private NicErrorBuilder() {
+
+    }
+
     /**
      * Gets image name format error builder.
      *
      * @return the image name format error builder
      */
-    public static ErrorCode getNicNameFormatErrorBuilder(String imageName, String pattern) {
+    public static ErrorCode getNicNameFormatErrorBuilder(String pattern) {
         ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
         builder.withId(NIC_NAME_FORMAT_NOT_ALLOWED);
         builder.withCategory(ErrorCategory.APPLICATION);
