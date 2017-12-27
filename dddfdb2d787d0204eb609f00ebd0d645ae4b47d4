@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f9bcae6e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ImageManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-27T13:49:13Z",
+      "side": 1,
+      "message": "You\u0027re losing very important information about the origin of the exception here. Pass it to the CoreException as a cause. Like throw new CoreException(errorCode, exception).",
+      "range": {
+        "startLine": 248,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 59
+      },
+      "revId": "dddfdb2d787d0204eb609f00ebd0d645ae4b47d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
