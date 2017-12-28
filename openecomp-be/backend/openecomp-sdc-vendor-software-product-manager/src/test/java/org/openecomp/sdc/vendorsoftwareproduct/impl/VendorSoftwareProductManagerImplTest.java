@@ -157,96 +157,6 @@ public class VendorSoftwareProductManagerImplTest {
   public void tearDown(){
     vendorSoftwareProductManager = null;
   }
-/*
-  @Test
-  public void testListWhenNone() {
-    doReturn(new HashMap<>()).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
-    List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(null);
-    Assert.assertEquals(vsps.size(), 0);
-  }
-
-  @Test
-  public void testList() {
-    String vsp1id = "vsp1_id";
-    String vsp2id = "vsp2_id";
-    Map<String, VersionInfo> vspsTobeReturned = new HashMap<>();
-
-    VersionInfo versionInfo1 = new VersionInfo();
-    versionInfo1.setActiveVersion(VERSION01);
-    vspsTobeReturned.put(vsp1id, versionInfo1);
-
-    VersionInfo versionInfo2 = new VersionInfo();
-    versionInfo2.setActiveVersion(VERSION10);
-    vspsTobeReturned.put(vsp2id, versionInfo2);
-
-    doReturn(vspsTobeReturned).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
-
-    VspDetails vsp1 = new VspDetails(vsp1id, VERSION01);
-    vsp1.setWritetimeMicroSeconds(8L);
-    doReturn(vsp1).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
-
-    List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(null);
-    Assert.assertEquals(vsps.size(), 2);
-  }
-
-  @Test
-  public void testListFinalsWhenNone() {
-    String vsp1id = "vsp1_id";
-    String vsp2id = "vsp2_id";
-    Map<String, VersionInfo> vspsTobeReturned = new HashMap<>();
-
-    VersionInfo versionInfo1 = new VersionInfo();
-    versionInfo1.setActiveVersion(VERSION01);
-    vspsTobeReturned.put(vsp1id, versionInfo1);
-
-    VersionInfo versionInfo2 = new VersionInfo();
-    versionInfo2.setActiveVersion(VERSION10);
-    vspsTobeReturned.put(vsp2id, versionInfo2);
-
-    doReturn(vspsTobeReturned).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
-
-    List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(VersionStatus.Certified.name());
-    Assert.assertEquals(vsps.size(), 0);
-  }
-
-  @Test
-  public void testListFinals() {
-    String vsp1id = "vsp1_id";
-    String vsp2id = "vsp2_id";
-    Map<String, VersionInfo> vspsTobeReturned = new HashMap<>();
-
-    VersionInfo versionInfo1 = new VersionInfo();
-    versionInfo1.setActiveVersion(VERSION01);
-    vspsTobeReturned.put(vsp1id, versionInfo1);
-
-    VersionInfo versionInfo2 = new VersionInfo();
-    versionInfo2.setActiveVersion(new Version(1, 3));
-    versionInfo2.setLatestFinalVersion(VERSION10);
-    vspsTobeReturned.put(vsp2id, versionInfo2);
-
-    doReturn(vspsTobeReturned).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
-
-    VspDetails vsp2 = new VspDetails(vsp2id, VERSION10);
-    vsp2.setWritetimeMicroSeconds(8L);
-    doReturn(vsp2).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
-
-    List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(VersionStatus.Certified.name());
-    Assert.assertEquals(vsps.size(), 1);
-  }*/
 
 
   @Test
@@ -585,107 +495,6 @@ public class VendorSoftwareProductManagerImplTest {
       Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
     }
   }
-/*
-  @Test
-  public void testEnrichModelInSubmit() {
-    UniqueValueUtil
-        .deleteUniqueValue(VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME,
-            "VSP_syb");
-    VspDetails vspDetails = vendorSoftwareProductManager.createVsp(
-        createVspDetails(null, null, "VSP_syb", "Test-vsp_syb", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "456", null), USER1);
-    String id = vspDetails.getId();
-
-    //upload file
-    InputStream zis = getFileInputStream("/vspmanager/zips/fullComposition.zip");
-    candidateManager.upload(id, VERSION01, zis, USER1);
-    OrchestrationTemplateActionResponse uploadFileResponse =
-        candidateManager.process(id, VERSION01, USER1);
-
-    //check in
-    vendorSoftwareProductManager.checkin(id, USER1);
-    //submit
-    try {
-      ValidationResponse result = vendorSoftwareProductManager.submit(id, USER1);
-    } catch (IOException exception) {
-      Assert.fail();
-    }
-    VersionedVendorSoftwareProductInfo details =
-        vendorSoftwareProductManager.getVsp(id, null, USER1);
-    Collection<ComponentEntity> components =vendorSoftwareProductManager
-        .listComponents(id, details.getVersionInfo().getVersion(), USER1);
-
-    ToscaServiceModel model =
-        (ToscaServiceModel) EnrichedServiceModelDaoFactory.getInstance().createInterface()
-            .getServiceModel(id, details.getVersionInfo().getVersion());
-
-    Map<String, CapabilityDefinition> capabilities = new HashMap<>();
-    for (ComponentEntity component : components) {
-      model.getServiceTemplates().
-          entrySet().
-          stream().
-          filter(entryValue -> entryValue.getValue() != null &&
-              entryValue.getValue().getNode_types() != null &&
-              entryValue.getValue().
-                  getNode_types().
-                  containsKey(component.getComponentCompositionData().getName())).
-          forEach(entryValue -> entryValue.getValue().getNode_types().
-              values().
-              stream().
-              filter(type -> MapUtils.isNotEmpty(type.getCapabilities())).
-              forEach(type -> type.getCapabilities().
-                  entrySet().
-                  forEach(entry -> addCapability(entryValue.getKey(), capabilities, entry.getKey(),
-                      entry.getValue()))));
-
-    }
-
-    Assert.assertNotNull(capabilities);
-  }
-
-  @Test(dependsOnMethods = {"testCreatePackage"})
-  public void testEnrichedFilesDeletedOnNewUpload() throws IOException {
-    Version activeVersion;
-
-    createPackageFromUpload(VSP_ID, USER1, "/fullComposition");
-    activeVersion = vendorSoftwareProductManager.getVsp(VSP_ID, null, USER1).getVersionInfo()
-        .getVersion();
-
-    List<ServiceArtifact> firstExternalArtifacts = enrichedServiceModelDaoMock
-        .getExternalArtifacts(VSP_ID, activeVersion);
-    ToscaServiceModel firstServiceModel = enrichedServiceModelDaoMock.getServiceModel(VSP_ID,
-        activeVersion);
-
-    createPackageFromUpload(VSP_ID, USER1, "/emptyComposition");
-    activeVersion = vendorSoftwareProductManager.getVsp(VSP_ID, null, USER1).getVersionInfo()
-        .getVersion();
-
-    List<ServiceArtifact> secondExternalArtifacts = enrichedServiceModelDaoMock
-        .getExternalArtifacts(VSP_ID, activeVersion);
-    ToscaServiceModel secondServiceModel = enrichedServiceModelDaoMock.getServiceModel(VSP_ID,
-        activeVersion);
-
-    Assert.assertNotEquals(firstExternalArtifacts, secondExternalArtifacts);
-    Assert.assertNotEquals(firstServiceModel, secondServiceModel);
-
-  }
-
-  @Test(dependsOnMethods = {"testMibsDeletedInCsar"})
-  public void testServiceTemplatesAreDeletedInCsarOnNewUpload() throws IOException {
-    String nestedPath = "Definitions" + File.separator + "nested";
-
-    uploadFileAndProcess(VSP_ID, USER1, "/vspmanager/zips/fullCompositionNested.zip");
-    checkinSubmitCreatePackage(VSP_ID, USER1);
-    List<String> nestedFileNamesServiceTemplates =
-        getWantedFileNamesFromCsar(nestedPath);
-
-    uploadFileAndProcess(VSP_ID, USER1, "/vspmanager/zips/fullComposition.zip");
-    checkinSubmitCreatePackage(VSP_ID, USER1);
-    List<String> emptyNestedNamesList = getWantedFileNamesFromCsar(nestedPath);
-
-    Assert.assertEquals(emptyNestedNamesList.size(), 0);
-    Assert.assertNotEquals(emptyNestedNamesList.size(), nestedFileNamesServiceTemplates.size());
-  }*/
 
   private List<String> getWantedFileNamesFromCsar(String pathInCsar)
       throws IOException {
@@ -788,11 +597,6 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertNotNull(uploadData);
   }
 
-  private void addCapability(String entryValueKey, Map<String, CapabilityDefinition> capabilities,
-                             String key, CapabilityDefinition value) {
-
-    capabilities.put(entryValueKey + "_" + key, value);
-  }
 
   public InputStream getFileInputStream(String fileName) {
     URL url = this.getClass().getResource(fileName);
@@ -804,30 +608,6 @@ public class VendorSoftwareProductManagerImplTest {
     }
   }
 
-/*  private void assertVSPInWantedLocationInVSPList(String vspId, int location, String user) {
-    List<VersionedVendorSoftwareProductInfo> vspList =
-        vendorSoftwareProductManager.listVsps(null);
-    Assert.assertEquals(vspList.get(location).getVspDetails().getId(), vspId);
-  }*/
-
-
-  //  private void assertInfoArtifactIsInRightPathInCsar(String vspId, String zipFileName)
-//      throws IOException {
-//    ZipInputStream inputZipStream = new ZipInputStream(new FileInputStream(new File(zipFileName)));
-//    boolean isInfoArtifactInZip = false;
-//
-//    ZipEntry zipEntry;
-//    while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-//      String currentEntryName = zipEntry.getName();
-//      if(currentEntryName.equals("Artifacts\\Informative\\Guide\\VSP_" +
-//          vspId + "_Information.txt")){
-//        isInfoArtifactInZip = true;
-//        break;
-//      }
-//    }
-//
-//    Assert.assertTrue(isInfoArtifactInZip);
-//  }
   static VspDetails createVspDetails(String id, Version version, String name, String desc,
                                      String vendorName, String vlm, String icon,
                                      String category, String subCategory,
@@ -862,43 +642,6 @@ public class VendorSoftwareProductManagerImplTest {
   }
 
 
-//    @Test
-//    public void testDownloadFile() throws IOException {
-//        VspDetails expectedVsp = VSPCommon.createVspDetails(null, null, String.format("VSP-test-%s", vlm1Id), "Test-vsp", "vendorName", "vlm1Id", "icon", "category", "subCategory", "123", null);
-//        VspDetails createdVsp = vendorSoftwareProductManager.createVsp(expectedVsp, USER1);
-//
-//        id005 = createdVsp.getId();
-//        Assert.assertNotNull(id005);
-//        Assert.assertNotNull(createdVsp.getVersion());
-//
-//        try (InputStream zipInputStream = new ZipFileUtils().getZipInputStream("/legalUploadWithWarning")) {
-//
-//            UploadFileResponse uploadFileResponse = vendorSoftwareProductManager.upload(id005, zipInputStream, USER1);
-//            vendorSoftwareProductManager.process(id005, USER1);
-//            Optional<File> fileCandidate = vendorSoftwareProductManager.get(id005, USER1);
-//
-//            File latestHeatPackage = fileCandidate.get();
-//
-//            zipInputStream.reset();
-//            byte[] uploaded = IOUtils.toByteArray(zipInputStream);
-//
-//            Optional<FileContentHandler> zipContentMap = vendorSoftwareProductManager.getZipContentMap(uploadFileResponse, uploaded);
-//            FileContentHandler fileContentHandler = new FileContentHandler();
-//            if(zipContentMap.isPresent()){
-//                 fileContentHandler = zipContentMap.get();
-//            }
-//
-//            uploaded = IOUtils.toByteArray(fileContentHandler.getFiles().values());
-//
-//            byte[] downloaded;
-//            try (BufferedInputStream fileStream = new BufferedInputStream(new FileInputStream(latestHeatPackage))) {
-//                downloaded = IOUtils.toByteArray(fileStream);
-//            }
-//
-//            Assert.assertTrue(Arrays.equals(uploaded, downloaded));
-//        }
-//    }
-
   // todo ********************** move to common **************************************
 
   private void mockVersioning(VersionableEntityAction action) {
@@ -909,20 +652,4 @@ public class VendorSoftwareProductManagerImplTest {
         action);
   }
 
-  private void mockVersioningEntityNotExist(VersionableEntityAction action, String vspId) {
-    doThrow(new CoreException(new EntityNotExistErrorBuilder(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, vspId).build()))
-        .when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, vspId, USER1,
-        action);
-  }
-
-  private void MockVersioningEntityLocked(VersionableEntityAction action) {
-    doThrow(new CoreException(new EditOnEntityLockedByOtherErrorBuilder(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1)
-        .build()))
-        .when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER2,
-        action);
-  }
 }
