@@ -20,15 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import com.att.automation.common.report_portal_integration.annotations.Step;
+import com.aventstack.extentreports.Status;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -40,6 +33,7 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
@@ -54,7 +48,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
-import com.aventstack.extentreports.Status;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.Assert.*;
 
 public final class VfVerificator {
 	
@@ -77,7 +76,8 @@ public final class VfVerificator {
 		ExtentTestActions.log(Status.INFO, "The link was verified.");
 
 	}
-
+    
+//	@Step(description="Verifying fields on General screen through UI ...")
 	public static void verifyVFMetadataInUI(ResourceReqDetails vf) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying fields on General screen through UI ..."));
 		assertTrue(vf.getName().equals(ResourceGeneralPage.getNameText()));
@@ -94,6 +94,7 @@ public final class VfVerificator {
 		assertTrue(vf.getContactId().equals(ResourceGeneralPage.getContactIdText()));
 	}
 	
+//	@Step(description="Verifying fields on General screen through Backend ...")
 	public static void verifyVFUpdated(ResourceReqDetails vf, User user) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying fields on General screen through Backend ..."));
 		String response = RestCDUtils.getResource(vf, user).getResponse();
@@ -217,17 +218,22 @@ public final class VfVerificator {
 		}
 	}
 
-	public static void verifyOnboardedVnfMetadata(String vspName, Map<String, String> vspMetadata) {
+	public static void verifyOnboardedVnfMetadata(String vspName, VendorSoftwareProductObject vspMetadata) {
 		SetupCDTest.getExtendTest().log(Status.INFO, "Verifying metadata");
 		assertTrue(vspName.equals(ResourceGeneralPage.getNameText()), "VSP name is not valid.");
-		assertTrue(vspMetadata.get("description").equals(ResourceGeneralPage.getDescriptionText()), "VSP description is not valid.");
-		assertTrue(vspMetadata.get("subCategory").equals(GeneralUIUtils.getSelectedElementFromDropDown(ResourceGeneralPage.getCategoryDataTestsIdAttribute()).getText().trim()), "VSP category is not valid.");
-		assertTrue(vspMetadata.get("vendorName").equals(ResourceGeneralPage.getVendorNameText()), "VSP vendor name is not valid.");
+		assertTrue(vspMetadata.getDescription().equals(ResourceGeneralPage.getDescriptionText()), "VSP description is not valid.");
+		
+		String [] splitedSubCategorey = vspMetadata.getSubCategory().split("\\.");
+		String expectedSubCategory = splitedSubCategorey[splitedSubCategorey.length-1];
+		String actualSubCategory = GeneralUIUtils.getSelectedElementFromDropDown(ResourceGeneralPage.getCategoryDataTestsIdAttribute()).getText().trim().toLowerCase();
+		
+		assertTrue(expectedSubCategory.equals(actualSubCategory), "VSP category is not valid.");
+		assertTrue(vspMetadata.getVendorName().equals(ResourceGeneralPage.getVendorNameText()), "VSP vendor name is not valid.");
 		assertTrue("1.0".equals(ResourceGeneralPage.getVendorReleaseText()), "VSP version is not valid.");
 		List<WebElement> tagsList = ResourceGeneralPage.getElementsFromTagsTable();
 		assertTrue(tagsList.size() == 1, "VSP tags size is not equal to 1.");
 		assertTrue(vspName.equals(tagsList.get(0).getText()), "VSP tag is not its name.");
-		assertTrue(vspMetadata.get("attContact").equals(ResourceGeneralPage.getContactIdText()), "VSP attContact is not valid.");
+		assertTrue(vspMetadata.getAttContact().equals(ResourceGeneralPage.getContactIdText()), "VSP attContact is not valid.");
 	}
 	
 	public static void verifyIsElementDisabled(String elementLocator, String elementName){

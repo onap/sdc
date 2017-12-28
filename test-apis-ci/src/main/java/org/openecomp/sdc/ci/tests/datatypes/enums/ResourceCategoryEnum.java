@@ -22,6 +22,11 @@ package org.openecomp.sdc.ci.tests.datatypes.enums;
 
 import java.util.Random;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 public enum ResourceCategoryEnum {
 
 	NETWORK_L2_3_ROUTERS("Network L2-3", "Router", "resourceNewCategory.network l2-3", "resourceNewCategory.network l2-3.router"), 

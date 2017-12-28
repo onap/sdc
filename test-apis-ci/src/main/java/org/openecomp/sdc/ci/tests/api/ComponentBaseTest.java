@@ -70,11 +70,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.*;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
@@ -153,7 +149,6 @@ public abstract class ComponentBaseTest {
 	
 	@AfterMethod(alwaysRun = true)
 	public void quitAfterTest(ITestResult result, ITestContext context) throws Exception {
-
 		String testName = result.getName();
 		Throwable throwable = result.getThrowable();
 		int status = result.getStatus();
@@ -202,7 +197,6 @@ public abstract class ComponentBaseTest {
 		shutdownTitanLogic();
 
 	}
-
 	protected static void openTitanLogic() throws Exception {
 	
 		logger.trace(config.toString());
@@ -211,7 +205,6 @@ public abstract class ComponentBaseTest {
 		assertNotNull(titanGraph);
 		
 	}
-
 
 	protected static void shutdownTitanLogic() {
 		if (titanGraph.isOpen()) {

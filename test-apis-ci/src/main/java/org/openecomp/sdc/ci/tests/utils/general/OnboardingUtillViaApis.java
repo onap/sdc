@@ -33,6 +33,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
+import com.google.gson.Gson;
+import fj.data.Either;
 
 import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.model.Component;
@@ -44,7 +48,9 @@ import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
@@ -53,36 +59,43 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import org.apache.commons.codec.binary.Base64;
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
 import com.google.gson.Gson;
 
 import fj.data.Either;
 
+
+import static org.testng.AssertJUnit.assertTrue;
+
 public class OnboardingUtillViaApis {
 
-	protected static Map<String, String> prepareHeadersMap(String userId) {
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
-		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), userId);
-		return headersMap;
-	}
+//	protected static Map<String, String> prepareHeadersMap(String userId) {
+//		Map<String, String> headersMap = new HashMap<String, String>();
+//		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
+//		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
+//		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), userId);
+//		return headersMap;
+//	}
 	
 	public static Pair<String, VendorSoftwareProductObject> createVspViaApis(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
 
 		VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
-		ExtentTestActions.log(Status.INFO, String.format("Create Vendor License"));
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(user);
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
-		Map<String, String> map = createVendorSoftwareProduct.right;
-		vendorSoftwareProductObject.setAttContact(map.get("attContact"));
-		vendorSoftwareProductObject.setCategory(map.get("category"));
-		vendorSoftwareProductObject.setComponentId(map.get("componentId"));
-		vendorSoftwareProductObject.setDescription(map.get("description"));
-		vendorSoftwareProductObject.setSubCategory(map.get("subCategory"));
-		vendorSoftwareProductObject.setVendorName(map.get("vendorName"));
-		vendorSoftwareProductObject.setVspId(map.get("vspId"));
+
+		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
+		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
+		VendorSoftwareProductObject map = createVendorSoftwareProduct.right;
+		vendorSoftwareProductObject.setAttContact(map.getAttContact());
+		vendorSoftwareProductObject.setCategory(map.getCategory());
+		vendorSoftwareProductObject.setComponentId(map.getComponentId());
+		vendorSoftwareProductObject.setDescription(map.getDescription());
+		vendorSoftwareProductObject.setSubCategory(map.getSubCategory());
+		vendorSoftwareProductObject.setVendorName(map.getVendorName());
+		vendorSoftwareProductObject.setVspId(map.getVspId());
 		Pair<String, VendorSoftwareProductObject> pair = new Pair<String, VendorSoftwareProductObject>(createVendorSoftwareProduct.left, vendorSoftwareProductObject);
 		return pair;
 	}
@@ -109,17 +122,10 @@ public class OnboardingUtillViaApis {
 		
 		return resource; 
 	}*/
-
-	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails, UserRoleEnum user) throws Exception {
-		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, user, true).left().value();
-
-		return resource;
-	}
-
 	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails) throws Exception {
 		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		
 		return resource;
+
 	}
 	public static void downloadToscaCsarToDirectory(Component component, File file) {
 		try {
@@ -236,7 +242,7 @@ public class OnboardingUtillViaApis {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_VENDOR_SOFTWARE_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort(), vspId);
 		String userId = user.getUserId();
-		Map<String, String> headersMap = prepareHeadersMap(userId);
+		Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
 		headersMap.put(HttpHeaderEnum.X_ECOMP_REQUEST_ID_HEADER.getValue(), "123456");
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "*/*");
 		headersMap.put("Accept-Encoding", "gzip, deflate, br");

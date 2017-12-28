@@ -8,11 +8,14 @@ public class VendorSoftwareProductObjectReqDetails {
     private String subCategory;
     private String vendorId;
     private String vendorName;
-    private LicensingVersion licensingVersion;
+//    private LicensingVersion licensingVersion;
+    private String licensingVersion;
     private LicensingData licensingData;
     private String onboardingMethod;
     private String networkPackageName;
     private String onboardingOrigin;
+    private String icon;
+
 
     public String getIcon() {
         return icon;
@@ -22,12 +25,10 @@ public class VendorSoftwareProductObjectReqDetails {
         this.icon = icon;
     }
 
-    private String icon;
-
     public VendorSoftwareProductObjectReqDetails() {
     }
 
-    public VendorSoftwareProductObjectReqDetails(String name, String description, String category, String subCategory, String vendorId, String vendorName, LicensingVersion licensingVersion, LicensingData licensingData, String onboardingMethod, String networkPackageName, String onboardingOrigin) {
+    public VendorSoftwareProductObjectReqDetails(String name, String description, String category, String subCategory, String vendorId, String vendorName, String licensingVersion, LicensingData licensingData, String onboardingMethod, String networkPackageName, String onboardingOrigin, String icon) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -39,6 +40,15 @@ public class VendorSoftwareProductObjectReqDetails {
         this.onboardingMethod = onboardingMethod;
         this.networkPackageName = networkPackageName;
         this.onboardingOrigin = onboardingOrigin;
+        this.icon = icon;
+    }
+
+    public String getLicensingVersion() {
+        return licensingVersion;
+    }
+
+    public void setLicensingVersion(String licensingVersion) {
+        this.licensingVersion = licensingVersion;
     }
 
     public String getName() {
@@ -89,13 +99,6 @@ public class VendorSoftwareProductObjectReqDetails {
         this.vendorName = vendorName;
     }
 
-    public LicensingVersion getLicensingVersion() {
-        return licensingVersion;
-    }
-
-    public void setLicensingVersion(LicensingVersion licensingVersion) {
-        this.licensingVersion = licensingVersion;
-    }
 
     public LicensingData getLicensingData() {
         return licensingData;

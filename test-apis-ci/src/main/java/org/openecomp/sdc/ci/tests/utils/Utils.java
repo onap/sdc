@@ -228,6 +228,15 @@ public final class Utils {
 		return config;
 	}
 
+	public static Config getConfigHandleException() {
+		Config config = null;
+		try{
+			config = Config.instance();
+		}catch (Exception e){
+			System.out.println("Configuration file not found. " + e);
+		}
+		return config;
+	}
 	// public void uploadNormativeTypes() throws IOException{
 	// Config config = getConfig();
 	// String[] normativeTypes = {"root", "compute", "blockStorage",

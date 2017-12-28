@@ -20,8 +20,19 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import java.awt.Robot;
-import java.awt.Toolkit;
+import com.aventstack.extentreports.Status;
+import org.apache.commons.io.FileUtils;
+import org.openecomp.sdc.ci.tests.datatypes.CatalogFilterTitlesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.DashboardCardEnum;
+import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
+import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.*;
+
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
@@ -33,30 +44,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
-import org.apache.commons.io.FileUtils;
-import org.openecomp.sdc.ci.tests.datatypes.CatalogFilterTitlesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.DashboardCardEnum;
-import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
-import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.aventstack.extentreports.Status;
 
 
 public final class GeneralUIUtils {
@@ -164,6 +151,13 @@ public final class GeneralUIUtils {
 		return true;
 	}
 
+	public static boolean isWebElementExistByClass(String className) {
+		if(getDriver().findElements(By.className(className)).size() == 0) {
+			return false;
+		}
+		return true;
+	}
+
 	public static WebElement getInputElement(String dataTestId) {
 		try{
 			ultimateWait();
@@ -179,6 +173,7 @@ public final class GeneralUIUtils {
 		return getDriver().findElements(By.xpath("//*[@data-tests-id='" + dataTestId + "']"));
 
 	}
+	
 	
 	public static WebElement getWebElementBy(By by) {
 		return getWebElementBy(by, timeOut);
@@ -272,6 +267,18 @@ public final class GeneralUIUtils {
 	
 	public static void clickOnElementByTestId(String dataTestId) {
 		clickOnElementByTestIdWithoutWait(dataTestId);
+		ultimateWait();
+	}
+
+	public static void clickOnElementByClassName(String className) {
+		WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+		wait.until(ExpectedConditions.elementToBeClickable(By.className(className))).click();
+		ultimateWait();
+	}
+
+	public static void clickOnElementById(String id) {
+		WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id(id))).click();
 		ultimateWait();
 	}
 	
@@ -790,5 +797,54 @@ public final class GeneralUIUtils {
 		Object elementAttributes = getAllElementAttributes(getDriver().findElement(By.cssSelector(cssString)));
 		return elementAttributes.toString().contains("disabled");
 	}
+
+	public static void setTextInElementByDataTestID(String dataTestsID, String text)
+	{
+		WebElement webElement = GeneralUIUtils.getWebElementByTestID(dataTestsID);
+		webElement.clear();
+		webElement.sendKeys(text);
+		ultimateWait();
+	}
+
+	public static void selectByValueTextContained(String dataTestsId, String value) {
+
+		List<WebElement> options = GeneralUIUtils.getWebElementsListBy(By.xpath(String.format("//select[@data-tests-id='%s']//option[contains(@value,'%s')]",dataTestsId,value)));
+
+		boolean matched = false;
+		for (WebElement option : options) {
+			option.click();
+			matched = true;
+		}
+
+		if (!matched) {
+			throw new NoSuchElementException("Cannot locate option with value: " + value);
+		}
+
+		ultimateWait();
+	}
+
+	public static void setTextInElementByXpath(String xPath, String text)
+	{
+		WebElement webElement = GeneralUIUtils.getWebElementBy(By.xpath(xPath));
+		webElement.clear();
+		webElement.click();
+		webElement.sendKeys(text);
+		ultimateWait();
+	}
+
+	public static String getTextValueFromInput(WebElement webElement)
+	{
+		return webElement.getAttribute("value");
+	}
+
+	public static String getTextValueFromWebElementByXpath(String Xpath)
+	{
+		WebElement webElement = getWebElementBy(By.xpath(Xpath));
+		return webElement.getAttribute("value");
+	}
+
+
+
+
     
 }

@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.api;
 
-import java.util.HashMap;
-
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 
+import java.util.HashMap;
 public class ExtentTestManager implements SomeInterface{
 		private static HashMap<Long, ExtentTest> extentTestMap = new HashMap<Long, ExtentTest>();
 		private static ExtentReports extent = ExtentManager.getReporter();

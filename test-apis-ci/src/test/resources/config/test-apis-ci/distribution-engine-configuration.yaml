@@ -1,0 +1,77 @@
+uebServers:
+   - uebsb91kcdc.it.att.com
+   - uebsb92kcdc.it.att.com
+#   - uebsb93kcdc.it.att.com
+
+uebPublicKey: 8F3MDAtMSBwwpSMy
+
+uebSecretKey: gzFmsTxSCtO5RQfAccM6PqqX
+
+distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
+distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
+
+initRetryIntervalSec: 5
+initMaxIntervalSec: 60
+
+distribNotifServiceArtifactTypes:
+  info:
+      - MURANO-PKG
+
+distribNotifResourceArtifactTypes:
+  lifecycle:
+      - HEAT
+      - DG-XML
+
+environments:
+   - PROD
+
+distributionStatusTopic:
+   pollingIntervalSec: 60
+   fetchTimeSec: 15
+   consumerGroup: asdc
+   consumerId: asdc-id
+
+distributionNotificationTopic:
+   minThreadPoolSize: 0
+   maxThreadPoolSize: 10
+   maxWaitingAfterSendingSeconds: 5
+
+createTopic:
+   partitionCount: 1
+   replicationCount: 1
+
+startDistributionEngine: true
+
+
+aaiConfig:
+   serverRootUrl: https://127.0.0.1/aai/v1
+   resourceNamespaces:
+      operationalEnvironments: /aai/cloud-infrastructure/operational-environments
+
+   httpRequestConfig:
+      readTimeoutMs: 5000
+      connectTimeoutMs: 1000
+      maxReadConnectionRetry: 3
+      userName: abcd
+      password: hmXYcznAljMSisdy8zgcag==
+      clientSslAuthentication: false
+      keyStore: opt/app/catalog-be/cert/.keystore
+      keyStorePassword: hmXYcznAljMSisdy8zgcag==
+  
+   httpRequestHeaders:
+      XFromAppId: asdc
+  
+opEnvRecoveryIntervalSec: 180
+allowedTimeBeforeStaleSec: 300
+
+msoConfig:
+    serverRootUrl: https://127.0.0.1/onap/so/infra/modelDistributions/v1
+    resourceNamespaces:
+        distributions: /distributions
+
+    httpClientConfig:
+        readTimeout: 2000
+        connectTimeout: 500
+        numOfRetries: 3
+        userName: asdc
+        password: OTLEp5lfVhYdyw5EAtTUBQ==

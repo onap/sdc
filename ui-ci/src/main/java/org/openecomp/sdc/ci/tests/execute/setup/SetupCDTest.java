@@ -26,9 +26,16 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
+import org.littleshoot.proxy.impl.ClientToProxyConnection;
+import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestManager;
 import org.openecomp.sdc.ci.tests.api.SomeInterface;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.UserCredentials;
@@ -59,11 +66,14 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import groovyjarjarantlr.Utils;
+import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.core.har.Har;
 
 public abstract class SetupCDTest extends DriverFactory {

@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ch.qos.logback.classic.util.ContextInitializer;
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.HeatAndHeatEnvNamesPair;

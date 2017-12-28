@@ -43,6 +43,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import com.aventstack.extentreports.Status;
 import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -50,6 +51,15 @@ import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
+import static org.testng.AssertJUnit.assertTrue;
 import com.aventstack.extentreports.Status;
 
 public class FileHandling {

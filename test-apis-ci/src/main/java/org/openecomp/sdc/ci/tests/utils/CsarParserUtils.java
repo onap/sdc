@@ -108,6 +108,11 @@ public class CsarParserUtils {
 				}
 				groupHeatMetaDefinition = listGroupHeatMetaDefinition.get(listGroupHeatMetaDefinition.size() - 1);
 				JSONObject jsonObject = (JSONObject) array.get(i);
+				if (openNewGroup) {
+					int lastIndexOfDot = jsonObject.get("fileName").toString().lastIndexOf(".");
+					String groupName = jsonObject.get("fileName").toString().substring(0, lastIndexOfDot);
+					groupHeatMetaDefinition.setGroupName(groupName);
+				}
 				fetchArtifactByGroupFromJsonObject(listGroupHeatMetaDefinition, groupHeatMetaDefinition, jsonObject, isNested);
 			}
 		}

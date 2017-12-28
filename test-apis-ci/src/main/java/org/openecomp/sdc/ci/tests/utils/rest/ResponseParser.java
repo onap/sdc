@@ -104,14 +104,23 @@ public class ResponseParser {
 
 	public static String getValueFromJsonResponse(String response, String fieldName) {
 		try {
-			JSONObject jsonResp = (JSONObject) JSONValue.parse(response);
-			Object fieldValue = jsonResp.get(fieldName);
-			return fieldValue.toString();
+//			JSONObject jsonResp = (JSONObject) JSONValue.parse(response);
+			String[] split = fieldName.split(":");
+			String fieldValue = response;
 
+			for(int i=0; i<split.length; i++) {
+				fieldValue = parser(fieldValue, split[i]);
+			}
+			return fieldValue;
 		} catch (Exception e) {
 			return null;
 		}
 
+	}
+
+	private static String parser(String response, String field){
+		JSONObject fieldValue = (JSONObject) JSONValue.parse(response);
+		return fieldValue.get(field).toString();
 	}
 
 	public static String getUniqueIdFromResponse(RestResponse response) {
@@ -201,8 +210,8 @@ public class ResponseParser {
 
 		ObjectMapper mapper = new ObjectMapper();
 		final SimpleModule module = new SimpleModule("customerSerializationModule",	new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
+		JsonDeserializer<PropertyConstraint> deserializer = new PropertyConstraintJacksonDeserialiser();
+		addDeserializer(module, PropertyConstraint.class, deserializer);
 
 		mapper.registerModule(module);
 		ComponentInstanceProperty propertyDefinition = null;
@@ -261,8 +270,8 @@ public class ResponseParser {
 		T object = null;
 		final SimpleModule module = new SimpleModule("customerSerializationModule",
 				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
+		JsonDeserializer<PropertyConstraint> deserializer = new PropertyConstraintJacksonDeserialiser();
+		addDeserializer(module, PropertyConstraint.class, deserializer);
 		mapper.registerModule(module);
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try {
@@ -320,8 +329,8 @@ public class ResponseParser {
 		
 		final SimpleModule module = new SimpleModule("customerSerializationModule",
 				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
+		JsonDeserializer<PropertyConstraint> deserializer = new PropertyConstraintJacksonDeserialiser();
+		addDeserializer(module, PropertyConstraint.class, deserializer);
 
 		mapper.registerModule(module);
 		
@@ -342,8 +351,8 @@ public class ResponseParser {
 		ObjectMapper mapper = new ObjectMapper();
 		final SimpleModule module = new SimpleModule("customerSerializationModule",
 				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
+		JsonDeserializer<PropertyConstraint> deserializer = new PropertyConstraintJacksonDeserialiser();
+		addDeserializer(module, PropertyConstraint.class, deserializer);
 
 		mapper.registerModule(module);
 		ComponentInstance componentInstance = null;

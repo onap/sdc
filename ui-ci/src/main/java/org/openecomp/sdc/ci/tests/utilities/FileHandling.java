@@ -222,21 +222,21 @@ public class FileHandling {
 		try{
 			ZipFile zipFile = new ZipFile(filepath + File.separator + zipFilename);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			
-			String[] artifactNames = new String[zipFile.size() - 1];
 
-			int i = 0;
+			List<String> artifactNames = new ArrayList<String>();
+			
 			while(entries.hasMoreElements()){
 				ZipEntry nextElement = entries.nextElement();
 				if (!nextElement.isDirectory()){ 
 					if (!nextElement.getName().equals("MANIFEST.json")){
 						String name = nextElement.getName();
-						artifactNames[i++] = name;
+						artifactNames.add(name);
 					}
 				}
 			}
 			zipFile.close();
-			return artifactNames;
+			// convert list to array 
+			return artifactNames.toArray(new String[0]);
 		}
 		catch(ZipException zipEx){
 			System.err.println("Error in zip file named : " +  zipFilename);	

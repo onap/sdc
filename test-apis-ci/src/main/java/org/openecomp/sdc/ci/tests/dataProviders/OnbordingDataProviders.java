@@ -1,14 +1,15 @@
 package org.openecomp.sdc.ci.tests.dataProviders;
 
-import static org.testng.Assert.assertFalse;
+import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
+import org.testng.annotations.DataProvider;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
-import org.testng.annotations.DataProvider;
+import static org.testng.Assert.assertFalse;
 
 public class OnbordingDataProviders {
 
