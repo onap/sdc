@@ -34,11 +34,11 @@ import java.util.Objects;
 public class ResourceBaseValidator implements Validator {
 
   protected Map<String, ImplementationConfiguration> resourceTypeToImpl = new HashMap<>();
-  private static Logger logger = (Logger) LoggerFactory.getLogger(ResourceBaseValidator.class);
+  private static Logger logger = LoggerFactory.getLogger(ResourceBaseValidator.class);
   private static final ErrorMessageCode ERROR_CODE_RBV_1 = new ErrorMessageCode("RBV1");
   private static final ErrorMessageCode ERROR_CODE_RBV_2 = new ErrorMessageCode("RBV2");
 
-
+@Override
   public void init(Map<String, Object> properties) {
     if (MapUtils.isEmpty(properties)) {
       return;
@@ -156,8 +156,8 @@ public class ResourceBaseValidator implements Validator {
     implementationConfiguration.setImplementationClass(
         valueAsMap.get(ConfigConstants.Impl_Class).toString());
     if (valueAsMap.containsKey(ConfigConstants.Enable)) {
-      implementationConfiguration.setEnable((Boolean.
-          valueOf(valueAsMap.get(ConfigConstants.Enable).toString())));
+      implementationConfiguration.setEnable(Boolean.
+          valueOf(valueAsMap.get(ConfigConstants.Enable).toString()));
     }
 
     return implementationConfiguration;
