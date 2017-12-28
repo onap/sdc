@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b412ad60",
+        "filename": "openecomp-be/backend/openecomp-sdc-item-permissions-manager/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/ItemPermissionsManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2017-12-28T11:07:45Z",
+      "side": 1,
+      "message": "Should PermissionTypes be visible/used here?",
+      "revId": "80572284e1c0badbda18206cfab2516b1bd2f2a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_141e0171",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/main/java/org/openecomp/sdc/versioning/dao/impl/zusammen/ItemZusammenDaoImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2017-12-28T11:07:45Z",
+      "side": 1,
+      "message": "change to \"item_owner\" so it\u0027ll match the other prop names",
+      "revId": "80572284e1c0badbda18206cfab2516b1bd2f2a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
