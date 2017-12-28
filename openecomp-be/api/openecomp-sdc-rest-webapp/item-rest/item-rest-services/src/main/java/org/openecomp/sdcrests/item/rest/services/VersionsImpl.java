@@ -145,8 +145,6 @@ public class VersionsImpl implements Versions {
 
   @Override
   public Response listRevisions(String itemId, String versionId, String user) {
-    GenericCollectionWrapper<RevisionDto> results = new GenericCollectionWrapper<>();
-    MapRevisionToDto mapper = new MapRevisionToDto();
 
     List<Revision> revisions = versioningManager.listRevisions(itemId, new Version(versionId));
     /* When creating a new item an initial version is created with invalid data.
@@ -155,11 +153,14 @@ public class VersionsImpl implements Versions {
        2- only in the first item version there are 2 revisions created
        3- the second revision is in format "Initial <vlm/vsp>: <name of the vlm/vsp>"
        4- only if a revision in this format exists we remove the first revision. */
-    if (revisions.size() > 1 &&
-        revisions.get(revisions.size() - 2).getMessage().matches("Initial .*:.*")) {
-      revisions.remove(revisions.size() - 1);
+    int numOfRevisions = revisions.size();
+    if (numOfRevisions > 1 &&
+        revisions.get(numOfRevisions - 2).getMessage().matches("Initial .*:.*")) {
+      revisions.remove(numOfRevisions - 1);
     }
 
+    GenericCollectionWrapper<RevisionDto> results = new GenericCollectionWrapper<>();
+    MapRevisionToDto mapper = new MapRevisionToDto();
     revisions.forEach(revision -> results.add(mapper.applyMapping(revision, RevisionDto.class)));
     return Response.ok(results).build();
   }

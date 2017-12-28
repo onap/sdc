@@ -39,13 +39,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -70,6 +70,17 @@ public class VersioningManagerImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
+  }
+
+  @Test
+  public void testListWhenNone() throws Exception {
+    String itemId = "itemId";
+
+    doReturn(new ArrayList<>()).when(versionDaoMock).list(itemId);
+
+    List<Version> versions = versioningManager.list(itemId);
+
+    Assert.assertTrue(versions.isEmpty());
   }
 
   @Test
@@ -169,7 +180,8 @@ public class VersioningManagerImplTest {
 
     verify(versionDaoMock).create(itemId, requestedVersion);
     verify(itemManagerMock).updateVersionStatus(itemId, Draft, null);
-    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), anyString());
+    verify(versionDaoMock)
+        .publish(eq(itemId), eq(requestedVersion), eq("Create version: versionName"));
   }
 
   @Test
@@ -198,7 +210,7 @@ public class VersioningManagerImplTest {
 
     verify(versionDaoMock).create(itemId, requestedVersion);
     verify(itemManagerMock).updateVersionStatus(itemId, Draft, null);
-    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), anyString());
+    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), eq("Create version: 4.0"));
   }
 
   @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp =

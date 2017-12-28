@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 
 public class ItemManagerImplTest {
 
+  public static final String ITEM_ID = "item1";
   @Mock
   private ItemDao itemDao;
   @Mock
@@ -41,7 +42,7 @@ public class ItemManagerImplTest {
   @Test
   public void testList() throws Exception {
     doReturn(Stream.of(
-        createItem("item1", "A"),
+        createItem(ITEM_ID, "A"),
         createItem("item2", "B"),
         createItem("item3", "B"),
         createItem("item4", "A"))
@@ -55,18 +56,18 @@ public class ItemManagerImplTest {
 
   @Test
   public void testGetNotExisting() throws Exception {
-    Item item = itemManager.get("item1");
+    Item item = itemManager.get(ITEM_ID);
     Assert.assertNull(item);
   }
 
   @Test
   public void testGet() throws Exception {
     Item toBeReturned = new Item();
-    toBeReturned.setId("itemId");
+    toBeReturned.setId(ITEM_ID);
     doReturn(toBeReturned).when(itemDao).get(any(Item.class));
 
-    Item item = itemManager.get("itemId");
-    Assert.assertEquals(item.getId(), "itemId");
+    Item item = itemManager.get(ITEM_ID);
+    Assert.assertEquals(item.getId(), ITEM_ID);
   }
 
   @Test
@@ -74,26 +75,26 @@ public class ItemManagerImplTest {
     SessionContextProviderFactory.getInstance().createInterface().create("user1");
 
     Item toBeReturned = new Item();
-    toBeReturned.setId("itemId");
+    toBeReturned.setId(ITEM_ID);
     doReturn(toBeReturned).when(itemDao).create(any(Item.class));
 
-    Item item = itemManager.create(createItem("item1", "A"));
-    Assert.assertEquals(item.getId(), "itemId");
+    Item item = itemManager.create(createItem(ITEM_ID, "A"));
+    Assert.assertEquals(item.getId(), ITEM_ID);
   }
 
   @Test
   public void testUpdateNotExistingVersionStatus() throws Exception {
-    itemManager.updateVersionStatus("itemId", VersionStatus.Certified, VersionStatus.Draft);
+    itemManager.updateVersionStatus(ITEM_ID, VersionStatus.Certified, VersionStatus.Draft);
     verify(itemDao, never()).update(any(Item.class));
   }
 
   @Test
   public void testUpdateVersionStatusWhenNone() throws Exception {
     Item item = new Item();
-    item.setId("itemId");
+    item.setId(ITEM_ID);
     doReturn(item).when(itemDao).get(any(Item.class));
 
-    itemManager.updateVersionStatus("itemId", VersionStatus.Certified, VersionStatus.Draft);
+    itemManager.updateVersionStatus(ITEM_ID, VersionStatus.Certified, VersionStatus.Draft);
     verify(itemDao).update(item);
     Assert.assertEquals(item.getVersionStatusCounters().get(VersionStatus.Certified).intValue(), 1);
     Assert.assertNull(item.getVersionStatusCounters().get(VersionStatus.Draft));
@@ -102,10 +103,10 @@ public class ItemManagerImplTest {
   @Test
   public void testUpdateVersionStatusAddFirst() throws Exception {
     Item item = new Item();
-    item.setId("itemId");
+    item.setId(ITEM_ID);
     doReturn(item).when(itemDao).get(any(Item.class));
 
-    itemManager.updateVersionStatus("itemId", VersionStatus.Draft, null);
+    itemManager.updateVersionStatus(ITEM_ID, VersionStatus.Draft, null);
 
     verify(itemDao).update(item);
     Assert.assertEquals(item.getVersionStatusCounters().size(), 1);
@@ -115,12 +116,12 @@ public class ItemManagerImplTest {
   @Test
   public void testUpdateVersionStatus() throws Exception {
     Item item = new Item();
-    item.setId("itemId");
+    item.setId(ITEM_ID);
     item.getVersionStatusCounters().put(VersionStatus.Certified, 2);
     item.getVersionStatusCounters().put(VersionStatus.Draft, 3);
     doReturn(item).when(itemDao).get(any(Item.class));
 
-    itemManager.updateVersionStatus("itemId", VersionStatus.Certified, VersionStatus.Draft);
+    itemManager.updateVersionStatus(ITEM_ID, VersionStatus.Certified, VersionStatus.Draft);
 
     verify(itemDao).update(item);
     Assert.assertEquals(item.getVersionStatusCounters().size(), 2);
@@ -131,12 +132,12 @@ public class ItemManagerImplTest {
   @Test
   public void testUpdateVersionStatusRemoveLast() throws Exception {
     Item item = new Item();
-    item.setId("itemId");
+    item.setId(ITEM_ID);
     item.getVersionStatusCounters().put(VersionStatus.Certified, 2);
     item.getVersionStatusCounters().put(VersionStatus.Draft, 1);
     doReturn(item).when(itemDao).get(any(Item.class));
 
-    itemManager.updateVersionStatus("itemId", VersionStatus.Certified, VersionStatus.Draft);
+    itemManager.updateVersionStatus(ITEM_ID, VersionStatus.Certified, VersionStatus.Draft);
 
     verify(itemDao).update(item);
     Assert.assertEquals(item.getVersionStatusCounters().size(), 1);
