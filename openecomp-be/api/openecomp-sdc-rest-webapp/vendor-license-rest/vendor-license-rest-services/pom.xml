@@ -113,23 +113,12 @@
 
     </dependencies>
 
-
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>test/core/unittest/offline/**</include>
-					</includes>
-				</configuration>
 			</plugin>
-			<!-- Error codes generator plugin -->
-			<!--plugin>
-				<groupId>org.openecomp.nfv.tools</groupId>
-				<artifactId>error-codes-maven-plugin</artifactId>
-			</plugin-->
 		</plugins>
 	</build>
 

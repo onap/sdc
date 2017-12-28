@@ -45,6 +45,10 @@ public class ChoiceOrOther<E extends Enum<E>> {
 
   private String result;
 
+  public ChoiceOrOther() {
+    // the default constructor is used to instantiate by reflection
+  }
+
   /**
    * Instantiates a new Choice or other.
    *
