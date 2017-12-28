@@ -38,7 +38,9 @@ import static java.util.Objects.nonNull;
 public class ValidationUtil {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private final static Logger log = (Logger) LoggerFactory.getLogger(ValidationUtil.class.getName());
+  private static final Logger log = LoggerFactory.getLogger(ValidationUtil.class.getName());
+
+  private ValidationUtil(){}
 
   public static void removeExposedResourcesCalledByGetResource(String fileName,
                                                                Set<String> actualExposedResources,
@@ -64,10 +66,8 @@ public class ValidationUtil {
                                                                 Map<String, Resource> resourcesMap) {
     for (String referencedResourceName : referencedResources) {
       Resource currResource = resourcesMap.get(referencedResourceName);
-      if (Objects.nonNull(currResource)) {
-        if (isExpectedToBeExposed(currResource.getType())) {
+      if (Objects.nonNull(currResource) && isExpectedToBeExposed(currResource.getType())) {
           actualExposedResources.add(referencedResourceName);
-        }
       }
     }
   }
@@ -89,7 +89,7 @@ public class ValidationUtil {
   public static boolean evalPattern(Object paramVal, String[] regexList) {
     String value = "";
     if (paramVal instanceof String) {
-      value = ((String) paramVal);
+      value = (String) paramVal;
     }
     if (paramVal instanceof Integer) {
       value = paramVal.toString();
@@ -157,8 +157,7 @@ public class ValidationUtil {
     mdcDataDebugMessage.debugEntryMessage("file", fileName);
 
     String propertyValue = getWantedNameFromPropertyValueGetParam(nameValue);
-    if (nonNull(propertyValue)) {
-      if (!evalPattern(propertyValue, regexList)) {
+    if (nonNull(propertyValue) && !evalPattern(propertyValue, regexList)) {
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING,
@@ -171,7 +170,6 @@ public class ValidationUtil {
         mdcDataDebugMessage.debugExitMessage("file", fileName);
         return true;
       }
-    }
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
     return false;
