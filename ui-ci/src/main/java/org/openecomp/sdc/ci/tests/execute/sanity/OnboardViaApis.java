@@ -20,13 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.awt.AWTException;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import com.clearspring.analytics.util.Pair;
+import fj.data.Either;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
@@ -40,19 +37,16 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utils.general.*;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.clearspring.analytics.util.Pair;
+import java.awt.*;
+import java.sql.Timestamp;
+import java.util.List;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertTrue;
 
 
 public class OnboardViaApis{
@@ -100,10 +94,11 @@ public class OnboardViaApis{
 	{
 		//CREATE DATA REQUIRED FOR TEST
 		boolean skipReport = true;
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(sdncDesignerDetails1);
+		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1, amdocsLicenseMembers);
-		VendorSoftwareProductObject vendorSoftwareProductObject = fillVendorSoftwareProductObjectWithMetaData(vnfFile, createVendorSoftwareProduct);
+		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1, amdocsLicenseMembers);
+//		VendorSoftwareProductObject vendorSoftwareProductObject = fillVendorSoftwareProductObjectWithMetaData(vnfFile, createVendorSoftwareProduct);
+		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
 		resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
@@ -115,38 +110,15 @@ public class OnboardViaApis{
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		// TEST START
 
-		// Update exist VLM Version (From 1.0 to 2.0)
-		OnboardingUtils.updateVendorLicense(amdocsLicenseMembers, sdncDesignerDetails1, "1.0");
-		// Set VLM version to 2.0 in VLM Meta data object
-		amdocsLicenseMembers.setLicenseVersionId("2.0");
-		amdocsLicenseMembers.setLicenseVersionLabel("2.0");
-		OnboardingUtils.validateVlmExist(amdocsLicenseMembers.getVendorId(), amdocsLicenseMembers.getLicenseVersionId(), sdncDesignerDetails1);
+		VendorLicenseModelRestUtils.updateVendorLicense(amdocsLicenseMembers, sdncDesignerDetails1, false);
+		VendorLicenseModelRestUtils.validateVlmExist(amdocsLicenseMembers.getVendorId(), amdocsLicenseMembers.getVersion(), sdncDesignerDetails1);
 
 		// Update the VSP With the VLM new version and submit the VSP
-		vendorSoftwareProductObject = OnboardingUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject, amdocsLicenseMembers, sdncDesignerDetails1, "1.1", "2.0");
-		OnboardingUtils.validateVspExist(vendorSoftwareProductObject.getVspId(),vendorSoftwareProductObject.getVersion(), sdncDesignerDetails1);
+		vendorSoftwareProductObject = VendorSoftwareProductRestUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject, amdocsLicenseMembers, sdncDesignerDetails1);
+		VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
 		Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
 		assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
 		System.out.println(distributeAndValidateService);
-	}
-
-	public static VendorSoftwareProductObject fillVendorSoftwareProductObjectWithMetaData(String vnfFile, Pair<String, Map<String, String>> createVendorSoftwareProduct) {
-		VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
-		Map<String, String> map = createVendorSoftwareProduct.right;
-		vendorSoftwareProductObject.setAttContact(map.get("attContact"));
-		vendorSoftwareProductObject.setCategory(map.get("category"));
-		vendorSoftwareProductObject.setComponentId(map.get("componentId"));
-		vendorSoftwareProductObject.setDescription(map.get("description"));
-		vendorSoftwareProductObject.setSubCategory(map.get("subCategory"));
-		vendorSoftwareProductObject.setVendorName(map.get("vendorName"));
-		vendorSoftwareProductObject.setVspId(map.get("vspId"));
-		vendorSoftwareProductObject.setName(createVendorSoftwareProduct.left);
-		String[] arrFileNameAndExtension = vnfFile.split("\\.");
-		vendorSoftwareProductObject.setOnboardingMethod("NetworkPackage");
-		vendorSoftwareProductObject.setNetworkPackageName(arrFileNameAndExtension[0]);
-		vendorSoftwareProductObject.setOnboardingOrigin(arrFileNameAndExtension[1]);
-
-		return vendorSoftwareProductObject;
 	}
 
 	public Service runOnboardViaApisOnly(ServiceReqDetails serviceReqDetails, ResourceReqDetails resourceReqDetails, String filepath, String vnfFile) throws Exception, AWTException {

@@ -13,6 +13,21 @@
 /out/
 *.iml
 
+# Logs
+*.log
+*/logs/*
+*/*/logs/*
+
+
+#Excluded Script Folder
+xFolder
+
+# IntelliJ IDE
+#------------------------------------------------------------
+**/.idea/
+/out/
+*.iml
+
 # IntelliJ IDE
 #------------------------------------------------------------
 **/.idea/
@@ -25,11 +40,12 @@
 # Maven
 #------------------------------------------------------------
 **/target/
+**/target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 version.properties
-dependency-reduced-pom.xml
+*dependency-reduced-pom.xml
 
 ## sdc-os-chef
 *.class
@@ -61,6 +77,14 @@ build.gradle
 # catalog-ui
 #------------------------------------------------------------
 
+#------------------------------------------------------------
+catalog-ui/app/dist/*
+catalog-ui/package-lock.json
+catalog-ui/dist
+catalog-ui/*.tmp.txt
+catalog-ui/tests/Coverage/*
+catalog-ui/Chrome*
+catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
 
 catalog-ui/app/dist/*
 .metadata/
@@ -77,7 +101,6 @@ bin/
 catalog-be/.pydevproject
 catalog-be/.checkstyle
 catalog-be/.pydevproject
-catalog-be/bin/
 catalog-be/data/*
 catalog-be/src/main/java/META-INF/MANIFEST.MF
 catalog-be/test-output/*
@@ -103,7 +126,6 @@ catalog-ui/app/scripts/tsconfig.json
 catalog-ui/app/tsconfig.json
 catalog-ui/bower_components/
 catalog-ui/package-lock.json
-catalog-ui/dist
 catalog-ui/*.tmp.txt
 catalog-ui/tests/Coverage/*
 catalog-ui/Chrome*
@@ -217,3 +239,9 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 
 /sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
+
+sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
+
+utils/DmaapPublisher/logs/*
+

@@ -93,7 +93,8 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		final String ES_TEMPLATE_URL = "http://%s:%s/_template/audit_template";
 		String url = String.format(ES_TEMPLATE_URL, config.getEsHost(), config.getEsPort());
 
-		RestResponse sendHttpPost = new HttpRequest().sendHttpPost(url, fileContentUTF8.left().value(), null);
+//		RestResponse sendHttpPost = new HttpRequest().sendHttpPost(url, fileContentUTF8.left().value(), null);
+		RestResponse sendHttpPost = new HttpRequest().httpSendPost(url, fileContentUTF8.left().value(), null);
 		AssertJUnit.assertTrue(sendHttpPost.getErrorCode() == HttpStatus.SC_OK);
 	}
 

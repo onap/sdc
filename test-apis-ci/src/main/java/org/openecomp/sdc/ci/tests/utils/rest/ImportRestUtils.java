@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
+import org.openecomp.sdc.common.http.client.api.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -48,7 +48,6 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.codehaus.jettison.json.JSONException;
-import org.openecomp.sdc.be.dao.rest.HttpRestClient;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -61,7 +60,6 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
-import org.openecomp.sdc.common.rest.api.RestResponseAsByteArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -351,7 +349,7 @@ public class ImportRestUtils extends BaseRestUtils {
 		}
 	}
 
-	public static RestResponseAsByteArray getCsar(String csarUid, User sdncModifierDetails) throws Exception {
+	public static HttpResponse<byte []> getCsar(String csarUid, User sdncModifierDetails) throws Exception {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_CSAR_USING_SIMULATOR, config.getCatalogBeHost(), config.getCatalogBePort(),
@@ -367,17 +365,11 @@ public class ImportRestUtils extends BaseRestUtils {
 		// System.out.println(url);
 		// System.out.println(userBodyJson);
 
-		HttpRestClient httpRestClient = new HttpRestClient();
-
 		for (Map.Entry<String, String> mapEntry : headersMap.entrySet()) {
 
 			downloadCsarHeaders.put(mapEntry.getKey(), mapEntry.getValue());
 		}
-		RestResponseAsByteArray doGetAsByteArray = httpRestClient.doGetAsByteArray(url, downloadCsarHeaders);
-		// RestResponse getCsar = http.httpSendGet(url, headersMap);
-
-		return doGetAsByteArray;
-
+		return org.openecomp.sdc.common.http.client.api.HttpRequest.getAsByteArray(url, downloadCsarHeaders);
 	}
 
 	private static File getGroupTypeZipFile(String elementName) throws IOException {

@@ -40,6 +40,7 @@ import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.DistributionMonitorObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
+import org.openecomp.sdc.ci.tests.datatypes.enums.DistributionNotificationStatusEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
@@ -51,6 +52,7 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import com.clearspring.analytics.util.Pair;
 import com.google.gson.Gson;
 
+import fj.data.Either;
 
  public class DistributionUtils extends BaseRestUtils{
 	 

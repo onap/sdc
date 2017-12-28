@@ -17,7 +17,7 @@ isDistributionClientRunning: true
 esPort: 9200
 neoHost: neoHost
 neoPort: 7474
-neoDBusername: neo4j	
+neoDBusername: neo4j
 neoDBpassword: 123456
 windowsDownloadDirectory: "c:\\apache-ftpserver-1.1.0\\res\\home"
 systemUnderDebug: false
@@ -41,6 +41,8 @@ cassandraTruststorePassword : 123123
 cassandraAuditKeySpace: sdcaudit
 cassandraArtifactKeySpace: sdcartifact
 url: http://localhost:8181/sdc1/proxy-designer1#/dashboard
+
+sdcHttpMethod: http
 
 
 stopOnClassFailure: false

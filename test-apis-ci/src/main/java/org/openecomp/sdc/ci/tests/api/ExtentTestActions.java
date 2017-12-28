@@ -23,10 +23,14 @@ package org.openecomp.sdc.ci.tests.api;
 import java.io.File;
 
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+
+import java.io.File;
+import org.openecomp.sdc.ci.tests.api.ExtentTestManager;
 
 
 public class ExtentTestActions {

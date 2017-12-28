@@ -43,6 +43,12 @@ public final class CanvasElement {
 		elementType = canvasItem;
 	}
 
+	public CanvasElement(String name, ImmutablePair<Integer, Integer> location) {
+		super();
+		this.uniqueId = name;
+		this.location = location;
+	}
+
 	public String getUniqueId() {
 		return uniqueId;
 	}

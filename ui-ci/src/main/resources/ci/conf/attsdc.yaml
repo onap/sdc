@@ -39,6 +39,7 @@ windowsDownloadDirectory: "c:\\apache-ftpserver-1.1.0\\res\\home\\"
 systemUnderDebug: false
 reportDBhost: dbhost
 reportDBport: 27017
+sdcHttpMethod: http
 
 useBrowserMobProxy: false
 captureTraffic: false

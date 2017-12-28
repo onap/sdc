@@ -20,50 +20,33 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import static org.testng.AssertJUnit.assertNotNull;
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
+import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
+import org.openecomp.sdc.ci.tests.utilities.*;
+import org.openecomp.sdc.ci.tests.utilities.FileHandling;
+import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
+import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
+import org.openecomp.sdc.ci.tests.utils.general.*;
+import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
+import org.openecomp.sdc.ci.tests.verificator.VfModuleVerificator;
+import org.testng.annotations.Test;
 
-import java.awt.AWTException;
+import java.awt.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
-import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.HomePage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
-import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
-import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
-import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
-import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
-import org.openecomp.sdc.ci.tests.verificator.VfModuleVerificator;
-import org.testng.annotations.Test;
-
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
+import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * @author al714h
@@ -87,12 +70,12 @@ public class VfModule extends SetupCDTest {
 		getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
 		System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
+		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(), amdocsLicenseMembers);
+		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(), amdocsLicenseMembers);
 		String vspName = createVendorSoftwareProduct.left;
 		//
-		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.get("vspId"));
+		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.getVspId());
 		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = CsarParserUtils.getListTypeHeatMetaDefinition(latestFilefromDir);
 		//

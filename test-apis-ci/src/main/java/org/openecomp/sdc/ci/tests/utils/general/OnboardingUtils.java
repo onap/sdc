@@ -20,21 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import static org.testng.AssertJUnit.assertEquals;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.nio.file.FileSystems;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
+import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -44,7 +32,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
@@ -52,12 +39,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
-import org.openecomp.sdc.ci.tests.datatypes.LicensingData;
-import org.openecomp.sdc.ci.tests.datatypes.LicensingVersion;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
-import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObjectReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.enums.CvfcTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
@@ -67,9 +49,11 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
-import com.google.gson.Gson;
+import java.io.*;
+import java.nio.file.FileSystems;
+import java.util.*;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class OnboardingUtils {
 
@@ -77,211 +61,75 @@ public class OnboardingUtils {
 	 * excluded VNF file list
 	 */
 	protected static List<String> exludeVnfList =
-//			new ArrayList<String>();
-
-			Arrays.asList(
-
-//			new VNFs
-					"Vhss-epc-rdm3-lab-vf-0921-v2.0-MOBILITY-10-20.zip", "Apndns-1710-vf-v3.0-10-20.zip",
-					"HeatCandidate_2017-09-22_01-48_55Name_2016-182-asbg-nsbg-tsbg-v1.0-(VOIP).zip", "HeatCandidate_2017-09-22_01-47_55Name_2016-182-asbg-nsbg-tsbg-v7.0-(VOIP).zip",
-					"Efmc-dbe-nin-v24.0-VOIP-10-20.zip", "VF_LMSP_v5-062317-V3.0-(Mobility).zip", "base_bwks_nfm_volume-236262502.zip",
-
-//			newest failed VNFs
-					"HeatCandidate_2017-09-20_15-07_66Name_2016-20-visbc1vf-v4.0-(VOIP).zip",
-					"HeatCandidate_2017-09-20_15-06_66Name_2016-20-visbc1vf-v6.0-(VOIP).zip", "1-Vf-zrdm5bpxtc02-092017-(MOBILITY)_v3.0.zip",
-					"1-2017-491-4vshaken-HTTP-CM-vf-(VOIP)_v2.0.zip"
-
-			);
+//		new ArrayList<>();
+	Arrays.asList(
+//		DUPLICATE_RESOURCE_ID_IN_DIFFERENT_FILES:
+		"2017-376_vMOG_11_1.zip",
+		"HeatCandidate_2017-09-20_15-06_66Name_2016-20-visbc1vf-v6.0-(VOIP).zip",
+		"1 Apndns-1710-vf v3.0.zip",
+		"1 AVPN_vRE_BV_volume-V2.zip",
+		"1-Vf-zrdm5bpxtc02-092017-(MOBILITY)_v3.0.zip",
+		"1-Mobility_vprobe_fe_11_2_1_vf_(MOBILITY)_v1.0.zip",
+//		ORCHESTRATION_NOT_FOUND:
+		"1-2017-491-4vshaken-HTTP-CM-vf-(VOIP)_v2.0.zip",
+//		did not succeed to create package of new VSP  expected:<200> but was:<500>:
+		"1-Riverbed-WANx1710VFv_v2.0.zip",
+		"1-LMSP_v5-062317_v3.0.zip",
+		"1-VF-Cisco-vCSR-1710_v2.0.zip",
+		"1-mDNS-preload_1710-0914_v3.0.zip",
+		"1-Firewall_170_Pala_Aloto_VF_v2.0.zip",
+		"2-mDNS-preload-1710-0914_v3.1VF.zip",
+		"1-2016-233_xsp_bfsa_nin2-vf-V1.0-VOIP-10-20.zip",
+//		did not succeed to submit new VSP expected:<200> but was:<417>
+		"1-VF_vEPDG_v4.0.zip",
+		"1-VF-2017-491_9vShaken-F5-LB_v1.0.zip",
+		"2-2016-73_Mow-AVPN-vpe-BV-L_v1.0.zip",
+		"VF-2017389vTSBCDPA2-v4.0.zip",
+		"1-vEPDG_V1.0(3).zip",
+		"1-vHSS-EPC-RDM3-Lab-VF-0830_V3.0.zip",
+		"2-2016-73_Mow-AVPN-vPE-BV-L_VF_V2.0_1027.zip",
+		"1-ADIOD_base_vPE_BV_v9.0.zip",
+		"Vhss-epc-rdm3-lab-vf-0921-v2.0-MOBILITY-10-20.zip",
+		"1-Vhss-epc-rdm3-lab-vf-0921_VF00816v2.0-MOBILITY-10-20.zip",
+		"1-VF-vUSP-CCF-DB-0620_v1.0base_vDB.zip",
+		"1-Vusp_vhss-ims_cm-repo1_V1.zip",
+		"1-base_vepdg_volume_v4.0.zip",
+		"1-Vocg_1710-2017-509(2)_v1.0.zip",
+		"1-2016-20-vISBC3VF_v3.0.zip",
+		"Apndns-1710-vf-v3.0-10-20.zip",
+		"1-VF-EFMC_DBE_Nin_v27.0.zip",
+		"2-APNDNS_1710-VF_v4.0.zip",
+		"1-Mow_adig_vpe_bv-V3.0.zip",
+		"1-VF-2017-488_ADOID_vPE_v9.0.zip",
+		"1-MOBT_Nimbus_3_Sprint-1.zip",
+		"1-VF-2017-491_9vShaken-CM_v1.0.zip",
+		"1-VF_zrdm5bpxtc02_092017_v2.0.zip",
+//		Error: TOSCA yaml file %1 cannot be modeled to VF as it does not contain \u0027topology_template
+		"1-VF-Checkpoint_vFW-1710_v1.0.zip"
+	);
 
 	/**
 	 * additional files to exludeVnfList files for tosca parser tests
 	 */
 	protected static List<String> exludeVnfListForToscaParser = //new ArrayList<String>();
-	Arrays.asList("1-Vvig-062017-(MOBILITY)_v5.1.zip",
-			"HeatCandidate_2017-09-22_01-43_57Name_2017389vtsbc4vf-v1.0-(VOIP).zip",
-			"1-Mvm-sbc-1710-092017-(MOBILITY)_v7.0.zip",
-			"1-2017-492-5vshaken-SIP-AS-vf-(VOIP)_v2.0.zip",
-			"HeatCandidate_2017-09-20_13-37_70Name_2017-491-4vshaken-HTTP-CM-vf-v1.0-(VOIP)_10202017.zip", "1-201712-488-adiod-vpe-(Layer-0-3)_v2.0.zip",
-			"2017-502.zip",
-			"1-2017-505-urlb-vhepe-(Layer-0-3)_v2.0.zip",
-			"2017-376_vMOG_11_1.zip",
-			"HeatCandidate_2017-09-22_00-55_62Name_2017-491-6vshaken-http-cm-vf-v1.0-(VOIP).zip", "HeatCandidate_2017-09-22_01-30_60Name_Vdbe-vsp-15.1x49-d50.3-v3.0-(VOIP).zip",
-			"HeatCandidate_2017-09-22_01-35_59Name_2017-418-afx-v1.0.zip",
-			"1-2017-488-adiod-vpe-(Layer-0-3)_v-5.0.zip",
-			"HeatCandidate_2017-09-22_01-42_57Name_2017389vtsbc4vf-v10.0-(VOIP).zip",
-			"HeatCandidate_2017-09-20_13-47_68Name_2017-492-5vshaken-SIP-AS-vf-v1.0-(VOIP)_10202017.zip", "1-2016-20-visbc3vf-(VOIP)_v2.1.zip",
-			"1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip", "1-2017389vtsbc4vf-(VOIP)_v11.0.zip",
-			"HeatCandidate_2017-09-22_01-32_60Name_Vdbe-vsp-15.1x49-d50.3-v1.0-(VOIP).zip", "1-2017-418-afx-v1.1.zip");
+	Arrays.asList(
+		"1-Vvig-062017-(MOBILITY)_v5.1.zip",
+		"1-Mvm-sbc-1710-092017-(MOBILITY)_v7.0.zip",
+		"1-2017-492-5vshaken-SIP-AS-vf-(VOIP)_v2.0.zip",
+		"1-201712-488-adiod-vpe-(Layer-0-3)_v2.0.zip",
+		"2017-502.zip",
+		"1-2017-505-urlb-vhepe-(Layer-0-3)_v2.0.zip",
+		"2017-376_vMOG_11_1.zip",
+		"HeatCandidate_2017-09-22_01-30_60Name_Vdbe-vsp-15.1x49-d50.3-v3.0-(VOIP).zip",
+		"HeatCandidate_2017-09-22_01-42_57Name_2017389vtsbc4vf-v10.0-(VOIP).zip",
+		"HeatCandidate_2017-09-20_13-47_68Name_2017-492-5vshaken-SIP-AS-vf-v1.0-(VOIP)_10202017.zip",
+		"1-2016-20-visbc3vf-(VOIP)_v2.1.zip",
+		"1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip",
+		"1-2017389vtsbc4vf-(VOIP)_v11.0.zip"
+	);
 	
-	public OnboardingUtils() {
-	}
-
-	public static Pair<String, Map<String, String>> createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers, Map<CvfcTypeEnum, String> cvfcArtifacts)
-			throws Exception {
-
-		Pair<String, Map<String, String>> pair = createVSP(resourceReqDetails, heatFileName, filepath, user, amdocsLicenseMembers);
-		String vspid = pair.right.get("vspId");
-		if(cvfcArtifacts != null && ! cvfcArtifacts.isEmpty()){
-			OnboardingUtils.addCvfcArtifacts(cvfcArtifacts, vspid, user, null);
-
-		}
-		prepareVspForUse(user, vspid, "0.1");
-		return pair;
-	}
-
-	public static Pair<String, Map<String, String>> createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers)
-			throws Exception {
-
-		Map<CvfcTypeEnum, String> cvfcArtifacts = new HashMap<>();
-		return createVendorSoftwareProduct(resourceReqDetails, heatFileName, filepath, user, amdocsLicenseMembers, cvfcArtifacts);
-	}
-
-//	duplicate function
-	public static void prepareVspForUse(User user, String vspid, String vspVersion) throws Exception {
-
-		RestResponse checkin = OnboardingUtils.checkinVendorSoftwareProduct(vspid, user, vspVersion);
-		assertEquals("did not succeed to checking new VSP", 200, checkin.getErrorCode().intValue());
-
-		RestResponse submit = OnboardingUtils.submitVendorSoftwareProduct(vspid, user, vspVersion);
-		assertEquals("did not succeed to submit new VSP", 200, submit.getErrorCode().intValue());
-
-		RestResponse createPackage = OnboardingUtils.createPackageOfVendorSoftwareProduct(vspid, user, vspVersion);
-		assertEquals("did not succeed to create package of new VSP ", 200, createPackage.getErrorCode().intValue());
-
-//		ComponentBaseTest.getExtendTest().log(Status.INFO, "Succeeded in creating the vendor software product");
-	}
-
-	public static VendorSoftwareProductObject createAndFillVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filePath, User user, AmdocsLicenseMembers amdocsLicenseMembers, Map<CvfcTypeEnum, String> cvfcArtifacts)
-			throws Exception {
-
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, heatFileName, filePath, user, amdocsLicenseMembers, cvfcArtifacts);
-		VendorSoftwareProductObject vendorSoftwareProductObject = fillVendorSoftwareProductObjectWithMetaData(heatFileName, createVendorSoftwareProduct);
-		return vendorSoftwareProductObject;
-
-	}
-
-	public static void updateVendorLicense(AmdocsLicenseMembers amdocsLicenseMembers, User user, String vlmVersion) throws Exception {
-
-		RestResponse checkoutVendorLicense = checkoutVendorLicense(amdocsLicenseMembers.getVendorId(), user, vlmVersion);
-		assertEquals("did not succeed to checkout vendor license", 200, checkoutVendorLicense.getErrorCode().intValue());
-
-		RestResponse checkinVendorLicense = checkinVendorLicense(amdocsLicenseMembers.getVendorId(), user, vlmVersion);
-		assertEquals("did not succeed to checkin vendor license", 200, checkinVendorLicense.getErrorCode().intValue());
-
-		RestResponse submitVendorLicense = submitVendorLicense(amdocsLicenseMembers.getVendorId(), user, vlmVersion);
-		assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
-
-		if(ComponentBaseTest.getExtendTest() != null){
-			ComponentBaseTest.getExtendTest().log(Status.INFO, "Succeeded in updating the vendor license");
-		}
-	}
-
-	public static Pair<String, Map<String, String>> createVSP(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers) throws Exception {
-		String vspName = handleFilename(heatFileName);
-
-		if(ComponentBaseTest.getExtendTest() != null){
-			ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor software product");
-		}
-
-		Pair<RestResponse, Map<String, String>> createNewVspPair = createNewVendorSoftwareProduct(resourceReqDetails, vspName, amdocsLicenseMembers, user);
-		RestResponse createNewVendorSoftwareProduct = createNewVspPair.left;
-		assertEquals("did not succeed to create new VSP", 200,createNewVendorSoftwareProduct.getErrorCode().intValue());
-		String vspid = ResponseParser.getValueFromJsonResponse(createNewVendorSoftwareProduct.getResponse(), "vspId");
-		String componentId = ResponseParser.getValueFromJsonResponse(createNewVendorSoftwareProduct.getResponse(), "componentId");
-
-		Map<String, String> vspMeta = createNewVspPair.right;
-		Map<String, String> vspObject = new HashMap<String, String>();
-		Iterator<String> iterator = vspMeta.keySet().iterator();
-		while(iterator.hasNext()){
-			Object key = iterator.next();
-			Object value = vspMeta.get(key);
-			vspObject.put(key.toString(), value.toString());
-		}
-		vspObject.put("vspId", vspid);
-		vspObject.put("componentId", componentId);
-		vspObject.put("vendorName", amdocsLicenseMembers.getVendorLicenseName());
-		vspObject.put("attContact", user.getUserId());
-
-		RestResponse uploadHeatPackage = uploadHeatPackage(filepath, heatFileName, vspid, user, "0.1");
-		assertEquals("did not succeed to upload HEAT package", 200, uploadHeatPackage.getErrorCode().intValue());
-
-		RestResponse validateUpload = validateUpload(vspid, user, "0.1");
-		assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), 200, validateUpload.getErrorCode().intValue());
-
-		Pair<String, Map<String, String>> pair = new Pair<String, Map<String, String>>(vspName, vspObject);
-
-		return pair;
-	}
-
-	public static void updateVspWithVfcArtifacts(String filepath, String vspId, String updatedSnmpPoll, String updatedSnmpTrap, String componentId, User user, String vspVersion) throws Exception{
-		RestResponse checkout = checkoutVendorSoftwareProduct(vspId, user, vspVersion);
-		assertEquals("did not succeed to checkout new VSP", 200, checkout.getErrorCode().intValue());
-//		ExtentTestActions.log(Status.INFO, "Deleting SNMP POLL");
-		deleteArtifactByType(componentId, vspId, user, CvfcTypeEnum.SNMP_POLL);
-//		ExtentTestActions.log(Status.INFO, "Deleting SNMP TRAP");
-		deleteArtifactByType(componentId, vspId, user, CvfcTypeEnum.SNMP_TRAP);
-		addVFCArtifacts(filepath, updatedSnmpPoll, updatedSnmpTrap, vspId, user, componentId);
-		prepareVspForUse(user, vspId, vspVersion);
-	}
-
-	private static RestResponse deleteArtifactByType(String componentId, String vspId, User user, CvfcTypeEnum snmpType) throws Exception
-	{
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_AMDOCS_ARTIFACT_BY_TYPE, config.getCatalogBeHost(),config.getCatalogBePort(), vspId, componentId, snmpType.getValue());
-		String userId = user.getUserId();
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendDelete(url, headersMap);
-		return response;
-	}
-
-//	duplicated method
-	public static String updateVendorSoftwareProduct(String vspId, String HeatFileName, String filepath, User user, String vspVersion)
-		throws Exception, Throwable {
-		String vspName = OnboardingUtils.handleFilename(HeatFileName);
-		ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to update the vendor software product");
-
-		RestResponse checkout = OnboardingUtils.checkoutVendorSoftwareProduct(vspId, user, vspVersion);
-		assertEquals("did not succeed to checkout new VSP", 200, checkout.getErrorCode().intValue());
-
-		RestResponse uploadHeatPackage = OnboardingUtils.uploadHeatPackage(filepath, HeatFileName, vspId, user, vspVersion);
-		assertEquals("did not succeed to upload HEAT package", 200, uploadHeatPackage.getErrorCode().intValue());
-
-		RestResponse validateUpload = OnboardingUtils.validateUpload(vspId, user, vspVersion);
-		assertEquals("did not succeed to validate upload process", 200, validateUpload.getErrorCode().intValue());
-
-		RestResponse checkin = OnboardingUtils.checkinVendorSoftwareProduct(vspId, user, vspVersion);
-		assertEquals("did not succeed to checking VSP", 200, checkin.getErrorCode().intValue());
-
-		RestResponse submit = OnboardingUtils.submitVendorSoftwareProduct(vspId, user, vspVersion);
-		assertEquals("did not succeed to submit VSP", 200, submit.getErrorCode().intValue());
-
-		RestResponse createPackage = OnboardingUtils.createPackageOfVendorSoftwareProduct(vspId, user, vspVersion);
-		assertEquals("did not succeed to update package of VSP ", 200, createPackage.getErrorCode().intValue());
-
-		ComponentBaseTest.getExtendTest().log(Status.INFO, "Succeeded in updating the vendor software product");
-
-		return vspName;
-	}
-
-	public static void updateVendorSoftwareProductToNextVersion(VendorSoftwareProductObject vendorSoftwareProductObject, String toVspVersion, User user)
-			throws Exception, Throwable {
-
-		RestResponse checkout = checkoutVendorSoftwareProduct(vendorSoftwareProductObject.getVspId(), user, vendorSoftwareProductObject.getVersion());
-		assertEquals("did not succeed to checkout new VSP", 200, checkout.getErrorCode().intValue());
-
-		RestResponse checkin = checkinVendorSoftwareProduct(vendorSoftwareProductObject.getVspId(), user, vendorSoftwareProductObject.getVersion());
-		assertEquals("did not succeed to checking VSP", 200, checkin.getErrorCode().intValue());
-
-		RestResponse submit = submitVendorSoftwareProduct(vendorSoftwareProductObject.getVspId(), user, vendorSoftwareProductObject.getVersion());
-		assertEquals("did not succeed to submit VSP", 200, submit.getErrorCode().intValue());
-
-		vendorSoftwareProductObject.setVersion(toVspVersion);
-	}
-
 	public static String handleFilename(String heatFileName) {
-		final String namePrefix = "ciVFOnboarded-";
+		final String namePrefix = String.format("%sVF%s", ElementFactory.getResourcePrefix(), "Onboarded-");
 		final String nameSuffix = "-" + getShortUUID();
 
 		String subHeatFileName = heatFileName.substring(0, heatFileName.lastIndexOf("."));
@@ -299,496 +147,20 @@ public class OnboardingUtils {
 		return vnfName;
 	}
 	
-	public static String addVFCArtifacts(String filepath, String snmpPoll, String snmpTrap, String vspid, User user, String vspComponentId) throws Exception{
-		vspComponentId = (vspComponentId == null) ? getVSPComponentId(vspid, user) : vspComponentId;
-		if (vspComponentId != null){
-			if (snmpPoll != null){
-//				ExtentTestActions.log(Status.INFO, "Adding VFC artifact of type SNMP POLL with the file " + snmpPoll);
-				RestResponse uploadSnmpPollArtifact = uploadSnmpPollArtifact(filepath, snmpPoll, vspid, user, vspComponentId);
-				assertEquals("Did not succeed to add SNMP POLL", 200, uploadSnmpPollArtifact.getErrorCode().intValue());
-			}
-			if (snmpTrap != null){
-//				ExtentTestActions.log(Status.INFO, "Adding VFC artifact of type SNMP TRAP with the file " + snmpTrap);
-				RestResponse uploadSnmpTrapArtifact = uploadSnmpTrapArtifact(filepath, snmpTrap, vspid, user, vspComponentId);
-				assertEquals("Did not succeed to add SNMP TRAP", 200, uploadSnmpTrapArtifact.getErrorCode().intValue());
-			}
-		}
-		
-		return vspComponentId;
-	}
-
-	public static String addCvfcArtifacts(Map<CvfcTypeEnum, String> componentVfcArtifacts, String vspid, User user, String vspComponentId) throws Exception{
-		vspComponentId = (vspComponentId == null) ? getVSPComponentId(vspid, user) : vspComponentId;
-		if (vspComponentId != null){
-			for(Map.Entry<CvfcTypeEnum, String> entry : componentVfcArtifacts.entrySet()){
-//				ExtentTestActions.log(Status.INFO, "Adding VFC artifact of type " + entry.getKey().getValue() + " with the file " + entry.getValue());
-				RestResponse uploadSnmpPollArtifact = uploadCvfcArtifact(entry.getValue(), entry.getKey().getValue(), vspid, user, vspComponentId);
-				assertEquals("Did not succeed to add " + entry.getKey().getValue(), BaseRestUtils.STATUS_CODE_SUCCESS, uploadSnmpPollArtifact.getErrorCode().intValue());
-			}
-		}
-		return vspComponentId;
-	}
-
-	public static String addVFCArtifacts(String filepath, String snmpPoll, String snmpTrap, String vspid, User user) throws Exception{
-		return addVFCArtifacts(filepath, snmpPoll, snmpTrap, vspid, user, null);
-	}
-
-	public static RestResponse uploadCvfcArtifact(String filepath, String cvfcType, String vspid, User user, String vspComponentId) throws FileNotFoundException, IOException, ClientProtocolException {
-		Config config = Utils.getConfig();
-		String snmpPollUrl = String.format(Urls.UPLOAD_AMDOCS_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), vspid, vspComponentId, cvfcType);
-		return uploadFile(filepath, null, snmpPollUrl, user);
-	}
-
-
-	private static RestResponse uploadSnmpPollArtifact(String filepath, String zipArtifact, String vspid, User user,
-													   String vspComponentId) throws FileNotFoundException, IOException, ClientProtocolException {
-		Config config = Utils.getConfig();
-		String snmpPollUrl = String.format(Urls.UPLOAD_SNMP_POLL_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), vspid, vspComponentId);
-		return uploadFile(filepath, zipArtifact, snmpPollUrl, user);
-	}
-
-	private static RestResponse uploadSnmpTrapArtifact(String filepath, String zipArtifact, String vspid, User user,
-													   String vspComponentId) throws FileNotFoundException, IOException, ClientProtocolException {
-		Config config = Utils.getConfig();
-		String snmpTrapUrl = String.format(Urls.UPLOAD_SNMP_POLL_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), vspid, vspComponentId);
-		return uploadFile(filepath, zipArtifact, snmpTrapUrl, user);
-	}
-	
-	private static RestResponse deleteSnmpArtifact(String componentId, String vspId, User user, SnmpTypeEnum snmpType) throws Exception
-	{
-		Config config = Utils.getConfig();
-		String url = String.format("http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/components/%s/monitors/%s", 
-				config.getCatalogBeHost(),config.getCatalogBePort(), vspId, componentId, snmpType.getValue());
-		String userId = user.getUserId();
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendDelete(url, headersMap);
-		return response;
-	}
-
-	private static String getVSPComponentId(String vspid, User user) throws Exception, JSONException {
-		RestResponse components = getVSPComponents(vspid, user);
-		String response = components.getResponse();
-		Map<String, Object> responseMap = (Map<String, Object>) JSONValue.parse(response);
-		JSONArray results = (JSONArray)responseMap.get("results");
-		for (Object res : results){
-			Map<String, Object> compMap= (Map<String, Object>) JSONValue.parse(res.toString());
-			String componentId = compMap.get("id").toString();
-			return componentId;
-		}
-		return null;
-	}
-
-	private static RestResponse getVSPComponents(String vspid, User user) throws Exception{
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_VSP_COMPONENTS, config.getCatalogBeHost(),config.getCatalogBePort(), vspid);
-		String userId = user.getUserId();
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendGet(url, headersMap);
-		return response;
-	}
-
-	private static RestResponse getVLMComponentByVersion(String vlmId, String vlmVersion, User user) throws Exception{
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_VLM_COMPONENT_BY_VERSION, config.getCatalogBeHost(),config.getCatalogBePort(), vlmId,vlmVersion);
-		String userId = user.getUserId();
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendGet(url, headersMap);
-		return response;
-	}
-
-	public static boolean validateVspExist(String vspId, String vspVersion, User user) throws Exception {
-		RestResponse restResponse = getVSPComponentByVersion(vspId, vspVersion, user);
-		assertEquals(String.format("Vsp version not updated, reponse message: %s", restResponse.getResponse()),restResponse.getErrorCode().intValue(),200);
-		return (restResponse.getErrorCode()==200);
-	}
-
-	public static boolean validateVlmExist(String vlmId, String vlmVersion, User user) throws Exception {
-		RestResponse restResponse = getVLMComponentByVersion(vlmId, vlmVersion, user);
-		assertEquals(String.format("VLM version not updated, reponse code message: %s", restResponse.getResponse()),restResponse.getErrorCode().intValue(),200);
-		return (restResponse.getErrorCode()==200);
-	}
-
-
-	private static RestResponse getVSPComponentByVersion(String vspId, String vspVersion, User user) throws Exception{
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_VSP_COMPONENT_BY_VERSION, config.getCatalogBeHost(),config.getCatalogBePort(), vspId,vspVersion);
-		String userId = user.getUserId();
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendGet(url, headersMap);
-		return response;
-	}
-
-//	Duplicate method
-	public static AmdocsLicenseMembers createVendorLicense(User user) throws Exception {
-		
-		AmdocsLicenseMembers amdocsLicenseMembers;
-//		ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor license");
-		String vendorLicenseName = "ciLicense" + OnboardingUtils.getShortUUID();
-		RestResponse vendorLicenseResponse = OnboardingUtils.createVendorLicenseModels_1(vendorLicenseName, user);
-		assertEquals("did not succeed to create vendor license model", 200, vendorLicenseResponse.getErrorCode().intValue());
-		String vendorId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "value");
-
-		RestResponse vendorKeyGroupsResponse = OnboardingUtils.createVendorKeyGroups_2(vendorId, user);
-		assertEquals("did not succeed to create vendor key groups", 200, vendorKeyGroupsResponse.getErrorCode().intValue());
-		String keyGroupId = ResponseParser.getValueFromJsonResponse(vendorKeyGroupsResponse.getResponse(), "value");
-
-		RestResponse vendorEntitlementPool = OnboardingUtils.createVendorEntitlementPool_3(vendorId, user);
-		assertEquals("did not succeed to create vendor entitlement pool", 200, vendorEntitlementPool.getErrorCode().intValue());
-		String entitlementPoolId = ResponseParser.getValueFromJsonResponse(vendorEntitlementPool.getResponse(), "value");
-
-		RestResponse vendorLicenseFeatureGroups = OnboardingUtils.createVendorLicenseFeatureGroups_4(vendorId, keyGroupId, entitlementPoolId, user);
-		assertEquals("did not succeed to create vendor license feature groups", 200, vendorLicenseFeatureGroups.getErrorCode().intValue());
-		String featureGroupId = ResponseParser.getValueFromJsonResponse(vendorLicenseFeatureGroups.getResponse(), "value");
-
-		RestResponse vendorLicenseAgreement = OnboardingUtils.createVendorLicenseAgreement_5(vendorId, featureGroupId, user);
-		assertEquals("did not succeed to create vendor license agreement", 200, vendorLicenseAgreement.getErrorCode().intValue());
-		String vendorLicenseAgreementId = ResponseParser.getValueFromJsonResponse(vendorLicenseAgreement.getResponse(), "value");
-
-		RestResponse checkinVendorLicense = OnboardingUtils.checkinVendorLicense(vendorId, user, "0.1");
-		assertEquals("did not succeed to checkin vendor license", 200, checkinVendorLicense.getErrorCode().intValue());
-
-		RestResponse submitVendorLicense = OnboardingUtils.submitVendorLicense(vendorId, user, "0.1");
-		assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
-
-//		ComponentBaseTest.getExtendTest().log(Status.INFO, "Succeeded in creating the vendor license");
-
-		amdocsLicenseMembers = new AmdocsLicenseMembers(vendorId, vendorLicenseName, vendorLicenseAgreementId, featureGroupId);
-		amdocsLicenseMembers.setVersion("1.0"); // Once object created and submitted, his initial version is 1.0
-
-		return amdocsLicenseMembers;
-	}
 
 	public static String getShortUUID() {
 		return UUID.randomUUID().toString().split("-")[0];
 	}
 
-	private static RestResponse actionOnComponent(String vspid, String action, String onboardComponent, User user, String componentVersion)
-			throws Exception {
+	private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.ACTION_ON_COMPONENT, config.getCatalogBeHost(), config.getCatalogBePort(), onboardComponent, vspid, componentVersion);
 		String userId = user.getUserId();
-
-		JSONObject jObject = new JSONObject();
-		jObject.put("action", action);
-
 		Map<String, String> headersMap = prepareHeadersMap(userId);
 
 		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendPut(url, jObject.toString(), headersMap);
-		return response;
-	}
-
-
-		public static RestResponse checkinVendorLicense(String vspid, User user, String vlmVersion) throws Exception {
-		return actionOnComponent(vspid, "Checkin", "vendor-license-models", user, vlmVersion);
-	}
-
-	public static RestResponse checkoutVendorLicense(String vspid, User user, String vlmVersion) throws Exception {
-		return actionOnComponent(vspid, "Checkout", "vendor-license-models", user, vlmVersion);
-	}
-
-	public static RestResponse submitVendorLicense(String vspid, User user, String vlmVersion) throws Exception {
-		return actionOnComponent(vspid, "Submit", "vendor-license-models", user, vlmVersion);
-	}
-
-	public static RestResponse createVendorLicenseModels_1(String name, User user) throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.CREATE_VENDOR_LISENCE_MODELS, config.getCatalogBeHost(),
-				config.getCatalogBePort());
-		String userId = user.getUserId();
-
-		JSONObject jObject = new JSONObject();
-		jObject.put("vendorName", name);
-		jObject.put("description", "new vendor license model");
-		jObject.put("iconRef", "icon");
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendPost(url, jObject.toString(), headersMap);
-		return response;
-
-	}
-
-	public static RestResponse createVendorLicenseAgreement_5(String vspid, String featureGroupId, User user)
-			throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.CREATE_VENDOR_LISENCE_AGREEMENT, config.getCatalogBeHost(), config.getCatalogBePort(), vspid);
-		String userId = user.getUserId();
-
-		JSONObject licenseTermpObject = new JSONObject();
-		licenseTermpObject.put("choice", "Fixed_Term");
-		licenseTermpObject.put("other", "");
-
-		JSONObject jObjectBody = new JSONObject();
-		jObjectBody.put("name", "abc");
-		jObjectBody.put("description", "new vendor license agreement");
-		jObjectBody.put("requirementsAndConstrains", "abc");
-		jObjectBody.put("licenseTerm", licenseTermpObject);
-		jObjectBody.put("addedFeatureGroupsIds", Arrays.asList(featureGroupId).toArray());
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendPost(url, jObjectBody.toString(), headersMap);
-		return response;
-	}
-
-	public static RestResponse createVendorLicenseFeatureGroups_4(String vspid, String licenseKeyGroupId,
-																  String entitlementPoolId, User user) throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.CREATE_VENDOR_LISENCE_FEATURE_GROUPS, config.getCatalogBeHost(), config.getCatalogBePort(), vspid);
-		String userId = user.getUserId();
-
-		JSONObject jObject = new JSONObject();
-		jObject.put("name", "xyz");
-		jObject.put("description", "new vendor license feature groups");
-		jObject.put("partNumber", "123abc456");
-		jObject.put("manufacturerReferenceNumber", "5");
-		jObject.put("addedLicenseKeyGroupsIds", Arrays.asList(licenseKeyGroupId).toArray());
-		jObject.put("addedEntitlementPoolsIds", Arrays.asList(entitlementPoolId).toArray());
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendPost(url, jObject.toString(), headersMap);
-		return response;
-
-	}
-
-	public static RestResponse createVendorEntitlementPool_3(String vspid, User user) throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.CREATE_VENDOR_LISENCE_ENTITLEMENT_POOL, config.getCatalogBeHost(), config.getCatalogBePort(), vspid);
-		String userId = user.getUserId();
-
-		JSONObject jEntitlementMetricObject = new JSONObject();
-		jEntitlementMetricObject.put("choice", "CPU");
-		jEntitlementMetricObject.put("other", "");
-
-		JSONObject jAggregationFunctionObject = new JSONObject();
-		jAggregationFunctionObject.put("choice", "Peak");
-		jAggregationFunctionObject.put("other", "");
-
-		JSONObject jOperationalScope = new JSONObject();
-		jOperationalScope.put("choices", Arrays.asList("Availability_Zone").toArray());
-		jOperationalScope.put("other", "");
-
-		JSONObject jTimeObject = new JSONObject();
-		jTimeObject.put("choice", "Hour");
-		jTimeObject.put("other", "");
-
-		JSONObject jObjectBody = new JSONObject();
-		jObjectBody.put("name", "def"+ getShortUUID());
-		jObjectBody.put("description", "new vendor license entitlement pool");
-		jObjectBody.put("thresholdValue", "23");
-		jObjectBody.put("thresholdUnits", "Absolute");
-		jObjectBody.put("entitlementMetric", jEntitlementMetricObject);
-		jObjectBody.put("increments", "abcd");
-		jObjectBody.put("aggregationFunction", jAggregationFunctionObject);
-		jObjectBody.put("operationalScope", jOperationalScope);
-		jObjectBody.put("time", jTimeObject);
-		jObjectBody.put("manufacturerReferenceNumber", "123aaa");
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendPost(url, jObjectBody.toString(), headersMap);
-		return response;
-	}
-
-	public static RestResponse createVendorKeyGroups_2(String vspid, User user) throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.CREATE_VENDOR_LISENCE_KEY_GROUPS, config.getCatalogBeHost(), config.getCatalogBePort(), vspid);
-		String userId = user.getUserId();
-
-		JSONObject jOperationalScope = new JSONObject();
-		jOperationalScope.put("choices", Arrays.asList("Tenant").toArray());
-		jOperationalScope.put("other", "");
-
-		JSONObject jObjectBody = new JSONObject();
-		jObjectBody.put("name", "keyGroup" + getShortUUID());
-		jObjectBody.put("description", "new vendor license key group");
-		jObjectBody.put("operationalScope", jOperationalScope);
-		jObjectBody.put("type", "Universal");
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		HttpRequest http = new HttpRequest();
-		RestResponse response = http.httpSendPost(url, jObjectBody.toString(), headersMap);
-		return response;
-	}
-
-	public static Pair<RestResponse, Map<String, String>> createNewVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String vspName, AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
-		Map<String, String> vspMetadta = new HashMap<String, String>();
-
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.CREATE_VENDOR_SOFTWARE_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort());
-		String userId = user.getUserId();
-		VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
-		LicensingData licensingData = new LicensingData(amdocsLicenseMembers.getVendorLicenseAgreementId(), Arrays.asList(amdocsLicenseMembers.getFeatureGroupId()));
-		LicensingVersion licensingVersion = new LicensingVersion("1.0", "1.0");
-		ResourceCategoryEnum resourceCategoryEnum = ResourceCategoryEnum.findEnumNameByValues(resourceReqDetails.getCategories().get(0).getName(), resourceReqDetails.getCategories().get(0).getSubcategories().get(0).getName());
-
-		vendorSoftwareProductObject.setLicensingVersion(licensingVersion);
-
-		vendorSoftwareProductObject.setName(vspName);
-		vendorSoftwareProductObject.setDescription(resourceReqDetails.getDescription());
-		vendorSoftwareProductObject.setCategory(resourceCategoryEnum.getCategoryUniqeId());
-		vendorSoftwareProductObject.setSubCategory(resourceCategoryEnum.getSubCategoryUniqeId());
-		vendorSoftwareProductObject.setOnboardingMethod("NetworkPackage");
-		vendorSoftwareProductObject.setVendorName(amdocsLicenseMembers.getVendorLicenseName());
-		vendorSoftwareProductObject.setVendorId(amdocsLicenseMembers.getVendorId());
-		vendorSoftwareProductObject.setIcon("icon");
-		vendorSoftwareProductObject.setLicensingData(licensingData);
-
-		vspMetadta.put("description", resourceReqDetails.getDescription());
-		vspMetadta.put("category", resourceCategoryEnum.getCategory());
-		vspMetadta.put("subCategory", resourceCategoryEnum.getSubCategory());
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-		HttpRequest http = new HttpRequest();
-		Gson gson = new Gson();
-		String body = gson.toJson(vendorSoftwareProductObject);
-
-		RestResponse response = http.httpSendPost(url, body, headersMap);
-		return new Pair<RestResponse, Map<String, String>>(response, vspMetadta);
-	}
-
-	public static RestResponse validateUpload(String vspid, User user, String vspVersion) throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.VALIDATE_UPLOAD, config.getCatalogBeHost(), config.getCatalogBePort(), vspid,vspVersion);
-
-		String userId = user.getUserId();
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-		HttpRequest http = new HttpRequest();
-
-		String body =null;
-
 		RestResponse response = http.httpSendPut(url, body, headersMap);
-
 		return response;
-	}
-
-	public static RestResponse uploadHeatPackage(String filepath, String filename, String vspid, User user, String vspVersion) throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.UPLOAD_HEAT_PACKAGE, config.getCatalogBeHost(), config.getCatalogBePort(), vspid, vspVersion);
-		return uploadFile(filepath, filename, url, user);
-	}
-
-	private static RestResponse uploadFile(String filepath, String filename, String url, User user)
-			throws FileNotFoundException, IOException, ClientProtocolException {
-		CloseableHttpResponse response = null;
-
-		MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
-		mpBuilder.addPart("upload", new FileBody(getTestZipFile(filepath, filename)));
-
-		Map<String, String> headersMap = prepareHeadersMap(user.getUserId());
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "multipart/form-data");
-
-		CloseableHttpClient client = HttpClients.createDefault();
-		try {
-			HttpPost httpPost = new HttpPost(url);
-			RestResponse restResponse = new RestResponse();
-
-			Iterator<String> iterator = headersMap.keySet().iterator();
-			while (iterator.hasNext()) {
-				String key = iterator.next();
-				String value = headersMap.get(key);
-				httpPost.addHeader(key, value);
-			}
-			httpPost.setEntity(mpBuilder.build());
-			response = client.execute(httpPost);
-			HttpEntity entity = response.getEntity();
-			String responseBody = null;
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				try {
-					StringWriter writer = new StringWriter();
-					IOUtils.copy(instream, writer);
-					responseBody = writer.toString();
-				} finally {
-					instream.close();
-				}
-			}
-
-			restResponse.setErrorCode(response.getStatusLine().getStatusCode());
-			restResponse.setResponse(responseBody);
-
-			return restResponse;
-
-		} finally {
-			closeResponse(response);
-			closeHttpClient(client);
-
-		}
-	}
-
-	private static void closeResponse(CloseableHttpResponse response) {
-		try {
-			if (response != null) {
-				response.close();
-			}
-		} catch (IOException e) {
-			System.out.println(String.format("failed to close client or response: %s", e.getMessage()));
-		}
-	}
-
-	private static void closeHttpClient(CloseableHttpClient client) {
-		try {
-			if (client != null) {
-				client.close();
-			}
-		} catch (IOException e) {
-			System.out.println(String.format("failed to close client or response: %s", e.getMessage()));
-		}
-	}
-
-//	private static File getTestZipFile(String filepath, String filename) throws IOException {
-//		Config config = Utils.getConfig();
-//		String sourceDir = config.getImportResourceTestsConfigDir();
-//		java.nio.file.Path filePath = FileSystems.getDefault().getPath(filepath + File.separator + filename);
-//		return filePath.toFile();
-//	}
-
-	private static File getTestZipFile(String filepath, String filename) throws IOException {
-		Config config = Utils.getConfig();
-		String sourceDir = config.getImportResourceTestsConfigDir();
-		java.nio.file.Path filePath;
-		if(filename == null){
-			filePath = FileSystems.getDefault().getPath(filepath);
-		}else{
-			filePath = FileSystems.getDefault().getPath(filepath + File.separator + filename);
-		}
-		return filePath.toFile();
-	}
-
-	public static RestResponse checkinVendorSoftwareProduct(String vspid, User user, String vspVersion) throws Exception {
-		return actionOnComponent(vspid, "Checkin", "vendor-software-products", user, vspVersion);
-	}
-
-	public static RestResponse checkoutVendorSoftwareProduct(String vspid, User user, String vspVersion) throws Exception {
-		return actionOnComponent(vspid, "Checkout", "vendor-software-products", user, vspVersion);
-	}
-
-	public static RestResponse submitVendorSoftwareProduct(String vspid, User user, String vspVersion) throws Exception {
-		return actionOnComponent(vspid, "Submit", "vendor-software-products", user, vspVersion);
-	}
-
-	public static RestResponse createPackageOfVendorSoftwareProduct(String vspid, User user, String vspVersion) throws Exception {
-		return actionOnComponent(vspid, "Create_Package", "vendor-software-products", user, vspVersion);
 	}
 
 	protected static Map<String, String> prepareHeadersMap(String userId) {
@@ -799,193 +171,7 @@ public class OnboardingUtils {
 		return headersMap;
 	}
 
-	public static VendorSoftwareProductObject updateVSPWithNewVLMParameters(VendorSoftwareProductObject vendorSoftwareProductObject,
-																			AmdocsLicenseMembers amdocsLicenseMembers, User user, String vspCurrentVersion, String vspNextVersion) throws Exception {
 
-		LicensingVersion licensingVersion = new LicensingVersion(amdocsLicenseMembers.getLicenseVersionId(),amdocsLicenseMembers.getLicenseVersionId());
-		LicensingData licensingData = new LicensingData(amdocsLicenseMembers.getVendorLicenseAgreementId(), Arrays.asList(amdocsLicenseMembers.getFeatureGroupId()));
-		vendorSoftwareProductObject.setVendorId(amdocsLicenseMembers.getVendorId());
-		vendorSoftwareProductObject.setVendorName(amdocsLicenseMembers.getVendorLicenseName());
-		vendorSoftwareProductObject.setLicensingVersion(licensingVersion);
-		vendorSoftwareProductObject.setLicensingData(licensingData);
-
-		VendorSoftwareProductObjectReqDetails vendorSoftwareProductObjectReqDetails = new VendorSoftwareProductObjectReqDetails(
-				vendorSoftwareProductObject.getName(),
-				vendorSoftwareProductObject.getDescription(),
-				vendorSoftwareProductObject.getCategory(),
-				vendorSoftwareProductObject.getSubCategory(),
-				vendorSoftwareProductObject.getVendorId(),
-				vendorSoftwareProductObject.getVendorName(),
-				licensingVersion,
-				licensingData,
-				vendorSoftwareProductObject.getOnboardingMethod(),
-				vendorSoftwareProductObject.getNetworkPackageName(),
-				vendorSoftwareProductObject.getOnboardingOrigin());
-
-		Gson gson = new Gson();
-		String json = gson.toJson(vendorSoftwareProductObjectReqDetails);
-
-		RestResponse checkout = checkoutVendorSoftwareProduct(vendorSoftwareProductObject.getVspId(), user, "1.0");
-		assertEquals("did not succeed to checkout new VSP", 200, checkout.getErrorCode().intValue());
-
-		Config config = Utils.getConfig();
-		String url = String.format(Urls.UPDATE_VSP, config.getCatalogBeHost(), config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vspCurrentVersion);
-		String userId = user.getUserId();
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-		HttpRequest http = new HttpRequest();
-
-		RestResponse response = http.httpSendPut(url, json, headersMap);
-
-		RestResponse checkin = checkinVendorSoftwareProduct(vendorSoftwareProductObject.getVspId(), user, vspCurrentVersion);
-		assertEquals("did not succeed to checking VSP", 200, checkin.getErrorCode().intValue());
-
-		RestResponse submit = submitVendorSoftwareProduct(vendorSoftwareProductObject.getVspId(), user, vspCurrentVersion);
-		assertEquals("did not succeed to submit VSP", 200, submit.getErrorCode().intValue());
-
-		vendorSoftwareProductObject.setVersion(vspNextVersion);
-
-		return vendorSoftwareProductObject;
-	}
-
-//	private static void importUpdateVSP(Pair<String, Map<String, String>> vsp, boolean isUpdate) throws Exception{
-//		String vspName = vsp.left;
-//		Map<String, String> vspMetadata = vsp.right;
-//		boolean vspFound = HomePage.searchForVSP(vspName);
-//
-//		if (vspFound){
-//
-//			List<WebElement> elemenetsFromTable = HomePage.getElemenetsFromTable();
-////			WebDriverWait wait = new WebDriverWait(GeneralUIUtils.getDriver(), 30);
-////			WebElement findElement = wait.until(ExpectedConditions.visibilityOf(elemenetsFromTable.get(1)));
-////			findElement.click();
-//			elemenetsFromTable.get(1).click();
-//			GeneralUIUtils.waitForLoader();
-//
-//			if (isUpdate){
-//				GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.UPDATE_VSP.getValue());
-//
-//			}
-//			else{
-//				GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.IMPORT_VSP.getValue());
-//			}
-//
-//			String lifeCycleState = ResourceGeneralPage.getLifeCycleState();
-//			boolean needCheckout = lifeCycleState.equals(LifeCycleStateEnum.CHECKIN.getValue()) || lifeCycleState.equals(LifeCycleStateEnum.CERTIFIED.getValue());
-//			if (needCheckout)
-//			{
-//				try {
-//					ResourceGeneralPage.clickCheckoutButton();
-//					Assert.assertTrue(ResourceGeneralPage.getLifeCycleState().equals(LifeCycleStateEnum.CHECKOUT.getValue()), "Did not succeed to checkout");
-//
-//				} catch (Exception e) {
-//					ExtentTestActions.log(Status.ERROR, "Did not succeed to checkout");
-//					e.printStackTrace();
-//				}
-//				GeneralUIUtils.waitForLoader();
-//			}
-//
-//			//Metadata verification
-//			VfVerificator.verifyOnboardedVnfMetadata(vspName, vspMetadata);
-//
-//			ExtentTestActions.log(Status.INFO, "Clicking create/update VNF");
-//			String duration = GeneralUIUtils.getActionDuration(() -> waitUntilVnfCreated());
-//		    ExtentTestActions.log(Status.INFO, "Succeeded in importing/updating " + vspName, duration);
-//		}
-//		else{
-//			Assert.fail("Did not find VSP named " + vspName);
-//		}
-//	}
-
-//	private static void waitUntilVnfCreated() {
-//		GeneralUIUtils.clickOnElementByTestIdWithoutWait(DataTestIdEnum.GeneralElementsEnum.CREATE_BUTTON.getValue());
-//		GeneralUIUtils.waitForLoader(60*10);
-//		GeneralUIUtils.waitForAngular();
-//		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue());
-//	}
-//
-//	public static void updateVSP(Pair<String, Map<String, String>> vsp) throws Exception{
-//		ExtentTestActions.log(Status.INFO, "Updating VSP " + vsp.left);
-//		importUpdateVSP(vsp, true);
-//	}
-//
-//	public static void importVSP(Pair<String, Map<String, String>> vsp) throws Exception{
-//		ExtentTestActions.log(Status.INFO, "Importing VSP " + vsp.left);
-//		importUpdateVSP(vsp, false);
-//	}
-//
-//	public static void updateVnfAndValidate(String filepath, Pair<String, Map<String, String>> vsp, String updatedVnfFile, User user) throws Exception, Throwable {
-//		ExtentTestActions.log(Status.INFO, String.format("Going to update the VNF with %s......", updatedVnfFile));
-//		System.out.println(String.format("Going to update the VNF with %s......", updatedVnfFile));
-//
-//		Map<String, String> vspMap = vsp.right;
-//		String vspId = vspMap.get("vspId");
-//
-//		updateVendorSoftwareProduct(vspId, updatedVnfFile, filepath, user);
-//		HomePage.showVspRepository();
-//		updateVSP(vsp);
-//		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
-//		DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, updatedVnfFile);
-//	}
-//
-//	public static Pair<String, Map<String, String>> onboardAndValidate(String filepath, String vnfFile, User user) throws Exception {
-//		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
-//		System.out.println(String.format("Going to onboard the VNF %s", vnfFile));
-//
-//		AmdocsLicenseMembers amdocsLicenseMembers = createVendorLicense(user);
-//		Pair<String, Map<String, String>> createVendorSoftwareProduct = createVendorSoftwareProduct(vnfFile, filepath, user, amdocsLicenseMembers);
-//		String vspName = createVendorSoftwareProduct.left;
-//
-//		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.get("vspId"));
-//		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
-//
-//		ExtentTestActions.log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
-//		HomePage.showVspRepository();
-//		ExtentTestActions.log(Status.INFO,String.format("Going to import %s", vnfFile.substring(0, vnfFile.indexOf("."))));
-//		importVSP(createVendorSoftwareProduct);
-//
-//		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
-//
-//		// Verify deployment artifacts
-//		Map<String, Object> combinedMap = ArtifactFromCsar.combineHeatArtifacstWithFolderArtifacsToMap(latestFilefromDir.getAbsolutePath());
-//
-//		LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts = ((LinkedList<HeatMetaFirstLevelDefinition>) combinedMap.get("Deployment"));
-//		ArtifactsCorrelationManager.addVNFartifactDetails(vspName, deploymentArtifacts);
-//
-//		List<String> heatEnvFilesFromCSAR = deploymentArtifacts.stream().filter(e -> e.getType().equals("HEAT_ENV")).
-//																		 map(e -> e.getFileName()).
-//																		 collect(Collectors.toList());
-//
-//		validateDeploymentArtifactsVersion(deploymentArtifacts, heatEnvFilesFromCSAR);
-//
-//		DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
-//		return createVendorSoftwareProduct;
-//	}
-//
-//	public static void validateDeploymentArtifactsVersion(LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts,
-//			List<String> heatEnvFilesFromCSAR) {
-//		String artifactVersion;
-//		String artifactName;
-//
-//		for(HeatMetaFirstLevelDefinition deploymentArtifact: deploymentArtifacts) {
-//			artifactVersion = "1";
-//
-//			if(deploymentArtifact.getType().equals("HEAT_ENV")) {
-//				continue;
-//			} else if(deploymentArtifact.getFileName().contains(".")) {
-//				artifactName = deploymentArtifact.getFileName().trim().substring(0, deploymentArtifact.getFileName().lastIndexOf("."));
-//			} else {
-//				artifactName = deploymentArtifact.getFileName().trim();
-//			}
-//
-//			if (heatEnvFilesFromCSAR.contains(artifactName + ".env")){
-//				artifactVersion = "2";
-//			}
-//			ArtifactUIUtils.validateArtifactNameVersionType(artifactName, artifactVersion, deploymentArtifact.getType());
-//		}
-//	}
-	
-	
 	/**
 	 * @return
 	 * The method returns VNF names list from Files directory under sdc-vnfs repository
@@ -1007,41 +193,6 @@ public class OnboardingUtils {
 		return fileNamesFromFolder;
 	}
 
-	public static VendorSoftwareProductObject fillVendorSoftwareProductObjectWithMetaData(String vnfFile, Pair<String, Map<String, String>> createVendorSoftwareProduct) {
-		VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
-		Map<String, String> map = createVendorSoftwareProduct.right;
-		vendorSoftwareProductObject.setAttContact(map.get("attContact"));
-		vendorSoftwareProductObject.setCategory(map.get("category"));
-		vendorSoftwareProductObject.setComponentId(map.get("componentId"));
-		vendorSoftwareProductObject.setDescription(map.get("description"));
-		vendorSoftwareProductObject.setSubCategory(map.get("subCategory"));
-		vendorSoftwareProductObject.setVendorName(map.get("vendorName"));
-		vendorSoftwareProductObject.setVspId(map.get("vspId"));
-		vendorSoftwareProductObject.setName(createVendorSoftwareProduct.left);
-		String[] arrFileNameAndExtension = vnfFile.split("\\.");
-		vendorSoftwareProductObject.setOnboardingMethod("NetworkPackage");
-		vendorSoftwareProductObject.setNetworkPackageName(arrFileNameAndExtension[0]);
-		vendorSoftwareProductObject.setOnboardingOrigin(arrFileNameAndExtension[1]);
-
-		return vendorSoftwareProductObject;
-	}
-
-	public static void updateVendorSoftwareProductToNextVersion(VendorSoftwareProductObject vendorSoftwareProductObject, String toVspVersion, User user, String filepath, String heatFileName)
-			throws Exception, Throwable {
-
-		RestResponse checkout = checkoutVendorSoftwareProduct(vendorSoftwareProductObject.getVspId(), user, vendorSoftwareProductObject.getVersion());
-		assertEquals("did not succeed to checkout new VSP", 200, checkout.getErrorCode().intValue());
-
-		RestResponse uploadHeatPackage = uploadHeatPackage(filepath, heatFileName, vendorSoftwareProductObject.getVspId(), user, "1.1");
-		assertEquals("did not succeed to upload HEAT package", 200, uploadHeatPackage.getErrorCode().intValue());
-
-		RestResponse validateUpload = validateUpload(vendorSoftwareProductObject.getVspId(), user, "1.1");
-		assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), 200, validateUpload.getErrorCode().intValue());
-
-		prepareVspForUse(user,vendorSoftwareProductObject.getVspId(),toVspVersion);
-
-		vendorSoftwareProductObject.setVersion(toVspVersion);
-	}
 
 	public static Object[][] filterObjectArrWithExcludedVnfs(Object[][] objectArr)
 	{

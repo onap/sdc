@@ -7,7 +7,8 @@ VERSION=$2
 ENV=$3
 
 RECIPIENTS1="dl-sdcqa@intl.att.com,ml636r@intl.att.com,bl5783intl.att.com,ak314p@intl.att.com,el489u@intl.att.com,hk096q@intl.att.com,bs5719@intl.att.com"
-RECIPIENTS2="dl-asdcqa@intl.att.com"
+#RECIPIENTS2="dl-asdcqa@intl.att.com"
+RECIPIENTS2="md9897@intl.att.com,sw594b@intl.att.com,al714h@intl.att.com"
 
 source ExtentReport/versions.info
 if [ -z "$REPORT_NAME" ]

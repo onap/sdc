@@ -38,6 +38,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
