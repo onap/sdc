@@ -2,14 +2,13 @@ package org.openecomp.core.tools.Commands;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.tools.concurrent.ItemHealingTask;
+import org.openecomp.core.tools.exceptions.HealingRuntimeException;
 import org.openecomp.core.tools.loaders.VersionInfoCassandraLoader;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 
@@ -32,114 +31,95 @@ import java.util.stream.Stream;
  */
 public class HealAll {
 
-  private static final String HEALING_USER = "healing_user";
-  private static final int defaulThreadNumber = 100;
-  private static BufferedWriter log;
-  private static List<ItemHealingTask> tasks = new ArrayList<>();
-  private static VendorSoftwareProductManager vspManager = VspManagerFactory
-      .getInstance().createInterface();
-  private static HealingManager healingManager = HealingManagerFactory.getInstance()
-      .createInterface();
-  private static VersioningManager versioningManager = VersioningManagerFactory.getInstance()
-      .createInterface();
+    private static final int DEFAULT_THREAD_NUMBER = 100;
+    private static List<ItemHealingTask> tasks = new ArrayList<>();
+    private static VendorSoftwareProductManager vspManager = VspManagerFactory
+            .getInstance().createInterface();
+    private static HealingManager healingManager = HealingManagerFactory.getInstance()
+            .createInterface();
 
-  static {
-    try {
-      log =
-          new BufferedWriter(new FileWriter("healing.log", true));
-    } catch (IOException e) {
-      if (log != null) {
-        try {
-          log.close();
-        } catch (IOException e1) {
-          throw new RuntimeException("can't initial healing log file: " + e1.getMessage());
+    private HealAll() {
+    }
+
+    public static void healAll(String threadNumber) {
+
+        String logFileName = "healing.log";
+        try (BufferedWriter log = new BufferedWriter(new FileWriter(logFileName, true))) {
+
+            writeToLog("----starting healing------", log);
+            Instant startTime = Instant.now();
+
+            int numberOfThreads = Objects.nonNull(threadNumber) ? Integer.valueOf(threadNumber) :
+                    DEFAULT_THREAD_NUMBER;
+            ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+
+            filterByEntityType(VersionInfoCassandraLoader.list(),
+                    VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE).forEach
+                    (HealAll::addTaskToTasks);
+
+            executeAllTasks(executor, log);
+
+            writeToLog("----finished healing------", log);
+            Instant endTime = Instant.now();
+            writeToLog("Total runtime was: " + Duration.between(startTime, endTime), log);
+        } catch (IOException e) {
+            throw new HealingRuntimeException("can't initial healing log file '" + logFileName + "'", e);
         }
-      }
-      throw new RuntimeException("can't initial healing log file: " + e.getMessage());
-    }
-  }
 
-  public static void healAll(String threadNumber) {
-
-    writeToLog("----starting healing------");
-    Instant startTime = Instant.now();
-
-    int numberOfThreads = Objects.nonNull(threadNumber) ? Integer.valueOf(threadNumber) :
-        defaulThreadNumber;
-    ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
-
-    filterByEntityType(VersionInfoCassandraLoader.list(),
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE).forEach
-        (HealAll::addTaskToTasks);
-
-    executeAllTasks(executor);
-
-    writeToLog("----finished healing------");
-    Instant endTime = Instant.now();
-    writeToLog("Total runtime was: " + Duration.between(startTime, endTime));
-
-    try {
-      if (log != null) {
-        log.close();
-      }
-    } catch (IOException e) {
-      writeToLog("Error:" + e.getMessage());
+        System.exit(1);
     }
 
-    System.exit(1);
-  }
-
-  private static void executeAllTasks(ExecutorService executor) {
-    List<Future<String>> futureTasks;
-    try {
-      futureTasks = executor.invokeAll(tasks);
-      futureTasks.forEach(future -> {
+    private static void executeAllTasks(ExecutorService executor, BufferedWriter log) {
+        List<Future<String>> futureTasks;
         try {
-          log.write(future.get());
-          log.newLine();
-        } catch (Exception e) {
-          writeToLog(e.getMessage());
+            futureTasks = executor.invokeAll(tasks);
+            futureTasks.forEach(future -> {
+                try {
+                    log.write(future.get());
+                    log.newLine();
+                } catch (Exception e) {
+                    writeToLog(e.getMessage(), log);
+                }
+            });
+        } catch (InterruptedException e) {
+            writeToLog("migration tasks failed with message: " + e.getMessage(), log);
+            throw new HealingRuntimeException(e);
         }
-      });
-    } catch (InterruptedException e) {
-      writeToLog("migration tasks failed with message: " + e.getMessage());
-      throw new RuntimeException(e);
+
+        boolean isThreadOpen = true;
+        while (isThreadOpen) {
+            isThreadOpen = futureTasks.stream().anyMatch(future -> !future.isDone());
+        }
     }
 
-    boolean isThreadOpen = true;
-    while (isThreadOpen) {
-      isThreadOpen = futureTasks.stream().anyMatch(future -> !future.isDone());
+    private static Version resolveVersion(VersionInfoEntity versionInfoEntity) {
+        if (Objects.nonNull(versionInfoEntity.getCandidate())) {
+            return versionInfoEntity.getCandidate().getVersion();
+        } else if (!CollectionUtils.isEmpty(versionInfoEntity.getViewableVersions())) {
+            return versionInfoEntity.getViewableVersions().stream().max(Version::compateTo).get();
+        }
+        return versionInfoEntity.getActiveVersion();
     }
-  }
 
-  private static Version resolveVersion(VersionInfoEntity versionInfoEntity) {
-    if (Objects.nonNull(versionInfoEntity.getCandidate())) {
-      return versionInfoEntity.getCandidate().getVersion();
-    } else if (!CollectionUtils.isEmpty(versionInfoEntity.getViewableVersions())) {
-      return versionInfoEntity.getViewableVersions().stream().max(Version::compateTo).get();
+    private static void writeToLog(String message, BufferedWriter log) {
+        try {
+            log.write(message);
+            log.newLine();
+        } catch (IOException e) {
+            throw new HealingRuntimeException("unable to write to healing all log file.", e);
+        }
     }
-    return versionInfoEntity.getActiveVersion();
-  }
 
-  private static void writeToLog(String message) {
-    try {
-      log.write(message);
-      log.newLine();
-    } catch (IOException e) {
-      throw new RuntimeException("unable to write to healing all log file.");
+    private static Stream<VersionInfoEntity> filterByEntityType(
+            Collection<VersionInfoEntity> versionInfoEntities, String entityType) {
+        return versionInfoEntities.stream().filter(versionInfoEntity -> versionInfoEntity
+                .getEntityType().equals(entityType));
     }
-  }
 
-  private static Stream<VersionInfoEntity> filterByEntityType(
-      Collection<VersionInfoEntity> versionInfoEntities, String entityType) {
-    return versionInfoEntities.stream().filter(versionInfoEntity -> versionInfoEntity
-        .getEntityType().equals(entityType));
-  }
-
-  private static void addTaskToTasks(VersionInfoEntity versionInfoEntity) {
-    tasks.add(new ItemHealingTask(versionInfoEntity.getEntityId(), resolveVersion
-        (versionInfoEntity).toString(),
-        vspManager, healingManager));
-  }
+    private static void addTaskToTasks(VersionInfoEntity versionInfoEntity) {
+        tasks.add(new ItemHealingTask(versionInfoEntity.getEntityId(), resolveVersion
+                (versionInfoEntity).toString(),
+                vspManager, healingManager));
+    }
 
 }
