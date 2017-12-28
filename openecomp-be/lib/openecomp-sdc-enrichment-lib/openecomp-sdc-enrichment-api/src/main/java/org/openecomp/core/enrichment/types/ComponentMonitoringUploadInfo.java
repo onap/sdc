@@ -31,30 +31,21 @@ public class ComponentMonitoringUploadInfo {
 
 
   private Map<MonitoringUploadType, MonitoringArtifactInfo> infoByType = new HashMap<>();
-  //todo as part of ATTASDC-4503
-
 
   public MonitoringArtifactInfo getSnmpTrap() {
     return infoByType.get(SNMP_TRAP);
-  }
-
-  public void setSnmpTrap(MonitoringArtifactInfo snmpTrapInfo) {
-    infoByType.put(SNMP_TRAP, snmpTrapInfo);
   }
 
   public MonitoringArtifactInfo getSnmpPoll() {
     return infoByType.get(SNMP_POLL);
   }
 
-  public void setSnmpPoll(MonitoringArtifactInfo snmpPollInfo) {
-    infoByType.put(SNMP_POLL, snmpPollInfo);
-  }
-
   public MonitoringArtifactInfo getVesEvent() {
     return infoByType.get(VES_EVENTS);
   }
 
-  public void setVesEvent(MonitoringArtifactInfo snmpPollInfo) {
-    infoByType.put(VES_EVENTS, snmpPollInfo);
+  public void setMonitoringArtifactFile(MonitoringUploadType type,
+                                        MonitoringArtifactInfo monitoringArtifactInfo) {
+    infoByType.put(type, monitoringArtifactInfo);
   }
 }

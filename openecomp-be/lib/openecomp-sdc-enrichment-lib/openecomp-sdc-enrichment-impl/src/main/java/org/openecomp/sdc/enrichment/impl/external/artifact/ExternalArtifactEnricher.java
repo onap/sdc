@@ -28,6 +28,7 @@ import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -38,9 +39,6 @@ import java.util.Map;
 public class ExternalArtifactEnricher extends Enricher {
   private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static String EXTERNAL_ARTIFACT_ENRICH_CONF_FILE = "ExternalArtifactConfiguration.json";
-  private static final String EXTERNAL_ARTIFACT_ENRICH_ERROR = "ERROR_CREATING_EXTERNAL_ARTIFACTS";
-  private static final String EXTERNAL_ARTIFACT_ENRICH_ERROR_MSG =
-      "An Error has occured during enrichment of external artifacts ";
   private static Collection<String> implementingClasses =
       getExternalArtifactEnrichedImplClassesList();
   private static Logger logger = LoggerFactory.getLogger(ExternalArtifactEnricher.class);
@@ -57,21 +55,21 @@ public class ExternalArtifactEnricher extends Enricher {
   public Map<String, List<ErrorMessage>> enrich() {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
 
         try {
             for (String implementingClassName : implementingClasses) {
                 ExternalArtifactEnricherInterface externalArtifactEnricherInstance = getExternalArtifactEnricherInstance(implementingClassName);
-                externalArtifactEnricherInstance.enrich(this.data);
+                externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model);
             }
         } catch (Exception e) {
           logger.debug("",e);
           logger.error(e.getMessage());
         }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
     return errors;
   }
 
