@@ -1,0 +1,39 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pd_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    pd_flavor_name:
+      type: string
+      description: flavor name of PD instance
+      default: m3.xlarge
+    availabilityzone_name:
+      type: string
+      description: availabilityzone name
+      default: nova
+
+  node_templates:
+    abstract_pd_server_0:
+      type: org.openecomp.resource.abstract.nodes.pd_server
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
+          count: 1
+    abstract_pd_server_1:
+      type: org.openecomp.resource.abstract.nodes.pd_server_1
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: Nested_pd_1serverServiceTemplate.yaml
+          count: 1

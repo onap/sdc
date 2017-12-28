@@ -10,6 +10,7 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
@@ -29,13 +30,13 @@ import java.util.Map;
 public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterface {
 
   private ComponentDao componentDao;
-  //private ProcessArtifactDao processArtifactDao;
   private ProcessDao processDao;
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private EnrichedServiceModelDao enrichedServiceModelDao;
 
   @Override
-  public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo) throws IOException {
+  public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo,
+                                                ToscaServiceModel serviceModel) throws IOException {
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
     String vspId = enrichmentInfo.getKey();
     Version version = enrichmentInfo.getVersion();
@@ -72,18 +73,11 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
     ProcessEntity processEntity = new ProcessEntity(vspId, version, componentId, null);
     final Collection<ProcessEntity> processes = getProcessDao().list(processEntity);
 
-    /*processes.stream()
-        .filter(entity -> entity.getType().equals(ProcessType.Lifecycle_Operations))
-        .forEach(entity -> {
-          ProcessArtifactEntity artifactEntity = new ProcessArtifactEntity(vspId, version,
-                  componentId, entity.getId());*/
-
     processes.forEach(entity -> {
       ProcessEntity artifactEntity = new ProcessEntity(vspId, version,
           componentId, entity.getId());
 
           ProcessEntity artifactProcessEntity = getProcessDao().get(artifactEntity);
-          //ProcessArtifactEntity artifact = getProcessArtifactDao().get(artifactEntity);
           if (artifactProcessEntity != null && ProcessType.Lifecycle_Operations.equals(
               artifactProcessEntity.getType())
               && artifactProcessEntity.getArtifactName() != null ) {
@@ -99,7 +93,7 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
             ServiceArtifact processServiceArtifact = new ServiceArtifact();
             processServiceArtifact.setVspId(vspId);
             processServiceArtifact.setVersion(version);
-            enrichServiceArtifact(componentProcessInfo, processServiceArtifact, errors);
+            enrichServiceArtifact(componentProcessInfo, processServiceArtifact);
           }
         });
 
@@ -107,8 +101,7 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
   }
 
   void enrichServiceArtifact(ComponentProcessInfo componentProcessInfo,
-                             ServiceArtifact processServiceArtifact,
-                             Map<String, List<ErrorMessage>> errors) {
+                             ServiceArtifact processServiceArtifact) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null);

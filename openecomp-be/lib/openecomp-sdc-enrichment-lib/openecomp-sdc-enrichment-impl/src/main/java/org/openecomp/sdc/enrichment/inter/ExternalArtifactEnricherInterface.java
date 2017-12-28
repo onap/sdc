@@ -23,6 +23,7 @@ package org.openecomp.sdc.enrichment.inter;
 
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,5 +33,6 @@ import java.util.Map;
  * Created by Talio on 11/24/2016.
  */
 public interface ExternalArtifactEnricherInterface {
-  Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo) throws IOException;
+  Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo,
+                                         ToscaServiceModel serviceModel) throws IOException;
 }
