@@ -28,6 +28,8 @@ import java.util.Map;
 public class GroupHeatMetaDefinition {
 
 	private int group = 0;
+	private String groupName;
+
 //	private List<String> artifactList = new ArrayList<String>();
 	private List<HeatMetaFirstLevelDefinition> artifactList = new ArrayList<HeatMetaFirstLevelDefinition>();
 	@Override
@@ -75,7 +77,15 @@ public class GroupHeatMetaDefinition {
 		this.group = group;
 	}
 
-//	public List<String> getArtifactList() {
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	//	public List<String> getArtifactList() {
 //		return artifactList;
 //	}
 //

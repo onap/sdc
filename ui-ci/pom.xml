@@ -11,10 +11,10 @@
 		<artifactId>sdc-main</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
-	
+
 	<properties>
-		<sonar.skip>true</sonar.skip>
 		<jacoco.skip>true</jacoco.skip>
+		<aspectj.version>1.8.10</aspectj.version>
 	</properties>
 
 	<dependencies>
@@ -22,22 +22,22 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
-<!--             <version>21.0</version> -->
+			<!-- <version>21.0</version> -->
 			<scope>compile</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>2.53.1</version>
-<!-- 			<version>3.4.0</version> -->
+			<!-- <version>3.4.0</version> -->
 		</dependency>
 
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-server</artifactId>
 			<version>2.53.1</version>
-<!-- 			<version>3.4.0</version> -->
+			<!-- <version>3.4.0</version> -->
 			<scope>runtime</scope>
 		</dependency>
 
@@ -69,7 +69,7 @@
 			<version>${snakeyaml.version}</version>
 			<scope>compile</scope>
 		</dependency>
-	    <dependency>
+		<dependency>
 			<groupId>org.functionaljava</groupId>
 			<artifactId>functionaljava</artifactId>
 			<version>${functionaljava.version}</version>
@@ -87,42 +87,42 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+			<version>${httpclient.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
-            <version>${httpclient.version}</version>
+			<version>${httpclient.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-            <version>${commons-logging}</version>
+			<version>${commons-logging}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-            <version>${slf4j-api.version}</version>
+			<version>${slf4j-api.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+			<version>${logback.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
+			<version>${logback.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -143,8 +143,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openecomp.sdc.sdc-titan-cassandra</groupId>
-  			<artifactId>sdc-titan-cassandra</artifactId>
+			<groupId>com.thinkaurelius.titan</groupId>
+			<artifactId>titan-cassandra</artifactId>
 			<version>${titan.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -169,18 +169,18 @@
 			<version>2.3.1</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.annotations.version}</version>
-            <scope>compile</scope>
-       </dependency>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
 			<artifactId>sdc-distribution-client</artifactId>
-			<version>1.1.50-SNAPSHOT</version>
+			<version>1.1.50</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -194,7 +194,7 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>${testng.version}</version>
+			<version>6.11</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -234,42 +234,80 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
+			<version>${commons-codec}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-  			<groupId>com.aventstack</groupId>
-  			<artifactId>extentreports</artifactId>
-  			<version>3.0.6</version>
-  			<scope>compile</scope>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>3.0.6</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-            <groupId>net.lightbody.bmp</groupId>
-            <!-- To use the legacy, Jetty-based implementation, 
-             change the artifactId to browsermob-core -->
-            <artifactId>browsermob-core</artifactId>
-            <version>2.1.4</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.github.markusbernhardt</groupId>
-            <artifactId>proxy-vole</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.paulhammant</groupId>
-            <artifactId>ngwebdriver</artifactId>
-            <version>0.9.7</version>
-            <scope>compile</scope>
-        </dependency>
-        	
+			<groupId>net.lightbody.bmp</groupId>
+			<!-- To use the legacy, Jetty-based implementation, change the artifactId 
+				to browsermob-core -->
+			<artifactId>browsermob-core</artifactId>
+			<version>2.1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.markusbernhardt</groupId>
+			<artifactId>proxy-vole</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.paulhammant</groupId>
+			<artifactId>ngwebdriver</artifactId>
+			<version>0.9.7</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.att.automation.common</groupId>
+			<artifactId>report-portal-integration</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+
+
+
+
+
 	</dependencies>
 
 	<build>
 		<plugins>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-compiler-plugin</artifactId> -->
+<!-- 				<version>3.7.0</version> -->
+<!-- 				<configuration> -->
+<!-- 					<compilerArgument>-g:vars</compilerArgument> -->
+<!-- 					<debug>true</debug> -->
+<!-- 					<debuglevel>lines,vars,source</debuglevel> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-surefire-plugin</artifactId> -->
+<!-- 				<version>2.19.1</version> -->
+<!-- 				<configuration> -->
+<!-- 					<suiteXmlFiles> -->
+<!-- 						<suiteXmlFile>${suiteXmlFile}</suiteXmlFile> -->
+<!-- 					</suiteXmlFiles> -->
+<!-- 					<argLine>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -285,6 +323,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.5</version>
 				<executions>
 					<execution>
 						<id>create.jar.with.dependencies</id>
@@ -307,4 +346,16 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>nexus_att_repository_id</id>
+			<url>http://135.76.5.78:8083/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>nexus_att_repository_id</id>
+			<url>http://135.76.5.78:8083/nexus/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

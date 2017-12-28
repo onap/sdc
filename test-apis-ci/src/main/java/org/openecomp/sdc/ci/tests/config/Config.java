@@ -92,7 +92,8 @@ public class Config {
 	private String windowsDownloadDirectory;
 	private boolean captureTraffic;
 	private boolean useBrowserMobProxy;
-	
+	private String sdcHttpMethod;
+
 	private static Config configIt = null;
 
 	private static Yaml yaml = new Yaml();
@@ -244,6 +245,14 @@ public class Config {
 
 	public void setSystemUnderDebug(boolean systemUnderDebug) {
 		this.systemUnderDebug = systemUnderDebug;
+	}
+
+	public String getSdcHttpMethod() {
+		return sdcHttpMethod;
+	}
+
+	public void setSdcHttpMethod(String sdcHttpMethod) {
+		this.sdcHttpMethod = sdcHttpMethod;
 	}
 
 	public boolean getRerun() {

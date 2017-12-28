@@ -58,7 +58,9 @@ public class VfModuleVerificator {
 		int heatMetaGroupCount = 0;
 		int toscaDefinitionGroupCount = 0;
 		for (TypeHeatMetaDefinition typeHeatMetaDefinition : listTypeHeatMetaDefinition) {
-			heatMetaGroupCount = typeHeatMetaDefinition.getGroupHeatMetaDefinition().size();
+			if(!typeHeatMetaDefinition.getTypeName().equals("artifacts")) {
+				heatMetaGroupCount = typeHeatMetaDefinition.getGroupHeatMetaDefinition().size();
+			}
 		}
 		toscaDefinitionGroupCount = toscaDefinition.getTopology_template().getGroups().size();
 		assertEquals("Expected num of groups in HEAT.meta file is " + heatMetaGroupCount + ", but was in TOSCA yaml file " + toscaDefinitionGroupCount, heatMetaGroupCount, toscaDefinitionGroupCount);
@@ -127,7 +129,7 @@ public class VfModuleVerificator {
 		
 		for(String propertyType : PROPERTY_TYPES){
 			int numberOfTypes = (int) vfModules.stream().
-												filter(e -> e.getProperties().containsKey(propertyType)).
+												filter(e -> e.getProperties().equals(propertyType)).
 												count();
 			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating VF property %s exist, Expected: %s, Actual: %s  ", propertyType, vfModules.size(), numberOfTypes));
 			assertTrue(numberOfTypes == vfModules.size());

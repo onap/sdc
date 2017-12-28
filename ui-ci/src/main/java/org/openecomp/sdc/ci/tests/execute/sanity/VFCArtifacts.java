@@ -20,18 +20,13 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -43,20 +38,21 @@ import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.verificator.VFCArtifactVerificator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.testng.Assert.assertTrue;
+import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 
 public class VFCArtifacts extends SetupCDTest {
 	
@@ -218,14 +214,14 @@ public class VFCArtifacts extends SetupCDTest {
 		String vnfFile = "vProbes_FE.zip";
 		String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 		
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+		Pair<String, VendorSoftwareProductObject> createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
-		Map<String, String> resourceMeta = createVSP.right;
-		String vspid = resourceMeta.get("vspId");
-		OnboardingUtils.addVFCArtifacts(filePath, snmpFile, null, vspid, getUser());
-		OnboardingUtils.prepareVspForUse(getUser(), vspid, "0.1");
+		VendorSoftwareProductObject resourceMeta = createVSP.right;
+		String vspid = resourceMeta.getVspId();
+		VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, resourceMeta, getUser());
+		VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), resourceMeta, true);
 		
 		String downloadDirectory = getWindowTest().getDownloadDirectory();
 		String csarFile = vspid + ".csar";
@@ -252,14 +248,14 @@ public class VFCArtifacts extends SetupCDTest {
 		String snmpPollFile = "vprobes-vLB.zip";
 		String updatedSnmpPollFile = "vprobes-vLBAgent.zip";
 		
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+		Pair<String, VendorSoftwareProductObject> createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
-		Map<String, String> resourceMeta = createVSP.right;
-		String vspid = resourceMeta.get("vspId");
-		String montoringComponentId = OnboardingUtils.addVFCArtifacts(filePath, snmpPollFile, null, vspid, getUser());
-		OnboardingUiUtils.prepareVspForUse(getUser(), vspid, "0.1");
+		VendorSoftwareProductObject resourceMeta = createVSP.right;
+		String vspid = resourceMeta.getVspId();
+		String montoringComponentId = VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpPollFile, null, resourceMeta, getUser());
+		VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), resourceMeta, true);
 		
 		String downloadDirectory = getWindowTest().getDownloadDirectory();
 		String csarFile = vspid + ".csar";
@@ -275,7 +271,7 @@ public class VFCArtifacts extends SetupCDTest {
 		TesterOperationPage.certifyComponent(vspName);
 		
 		reloginWithNewRole(UserRoleEnum.DESIGNER);
-		OnboardingUtils.updateVspWithVfcArtifacts(filePath, vspid, updatedSnmpPollFile, null, montoringComponentId, getUser(), "0.1");
+		VendorSoftwareProductRestUtils.updateVspWithVfcArtifacts(filePath, updatedSnmpPollFile, null, montoringComponentId, getUser(), resourceMeta);
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
 		HomePage.showVspRepository();
 		OnboardingUiUtils.updateVSP(createVSP);
@@ -298,14 +294,14 @@ public class VFCArtifacts extends SetupCDTest {
 		String snmpFile = "vprobes-vLB.zip";
 		String updatedSnmpFile = "vprobes-vLB-Modified.zip";
 		
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+		Pair<String, VendorSoftwareProductObject> createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
-		Map<String, String> resourceMeta = createVSP.right;
-		String vspid = resourceMeta.get("vspId");
-		String monitoringId = OnboardingUtils.addVFCArtifacts(filePath, snmpFile, null, vspid, getUser());
-		OnboardingUiUtils.prepareVspForUse(getUser(), vspid, "0.1");
+		VendorSoftwareProductObject resourceMeta = createVSP.right;
+		String vspid = resourceMeta.getVspId();
+		String monitoringId = VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, resourceMeta, getUser());
+		VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), resourceMeta, true);
 		
 		String downloadDirectory = getWindowTest().getDownloadDirectory();
 		String csarFile = vspid + ".csar";
@@ -328,7 +324,7 @@ public class VFCArtifacts extends SetupCDTest {
 		TesterOperationPage.certifyComponent(vspName);
 		
 		reloginWithNewRole(UserRoleEnum.DESIGNER);
-		OnboardingUtils.updateVspWithVfcArtifacts(filePath, vspid, updatedSnmpFile, null, monitoringId, getUser(), "0.1");
+		VendorSoftwareProductRestUtils.updateVspWithVfcArtifacts(filePath, updatedSnmpFile, null, monitoringId, getUser(), resourceMeta);
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
 		HomePage.showVspRepository();
 		OnboardingUiUtils.updateVSP(createVSP);

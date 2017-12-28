@@ -820,7 +820,13 @@ public final class DataTestIdEnum {
 		INPUT_DELETE_BUTTON("delete-input-button"),
 		INPUT_DELETE_DIALOG_DELETE("Delete"),
 		INPUT_DELETE_DIALOG_CLOSE("Close"),
-		FILTER_CHECKBOX_ALL("filter-checkbox-all");
+		FILTER_CHECKBOX_ALL("filter-checkbox-all"),
+		FILTER_CHECKBOX_CP("filter-checkbox-cp"),
+		FILTER_CHECKBOX_VFC("filter-checkbox-vfc"),
+		FILTER_CHECKBOX_VL("filter-checkbox-vl"),
+		FILTER_APPLY_BUTTON("filter-apply-button"),
+		FILTER_CLOSE_BUTTON("filter-close-button"),
+		PROPERTY_NAME_COLUMN("property-name");
 		
 		
 		private String value;
@@ -867,6 +873,82 @@ public final class DataTestIdEnum {
 			this.value = value;
 		}
 	}
-	
-	
+
+	public enum ComplexServiceAmdocs {
+		CREATE_BUTTON("Create"),
+		PATH_LIST_BUTTON("pathsListMenuItem"),
+		CREATE_PATH_MENU_BUTTON("createPathMenuItem"),
+		PATH_NAME("pathName"),
+		PATH_PROTOCOL("pathProtocol"),
+		PATH_PORT_NUMBER("pathPortNumbers"),
+		SAVE("Save"),
+		EXTEND_BUTTON("extendPathlnk");
+
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		private ComplexServiceAmdocs(String value) {
+			this.value = value;
+		}
+	}
+
+	public enum PortMirroring {
+		COLLECTOR_NODE("collector_node"),
+		EQUIP_MODEL("equip_model"),
+		EQUIP_VENDOR("equip_vendor"),
+		PMC_NAME_IN_PALLETE("Port Mirroring Configuration"),
+		PMCP_NAME_IN_PALLETE("Port Mirroring Configuration By Policy");
+
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		private PortMirroring(String value) {
+			this.value = value;
+		}
+	}
+
+	public enum CompositionRightPanel_GenerInfo {
+		TYPE("rightTab_componentType"),
+		RESOURCE_TYPE("rightTab_resourceType"),
+		SELECT_VERSION("changeVersion"),
+		CATEGORY("rightTab_category"),
+		SUB_CATEGORY("rightTab_subCategory");
+
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		private CompositionRightPanel_GenerInfo(String value) {
+			this.value = value;
+		}
+	}
+
+	public enum CompositionRightPanel {
+
+		COMPONENT_TITLE("selectedCompTitle"),
+		REQS_AND_CAPS_TAB("requirements-and-capabilities"),
+		EDIT_PENCIL("editPencil"),
+		INSTANCE_NAME_TEXTBOX("instanceName"),
+		DELETE_ITEM("e-sdc-small-icon-delete"),
+		REQS_AND_CAPS_TAB_XPATH("//button[@tooltip-content='Requirements and Capabilities']");
+
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		private CompositionRightPanel(String value) {
+			this.value = value;
+		}
+	}
+
 }

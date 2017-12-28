@@ -1,34 +1,24 @@
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
+import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
+import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaInputsTopologyTemplateDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.*;
 import org.openecomp.sdc.ci.tests.tosca.model.ToscaMetadataFieldsPresentationEnum;
 import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
+import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
@@ -37,15 +27,14 @@ import org.openecomp.sdc.ci.tests.utils.rest.PropertyRestUtils;
 import org.openecomp.sdc.ci.tests.verificator.ToscaValidation;
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.openecomp.sdc.toscaparser.api.Group;
 import org.openecomp.sdc.toscaparser.api.NodeTemplate;
 import org.openecomp.sdc.toscaparser.api.elements.Metadata;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
-
-import fj.data.Either;
+import java.io.File;
+import java.util.*;
 
 
 public class ToscaValidationTest extends SetupCDTest{
@@ -53,50 +42,11 @@ public class ToscaValidationTest extends SetupCDTest{
 	private static final String GENERIC_VF = "Generic_VF";
 	private static final String GENERIC_PNF = "Generic_PNF";
 			
-//	private ToscaDefinition toscaMainAmdocsDefinition, toscaMainVfDefinition, toscaMainServiceDefinition, toscaExpectedMainServiceDefinition;
-	protected String vnfFile;
-	protected String filepath;
-//	protected File filesFolder = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
 	protected SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();
-//	protected ISdcCsarHelper fdntCsarHelper;
-//	protected ResourceReqDetails resourceReqDetails;
-//	protected Resource resource;
-//	protected ServiceReqDetails serviceReqDetails;
-//	protected Service service;
-//	protected ComponentInstance componentInstanceDefinition;
 	User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-//	File importToscaFilesFolder = new File("C:/Git_work/sdc/catalog-be/src/main/resources/import/tosca/");
 
-//	File dataTypesLocation = new File(importToscaFilesFolder.getPath() + "/data-types/dataTypes.yml");
-//	List<Boolean> status = new ArrayList<>();
-
-//	File genericVfFileLocation = new File(importToscaFilesFolder.getPath() + "/heat-types/Generic_VF/Generic_VF.yml");
-//	File genericVfcFileLocation = new File (importToscaFilesFolder.getPath() + "/heat-types/Generic_VFC/Generic_VFC.yml");
-//	File genericPnfFileLocation = new File (importToscaFilesFolder.getPath() + "/heat-types/Generic_PNF/Generic_PNF.yml");
-//	File genericServiceFileLocation = new File (importToscaFilesFolder.getPath() + "/heat-types/Generic_Service/Generic_Service.yml");
-
-//	Map<String, DataTypeDefinition> parseDataTypesYaml = FileHandling.parseDataTypesYaml(dataTypesLocation.getAbsoluteFile().toString());
-	
-//	toscaMainAmdocsDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + amdocsCsarFileName));
-//	toscaMainVfDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + VfCsarFileName));
-//	toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + serviceCsarFileName));
-//	ToscaTopologyTemplateDefinition topologyTemplate = toscaMainAmdocsDefinition.getTopology_template();
-//	ToscaDefinition objectHelper = ToscaParserUtils.parseToscaYamlToJavaObject(genericVfFileLocation);
-	
-
-	public ToscaValidationTest(String filepath, String vnfFile) {
-		this.filepath = filepath;
-		this.vnfFile = vnfFile;
-	}
-
-	public ToscaValidationTest() {
-	}
-
-
-
-//	@BeforeClass
-	@Test()
-	public void toscaFileValidator() throws Exception{
+	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
+	public void toscaFileValidator(String filePath, String vnfFile) throws Exception, Throwable{
 //--------------------------GENERAL--------------------------------
 /*//		for debugging only
 		setLog("Test");
@@ -104,35 +54,93 @@ public class ToscaValidationTest extends SetupCDTest{
 		toscaMainAmdocsDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(amdocsCsarFileName);
 		toscaMainVfDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File("C:\\Users\\al714h\\Downloads\\resource-Civfonboarded2016073VmxBv301072E2eE60f5c15-csar.csar"));
 	*/
+//		vnfFile = "BE-HEAT.zip";
 		setLog(vnfFile);
 		List<Boolean> status = new ArrayList<>();
 		ISdcCsarHelper fdntCsarHelper;
 		File filesFolder = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
-//		filesFolder = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
-//--------------------------AMDOCS--------------------------------	
-//		vnfFile = "HeatCandidate_2017-09-22_01-32_60Name_Vdbe-vsp-15.1x49-d50.3-v1.0-(VOIP).zip";
+//--------------------------AMDOCS--------------------------------
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, user);//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		resourceReqDetails = createCustomizedVsp(resourceReqDetails, filepath, vnfFile);
-
+		resourceReqDetails = createCustomizedVsp(resourceReqDetails, filePath, vnfFile);
 		ToscaDefinition toscaMainAmdocsDefinition = downloadAndGetToscaMainYamlObjectUI(resourceReqDetails, filesFolder);
 //------adding generic inputs to expected object
 		toscaMainAmdocsDefinition = addGenericPropertiesToToscaDefinitionObject(toscaMainAmdocsDefinition, GENERIC_VF);
 //	copy object
 		ToscaDefinition toscaExpectedMainServiceDefinition = new ToscaDefinition(toscaMainAmdocsDefinition);
+//		create list of modules from HEAT.meta file
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
+		List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = CsarParserUtils.getListTypeHeatMetaDefinition(latestFilefromDir);
+//TODO 	VfModuleVerificator.verifyGroupMetadata();
 //TODO--------------------------AMDOCS DOWNLOAD VIA APIS--------------------------------
-
 //--------------------------VF--------------------------------
 //		create VF base on VNF imported from previous step - have, resourceReqDetails object include part of resource metadata
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
+//--------------------------SERVICE--------------------------------
+		ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+		ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
+//--------------------------getProperties set values and declare--------------------
+		Component componentObject = AtomicOperationUtils.getComponentObject(service, UserRoleEnum.DESIGNER);
+		Map<String, List<ComponentInstanceInput>> componentInstancesInputs = componentObject.getComponentInstancesInputs();
+		setValuesToPropertiesList(componentInstancesInputs, toscaExpectedMainServiceDefinition);
+		PropertyRestUtils.declareProporties(componentObject, componentInstancesInputs, user);
+
+		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		File ServiceCsarFileName = new File(File.separator + "ServiceCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
+		OnboardingUtillViaApis.downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + ServiceCsarFileName));
+		ToscaDefinition toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + ServiceCsarFileName));
+//--------------------------initialization of Tosca Parser--------------------------------
+		fdntCsarHelper = initSdcCsarHelper(ServiceCsarFileName, filesFolder);
+////---------------------------TESTS--------------------------------------------------
+		status = validateVfMetadata(toscaMainAmdocsDefinition, toscaMainVfDefinition, resourceReqDetails, resource, vnfFile, status);
+		status = validateResourceNodeTemplateMetadata(toscaMainVfDefinition, resource, vnfFile, status);
+		status = validateServiceMetadata(toscaMainServiceDefinition, serviceReqDetails, service, vnfFile, status);
+		status = validateServiceNodeTemplateMetadata(toscaMainServiceDefinition, componentInstanceDefinition, resourceReqDetails, resource, vnfFile, status);
+		status = validateServiceMetadataUsingParser(fdntCsarHelper, serviceReqDetails, service, vnfFile, status);
+		status = validateServiceNodeTemplateMetadataUsingParser(fdntCsarHelper, resourceReqDetails, resource, componentInstanceDefinition, vnfFile, status);
+		status = validateResourceInputs(toscaMainAmdocsDefinition, toscaMainVfDefinition, vnfFile, status);
+		status = validateServiceInputs(toscaExpectedMainServiceDefinition, toscaMainServiceDefinition, vnfFile, status);
+		status = validateServiceInputsUsingParser(fdntCsarHelper, toscaExpectedMainServiceDefinition, vnfFile, status);
+
+		Map<String, ToscaGroupsTopologyTemplateDefinition> expectedToscaServiceGroupsDefinitionObject = createExpectedToscaServiceGroupsDefinitionObject(resource, service, listTypeHeatMetaDefinition);
+		status = validateServiceModuleMetadata(expectedToscaServiceGroupsDefinitionObject, toscaMainServiceDefinition, vnfFile, status);
+		status = validateServiceModuleProperty(expectedToscaServiceGroupsDefinitionObject, toscaMainServiceDefinition, vnfFile, status);
+		status = validateServiceModuleMetadataUsingParser(fdntCsarHelper, expectedToscaServiceGroupsDefinitionObject, vnfFile, status);
+		status = validateServiceModulePropertyUsingParser(fdntCsarHelper, expectedToscaServiceGroupsDefinitionObject, vnfFile, status);
+
+		if(status.contains(false)){
+			SetupCDTest.getExtendTest().log(Status.FAIL, "Summary: tosca validation test failed with zip file " + vnfFile);
+			Assert.assertFalse(true);
+		}
+	}
+
+	@Test()
+	public void NetworkModel() throws Exception{
+//--------------------------GENERAL--------------------------------
+		String vnfFile = "networkModel";
+		setLog(vnfFile);
+		List<Boolean> status = new ArrayList<>();
+		ISdcCsarHelper fdntCsarHelper;
+		ToscaDefinition toscaMainAmdocsDefinition = new ToscaDefinition();
+		File filesFolder = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
+//		filesFolder = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
+
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.PNF, user);
+		toscaMainAmdocsDefinition = addGenericPropertiesToToscaDefinitionObject(toscaMainAmdocsDefinition, GENERIC_PNF);
+		ToscaDefinition toscaExpectedMainServiceDefinition = new ToscaDefinition(toscaMainAmdocsDefinition);
+//--------------------------VF--------------------------------
+		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceReqDetails,UserRoleEnum.DESIGNER,true).left().value();
+		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
-		
-//--------------------------SERVICE--------------------------------	
-		ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-//		serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(serviceReqDetails, user);
+
+//--------------------------SERVICE--------------------------------
+		ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
 		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-		
+
 		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
 		ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
 
@@ -148,10 +156,6 @@ public class ToscaValidationTest extends SetupCDTest{
 		OnboardingUtillViaApis.downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + ServiceCsarFileName));
 		ToscaDefinition toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + ServiceCsarFileName));
 
-
-
-
-		
 //--------------------------initialization of Tosca Parser--------------------------------
 
 		fdntCsarHelper = initSdcCsarHelper(ServiceCsarFileName, filesFolder);
@@ -167,20 +171,14 @@ public class ToscaValidationTest extends SetupCDTest{
 		status = validateResourceInputs(toscaMainAmdocsDefinition, toscaMainVfDefinition, vnfFile, status);
 		status = validateServiceInputs(toscaExpectedMainServiceDefinition, toscaMainServiceDefinition, vnfFile, status);
 		status = validateServiceInputsUsingParser(fdntCsarHelper, toscaExpectedMainServiceDefinition, vnfFile, status);
-		
+
 		if(status.contains(false)){
 			SetupCDTest.getExtendTest().log(Status.FAIL, "Summary: tosca validation test failed with zip file " + vnfFile);
 			Assert.assertFalse(true);
 		}
 	}
 
-
-
-
-
-
-
-	/**The method set values to toscaDefinition object service level only, to resource level should put instead of setDefault --> setValue 
+	/**The method set values to toscaDefinition object service level only, to resource level should put instead of setDefault --> setValue
 	 * inputs.get(componentInstanceInput.getName()).setValue(randomString);
 	 * @param componentInstancesInputs
 	 * @param toscaDefinition
@@ -225,7 +223,17 @@ public class ToscaValidationTest extends SetupCDTest{
 					componentInstanceInput.setValue(myListofStrings);
 					inputs.get(componentInstanceInput.getName()).setDefault(myListofStrings);
 				}
-				
+				else if (type.equals("json")  ){
+					String myJson = "{\"firstParam\":\"my First Param Value\",\"secondParam\":\"my Second Param Value\",\"numberParam\":666}";
+					componentInstanceInput.setValue(myJson);
+					inputs.get(componentInstanceInput.getName()).setDefault(myJson);
+				}
+				else if (type.equals("comma_delimited_list")  ){
+					String commaDelimitedList = "[\"one\", \"two\"]";
+					componentInstanceInput.setValue(commaDelimitedList);
+					inputs.get(componentInstanceInput.getName()).setDefault(commaDelimitedList);
+				}
+
 				String expectedServiceInputName = expectedServiceInputPrefix + componentInstanceInput.getName();
 				ToscaInputsTopologyTemplateDefinition oldInput = inputs.get(componentInstanceInput.getName());
 				inputs.put(expectedServiceInputName, oldInput);
@@ -256,7 +264,6 @@ public class ToscaValidationTest extends SetupCDTest{
 		int integerValue = r.nextInt(High - Low) + Low;
 		return integerValue;
 	}
-
 
 
 	//--------------------------Metadata verification--------------------------------	
@@ -331,8 +338,6 @@ public class ToscaValidationTest extends SetupCDTest{
 		return status;
 	}
 
-	
-	
 	//--------------------------Input verification--------------------------------
 	
 	//--------------------------Resource--------------------------------
@@ -357,11 +362,29 @@ public class ToscaValidationTest extends SetupCDTest{
 			status.add(false);
 		return status;
 	}
-	
+
+	public List<Boolean> validateServiceModuleMetadata(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedToscaServiceGroupsDefinitionObject, ToscaDefinition toscaMainServiceDefinition, String vnfFile, List<Boolean> status) {
+		reportStartTestPrint("validateServiceModuleMetadata", vnfFile);
+
+		Either<Boolean,Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupMetadataValidator(expectedToscaServiceGroupsDefinitionObject, toscaMainServiceDefinition);
+		if(toscaServiceModuleMetadataValidator.isRight())
+			status.add(false);
+		return status;
+	}
+
+	public List<Boolean> validateServiceModuleProperty(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedToscaServiceGroupsDefinitionObject, ToscaDefinition toscaMainServiceDefinition, String vnfFile, List<Boolean> status) {
+		reportStartTestPrint("validateServiceModuleProperty", vnfFile);
+
+		Either<Boolean,Map<String, Object>> toscaServiceModulePropertyValidator = ToscaValidation.serviceToscaGroupPropertyValidator(expectedToscaServiceGroupsDefinitionObject, toscaMainServiceDefinition);
+		if(toscaServiceModulePropertyValidator.isRight())
+			status.add(false);
+		return status;
+	}
+
 	//--------------------------Service verification against Pavel Parser--------------------------------
 	public List<Boolean> validateServiceInputsUsingParser(ISdcCsarHelper fdntCsarHelper, ToscaDefinition toscaExpectedMainServiceDefinition, String vnfFile, List<Boolean> status) throws Exception{
 		if(fdntCsarHelper == null){
-			reportSkipTestPrint("validateServiceInputsUsingParser", status);			
+			reportSkipTestPrint("validateServiceInputsUsingParser", status);
 		}else{
 			reportStartTestPrint("validateServiceInputsUsingParser", vnfFile);
 			Map<String, ToscaInputsTopologyTemplateDefinition> expectedInputsMap = toscaExpectedMainServiceDefinition.getTopology_template().getInputs();
@@ -371,24 +394,143 @@ public class ToscaValidationTest extends SetupCDTest{
 		}
 		return status;
 	}
-	
-	//--------------------------XXX verification--------------------------------
-	
-		//--------------------------Resource--------------------------------
-		
-		
-		//--------------------------Service--------------------------------
-		
-		
-		//--------------------------Service verification against Pavel Parser--------------------------------
-	
-	
-	
-	
-	
-	
-	
-	
+
+	public List<Boolean> validateServiceModuleMetadataUsingParser(ISdcCsarHelper fdntCsarHelper, Map<String, ToscaGroupsTopologyTemplateDefinition> expectedToscaServiceGroupsDefinitionObject, String vnfFile, List<Boolean> status) {
+		reportStartTestPrint("validateServiceModuleMetadataUsingParser", vnfFile);
+		String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetaData().getValue("customizationUUID");
+		List<Group> actualGroups = fdntCsarHelper.getVfModulesByVf(customizationUUID);
+		Either<Boolean,Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupMetadataValidatorUsingParser(expectedToscaServiceGroupsDefinitionObject, actualGroups);
+		if(toscaServiceModuleMetadataValidator.isRight())
+			status.add(false);
+		return status;
+	}
+
+	public List<Boolean> validateServiceModulePropertyUsingParser(ISdcCsarHelper fdntCsarHelper, Map<String, ToscaGroupsTopologyTemplateDefinition> expectedToscaServiceGroupsDefinitionObject, String vnfFile, List<Boolean> status) {
+		reportStartTestPrint("validateServiceModuleMetadataUsingParser", vnfFile);
+		String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetaData().getValue("customizationUUID");
+		List<Group> actualGroups = fdntCsarHelper.getVfModulesByVf(customizationUUID);
+		Either<Boolean,Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupPropertyValidatorUsingParser(expectedToscaServiceGroupsDefinitionObject, actualGroups);
+		if(toscaServiceModuleMetadataValidator.isRight())
+			status.add(false);
+		return status;
+	}
+
+	private Map<String, ToscaGroupsTopologyTemplateDefinition> createExpectedToscaServiceGroupsDefinitionObject(Resource resource, Service service, List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition) {
+		Map<String, ToscaGroupsTopologyTemplateDefinition> toscaGroupsTopologyTemplateDefinitionMap = new HashMap<>();
+
+		for (TypeHeatMetaDefinition moduleType : listTypeHeatMetaDefinition) {
+			if (!moduleType.getTypeName().equals("artifacts")) {
+				for(GroupHeatMetaDefinition module : moduleType.getGroupHeatMetaDefinition()){
+					ToscaGroupsTopologyTemplateDefinition toscaGroupsTopologyTemplateDefinition = new ToscaGroupsTopologyTemplateDefinition();
+					String resourceModuleName = buildResourceModuleName(resource, module.getGroupName());
+					ToscaServiceGroupsMetadataDefinition toscaServiceGroupsMetadataDefinition = setGroupMetadataFromResourceObject(resourceModuleName, resource);
+					if(!toscaServiceGroupsMetadataDefinition.equals("")){
+						String serviceModuleName = buildServiceModuleName(service.getComponentInstances().get(0).getNormalizedName(), toscaServiceGroupsMetadataDefinition.getVfModuleModelName());
+						toscaServiceGroupsMetadataDefinition = setGroupMetadataFromServiceObject(toscaServiceGroupsMetadataDefinition, serviceModuleName, service);
+						toscaGroupsTopologyTemplateDefinition.setMetadata(toscaServiceGroupsMetadataDefinition);
+						ToscaGroupPropertyDefinition toscaGroupPropertyDefinition = setGroupProperty(module);
+						toscaGroupsTopologyTemplateDefinition.setProperties(toscaGroupPropertyDefinition);
+						toscaGroupsTopologyTemplateDefinitionMap.put(serviceModuleName,toscaGroupsTopologyTemplateDefinition);
+
+					}else{
+						getExtendTest().log(Status.FAIL, "module name [" + module.getGroupName() + "] didn't represent in resource");
+					}
+				}
+			}
+		}
+		return toscaGroupsTopologyTemplateDefinitionMap;
+
+	}
+
+	private ToscaGroupPropertyDefinition setGroupProperty(GroupHeatMetaDefinition module) {
+		ToscaGroupPropertyDefinition toscaGroupPropertyDefinition = new ToscaGroupPropertyDefinition();
+		toscaGroupPropertyDefinition.setVf_module_label(module.getGroupName());
+		Boolean isBase = module.getPropertyHeatMetaDefinition().getValue();
+		if(isBase){
+			toscaGroupPropertyDefinition.setInitial_count("1");
+			toscaGroupPropertyDefinition.setMin_vf_module_instances("1");
+			toscaGroupPropertyDefinition.setMax_vf_module_instances("1");
+			toscaGroupPropertyDefinition.setVf_module_type("Base");
+		}else{
+			toscaGroupPropertyDefinition.setInitial_count("0");
+			toscaGroupPropertyDefinition.setMin_vf_module_instances("0");
+			toscaGroupPropertyDefinition.setMax_vf_module_instances(null);
+			toscaGroupPropertyDefinition.setVf_module_type("Expansion");
+		}
+		toscaGroupPropertyDefinition.setAvailability_zone_count(null);
+		toscaGroupPropertyDefinition.setVfc_list(null);
+		toscaGroupPropertyDefinition.setVf_module_description(null);
+		toscaGroupPropertyDefinition.setVolume_group(isVolumeGroup(module));
+
+		return toscaGroupPropertyDefinition;
+	}
+
+	private String isVolumeGroup(GroupHeatMetaDefinition module) {
+		String isVolumeGroup = "false";
+		for( HeatMetaFirstLevelDefinition artifactList : module.getArtifactList()){
+			if(artifactList.getType().equals(ArtifactTypeEnum.HEAT_VOL.getType())){
+				isVolumeGroup = "true";
+				return isVolumeGroup;
+			}
+		}
+		return isVolumeGroup;
+	}
+
+	private Map<String,ToscaServiceGroupsMetadataDefinition> createExpectedToscaServiceGroupsPropertyDefinitionObject(Resource resource, Service service, List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition) {
+
+		Map<String,ToscaServiceGroupsMetadataDefinition> toscaServiceGroupsMetadataDefinitionMap = new HashMap<>();
+		for (TypeHeatMetaDefinition moduleType : listTypeHeatMetaDefinition) {
+			Map<String, String> groupProperty = new HashMap<>();
+
+				ToscaServiceGroupsMetadataDefinition toscaServiceGroupsMetadataDefinition = new ToscaServiceGroupsMetadataDefinition();
+				for(GroupHeatMetaDefinition module : moduleType.getGroupHeatMetaDefinition()){
+					String resourceModuleName = buildResourceModuleName(resource, module.getGroupName());
+					toscaServiceGroupsMetadataDefinition = setGroupMetadataFromResourceObject(resourceModuleName, resource);
+					if(!toscaServiceGroupsMetadataDefinition.equals("")){
+						String serviceModuleName = buildServiceModuleName(service.getComponentInstances().get(0).getNormalizedName(), toscaServiceGroupsMetadataDefinition.getVfModuleModelName());
+						toscaServiceGroupsMetadataDefinition = setGroupMetadataFromServiceObject(toscaServiceGroupsMetadataDefinition, serviceModuleName, service);
+						toscaServiceGroupsMetadataDefinitionMap.put(serviceModuleName, toscaServiceGroupsMetadataDefinition);
+					}else{
+						getExtendTest().log(Status.FAIL, "module name [" + module.getGroupName() + "] didn't represent in resource");
+					}
+				}
+		}
+		return toscaServiceGroupsMetadataDefinitionMap;
+
+	}
+
+	private ToscaServiceGroupsMetadataDefinition setGroupMetadataFromServiceObject(ToscaServiceGroupsMetadataDefinition toscaServiceGroupsMetadataDefinition, String serviceModuleName, Service service) {
+		for (GroupInstance groupInstance : service.getComponentInstances().get(0).getGroupInstances()) {
+			if (groupInstance.getName().equals(serviceModuleName)) {
+				toscaServiceGroupsMetadataDefinition.setVfModuleModelCustomizationUUID(groupInstance.getCustomizationUUID());
+				return toscaServiceGroupsMetadataDefinition;
+			}
+		}
+		return toscaServiceGroupsMetadataDefinition;
+	}
+
+	private ToscaServiceGroupsMetadataDefinition setGroupMetadataFromResourceObject(String resourceModuleName, Resource resource) {
+		ToscaServiceGroupsMetadataDefinition toscaServiceGroupsMetadataDefinition = new ToscaServiceGroupsMetadataDefinition();
+		for (GroupDefinition group : resource.getGroups()) {
+			if (group.getName().contains(resourceModuleName)) {
+				toscaServiceGroupsMetadataDefinition.setVfModuleModelName(group.getName());
+				toscaServiceGroupsMetadataDefinition.setVfModuleModelInvariantUUID(group.getInvariantUUID());
+				toscaServiceGroupsMetadataDefinition.setVfModuleModelUUID(group.getGroupUUID());
+				toscaServiceGroupsMetadataDefinition.setVfModuleModelVersion(group.getVersion());
+				return toscaServiceGroupsMetadataDefinition;
+			}
+		}
+		return toscaServiceGroupsMetadataDefinition;
+	}
+
+	public static String buildResourceModuleName(Resource resource, String groupName ){
+		return resource.getSystemName()+".."+groupName+".."+"module-";
+	}
+	public static String buildServiceModuleName(String resourceInstanceNormalizedName, String resourceGroupName ){
+		return resourceInstanceNormalizedName+".."+resourceGroupName;
+	}
+
+
 	@Override
     protected UserRoleEnum getRole() {
 		return UserRoleEnum.DESIGNER;
@@ -427,15 +569,12 @@ public class ToscaValidationTest extends SetupCDTest{
 		return toscaDefinition;
 	}
 
-
-
 	public static ToscaDefinition addAndGenerateResourceMetadataToExpectedObject(ToscaDefinition toscaDefinition, ResourceReqDetails resourceReqDetails, Component component) {
 		
 		Map<String, String> metadata = convertResourceMetadataToMap(resourceReqDetails, component);
 		toscaDefinition.setMetadata(metadata);
 		return toscaDefinition;
 	}
-
 
 	public static Map<String, String> convertResourceMetadataToMap(ResourceReqDetails resourceReqDetails, Component component) {
 		Map<String, String> metadata = new HashMap<>();
@@ -474,8 +613,8 @@ public class ToscaValidationTest extends SetupCDTest{
 		metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.VERSION.value, componentInstance.getComponentVersion());
 		
 		return metadata;
-		
 	}
+
 	public static Map<String, String> generateServiceNodeTemplateMetadataToExpectedObject(ResourceReqDetails resourceReqDetails, Component component, ComponentInstance componentInstanceDefinition) {
 		
 		Map<String, String> metadata = convertResourceMetadataToMap(resourceReqDetails, component);
@@ -580,70 +719,10 @@ public class ToscaValidationTest extends SetupCDTest{
 			SetupCDTest.getExtendTest().log(Status.FAIL, "Summary: allottedResourceModelTest tosca validation test failed with zip file " + vnfFile);
 			Assert.assertFalse(true);
 		}
-	}
-
-
-
-	@Test()
-	public void NetworkModel() throws Exception{
-//--------------------------GENERAL--------------------------------
-		String vnfFile = "networkModel";
-		setLog(vnfFile);
-		List<Boolean> status = new ArrayList<>();
-		ISdcCsarHelper fdntCsarHelper;
-		ToscaDefinition toscaMainAmdocsDefinition = new ToscaDefinition();
-		File filesFolder = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
-//		filesFolder = new File(SetupCDTest.getWindowTest().getDownloadDirectory());
-
-		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.PNF, user);
-		toscaMainAmdocsDefinition = addGenericPropertiesToToscaDefinitionObject(toscaMainAmdocsDefinition, GENERIC_PNF);
-		ToscaDefinition toscaExpectedMainServiceDefinition = new ToscaDefinition(toscaMainAmdocsDefinition);
-//--------------------------VF--------------------------------
-		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceReqDetails,UserRoleEnum.DESIGNER,true).left().value();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-
-		ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
-
-//--------------------------SERVICE--------------------------------
-		ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-
-		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
-		ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
-
-//--------------------------getProperties set values and declare--------------------
-
-		Component componentObject = AtomicOperationUtils.getComponentObject(service, UserRoleEnum.DESIGNER);
-		Map<String, List<ComponentInstanceInput>> componentInstancesInputs = componentObject.getComponentInstancesInputs();
-		setValuesToPropertiesList(componentInstancesInputs, toscaExpectedMainServiceDefinition);
-		PropertyRestUtils.declareProporties(componentObject, componentInstancesInputs, user);
-
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		File ServiceCsarFileName = new File(File.separator + "ServiceCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
-		OnboardingUtillViaApis.downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + ServiceCsarFileName));
-		ToscaDefinition toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + ServiceCsarFileName));
-
-//--------------------------initialization of Tosca Parser--------------------------------
-
-		fdntCsarHelper = initSdcCsarHelper(ServiceCsarFileName, filesFolder);
-
-
-//---------------------------TESTS--------------------------------------------------
-		status = validateVfMetadata(toscaMainAmdocsDefinition, toscaMainVfDefinition, resourceReqDetails, resource, vnfFile, status);
-		status = validateResourceNodeTemplateMetadata(toscaMainVfDefinition, resource, vnfFile, status);
-		status = validateServiceMetadata(toscaMainServiceDefinition, serviceReqDetails, service, vnfFile, status);
-		status = validateServiceNodeTemplateMetadata(toscaMainServiceDefinition, componentInstanceDefinition, resourceReqDetails, resource, vnfFile, status);
-		status = validateServiceMetadataUsingParser(fdntCsarHelper, serviceReqDetails, service, vnfFile, status);
-		status = validateServiceNodeTemplateMetadataUsingParser(fdntCsarHelper, resourceReqDetails, resource, componentInstanceDefinition, vnfFile, status);
-		status = validateResourceInputs(toscaMainAmdocsDefinition, toscaMainVfDefinition, vnfFile, status);
-		status = validateServiceInputs(toscaExpectedMainServiceDefinition, toscaMainServiceDefinition, vnfFile, status);
-		status = validateServiceInputsUsingParser(fdntCsarHelper, toscaExpectedMainServiceDefinition, vnfFile, status);
-
-		if(status.contains(false)){
-			SetupCDTest.getExtendTest().log(Status.FAIL, "Summary: tosca validation test failed with zip file " + vnfFile);
-			Assert.assertFalse(true);
-		}
 	}*/
+
+
+
 
 	//	help method to toscaValidation tests
 	private ISdcCsarHelper initSdcCsarHelper(File serviceCsarFileName, File filesFolder) {
@@ -704,11 +783,6 @@ public class ToscaValidationTest extends SetupCDTest{
 		return ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + VfCsarFileName));
 	}
 
-	/*public static void main(String[] args) {
-		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-		List<CategoryDefinition> categories = resourceReqDetails.getCategories();
-		System.out.println(categories);
-	}*/
 
 }
 

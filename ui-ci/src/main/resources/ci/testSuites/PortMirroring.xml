@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="uitests" configfailurepolicy="continue" parallel="methods" thread-count="2">
+  <test name="PortMirroringTests">
+    <classes>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PortMirroring"/>
+    </classes>
+  </test>
+</suite>
