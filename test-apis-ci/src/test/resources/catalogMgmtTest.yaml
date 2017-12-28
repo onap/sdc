@@ -1,0 +1,6 @@
+publisherPropertiesFilePath: "catalogMgmtTest.properties"
+topicMessages:
+  - "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"product\"],\"republish\":\"No\",\"Authorization\": \"Basic bTEzMzMxQGNjZC5hdHQuY29tOkFhMTIzNDU2\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"logo\"],\"republish\":\"No\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"availabilitymatrix\"],\"republish\":\"No\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"product\",\"availabilitymatrix\"],\"republish\":\"No\"}"

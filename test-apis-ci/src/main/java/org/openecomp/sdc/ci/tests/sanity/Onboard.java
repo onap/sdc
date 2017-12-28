@@ -21,6 +21,9 @@
 package org.openecomp.sdc.ci.tests.sanity;
 
 
+
+
+
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -51,6 +54,10 @@ import com.clearspring.analytics.util.Pair;
 import fj.data.Either;
 
 
+
+
+
+
 public class Onboard extends ComponentBaseTest {
 	
 	
@@ -62,21 +69,13 @@ public class Onboard extends ComponentBaseTest {
 	}
 
 	protected String makeDistributionValue;
-	protected String makeToscaValidationValue;
+
 
 
 	@Parameters({ "makeDistribution" })
 	@BeforeMethod
 	public void beforeTestReadParams(@Optional("true") String makeDistributionReadValue) {
 		makeDistributionValue = makeDistributionReadValue;                             
-		logger.info("makeDistributionReadValue - > " + makeDistributionValue);
-	}
-
-	@Parameters({ "makeToscaValidation" })
-	@BeforeClass
-	public void makeToscaValidation(@Optional("false") String makeToscaValidationReadValue) {
-		makeToscaValidationValue = makeToscaValidationReadValue;
-		logger.info("makeToscaValidationReadValue - > " + makeToscaValidationValue);
 	}
 	
 
@@ -94,7 +93,7 @@ public class Onboard extends ComponentBaseTest {
 	public void runOnboardToDistributionFlow(String filePath, String vnfFile) throws Exception {
 
 		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
-		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER3);
+		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
      	ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
 		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
 		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
@@ -104,35 +103,22 @@ public class Onboard extends ComponentBaseTest {
 //		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
 		resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
 		ExtentTestActions.log(Status.INFO, String.format("Create VF %s From VSP", resourceReqDetails.getName()));
-		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, UserRoleEnum.DESIGNER3);
+		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 		ExtentTestActions.log(Status.INFO, String.format("Certify VF"));
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER3, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		//--------------------------SERVICE--------------------------------	
 		ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(user);
 		ExtentTestActions.log(Status.INFO, String.format("Create Service %s", serviceReqDetails.getName()));
-		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER3, true).left().value();
+		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 		ExtentTestActions.log(Status.INFO, String.format("add VF to Service"));
-		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER3, true);
+		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
 		addComponentInstanceToComponentContainer.left().value();
 		ExtentTestActions.log(Status.INFO, String.format("Certify Service"));
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER3, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		if (makeDistributionValue.equals("true")) {
-			ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
-			AtomicOperationUtils.distributeService(service, true);
-		}
-
-		if (makeToscaValidationValue.equals("true")) {
-
-			ExtentTestActions.log(Status.INFO, String.format("Start tosca validation"));
-			AtomicOperationUtils.toscaValidation(service ,vnfFile);
-
-
-		}
-
-
-
+		ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
+		AtomicOperationUtils.distributeService(service, true);
 		
 		ExtentTestActions.log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
 	}

@@ -37,10 +37,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
@@ -52,14 +49,14 @@ import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.clearspring.analytics.util.Pair;
-
+import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 
 public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 	
@@ -84,15 +81,14 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		String vnfFile = "FDNT.zip";
 		String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 		
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
+		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		Pair<String, VendorSoftwareProductObject> createVSP = VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
-		Map<String, String> resourceMeta = createVSP.right;
-		String vspid = resourceMeta.get("vspId");
-		OnboardingUtils.addVFCArtifacts(filePath, snmpFile, null, vspid, getUser());
-		OnboardingUtils.prepareVspForUse(getUser(), vspid, "0.1");
+		VendorSoftwareProductObject resourceMeta = createVSP.right;
+		VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, resourceMeta, getUser());
+		VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), resourceMeta, true);
 
 		HomePage.showVspRepository();
 		OnboardingUiUtils.importVSP(createVSP);

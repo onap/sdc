@@ -20,8 +20,46 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import static org.testng.AssertJUnit.assertTrue;
+import com.aventstack.extentreports.Status;
+import com.google.gson.Gson;
+import fj.data.Either;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONException;
+import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
+import org.openecomp.sdc.ci.tests.api.Urls;
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
+import org.openecomp.sdc.ci.tests.datatypes.DistributionMonitorObject;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
+import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.CsarToscaTester;
+import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.testng.SkipException;
 
+import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,68 +72,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.tuple.Pair;
-import org.json.JSONException;
-import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
-import org.openecomp.sdc.ci.tests.api.Urls;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.DistributionMonitorObject;
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.CsarToscaTester;
-import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ConsumerRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.PropertyRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
-import org.testng.SkipException;
-
-import com.aventstack.extentreports.Status;
-import com.google.gson.Gson;
-
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertTrue;
 
 public final class AtomicOperationUtils {
 
@@ -134,7 +111,7 @@ public final class AtomicOperationUtils {
 			RestResponse resourceResp = ResourceRestUtils.createResource(defaultResource, defaultUser);
 
 			if (validateState) {
-				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+				assertTrue("Create resource failed with error: " + resourceResp.getResponse(),resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
 			}
 
 			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -153,7 +130,7 @@ public final class AtomicOperationUtils {
 			RestResponse resourceResp = ResourceRestUtils.createResource(resourceDetails, defaultUser);
 
 			if (validateState) {
-				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+				assertTrue("Create resource failed with error: " + resourceResp.getResponse(),resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
 			}
 
 			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -192,7 +169,7 @@ public final class AtomicOperationUtils {
 		RestResponse resourceResp = ResourceRestUtils.createResource(defaultResource, defaultUser);
 
 		if (validateState) {
-			assertTrue("actual result: " + resourceResp.getResponseMessage(), resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create resource failed with error: " + resourceResp.getResponse(), resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -210,7 +187,7 @@ public final class AtomicOperationUtils {
 			RestResponse resourceResp = ResourceRestUtils.updateResource(resourceReqDetails, defaultUser, resourceReqDetails.getUniqueId());
 
 			if (validateState) {
-				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
+				assertTrue("Update resource failed with error: " + resourceResp.getResponse(),resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
 			}
 
 			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS) {
@@ -231,7 +208,7 @@ public final class AtomicOperationUtils {
 		RestResponse createServiceResp = ServiceRestUtils.createService(serviceDetails, defaultUser);
 
 		if (validateState) {
-			assertTrue(createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create service failed with error: " + createServiceResp.getResponse(),createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (createServiceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -247,7 +224,7 @@ public final class AtomicOperationUtils {
 		RestResponse createServiceResp = ServiceRestUtils.createService(serviceDetails, defaultUser);
 
 		if (validateState) {
-			assertTrue(createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create service failed with error: " + createServiceResp.getResponse(),createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (createServiceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -262,7 +239,7 @@ public final class AtomicOperationUtils {
 		RestResponse createServiceResp = ServiceRestUtils.createService(serviceDetails, defaultUser);
 
 		if (validateState) {
-			assertTrue(createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create service failed with error: " + createServiceResp.getResponse(),createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (createServiceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -395,8 +372,8 @@ public final class AtomicOperationUtils {
 		}
 
 		if (validateState) {
-			assertTrue(approveDistribution.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
-			assertTrue(distributionService.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
+			assertTrue("Distribution approve failed with error: " + approveDistribution.getResponse(),approveDistribution.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
+			assertTrue("Distribute service failed with error: " + distributionService.getResponse(),distributionService.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
 			return distributionService;
 		}
 
@@ -463,6 +440,34 @@ public final class AtomicOperationUtils {
 				}
 				else{
 				assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " + ServiceRestUtils.STATUS_CODE_CREATED, createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+				}
+			}
+
+			if (createComponentInstance.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
+				ComponentInstance componentInstance = ResponseParser.convertComponentInstanceResponseToJavaObject(createComponentInstance.getResponse());
+				return Either.left(componentInstance);
+			}
+			return Either.right(createComponentInstance);
+		} catch (Exception e) {
+			throw new AtomicOperationException(e);
+		}
+	}
+
+	public static Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer(Component compInstParent, Component compContainer, UserRoleEnum userRole, Boolean validateState, String positionX, String positionY) {
+		try {
+			User defaultUser = ElementFactory.getDefaultUser(userRole);
+			ComponentInstanceReqDetails componentInstanceDetails = ElementFactory.getComponentInstance(compInstParent);
+			componentInstanceDetails.setPosX(positionX);
+			componentInstanceDetails.setPosY(positionY);
+			RestResponse createComponentInstance = ComponentInstanceRestUtils.createComponentInstance(componentInstanceDetails, defaultUser, compContainer);
+
+			if (validateState) {
+				if (createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_NOT_FOUND)
+				{
+					throw new SkipException("Open bug DE262001");
+				}
+				else{
+					assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " + ServiceRestUtils.STATUS_CODE_CREATED, createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 				}
 			}
 
@@ -818,7 +823,7 @@ public final class AtomicOperationUtils {
 
 	}
 
-	public static RestResponse getDistributionStatusByDistributionId(String distributionId ,Boolean validateState) {
+	public static RestResponse getDistributionStatusByDistributionId(String distributionId, Boolean validateState) {
 
 		try {
 			User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.OPS);
@@ -834,12 +839,11 @@ public final class AtomicOperationUtils {
 		}
 	}
 	
-	public static Either <RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service ,Boolean validateState) {
+	public static Either <RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service, Boolean validateState) {
 		
 		try {
 			ServiceDistributionStatus serviceDistributionObject = DistributionUtils.getLatestServiceDistributionObject(service);
 			RestResponse response = getDistributionStatusByDistributionId(serviceDistributionObject.getDistributionID(), true);
-
 			if(validateState) {
 				assertTrue(response.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
 			}
@@ -863,30 +867,33 @@ public final class AtomicOperationUtils {
 	 * @throws Exception
 	 */
 	public static Boolean distributeAndValidateService(Service service, int pollingCount, int pollingInterval) throws Exception {
-
+        int firstPollingInterval = 30000; //this value define first be polling topic time, should change if DC configuration changed  
 		Boolean statusFlag = true;
 		AtomicOperationUtils.distributeService(service,  true);
-		TimeUnit.MILLISECONDS.sleep(pollingInterval);
+		TimeUnit.MILLISECONDS.sleep(firstPollingInterval);
 		int timeOut = pollingCount * pollingInterval;
+		com.clearspring.analytics.util.Pair<Boolean,Map<String,List<String>>> verifyDistributionStatus = null;
+		
 		while (timeOut > 0) {
 			Map<String,List<DistributionMonitorObject>> sortedDistributionStatusMap = AtomicOperationUtils.getSortedDistributionStatusMap(service, true).right().value();
-			com.clearspring.analytics.util.Pair<Boolean,Map<String,List<String>>> verifyDistributionStatus = DistributionUtils.verifyDistributionStatus(sortedDistributionStatusMap);
+			verifyDistributionStatus = DistributionUtils.verifyDistributionStatus(sortedDistributionStatusMap);
 			if(verifyDistributionStatus.left.equals(false)){
-				if((verifyDistributionStatus.right != null && ! verifyDistributionStatus.right.isEmpty()) && timeOut == 0){
-					for(Entry<String, List<String>> entry : verifyDistributionStatus.right.entrySet()){
-						if(ComponentBaseTest.getExtendTest() != null){
-							ComponentBaseTest.getExtendTest().log(Status.INFO, "Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
-							statusFlag = false;
-						}else{
-							System.out.println("Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
-						}
-					}
-				}
 				TimeUnit.MILLISECONDS.sleep(pollingInterval);
 				timeOut-=pollingInterval;
 			}else {
 				timeOut = 0;
 			}
+		}
+		
+		if((verifyDistributionStatus.right != null && ! verifyDistributionStatus.right.isEmpty())){
+			for(Entry<String, List<String>> entry : verifyDistributionStatus.right.entrySet()){
+				if(ComponentBaseTest.getExtendTest() != null){
+					ComponentBaseTest.getExtendTest().log(Status.INFO, "Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
+				}else{
+					System.out.println("Consumer: [" + entry.getKey() + "] failed on following: "+ entry.getValue());
+				}
+			}
+			statusFlag = false;
 		}
 		return statusFlag;
 	}

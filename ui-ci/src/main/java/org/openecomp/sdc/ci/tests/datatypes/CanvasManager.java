@@ -20,14 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
 import org.openecomp.sdc.ci.tests.datatypes.enums.CircleSize;
@@ -41,8 +35,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public final class CanvasManager {
 	private Map<String, CanvasElement> canvasElements;
@@ -110,7 +105,7 @@ public final class CanvasManager {
 			actions.clickAndHold();
 			actions.release();
 			actions.perform();
-			isKeepWaiting = GeneralUIUtils.getWebElementByTestID("selectedCompTitle").getText()
+			isKeepWaiting = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel.COMPONENT_TITLE.getValue()).getText()
 					.equals(containerName);
 			sumOfWaiting += napPeriod;
 			if (sumOfWaiting > maxWait) {
@@ -129,6 +124,56 @@ public final class CanvasManager {
 
 	    validateInstanceSelected(canvasElement);
 		ExtentTestActions.log(Status.INFO, String.format("Canvas element %s selected", canvasElement.getElementType()));
+	}
+
+	public void openLinkPopupReqsCapsConnection(CanvasElement canvasElement)
+	{
+		ExtentTestActions.log(Status.INFO, "Open Link popup");
+		clickOnCanvasLink(canvasElement);
+		int x = canvasElement.getLocation().getLeft() + 30; // view button x delta
+		int y = canvasElement.getLocation().getRight() + 11; // view button y delta
+		clickOnCanvasPosition(x,y);
+		GeneralUIUtils.ultimateWait();
+	}
+	public void closeLinkPopupReqsCapsConnection()
+	{
+		GeneralUIUtils.clickOnElementByTestId("Cancel");
+		GeneralUIUtils.ultimateWait();
+	}
+
+	public void clickSaveOnLinkPopup()
+	{
+		ExtentTestActions.log(Status.INFO, "Click save on link popup");
+		GeneralUIUtils.clickOnElementByTestId("Save");
+		GeneralUIUtils.ultimateWait();
+	}
+
+	public void deleteLinkPopupReqsCapsConnection(CanvasElement canvasElement)
+	{
+		clickOnCanvasLink(canvasElement);
+		int x = canvasElement.getLocation().getLeft() + 30; // delete button x delta
+		int y = canvasElement.getLocation().getRight() + 30; // delete button x delta
+		clickOnCanvasPosition(x,y);
+	}
+
+	public void clickOnCanvasLink(CanvasElement canvasElement) {
+		actions.moveToElement(canvas, canvasElement.getLocation().left, canvasElement.getLocation().right);
+		actions.click().perform();
+		GeneralUIUtils.ultimateWait();
+	}
+
+	public void clickOnCanvasPosition(int x, int y) {
+
+		try {
+			actions.moveToElement(canvas, x, y);
+			actions.click();
+			actions.perform();
+			GeneralUIUtils.ultimateWait();
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
+		}
 	}
 
 	public void moveElementOnCanvas(CanvasElement canvasElement) throws Exception {
@@ -245,12 +290,12 @@ public final class CanvasManager {
 	}
 
 	private void selectReqAndCapAndConnect() throws Exception {
-		addFitstReqOrCapAndPressNext();
-		addFitstReqOrCapAndPressNext();
+		addFirstReqOrCapAndPressNext();
+		addFirstReqOrCapAndPressNext();
 		linkMenuClickOnFinishButton();
 	}
 
-	private void addFitstReqOrCapAndPressNext() throws Exception {
+	private void addFirstReqOrCapAndPressNext() throws Exception {
 		addFirstReqOrCap();
 		linkMenuClickOnNextButton();
 	}
@@ -349,7 +394,7 @@ public final class CanvasManager {
 		long napPeriod = 200;
 		boolean isInstanceSelected;
 		do {
-			isInstanceSelected = CompositionPage.getSelectedInstanceName().contains(canvasElement.getElementType());
+			isInstanceSelected = CompositionPage.getSelectedInstanceName().toLowerCase().contains(canvasElement.getElementType().toLowerCase());
 
 			if (!isInstanceSelected) {
 				try {
@@ -366,24 +411,56 @@ public final class CanvasManager {
 		} while (!isInstanceSelected);
 	}
 
+	public void validateLinkIsSelected() {
+		long maxWait = 3000;
+		long sumOfWaiting = 0;
+		long napPeriod = 200;
+		boolean isInstanceSelected;
+		do {
+			isInstanceSelected = GeneralUIUtils.isWebElementExistByClass("w-sdc-menu-item w-sdc-canvas-menu-item-view");
+
+			if (!isInstanceSelected) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(napPeriod);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			sumOfWaiting += napPeriod;
+			if (sumOfWaiting > maxWait) {
+				Assert.fail(String.format("Can't select link properly, waited for %s seconds", (int) (maxWait/1000)));
+			}
+		} while (!isInstanceSelected);
+	}
+
 	private void selectReqCapByName(String reqCapName)
 	{
 	    GeneralUIUtils.clickOnElementByText(reqCapName);
         GeneralUIUtils.ultimateWait();
     }
 
-	private void selectTypeOfReqCap(String reqCapType)
+	private void selectTypeOfReqCap(String dataTestId, String reqCapType)
 	{
-        GeneralUIUtils.getSelectList(reqCapType,DataTestIdEnum.LinkMenuItems.REQ_CAP_SELECT_DATA_TESTS_ID.getValue());
-        GeneralUIUtils.ultimateWait();
+        GeneralUIUtils.selectByValueTextContained(dataTestId, reqCapType);
 	}
 
 	public void linkElementsAndSelectCapReqTypeAndCapReqName(CanvasElement firstElement, CircleSize firstElementSize, CanvasElement secondElement, CircleSize secondElementSize, ConnectionWizardPopUpObject connectionWizardPopUpObject) throws Exception {
-        drawSimpleLink(firstElement, firstElementSize, secondElement, secondElementSize);
-        selectTypeOfReqCap(connectionWizardPopUpObject.getCapabilityTypeSecondItem());
-		addFitstReqOrCapAndPressNext();
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating link between %s and %s", firstElement.getElementType(), secondElement.getElementType()));
+		drawSimpleLink(firstElement, firstElementSize, secondElement, secondElementSize);
+        selectTypeOfReqCap(DataTestIdEnum.LinkMenuItems.REQ_CAP_SELECT_DATA_TESTS_ID.getValue(),connectionWizardPopUpObject.getCapabilityTypeSecondItem());
+		addFirstReqOrCapAndPressNext();
 		selectReqCapByName(connectionWizardPopUpObject.getCapabilityNameSecondItem());
 		linkMenuClickOnNextButton();
         linkMenuClickOnFinishButton();
     }
+
+	public ImmutablePair<Integer, Integer> calcMidOfLink(ImmutablePair<Integer, Integer> location1, ImmutablePair<Integer, Integer> location2)
+	{
+		int x = (location1.getLeft()+location2.getLeft())/2;
+		int y = (location1.getRight()+location2.getRight())/2;
+
+		ImmutablePair<Integer, Integer> location = new ImmutablePair<>(x,y);
+		return location;
+	}
 }

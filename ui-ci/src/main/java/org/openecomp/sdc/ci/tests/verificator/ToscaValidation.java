@@ -1,21 +1,21 @@
 package org.openecomp.sdc.ci.tests.verificator;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.aventstack.extentreports.Status;
+import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaInputsTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.*;
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.openecomp.sdc.toscaparser.api.Group;
+import org.openecomp.sdc.toscaparser.api.Property;
 import org.openecomp.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.sdc.toscaparser.api.parameters.Input;
 
-import com.aventstack.extentreports.Status;
-
-import fj.data.Either;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ToscaValidation {
 
@@ -63,6 +63,278 @@ public class ToscaValidation {
 		return serviceToscaMetadataValidator;
 	}
 
+	public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataValidator(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, ToscaDefinition actualToscaDefinition){
+
+		SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate service TOSCA group metadata...");
+		Map<String, ToscaGroupsTopologyTemplateDefinition> actualServiceGroups = actualToscaDefinition.getTopology_template().getGroups();
+		Either<Boolean,Map<String,Object>> serviceToscaGroupMetadataValidator = compareServiceGroupMetadata(expectedServiceGroup, actualServiceGroups);
+		if(serviceToscaGroupMetadataValidator.isLeft()){
+			SetupCDTest.getExtendTest().log(Status.INFO, "Service TOSCA group metadata verification success");
+		}else{
+			SetupCDTest.getExtendTest().log(Status.ERROR, "Service TOSCA group metadata verification failed" + serviceToscaGroupMetadataValidator.right().value().toString());
+		}
+		return serviceToscaGroupMetadataValidator;
+	}
+
+    public static Either<Boolean,Map<String,Object>> compareServiceGroupMetadata(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, Map<String, ToscaGroupsTopologyTemplateDefinition> actualServiceGroups) {
+
+        Map<String, Object> errorMap = new HashMap<>();
+        for (String groupName : expectedServiceGroup.keySet()){
+            if (actualServiceGroups.get(groupName) == null ){
+                errorMap.put("group/module [" + groupName + "]", " does not exist in TOSCA main yaml");
+            }else{
+                compareServiceGroupData(expectedServiceGroup.get(groupName).getMetadata(), actualServiceGroups.get(groupName).getMetadata(), groupName, errorMap);
+            }
+        }
+        if(errorMap != null && !errorMap.isEmpty()){
+            return Either.right(errorMap);
+        }
+        return Either.left(true);
+    }
+
+    public static Either<Boolean, Map<String, Object>> compareServiceGroupData(ToscaServiceGroupsMetadataDefinition expectedServiceGroupMetadata, ToscaServiceGroupsMetadataDefinition actualServiceGroupMetadata, String groupName, Map<String, Object> errorMap) {
+
+        Field[] declaredFields = expectedServiceGroupMetadata.getClass().getDeclaredFields();
+        for (Field field : declaredFields){
+            try {
+                String expectedValue = field.get(expectedServiceGroupMetadata).toString();
+                String actualValue = field.get(actualServiceGroupMetadata).toString();
+                if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
+                    if (actualValue != null) {
+                        Boolean result = compareValue(expectedValue, actualValue);
+                        if(! result ){
+                            errorMap.put("Data field [" + field.getName()+"] in group service metadata [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
+                        }
+                    } else {
+                        errorMap.put("Data field [" + field.getName() + "] in group service metadata [" + groupName + "]", " does not exist in actual object");
+                        System.out.println("Data field [" + field.getName() + "] in group service metadata [" + groupName + "] does not exist in actual object");
+                    }
+                }
+            }catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(errorMap != null && !errorMap.isEmpty()){
+            return Either.right(errorMap);
+        }
+        return Either.left(true);
+    }
+
+
+//    ###########################UsingParser############################
+public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataValidatorUsingParser(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, List<Group> actualServiceGroups){
+
+	SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate service TOSCA group metadata...");
+	Either<Boolean,Map<String,Object>> serviceToscaGroupMetadataValidator = compareServiceGroupMetadataUsingParser(expectedServiceGroup, actualServiceGroups);
+	if(serviceToscaGroupMetadataValidator.isLeft()){
+		SetupCDTest.getExtendTest().log(Status.INFO, "Service TOSCA group metadata verification vs. tosca parser success");
+	}else{
+		SetupCDTest.getExtendTest().log(Status.ERROR, "Service TOSCA group metadata verification vs. tosca parser failed" + serviceToscaGroupMetadataValidator.right().value().toString());
+	}
+	return serviceToscaGroupMetadataValidator;
+}
+
+	public static Either<Boolean,Map<String,Object>> compareServiceGroupMetadataUsingParser(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, List<Group> actualServiceGroups) {
+
+		Map<String, Object> errorMap = new HashMap<>();
+		for (String groupName : expectedServiceGroup.keySet()){
+			Group actualGroup = getServiceToscaParserGroupFromObject(groupName, actualServiceGroups);
+			if (actualGroup == null ){
+				errorMap.put("group/module [" + groupName + "]", " does not exist in TOSCA main yaml");
+			}else{
+				compareServiceGroupDataUsingParser(expectedServiceGroup.get(groupName).getMetadata(), actualGroup.getMetadata(), groupName, errorMap);
+			}
+		}
+		if(errorMap != null && !errorMap.isEmpty()){
+			return Either.right(errorMap);
+		}
+		return Either.left(true);
+	}
+
+	private static Group getServiceToscaParserGroupFromObject(String groupName, List<Group> actualServiceGroups) {
+		for(Group group : actualServiceGroups){
+			if(group.getName().equals(groupName)){
+				return group;
+			}
+		}
+		return null;
+	}
+
+	public static Either<Boolean, Map<String, Object>> compareServiceGroupDataUsingParser(ToscaServiceGroupsMetadataDefinition expectedServiceGroupMetadata, Metadata actualServiceGroupMetadata, String groupName, Map<String, Object> errorMap) {
+
+		Field[] declaredFields = expectedServiceGroupMetadata.getClass().getDeclaredFields();
+		for (Field field : declaredFields){
+			try {
+				String expectedValue = field.get(expectedServiceGroupMetadata).toString();
+				String actualValue = actualServiceGroupMetadata.getValue(field.getName());
+				if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
+					if (actualValue != null) {
+						Boolean result = compareValue(expectedValue, actualValue);
+						if(! result ){
+							errorMap.put("Data field [" + field.getName()+"] in group service metadata [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
+						}
+					} else {
+						errorMap.put("Data field [" + field.getName() + "] in group service metadata [" + groupName + "]", " does not exist in actual object");
+						System.out.println("Data field [" + field.getName() + "] in group service metadata [" + groupName + "] does not exist in actual object");
+					}
+				}
+			}catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if(errorMap != null && !errorMap.isEmpty()){
+			return Either.right(errorMap);
+		}
+		return Either.left(true);
+	}
+
+//	############################################################################################
+
+
+
+	//    ###########################Property UsingParser############################
+	public static Either<Boolean, Map<String, Object>> serviceToscaGroupPropertyValidatorUsingParser(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, List<Group> actualServiceGroups){
+
+		SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate service TOSCA group property...");
+		Either<Boolean,Map<String,Object>> serviceToscaGroupMetadataValidator = compareServiceGroupPropertyUsingParser(expectedServiceGroup, actualServiceGroups);
+		if(serviceToscaGroupMetadataValidator.isLeft()){
+			SetupCDTest.getExtendTest().log(Status.INFO, "Service TOSCA group property verification vs. tosca parser success");
+		}else{
+			SetupCDTest.getExtendTest().log(Status.ERROR, "Service TOSCA group property verification vs. tosca parser failed" + serviceToscaGroupMetadataValidator.right().value().toString());
+		}
+		return serviceToscaGroupMetadataValidator;
+	}
+
+	public static Either<Boolean,Map<String,Object>> compareServiceGroupPropertyUsingParser(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, List<Group> actualServiceGroups) {
+
+		Map<String, Object> errorMap = new HashMap<>();
+		for (String groupName : expectedServiceGroup.keySet()){
+			Group actualGroup = getServiceToscaParserGroupFromObject(groupName, actualServiceGroups);
+			if (actualGroup == null ){
+				errorMap.put("group/module [" + groupName + "]", " does not exist in TOSCA main yaml");
+			}else{
+				compareServiceGroupPropertyUsingParser(expectedServiceGroup.get(groupName).getProperties(), actualGroup.getProperties(), groupName, errorMap);
+			}
+		}
+		if(errorMap != null && !errorMap.isEmpty()){
+			return Either.right(errorMap);
+		}
+		return Either.left(true);
+	}
+
+	public static Either<Boolean, Map<String, Object>> compareServiceGroupPropertyUsingParser(ToscaGroupPropertyDefinition expectedServiceGroupProperty, LinkedHashMap<String, Property> actualServiceGroupProperty, String groupName, Map<String, Object> errorMap) {
+
+		Field[] declaredFields = expectedServiceGroupProperty.getClass().getDeclaredFields();
+		for (Field field : declaredFields){
+			try {
+				String expectedValue = (String) field.get(expectedServiceGroupProperty);
+				String actualValue = null;
+				if(actualServiceGroupProperty.get(field.getName()).getValue()!= null) {
+					actualValue = actualServiceGroupProperty.get(field.getName()).getValue().toString();
+				}
+				if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
+					if (actualValue != null) {
+						Boolean result = compareValue(expectedValue, actualValue);
+						if(! result ){
+							errorMap.put("Data field [" + field.getName()+"] in group service property [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
+						}
+					} else {
+						errorMap.put("Data field [" + field.getName() + "] in group service property [" + groupName + "]", " does not exist in actual object");
+						System.out.println("Data field [" + field.getName() + "] in group service property [" + groupName + "] does not exist in actual object");
+					}
+				}
+			}catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if(errorMap != null && !errorMap.isEmpty()){
+			return Either.right(errorMap);
+		}
+		return Either.left(true);
+	}
+
+//	############################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//?-------
+	public static Either<Boolean, Map<String, Object>> serviceToscaGroupPropertyValidator(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, ToscaDefinition actualToscaDefinition){
+
+		SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate service TOSCA group property...");
+		Map<String, ToscaGroupsTopologyTemplateDefinition> actualServiceGroups = actualToscaDefinition.getTopology_template().getGroups();
+		Either<Boolean,Map<String,Object>> serviceToscaGroupPropertyValidator = compareServiceGroupProperty(expectedServiceGroup, actualServiceGroups);
+		if(serviceToscaGroupPropertyValidator.isLeft()){
+			SetupCDTest.getExtendTest().log(Status.INFO, "Service TOSCA group property verification success");
+		}else{
+			SetupCDTest.getExtendTest().log(Status.ERROR, "Service TOSCA group property verification failed" + serviceToscaGroupPropertyValidator.right().value().toString());
+		}
+		return serviceToscaGroupPropertyValidator;
+	}
+
+	public static Either<Boolean,Map<String,Object>> compareServiceGroupProperty(Map<String, ToscaGroupsTopologyTemplateDefinition> expectedServiceGroup, Map<String, ToscaGroupsTopologyTemplateDefinition> actualServiceGroups) {
+
+		Map<String, Object> errorMap = new HashMap<>();
+		for (String groupName : expectedServiceGroup.keySet()){
+			if (actualServiceGroups.get(groupName) == null ){
+				errorMap.put("group/module [" + groupName + "]", " does not exist in TOSCA main yaml");
+			}else{
+				compareServiceGroupProperty(expectedServiceGroup.get(groupName).getProperties(), actualServiceGroups.get(groupName).getProperties(), groupName, errorMap);
+			}
+		}
+		if(errorMap != null && !errorMap.isEmpty()){
+			return Either.right(errorMap);
+		}
+		return Either.left(true);
+	}
+
+	public static Either<Boolean, Map<String, Object>> compareServiceGroupProperty(ToscaGroupPropertyDefinition expectedServiceGroupProperty, ToscaGroupPropertyDefinition actualServiceGroupProperty, String groupName, Map<String, Object> errorMap) {
+
+		Field[] declaredFields = expectedServiceGroupProperty.getClass().getDeclaredFields();
+		for (Field field : declaredFields){
+			try {
+				String expectedValue = (String) field.get(expectedServiceGroupProperty);
+				String actualValue = (String) field.get(actualServiceGroupProperty);
+				if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
+					if (actualValue != null) {
+						Boolean result = compareValue(expectedValue, actualValue);
+						if(! result ){
+							errorMap.put("Data field [" + field.getName()+"] in group service property [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
+						}
+					} else {
+						errorMap.put("Data field [" + field.getName() + "] in group service property [" + groupName + "]", " does not exist in actual object");
+						System.out.println("Data field [" + field.getName() + "] in group service property [" + groupName + "] does not exist in actual object");
+					}
+				}
+			}catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if(errorMap != null && !errorMap.isEmpty()){
+			return Either.right(errorMap);
+		}
+		return Either.left(true);
+	}
+
+
+//    ----------------------------------
 	public static Either<Boolean, Map<String, Object>> componentToscaNodeTemplateMetadataValidator(Map<String, String> expectedMetadata, ToscaDefinition actualToscaDefinition, String nodeTemplateName, ComponentTypeEnum componentType, String componentName){
 		
 		SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate "+ componentName + " " + componentType.getValue() + " node template TOSCA metadata...");
@@ -166,7 +438,7 @@ public class ToscaValidation {
 				Object expectedValue = field.get(expectedInputDefinition);
 				Object actualValue = field.get(actualInputDefinition);
 //				verification exclude fields as (immutable, hidden, constraints, entry_schema) according Renana
-				if(expectedValue != null && expectedValue.toString().trim()!= "" && field.getName() != "name" && field.getName() != "immutable" && field.getName() != "hidden" && field.getName() != "constraints" && field.getName() != "entry_schema" && field.getName() != "required") {
+				if(expectedValue != null && !expectedValue.toString().trim().equals("") && field.getName() != "name" && field.getName() != "immutable" && field.getName() != "hidden" && field.getName() != "constraints" && field.getName() != "entry_schema" && field.getName() != "required") {
 					if (actualValue != null) {
 						compareInputValue(expectedInputDefinition, errorMap, field, expectedValue, actualValue);
 					} else {
@@ -284,6 +556,5 @@ public class ToscaValidation {
 		}
 		return actualInputsMap;
 	}
-	
 	
 }

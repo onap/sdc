@@ -19,11 +19,8 @@
  */
 
 package org.openecomp.sdc.ci.tests.US;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
+import com.clearspring.analytics.util.Pair;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -31,14 +28,18 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 
-import com.clearspring.analytics.util.Pair;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocalGeneralUtilities {
 
@@ -76,8 +77,8 @@ public static List<String> getValuesFromJsonArray(RestResponse message) throws E
 }
 
 public static String simpleOnBoarding(ResourceReqDetails resourceReqDetails, String fileName, String filePath,User user) throws Exception {
-	AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(user);
-	Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
+	AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
+	Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
 	String vspName = createVendorSoftwareProduct.left;
 	HomePage.showVspRepository();
 	OnboardingUiUtils.importVSP(createVendorSoftwareProduct);

@@ -1,43 +1,14 @@
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.Assert.assertTrue;
-
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
-import org.openecomp.sdc.ci.tests.datatypes.TypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.CircleSize;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.GovernorOperationPage;
-import org.openecomp.sdc.ci.tests.pages.InformationalArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.OpsOperationPage;
-import org.openecomp.sdc.ci.tests.pages.PropertiesPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.pages.ToscaArtifactsPage;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.CatalogUIUtilitis;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
+import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
@@ -49,7 +20,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
+
+import static org.testng.Assert.assertTrue;
 
 public class PNF extends SetupCDTest {
 	

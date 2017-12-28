@@ -1,6 +1,8 @@
 package org.openecomp.sdc.ci.tests.pages;
 
 
+import java.util.List;
+
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.PropertiesAssignmentScreen;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -84,11 +86,7 @@ public class PropertiesAssignmentPage {
 		GeneralUIUtils.ultimateWait();		
 	}
 	
-	public static void clickOnFilterAll() {
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on property %s "));
-		GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_ALL.getValue());
-		GeneralUIUtils.ultimateWait();
-	}
+	
 	
 	public static void clickOnComponentInComposition(String resourceName) throws Exception{
 		try{
@@ -144,6 +142,71 @@ public class PropertiesAssignmentPage {
 		return false;
 		
 	}
+	
+	
+	//Filter Actions
+		public static void clickOnFilterButton() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter button "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterAllCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter All Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_ALL.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterCPCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter CP Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_CP.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterVfcCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter VFC Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_VFC.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterVlCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter VL Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_VL.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterApplyButton(){
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter Apply Button"));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_APPLY_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();		
+		}
+		
+		public static void clickOnFilterCloseButton(){
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter Close Button"));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CLOSE_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();		
+		}
+		
+		public static void clickOnFilterClearAllButton(){
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter Clear All Button"));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.CLEAR_FILTER_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();		
+		}
+		
+		public static void findFilterBoxAndClick(String resourceName) throws Exception {
+			SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + resourceName + " in homepage");
+			WebElement searchTextbox = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.PropertiesAssignmentScreen.FILTER_BOX.getValue());
+			try{
+				searchTextbox.clear();
+				searchTextbox.sendKeys(resourceName);
+				GeneralUIUtils.ultimateWait();
+			}
+			catch(Exception e){
+				SetupCDTest.getExtendTest().log(Status.INFO, "Can't interact with search bar");
+				e.printStackTrace();
+			}
+
+		}
 	
 	
 }

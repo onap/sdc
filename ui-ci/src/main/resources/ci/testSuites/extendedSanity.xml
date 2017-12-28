@@ -6,11 +6,7 @@
   <test name="uiSanity">
     <classes>
     	
-    	<class name="org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders">
-   			  <methods>
-				<include name="OnbordingDataProviders"/>
-			  </methods>
-		</class>
+    	<class name="org.openecomp.sdc.ci.tests.execute.sanity.ToscaValidationTest"/>
    		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Onboard">
    			  <methods>
 				<exclude name="onboardVNFTestSanity"/>
