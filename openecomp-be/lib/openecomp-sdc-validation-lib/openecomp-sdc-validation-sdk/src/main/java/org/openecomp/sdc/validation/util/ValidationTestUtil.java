@@ -26,7 +26,6 @@ import org.testng.Assert;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,8 +37,10 @@ import java.util.Objects;
  */
 public class ValidationTestUtil {
 
-  private final static Logger log = (Logger) LoggerFactory.getLogger(ValidationTestUtil.class
+  private static final Logger LOG = LoggerFactory.getLogger(ValidationTestUtil.class
       .getName());
+
+  private ValidationTestUtil(){}
 
   public static GlobalValidationContext createGlobalContextFromPath(String path) {
     GlobalValidationContext globalValidationContext = new GlobalValidationContext();
@@ -181,7 +182,7 @@ public class ValidationTestUtil {
           CommonMethods.newInstance(validatorConf.getImplementationClass(), Validator.class);
       validator.init(validatorConf.getProperties());
     } catch (IllegalArgumentException iae) {
-      log.debug("",iae);
+      LOG.debug("",iae);
       return null;
     }
     return validator;
@@ -189,7 +190,6 @@ public class ValidationTestUtil {
 
   public static Map<String, Object> getResourceMap(String configFileName) throws IOException {
     URL mockResource = ValidationTestUtil.class.getResource(configFileName);
-    StringWriter writer = new StringWriter();
     String json = IOUtils.toString(mockResource.openStream(), "UTF-8");
     return JsonUtil.json2Object(json, Map.class);
   }
