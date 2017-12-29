@@ -35,6 +35,15 @@ public class ApplicationConfigEntity {
   private String value;
 
   /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
+  public ApplicationConfigEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
+  }
+
+  /**
    * Instantiates a new Application config entity.
    *
    * @param namespace the namespace
@@ -46,11 +55,6 @@ public class ApplicationConfigEntity {
     this.key = key;
     this.value = value;
   }
-
-
-  public ApplicationConfigEntity() {
-  }
-
 
   public String getNamespace() {
     return namespace;
