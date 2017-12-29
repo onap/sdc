@@ -32,14 +32,20 @@ public class ComputeEntity implements CompositionEntity {
   @Column(name = "questionnaire_data")
   private String questionnaireData;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
+  public ComputeEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
+  }
+
   public ComputeEntity(String vspId, Version version, String componentId, String id) {
     this.vspId = vspId;
     this.version = version;
     this.componentId = componentId;
     this.id = id;
-  }
-
-  public ComputeEntity() {
   }
 
   @Override
