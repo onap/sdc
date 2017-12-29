@@ -41,7 +41,13 @@ public class VersionHistoryEntity {
   private String description;
   private VersionType type;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public VersionHistoryEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   public VersionHistoryEntity(VersionableEntityId entityId) {

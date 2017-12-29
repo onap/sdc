@@ -60,7 +60,13 @@ public class VersionInfoEntity {
   @Frozen
   private Version latestFinalVersion;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public VersionInfoEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   public VersionInfoEntity(String entityType, String entityId) {
