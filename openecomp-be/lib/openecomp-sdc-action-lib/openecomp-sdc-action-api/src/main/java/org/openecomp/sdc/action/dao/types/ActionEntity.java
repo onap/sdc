@@ -65,7 +65,13 @@ public class ActionEntity {
   @Column(name = "data")
   private String data;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public ActionEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   public ActionEntity(String actionInvariantUuId, Version version) {
@@ -124,7 +130,7 @@ public class ActionEntity {
    */
   public void setVendorList(List<String> vendorList) {
     if (vendorList != null && !vendorList.isEmpty()) {
-      List<String> lowerCaseVendorList = new ArrayList<String>();
+      List<String> lowerCaseVendorList = new ArrayList<>();
       lowerCaseVendorList
           .addAll(vendorList.stream().map(String::toLowerCase).collect(Collectors.toList()));
       this.vendorList = lowerCaseVendorList;
@@ -144,7 +150,7 @@ public class ActionEntity {
    */
   public void setCategoryList(List<String> categoryList) {
     if (categoryList != null && !categoryList.isEmpty()) {
-      List<String> lowerCaseCategoryList = new ArrayList<String>();
+      List<String> lowerCaseCategoryList = new ArrayList<>();
       lowerCaseCategoryList
           .addAll(categoryList.stream().map(String::toLowerCase).collect(Collectors.toList()));
       this.categoryList = lowerCaseCategoryList;
@@ -199,8 +205,6 @@ public class ActionEntity {
    * @return the action
    */
   public Action toDto() {
-    //Action destination = new Action();
-
     Action destination = JsonUtil.json2Object(this.getData(), Action.class);
     destination.setData(this.getData());
     destination.setTimestamp(this.getTimestamp());

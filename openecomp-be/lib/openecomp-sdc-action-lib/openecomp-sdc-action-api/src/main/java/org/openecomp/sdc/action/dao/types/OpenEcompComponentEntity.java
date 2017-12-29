@@ -35,7 +35,13 @@ public class OpenEcompComponentEntity {
   @Column(name = "name")
   private String name;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public OpenEcompComponentEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   public OpenEcompComponentEntity(String id, String name) {
