@@ -28,8 +28,13 @@ public class ComponentDependencyModelEntity implements VersionableEntity {
   @Column(name = "relation")
   private String relation;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public ComponentDependencyModelEntity() {
-
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   /**
