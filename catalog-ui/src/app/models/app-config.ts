@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,6 +53,7 @@ export interface IApi {
     GET_resource_artifact_types:string;
     GET_activity_log:string;
     GET_configuration_ui:string;
+    GET_designers_configuration:string;
     GET_service:string;
     GET_ecomp_menu_items:string;
     GET_service_validate_name:string;
@@ -71,6 +72,7 @@ export interface IApi {
     GET_lifecycle_state_CERTIFICATIONREQUEST:string;
     GET_lifecycle_state_UNDOCHECKOUT:string;
     root:string;
+    no_proxy_root:string;
     PUT_service:string;
     GET_download_artifact:string;
     GET_SDC_Version:string;

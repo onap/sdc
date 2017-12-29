@@ -44,6 +44,13 @@ module.exports = function(env) {
 				    secure: false
                 }));
 
+            middlewares.push(
+                proxy(['/sdc1/rest'],{
+                    target: 'http://localhost:' + fePort,
+                    changeOrigin: true,
+                    secure: false
+                }));
+
             // Redirect dcae urls to feHost
             middlewares.push(
                 proxy(['/dcae','/sdc1/feProxy/dcae-api'],{

@@ -39,6 +39,20 @@
             "FE": "yyy",
             "ES": "yyy",
             "KB": "yyy"
+        },
+        "Designers": {
+            "DCAE": {
+                "dcae_host": "yyy",
+                "dcae_port": "yyy",
+                "dcae_path": "yyy",
+                "dcae_protocol": "yyy"
+            },
+            "WORKFLOW": {
+                "workflow_host": "yyy",
+                "workflow_port": "yyy",
+                "workflow_path": "yyy",
+                "workflow_protocol": "yyy"
+            }
         }
     },
     "override_attributes": {

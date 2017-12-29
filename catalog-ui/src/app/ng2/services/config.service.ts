@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ import { Injectable, Inject } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import {IAppConfigurtaion, ValidationConfiguration, Validations} from "app/models";
+import {IApi} from "app/models/app-config";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 
 @Injectable()
@@ -33,9 +34,11 @@ export class ConfigService {
 
     private baseUrl;
     public configuration: IAppConfigurtaion;
+    public api:IApi;
 
     constructor(private http: Http, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
-        this.baseUrl = this.sdcConfig.api.root + this.sdcConfig.api.component_api_root;
+        this.api = this.sdcConfig.api;
+        this.baseUrl = this.api.root + this.api.component_api_root;
     }
 
     loadValidationConfiguration(): Promise<ValidationConfiguration> {
@@ -45,7 +48,7 @@ export class ConfigService {
             ValidationConfiguration.validation = validationData;
         }).catch((ex) => {
             console.error('Error loading validation.json configuration file, using fallback data', ex);
-            
+
             let fallback:Validations = {
                 "propertyValue": {
                     "max": 2500,
@@ -58,12 +61,23 @@ export class ConfigService {
                     "integer": "^(([-+]?\\d+)|([-+]?0x[0-9a-fA-F]+))$"
                 }
             };
-            
+
             ValidationConfiguration.validation = fallback;
-            
+
         });
 
         return promise;
+    }
+
+    loadDesignersConfiguration(): void {
+        let url:string = this.api.no_proxy_root + this.api.GET_designers_configuration;
+        let promise: Promise<any> = this.http.get(url).map((res: Response) => res.json()).toPromise();
+
+        promise.then((config:any) => {
+            console.log(config);
+        }).catch((ex) => {
+            console.error('Error was:', ex);
+        })
     }
 
 }
