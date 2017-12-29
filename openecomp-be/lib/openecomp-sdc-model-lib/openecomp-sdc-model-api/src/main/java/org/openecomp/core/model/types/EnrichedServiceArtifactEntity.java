@@ -57,6 +57,15 @@ public class EnrichedServiceArtifactEntity implements ServiceElementEntity {
   public ByteBuffer contentData;
 
   /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
+  public EnrichedServiceArtifactEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
+  }
+
+  /**
    * Instantiates a new Enriched service artifact entity.
    *
    * @param entity the entity
