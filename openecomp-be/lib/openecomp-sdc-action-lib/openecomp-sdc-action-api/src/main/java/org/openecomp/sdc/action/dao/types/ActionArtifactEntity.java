@@ -41,8 +41,13 @@ public class ActionArtifactEntity {
   @Column(name = "artifact")
   private ByteBuffer artifact;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public ActionArtifactEntity() {
-    //Default constructor implementation
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   public ActionArtifactEntity(String artifactUuId, int effectiveVersion) {
