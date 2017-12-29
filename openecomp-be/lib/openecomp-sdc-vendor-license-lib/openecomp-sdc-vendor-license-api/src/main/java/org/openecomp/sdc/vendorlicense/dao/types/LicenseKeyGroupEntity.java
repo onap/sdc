@@ -45,7 +45,7 @@ import java.util.Set;
 @Table(keyspace = "dox", name = "license_key_group")
 public class LicenseKeyGroupEntity implements VersionableEntity {
 
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final String ENTITY_TYPE = "License Key Group";
 
   @PartitionKey
@@ -79,8 +79,13 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   //Defined and used only for License Artifcat XMLs
   private String manufacturerReferenceNumber;
 
-
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public LicenseKeyGroupEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   /**
@@ -387,11 +392,11 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   }
 
   public String getIsoFormatStartDate() {
-    mdcDataDebugMessage.debugEntryMessage("start date", startDate);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("start date", startDate);
     String isoFormatStartDate = null;
     if (!StringUtils.isEmpty(startDate)) {
       isoFormatStartDate = VendorLicenseUtil.getIsoFormatDate(startDate);
-      mdcDataDebugMessage.debugExitMessage("start date", "iso format start date", startDate,
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("start date", "iso format start date", startDate,
           isoFormatStartDate);
     }
     return isoFormatStartDate;
@@ -399,11 +404,11 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
 
 
   public String getIsoFormatExpiryDate() {
-    mdcDataDebugMessage.debugEntryMessage("expiry date", expiryDate);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("expiry date", expiryDate);
     String isoFormatExpDate = null;
     if (!StringUtils.isEmpty(expiryDate)) {
       isoFormatExpDate = VendorLicenseUtil.getIsoFormatDate(expiryDate);
-      mdcDataDebugMessage.debugExitMessage("expiry date", "iso format expiry date", expiryDate,
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("expiry date", "iso format expiry date", expiryDate,
           isoFormatExpDate);
     }
     return isoFormatExpDate;

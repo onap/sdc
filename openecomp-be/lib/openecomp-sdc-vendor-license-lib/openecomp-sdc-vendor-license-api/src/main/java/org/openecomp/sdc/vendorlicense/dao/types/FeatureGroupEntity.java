@@ -58,7 +58,13 @@ public class FeatureGroupEntity implements VersionableEntity {
   @Column(name = "ref_la_ids")
   private Set<String> referencingLicenseAgreements = new HashSet<>();
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public FeatureGroupEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   /**

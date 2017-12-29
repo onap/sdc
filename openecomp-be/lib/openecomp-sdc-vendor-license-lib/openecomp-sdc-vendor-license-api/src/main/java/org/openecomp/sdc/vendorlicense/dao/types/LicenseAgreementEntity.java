@@ -60,7 +60,13 @@ public class LicenseAgreementEntity implements VersionableEntity {
   @Column(name = "fg_ids")
   private Set<String> featureGroupIds = new HashSet<>();
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public LicenseAgreementEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   /**
