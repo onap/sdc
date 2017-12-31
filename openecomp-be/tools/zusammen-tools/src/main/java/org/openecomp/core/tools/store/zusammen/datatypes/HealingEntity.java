@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
 import com.datastax.driver.mapping.annotations.Column;
@@ -9,6 +24,7 @@ import com.datastax.driver.mapping.annotations.Table;
  */
 @Table(keyspace = "dox", name = "healing")
 public class HealingEntity {
+
   @Column(name = "space")
   @PartitionKey(0)
   private String space;
@@ -25,7 +41,25 @@ public class HealingEntity {
   private boolean healingFlag;
 
   @Column(name = "old_version")
-  private String old_version;
+  private String oldVersion;
+
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
+  public HealingEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
+  }
+
+  public HealingEntity(String space, String itemId, String versionId, boolean healingFlag,
+                       String oldVersion) {
+    this.space = space;
+    this.itemId = itemId;
+    this.versionId = versionId;
+    this.healingFlag = healingFlag;
+    this.oldVersion = oldVersion;
+  }
 
   public String getSpace() {
     return space;
@@ -59,20 +93,11 @@ public class HealingEntity {
     this.healingFlag = healingFlag;
   }
 
-  public HealingEntity(String space, String itemId, String versionId, boolean healingFlag,String
-      oldVersion) {
-    this.space = space;
-    this.itemId = itemId;
-    this.versionId = versionId;
-    this.healingFlag = healingFlag;
-    this.old_version = oldVersion;
-  }
-
   public String getOldVersion() {
-    return old_version;
+    return oldVersion;
   }
 
-  public void setOldVersion(String old_version) {
-    this.old_version = old_version;
+  public void setOldVersion(String oldVersion) {
+    this.oldVersion = oldVersion;
   }
 }
