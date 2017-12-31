@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8fe517aa",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/VersionsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T14:11:42Z",
+      "side": 1,
+      "message": "Don\u0027t assign new values to a parameter. Here\u0027s a detailed explanation https://sonar.onap.org/coding_rules#rule_key\u003dsquid%3AS1226",
+      "revId": "d8539cf7504d32f19e7850db32747ade76ed3153",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_afe2539d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T14:11:42Z",
+      "side": 1,
+      "message": "Is it OK to proceed despite an exception? Please use the Logger.error(String, Throwable) version.",
+      "revId": "d8539cf7504d32f19e7850db32747ade76ed3153",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6ff44b5b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T14:11:42Z",
+      "side": 1,
+      "message": "Same problem. Crucial information about the exception is lost. getMessage() of some exceptions return null or \"\", you won\u0027t be able to understand what had happened.",
+      "revId": "d8539cf7504d32f19e7850db32747ade76ed3153",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
