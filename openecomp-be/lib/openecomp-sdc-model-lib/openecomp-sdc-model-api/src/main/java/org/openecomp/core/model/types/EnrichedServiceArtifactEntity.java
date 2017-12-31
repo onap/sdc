@@ -22,6 +22,7 @@ import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -35,117 +36,113 @@ import java.nio.ByteBuffer;
 
 @Table(keyspace = "dox", name = "vsp_enriched_service_artifact")
 public class EnrichedServiceArtifactEntity implements ServiceElementEntity {
-  private static final String ENTITY_TYPE;
 
-  static {
-    ENTITY_TYPE = "Vendor Software Product Service artifact";
-  }
+    private static final String ENTITY_TYPE;
 
-  @PartitionKey
-  @Column(name = "vsp_id")
-  public String id;
-
-  @PartitionKey(value = 1)
-  @Frozen
-  public Version version;
-
-  @ClusteringColumn
-  @Column(name = "name")
-  public String name;
-
-  @Column(name = "content_data")
-  public ByteBuffer contentData;
-
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public EnrichedServiceArtifactEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
-  /**
-   * Instantiates a new Enriched service artifact entity.
-   *
-   * @param entity the entity
-   */
-  public EnrichedServiceArtifactEntity(ServiceArtifact entity) {
-    this.id = entity.getVspId();
-    this.version = entity.getVersion();
-    this.name = entity.getName();
-
-    try {
-      this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
-    } catch (IOException ioException) { //todo fix typo in Traget
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_SERVICE_ENRICH_ARTIFACT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          LoggerErrorDescription.CREATE_ENRICH_SERVICE_ARTIFACT);
-      throw new RuntimeException(ioException);
+    static {
+        ENTITY_TYPE = "Vendor Software Product Service artifact";
     }
 
-  }
+    @PartitionKey
+    @Column(name = "vsp_id")
+    public String id;
 
-  @Override
-  public String getEntityType() {
-    return ENTITY_TYPE;
-  }
+    @PartitionKey(value = 1)
+    @Frozen
+    public Version version;
 
-  @Override
-  public String getFirstClassCitizenId() {
-    return getId();
-  }
+    @ClusteringColumn
+    @Column(name = "name")
+    public String name;
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Column(name = "content_data")
+    public ByteBuffer contentData;
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    /**
+     * Every entity class must have a default constructor according to
+     * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+     * Definition of mapped classes</a>.
+     */
+    public EnrichedServiceArtifactEntity() {
+        // Don't delete! Default constructor is required by DataStax driver
+    }
 
-  @Override
-  public Version getVersion() {
-    return version;
-  }
+    /**
+     * Instantiates a new Enriched service artifact entity.
+     *
+     * @param entity the entity
+     */
+    public EnrichedServiceArtifactEntity(ServiceArtifact entity) {
+        this.id = entity.getVspId();
+        this.version = entity.getVersion();
+        this.name = entity.getName();
 
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
-  }
+        try {
+            this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
+        } catch (IOException ioException) {
+            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+                    LoggerTragetServiceName.CREATE_SERVICE_ENRICH_ARTIFACT, ErrorLevel.ERROR.name(),
+                    LoggerErrorCode.DATA_ERROR.getErrorCode(),
+                    LoggerErrorDescription.CREATE_ENRICH_SERVICE_ARTIFACT);
+            throw new SdcRuntimeException(ioException);
+        }
 
-  @Override
-  public String getName() {
-    return name;
-  }
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    @Override
+    public String getEntityType() {
+        return ENTITY_TYPE;
+    }
 
-  @Override
-  public ByteBuffer getContentData() {
-    return contentData;
-  }
+    @Override
+    public String getFirstClassCitizenId() {
+        return getId();
+    }
 
-  public void setContentData(ByteBuffer contentData) {
-    this.contentData = contentData;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  /**
-   * Gets service artifact.
-   *
-   * @return the service artifact
-   */
-  public ServiceArtifact getServiceArtifact() {
-    ServiceArtifact serviceArtifact = new ServiceArtifact();
-    serviceArtifact.setName(this.getName());
-    serviceArtifact.setVersion(this.getVersion());
-    serviceArtifact.setContentData(this.getContentData().array());
-    serviceArtifact.setVspId(this.getId());
-    return serviceArtifact;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public Version getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Version version) {
+        this.version = version;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public ByteBuffer getContentData() {
+        return contentData;
+    }
+
+    public void setContentData(ByteBuffer contentData) {
+        this.contentData = contentData;
+    }
+
+    public ServiceArtifact getServiceArtifact() {
+        ServiceArtifact serviceArtifact = new ServiceArtifact();
+        serviceArtifact.setName(this.getName());
+        serviceArtifact.setVersion(this.getVersion());
+        serviceArtifact.setContentData(this.getContentData().array());
+        serviceArtifact.setVspId(this.getId());
+        return serviceArtifact;
+    }
 }

@@ -1,26 +1,23 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.core.factory.impl;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -29,7 +26,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.openecomp.core.utilities.CommonMethods.isEmpty;
 import static org.openecomp.core.utilities.CommonMethods.newInstance;
 
 public abstract class AbstractFactoryBase {
@@ -39,13 +35,12 @@ public abstract class AbstractFactoryBase {
    * types to allow unloading of those classes from memory by garbage collector if factory is not
    * actually used.
    */
-  private static Map<String, String> registry = new ConcurrentHashMap<String, String>();
+  private static final Map<String, String> REGISTRY = new ConcurrentHashMap<>();
 
   /**
    * Cached factory instances.
    */
-  private static Map<String, AbstractFactoryBase> factoryMap =
-      new ConcurrentHashMap<String, AbstractFactoryBase>();
+  private static final Map<String, AbstractFactoryBase> FACTORY_MAP = new ConcurrentHashMap<>();
 
   /**
    * Registers implementor for an abstract factory. The method accepts Java classes rather then
@@ -69,15 +64,15 @@ public abstract class AbstractFactoryBase {
           new ErrorCode.ErrorCodeBuilder().withId("E0001").withMessage("Mandatory input impl.")
               .withCategory(ErrorCategory.SYSTEM).build());
     }
-    if (factoryMap != null && factoryMap.containsKey(factory.getName())) {
-      factoryMap.remove(factory.getName());
+    if (FACTORY_MAP.containsKey(factory.getName())) {
+      FACTORY_MAP.remove(factory.getName());
     }
-    registry.put(factory.getName(), impl.getName());
+    REGISTRY.put(factory.getName(), impl.getName());
   } // registerFactory
 
   // TODO: Remove
   protected static void registerFactory(String factoryName, String implName) {
-    registry.put(factoryName, implName);
+    REGISTRY.put(factoryName, implName);
   } // registerFactory
 
   /**
@@ -92,9 +87,8 @@ public abstract class AbstractFactoryBase {
           new ErrorCode.ErrorCodeBuilder().withId("E0001").withMessage("Mandatory input factory.")
               .withCategory(ErrorCategory.SYSTEM).build());
     }
-    if (factoryMap != null) {
-      factoryMap.remove(factory.getName());
-    }
+
+    FACTORY_MAP.remove(factory.getName());
   }
 
   /**
@@ -115,18 +109,18 @@ public abstract class AbstractFactoryBase {
 
     }
     // Pick up factory instance from cache
-    F factory = (F) factoryMap.get(factoryType.getName());
+    F factory = (F) FACTORY_MAP.get(factoryType.getName());
     // Check for the first time access
     if (factory == null) {
       // Synchronize factory instantiation
       synchronized (factoryType) {
         // Re-check the factory instance
-        factory = (F) factoryMap.get(factoryType.getName());
+        factory = (F) FACTORY_MAP.get(factoryType.getName());
         if (factory == null) {
           // Get the implementation class name
-          String implName = registry.get(factoryType.getName());
+          String implName = REGISTRY.get(factoryType.getName());
 
-          if (isEmpty(implName)) {
+          if (StringUtils.isEmpty(implName)) {
             throw new CoreException(
                 new ErrorCode.ErrorCodeBuilder().withId("E0001")
                     .withMessage("Mandatory input factory implementation.")
@@ -138,7 +132,7 @@ public abstract class AbstractFactoryBase {
           factory.init();
 
           // Cache the instantiated singleton
-          factoryMap.put(factoryType.getName(), factory);
+          FACTORY_MAP.put(factoryType.getName(), factory);
         }
       }
     }
@@ -164,14 +158,14 @@ public abstract class AbstractFactoryBase {
               .build());
     }
     // Pick up factory instance from cache
-    F factory = (F) factoryMap.get(factoryType.getName());
+    F factory = (F) FACTORY_MAP.get(factoryType.getName());
     // Check for the first time access
     if (factory != null) {
       isFactoryRegistered = true;
     } else {
       // Get the implementation class name
-      String implName = registry.get(factoryType.getName());
-      if (!isEmpty(implName)) {
+      String implName = REGISTRY.get(factoryType.getName());
+      if (StringUtils.isNotEmpty(implName)) {
         isFactoryRegistered = true;
       }
     }
@@ -182,16 +176,20 @@ public abstract class AbstractFactoryBase {
    * Stop all.
    */
   public static void stopAll() {
-    Collection<AbstractFactoryBase> factorylist = factoryMap.values();
+    Collection<AbstractFactoryBase> factorylist = FACTORY_MAP.values();
     for (AbstractFactoryBase factory : factorylist) {
       factory.stop();
     }
   }
 
   protected void init() {
+    // allows custom initialization
+    // noop by default
   }
 
   protected void stop() {
+    // allows custom shutdown
+    // noop by default
   }
 
 }

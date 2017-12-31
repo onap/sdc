@@ -43,6 +43,7 @@ import com.amdocs.zusammen.datatypes.response.ReturnCode;
 import org.openecomp.core.zusammen.db.ZusammenConnector;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
 import org.openecomp.core.zusammen.impl.ItemElementLoggerTargetServiceName;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -87,7 +88,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   public Collection<Item> listItems(SessionContext context) {
     Response<Collection<Item>> response = itemAdaptorFactory.createInterface(context).list(context);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           "Failed to list Items. message:" + response.getReturnCode().toString());
     }
     return response.getValue();
@@ -97,7 +98,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   public Item getItem(SessionContext context, Id itemId) {
     Response<Item> response = itemAdaptorFactory.createInterface(context).get(context, itemId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           "Failed to get Item. message:" + response.getReturnCode().toString());
     }
     return response.getValue();
@@ -107,7 +108,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   public Id createItem(SessionContext context, Info info) {
     Response<Id> response = itemAdaptorFactory.createInterface(context).create(context, info);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           "Failed to create Item. message:" + response.getReturnCode().toString());
     }
     return response.getValue();
@@ -119,7 +120,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
         itemAdaptorFactory.createInterface(context).update(context, itemId, info);
 
     if (!response.isSuccessful()) {
-      throw new RuntimeException("failed to update Item . ItemId:" + itemId + "" +
+      throw new SdcRuntimeException("failed to update Item . ItemId:" + itemId + "" +
           " message:" + response.getReturnCode().toString());
     }
   }
@@ -131,7 +132,8 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     if (!versions.isSuccessful()) {
       logErrorMessageToMdc(ItemElementLoggerTargetServiceName.ITEM_VERSION_RETRIEVAL, versions
           .getReturnCode());
-      throw new RuntimeException(versions.getReturnCode().toString());
+      throw new SdcRuntimeException("failed to list public versions. message: " +
+              versions.getReturnCode().toString());
     }
     return versions.getValue();
   }
@@ -141,7 +143,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<ItemVersion> response = versionAdaptorFactory.createInterface(context)
         .get(context, Space.PUBLIC, itemId, versionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           String.format("failed to get public Item Version. ItemId: %s, versionId: %s, message: %s",
               itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -156,7 +158,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     if (response.isSuccessful()) {
       return response.getValue();
     } else {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to create Item Version. ItemId: %s, base versionId: %s, message: %s",
           itemId.getValue(), baseVersionId.getValue(), response.getReturnCode().toString()));
     }
@@ -168,7 +170,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Void> response = versionAdaptorFactory.createInterface(context)
         .update(context, itemId, versionId, itemVersionData);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           String.format("failed to update Item Version. ItemId: %s, versionId: %s, message: %s",
               itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -179,7 +181,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<ItemVersion> response = versionAdaptorFactory.createInterface(context)
         .get(context, Space.PRIVATE, itemId, versionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           String.format("failed to get Item Version. ItemId: %s, versionId: %s, message: %s",
               itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -191,7 +193,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<ItemVersionStatus> response =
         versionAdaptorFactory.createInterface(context).getStatus(context, itemId, versionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           String.format("failed to get Item Version status. ItemId: %s, versionId: %s, message: %s",
               itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -203,7 +205,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Void> response = versionAdaptorFactory.createInterface(context)
         .tag(context, itemId, versionId, null, tag);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to tag Item Version with tag %s. ItemId: %s, versionId: %s, message: %s",
           tag.getName(), itemId.getValue(), versionId.getValue(),
           response.getReturnCode().toString()));
@@ -216,7 +218,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Void> response = versionAdaptorFactory.createInterface(context)
         .resetRevision(context, itemId, versionId, revisionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to reset Item Version back to revision: %s. ItemId: %s, versionId: %s, message:" +
               " %s",
           revisionId.getValue(), itemId.getValue(), versionId.getValue(),
@@ -230,7 +232,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Void> response = versionAdaptorFactory.createInterface(context)
         .revertRevision(context, itemId, versionId, revisionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to revert Item Version back to revision: %s. ItemId: %s, versionId: %s, " +
               "message: %s",
           revisionId.getValue(), itemId.getValue(), versionId.getValue(),
@@ -245,7 +247,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
         versionAdaptorFactory.createInterface(context)
             .listRevisions(context, itemId, versionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to list revisions of Item Version. ItemId: %s, versionId: %s, message: %s",
           itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -258,7 +260,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Void> response =
         versionAdaptorFactory.createInterface(context).publish(context, itemId, versionId, message);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to publish item Version. ItemId: %s, versionId: %s, message: %s",
           itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -269,7 +271,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<MergeResult> response =
         versionAdaptorFactory.createInterface(context).sync(context, itemId, versionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to sync item Version. ItemId: %s, versionId: %s, message: %s",
           itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -280,7 +282,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<MergeResult> response =
         versionAdaptorFactory.createInterface(context).forceSync(context, itemId, versionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "failed to force sync item Version. ItemId: %s, versionId: %s, message: %s",
           itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -291,7 +293,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<ItemVersionConflict> response =
         versionAdaptorFactory.createInterface(context).getConflict(context, itemId, versionId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String
+      throw new SdcRuntimeException(String
           .format("failed to get Item Version conflict. ItemId: %s, versionId: %s, message: %s",
               itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
@@ -309,7 +311,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     } else {
       logErrorMessageToMdc(ItemElementLoggerTargetServiceName.ELEMENT_GET_BY_PROPERTY,
           response.getReturnCode());
-      throw new RuntimeException(response.getReturnCode().toString());
+      throw new SdcRuntimeException(response.getReturnCode().toString());
     }
   }
 
@@ -345,7 +347,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<ElementConflict> response = elementAdaptorFactory.createInterface(context)
         .getConflict(context, elementContext, elementId);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String.format(
+      throw new SdcRuntimeException(String.format(
           "Failed to get element conflict. Item Id: %s, version Id: %s, element Id: %s message: %s",
           elementContext.getItemId().getValue(), elementContext.getVersionId().getValue(),
           elementId.getValue(), response.getReturnCode().toString()));
@@ -359,7 +361,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Element> response = elementAdaptorFactory.createInterface(context)
         .save(context, elementContext, element, message);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(String
+      throw new SdcRuntimeException(String
           .format("Failed to create element %s. ItemId: %s, versionId: %s, message: %s",
               element.getElementId().getValue(), elementContext.getItemId().getValue(),
               elementContext.getVersionId().getValue(), response.getReturnCode().toString()));
@@ -374,7 +376,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Void> response = elementAdaptorFactory.createInterface(context)
         .resolveConflict(context, elementContext, element, resolution);
     if (!response.isSuccessful()) {
-      throw new RuntimeException(
+      throw new SdcRuntimeException(
           "Failed to resolve conflict. message:" + response.getReturnCode().toString());
     }
   }
@@ -385,14 +387,14 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     // no-op, required by the interface
   }
 
-  private RuntimeException buildGetElementException(ElementContext elementContext, Id elementId,
+  private SdcRuntimeException buildGetElementException(ElementContext elementContext, Id elementId,
                                                     String zusammenErrorMessage) {
     if (elementContext.getRevisionId() == null) {
-      return new RuntimeException(String.format(GET_ELEMENT_ERR_MSG,
+      return new SdcRuntimeException(String.format(GET_ELEMENT_ERR_MSG,
           elementContext.getItemId().getValue(), elementContext.getVersionId().getValue(),
           elementId.getValue(), zusammenErrorMessage));
     }
-    return new RuntimeException(String.format(GET_ELEMENT_IN_REV_ERR_MSG,
+    return new SdcRuntimeException(String.format(GET_ELEMENT_IN_REV_ERR_MSG,
         elementContext.getItemId().getValue(), elementContext.getVersionId().getValue(),
         elementContext.getRevisionId().getValue(),
         elementId.getValue(), zusammenErrorMessage));
