@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_6f668b53",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/VersionsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-31T12:29:40Z",
+      "side": 1,
+      "message": "extract to a variable with meaningful name so it will be clear why you are looking for numOfRevision-2 and not -3(maybe tommorow it will be -3 but the meaning will remain)",
+      "range": {
+        "startLine": 158,
+        "startChar": 22,
+        "endLine": 158,
+        "endChar": 40
+      },
+      "revId": "111bf563f473790cc5f9099b345b0b8511ed5a66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0f5b4788",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-31T12:29:40Z",
+      "side": 1,
+      "message": "if version is not null safe, please check for null",
+      "range": {
+        "startLine": 202,
+        "startChar": 33,
+        "endLine": 202,
+        "endChar": 41
+      },
+      "revId": "111bf563f473790cc5f9099b345b0b8511ed5a66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4feaaf10",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 1
