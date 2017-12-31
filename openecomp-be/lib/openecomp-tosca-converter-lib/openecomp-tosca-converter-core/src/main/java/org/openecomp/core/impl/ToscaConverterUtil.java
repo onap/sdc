@@ -8,6 +8,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +43,8 @@ public class ToscaConverterUtil {
   }
 
   private static <T> Optional<T> createObjectUsingSetters(Object objectCandidate,
-                                                          Class<T> classToCreate) throws Exception {
+                                                          Class<T> classToCreate)
+          throws ReflectiveOperationException {
     if (Objects.isNull(objectCandidate)
         || !(objectCandidate instanceof Map)) {
       return Optional.empty();
