@@ -145,21 +145,11 @@ public class VersionsImpl implements Versions {
 
   @Override
   public Response listRevisions(String itemId, String versionId, String user) {
+    List<Revision> revisions = versioningManager.listRevisions(itemId, new Version(versionId));
+    filterRevisions(revisions);
+
     GenericCollectionWrapper<RevisionDto> results = new GenericCollectionWrapper<>();
     MapRevisionToDto mapper = new MapRevisionToDto();
-
-    List<Revision> revisions = versioningManager.listRevisions(itemId, new Version(versionId));
-    /* When creating a new item an initial version is created with invalid data.
-       This revision is not an applicable revision. The logic of identifying this revision is:
-       1- only the first version of item has this issue
-       2- only in the first item version there are 2 revisions created
-       3- the second revision is in format "Initial <vlm/vsp>: <name of the vlm/vsp>"
-       4- only if a revision in this format exists we remove the first revision. */
-    if (revisions.size() > 1 &&
-        revisions.get(revisions.size() - 2).getMessage().matches("Initial .*:.*")) {
-      revisions.remove(revisions.size() - 1);
-    }
-
     revisions.forEach(revision -> results.add(mapper.applyMapping(revision, RevisionDto.class)));
     return Response.ok(results).build();
   }
@@ -189,13 +179,14 @@ public class VersionsImpl implements Versions {
     return Response.ok().build();
   }
 
+  private Version getVersion(String itemId, Version version) {
+    version = versioningManager.get(itemId, version);
 
-  private void revert(RevisionRequestDto request, String itemId, String versionId) {
-    if (request.getRevisionId() == null) {
-      throw new CoreException(new RevisionIdNotFoundErrorBuilder().build());
+    if (version.getState().getSynchronizationState() != SynchronizationState.Merging &&
+        conflictsManager.isConflicted(itemId, version)) { // looks for sdc applicative conflicts
+      version.getState().setSynchronizationState(SynchronizationState.Merging);
     }
-
-    versioningManager.revert(itemId, new Version(versionId), request.getRevisionId());
+    return version;
   }
 
   private void sync(String itemId, Version version) {
@@ -212,6 +203,28 @@ public class VersionsImpl implements Versions {
 
     activityLogManager.logActivity(new ActivityLogEntity(itemId, version,
         ActivityType.Commit, user, true, "", message));
+  }
+
+  private void revert(RevisionRequestDto request, String itemId, String versionId) {
+    if (request.getRevisionId() == null) {
+      throw new CoreException(new RevisionIdNotFoundErrorBuilder().build());
+    }
+
+    versioningManager.revert(itemId, new Version(versionId), request.getRevisionId());
+  }
+
+  private void filterRevisions(List<Revision> revisions) {
+  /* When creating a new item an initial version is created with invalid data.
+     This revision is not an applicable revision. The logic of identifying this revision is:
+     1- only the first version of item has this issue
+     2- only in the first item version there are 2 revisions created
+     3- the second revision is in format "Initial <vlm/vsp>: <name of the vlm/vsp>"
+     4- only if a revision in this format exists we remove the first revision. */
+    int numOfRevisions = revisions.size();
+    if (numOfRevisions > 1 &&
+        revisions.get(numOfRevisions - 2).getMessage().matches("Initial .*:.*")) {
+      revisions.remove(numOfRevisions - 1);
+    }
   }
 
   private void notifyUsers(String itemId, Version version, String message,
@@ -236,10 +249,10 @@ public class VersionsImpl implements Versions {
   }
 
   private class SyncEvent implements Event {
-
     private String eventType;
     private String originatorId;
     private Map<String, Object> attributes;
+
     private String entityId;
 
     public SyncEvent(String eventType, String originatorId,
@@ -264,20 +277,10 @@ public class VersionsImpl implements Versions {
     public Map<String, Object> getAttributes() {
       return attributes;
     }
-
     @Override
     public String getEntityId() {
       return entityId;
     }
-  }
 
-  private Version getVersion(String itemId, Version version) {
-    version = versioningManager.get(itemId, version);
-
-    if (version.getState().getSynchronizationState() != SynchronizationState.Merging &&
-        conflictsManager.isConflicted(itemId, version)) { // looks for sdc applicative conflicts
-      version.getState().setSynchronizationState(SynchronizationState.Merging);
-    }
-    return version;
   }
 }

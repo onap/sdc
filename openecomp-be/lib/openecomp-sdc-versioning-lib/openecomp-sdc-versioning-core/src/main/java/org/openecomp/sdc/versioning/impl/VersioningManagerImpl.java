@@ -75,8 +75,9 @@ import java.util.stream.Collectors;
 public class VersioningManagerImpl implements VersioningManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(VersioningManagerImpl.class);
   private static final Version INITIAL_ACTIVE_VERSION = new Version(0, 0);
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private static Map<String, Set<VersionableEntityMetadata>> versionableEntities = new HashMap<>();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private static final Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES =
+      new HashMap<>();
 
   private final VersionInfoDao versionInfoDao;
   private final VersionInfoDeletedDao versionInfoDeletedDao;
@@ -129,7 +130,7 @@ public class VersioningManagerImpl implements VersioningManager {
                                             VersionableEntityAction action, String user) {
 
 
-    mdcDataDebugMessage.debugEntryMessage("entity Id", entityId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("entity Id", entityId);
 
     Version activeVersion;
 
@@ -180,7 +181,7 @@ public class VersioningManagerImpl implements VersioningManager {
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage("entity Id", entityId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("entity Id", entityId);
     return versionInfo;
   }
 
@@ -198,7 +199,7 @@ public class VersioningManagerImpl implements VersioningManager {
   @Override
   public void register(String entityType, VersionableEntityMetadata entityMetadata) {
     Set<VersionableEntityMetadata> entitiesMetadata =
-        versionableEntities.computeIfAbsent(entityType, k -> new HashSet<>());
+        VERSIONABLE_ENTITIES.computeIfAbsent(entityType, k -> new HashSet<>());
     entitiesMetadata.add(entityMetadata);
   }
 
@@ -518,7 +519,7 @@ public class VersioningManagerImpl implements VersioningManager {
     versionDao.create(itemId, version);
     itemManager.updateVersionStatus(itemId, VersionStatus.Draft, null);
 
-    publish(itemId, version, String.format("Initial version: %s ", version.getName()));
+    publish(itemId, version, String.format("Create version: %s", version.getName()));
     return version;
   }
 
@@ -597,7 +598,6 @@ public class VersioningManagerImpl implements VersioningManager {
   @Override
   public List<Revision> listRevisions(String itemId, Version version) {
     return versionDao.listRevisions(itemId, version);
-
   }
 
   private void markAsCheckedOut(VersionInfoEntity versionInfoEntity, String checkingOutUser) {
@@ -683,7 +683,7 @@ public class VersioningManagerImpl implements VersioningManager {
 
   private void initVersionOnEntity(String entityType, String entityId, Version baseVersion,
                                    Version newVersion) {
-    Set<VersionableEntityMetadata> entityMetadatas = versionableEntities.get(entityType);
+    Set<VersionableEntityMetadata> entityMetadatas = VERSIONABLE_ENTITIES.get(entityType);
     if (entityMetadatas != null) {
       for (VersionableEntityMetadata entityMetadata : entityMetadatas) {
         VersionableEntityDaoFactory.getInstance().createInterface(entityMetadata.getStoreType())
@@ -694,7 +694,7 @@ public class VersioningManagerImpl implements VersioningManager {
 
   private void deleteVersionFromEntity(String entityType, String entityId,
                                        Version versionToDelete, Version backToVersion) {
-    Set<VersionableEntityMetadata> entityMetadatas = versionableEntities.get(entityType);
+    Set<VersionableEntityMetadata> entityMetadatas = VERSIONABLE_ENTITIES.get(entityType);
     if (entityMetadatas != null) {
       for (VersionableEntityMetadata entityMetadata : entityMetadatas) {
         VersionableEntityDaoFactory.getInstance().createInterface(entityMetadata.getStoreType())
@@ -704,7 +704,7 @@ public class VersioningManagerImpl implements VersioningManager {
   }
 
   private void closeVersionOnEntity(String entityType, String entityId, Version versionToClose) {
-    Set<VersionableEntityMetadata> entityMetadatas = versionableEntities.get(entityType);
+    Set<VersionableEntityMetadata> entityMetadatas = VERSIONABLE_ENTITIES.get(entityType);
     if (entityMetadatas != null) {
       for (VersionableEntityMetadata entityMetadata : entityMetadatas) {
         VersionableEntityDaoFactory.getInstance().createInterface(entityMetadata.getStoreType())

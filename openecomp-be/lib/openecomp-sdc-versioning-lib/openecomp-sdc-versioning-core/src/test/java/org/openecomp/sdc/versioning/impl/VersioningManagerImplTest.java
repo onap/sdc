@@ -39,13 +39,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -58,6 +58,9 @@ import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Certified;
 import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Draft;
 
 public class VersioningManagerImplTest {
+  private static final String ITEM_ID = "itemId";
+  private static final String VERSION_ID = "versionId";
+
   @Mock
   private VersionDao versionDaoMock;
   @Mock
@@ -73,85 +76,83 @@ public class VersioningManagerImplTest {
   }
 
   @Test
-  public void testList() throws Exception {
-    String itemId = "itemId";
+  public void testListWhenNone() throws Exception {
+    doReturn(new ArrayList<>()).when(versionDaoMock).list(ITEM_ID);
 
+    List<Version> versions = versioningManager.list(ITEM_ID);
+
+    Assert.assertTrue(versions.isEmpty());
+  }
+
+  @Test
+  public void testList() throws Exception {
     List<Version> returnedVersions = Stream.of(createVersion("1", null, null, false),
         createVersion("2", null, null, false),
         createVersion("3", null, null, false)).collect(Collectors.toList());
-    doReturn(returnedVersions).when(versionDaoMock).list(itemId);
+    doReturn(returnedVersions).when(versionDaoMock).list(ITEM_ID);
 
-    List<Version> versions = versioningManager.list(itemId);
+    List<Version> versions = versioningManager.list(ITEM_ID);
     Assert.assertEquals(versions, returnedVersions);
   }
 
   @Test(expectedExceptions = Exception.class)
   public void testGetNonExisting() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
 
-    doReturn(Optional.empty()).when(versionDaoMock).get(itemId, version);
-    doThrow(new Exception()).when(versionDaoMock).sync(itemId, version);
+    doReturn(Optional.empty()).when(versionDaoMock).get(ITEM_ID, version);
+    doThrow(new Exception()).when(versionDaoMock).sync(ITEM_ID, version);
 
-    versioningManager.get(itemId, version);
+    versioningManager.get(ITEM_ID, version);
   }
 
   @Test
   public void testGetNonExistingForUser() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version requestedVersion = new Version(versionId);
+    Version requestedVersion = new Version(VERSION_ID);
 
-    Version returnedVersion = createVersion(versionId, Draft, UpToDate, false);
+    Version returnedVersion = createVersion(VERSION_ID, Draft, UpToDate, false);
     doReturn(Optional.empty()).doReturn(Optional.of(returnedVersion))
-        .when(versionDaoMock).get(itemId, requestedVersion);
+        .when(versionDaoMock).get(ITEM_ID, requestedVersion);
 
-    Version version = versioningManager.get(itemId, requestedVersion);
+    Version version = versioningManager.get(ITEM_ID, requestedVersion);
     Assert.assertEquals(version, returnedVersion);
 
-    verify(versionDaoMock, times(2)).get(itemId, requestedVersion);
-    verify(versionDaoMock).sync(itemId, requestedVersion);
+    verify(versionDaoMock, times(2)).get(ITEM_ID, requestedVersion);
+    verify(versionDaoMock).sync(ITEM_ID, requestedVersion);
   }
 
   @Test
   public void testGetOutOfSyncCertified() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version requestedVersion = new Version(versionId);
+    Version requestedVersion = new Version(VERSION_ID);
 
-    Version returnedVersion = createVersion(versionId, Certified, UpToDate, false);
-    doReturn(Optional.of(createVersion(versionId, Certified, OutOfSync, false)))
+    Version returnedVersion = createVersion(VERSION_ID, Certified, UpToDate, false);
+    doReturn(Optional.of(createVersion(VERSION_ID, Certified, OutOfSync, false)))
         .doReturn(Optional.of(returnedVersion))
-        .when(versionDaoMock).get(itemId, requestedVersion);
+        .when(versionDaoMock).get(ITEM_ID, requestedVersion);
 
-    Version version = versioningManager.get(itemId, requestedVersion);
+    Version version = versioningManager.get(ITEM_ID, requestedVersion);
     Assert.assertEquals(version, returnedVersion);
 
-    verify(versionDaoMock, times(2)).get(itemId, requestedVersion);
-    verify(versionDaoMock).forceSync(itemId, requestedVersion);
+    verify(versionDaoMock, times(2)).get(ITEM_ID, requestedVersion);
+    verify(versionDaoMock).forceSync(ITEM_ID, requestedVersion);
   }
 
   @Test
   public void testGet() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version requestedVersion = new Version(versionId);
+    Version requestedVersion = new Version(VERSION_ID);
 
-    Version returnedVersion = createVersion(versionId, Draft, OutOfSync, true);
-    doReturn(Optional.of(returnedVersion)).when(versionDaoMock).get(itemId, requestedVersion);
+    Version returnedVersion = createVersion(VERSION_ID, Draft, OutOfSync, true);
+    doReturn(Optional.of(returnedVersion)).when(versionDaoMock).get(ITEM_ID, requestedVersion);
 
-    Version version = versioningManager.get(itemId, requestedVersion);
+    Version version = versioningManager.get(ITEM_ID, requestedVersion);
     Assert.assertEquals(version, returnedVersion);
 
-    verify(versionDaoMock).get(itemId, requestedVersion);
+    verify(versionDaoMock).get(ITEM_ID, requestedVersion);
     verify(versionDaoMock, never()).sync(any(), any());
     verify(versionDaoMock, never()).forceSync(any(), any());
   }
 
   @Test
   public void testCreate() throws Exception {
-    String itemId = "itemId";
     Version requestedVersion = new Version();
 
     String versionName = "versionName";
@@ -160,27 +161,27 @@ public class VersioningManagerImplTest {
     doReturn(Stream.of(createVersion("1", null, null, false),
         createVersion("2", null, null, false),
         createVersion("3", null, null, false)).collect(Collectors.toList()))
-        .when(versionDaoMock).list(itemId);
+        .when(versionDaoMock).list(ITEM_ID);
 
     Version version =
-        versioningManager.create(itemId, requestedVersion, VersionCreationMethod.major);
+        versioningManager.create(ITEM_ID, requestedVersion, VersionCreationMethod.major);
     Assert.assertNotNull(version);
     Assert.assertEquals(version.getName(), versionName);
 
-    verify(versionDaoMock).create(itemId, requestedVersion);
-    verify(itemManagerMock).updateVersionStatus(itemId, Draft, null);
-    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), anyString());
+    verify(versionDaoMock).create(ITEM_ID, requestedVersion);
+    verify(itemManagerMock).updateVersionStatus(ITEM_ID, Draft, null);
+    verify(versionDaoMock)
+        .publish(eq(ITEM_ID), eq(requestedVersion), eq("Create version: versionName"));
   }
 
   @Test
   public void testCreateBasedOn() throws Exception {
-    String itemId = "itemId";
     Version requestedVersion = new Version();
     requestedVersion.setBaseId("baseVersionId");
 
     Version baseVersion = createVersion(requestedVersion.getBaseId(), Certified, UpToDate, false);
     // TODO: 12/13/2017 fix to eq(new Version("baseVersionId")) when version.equals will be fixed
-    doReturn(Optional.of(baseVersion)).when(versionDaoMock).get(eq(itemId), any(Version.class));
+    doReturn(Optional.of(baseVersion)).when(versionDaoMock).get(eq(ITEM_ID), any(Version.class));
 
     String versionName = "4.0";
     doReturn(versionName)
@@ -189,28 +190,27 @@ public class VersioningManagerImplTest {
     doReturn(Stream.of(createVersion("1", null, null, false),
         createVersion("2", null, null, false),
         createVersion("3", null, null, false)).collect(Collectors.toList()))
-        .when(versionDaoMock).list(itemId);
+        .when(versionDaoMock).list(ITEM_ID);
 
     Version version =
-        versioningManager.create(itemId, requestedVersion, VersionCreationMethod.major);
+        versioningManager.create(ITEM_ID, requestedVersion, VersionCreationMethod.major);
     Assert.assertNotNull(version);
     Assert.assertEquals(version.getName(), versionName);
 
-    verify(versionDaoMock).create(itemId, requestedVersion);
-    verify(itemManagerMock).updateVersionStatus(itemId, Draft, null);
-    verify(versionDaoMock).publish(eq(itemId), eq(requestedVersion), anyString());
+    verify(versionDaoMock).create(ITEM_ID, requestedVersion);
+    verify(itemManagerMock).updateVersionStatus(ITEM_ID, Draft, null);
+    verify(versionDaoMock).publish(eq(ITEM_ID), eq(requestedVersion), eq("Create version: 4.0"));
   }
 
   @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp =
       "Item itemId: create version failed, a version with the name 2.0 already exist")
   public void testCreateWithExistingName() throws Exception {
-    String itemId = "itemId";
     Version version = new Version();
     version.setBaseId("baseVersionId");
 
     Version baseVersion = createVersion(version.getBaseId(), Certified, UpToDate, false);
     // TODO: 12/13/2017 fix to eq(new Version("baseVersionId")) when version.equals will be fixed
-    doReturn(Optional.of(baseVersion)).when(versionDaoMock).get(eq(itemId), any(Version.class));
+    doReturn(Optional.of(baseVersion)).when(versionDaoMock).get(eq(ITEM_ID), any(Version.class));
 
     String versionName = "2.0";
     doReturn(versionName)
@@ -219,102 +219,88 @@ public class VersioningManagerImplTest {
     doReturn(Stream.of(createVersion("1", null, null, false),
         createVersion("2", null, null, false),
         createVersion("3", null, null, false)).collect(Collectors.toList()))
-        .when(versionDaoMock).list(itemId);
+        .when(versionDaoMock).list(ITEM_ID);
 
-    versioningManager.create(itemId, version, VersionCreationMethod.major);
+    versioningManager.create(ITEM_ID, version, VersionCreationMethod.major);
   }
 
   @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp =
       "Item itemId: submit version failed, version versionId is already Certified")
   public void testSubmitCertified() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
 
-    Version returnedVersion = createVersion(versionId, Certified, UpToDate, false);
-    doReturn(Optional.of(returnedVersion)).when(versionDaoMock).get(itemId, version);
+    Version returnedVersion = createVersion(VERSION_ID, Certified, UpToDate, false);
+    doReturn(Optional.of(returnedVersion)).when(versionDaoMock).get(ITEM_ID, version);
 
-    versioningManager.submit(itemId, version, "Submit message");
+    versioningManager.submit(ITEM_ID, version, "Submit message");
   }
 
   @Test
   public void testSubmit() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
 
     ArgumentCaptor<Version> versionArgumentCaptor = ArgumentCaptor.forClass(Version.class);
 
-    Version returnedVersion = createVersion(versionId, Draft, UpToDate, false);
-    doReturn(Optional.of(returnedVersion)).when(versionDaoMock).get(itemId, version);
+    Version returnedVersion = createVersion(VERSION_ID, Draft, UpToDate, false);
+    doReturn(Optional.of(returnedVersion)).when(versionDaoMock).get(ITEM_ID, version);
 
     String submitDescription = "Submit message";
-    versioningManager.submit(itemId, version, submitDescription);
+    versioningManager.submit(ITEM_ID, version, submitDescription);
 
-    verify(versionDaoMock).update(eq(itemId), versionArgumentCaptor.capture());
+    verify(versionDaoMock).update(eq(ITEM_ID), versionArgumentCaptor.capture());
     Assert.assertEquals(Certified, versionArgumentCaptor.getValue().getStatus());
-    verify(versionDaoMock).publish(itemId, version, submitDescription);
-    verify(itemManagerMock).updateVersionStatus(itemId, Certified, Draft);
+    verify(versionDaoMock).publish(ITEM_ID, version, submitDescription);
+    verify(itemManagerMock).updateVersionStatus(ITEM_ID, Certified, Draft);
   }
 
   @Test
   public void testPublish() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
     String publishDescription = "Publish message";
 
-    versioningManager.publish(itemId, version, publishDescription);
+    versioningManager.publish(ITEM_ID, version, publishDescription);
 
-    verify(versionDaoMock).publish(itemId, version, publishDescription);
+    verify(versionDaoMock).publish(ITEM_ID, version, publishDescription);
   }
 
   @Test
   public void testSync() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
 
-    versioningManager.sync(itemId, version);
+    versioningManager.sync(ITEM_ID, version);
 
-    verify(versionDaoMock).sync(itemId, version);
+    verify(versionDaoMock).sync(ITEM_ID, version);
   }
 
   @Test
   public void testForceSync() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
 
-    versioningManager.forceSync(itemId, version);
+    versioningManager.forceSync(ITEM_ID, version);
 
-    verify(versionDaoMock).forceSync(itemId, version);
+    verify(versionDaoMock).forceSync(ITEM_ID, version);
   }
 
   @Test
   public void testRevert() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
     String revisionId = "revisionId";
 
-    versioningManager.revert(itemId, version, revisionId);
+    versioningManager.revert(ITEM_ID, version, revisionId);
 
-    verify(versionDaoMock).revert(itemId, version, revisionId);
+    verify(versionDaoMock).revert(ITEM_ID, version, revisionId);
   }
 
   @Test
   public void testListRevisions() throws Exception {
-    String itemId = "itemId";
-    String versionId = "versionId";
-    Version version = new Version(versionId);
+    Version version = new Version(VERSION_ID);
 
     List<Revision> returnedRevisions =
         Stream.of(new Revision(), new Revision()).collect(Collectors.toList());
     doReturn(returnedRevisions)
-        .when(versionDaoMock).listRevisions(itemId, version);
+        .when(versionDaoMock).listRevisions(ITEM_ID, version);
 
-    List<Revision> revisions = versioningManager.listRevisions(itemId, version);
+    List<Revision> revisions = versioningManager.listRevisions(ITEM_ID, version);
     Assert.assertEquals(revisions, returnedRevisions);
   }
 
