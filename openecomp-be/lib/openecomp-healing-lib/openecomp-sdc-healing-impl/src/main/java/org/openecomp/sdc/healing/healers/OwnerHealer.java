@@ -7,11 +7,17 @@ import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.notification.dao.SubscribersDao;
+import org.openecomp.sdc.notification.factories.SubscribersDaoFactory;
+import org.openecomp.sdc.versioning.dao.ItemDao;
+import org.openecomp.sdc.versioning.dao.ItemDaoFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.types.Item;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Created by ayalaben on 8/28/2017
@@ -22,6 +28,10 @@ public class OwnerHealer implements Healer {
 
   private static final ItemPermissionsDao permissionsDao =
       ItemPermissionsDaoFactory.getInstance().createInterface();
+  private static final ItemDao itemDao = ItemDaoFactory.getInstance().createInterface();
+
+  private static final SubscribersDao subscribersDao = SubscribersDaoFactory.getInstance()
+      .createInterface();
 
   public Object heal(String itemId, Version version) {
     mdcDataDebugMessage.debugEntryMessage(null);
@@ -36,9 +46,23 @@ public class OwnerHealer implements Healer {
       permissionsDao.updateItemPermissions(itemId, PermissionTypes.Owner.name(),
           Collections.singleton(currentUserId), new HashSet<>());
 
+      updateItemOwner(itemId,currentUserId);
+
+      subscribersDao.subscribe(currentUserId,itemId);
+
       return currentUserId;
     }
     return itemPermissions.stream().filter(this::isOwnerPermission).findFirst().get().getUserId();
+  }
+
+  private void updateItemOwner(String itemId,String userId) {
+    Item item = new Item();
+    item.setId(itemId);
+    Item retrievedItem = itemDao.get(item);
+    if (Objects.nonNull(retrievedItem)) {
+      retrievedItem.setOwner(userId);
+      itemDao.update(retrievedItem);
+    }
   }
 
   private boolean isOwnerPermission(ItemPermissionsEntity permissionsEntity) {
