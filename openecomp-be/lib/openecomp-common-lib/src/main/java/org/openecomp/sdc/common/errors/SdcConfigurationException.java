@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.common.errors;
 
-public class SdcRuntimeException extends RuntimeException {
+public class SdcConfigurationException extends RuntimeException {
 
-  public SdcRuntimeException(String message) {
+  public SdcConfigurationException(String message) {
     super(message);
   }
 
-  public SdcRuntimeException(String message, Throwable cause) {
+  public SdcConfigurationException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public SdcRuntimeException(Throwable cause) {
+  public SdcConfigurationException(Throwable cause) {
     super(cause);
   }
 }

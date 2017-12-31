@@ -16,6 +16,7 @@
 
 package org.openecomp.core.factory.api;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.factory.FactoryConfig;
 import org.openecomp.core.factory.impl.AbstractFactoryBase;
 import org.openecomp.core.utilities.CommonMethods;
@@ -66,7 +67,7 @@ public abstract class AbstractComponentFactory<I> extends AbstractFactory<I> {
           String abstractClassName = entry.getKey();
           String concreteTypeName = entry.getValue();
 
-          if (CommonMethods.isEmpty(concreteTypeName)) {
+          if (StringUtils.isEmpty(concreteTypeName)) {
             throw new CoreException(
                 new ErrorCode.ErrorCodeBuilder().withId("E0003")
                     .withMessage("Missing configuration value:" + concreteTypeName + ".")

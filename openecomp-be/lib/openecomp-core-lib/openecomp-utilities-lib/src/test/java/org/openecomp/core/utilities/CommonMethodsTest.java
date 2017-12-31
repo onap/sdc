@@ -18,14 +18,70 @@ package org.openecomp.core.utilities;
 
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class CommonMethodsTest {
+
+  private static final String[] ARRAY = { "A", "B", "C" };
+
   @Test
-  public void testPrintStackTrace() throws Exception {
-    assertTrue(CommonMethods.printStackTrace().contains("org.openecomp.core.utilities" +
+  public void testPrintStackTrace() {
+
+    String trace = CommonMethods.printStackTrace();
+    assertTrue(trace.contains("org.openecomp.core.utilities" +
         ".CommonMethods.printStackTrace(CommonMethods.java:"));
-    assertTrue(CommonMethods.printStackTrace().contains("org.openecomp.core.utilities" +
+    assertTrue(trace.contains("org.openecomp.core.utilities" +
         ".CommonMethodsTest.testPrintStackTrace(CommonMethodsTest.java"));
   }
+
+  @Test
+  public void testArrayToCommaSeparatedString() {
+    assertEquals(CommonMethods.arrayToCommaSeparatedString(ARRAY), "A,B,C");
+  }
+
+  @Test
+  public void testArrayToCommaSeparatedStringEmpty() {
+    assertEquals(CommonMethods.arrayToCommaSeparatedString(new String[0]), "");
+  }
+
+  @Test(expectedExceptions = NullPointerException.class)
+  public void testArrayToCommaSeparatedStringNull() {
+    CommonMethods.arrayToCommaSeparatedString(null);
+  }
+
+  @Test
+  public void testArrayToSeparatedString() {
+    assertEquals(CommonMethods.arrayToSeparatedString(ARRAY, '/'),"A/B/C");
+  }
+
+  @Test
+  public void testArrayToSeparatedStringEmpty() {
+    assertEquals(CommonMethods.arrayToSeparatedString(new String[0], '/'),"");
+  }
+
+  @Test(expectedExceptions = NullPointerException.class)
+  public void testArrayToSeparatedStringNull() {
+    CommonMethods.arrayToSeparatedString(null, '/');
+  }
+
+  @Test
+  public void testCollectionToCommaSeparatedString() {
+    assertEquals(CommonMethods.collectionToCommaSeparatedString(Arrays.asList(ARRAY)), "A,B,C");
+  }
+
+  @Test
+  public void testCollectionToCommaSeparatedStringEmtpy() {
+    assertEquals(CommonMethods.collectionToCommaSeparatedString(Collections.emptySet()), "");
+  }
+
+  @Test(expectedExceptions = NullPointerException.class)
+  public void testCollectionToCommaSeparatedStringNull() {
+    assertNull(CommonMethods.collectionToCommaSeparatedString(null));
+  }
+
 }

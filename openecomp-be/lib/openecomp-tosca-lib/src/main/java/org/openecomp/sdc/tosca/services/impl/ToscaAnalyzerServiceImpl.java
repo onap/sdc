@@ -1,27 +1,24 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.tosca.services.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -68,12 +65,12 @@ import java.util.Set;
 
 public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  protected static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
 
   public List<Map<String, RequirementDefinition>> calculateExposedRequirements(
       List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
       Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
 
     if (nodeTypeRequirementsDefinitionList == null) {
       return null;
@@ -109,7 +106,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return nodeTypeRequirementsDefinitionList;
   }
 
@@ -136,7 +133,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
       Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinitionMap) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
 
     String capabilityKey;
     String capability;
@@ -169,7 +166,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
       exposedCapabilitiesDefinition.put(entry.getKey(), entry.getValue());
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return exposedCapabilitiesDefinition;
   }
 
@@ -425,8 +422,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             "Entity[" + elementType + "] id[" + typeId + "] flat not supported");
     }
 
-    scanAnFlatEntity(elementType, typeId, returnEntity, serviceTemplate, toscaModel,
-        new ArrayList<String>(), 0);
+    scanAnFlatEntity(elementType, typeId, returnEntity, serviceTemplate, toscaModel, new ArrayList<>(), 0);
 
 
     return returnEntity;
@@ -512,12 +508,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     return Optional.of(false);
   }
 
-  private Set<String> addImportFileToAnalyzedImportFilesSet(Set<String> analyzedImportFiles,
-                                                            String importFile) {
-    analyzedImportFiles.add(importFile);
-    return analyzedImportFiles;
-  }
-
   private Set<String> createFilesScannedSet(Set<String> filesScanned) {
     if (Objects.isNull(filesScanned)) {
       filesScanned = new HashSet<>();
@@ -568,7 +558,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         if (found) {
           return true;
         }
-        String filename = "";
+        String filename;
         for (Object importObject : importMap.values()) {
           Import importServiceTemplate = toscaExtensionYamlUtil
               .yamlToObject(toscaExtensionYamlUtil.objectToYaml(importObject), Import.class);
@@ -694,13 +684,13 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         .mergeLists(targetCapabilityType.getValid_source_types(),
             sourceCapabilityType.getValid_source_types()));
 
-    if (!CommonMethods.isEmpty(sourceCapabilityType.getDerived_from())) {
+    if (StringUtils.isNotEmpty(sourceCapabilityType.getDerived_from())) {
       targetCapabilityType.setDerived_from(sourceCapabilityType.getDerived_from());
     }
-    if (!CommonMethods.isEmpty(sourceCapabilityType.getDescription())) {
+    if (StringUtils.isNotEmpty(sourceCapabilityType.getDescription())) {
       targetCapabilityType.setDescription(sourceCapabilityType.getDescription());
     }
-    if (!CommonMethods.isEmpty(sourceCapabilityType.getVersion())) {
+    if (StringUtils.isNotEmpty(sourceCapabilityType.getVersion())) {
       targetCapabilityType.setVersion(sourceCapabilityType.getVersion());
     }
 
