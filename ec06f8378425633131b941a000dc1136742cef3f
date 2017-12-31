@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6f0a0b8c",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/exportinfo/ExportDataCommand.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T10:50:17Z",
+      "side": 1,
+      "message": "In my opinion this way of terminating the program is too abrupt. What about other running threads? I can think, for example, of asych writing to the log, in which case the message about may never be written (depending on the implementation). I might be wrong, but something really bad must happen to justify System.exit() from deep within a program. On the other hand, System.exit can and should be used in main() to make the program shell-script-friendly. In this case an exit status can be checked if the program prints out/writes to log and doesn\u0027t throw an exception from its main().",
+      "range": {
+        "startLine": 110,
+        "startChar": 20,
+        "endLine": 110,
+        "endChar": 36
+      },
+      "revId": "ec06f8378425633131b941a000dc1136742cef3f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
