@@ -45,7 +45,7 @@ public final class ExportDataCommand {
     public static final String JOIN_DELIMITER_SPLITTER = "\\$\\#";
     public static final String MAP_DELIMITER = "!@";
     public static final String MAP_DELIMITER_SPLITTER = "\\!\\@";
-    public static final int THREAD_POOL_SIZE = 4;
+    public static final int THREAD_POOL_SIZE = 6;
 
     private ExportDataCommand() {
     }
@@ -56,7 +56,7 @@ public final class ExportDataCommand {
             CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
             Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
             initDir(rootDir);
-            try(Session session = CassandraSessionFactory.getSession()) {
+            try (Session session = CassandraSessionFactory.getSession()) {
                 final Set<String> filteredItems = Sets.newHashSet(filterItem);
                 Set<String> fis = filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
                 Map<String, List<String>> queries;
@@ -95,23 +95,28 @@ public final class ExportDataCommand {
     }
 
 
-    private static boolean executeQuery(final Session session, final String query, final Set<String> filteredItems, final String filteredColumn,
+    private static void executeQuery(final Session session, final String query, final Set<String> filteredItems, final String filteredColumn,
                                         final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
         ResultSetFuture resultSetFuture = session.executeAsync(query);
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
             @Override
             public void onSuccess(ResultSet resultSet) {
-                new ExportSerializer().serializeResult(resultSet, filteredItems, filteredColumn, vlms);
-                donequerying.countDown();
+                try {
+                    Utils.printMessage(logger, "Start to serialize " + query);
+                    new ExportSerializer().serializeResult(resultSet, filteredItems, filteredColumn, vlms);
+                    donequerying.countDown();
+                } catch (Exception e){
+                    Utils.logError(logger, "Serialization failed :" + query, e);
+                    System.exit(-1);
+                }
             }
 
             @Override
             public void onFailure(Throwable t) {
                 Utils.logError(logger, "Query failed :" + query, t);
-                donequerying.countDown();
+                System.exit(-1);
             }
         }, executor);
-        return true;
     }
 
     private static void zipPath(Path rootDir) throws IOException {
