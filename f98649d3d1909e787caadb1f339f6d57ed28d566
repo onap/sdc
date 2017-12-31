@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6fa1abf7",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAll.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T06:45:51Z",
+      "side": 1,
+      "message": "It will be difficult to locate the file. If the decision is not to use a logging framework, then at least the logging mechanism, along with the output file, should have been defined and initialized at the top level of the command-line application (which I assume this class is a part of).",
+      "revId": "f98649d3d1909e787caadb1f339f6d57ed28d566",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8f62f7d6",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAll.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T06:45:51Z",
+      "side": 1,
+      "message": "It means that this method will fail the entire program no matter what. It\u0027s a regular method, not a main, so theoretically can be used anywhere. Also, this line doesn\u0027t seem to be caused by an exception, so why does it close the process with an error status?",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 69,
+        "endChar": 23
+      },
+      "revId": "f98649d3d1909e787caadb1f339f6d57ed28d566",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_af5fb30d",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAll.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T06:45:51Z",
+      "side": 1,
+      "message": "I wouldn\u0027t have limited it to BufferedWriter, but used Writer instead.",
+      "range": {
+        "startLine": 72,
+        "startChar": 66,
+        "endLine": 72,
+        "endChar": 80
+      },
+      "revId": "f98649d3d1909e787caadb1f339f6d57ed28d566",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4f9cefc0",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAll.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T06:45:51Z",
+      "side": 1,
+      "message": "Not very useful - the exception type and stack trace are lost. And many exceptions do not have a message (either null or empty string).",
+      "range": {
+        "startLine": 81,
+        "startChar": 31,
+        "endLine": 81,
+        "endChar": 45
+      },
+      "revId": "f98649d3d1909e787caadb1f339f6d57ed28d566",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
