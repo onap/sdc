@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4feaaf10",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T07:36:53Z",
+      "side": 1,
+      "message": "javax.ws.rs.core.HttpHeaders#CONTENT_DISPOSITION",
+      "range": {
+        "startLine": 127,
+        "startChar": 59,
+        "endLine": 127,
+        "endChar": 80
+      },
+      "revId": "111bf563f473790cc5f9099b345b0b8511ed5a66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6fef6b1f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T07:36:53Z",
+      "side": 1,
+      "message": "This just writes the error to a log, but the flow continues. Is it OK to do that?",
+      "revId": "111bf563f473790cc5f9099b345b0b8511ed5a66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0ff4a7f0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-31T07:36:53Z",
+      "side": 1,
+      "message": "This is used multiple times and should be a constant.",
+      "range": {
+        "startLine": 373,
+        "startChar": 49,
+        "endLine": 373,
+        "endChar": 69
+      },
+      "revId": "111bf563f473790cc5f9099b345b0b8511ed5a66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
