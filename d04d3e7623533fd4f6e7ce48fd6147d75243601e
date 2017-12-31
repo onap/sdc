@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4f894f25",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/exportinfo/ExportSerializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-31T09:13:52Z",
+      "side": 1,
+      "message": "now you are not catching exception at all. you only catch IOException in serializeResult and then do exit(-1). what if you get JsonSyntaxException from extractVLM. you are not failing the process or log it",
+      "range": {
+        "startLine": 129,
+        "startChar": 21,
+        "endLine": 129,
+        "endChar": 31
+      },
+      "revId": "d04d3e7623533fd4f6e7ce48fd6147d75243601e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
