@@ -22,6 +22,7 @@ import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -36,130 +37,124 @@ import java.nio.ByteBuffer;
 @Table(keyspace = "dox", name = "vsp_enriched_service_template")
 public class EnrichedServiceTemplateEntity implements ServiceElementEntity {
 
-  private static final String ENTITY_TYPE;
+    private static final String ENTITY_TYPE;
 
-  static {
-    ENTITY_TYPE = "Vendor Software Product Service model";
-  }
-
-  @PartitionKey
-  @Column(name = "vsp_id")
-  public String id;
-
-  @PartitionKey(value = 1)
-  @Frozen
-  public Version version;
-
-  @ClusteringColumn
-  @Column(name = "name")
-  public String name;
-
-  @Column(name = "content_data")
-  public ByteBuffer contentData;
-
-  @Column(name = "base_name")
-  private String baseName;
-
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public EnrichedServiceTemplateEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
-  /**
-   * Instantiates a new Enriched service template entity.
-   *
-   * @param entity the entity
-   */
-  public EnrichedServiceTemplateEntity(ServiceTemplate entity) {
-    this.id = entity.getVspId();
-    this.version = entity.getVersion();
-    this.name = entity.getName();
-    this.setBaseName(entity.getBaseName());
-    try {
-      this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
-    } catch (IOException ioException) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_ENRICH_SERVICE_TEMPLATE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          LoggerErrorDescription.CREATE_ENRICH_SERVICE_TEMPLATE);
-      throw new RuntimeException(ioException);
+    static {
+        ENTITY_TYPE = "Vendor Software Product Service model";
     }
 
-  }
+    @PartitionKey
+    @Column(name = "vsp_id")
+    public String id;
 
-  public String getBaseName() {
-    return baseName;
-  }
+    @PartitionKey(value = 1)
+    @Frozen
+    public Version version;
 
-  public void setBaseName(String baseName) {
-    this.baseName = baseName;
-  }
+    @ClusteringColumn
+    @Column(name = "name")
+    public String name;
 
-  @Override
-  public String getEntityType() {
-    return ENTITY_TYPE;
-  }
+    @Column(name = "content_data")
+    public ByteBuffer contentData;
 
-  @Override
-  public String getFirstClassCitizenId() {
-    return getId();
-  }
+    @Column(name = "base_name")
+    private String baseName;
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    /**
+     * Every entity class must have a default constructor according to
+     * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+     * Definition of mapped classes</a>.
+     */
+    public EnrichedServiceTemplateEntity() {
+        // Don't delete! Default constructor is required by DataStax driver
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    /**
+     * Instantiates a new Enriched service template entity.
+     *
+     * @param entity the entity
+     */
+    public EnrichedServiceTemplateEntity(ServiceTemplate entity) {
+        this.id = entity.getVspId();
+        this.version = entity.getVersion();
+        this.name = entity.getName();
+        this.setBaseName(entity.getBaseName());
+        try {
+            this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
+        } catch (IOException ioException) {
+            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+                    LoggerTragetServiceName.CREATE_ENRICH_SERVICE_TEMPLATE, ErrorLevel.ERROR.name(),
+                    LoggerErrorCode.DATA_ERROR.getErrorCode(),
+                    LoggerErrorDescription.CREATE_ENRICH_SERVICE_TEMPLATE);
+            throw new SdcRuntimeException(ioException);
+        }
 
-  @Override
-  public Version getVersion() {
-    return version;
-  }
+    }
 
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
-  }
+    public String getBaseName() {
+        return baseName;
+    }
 
-  @Override
-  public String getName() {
-    return name;
-  }
+    public void setBaseName(String baseName) {
+        this.baseName = baseName;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    @Override
+    public String getEntityType() {
+        return ENTITY_TYPE;
+    }
 
-  @Override
-  public ByteBuffer getContentData() {
-    return contentData;
-  }
+    @Override
+    public String getFirstClassCitizenId() {
+        return getId();
+    }
 
-  public void setContentData(ByteBuffer contentData) {
-    this.contentData = contentData;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  /**
-   * Gets service template.
-   *
-   * @return the service template
-   */
-  public ServiceTemplate getServiceTemplate() {
-    ServiceTemplate serviceTemplate = new ServiceTemplate();
-    serviceTemplate.setName(this.getName());
-    serviceTemplate.setVersion(this.getVersion());
-    serviceTemplate.setContentData(this.getContentData().array());
-    serviceTemplate.setVspId(this.getId());
-    serviceTemplate.setBaseName(this.getBaseName());
-    return serviceTemplate;
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  }
+    @Override
+    public Version getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Version version) {
+        this.version = version;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public ByteBuffer getContentData() {
+        return contentData;
+    }
+
+    public void setContentData(ByteBuffer contentData) {
+        this.contentData = contentData;
+    }
+
+    public ServiceTemplate getServiceTemplate() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setName(getName());
+        serviceTemplate.setVersion(getVersion());
+        serviceTemplate.setContentData(getContentData().array());
+        serviceTemplate.setVspId(getId());
+        serviceTemplate.setBaseName(getBaseName());
+        return serviceTemplate;
+    }
 }

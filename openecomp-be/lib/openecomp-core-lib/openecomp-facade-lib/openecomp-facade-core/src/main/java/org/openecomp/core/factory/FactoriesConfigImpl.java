@@ -24,6 +24,7 @@ package org.openecomp.core.factory;
 import org.openecomp.core.factory.api.FactoriesConfiguration;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.common.errors.SdcConfigurationException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +60,7 @@ public final class FactoriesConfigImpl implements FactoriesConfiguration {
       try (InputStream stream = factoryConfigUrl.openStream()) {
         factoryMap.putAll(JsonUtil.json2Object(stream, Map.class));
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new SdcConfigurationException("Failed to initialize Factory from '" + factoryConfigUrl.getPath() +"'", e);
       }
     }
   }

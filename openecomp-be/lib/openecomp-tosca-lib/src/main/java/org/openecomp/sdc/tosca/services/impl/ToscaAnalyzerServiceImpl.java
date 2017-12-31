@@ -22,6 +22,7 @@ package org.openecomp.sdc.tosca.services.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -694,13 +695,13 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         .mergeLists(targetCapabilityType.getValid_source_types(),
             sourceCapabilityType.getValid_source_types()));
 
-    if (!CommonMethods.isEmpty(sourceCapabilityType.getDerived_from())) {
+    if (StringUtils.isNotEmpty(sourceCapabilityType.getDerived_from())) {
       targetCapabilityType.setDerived_from(sourceCapabilityType.getDerived_from());
     }
-    if (!CommonMethods.isEmpty(sourceCapabilityType.getDescription())) {
+    if (StringUtils.isNotEmpty(sourceCapabilityType.getDescription())) {
       targetCapabilityType.setDescription(sourceCapabilityType.getDescription());
     }
-    if (!CommonMethods.isEmpty(sourceCapabilityType.getVersion())) {
+    if (StringUtils.isNotEmpty(sourceCapabilityType.getVersion())) {
       targetCapabilityType.setVersion(sourceCapabilityType.getVersion());
     }
 

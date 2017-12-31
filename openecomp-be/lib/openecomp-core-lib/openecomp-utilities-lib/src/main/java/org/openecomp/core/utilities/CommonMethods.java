@@ -17,7 +17,10 @@
 package org.openecomp.core.utilities;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,108 +61,6 @@ public class CommonMethods {
   }
 
   /**
-   * Serializes an object instance into byte array.
-   *
-   * @param object An instance to be serialized.
-   * @return Java array of bytes.
-   * @see #deserializeObject(byte[]) #deserializeObject(byte[])
-   */
-  public static byte[] serializeObject(Serializable object) {
-    ByteArrayOutputStream byteArray = new ByteArrayOutputStream(2048);
-    try {
-      ObjectOutputStream ds = new ObjectOutputStream(byteArray);
-      ds.writeObject(object);
-      ds.close();
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
-    }
-
-    return byteArray.toByteArray();
-  } // serializeObject
-
-  /**
-   * Deserializes an object instance.
-   *
-   * @param bytes Java array of bytes.
-   * @return Deserialized instance of an object.
-   * @see #serializeObject(Serializable) #serializeObject(Serializable)
-   */
-  public static Serializable deserializeObject(byte[] bytes) {
-    Serializable obj = null;
-    try {
-      ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(bytes));
-      obj = (Serializable) stream.readObject();
-      stream.close();
-    } catch (IOException | ClassNotFoundException exception) {
-      throw new RuntimeException(exception);
-    }
-
-    return obj;
-  } // deserializeObject
-
-  /**
-   * Encodes binary byte stream to ASCII format.
-   *
-   * @param binary An Java array of bytes in binary format.
-   * @return An Java array of bytes encoded in ASCII format.
-   * @see #decode(byte[]) #decode(byte[])
-   */
-  public static byte[] encode(byte[] binary) {
-    return Base64.encodeBase64(binary);
-  }
-
-  /**
-   * Decodes ASCII byte stream into binary format.
-   *
-   * @param ascii An Java array of bytes in ASCII format.
-   * @return An Java array of bytes encoded in binary format.
-   * @see #encode(byte[]) #encode(byte[])
-   */
-  public static byte[] decode(byte[] ascii) {
-    return Base64.decodeBase64(ascii);
-  }
-
-  /**
-   * Checks whether the given <tt>Object</tt> is empty.
-   *
-   * @param obj Object to be checked.
-   * @return <tt>true</tt> - if the Object is null, <tt>false</tt> otherwise.
-   */
-  public static boolean isEmpty(Object obj) {
-    return obj == null;
-  }
-
-  /**
-   * Checks whether the given <tt>Object</tt> is empty.
-   *
-   * @param byteArray Object to be checked.
-   * @return <tt>true</tt> - if the Object is null, <tt>false</tt> otherwise.
-   */
-  public static boolean isEmpty(byte[] byteArray) {
-    return byteArray == null || byteArray.length == 0;
-  }
-
-  /**
-   * Checks whether the given <tt>String</tt> is empty.
-   *
-   * @param str String object to be checked.
-   * @return <tt>true</tt> - if the String is null or empty, <tt>false</tt> - otherwise.
-   */
-  public static boolean isEmpty(String str) {
-    return str == null || str.length() == 0;
-  }
-
-  /**
-   * Checks whether the given Java array is empty.
-   *
-   * @param array Java array to be checked.
-   * @return <tt>true</tt> - if the array is null or empty, <tt>false</tt> - otherwise.
-   */
-  public static boolean isEmpty(Object[] array) {
-    return array == null || array.length == 0;
-  }
-
-  /**
    * Checks whether the given collection is empty.
    *
    * @param collection A collection to be checked.
@@ -177,39 +78,6 @@ public class CommonMethods {
    */
   public static boolean isEmpty(Map<?, ?> map) {
     return map == null || map.isEmpty();
-  }
-
-  /**
-   * Converts the array with Long elements to the array with long (primitive type).
-   *
-   * @param array input array with Long elements
-   * @return array with the same elements converted to the long type (primitive)
-   */
-  public static long[] toPrimitive(Long[] array) {
-    if (array == null) {
-      return null;
-    }
-
-    long[] result = new long[array.length];
-    for (int i = 0; i < array.length; i++) {
-      result[i] = array[i] != null ? array[i] : 0L;
-    }
-    return result;
-  }
-
-  /**
-   * Converts a collection to Java array.
-   *
-   * @param <T>  Java type of the collection element.
-   * @param col  Collection to be converted to array
-   * @param type Java type of collection/array element
-   * @return An Java array of collection elements, or empty array if collection is null or empty.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> T[] toArray(Collection<? extends T> col, Class<T> type) {
-    int length = isEmpty(col) ? 0 : col.size();
-    T[] array = (T[]) Array.newInstance(type, length);
-    return col != null ? col.toArray(array) : array;
   }
 
   /**
@@ -264,9 +132,9 @@ public class CommonMethods {
   public static <T> T[] concat(T[] left, T[] right) {
     T[] res;
 
-    if (isEmpty(left)) {
+    if (ArrayUtils.isEmpty(left)) {
       res = right;
-    } else if (isEmpty(right)) {
+    } else if (ArrayUtils.isEmpty(right)) {
       res = left;
     } else {
       res = (T[]) Array.newInstance(left[0].getClass(), left.length + right.length);
@@ -276,36 +144,6 @@ public class CommonMethods {
 
     return res;
   } // concat
-
-  /**
-   * Casts an object to the class or interface represented by the specified
-   * <tt>Class</tt> object. The method logic is similar to Java method
-   * <tt>Class.cast(Object)</tt> with the only difference that unlike Java's
-   * version the type name of the current object instance is specified in the
-   * error message if casting fails to simplify error tracking.
-   *
-   * @param <B> the type parameter
-   * @param <D> the type parameter
-   * @param b1  An object instance to be casted to the specified Java type.
-   * @param cls Target Java type.
-   * @return Object instance safely casted to the requested Java type.
-   * @throws ClassCastException In case which is the given object is not instance of the specified
-   *                            Java type.
-   */
-  @SuppressWarnings("unchecked")
-  public static <B, D> D cast(B b1, Class<D> cls) {
-    D d1 = null;
-    if (b1 != null) {
-      if (!cls.isInstance(b1)) {
-        throw new ClassCastException(String
-            .format("Failed to cast from '%s' to '%s'", b1.getClass().getName(), cls.getName()));
-      } else {
-        d1 = (D) b1;
-      }
-    }
-
-    return d1;
-  } // cast
 
   /**
    * New instance object.
@@ -328,7 +166,7 @@ public class CommonMethods {
   @SuppressWarnings("unchecked")
   public static <T> T newInstance(String classname, Class<T> cls) {
 
-    if (isEmpty(classname)) {
+    if (StringUtils.isEmpty(classname)) {
       throw new IllegalArgumentException();
     }
 
@@ -368,33 +206,6 @@ public class CommonMethods {
   }
 
   /**
-   * Gets resources path.
-   *
-   * @param resourceName the resource name
-   * @return the resources path
-   */
-  public static String getResourcesPath(String resourceName) {
-    URL resourceUrl = CommonMethods.class.getClassLoader().getResource(resourceName);
-    return resourceUrl != null ? resourceUrl.getPath()
-        .substring(0, resourceUrl.getPath().lastIndexOf("/") + 1) : null;
-  }
-
-  /**
-   * Gets stack trace.
-   *
-   * @param throwable the throwable
-   * @return the stack trace
-   */
-  public static String getStackTrace(Throwable throwable) {
-    if (null == throwable) {
-      return "";
-    }
-    StringWriter sw = new StringWriter();
-    throwable.printStackTrace(new PrintWriter(sw));
-    return sw.toString();
-  }
-
-  /**
    * Print stack trace string.
    *
    * @return the string
@@ -407,25 +218,6 @@ public class CommonMethods {
       sb.append(System.lineSeparator());
     }
     return sb.toString();
-  }
-
-  /**
-   * Is equal object boolean.
-   *
-   * @param obj1 the obj 1
-   * @param obj2 the obj 2
-   * @return the boolean
-   */
-  public static boolean isEqualObject(Object obj1, Object obj2) {
-    boolean isEqualValue = false;
-    if (obj1 == null && obj2 == null) {
-      isEqualValue = true;
-    }
-
-    if (!isEqualValue && obj1 != null && obj2 != null && obj1.equals(obj2)) {
-      isEqualValue = true;
-    }
-    return isEqualValue;
   }
 
   /**
@@ -503,23 +295,6 @@ public class CommonMethods {
       sb.append(arg);
     }
     return sb.toString();
-  }
-
-  /**
-   * Bytes to hex string.
-   *
-   * @param bytes the bytes
-   * @return the string
-   */
-  public static String bytesToHex(byte[] bytes) {
-    char[] hexChars = new char[bytes.length * 2];
-    for (int j = 0; j < bytes.length; j++) {
-      int var = bytes[j] & 0xFF;
-      int x1 = j << 1;
-      hexChars[x1] = hexArray[var >>> 4];
-      hexChars[x1 + 1] = hexArray[var & 0x0F];
-    }
-    return new String(hexChars);
   }
 
   /**

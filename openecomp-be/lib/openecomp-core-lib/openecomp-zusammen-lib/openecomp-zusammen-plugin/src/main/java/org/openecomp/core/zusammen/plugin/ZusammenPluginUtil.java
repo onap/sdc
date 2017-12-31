@@ -34,6 +34,7 @@ import com.amdocs.zusammen.utils.fileutils.FileUtils;
 import com.amdocs.zusammen.utils.fileutils.json.JsonUtil;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 import org.openecomp.core.zusammen.plugin.dao.types.VersionEntity;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
@@ -45,6 +46,10 @@ import java.util.Date;
 import static org.openecomp.core.zusammen.plugin.ZusammenPluginConstants.ROOT_ELEMENTS_PARENT_ID;
 
 public class ZusammenPluginUtil {
+
+  private ZusammenPluginUtil() {
+    // prevent instantiation
+  }
 
   public static String getSpaceName(SessionContext context, Space space) {
     switch (space) {
@@ -67,14 +72,6 @@ public class ZusammenPluginUtil {
 
 
   public static VersionEntity convertToVersionEntity(Id versionId, Id baseVersionId,
-                                                     Date creationTime,
-                                                     Date modificationTime) {
-
-    return convertToVersionEntity(versionId, null, baseVersionId,
-        creationTime, modificationTime);
-  }
-
-  public static VersionEntity convertToVersionEntity(Id versionId, Id revisionId, Id baseVersionId,
                                                      Date creationTime,
                                                      Date modificationTime) {
     VersionEntity version = new VersionEntity(versionId);
@@ -180,25 +177,6 @@ public class ZusammenPluginUtil {
     return versionChange;
   }
 
-  public static ItemVersionDataConflict getVersionConflict(ElementEntity localVesionData,
-                                                           ElementEntity remoteVersionData) {
-    ItemVersionDataConflict versionConflict = new ItemVersionDataConflict();
-    versionConflict.setLocalData(convertToVersionData(localVesionData));
-    versionConflict.setRemoteData(convertToVersionData(remoteVersionData));
-    return versionConflict;
-  }
-
-  public static CollaborationElementConflict getElementConflict(ElementContext elementContext,
-                                                                ElementEntity localElement,
-                                                                ElementEntity remoteElement) {
-    CollaborationElementConflict elementConflict = new CollaborationElementConflict();
-    elementConflict
-        .setLocalElement(convertToCollaborationElement(elementContext, localElement));
-    elementConflict.setRemoteElement(
-        convertToCollaborationElement(elementContext, remoteElement));
-    return elementConflict;
-  }
-
   public static ItemVersionData convertToVersionData(ElementEntity versionDataElement) {
     ItemVersionData versionData = new ItemVersionData();
     versionData.setInfo(versionDataElement.getInfo());
@@ -258,13 +236,11 @@ public class ZusammenPluginUtil {
   }
 
   private static String calculateSHA1(byte[] content2Convert) {
-    MessageDigest md = null;
     try {
-      md = MessageDigest.getInstance("SHA-1");
+      return Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest(content2Convert));
     } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
+      throw new SdcRuntimeException(e);
     }
-    return Base64.getEncoder().encodeToString(md.digest(content2Convert));
   }
 
 

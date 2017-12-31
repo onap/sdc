@@ -21,6 +21,7 @@
 package org.openecomp.core.factory.impl;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -126,7 +127,7 @@ public abstract class AbstractFactoryBase {
           // Get the implementation class name
           String implName = registry.get(factoryType.getName());
 
-          if (isEmpty(implName)) {
+          if (StringUtils.isEmpty(implName)) {
             throw new CoreException(
                 new ErrorCode.ErrorCodeBuilder().withId("E0001")
                     .withMessage("Mandatory input factory implementation.")
@@ -171,7 +172,7 @@ public abstract class AbstractFactoryBase {
     } else {
       // Get the implementation class name
       String implName = registry.get(factoryType.getName());
-      if (!isEmpty(implName)) {
+      if (StringUtils.isNotEmpty(implName)) {
         isFactoryRegistered = true;
       }
     }

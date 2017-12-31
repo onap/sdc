@@ -189,7 +189,7 @@ public class FileUtils {
       return IOUtils.toByteArray(input);
     } catch (IOException exception) {
       throw new RuntimeException(
-          "error will convertion input stream to byte array:" + exception.getMessage());
+          "error while converting input stream to byte array", exception);
     }
   }
 
