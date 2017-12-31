@@ -1,20 +1,16 @@
 package org.openecomp.sdc.webseal.simulator;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.openecomp.sdc.webseal.simulator.SSL.DummySSLProtocolSocketFactory;
+import org.openecomp.sdc.webseal.simulator.conf.Conf;
 
+
+import javax.net.ssl.*;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,17 +18,20 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.openecomp.sdc.webseal.simulator.conf.Conf;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class SdcProxy extends HttpServlet {
 
@@ -57,8 +56,16 @@ public class SdcProxy extends HttpServlet {
 		} catch (MalformedURLException me) {
 			throw new ServletException("Proxy URL is invalid", me);
 		}
+		// Set up an HTTPS socket factory that accepts self-signed certs.
+		Protocol https = new Protocol("https",
+				new DummySSLProtocolSocketFactory(), 9443);
+		Protocol.registerProtocol("https", https);
+
 		this.proxy = new HttpClient();
 		this.proxy.getHostConfiguration().setHost(this.url.getHost());
+
+
+
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -315,5 +322,19 @@ public class SdcProxy extends HttpServlet {
 
 		body = stringBuilder.toString();
 		return body;
+	}
+
+	private class DefaultTrustManager implements X509TrustManager {
+
+		@Override
+		public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+		@Override
+		public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
 	}
 }
