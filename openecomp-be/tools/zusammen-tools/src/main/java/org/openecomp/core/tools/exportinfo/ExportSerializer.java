@@ -52,8 +52,7 @@ public class ExportSerializer {
                     ColumnDefinition columnDefinition = tableData.definitions.get(i);
                     Name name = dataTypesMap.get(columnDefinition.getType());
                     boolean checkForVLM = isElementTable && columnDefinition.getName().equals(ELEMENT_INFO_COLUMN_NAME);
-                    Object data;
-                    data = convertByType(vlms, row, i, name, checkForVLM);
+                    Object data = convertByType(vlms, row, i, name, checkForVLM);
                     rowData.add(data.toString());
                 }
                 tableData.rows.add(rowData);
@@ -128,7 +127,6 @@ public class ExportSerializer {
     }
 
     protected String extractVlm(String injson) {
-        try {
             if (injson == null){
                 return null;
             }
@@ -145,8 +143,5 @@ public class ExportSerializer {
                 return null;
             }
             return vendorId.getAsString();
-        } catch (Exception ex){
-            return null;
-        }
     }
 }
