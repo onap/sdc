@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.notification.dao.types;
 
 import com.datastax.driver.mapping.annotations.Column;
@@ -19,8 +35,13 @@ public class SubscribersEntity {
     @Column(name = "subscribers")
     private Set<String> subscribers;
 
-
+    /**
+     * Every entity class must have a default constructor according to
+     * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+     * Definition of mapped classes</a>.
+     */
     public SubscribersEntity() {
+        // Don't delete! Default constructor is required by DataStax driver
     }
 
     public SubscribersEntity(String entityId, Set<String> subscribers) {

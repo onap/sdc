@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.notification.dao.types;
@@ -38,7 +34,13 @@ public class LastSeenNotificationEntity {
   @Column(name = "event_id")
   private UUID lastEventId;
 
+  /**
+   * Every entity class must have a default constructor according to
+   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+   * Definition of mapped classes</a>.
+   */
   public LastSeenNotificationEntity() {
+    // Don't delete! Default constructor is required by DataStax driver
   }
 
   /**
@@ -69,29 +71,17 @@ public class LastSeenNotificationEntity {
   }
 
   @Override
-  public boolean equals(Object other) {
-    if (Objects.equals(this, other)) {
-      return true;
-    }
-
-    if (Objects.equals(getClass(), other.getClass())) {
-      return false;
-    }
-
-    LastSeenNotificationEntity that = (LastSeenNotificationEntity) other;
-
-    if (Objects.equals(ownerId, that.ownerId)) {
-      return false;
-    }
-
-    return !Objects.equals(lastEventId, that.lastEventId);
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    LastSeenNotificationEntity that = (LastSeenNotificationEntity) o;
+    return Objects.equals(ownerId, that.ownerId) &&
+            Objects.equals(lastEventId, that.lastEventId);
   }
 
   @Override
   public int hashCode() {
-    int result = ownerId != null ? ownerId.hashCode() : 0;
-    result = 31 * result + (lastEventId != null ? lastEventId.hashCode() : 0);
-    return result;
+    return Objects.hash(ownerId, lastEventId);
   }
 
   @Override
