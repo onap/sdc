@@ -17,16 +17,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ToscaConverterUtil {
+
   private static final String SET = "set";
   private static final String DEFAULT = "default";
   private static final String DEFAULT_CAPITAL = "Default";
-  private static Set<String> defaultValueKeys;
+  private static final Set<String> DEFAULT_VALUE_KEYS;
 
-  private static Logger LOGGER = LoggerFactory.getLogger(ToscaConverterUtil.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(ToscaConverterUtil.class);
 
   static {
-    defaultValueKeys =
+    DEFAULT_VALUE_KEYS =
         Stream.of(DEFAULT, DEFAULT_CAPITAL).collect(Collectors.toSet());
+  }
+
+  private ToscaConverterUtil() {
+    // static utility methods only, prevent instantiation
   }
 
   public static <T> Optional<T> createObjectFromClass(String objectId,
@@ -42,7 +47,8 @@ public class ToscaConverterUtil {
   }
 
   private static <T> Optional<T> createObjectUsingSetters(Object objectCandidate,
-                                                          Class<T> classToCreate) throws Exception {
+                                                          Class<T> classToCreate)
+          throws ReflectiveOperationException {
     if (Objects.isNull(objectCandidate)
         || !(objectCandidate instanceof Map)) {
       return Optional.empty();
@@ -91,7 +97,7 @@ public class ToscaConverterUtil {
   private static Object getDefaultParameterValue(Map<String, Object> entryValue) {
     Object defaultValue = null;
     Set<String> keys = new HashSet<>(entryValue.keySet());
-    keys.retainAll(defaultValueKeys);
+    keys.retainAll(DEFAULT_VALUE_KEYS);
 
     if (CollectionUtils.isNotEmpty(keys)) {
       defaultValue = entryValue.get(keys.iterator().next());

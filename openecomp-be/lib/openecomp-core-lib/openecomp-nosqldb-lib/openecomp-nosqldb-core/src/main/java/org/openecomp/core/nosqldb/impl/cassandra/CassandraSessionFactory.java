@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.core.nosqldb.impl.cassandra;
@@ -28,147 +24,142 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
-import com.google.common.base.Optional;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
+import org.openecomp.sdc.common.errors.SdcConfigurationException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CassandraSessionFactory {
 
-  private static final Logger log = (Logger) LoggerFactory.getLogger
-      (CassandraSessionFactory.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CassandraSessionFactory.class);
 
-  public static Session getSession() {
-    return ReferenceHolder.CASSANDRA;
-  }
-
-  /**
-   * New cassandra session session.
-   *
-   * @return the session
-   */
-  public static Session newCassandraSession() {
-    Cluster.Builder builder = Cluster.builder();
-    String[] addresses = CassandraUtils.getAddresses();
-    for (String address : addresses) {
-      builder.addContactPoint(address);
+    private CassandraSessionFactory() {
+        // static methods, cannot be instantiated
     }
 
-    //Check if ssl
-    Boolean isSsl = CassandraUtils.isSsl();
-    if (isSsl) {
-      builder.withSSL(getSslOptions().get());
-    }
-    int port = CassandraUtils.getCassandraPort();
-    if (port > 0) {
-      builder.withPort(port);
-    }
-    //Check if user/pass
-    Boolean isAuthenticate = CassandraUtils.isAuthenticate();
-    if (isAuthenticate) {
-      builder.withCredentials(CassandraUtils.getUser(), CassandraUtils.getPassword());
+    public static Session getSession() {
+        return ReferenceHolder.CASSANDRA;
     }
 
-    setConsistencyLevel(builder, addresses);
+    /**
+     * New cassandra session session.
+     *
+     * @return the session
+     */
+    public static Session newCassandraSession() {
+        Cluster.Builder builder = Cluster.builder();
+        String[] addresses = CassandraUtils.getAddresses();
+        for (String address : addresses) {
+            builder.addContactPoint(address);
+        }
 
-    setLocalDataCenter(builder);
+        //Check if ssl
+        Boolean isSsl = CassandraUtils.isSsl();
+        if (isSsl) {
+            builder.withSSL(getSslOptions());
+        }
+        int port = CassandraUtils.getCassandraPort();
+        if (port > 0) {
+            builder.withPort(port);
+        }
+        //Check if user/pass
+        Boolean isAuthenticate = CassandraUtils.isAuthenticate();
+        if (isAuthenticate) {
+            builder.withCredentials(CassandraUtils.getUser(), CassandraUtils.getPassword());
+        }
+
+        setConsistencyLevel(builder, addresses);
+
+        setLocalDataCenter(builder);
 
 
-    Cluster cluster = builder.build();
-    String keyStore = CassandraUtils.getKeySpace();
-    return cluster.connect(keyStore);
-  }
-
-  private static void setLocalDataCenter(Cluster.Builder builder) {
-    String localDataCenter = CassandraUtils.getLocalDataCenter();
-    if (Objects.nonNull(localDataCenter)) {
-      log.info("localDatacenter was provided, setting Cassndra client to use datacenter: {} as " +
-          "local.", localDataCenter);
-
-      LoadBalancingPolicy tokenAwarePolicy = new TokenAwarePolicy(
-          DCAwareRoundRobinPolicy.builder().withLocalDc(localDataCenter).build());
-      builder.withLoadBalancingPolicy(tokenAwarePolicy);
-    } else {
-      log.info(
-          "localDatacenter was provided,  the driver will use the datacenter of the first contact point that was reached at initialization");
+        Cluster cluster = builder.build();
+        String keyStore = CassandraUtils.getKeySpace();
+        return cluster.connect(keyStore);
     }
-  }
 
-  private static void setConsistencyLevel(Cluster.Builder builder, String[] addresses) {
-    if (addresses != null && addresses.length > 1) {
-      String consistencyLevel = CassandraUtils.getConsistencyLevel();
-      if (Objects.nonNull(consistencyLevel)) {
-        log.info(
-            "consistencyLevel was provided, setting Cassandra client to use consistencyLevel: {}" +
-                " as "
-            , consistencyLevel);
-        builder.withQueryOptions(new QueryOptions().setConsistencyLevel(ConsistencyLevel.valueOf
-            (consistencyLevel)));
-      }
+    private static void setLocalDataCenter(Cluster.Builder builder) {
+        String localDataCenter = CassandraUtils.getLocalDataCenter();
+        if (Objects.nonNull(localDataCenter)) {
+            LOGGER.info("localDatacenter was provided, setting Cassndra client to use datacenter: {} as " +
+                    "local.", localDataCenter);
+
+            LoadBalancingPolicy tokenAwarePolicy = new TokenAwarePolicy(
+                    DCAwareRoundRobinPolicy.builder().withLocalDc(localDataCenter).build());
+            builder.withLoadBalancingPolicy(tokenAwarePolicy);
+        } else {
+            LOGGER.info(
+                    "localDatacenter was provided,  the driver will use the datacenter of the first contact point that was reached at initialization");
+        }
     }
-  }
 
-  private static Optional<SSLOptions> getSslOptions() {
-    Optional<String> truststorePath = Optional.of(CassandraUtils.getTruststore());
-    Optional<String> truststorePassword = Optional.of(CassandraUtils.getTruststorePassword());
-
-    if (truststorePath.isPresent() && truststorePassword.isPresent()) {
-      SSLContext context;
-      try {
-        context = getSslContext(truststorePath.get(), truststorePassword.get());
-      } catch (UnrecoverableKeyException | KeyManagementException
-          | NoSuchAlgorithmException | KeyStoreException | CertificateException
-          | IOException exception) {
-        throw new RuntimeException(exception);
-      }
-      String[] css = new String[]{"TLS_RSA_WITH_AES_128_CBC_SHA"};
-      return Optional.of(new SSLOptions(context, css));
+    private static void setConsistencyLevel(Cluster.Builder builder, String[] addresses) {
+        if (addresses != null && addresses.length > 1) {
+            String consistencyLevel = CassandraUtils.getConsistencyLevel();
+            if (Objects.nonNull(consistencyLevel)) {
+                LOGGER.info(
+                        "consistencyLevel was provided, setting Cassandra client to use consistencyLevel: {}" +
+                                " as "
+                        , consistencyLevel);
+                builder.withQueryOptions(new QueryOptions().setConsistencyLevel(ConsistencyLevel.valueOf
+                        (consistencyLevel)));
+            }
+        }
     }
-    return Optional.absent();
-  }
 
-  private static SSLContext getSslContext(String truststorePath, String truststorePassword)
-      throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException,
-      UnrecoverableKeyException, KeyManagementException {
-    FileInputStream tsf = null;
-    SSLContext ctx = null;
-    try {
-      tsf = new FileInputStream(truststorePath);
-      ctx = SSLContext.getInstance("SSL");
+    private static SSLOptions getSslOptions() {
 
-      KeyStore ts = KeyStore.getInstance("JKS");
-      ts.load(tsf, truststorePassword.toCharArray());
-      TrustManagerFactory tmf =
-          TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-      tmf.init(ts);
+        Optional<String> trustStorePath = Optional.ofNullable(CassandraUtils.getTruststore());
+        if (!trustStorePath.isPresent()) {
+            throw new SdcConfigurationException("Missing configuration for Cassandra trustStorePath");
+        }
 
-      ctx.init(null, tmf.getTrustManagers(), new SecureRandom());
-    } catch (Exception exception) {
-      log.debug("", exception);
-    } finally {
-      if (tsf != null) {
-        tsf.close();
-      }
+        Optional<String> trustStorePassword = Optional.ofNullable(CassandraUtils.getTruststorePassword());
+        if (!trustStorePassword.isPresent()) {
+            throw new SdcConfigurationException("Missing configuration for Cassandra trustStorePassword");
+        }
+
+        SSLContext context = getSslContext(trustStorePath.get(), trustStorePassword.get());
+        String[] css = new String[]{"TLS_RSA_WITH_AES_128_CBC_SHA"};
+        return new SSLOptions(context, css);
     }
-    return ctx;
-  }
 
-  private static class ReferenceHolder {
-    private static final Session CASSANDRA = newCassandraSession();
-  }
+    private static SSLContext getSslContext(String truststorePath, String trustStorePassword) {
+
+        try (FileInputStream tsf = new FileInputStream(truststorePath)) {
+
+            SSLContext ctx = SSLContext.getInstance("SSL");
+
+            KeyStore ts = KeyStore.getInstance("JKS");
+            ts.load(tsf, trustStorePassword.toCharArray());
+            TrustManagerFactory tmf =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(ts);
+
+            ctx.init(null, tmf.getTrustManagers(), new SecureRandom());
+            return ctx;
+
+        } catch (Exception exception) {
+            throw new SdcConfigurationException("Failed to get SSL Contexts for Cassandra connection", exception);
+        }
+    }
+
+    private static class ReferenceHolder {
+
+        private ReferenceHolder() {
+            // prevent instantiation
+        }
+
+        private static final Session CASSANDRA = newCassandraSession();
+    }
 
 
 }

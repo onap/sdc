@@ -22,6 +22,7 @@ import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -86,7 +87,7 @@ public class ServiceTemplateEntity implements ServiceElementEntity {
           LoggerTragetServiceName.CREATE_SERVICE_TEMPLATE, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(),
           LoggerErrorDescription.CREATE_SERVICE_TEMPLATE);
-      throw new RuntimeException(ioException);
+      throw new SdcRuntimeException(ioException);
     }
 
   }
