@@ -93,7 +93,7 @@ public class Onboard extends ComponentBaseTest {
 	public void runOnboardToDistributionFlow(String filePath, String vnfFile) throws Exception {
 
 		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
-		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER3);
      	ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
 		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
 		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
@@ -105,17 +105,17 @@ public class Onboard extends ComponentBaseTest {
 		ExtentTestActions.log(Status.INFO, String.format("Create VF %s From VSP", resourceReqDetails.getName()));
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 		ExtentTestActions.log(Status.INFO, String.format("Certify VF"));
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER3, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		//--------------------------SERVICE--------------------------------	
 		ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(user);
 		ExtentTestActions.log(Status.INFO, String.format("Create Service %s", serviceReqDetails.getName()));
-		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER3, true).left().value();
 		ExtentTestActions.log(Status.INFO, String.format("add VF to Service"));
-		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER3, true);
 		addComponentInstanceToComponentContainer.left().value();
 		ExtentTestActions.log(Status.INFO, String.format("Certify Service"));
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER3, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
 		AtomicOperationUtils.distributeService(service, true);
