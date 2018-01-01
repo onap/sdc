@@ -81,6 +81,7 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
 
 @Named
 @Service("vendorLicenseModels")
@@ -88,9 +89,12 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERS
 @Validated
 public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private static final Logger logger = LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
-  public static final String SUBMIT_ITEM = "Submit_Item";
+  private static final String VLM_ID = "VLM id";
+  private static final String SUBMIT_ITEM_ACTION = "Submit_Item";
+  private static final String SUBMIT_HEALED_VERSION_ERROR =
+      "VLM Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
+  private static final Logger LOGGER = LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
 
   private ItemPermissionsManager permissionsManager = ItemPermissionsManagerFactory.getInstance()
       .createInterface();
@@ -107,7 +111,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   @Override
   public Response listLicenseModels(String versionStatus, String user) {
-    mdcDataDebugMessage.debugEntryMessage(null);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
     MdcUtil.initMdc(LoggerServiceName.List_VLM.toString());
 
     Predicate<Item> itemPredicate;
@@ -130,14 +134,14 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
         .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
         .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, ItemDto.class)));
 
-    mdcDataDebugMessage.debugExitMessage(null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return Response.ok(results).build();
   }
 
   @Override
   public Response createLicenseModel(VendorLicenseModelRequestDto request, String user) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VLM + request.getVendorName());
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
+    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VLM + request.getVendorName());
     MdcUtil.initMdc(LoggerServiceName.Create_VLM.toString());
 
     Item item = new Item();
@@ -169,14 +173,14 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     activityLogManager.logActivity(new ActivityLogEntity(vlm.getId(), version,
         ActivityType.Create, user, true, "", ""));
 
-    mdcDataDebugMessage.debugExitMessage(null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return Response.ok(itemCreationDto).build();
   }
 
   @Override
   public Response updateLicenseModel(VendorLicenseModelRequestDto request, String vlmId,
                                      String versionId, String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VLM_ID, vlmId);
     MdcUtil.initMdc(LoggerServiceName.Update_VLM.toString());
 
     VendorLicenseModelEntity vlm =
@@ -187,13 +191,13 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
     vendorLicenseManager.updateVendorLicenseModel(vlm);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VLM_ID, vlmId);
     return Response.ok().build();
   }
 
   @Override
   public Response getLicenseModel(String vlmId, String versionId, String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VLM_ID, vlmId);
     MdcUtil.initMdc(LoggerServiceName.Get_VLM.toString());
 
     Version version = versioningManager.get(vlmId, new Version(versionId));
@@ -203,37 +207,34 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     try {
       Optional<Version> healedVersion = HealingManagerFactory.getInstance().createInterface()
           .healItemVersion(vlmId, version, ItemType.vlm, false);
-      healedVersion.ifPresent(vlm::setVersion);
 
-      if (healedVersion.isPresent() && version.getStatus() == VersionStatus.Certified) {
-        try {
-          submit(vlmId, healedVersion.get(), "Submit after heal", user);
-        } catch (Exception ex) {
-          logger.error("VLM Id {}: Error while submitting version {} " +
-                  "created based on Certified version {} for healing purpose.",
-              vlmId, healedVersion.get().getId(), versionId, ex.getMessage());
+      if (healedVersion.isPresent()) {
+        vlm.setVersion(healedVersion.get());
+        if (version.getStatus() == VersionStatus.Certified) {
+          submitHealedVersion(vlmId, healedVersion.get(), versionId, user);
         }
       }
     } catch (Exception e) {
-      logger.error(String.format("Error while auto healing VLM with Id %s and version %s: %s",
-          vlmId, versionId, e.getMessage()));
+      LOGGER.error(
+          String.format("Error while auto healing VLM with Id %s and version %s", vlmId, versionId),
+          e);
     }
 
     VendorLicenseModelEntityDto vlmDto =
         new MapVendorLicenseModelEntityToDto().applyMapping(vlm, VendorLicenseModelEntityDto.class);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VLM_ID, vlmId);
     return Response.ok(vlmDto).build();
   }
 
   @Override
   public Response deleteLicenseModel(String vlmId, String versionId, String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VLM_ID, vlmId);
 
     MdcUtil.initMdc(LoggerServiceName.Delete_VLM.toString());
     vendorLicenseManager.deleteVendorLicenseModel(vlmId, new Version(versionId));
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VLM_ID, vlmId);
 
     return Response.ok().build();
   }
@@ -243,33 +244,41 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
                                     String versionId, String user) {
     Version version = new Version(versionId);
 
-    switch (request.getAction()) {
-      case Submit:
-        if (!permissionsManager.isAllowed(vlmId, user, SUBMIT_ITEM)) {
-          return Response.status(Response.Status.FORBIDDEN).entity
-              (new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
-        }
-        String message =
-            request.getSubmitRequest() == null ? "" : request.getSubmitRequest().getMessage();
-        submit(vlmId, version, message, user);
+    if (request.getAction() == Submit) {
+      if (!permissionsManager.isAllowed(vlmId, user, SUBMIT_ITEM_ACTION)) {
+        return Response.status(Response.Status.FORBIDDEN)
+            .entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
+      }
+      String message =
+          request.getSubmitRequest() == null ? "Submit" : request.getSubmitRequest().getMessage();
+      submit(vlmId, version, message, user);
 
-        notifyUsers(vlmId, version, message, user, NotificationEventTypes.SUBMIT);
-        break;
-      default:
+      notifyUsers(vlmId, version, message, user, NotificationEventTypes.SUBMIT);
+
     }
-
     return Response.ok().build();
   }
 
   private void submit(String vlmId, Version version, String message, String user) {
     MdcUtil.initMdc(LoggerServiceName.Submit_VLM.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VLM + vlmId);
+    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VLM + vlmId);
 
     vendorLicenseManager.validate(vlmId, version);
     versioningManager.submit(vlmId, version, message);
 
     activityLogManager.logActivity(
         new ActivityLogEntity(vlmId, version, ActivityType.Submit, user, true, "", message));
+  }
+
+  private void submitHealedVersion(String vlmId, Version healedVersion, String baseVersionId,
+                                   String user) {
+    try {
+      submit(vlmId, healedVersion, "Submit after heal", user);
+    } catch (Exception ex) {
+      LOGGER.error(
+          String.format(SUBMIT_HEALED_VERSION_ERROR, vlmId, healedVersion.getId(), baseVersionId),
+          ex);
+    }
   }
 
   private void notifyUsers(String itemId, Version version, String message,
@@ -289,7 +298,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     try {
       notifier.notifySubscribers(syncEvent, userName);
     } catch (Exception e) {
-      logger.error("Failed to send sync notification to users subscribed o item '" + itemId);
+      LOGGER.error("Failed to send sync notification to users subscribed o item '" + itemId);
     }
   }
 

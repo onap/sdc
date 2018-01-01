@@ -107,6 +107,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
 import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
 import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
@@ -122,8 +123,11 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERS
 @Service("vendorSoftwareProducts")
 @Scope(value = "prototype")
 public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
-  private static final String SUBMIT_ITEM = "Submit_Item";
 
+  private static final String SUBMIT_ITEM_ACTION = "Submit_Item";
+  private static final String ATTACHMENT_FILENAME = "attachment; filename=";
+  private static final String SUBMIT_HEALED_VERSION_ERROR =
+      "VSP Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
   private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductsImpl.class);
 
   private static ItemCreationDto validationVsp;
@@ -237,20 +241,17 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     try {
       Optional<Version> healedVersion = HealingManagerFactory.getInstance().createInterface()
           .healItemVersion(vspId, version, ItemType.vsp, false);
-      healedVersion.ifPresent(vspDetails::setVersion);
 
-      if (healedVersion.isPresent() && version.getStatus() == VersionStatus.Certified) {
-        try {
-          submitHealedVsp(vspId, healedVersion.get(), user);
-        } catch (Exception ex) {
-          LOGGER.error("VSP Id {}: Error while submitting version {} " +
-                  "created based on Certified version {} for healing purpose.",
-              vspId, healedVersion.get().getId(), versionId, ex.getMessage());
+      if (healedVersion.isPresent()) {
+        vspDetails.setVersion(healedVersion.get());
+        if (version.getStatus() == VersionStatus.Certified) {
+          submitHealedVersion(vspId, healedVersion.get(), versionId, user);
         }
       }
     } catch (Exception e) {
-      LOGGER.error(String.format("Error while auto healing VSP with Id %s and version %s: %s",
-          vspId, versionId, e.getMessage()));
+      LOGGER.error(
+          String.format("Error while auto healing VSP with Id %s and version %s", vspId, versionId),
+          e);
     }
 
     VspDetailsDto vspDetailsDto =
@@ -260,16 +261,22 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     return Response.ok(vspDetailsDto).build();
   }
 
-  private void submitHealedVsp(String vspId, Version healedVersion, String user)
-      throws IOException {
-    Optional<ValidationResponse>
-        validationResponse = submit(vspId, healedVersion, "Submit healed Vsp", user);
-    if (validationResponse.isPresent()) {
-      // TODO: 8/9/2017 before collaboration checkout was done at this scenario (equivalent
-      // to new version in collaboration). need to decide what should be done now.
-      throw new IllegalStateException("Certified vsp after healing failed on validation");
+  private void submitHealedVersion(String vspId, Version healedVersion, String baseVersionId,
+                                   String user) {
+    try {
+      Optional<ValidationResponse>
+          validationResponse = submit(vspId, healedVersion, "Submit healed Vsp", user);
+      if (validationResponse.isPresent()) {
+        // TODO: 8/9/2017 before collaboration checkout was done at this scenario (equivalent
+        // to new version in collaboration). need to decide what should be done now.
+        throw new IllegalStateException("Certified vsp after healing failed on validation");
+      }
+      vendorSoftwareProductManager.createPackage(vspId, healedVersion);
+    } catch (Exception ex) {
+      LOGGER.error(
+          String.format(SUBMIT_HEALED_VERSION_ERROR, vspId, healedVersion.getId(), baseVersionId),
+          ex);
     }
-    vendorSoftwareProductManager.createPackage(vspId, healedVersion);
   }
 
   @Override
@@ -302,12 +309,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     switch (request.getAction()) {
       case Submit:
-        if (!permissionsManager.isAllowed(vspId, user, SUBMIT_ITEM)) {
+        if (!permissionsManager.isAllowed(vspId, user, SUBMIT_ITEM_ACTION)) {
           return Response.status(Response.Status.FORBIDDEN)
               .entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
         }
         String message =
-            request.getSubmitRequest() == null ? "" : request.getSubmitRequest().getMessage();
+            request.getSubmitRequest() == null ? "Submit" : request.getSubmitRequest().getMessage();
         Optional<ValidationResponse> validationResponse = submit(vspId, version, message, user);
 
         if (validationResponse.isPresent()) {
@@ -368,7 +375,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     Response.ResponseBuilder response = Response.ok(orchestrationTemplateFile);
-    response.header("Content-Disposition", "attachment; filename=LatestHeatPackage.zip");
+    response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "LatestHeatPackage.zip");
     return response.build();
   }
 
@@ -428,7 +435,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_FAIL + vspId);
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    response.header("Content-Disposition", "attachment; filename=" + zipFile.getName());
+    response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + zipFile.getName());
 
     LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_SUCCESS + vspId);
     return response.build();
@@ -478,7 +485,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     response
-        .header("Content-Disposition", "attachment; filename=" + textInformationArtifact.getName());
+        .header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + textInformationArtifact.getName());
     return response.build();
   }
 
@@ -621,16 +628,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             .getInfo(vspId, version);
 
     //todo - remove after fix missing candidate element
-    if(candidateInfo == null){
+    if (candidateInfo == null) {
       candidateInfo = new OrchestrationTemplateCandidateData();
       candidateInfo.setFileSuffix("zip");
     }
 
-    vspDetailsDto
-        .setCandidateOnboardingOrigin( candidateInfo.getFileSuffix()
-            == null
-            ? OnboardingTypesEnum.NONE.toString()
-            : candidateInfo.getFileSuffix());
+    vspDetailsDto.setCandidateOnboardingOrigin(candidateInfo.getFileSuffix() == null
+        ? OnboardingTypesEnum.NONE.toString()
+        : candidateInfo.getFileSuffix());
   }
 
   private boolean userHasPermission(String itemId, String userId) {
@@ -642,8 +647,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
     errorList.forEach(errorMessage -> {
       if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
-            vspId));
+        LOGGER.audit(
+            AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(), vspId));
       }
     });
   }

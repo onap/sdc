@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ItemManagerImpl implements ItemManager {
-  public static final String CREATE_ITEM = "Create_Item";
+  private static final String CREATE_ITEM = "Create_Item";
 
   private ItemDao itemDao;
   private PermissionsServices permissionsServices;
