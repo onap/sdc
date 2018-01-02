@@ -5,7 +5,6 @@
 
     <name>openecomp-zusammen-lib</name>
     <artifactId>openecomp-zusammen-lib</artifactId>
-    <groupId>org.openecomp.sdc.core</groupId>
     <packaging>pom</packaging>
     <parent>
         <groupId>org.openecomp.sdc.core</groupId>
@@ -17,7 +16,6 @@
     <modules>
         <module>openecomp-zusammen-api</module>
         <module>openecomp-zusammen-core</module>
-        <module>openecomp-zusammen-plugin</module>
     </modules>
 
 
