@@ -31,6 +31,7 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
@@ -63,14 +64,13 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
   public VspInformationArtifactEnricher() {
   }
 
-  public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo)
+  public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo,
+                                                ToscaServiceModel serviceModel)
       throws IOException {
 
     String vspId = enrichmentInfo.getKey();
     Version version = enrichmentInfo.getVersion();
-    Map<String, List<ErrorMessage>> errors = enrichInformationArtifact(vspId, version);
-
-    return errors;
+    return enrichInformationArtifact(vspId, version);
   }
 
   private Map<String, List<ErrorMessage>> enrichInformationArtifact(String vspId, Version version)
@@ -88,7 +88,6 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
       errorList.add(new ErrorMessage(ErrorLevel.ERROR, String.format(
           "Cannot enrich information artifact for vendor software product with id %s and version %s",
           vspId, version.toString())));
-      //TODO: add error to map (what is the key?)
 
       mdcDataDebugMessage.debugExitMessage(null);
       return errors;
