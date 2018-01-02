@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_323b0c3c",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-02T10:12:20Z",
+      "side": 1,
+      "message": "This could be static final LOG",
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9249c0d2",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-02T10:12:20Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem in use. Static analysis could have told you so.",
+      "range": {
+        "startLine": 198,
+        "startChar": 102,
+        "endLine": 198,
+        "endChar": 108
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_32122cb2",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-02T10:12:20Z",
+      "side": 1,
+      "message": "A bit dangerous to update a variable outside a loop if not some runs of the loop skip the update. You\u0027re using \"continue\" here, so in some cases this variable will hold the result of a previous iteration. I\u0027d use getArtifactPath() inline or reduce the scope of \"path\".",
+      "range": {
+        "startLine": 242,
+        "startChar": 6,
+        "endLine": 242,
+        "endChar": 10
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_120db090",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-02T10:12:20Z",
+      "side": 1,
+      "message": "It doesn\u0027t make much sense to return Optional in a private method. \nMoreover, here it can never be anything other than ComponentMonitoringUploadInfo componentMonitoringUploadInfo \u003d new ComponentMonitoringUploadInfo(); Which also makes the .ifPresent() in line 215 redundant.",
+      "range": {
+        "startLine": 248,
+        "startChar": 11,
+        "endLine": 248,
+        "endChar": 53
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d23f4824",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-02T10:12:20Z",
+      "side": 1,
+      "message": "You already had a working method. What changed is that you\u0027re now calling its body in a loop. Why didn\u0027t you change the client code? I mean it probably would be easier to write: \n\nfor (ComponentMonitoringUploadInfo uploadInfo : componentMonitoringUploadInfoList) {\n    enrichComponentMib(uploadInfo, vspId, version, errors);\n}\n\nWould be easier to compare/merge, too.",
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
