@@ -20,14 +20,17 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import com.amdocs.zusammen.datatypes.SessionContext;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
@@ -38,6 +41,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -54,6 +58,7 @@ public class NetworkManagerImplTest {
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String VSP_ID = "vsp";
+  private static final String USER_ID = "test_user1";
   private static final Version VERSION = new Version("version_id");
   private static final String NETWORK1_ID = "network1";
   private static final String NETWORK2_ID = "network2";
@@ -62,6 +67,9 @@ public class NetworkManagerImplTest {
   private NetworkDao networkDaoMock;
   @Mock
   private CompositionEntityDataManager compositionEntityDataManagerMock;
+  @Mock
+  private VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao;
+
   @InjectMocks
   @Spy
   private NetworkManagerImpl networkManager;
@@ -78,6 +86,13 @@ public class NetworkManagerImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER_ID);
+  }
+
+  @AfterMethod
+  public void tearDown() {
+    networkManager = null;
+    SessionContextProviderFactory.getInstance().createInterface().close();
   }
 
   @Test
@@ -161,6 +176,7 @@ public class NetworkManagerImplTest {
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
         .validateEntity(anyObject(), anyObject(), anyObject());
+    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
 
     NetworkEntity networkEntity = new NetworkEntity(VSP_ID, VERSION, NETWORK1_ID);
     Network networkData = new Network();
@@ -188,6 +204,7 @@ public class NetworkManagerImplTest {
     doReturn(network)
         .when(networkDaoMock).get(anyObject());
     doReturn("schema string").when(networkManager).getCompositionSchema(anyObject());
+    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
 
     CompositionEntityResponse<Network> response =
         networkManager.getNetwork(VSP_ID, VERSION, NETWORK1_ID);
@@ -238,6 +255,7 @@ public class NetworkManagerImplTest {
 
   private void testCreate_negative(NetworkEntity network, String expectedErrorCode) {
     try {
+      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
       networkManager.createNetwork(network);
       Assert.fail();
     } catch (CoreException exception) {
@@ -281,6 +299,7 @@ public class NetworkManagerImplTest {
   private void testDelete_negative(String vspId, Version version, String networkId,
                                    String expectedErrorCode) {
     try {
+      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
       networkManager.deleteNetwork(vspId, version, networkId);
       Assert.fail();
     } catch (CoreException exception) {

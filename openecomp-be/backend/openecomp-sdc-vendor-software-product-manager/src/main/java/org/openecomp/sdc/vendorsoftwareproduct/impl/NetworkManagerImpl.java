@@ -49,15 +49,17 @@ public class NetworkManagerImpl implements NetworkManager {
 
   private final NetworkDao networkDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
-  private static final VendorSoftwareProductInfoDao VSP_INFO_DAO
-          = VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
+  private final VendorSoftwareProductInfoDao VSP_INFO_DAO;
+
   private static final  String VSP_ID = "VSP id";
   private static final String VSP_ID_NETWORK_ID = "VSP id, network id";
 
   public NetworkManagerImpl(NetworkDao networkDao,
-                            CompositionEntityDataManager compositionEntityDataManager) {
+                            CompositionEntityDataManager compositionEntityDataManager,
+                            VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao) {
     this.networkDao = networkDao;
     this.compositionEntityDataManager = compositionEntityDataManager;
+    this.VSP_INFO_DAO = vendorSoftwareProductInfoDao;
   }
 
   @Override
