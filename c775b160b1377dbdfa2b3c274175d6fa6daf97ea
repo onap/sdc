@@ -2,6 +2,121 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_129a9063",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "change to capital letters and make it final",
+      "range": {
+        "startLine": 58,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 23
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_92ad408b",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "is there any chance that there will be classCastException? is so, catch it explicitly and log with the appropriate message and throw",
+      "range": {
+        "startLine": 65,
+        "startChar": 67,
+        "endLine": 65,
+        "endChar": 97
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d2a3c89c",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 68,
+        "startChar": 10,
+        "endLine": 68,
+        "endChar": 28
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f2a04492",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "add clear message and the exception to the log",
+      "range": {
+        "startLine": 69,
+        "startChar": 10,
+        "endLine": 69,
+        "endChar": 39
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_12361053",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "change to capital",
+      "range": {
+        "startLine": 73,
+        "startChar": 17,
+        "endLine": 73,
+        "endChar": 36
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_323b0c3c",
         "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
         "patchSetId": 1
@@ -13,6 +128,29 @@
       "writtenOn": "2018-01-02T10:12:20Z",
       "side": 1,
       "message": "This could be static final LOG",
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d2cae84e",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "change to capital letters and make static",
+      "range": {
+        "startLine": 76,
+        "startChar": 23,
+        "endLine": 76,
+        "endChar": 26
+      },
       "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -35,6 +173,52 @@
         "startChar": 102,
         "endLine": 198,
         "endChar": 108
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_32046c7a",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "what is upd? update?",
+      "range": {
+        "startLine": 222,
+        "startChar": 50,
+        "endLine": 222,
+        "endChar": 75
+      },
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_72319459",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "reduce the scope of \u0027path\u0027 and declare it near to it\u0027s first use. maybe it can be inline",
+      "range": {
+        "startLine": 228,
+        "startChar": 4,
+        "endLine": 228,
+        "endChar": 15
       },
       "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -99,6 +283,47 @@
       "writtenOn": "2018-01-02T10:12:20Z",
       "side": 1,
       "message": "You already had a working method. What changed is that you\u0027re now calling its body in a loop. Why didn\u0027t you change the client code? I mean it probably would be easier to write: \n\nfor (ComponentMonitoringUploadInfo uploadInfo : componentMonitoringUploadInfoList) {\n    enrichComponentMib(uploadInfo, vspId, version, errors);\n}\n\nWould be easier to compare/merge, too.",
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f56fce90",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/MonitoringMibEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_d23f4824",
+      "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_521338b8",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ProcessArtifactEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-02T15:20:24Z",
+      "side": 1,
+      "message": "extract to function with meaningful and clear name",
+      "range": {
+        "startLine": 81,
+        "startChar": 13,
+        "endLine": 83,
+        "endChar": 64
+      },
       "revId": "c775b160b1377dbdfa2b3c274175d6fa6daf97ea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
