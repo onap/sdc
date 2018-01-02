@@ -19,6 +19,7 @@ import classnames from 'classnames';
 import DetailsCatalogView from 'sdc-app/onboarding/onboard/DetailsCatalogView.jsx';
 import VendorCatalogView from './VendorCatalogView.jsx';
 import { tabsMapping} from './OnboardingCatalogConstants.js';
+import {tabsMapping as WCTabsMapping} from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 
 const CatalogHeaderTabs = ({onTabPress, activeTab}) => (
 	<div className='catalog-header-tabs'>
@@ -58,8 +59,8 @@ class OnboardingCatalogView extends React.Component {
 						users={users}
 						onAddVLM={onAddLicenseModelClick}
 						onAddVSP={onAddSoftwareProductClick}
-						onSelectVLM={onSelectLicenseModel}
-						onSelectVSP={onSelectSoftwareProduct}
+						onSelectVLM={(item, users) => onSelectLicenseModel(item, users, WCTabsMapping.CATALOG)}
+						onSelectVSP={(item, users) => onSelectSoftwareProduct(item, users, WCTabsMapping.CATALOG)}
 						filter={searchValue}
 						onMigrate={onMigrate}/>
 				);
@@ -71,8 +72,8 @@ class OnboardingCatalogView extends React.Component {
 						users={users}
 						onAddVSP={onAddSoftwareProductClick}
 						onAddVLM={onAddLicenseModelClick}
-						onSelectVSP={onSelectSoftwareProduct}
-						onSelectVLM={onSelectLicenseModel}
+						onSelectVSP={(item, users) => onSelectSoftwareProduct(item, users, WCTabsMapping.CATALOG)}
+						onSelectVLM={(item, users) => onSelectLicenseModel(item, users, WCTabsMapping.CATALOG)}
 						vspOverlay={vspOverlay}
 						onVendorSelect={onVendorSelect}
 						selectedVendor={selectedVendor}

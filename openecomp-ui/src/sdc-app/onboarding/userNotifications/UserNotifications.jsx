@@ -54,7 +54,7 @@ const Notification = ({notification, users, onActionClicked, getNotificationType
 			</div>
 			<div className='notification-action'>
 				<div className={classnames('action-button', {'hidden': read})} onClick={() => onActionClicked(notification)}>
-					{eventType === notificationType.PERMISSION_CHANGED ? i18n('Accept') : i18n('Sync')}
+					{eventType === notificationType.PERMISSION_CHANGED ? i18n('OK') : i18n('Sync')}
 				</div>
 			</div>
 		</div>

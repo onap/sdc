@@ -19,6 +19,7 @@ import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import isEqual from 'lodash/isEqual.js';
 import objectValues from 'lodash/values.js';
+import lodashUnionBy from 'lodash/unionBy.js';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Application from 'sdc-app/Application.jsx';
@@ -233,8 +234,11 @@ export default class OnboardingPunchOut {
 	handleData(data) {
 		let {breadcrumbs: {selectedKeys = []} = {}} = data;
 		let dispatch = action => store.dispatch(action);
-		let {currentScreen, users: {usersList}, softwareProductList, licenseModelList, softwareProduct: {softwareProductEditor: {data: vspData = {}},
+		let {currentScreen, users: {usersList}, softwareProductList, finalizedSoftwareProductList, licenseModelList, finalizedLicenseModelList,
+			softwareProduct: {softwareProductEditor: {data: vspData = {}},
 			softwareProductComponents = {}, softwareProductQuestionnaire = {}}} = store.getState();
+		const wholeSoftwareProductList = [...softwareProductList, ...finalizedSoftwareProductList];
+		const wholeLicenseModelList = [...licenseModelList, ...finalizedLicenseModelList];
 
 		let {props: {version, isReadOnlyMode}, screen} = currentScreen;
 		let {componentEditor: {data: componentData = {}, qdata: componentQData = {}}} = softwareProductComponents;
@@ -269,15 +273,15 @@ export default class OnboardingPunchOut {
 
 				} else if (selectedKeys.length === 1 || selectedKeys[1] === enums.BREADCRUMS.LICENSE_MODEL) {
 					let [licenseModelId, , licenseModelScreen] = selectedKeys;
-					let licenseModel = licenseModelList.find(vlm => vlm.id === licenseModelId);
+					let licenseModel = wholeLicenseModelList.find(vlm => vlm.id === licenseModelId);
 					ScreensHelper.loadScreen(dispatch, {screen: licenseModelScreen, screenType: screenTypes.LICENSE_MODEL,
 						props: {licenseModelId, version, licenseModel, usersList}});
 
 				} else if (selectedKeys.length <= 4 && selectedKeys[1] === enums.BREADCRUMS.SOFTWARE_PRODUCT) {
 					let [licenseModelId, , softwareProductId, softwareProductScreen] = selectedKeys;
 					let softwareProduct = softwareProductId ?
-						softwareProductList.find(({id}) => id === softwareProductId) :
-						softwareProductList.find(({vendorId}) => vendorId === licenseModelId);
+						wholeSoftwareProductList.find(({id}) => id === softwareProductId) :
+						wholeSoftwareProductList.find(({vendorId}) => vendorId === licenseModelId);
 					if (!softwareProductId) {
 						softwareProductId = softwareProduct.id;
 					}
@@ -298,8 +302,8 @@ export default class OnboardingPunchOut {
 				} else if (selectedKeys.length === 5 && selectedKeys[1] === enums.BREADCRUMS.SOFTWARE_PRODUCT && selectedKeys[3] === enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS) {
 					let [licenseModelId, , softwareProductId, , componentId] = selectedKeys;
 					let softwareProduct = softwareProductId ?
-						softwareProductList.find(({id}) => id === softwareProductId) :
-						softwareProductList.find(({vendorId}) => vendorId === licenseModelId);
+						wholeSoftwareProductList.find(({id}) => id === softwareProductId) :
+						wholeSoftwareProductList.find(({vendorId}) => vendorId === licenseModelId);
 					if (!softwareProductId) {
 						softwareProductId = softwareProduct.id;
 					}
@@ -309,8 +313,8 @@ export default class OnboardingPunchOut {
 				} else if (selectedKeys.length === 6 && selectedKeys[1] === enums.BREADCRUMS.SOFTWARE_PRODUCT && selectedKeys[3] === enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS) {
 					let [licenseModelId, , softwareProductId, , componentId, componentScreen] = selectedKeys;
 					let softwareProduct = softwareProductId ?
-						softwareProductList.find(({id}) => id === softwareProductId) :
-						softwareProductList.find(({vendorId}) => vendorId === licenseModelId);
+						wholeSoftwareProductList.find(({id}) => id === softwareProductId) :
+						wholeSoftwareProductList.find(({vendorId}) => vendorId === licenseModelId);
 					if (!softwareProductId) {
 						softwareProductId = softwareProduct.id;
 					}
@@ -337,8 +341,8 @@ export default class OnboardingPunchOut {
 			{versionsList: {itemType, itemId}},
 			softwareProduct: {softwareProductEditor: {data: currentSoftwareProduct = {onboardingMethod: ''}},
 				softwareProductComponents: {componentsList}}} = store.getState();
-		const wholeSoftwareProductList = [...softwareProductList, ...finalizedSoftwareProductList];
-		const wholeLicenseModelList = [...licenseModelList, ...finalizedLicenseModelList];
+		const wholeSoftwareProductList = lodashUnionBy(softwareProductList, finalizedSoftwareProductList, 'id');
+		const wholeLicenseModelList = lodashUnionBy(licenseModelList, finalizedLicenseModelList, 'id');
 		let breadcrumbsData = {itemType, itemId, currentScreen, wholeLicenseModelList, wholeSoftwareProductList, currentSoftwareProduct, componentsList};
 
 		if (currentScreen.forceBreadCrumbsUpdate || !isEqual(breadcrumbsData, this.prevBreadcrumbsData) || this.breadcrumbsPrefixSelected) {
