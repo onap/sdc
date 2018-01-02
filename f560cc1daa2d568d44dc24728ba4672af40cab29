@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f5102e50",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/CassandraElementRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-02T12:03:02Z",
+      "side": 1,
+      "message": "Is context still needed here? Can the API be changed, or is this class used externally?",
+      "range": {
+        "startLine": 48,
+        "startChar": 55,
+        "endLine": 48,
+        "endChar": 62
+      },
+      "revId": "f560cc1daa2d568d44dc24728ba4672af40cab29",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_951d2a69",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/ElementHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-02T12:03:02Z",
+      "side": 1,
+      "message": "Please delete the dead code",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 11
+      },
+      "revId": "f560cc1daa2d568d44dc24728ba4672af40cab29",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
