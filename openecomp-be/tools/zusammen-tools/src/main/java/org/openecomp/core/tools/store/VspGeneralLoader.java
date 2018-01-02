@@ -4,7 +4,7 @@ import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
-import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
+import com.amdocs.zusammen.plugin.dao.types.ElementEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +14,8 @@ import java.util.Optional;
 
 public class VspGeneralLoader {
 
-  public static final String NAME = "name";
-  public static final String GENERAL = "General";
+  private static final String NAME = "name";
+  private static final String GENERAL = "General";
 
   private static CassandraElementRepository cassandraElementRepository =
           new CassandraElementRepository();
@@ -36,7 +36,7 @@ public class VspGeneralLoader {
 
         itemId = new Id(entry.getKey());
         changeRefId = new Id(version);
-        entityId = getEntityIdByInfoNameValue(context, itemId, changeRefId, null, null, NAME,
+        entityId = getEntityIdByInfoNameValue(context, itemId, changeRefId, null,  NAME,
                 GENERAL);
         if (entityId != null) {
           Optional<ElementEntity> result =
@@ -60,7 +60,7 @@ public class VspGeneralLoader {
 
         itemId = new Id(entry.getKey());
 
-        entityId = getEntityIdByInfoNameValue(context, itemId, null, revisionId,null, NAME,
+        entityId = getEntityIdByInfoNameValue(context, itemId, null, revisionId, NAME,
                 GENERAL);
         if (entityId != null) {
           ElementEntityContext elementContext = new ElementEntityContext(
@@ -90,7 +90,6 @@ public class VspGeneralLoader {
                                                Id itemId,
                                                Id versionId,
                                                String revisionId,
-                                               Id elementId,
                                                String name,
                                                String value) {
 

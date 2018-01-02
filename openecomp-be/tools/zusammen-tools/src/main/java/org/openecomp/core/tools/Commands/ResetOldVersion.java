@@ -25,7 +25,7 @@ import org.openecomp.core.tools.store.ElementHandler;
 import org.openecomp.core.tools.store.VersionInfoCassandraLoader;
 import org.openecomp.core.tools.store.VspGeneralLoader;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
-import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
+import com.amdocs.zusammen.plugin.dao.types.ElementEntity;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;

@@ -21,6 +21,7 @@ import com.amdocs.zusammen.datatypes.Namespace;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.Relation;
+import com.amdocs.zusammen.plugin.dao.types.ElementEntity;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
 import com.amdocs.zusammen.utils.fileutils.json.JsonUtil;
 import com.datastax.driver.core.ResultSet;
@@ -30,7 +31,6 @@ import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
 import com.google.gson.reflect.TypeToken;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
@@ -47,7 +47,7 @@ public class CassandraElementRepository {
 
   public Collection<ElementEntity> list(SessionContext context,
                                         ElementEntityContext elementContext) {
-    Set<String> elementIds = getVersionElementIds(context, elementContext);
+    Set<String> elementIds = getVersionElementIds(elementContext);
 
     return elementIds.stream()
         .map(elementId -> get(context, elementContext, new ElementEntity(new Id(elementId))).get())
@@ -64,7 +64,7 @@ public class CassandraElementRepository {
 
   public Optional<ElementEntity> get(SessionContext context, ElementEntityContext elementContext,
                                      ElementEntity element) {
-    Row row = getElementAccessor(context).get(
+    Row row = getElementAccessor().get(
         elementContext.getSpace(),
         elementContext.getItemId().getValue(),
         getVersionId(elementContext),
@@ -81,7 +81,7 @@ public class CassandraElementRepository {
   }
 
 
-  private ElementAccessor getElementAccessor(SessionContext context) {
+  private ElementAccessor getElementAccessor() {
     return NoSqlDbFactory.getInstance().createInterface().getMappingManager().createAccessor
         (ElementAccessor.class);
 
@@ -99,7 +99,7 @@ public class CassandraElementRepository {
 
     if (elementContext.getRevisionId() == null) {
 
-      getElementAccessor(context).update(
+      getElementAccessor().update(
           JsonUtil.object2Json(element.getInfo()),
           JsonUtil.object2Json(element.getRelations()),
           element.getData(),
@@ -110,7 +110,7 @@ public class CassandraElementRepository {
           elementContext.getVersionId().toString(),
           element.getId().toString());
     } else {
-      getElementAccessor(context).update(
+      getElementAccessor().update(
           JsonUtil.object2Json(element.getInfo()),
           JsonUtil.object2Json(element.getRelations()),
           element.getData(),
@@ -151,8 +151,7 @@ public class CassandraElementRepository {
     return json == null ? null : JsonUtil.json2Object(json, typeOfT);
   }
 
-  private Set<String> getVersionElementIds(SessionContext context,
-                                           ElementEntityContext elementContext) {
+  private Set<String> getVersionElementIds(ElementEntityContext elementContext) {
     Row row = getVersionElementsAccessor().get(
         elementContext.getSpace(),
         elementContext.getItemId().toString(),
@@ -162,15 +161,7 @@ public class CassandraElementRepository {
         : row.getSet(VersionElementsField.ELEMENT_IDS, String.class);
   }
 
-  /*
-CREATE TABLE IF NOT EXISTS element_namespace (
-	space text,
-	item_id text,
-	element_id text,
-	namespace text,
-	PRIMARY KEY (( space, item_id, element_id ))
-);
-   */
+
   @Accessor
   interface ElementNamespaceAccessor {
     @Query(
@@ -182,23 +173,6 @@ CREATE TABLE IF NOT EXISTS element_namespace (
                 @Param("ns") String namespace);
   }
 
-  /*
-CREATE TABLE IF NOT EXISTS element (
-	space text,
-	item_id text,
-	version_id text,
-	element_id text,
-	parent_id text,
-	namespace text,
-	info text,
-	relations text,
-	data blob,
-	searchable_data blob,
-	visualization blob,
-	sub_element_ids set<text>,
-	PRIMARY KEY (( space, item_id, version_id, element_id ))
-);
-   */
   @Accessor
   interface ElementAccessor {
     @Query(
@@ -247,20 +221,12 @@ CREATE TABLE IF NOT EXISTS element (
     private static final String SUB_ELEMENT_IDS = "sub_element_ids";
   }
 
-  /*
-  CREATE TABLE IF NOT EXISTS version_elements (
-    space text,
-    item_id text,
-    version_id text,
-    element_ids set<text>,
-    PRIMARY KEY (( space, item_id, version_id ))
-  );
-   */
   @Accessor
   interface VersionElementsAccessor {
 
 
-    @Query("SELECT element_ids FROM zusammen_dox.version_elements WHERE space=? AND item_id=? AND version_id=?")
+    @Query(
+        "SELECT element_ids FROM zusammen_dox.version_elements WHERE space=? AND item_id=? AND version_id=?")
     ResultSet get(String space, String itemId, String versionId);
 
 
