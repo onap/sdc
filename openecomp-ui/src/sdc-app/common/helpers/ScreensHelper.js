@@ -277,13 +277,13 @@ const ScreensHelper = {
 		}
 	},
 
-	loadLandingScreen(dispatch, {previousScreenName, props: {licenseModelId, softwareProductId, version}}) {
-		const screenType = this.getScreenType(previousScreenName);
-		let screen = screenType === screenTypes.SOFTWARE_PRODUCT ?
+	loadLandingScreen(dispatch, {previousScreenName, screenType, props: {licenseModelId, softwareProductId, version}}) {
+		let selectedScreenType = screenType ? screenType : this.getScreenType(previousScreenName);
+		let screen = selectedScreenType === screenTypes.SOFTWARE_PRODUCT ?
 			enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE :
 			enums.SCREEN.LICENSE_MODEL_OVERVIEW;
 		let props = {licenseModelId, softwareProductId, version};
-		return this.loadScreen(dispatch, {screen, screenType, props});
+		return this.loadScreen(dispatch, {screen, screenType: selectedScreenType, props});
 	}
 };
 

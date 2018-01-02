@@ -16,6 +16,7 @@
 import React from 'react';
 import DetailsCatalogView from '../DetailsCatalogView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import {tabsMapping} from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 
 const WorkspaceView = (props) => {
 	let {
@@ -34,8 +35,8 @@ const WorkspaceView = (props) => {
 				users={users}
 				onAddVLM={onAddLicenseModelClick}
 				onAddVSP={onAddSoftwareProductClick}
-				onSelectVLM={onSelectLicenseModel}
-				onSelectVSP={onSelectSoftwareProduct}
+				onSelectVLM={(item, users) => onSelectLicenseModel(item, users, tabsMapping.WORKSPACE)}
+				onSelectVSP={(item, users) => onSelectSoftwareProduct(item, users, tabsMapping.WORKSPACE)}
 				onMigrate={onMigrate}
 				filter={searchValue} />
 		</div>

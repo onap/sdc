@@ -32,6 +32,7 @@ const VersionsPageActionHelper = {
 				itemType,
 				itemId
 			});
+			return Promise.resolve(response);
 		});
 	},
 

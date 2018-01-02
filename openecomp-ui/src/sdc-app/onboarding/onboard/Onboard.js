@@ -21,8 +21,6 @@ import OnboardActionHelper from './OnboardActionHelper.js';
 import LicenseModelCreationActionHelper from '../licenseModel/creation/LicenseModelCreationActionHelper.js';
 import SoftwareProductCreationActionHelper from '../softwareProduct/creation/SoftwareProductCreationActionHelper.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
-import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
-import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
 
 
 export const mapStateToProps = ({
@@ -91,18 +89,11 @@ export const mapStateToProps = ({
 const mapActionsToProps = (dispatch) => {
 
 	return {
-		onSelectLicenseModel({id: licenseModelId, name}, users) {
-			ScreensHelper.loadScreen(dispatch, {
-				screen: enums.SCREEN.VERSIONS_PAGE, screenType: screenTypes.LICENSE_MODEL,
-				props: {licenseModelId, licenseModel: {name}, usersList: users}
-			});
+		onSelectLicenseModel({id: licenseModelId, name}, users, tab) {
+			OnboardActionHelper.loadVLMScreen(dispatch, {id: licenseModelId, name}, users, tab);
 		},
-		onSelectSoftwareProduct(softwareProduct, users) {
-			let {id: softwareProductId, vendorId: licenseModelId, licensingVersion, name} = softwareProduct;
-			ScreensHelper.loadScreen(dispatch, {
-				screen: enums.SCREEN.SOFTWARE_PRODUCT_VERSIONS_PAGE, screenType: screenTypes.SOFTWARE_PRODUCT,
-				props: {softwareProductId, softwareProduct: {name, vendorId: licenseModelId, licensingVersion}, usersList: users}
-			});
+		onSelectSoftwareProduct(softwareProduct, users, tab) {
+			OnboardActionHelper.loadVSPScreen(dispatch, softwareProduct, users, tab);
 		},
 		onAddSoftwareProductClick: (vendorId) => SoftwareProductCreationActionHelper.open(dispatch, vendorId),
 		onAddLicenseModelClick: () => LicenseModelCreationActionHelper.open(dispatch),
