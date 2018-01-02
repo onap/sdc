@@ -21,6 +21,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -59,6 +60,11 @@ public class ComponentManagerImplTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @AfterMethod
+  public void tearDown() {
+    componentManager = null;
+  }
+
   @Test
   public void testListWhenNone() {
     Collection<ComponentEntity> components = componentManager.listComponents(VSP_ID, VERSION);
@@ -89,10 +95,6 @@ public class ComponentManagerImplTest {
         VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
   }
 
-  /*    @Test
-      public void testCreate() {
-          COMP1_ID = testCreate(VSP_ID);
-      }*/
   @Test
   public void testCreate() {
     ComponentEntity expected = new ComponentEntity(VSP_ID, null, null);
@@ -131,7 +133,7 @@ public class ComponentManagerImplTest {
     doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
 
     try {
-      ComponentEntity created = componentManager.createComponent(expected);
+       componentManager.createComponent(expected);
     } catch (CoreException exception) {
       Assert.assertEquals("Creation of only one VFC per VSP allowed.", exception.code().message());
       Assert.assertEquals(VendorSoftwareProductErrorCodes.VSP_VFC_COUNT_EXCEED,
@@ -180,7 +182,7 @@ public class ComponentManagerImplTest {
         .validateEntity(anyObject(), anyObject(), anyObject());
 
     try {
-      CompositionEntityValidationData created = componentManager.updateComponent(expected);
+       componentManager.updateComponent(expected);
     } catch (CoreException exception) {
       Assert.assertEquals("VFC with specified name already present in given VSP.",
           exception.code().message());
@@ -326,7 +328,7 @@ public class ComponentManagerImplTest {
   }
 
   @Test
-  public void testComponentNullQuestionnaire() throws Exception {
+  public void testComponentNullQuestionnaire() {
     doReturn(new ComponentEntity(VSP_ID, VERSION, COMP1_ID)).when(componentDaoMock)
         .getQuestionnaireData(VSP_ID, VERSION, COMP1_ID);
     String schema = "schema string";
@@ -335,7 +337,7 @@ public class ComponentManagerImplTest {
     QuestionnaireResponse questionnaire =
         componentManager.getQuestionnaire(VSP_ID, VERSION, COMP1_ID);
     Assert.assertNotNull(questionnaire);
-    Assert.assertEquals(questionnaire.getData(), null);
+    Assert.assertNull(questionnaire.getData());
     Assert.assertEquals(questionnaire.getSchema(), schema);
     Assert.assertNull(questionnaire.getErrorMessage());
   }
@@ -389,20 +391,6 @@ public class ComponentManagerImplTest {
         .updateQuestionnaireData(VSP_ID, VERSION, COMP1_ID, "questionnaire data");
   }
 
-/*
-    @Test(dependsOnMethods = "testDelete")
-    public void testDeleteList() {
-        ComponentEntity comp3 = new ComponentEntity(VSP_ID, null, null);
-        comp3.setName("comp3 name");
-        comp3.setDescription("comp3 desc");
-        componentManager.createComponent(comp3, USER);
-
-        componentManager.deleteComponents(VSP_ID, USER);
-
-        Collection<ComponentEntity> actual = componentManager.listComponents(VSP_ID, null, USER);
-        Assert.assertEquals(actual.size(), 0);
-    }*/
-
   private void testGet(String vspId, Version version, String componentId,
                        ComponentEntity expected) {
 
@@ -443,16 +431,6 @@ public class ComponentManagerImplTest {
     }
   }
 
-  private void testList_negative(String vspId, Version version,
-                                 String expectedErrorCode) {
-    try {
-      componentManager.listComponents(vspId, version);
-      Assert.fail();
-    } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), expectedErrorCode);
-    }
-  }
-
   private void testDeleteList_negative(String vspId, Version version,
                                        String expectedErrorCode) {
     try {
@@ -474,7 +452,7 @@ public class ComponentManagerImplTest {
   }
 
 
-  public static ComponentEntity createComponent(String vspId, Version version, String compId) {
+  private static ComponentEntity createComponent(String vspId, Version version, String compId) {
     ComponentEntity componentEntity = new ComponentEntity(vspId, version, compId);
     ComponentData compData = new ComponentData();
     compData.setName(compId + " name");

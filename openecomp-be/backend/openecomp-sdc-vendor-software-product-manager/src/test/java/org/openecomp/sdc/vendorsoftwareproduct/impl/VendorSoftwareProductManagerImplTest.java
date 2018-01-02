@@ -69,6 +69,7 @@ import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -150,6 +151,11 @@ public class VendorSoftwareProductManagerImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
+  }
+
+  @AfterMethod
+  public void tearDown(){
+    vendorSoftwareProductManager = null;
   }
 /*
   @Test

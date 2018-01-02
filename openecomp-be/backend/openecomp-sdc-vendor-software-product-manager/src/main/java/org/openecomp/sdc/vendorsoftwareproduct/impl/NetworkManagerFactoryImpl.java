@@ -23,13 +23,15 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 
 public class NetworkManagerFactoryImpl extends NetworkManagerFactory {
   private static final NetworkManager INSTANCE =
       new NetworkManagerImpl(
           NetworkDaoFactory.getInstance().createInterface(),
-          CompositionEntityDataManagerFactory.getInstance().createInterface());
+          CompositionEntityDataManagerFactory.getInstance().createInterface(),
+          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
 
   @Override
   public NetworkManager createInterface() {

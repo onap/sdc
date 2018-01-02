@@ -27,7 +27,6 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.CompositionEditNotAllowedErrorBuilder;
@@ -49,15 +48,17 @@ public class NetworkManagerImpl implements NetworkManager {
 
   private final NetworkDao networkDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
-  private static final VendorSoftwareProductInfoDao VSP_INFO_DAO
-          = VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
+  private final VendorSoftwareProductInfoDao VSPInfoDao;
+
   private static final  String VSP_ID = "VSP id";
   private static final String VSP_ID_NETWORK_ID = "VSP id, network id";
 
   public NetworkManagerImpl(NetworkDao networkDao,
-                            CompositionEntityDataManager compositionEntityDataManager) {
+                            CompositionEntityDataManager compositionEntityDataManager,
+                            VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao) {
     this.networkDao = networkDao;
     this.compositionEntityDataManager = compositionEntityDataManager;
+    this.VSPInfoDao = vendorSoftwareProductInfoDao;
   }
 
   @Override
@@ -72,7 +73,7 @@ public class NetworkManagerImpl implements NetworkManager {
   public NetworkEntity createNetwork(NetworkEntity network) {
     MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, network.getVspId());
 
-    if (!VSP_INFO_DAO.isManual(network.getVspId(), network.getVersion())) {
+    if (!VSPInfoDao.isManual(network.getVspId(), network.getVersion())) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.CREATE_NETWORK, ErrorLevel.ERROR.name(),
           LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create network");
@@ -94,7 +95,7 @@ public class NetworkManagerImpl implements NetworkManager {
     NetworkEntity retrieved = getValidatedNetwork(network.getVspId(), network.getVersion(), network.getId());
 
     NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
-    schemaInput.setManual(!VSP_INFO_DAO.isManual(network.getVspId(), network.getVersion()));
+    schemaInput.setManual(!VSPInfoDao.isManual(network.getVspId(), network.getVersion()));
     schemaInput.setNetwork(retrieved.getNetworkCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
@@ -118,7 +119,7 @@ public class NetworkManagerImpl implements NetworkManager {
     Network network = networkEntity.getNetworkCompositionData();
 
     NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
-    schemaInput.setManual(!VSP_INFO_DAO.isManual(vspId, version));
+    schemaInput.setManual(!VSPInfoDao.isManual(vspId, version));
     schemaInput.setNetwork(network);
 
     CompositionEntityResponse<Network> response = new CompositionEntityResponse<>();
@@ -143,7 +144,7 @@ public class NetworkManagerImpl implements NetworkManager {
   public void deleteNetwork(String vspId, Version version, String networkId) {
     MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_NETWORK_ID, vspId, networkId);
 
-    if (!VSP_INFO_DAO.isManual(vspId, version)) {
+    if (!VSPInfoDao.isManual(vspId, version)) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.DELETE_NETWORK, ErrorLevel.ERROR.name(),
           LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't delete network");

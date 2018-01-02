@@ -20,14 +20,17 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
@@ -38,6 +41,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -54,6 +58,7 @@ public class NetworkManagerImplTest {
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String VSP_ID = "vsp";
+  private static final String USER_ID = "test_user1";
   private static final Version VERSION = new Version("version_id");
   private static final String NETWORK1_ID = "network1";
   private static final String NETWORK2_ID = "network2";
@@ -62,6 +67,9 @@ public class NetworkManagerImplTest {
   private NetworkDao networkDaoMock;
   @Mock
   private CompositionEntityDataManager compositionEntityDataManagerMock;
+  @Mock
+  private VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao;
+
   @InjectMocks
   @Spy
   private NetworkManagerImpl networkManager;
@@ -78,6 +86,13 @@ public class NetworkManagerImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER_ID);
+  }
+
+  @AfterMethod
+  public void tearDown() {
+    networkManager = null;
+    SessionContextProviderFactory.getInstance().createInterface().close();
   }
 
   @Test
@@ -98,51 +113,11 @@ public class NetworkManagerImplTest {
     Assert.assertEquals(actual.size(), 2);
   }
 
-/*    @Test(dependsOnMethods = "testListWhenNone")
-    public void testCreate() {
-        NETWORK1_ID = testCreate(VSP_ID);
-    }
-
-    private String testCreate(String vspId) {
-        NetworkEntity expected = new NetworkEntity(vspId, null, null);
-        Network networkData = new Network();
-        networkData.setName("network1 name");
-        networkData.setDhcp(true);
-        expected.setNetworkCompositionData(networkData);
-
-
-        NetworkEntity created = networkManager.createNetwork(expected);
-        Assert.assertNotNull(created);
-        expected.setId(created.getId());
-        expected.setVersion(VERSION01);
-
-        NetworkEntity actual = networkDaoMock.getNetwork(vspId, VERSION01, created.getId());
-
-        Assert.assertEquals(actual, expected);
-        return created.getId();
-    }
-
-    @Test(dependsOnMethods = {"testCreate"})
-    public void testCreateWithExistingName_negative() {
-        NetworkEntity network = new NetworkEntity(VSP_ID, null, null);
-        Network networkData = new Network();
-        networkData.setName("network1 name");
-        networkData.setDhcp(true);
-        network.setNetworkCompositionData(networkData);
-        testCreate_negative(network, UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
-    }*/
-
   @Test
   public void testCreateOnUploadVsp_negative() {
     testCreate_negative(new NetworkEntity(VSP_ID, VERSION, null),
         VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
   }
-
-  /*    @Test(dependsOnMethods = {"testCreate"})
-      public void testCreateWithExistingNameUnderOtherVsp() {
-          testCreate(vsp2Id);
-      }
-  */
 
   @Test
   public void testUpdateNonExistingNetworkId_negative() {
@@ -161,6 +136,7 @@ public class NetworkManagerImplTest {
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
         .validateEntity(anyObject(), anyObject(), anyObject());
+    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
 
     NetworkEntity networkEntity = new NetworkEntity(VSP_ID, VERSION, NETWORK1_ID);
     Network networkData = new Network();
@@ -188,6 +164,7 @@ public class NetworkManagerImplTest {
     doReturn(network)
         .when(networkDaoMock).get(anyObject());
     doReturn("schema string").when(networkManager).getCompositionSchema(anyObject());
+    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
 
     CompositionEntityResponse<Network> response =
         networkManager.getNetwork(VSP_ID, VERSION, NETWORK1_ID);
@@ -195,40 +172,6 @@ public class NetworkManagerImplTest {
     Assert.assertEquals(response.getData(), network.getNetworkCompositionData());
     Assert.assertNotNull(response.getSchema());
   }
-
-    /*
-           @Test(dependsOnMethods = {"testUpdateOnUploadVsp", "testList"})
-           public void testCreateWithERemovedName() {
-               testCreate(VSP_ID);
-           }
-
-    @Test(dependsOnMethods = "testList")
-    public void testDeleteNonExistingNetworkId_negative() {
-        testDelete_negative(VSP_ID, "non existing network id", VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
-    }*/
-
-/*
-           @Test(dependsOnMethods = "testList")
-           public void testDelete() {
-               networkManager.deleteNetwork(VSP_ID, NETWORK1_ID);
-               NetworkEntity actual = networkDaoMock.getNetwork(VSP_ID, VERSION01, NETWORK1_ID);
-               Assert.assertNull(actual);
-           }
-
-
-
-           @Test(dependsOnMethods = "testDelete")
-           public void testDeleteList() {
-               NetworkEntity network3 = new NetworkEntity(VSP_ID, null, null);
-               network3.setName("network3 name");
-               network3.setDescription("network3 desc");
-               networkManager.createNetwork(network3);
-
-               networkManager.deleteNetworks(VSP_ID);
-
-               Collection<NetworkEntity> actual = networkManager.listNetworks(VSP_ID, null);
-               Assert.assertEquals(actual.size(), 0);
-           }*/
 
   @Test(dependsOnMethods = "testList")
   public void testDeleteOnUploadVsp_negative() {
@@ -238,6 +181,7 @@ public class NetworkManagerImplTest {
 
   private void testCreate_negative(NetworkEntity network, String expectedErrorCode) {
     try {
+      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
       networkManager.createNetwork(network);
       Assert.fail();
     } catch (CoreException exception) {
@@ -281,6 +225,7 @@ public class NetworkManagerImplTest {
   private void testDelete_negative(String vspId, Version version, String networkId,
                                    String expectedErrorCode) {
     try {
+      doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(),anyObject());
       networkManager.deleteNetwork(vspId, version, networkId);
       Assert.fail();
     } catch (CoreException exception) {
