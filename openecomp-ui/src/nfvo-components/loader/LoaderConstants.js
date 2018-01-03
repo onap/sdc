@@ -17,5 +17,8 @@ import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
 	SHOW: null,
-	HIDE: null
+	HIDE: null,
+
+	SEND_REQUEST:  null,
+	RECEIVE_RESPONSE: null
 });

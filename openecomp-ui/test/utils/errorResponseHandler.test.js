@@ -29,7 +29,7 @@ describe('Error Response Handler Util', () => {
 	it('validating error in policyException', () => {
 		let textStatus = '', errorThrown = '';
 		let xhr = {
-			responseJSON: {
+			data: {
 				requestError: {
 					policyException: {
 						messageId: 'SVC4122',
@@ -59,7 +59,7 @@ describe('Error Response Handler Util', () => {
 	it('validating error in serviceException with variables', () => {
 		let textStatus = '', errorThrown = '';
 		let xhr = {
-			responseJSON: {
+			data: {
 				requestError: {
 					serviceException: {
 						messageId: 'SVC4122',
@@ -88,7 +88,7 @@ describe('Error Response Handler Util', () => {
 	it('validating error in response', () => {
 		let textStatus = '', errorThrown = '';
 		let xhr = {
-			responseJSON: {
+			data: {
 				status: 'AA',
 				message: 'Error: Invalid data.'
 			}

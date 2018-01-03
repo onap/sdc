@@ -54,15 +54,15 @@ function parseATTExceptionObject(responseJSON) {
 	return {title, msg};
 }
 
-var errorResponseHandler = (xhr/*, textStatus, errorThrown*/) => {
+var errorResponseHandler = (error) => {
 	let errorData;
-	if (xhr.responseJSON) {
-		errorData = parseATTExceptionObject(xhr.responseJSON);
+	if (error.data) {
+		errorData = parseATTExceptionObject(error.data);
 	}
 	else {
 		errorData = {
-			title: xhr.statusText,
-			msg: xhr.responseText,			
+			title: error.statusText,
+			msg: error.responseText,
 		};
 	}
 	store.dispatch({

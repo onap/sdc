@@ -15,8 +15,36 @@
  */
 import {actionTypes} from './LoaderConstants.js';
 
-export default (state = {}, action) => {
+export default (state = {fetchingRequests : 0, currentlyFetching : [],  isLoading : false}, action) => {
+	let fetchingRequests = state.fetchingRequests;
+	let newArray;
 	switch (action.type) {
+		case actionTypes.SEND_REQUEST:
+			fetchingRequests++;
+			newArray = state.currentlyFetching.slice();
+			newArray.splice(0, 0, action.url);
+			if (DEBUG) {
+				console.log('Loader SEND REQUEST url: ' + action.url);
+				console.log('Loader SEND REQUEST number of fetching requests: ' + fetchingRequests);
+			}
+			return {
+				fetchingRequests: fetchingRequests,
+				currentlyFetching : newArray,
+				isLoading: true
+			};
+		case actionTypes.RECEIVE_RESPONSE:
+			fetchingRequests--;
+
+			newArray = state.currentlyFetching.filter((item) => {return item !== action.url;});
+			if (DEBUG) {
+				console.log('Loader RECEIVE_RESPONSE url: ' + action.url);
+				console.log('Loader RECEIVE_RESPONSE: number of fetching requests: ' + fetchingRequests);
+			}
+			return {
+				currentlyFetching : newArray,
+				fetchingRequests: fetchingRequests,
+				isLoading: (fetchingRequests !== 0)
+			};
 		case actionTypes.SHOW:
 			return {isLoading: true};
 		case actionTypes.HIDE:

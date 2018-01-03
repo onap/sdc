@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
+import showFileSaveDialog from 'nfvo-utils/ShowFileSaveDialog.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import isEqual from 'lodash/isEqual.js';
 import cloneDeep from 'lodash/cloneDeep.js';
@@ -30,13 +31,6 @@ const options = {
 	}
 };
 
-
-function getTimestampString() {
-	let date = new Date();
-	let z = n => n < 10 ? '0' + n : n;
-	return `${date.getFullYear()}-${z(date.getMonth())}-${z(date.getDate())}_${z(date.getHours())}-${z(date.getMinutes())}`;
-}
-
 function fetchVspIdAndVersion() {
 
 	let vspId = sessionStorage.getItem('validationAppVspId');
@@ -52,34 +46,6 @@ function fetchVspIdAndVersion() {
 			});
 	}
 
-}
-
-
-function showFileSaveDialog({blob, xhr, defaultFilename, addTimestamp}) {
-	let filename;
-	let contentDisposition = xhr.getResponseHeader('content-disposition');
-	let match = contentDisposition ? contentDisposition.match(/filename=(.*?)(;|$)/) : false;
-	if (match) {
-		filename = match[1];
-	} else {
-		filename = defaultFilename;
-	}
-
-	if (addTimestamp) {
-		filename = filename.replace(/(^.*?)\.([^.]+$)/, `$1_${getTimestampString()}.$2`);
-	}
-
-	let link = document.createElement('a');
-	let url = URL.createObjectURL(blob);
-	link.href = url;
-	link.download = filename;
-	link.style.display = 'none';
-	document.body.appendChild(link);
-	link.click();
-	setTimeout(function(){
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
-	}, 0);
 }
 
 
@@ -137,9 +103,9 @@ function downloadHeatFile() {
 				...options,
 				dataType: 'binary'
 			})
-				.done((blob, statusText, xhr) => showFileSaveDialog({
-					blob,
-					xhr,
+				.done((response) => showFileSaveDialog({
+					blob: response.blob,
+					headers: response.headers,
 					defaultFilename: 'HEAT_file.zip',
 					addTimestamp: true
 				}));

@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
+import showFileSaveDialog from 'nfvo-utils/ShowFileSaveDialog.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
@@ -182,40 +183,6 @@ function getExpandedItemsId(items, itemIdToToggle) {
 	return false;
 }
 
-function getTimestampString() {
-	let date = new Date();
-	let z = n => n < 10 ? '0' + n : n;
-	return `${date.getFullYear()}-${z(date.getMonth())}-${z(date.getDate())}_${z(date.getHours())}-${z(date.getMinutes())}`;
-}
-
-function showFileSaveDialog({blob, xhr, defaultFilename, addTimestamp}) {
-	let filename;
-	let contentDisposition = xhr.getResponseHeader('content-disposition') ? xhr.getResponseHeader('content-disposition') : '';
-	let match = contentDisposition.match(/filename=(.*?)(;|$)/);
-	if (match) {
-		filename = match[1];
-	}
-	else {
-		filename = defaultFilename;
-	}
-
-	if (addTimestamp) {
-		filename = filename.replace(/(^.*?)\.([^.]+$)/, `$1_${getTimestampString()}.$2`);
-	}
-
-	let link = document.createElement('a');
-	let url = URL.createObjectURL(blob);
-	link.href = url;
-	link.download = filename;
-	link.style.display = 'none';
-	document.body.appendChild(link);
-	link.click();
-	setTimeout(function(){
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
-	}, 0);
-}
-
 function migrateSoftwareProduct(vspId, version) {
 	return RestAPIUtil.put(`${baseUrl()}${vspId}/versions/${version.id}/heal`);
 }
@@ -325,10 +292,20 @@ const SoftwareProductActionHelper = {
 	},
 
 	downloadHeatFile(dispatch, {softwareProductId, heatCandidate, isReadOnlyMode, version}){
-		let p = isReadOnlyMode ? Promise.resolve() : SoftwareProductActionHelper.updateSoftwareProductHeatCandidate(dispatch, {softwareProductId, heatCandidate, version});
+		let p = isReadOnlyMode ? Promise.resolve() : SoftwareProductActionHelper.updateSoftwareProductHeatCandidate(dispatch, {
+			softwareProductId,
+			heatCandidate,
+			version});
 		p.then(() => {
 			fetchOrchestrationTemplateCandidate(softwareProductId, version)
-				.then((blob, statusText, xhr) => showFileSaveDialog({blob, xhr, defaultFilename: 'HEAT_file.zip', addTimestamp: true}));
+				.then((response) => {
+					showFileSaveDialog({
+						blob: response.blob,
+						headers: response.headers,
+						defaultFilename: 'HEAT_file.zip',
+						addTimestamp: true
+					});
+				});
 		}, null/* do not download if data was not saved correctly*/);
 	},
 

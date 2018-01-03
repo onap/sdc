@@ -33,9 +33,12 @@ class Loader extends React.Component {
 		isLoading: false
 	};
 
+	shouldComponentUpdate(nextProps) {
+		return (nextProps.isLoading !== this.props.isLoading);
+	}
+
 	render() {
 		let {isLoading} = this.props;
-
 		return (
 			<div className='onboarding-loader'>
 				{
