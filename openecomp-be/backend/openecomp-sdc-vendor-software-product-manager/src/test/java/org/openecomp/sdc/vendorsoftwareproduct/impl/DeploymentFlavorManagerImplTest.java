@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Matchers.anyObject;
@@ -43,6 +44,8 @@ public class DeploymentFlavorManagerImplTest {
   private static final String COMPONENT_ID = "COMPONENT_ID";
   private static final String DF1_ID = "df1";
   private static final String DF2_ID = "df2";
+  private static final String FG_ID = "FG_ID";
+  private static final List<String> fgs = Collections.singletonList(FG_ID);
 
   @Mock
   private CompositionEntityDataManager compositionEntityDataManagerMock;
@@ -88,6 +91,7 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     deploymentFlavorManager.createDeploymentFlavor(expected);
@@ -161,6 +165,7 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     try {
@@ -190,6 +195,7 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
@@ -222,6 +228,7 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
@@ -299,30 +306,11 @@ public class DeploymentFlavorManagerImplTest {
 
   @Test
   public void testGetNonExistingDepFlavorId_negative() {
-    testGet_negative(VSP_ID, VERSION, "non existing image id",
+    testGet_negative(VSP_ID, VERSION,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
-  /*
-  @Test
-  public void testGet() {
-    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
-    doReturn(expected).when(deploymentFlavorDaoMock).get(anyObject());
 
-    VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
-    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
-
-    CompositionEntityResponse<DeploymentFlavor> response =
-        deploymentFlavorManager.getDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
-    Assert.assertEquals(response.getId(), expected.getId());
-    Assert
-        .assertEquals(response.getData().getModel(), expected.getDeploymentFlavorCompositionData().
-            getModel());
-    Assert.assertEquals(response.getData().getDescription(),
-        expected.getDeploymentFlavorCompositionData().
-            getDescription());
-  }
-*/
   @Test
   public void testDeleteDepFlavorOnHEAT() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
@@ -374,6 +362,7 @@ public class DeploymentFlavorManagerImplTest {
     DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
     deploymentFlavor.setModel(deploymentFlavorId + "name");
     deploymentFlavor.setDescription(deploymentFlavorId + " desc");
+    deploymentFlavor.setFeatureGroupId(FG_ID);
 
     deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
     return deploymentFlavorEntity;
@@ -395,10 +384,10 @@ public class DeploymentFlavorManagerImplTest {
     }
   }
 
-  private void testGet_negative(String vspId, Version version, String deploymentFlavorId,
+  private void testGet_negative(String vspId, Version version,
                                 String expectedErrorCode) {
     try {
-      deploymentFlavorManager.getDeploymentFlavor(vspId, version, deploymentFlavorId);
+      deploymentFlavorManager.getDeploymentFlavor(vspId, version, "non existing image id");
       Assert.fail();
     } catch (CoreException exception) {
       Assert.assertEquals(exception.code().id(), expectedErrorCode);

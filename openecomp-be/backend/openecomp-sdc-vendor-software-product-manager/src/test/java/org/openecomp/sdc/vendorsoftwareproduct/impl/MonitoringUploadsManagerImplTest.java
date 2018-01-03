@@ -10,6 +10,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploa
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringUploadStatus;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -50,6 +51,11 @@ public class MonitoringUploadsManagerImplTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @AfterMethod
+  public void tearDown(){
+    monitoringUploadsManager = null;
+  }
+
   @Test(expectedExceptions = CoreException.class)
   public void testUploadEmptyZip() {
     processFile(ZIP_DIR + EMPTY_ZIP_FILE_NAME, inputStream ->
@@ -59,8 +65,7 @@ public class MonitoringUploadsManagerImplTest {
   }
 
   @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp =
-      "Monitoring file uploaded for vendor software product with Id vspId and version version_id " +
-          "is invalid: Invalid zip file")
+      "Invalid zip file")
   public void testUploadInvalidZip() {
     processFile("/notZipFile", inputStream ->
         monitoringUploadsManager
