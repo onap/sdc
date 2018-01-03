@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
 public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
   private static final Logger LOGGER =
@@ -156,7 +158,8 @@ public class OrchestrationTemplateCandidateManagerImpl
 
     if (!candidateDataEntity.isPresent()) {
       ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
-          Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage());
+          getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage
+              (), ""));
       LOGGER.error(errorMessage.getMessage());
 
       MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);

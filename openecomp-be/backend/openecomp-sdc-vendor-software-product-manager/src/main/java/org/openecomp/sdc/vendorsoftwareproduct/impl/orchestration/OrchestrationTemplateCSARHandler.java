@@ -160,9 +160,10 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
   }
 
   @Override
-  protected boolean isInvalidRawZipData(UploadFileResponse uploadFileResponse,
+  protected boolean isInvalidRawZipData(String fileSuffix,
+                                        UploadFileResponse uploadFileResponse,
                                         byte[] uploadedFileData,
                                         CandidateService candidateService) {
-    return super.isInvalidRawZipData(uploadFileResponse, uploadedFileData, candidateService);
+    return super.isInvalidRawZipData(fileSuffix, uploadFileResponse, uploadedFileData, candidateService);
   }
 }

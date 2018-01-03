@@ -64,7 +64,7 @@ public class ValidationResponse {
       valid = false;
     }
 
-    VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors, serviceName, targetServiceName);
+    VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors, targetServiceName);
   }
 
 
@@ -103,7 +103,7 @@ public class ValidationResponse {
     }
 
     VendorSoftwareProductUtils
-            .setErrorsIntoLogger(uploadDataErrors, serviceName, targetServiceName);
+            .setErrorsIntoLogger(uploadDataErrors, targetServiceName);
   }
 
   public Map<String, List<ErrorMessage>> getCompilationErrors() {
@@ -125,7 +125,7 @@ public class ValidationResponse {
     }
 
     VendorSoftwareProductUtils
-            .setErrorsIntoLogger(uploadDataErrors, serviceName, targetServiceName);
+            .setErrorsIntoLogger(uploadDataErrors, targetServiceName);
   }
 
   public QuestionnaireValidationResult getQuestionnaireValidationResult() {

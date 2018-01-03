@@ -77,7 +77,7 @@ public class UploadFileValidationTest {
             USER1);
     Assert.assertEquals(uploadFileResponse.getErrors().get(SdcCommon.UPLOAD_FILE).get(0)
             .getMessage(),
-        Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage());
+        Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage());
   }
 
   @Test(dependsOnMethods = "testUploadEmptyFile")
