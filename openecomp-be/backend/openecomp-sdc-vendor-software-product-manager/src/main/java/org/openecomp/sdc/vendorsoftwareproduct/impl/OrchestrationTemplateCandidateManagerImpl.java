@@ -31,7 +31,6 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.annotations.Metrics;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -130,8 +129,8 @@ public class OrchestrationTemplateCandidateManagerImpl
       if (CollectionUtils.isNotEmpty(errorMessages)) {
         Map<String, List<ErrorMessage>> errorsMap = new HashMap<>();
         errorsMap.put(SdcCommon.UPLOAD_FILE, errorMessages);
-        response.setUploadDataErrors(errorsMap, LoggerServiceName.Update_Manifest,
-            LoggerTragetServiceName.VALIDATE_FILE_DATA_STRUCTURE);
+        response.setUploadDataErrors(errorsMap,
+                LoggerTragetServiceName.VALIDATE_FILE_DATA_STRUCTURE);
 
         MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
         return response;

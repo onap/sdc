@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.utils;
@@ -34,7 +30,6 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.slf4j.MDC;
@@ -42,15 +37,17 @@ import org.slf4j.MDC;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 public class VendorSoftwareProductUtils {
 
-  private static final String MANUAL = "Manual";
-  protected static Logger logger =
-      (Logger) LoggerFactory.getLogger(VendorSoftwareProductUtils.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductUtils.class);
+
+  private VendorSoftwareProductUtils(){
+
+  }
 
   /**
    * Add file names to upload file response.
@@ -70,22 +67,6 @@ public class VendorSoftwareProductUtils {
   }
 
   /**
-   * Validate raw zip data.
-   *
-   * @param uploadedFileData the uploaded file data
-   * @param errors           the errors
-   */
-  public static void validateRawZipData(byte[] uploadedFileData,
-                                        Map<String, List<ErrorMessage>> errors) {
-    if (uploadedFileData.length == 0) {
-      MDC.put(LoggerConstants.ERROR_DESCRIPTION, LoggerErrorDescription.INVALID_ZIP);
-      ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.UPLOAD_FILE, errors).add(
-          new ErrorMessage(ErrorLevel.ERROR,
-              Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
-    }
-  }
-
-  /**
    * Validate content zip data.
    *
    * @param contentMap the content map
@@ -94,7 +75,7 @@ public class VendorSoftwareProductUtils {
   public static void validateContentZipData(FileContentHandler contentMap,
                                             Map<String, List<ErrorMessage>> errors) {
     MDC.put(LoggerConstants.ERROR_DESCRIPTION, LoggerErrorDescription.INVALID_ZIP);
-    if (contentMap.getFileList().size() == 0) {
+    if (contentMap.getFileList().isEmpty()) {
       ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.UPLOAD_FILE, errors)
           .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
     }
@@ -109,7 +90,8 @@ public class VendorSoftwareProductUtils {
    */
   public static Map<MonitoringUploadType, String> mapArtifactsByType(
       Collection<ComponentMonitoringUploadEntity> artifacts) {
-    Map<MonitoringUploadType, String> artifactTypeToFilename = new HashMap<>();
+    Map<MonitoringUploadType, String> artifactTypeToFilename
+            = new EnumMap<>(MonitoringUploadType.class);
 
     for (ComponentMonitoringUploadEntity entity : artifacts) {
       artifactTypeToFilename.put(entity.getType(), entity.getArtifactName());
@@ -119,21 +101,13 @@ public class VendorSoftwareProductUtils {
   }
 
 
-  private static boolean isTrapOrPoll(MonitoringUploadType type) {
-    return type.equals(MonitoringUploadType.SNMP_POLL) ||
-        type.equals(MonitoringUploadType.SNMP_TRAP);
-  }
-
-
   /**
    * Sets errors into logger.
-   *
-   * @param errors            the errors
-   * @param serviceName       the service name
+   *  @param errors            the errors
    * @param targetServiceName the target service name
    */
   public static void setErrorsIntoLogger(Map<String, List<ErrorMessage>> errors,
-                                         LoggerServiceName serviceName, String targetServiceName) {
+                                         String targetServiceName) {
     MdcDataErrorMessage mdcDataErrorMessage =
         new MdcDataErrorMessage(targetServiceName, LoggerConstants.TARGET_ENTITY_DB,
             ErrorLevel.ERROR.name(), null, null);
@@ -146,20 +120,18 @@ public class VendorSoftwareProductUtils {
     for (Map.Entry<String, List<ErrorMessage>> listEntry : errors.entrySet()) {
       List<ErrorMessage> errorList = listEntry.getValue();
       for (ErrorMessage message : errorList) {
-        logger.error(message.getMessage());
+        LOGGER.error(message.getMessage());
       }
     }
   }
 
   /**
    * Sets errors into logger.
-   *
-   * @param errors            the errors
-   * @param serviceName       the service name
+   *  @param errors            the errors
    * @param targetServiceName the target service name
    */
   public static void setErrorsIntoLogger(Collection<ErrorCode> errors,
-                                         LoggerServiceName serviceName, String targetServiceName) {
+                                         String targetServiceName) {
     MdcDataErrorMessage mdcDataErrorMessage =
         new MdcDataErrorMessage(targetServiceName, LoggerConstants.TARGET_ENTITY_DB,
             ErrorLevel.ERROR.name(), null, null);
@@ -170,17 +142,8 @@ public class VendorSoftwareProductUtils {
     }
 
     for (ErrorCode error : errors) {
-      logger.error(error.message());
+      LOGGER.error(error.message());
     }
   }
-
-  /*public static boolean isManual(String vspId, Version version, VendorSoftwareProductInfoDao
-      vspInfoDao) {
-    String onboardingMethod = vspInfoDao.get(new VspDetails(vspId, version)).getOnboardingMethod();
-    if (MANUAL.equals(onboardingMethod)) {
-      return true;
-    }
-    return false;
-  }*/
 
 }
