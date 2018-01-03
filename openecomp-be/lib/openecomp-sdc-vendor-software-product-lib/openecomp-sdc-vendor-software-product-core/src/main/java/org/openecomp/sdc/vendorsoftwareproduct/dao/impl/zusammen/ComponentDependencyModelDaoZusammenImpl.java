@@ -10,8 +10,6 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToComponentDependencyModelConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
@@ -30,9 +28,6 @@ import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
  * Created by ayalaben on 5/16/2017.
  */
 public class ComponentDependencyModelDaoZusammenImpl implements ComponentDependencyModelDao {
-
-  private static final Logger logger =
-      LoggerFactory.getLogger(OrchestrationTemplateCandidateDaoZusammenImpl.class);
 
   private ZusammenAdaptor zusammenAdaptor;
 
@@ -151,11 +146,10 @@ public class ComponentDependencyModelDaoZusammenImpl implements ComponentDepende
 
     Info info = new Info();
     info.addProperty(ElementPropertyName.elementType.name(), ElementType.ComponentDependency);
-    //info.addProperty(ComponentDependencyModelPropertyName.id.name(), entity.getId());
-    info.addProperty(ComponentDependencyModelPropertyName.relation.name(), compDep.getRelation());
-    info.addProperty(ComponentDependencyModelPropertyName.sourcecomponent_id.name(),
+    info.addProperty(ComponentDependencyModelPropertyName.RELATION.getVal(), compDep.getRelation());
+    info.addProperty(ComponentDependencyModelPropertyName.SOURCE_COMPONENT_ID.getVal(),
         compDep.getSourceComponentId());
-    info.addProperty(ComponentDependencyModelPropertyName.targetcomponent_id.name(),
+    info.addProperty(ComponentDependencyModelPropertyName.TARGET_COMPONENT_ID.getVal(),
         compDep.getTargetComponentId());
 
     componentDependencyElement.setInfo(info);
@@ -164,9 +158,19 @@ public class ComponentDependencyModelDaoZusammenImpl implements ComponentDepende
   }
 
   private enum ComponentDependencyModelPropertyName {
-    id,
-    relation,
-    sourcecomponent_id,
-    targetcomponent_id,
+    ID("id"),
+    RELATION("relation"),
+    SOURCE_COMPONENT_ID("sourcecomponent_id"),
+    TARGET_COMPONENT_ID("targetcomponent_id");
+
+    private String val;
+
+    ComponentDependencyModelPropertyName(String val){
+      this.val=val;
+    }
+
+    public String getVal() {
+      return val;
+    }
   }
 }
