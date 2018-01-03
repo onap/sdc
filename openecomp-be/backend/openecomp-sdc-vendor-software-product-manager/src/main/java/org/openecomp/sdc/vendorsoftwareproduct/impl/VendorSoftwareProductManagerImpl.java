@@ -43,7 +43,6 @@ import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -220,10 +219,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
                 vspDetails.getVersion()));
       }
       validationResponse.setUploadDataErrors(validateOrchestrationTemplate(orchestrationTemplate),
-          LoggerServiceName.Submit_VSP, LoggerTragetServiceName.SUBMIT_VSP);
+              LoggerTragetServiceName.SUBMIT_VSP);
     }
     validationResponse
-        .setVspErrors(vspErrors, LoggerServiceName.Submit_VSP, LoggerTragetServiceName.SUBMIT_VSP);
+        .setVspErrors(vspErrors, LoggerTragetServiceName.SUBMIT_VSP);
     validationResponse.setLicensingDataErrors(validateLicensingData(vspDetails));
 
 
