@@ -16,7 +16,6 @@
   "org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory":"org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory": "org.openecomp.sdc.vendorsoftwareproduct.factory.impl.CandidateServiceFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionDataExtractorFactory": "org.openecomp.sdc.vendorsoftwareproduct.factory.impl.CompositionDataExtractorFactoryImpl",
-  "org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.factory.impl.CompositionEntityDataManagerFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.factory.ManifestCreatorFactory": "org.openecomp.sdc.vendorsoftwareproduct.factory.impl.ManifestCreatorFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.DeploymentFlavorDaoFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.ComputeDaoFactoryImpl",

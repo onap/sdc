@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.vendorsoftwareproduct.services.composition;
+package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
@@ -59,16 +59,6 @@ public interface CompositionEntityDataManager {
   void saveCompositionData(String vspId, Version version, CompositionData compositionData);
 
   Set<CompositionEntityValidationData> getAllErrorsByVsp(String vspId);
-
-  void saveComponents(String vspId, Version version, CompositionData compositionData,
-                      Map<String, String> networkIdByName);
-
-  void saveNicsByComponent(String vspId, Version version, Map<String, String> networkIdByName,
-                           Component component, String componentId);
-
-  Map<String, String> saveNetworks(String vspId, Version version, CompositionData compositionData);
-
-  NetworkEntity createNetwork(NetworkEntity network);
 
   ComponentEntity createComponent(ComponentEntity component);
 
