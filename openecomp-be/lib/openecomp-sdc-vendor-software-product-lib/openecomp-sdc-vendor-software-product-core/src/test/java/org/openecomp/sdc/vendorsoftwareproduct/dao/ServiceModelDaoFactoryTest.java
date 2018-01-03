@@ -49,6 +49,8 @@ import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
@@ -65,8 +67,14 @@ public class ServiceModelDaoFactoryTest {
   private static final String baseServiceTemplateName = "baseYaml.yaml";
   private static String artifact001;
 
-  static {
+  @BeforeMethod
+  public void setUp(){
     SessionContextProviderFactory.getInstance().createInterface().create("test");
+  }
+
+  @AfterMethod
+  public void tearDaown(){
+    SessionContextProviderFactory.getInstance().createInterface().close();
   }
 
 
@@ -84,14 +92,6 @@ public class ServiceModelDaoFactoryTest {
     ToscaServiceModel model = getToscaServiceModel();
     serviceModelDaoZusammen.storeServiceModel(vspId, version, model);
   }
-
-  private SessionContext getSessionContext() {
-    SessionContext context = new SessionContext();
-    context.setUser(new UserInfo("USER_A"));
-    context.setTenant("asdc");
-    return context;
-  }
-
 
   @Test
   public void getServiceModelTest() {
@@ -181,7 +181,7 @@ public class ServiceModelDaoFactoryTest {
     return fileContentHandler;
   }
 
-  public ServiceTemplate getServiceTemplate() {
+  private ServiceTemplate getServiceTemplate() {
     ServiceTemplate serviceTemplate = new ServiceTemplate();
     serviceTemplate.setTosca_definitions_version("version 1.0");
     serviceTemplate.setDescription(CommonMethods.nextUuId());
@@ -194,15 +194,15 @@ public class ServiceModelDaoFactoryTest {
     private Map<String, ElementInfo> elementInfoMap = new HashMap();
     private Collection<Element> elements = new ArrayList<>();
 
-    public void setItemVersion(ItemVersion itemVersion) {
+    private void setItemVersion(ItemVersion itemVersion) {
       this.itemVersion = itemVersion;
     }
 
-    public void addElementInfo(String key, ElementInfo elementInfo) {
+    private void addElementInfo(String key, ElementInfo elementInfo) {
       elementInfoMap.put(key, elementInfo);
     }
 
-    public void addElement(Element element) {
+    private void addElement(Element element) {
       elements.add(element);
     }
 
@@ -225,14 +225,14 @@ public class ServiceModelDaoFactoryTest {
     @Override
     public Optional<Element> getElement(SessionContext context, ElementContext elementContext,
                                         String elementId) {
-      return null;
+      return Optional.empty();
     }
 
     @Override
     public Optional<Element> getElementByName(SessionContext context,
                                               ElementContext elementContext,
                                               Id parentElementId, String elementName) {
-      return null;
+      return Optional.empty();
     }
 
     @Override
@@ -372,7 +372,7 @@ public class ServiceModelDaoFactoryTest {
     public Optional<ElementInfo> getElementInfo(SessionContext context,
                                                 ElementContext elementContext,
                                                 Id elementId) {
-      return null;
+      return Optional.empty();
     }
 
     @Override
@@ -396,7 +396,7 @@ public class ServiceModelDaoFactoryTest {
     public Optional<ElementConflict> getElementConflict(SessionContext context,
                                                         ElementContext elementContext,
                                                         Id id) {
-      return null;
+      return Optional.empty();
     }
 
     @Override

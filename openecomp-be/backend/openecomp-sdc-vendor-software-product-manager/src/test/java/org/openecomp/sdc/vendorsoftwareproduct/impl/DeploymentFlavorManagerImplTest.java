@@ -43,6 +43,7 @@ public class DeploymentFlavorManagerImplTest {
   private static final String COMPONENT_ID = "COMPONENT_ID";
   private static final String DF1_ID = "df1";
   private static final String DF2_ID = "df2";
+  private static final String FG_ID = "FG_ID";
 
   @Mock
   private CompositionEntityDataManager compositionEntityDataManagerMock;
@@ -88,6 +89,9 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    List<String> fgs = new ArrayList<>();
+    fgs.add(FG_ID);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     deploymentFlavorManager.createDeploymentFlavor(expected);
@@ -161,6 +165,9 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    List<String> fgs = new ArrayList<>();
+    fgs.add(FG_ID);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     try {
@@ -190,6 +197,9 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    List<String> fgs = new ArrayList<>();
+    fgs.add(FG_ID);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
@@ -222,6 +232,9 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    List<String> fgs = new ArrayList<>();
+    fgs.add(FG_ID);
+    vspDetails.setFeatureGroups(fgs);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
@@ -374,6 +387,7 @@ public class DeploymentFlavorManagerImplTest {
     DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
     deploymentFlavor.setModel(deploymentFlavorId + "name");
     deploymentFlavor.setDescription(deploymentFlavorId + " desc");
+    deploymentFlavor.setFeatureGroupId(FG_ID);
 
     deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
     return deploymentFlavorEntity;
