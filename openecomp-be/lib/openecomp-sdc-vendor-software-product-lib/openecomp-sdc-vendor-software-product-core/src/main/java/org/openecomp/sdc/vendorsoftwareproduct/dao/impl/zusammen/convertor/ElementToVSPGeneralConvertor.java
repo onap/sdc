@@ -45,31 +45,31 @@ public class ElementToVSPGeneralConvertor extends ElementConvertor {
     VspDetails vspDetails = new VspDetails();
 
     vspDetails.setName(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl
-        .InfoPropertyName.name.name()));
+        .InfoPropertyName.NAME.getValue()));
     vspDetails.setDescription(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.description.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.DESCRIPTION.getValue()));
     vspDetails.setIcon(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.icon.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ICON.getValue()));
     vspDetails.setCategory(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.category.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.CATEGORY.getValue()));
     vspDetails.setSubCategory(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.subCategory.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.SUB_CATEGORY.getValue()));
     vspDetails.setVendorId(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.vendorId.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_ID.getValue()));
     vspDetails.setVendorName(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.vendorName.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_NAME.getValue()));
     if (info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.vendorVersion.name()) != null) {
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue()) != null) {
       vspDetails.setVlmVersion(new Version(info.getProperty(
-          VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.vendorVersion.name())));
+          VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue())));
     }
 
     vspDetails.setLicenseAgreement(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.licenseAgreement.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_AGREEMENT.getValue()));
     vspDetails.setFeatureGroups(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.featureGroups.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.FEATURE_GROUPS.getValue()));
     vspDetails.setOnboardingMethod(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.onboardingMethod.name()));
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ON_BOARDING_METHOD.getValue()));
 
     return vspDetails;
   }
