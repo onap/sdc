@@ -17,6 +17,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploa
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-
+    // registerVersioning is not implemented for ComponentArtifactDaoZusammenImpl
   }
 
   @Override
@@ -112,12 +113,11 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
     SessionContext context = createSessionContext();
     ElementContext elementContext =
         new ElementContext(mibEntity.getVspId(), mibEntity.getVersion().getId());
-    ElementToComponentMonitoringUploadConvertor
-        convertor = new ElementToComponentMonitoringUploadConvertor();
     return zusammenAdaptor
         .listElementsByName(context, elementContext, new Id(mibEntity.getComponentId()),
-            ElementType.Mibs.toString()).stream()
-        .map(elementInfo -> convertor.convert(elementInfo))
+            ElementType.Mibs.toString())
+        .stream()
+        .map(new ElementToComponentMonitoringUploadConvertor()::convert)
         .map(mib -> {
           mib.setVspId(mibEntity.getVspId());
           mib.setVersion(mibEntity.getVersion());
@@ -129,20 +129,6 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
 
   @Override
   public void deleteAll(ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-    /*ZusammenElement mibsElement =
-        buildStructuralElement(ElementType.Mibs, Action.DELETE);
-
-    ZusammenElement componentElement = buildComponentElement(componentMonitoringUploadEntity);
-
-    SessionContext context = createSessionContext();
-    ElementContext elementContext =
-        new ElementContext(componentMonitoringUploadEntity.getVspId(),
-            componentMonitoringUploadEntity.getVersion().getId());
-
-    zusammenAdaptor.saveElement(context, elementContext,
-        VspaggregateElements(componentElement, mibsElement), "Delete mibs");
-
-*/
     SessionContext context = createSessionContext();
     ElementContext elementContext =
         new ElementContext(componentMonitoringUploadEntity.getVspId(),
@@ -176,7 +162,7 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
             new Id(monitoringUploadEntity.getComponentId()), ElementType.Mibs.name());
 
     if (!elementByName.isPresent()) {
-      return null;
+      return Collections.emptyList();
     } else {
       final Id elementId = elementByName.get().getElementId();
       return zusammenAdaptor.listElementData(context, elementContext, elementId).stream()
@@ -212,14 +198,11 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
 
   private ZusammenElement buildMibElementStructure(
       ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-    ZusammenElement monitoringElement =
-        buildStructuralElement(getMonitoringStructuralElement(componentMonitoringUploadEntity.getType()),
-            Action.UPDATE);
-    return monitoringElement;
+    return buildStructuralElement(getMonitoringStructuralElement(componentMonitoringUploadEntity
+            .getType()), Action.UPDATE);
   }
 
-  private ElementType getMonitoringStructuralElement(MonitoringUploadType type)
-      throws IllegalArgumentException {
+  private ElementType getMonitoringStructuralElement(MonitoringUploadType type){
     switch (type) {
       case SNMP_POLL:
         return ElementType.SNMP_POLL;
