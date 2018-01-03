@@ -35,6 +35,7 @@ import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
@@ -122,6 +123,8 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     OrchestrationUtil orchestrationUtil = new OrchestrationUtil();
     Map<String, String> vspComponentIdNameInfoBeforeProcess =
         orchestrationUtil.getVspComponentIdNameInfo(vspId, version);
+    Collection<ComponentDependencyModelEntity> componentDependenciesBeforeDelete =
+        orchestrationUtil.getComponentDependenciesBeforeDelete(vspId, version);
     orchestrationUtil
         .backupComponentsQuestionnaireBeforeDelete(vspId, version, componentsQuestionnaire,
             componentNicsQuestionnaire, componentMibList, processes, processArtifact);
@@ -150,7 +153,7 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     orchestrationUtil.retainComponentQuestionnaireData(vspId, version, componentsQuestionnaire,
         componentNicsQuestionnaire, componentMibList, processes, processArtifact);
     orchestrationUtil.updateVspComponentDependencies(vspId, version,
-        vspComponentIdNameInfoBeforeProcess);
+        vspComponentIdNameInfoBeforeProcess, componentDependenciesBeforeDelete);
 
     LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     uploadFileResponse.addStructureErrors(uploadErrors);

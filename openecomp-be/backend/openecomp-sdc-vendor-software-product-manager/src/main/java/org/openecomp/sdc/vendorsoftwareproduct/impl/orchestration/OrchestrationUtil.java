@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.model.dao.ServiceModelDao;
@@ -76,8 +78,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME;
 
 public class OrchestrationUtil {
 
@@ -344,39 +344,42 @@ public class OrchestrationUtil {
   }
 
   public void updateVspComponentDependencies(String vspId, Version version,
-                                             Map<String, String> vspComponentIdNameInfoBeforeProcess) {
+                                             Map<String, String>
+                                                 vspComponentIdNameInfoBeforeProcess,
+                                             Collection<ComponentDependencyModelEntity>
+                                                 componentDependenciesBeforeDelete) {
     Map<String, String> updatedVspComponentNameIdInfo = getVspComponentNameIdInfo(vspId, version);
     if (MapUtils.isNotEmpty(updatedVspComponentNameIdInfo)) {
       Set<String> updatedVspComponentNames = updatedVspComponentNameIdInfo.keySet();
-      Collection<ComponentDependencyModelEntity> componentDependencies =
-          componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId,
-              version, null));
-      if (CollectionUtils.isNotEmpty(componentDependencies)) {
-        updateComponentDependency(vspComponentIdNameInfoBeforeProcess, componentDependencies,
-            updatedVspComponentNames, updatedVspComponentNameIdInfo);
+      if (CollectionUtils.isNotEmpty(componentDependenciesBeforeDelete)) {
+        restoreComponentDependencies(vspId, version, vspComponentIdNameInfoBeforeProcess,
+            componentDependenciesBeforeDelete, updatedVspComponentNames,
+            updatedVspComponentNameIdInfo);
       }
     }
   }
 
-  private void updateComponentDependency(Map<String, String> vspComponentIdNameInfoBeforeProcess,
-                                         Collection<ComponentDependencyModelEntity>
-                                             componentDependencies,
-                                         Set<String> updatedVspComponentNames,
-                                         Map<String, String> updatedVspComponentNameIdInfo) {
-    for (ComponentDependencyModelEntity componentDependency : componentDependencies) {
+  private void restoreComponentDependencies(String vspId, Version version,
+                                            Map<String, String> vspComponentIdNameInfoBeforeProcess,
+                                            Collection<ComponentDependencyModelEntity>
+                                             componentDependenciesBeforeDelete,
+                                            Set<String> updatedVspComponentNames,
+                                            Map<String, String> updatedVspComponentNameIdInfo) {
+    for (ComponentDependencyModelEntity componentDependency : componentDependenciesBeforeDelete) {
       String sourceComponentName = vspComponentIdNameInfoBeforeProcess.get(componentDependency
           .getSourceComponentId());
       String targetComponentName = vspComponentIdNameInfoBeforeProcess.get(componentDependency
           .getTargetComponentId());
       if (updatedVspComponentNames.contains(sourceComponentName)
           && (updatedVspComponentNames.contains(targetComponentName))) {
+        ComponentDependencyModelEntity restoredDependency =
+            new ComponentDependencyModelEntity(vspId, version, null);
         String newSourceComponentId = updatedVspComponentNameIdInfo.get(sourceComponentName);
-        componentDependency.setSourceComponentId(newSourceComponentId);
+        restoredDependency.setSourceComponentId(newSourceComponentId);
         String newTargetComponentId = updatedVspComponentNameIdInfo.get(targetComponentName);
-        componentDependency.setTargetComponentId(newTargetComponentId);
-        componentDependencyModelDao.update(componentDependency);
-      } else {
-        componentDependencyModelDao.delete(componentDependency);
+        restoredDependency.setTargetComponentId(newTargetComponentId);
+        restoredDependency.setRelation(componentDependency.getRelation());
+        componentDependencyModelDao.create(restoredDependency);
       }
     }
   }
@@ -393,6 +396,12 @@ public class OrchestrationUtil {
 
     }
     return vspComponentIdNameMap;
+  }
+
+  public Collection<ComponentDependencyModelEntity> getComponentDependenciesBeforeDelete(String
+                                                                         vspId, Version version) {
+    return componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId,
+            version, null));
   }
 
   private Map<String, String> getVspComponentNameIdInfo(String vspId,
