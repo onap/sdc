@@ -1,4 +1,4 @@
-package org.openecomp.core.tools.Commands.exportinfo.serialize;
+package org.openecomp.core.tools.commands.exportinfo.serialize;
 
 import org.openecomp.core.tools.exportinfo.ExportSerializer;
 import org.testng.annotations.Test;
