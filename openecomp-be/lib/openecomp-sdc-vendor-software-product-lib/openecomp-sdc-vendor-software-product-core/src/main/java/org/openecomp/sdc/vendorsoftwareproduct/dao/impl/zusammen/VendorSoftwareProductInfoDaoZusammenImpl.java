@@ -45,15 +45,11 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
 
   @Override
   public Collection<VspDetails> list(VspDetails entity) {
-    ElementToVSPGeneralConvertor convertor = new ElementToVSPGeneralConvertor();
-
-
     return zusammenAdaptor.listItems(createSessionContext()).stream()
         .filter(item -> "VendorSoftwareProduct".equals(item.getInfo().getProperty("item_type")))
-        .map(item -> convertor.convert(item))
+        .map(new ElementToVSPGeneralConvertor()::convert)
         .collect(Collectors.toList());
   }
-
 
   @Override
   public void create(VspDetails vspDetails) {
@@ -186,19 +182,6 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         questionnaireElement, "Update VSP Questionnaire");
   }
 
-
- /* @Override
-  public String getQuestionnaireData(String vspId, Version version) {
-    SessionContext context = createSessionContext();
-
-    return zusammenAdaptor
-        .getElementByName(context, new ElementContext(vspId, version.getId()), null,
-            ElementType.Questionnaire.name())
-        .map(questionnaireElement ->
-            new String(FileUtils.toByteArray(questionnaireElement.getData())))
-        .orElse(null);
-  }*/
-
   @Override
   public VspQuestionnaireEntity getQuestionnaire(String vspId, Version version) {
 
@@ -215,10 +198,8 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
   @Override
   public boolean isManual(String vspId, Version version) {
     final VspDetails vspDetails = get(new VspDetails(vspId, version));
-    if (vspDetails != null) {
-      if ("Manual".equals(vspDetails.getOnboardingMethod())) {
+    if (vspDetails != null && "Manual".equals(vspDetails.getOnboardingMethod())) {
         return true;
-      }
     }
     return false;
   }
@@ -237,41 +218,43 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     return questionnaireElement;
   }
 
-  private ZusammenElement mapTestElementToZusammenElement(String elementData) {
-    ZusammenElement testElement =
-        buildStructuralElement(ElementType.test, Action.UPDATE);
-    testElement.setData(new ByteArrayInputStream(elementData.getBytes()));
-    return testElement;
-  }
-
   private void addVspDetailsToInfo(Info info, VspDetails vspDetails) {
-    info.addProperty(InfoPropertyName.name.name(), vspDetails.getName());
-    info.addProperty(InfoPropertyName.description.name(), vspDetails.getDescription());
-    info.addProperty(InfoPropertyName.icon.name(), vspDetails.getIcon());
-    info.addProperty(InfoPropertyName.category.name(), vspDetails.getCategory());
-    info.addProperty(InfoPropertyName.subCategory.name(), vspDetails.getSubCategory());
-    info.addProperty(InfoPropertyName.vendorId.name(), vspDetails.getVendorId());
-    info.addProperty(InfoPropertyName.vendorName.name(), vspDetails.getVendorName());
+    info.addProperty(InfoPropertyName.NAME.getValue(), vspDetails.getName());
+    info.addProperty(InfoPropertyName.DESCRIPTION.getValue(), vspDetails.getDescription());
+    info.addProperty(InfoPropertyName.ICON.getValue(), vspDetails.getIcon());
+    info.addProperty(InfoPropertyName.CATEGORY.getValue(), vspDetails.getCategory());
+    info.addProperty(InfoPropertyName.SUB_CATEGORY.getValue(), vspDetails.getSubCategory());
+    info.addProperty(InfoPropertyName.VENDOR_ID.getValue(), vspDetails.getVendorId());
+    info.addProperty(InfoPropertyName.VENDOR_NAME.getValue(), vspDetails.getVendorName());
     if (vspDetails.getVlmVersion() != null) {
-      info.addProperty(InfoPropertyName.vendorVersion.name(), vspDetails.getVlmVersion().getId());
+      info.addProperty(InfoPropertyName.VENDOR_VERSION.getValue(), vspDetails.getVlmVersion().getId());
     }
-    info.addProperty(InfoPropertyName.licenseAgreement.name(), vspDetails.getLicenseAgreement());
-    info.addProperty(InfoPropertyName.featureGroups.name(), vspDetails.getFeatureGroups());
-    info.addProperty(InfoPropertyName.onboardingMethod.name(), vspDetails.getOnboardingMethod());
+    info.addProperty(InfoPropertyName.LICENSE_AGREEMENT.getValue(), vspDetails.getLicenseAgreement());
+    info.addProperty(InfoPropertyName.FEATURE_GROUPS.getValue(), vspDetails.getFeatureGroups());
+    info.addProperty(InfoPropertyName.ON_BOARDING_METHOD.getValue(), vspDetails.getOnboardingMethod());
   }
 
   public enum InfoPropertyName {
-    name,
-    description,
-    icon,
-    category,
-    subCategory,
-    vendorId,
-    vendorName,
-    vendorVersion,
-    licenseAgreement,
-    featureGroups,
-    onboardingMethod
+    NAME("name"),
+    DESCRIPTION("description"),
+    ICON("icon"),
+    CATEGORY("category"),
+    SUB_CATEGORY("subCategory"),
+    VENDOR_ID("vendorId"),
+    VENDOR_NAME("vendorName"),
+    VENDOR_VERSION("vendorVersion"),
+    LICENSE_AGREEMENT("licenseAgreement"),
+    FEATURE_GROUPS("featureGroups"),
+    ON_BOARDING_METHOD("onboardingMethod");
+
+    private String value;
+    InfoPropertyName(String value){
+      this.value=value;
+    }
+
+    public String getValue(){
+      return value;
+    }
   }
 
 }
