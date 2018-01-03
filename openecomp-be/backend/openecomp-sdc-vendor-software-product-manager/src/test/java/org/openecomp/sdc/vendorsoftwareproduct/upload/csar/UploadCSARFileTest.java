@@ -17,6 +17,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.upload.csar;
 
 
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -35,6 +36,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.function.Predicate;
@@ -58,12 +61,14 @@ public class UploadCSARFileTest {
   @Mock
   private ManifestCreatorNamingConventionImpl manifestCreator;
 
+  @InjectMocks
   private OrchestrationTemplateCandidateManagerImpl candidateManager;
 
 
-  public static String id001 = null;
-
-  public static Version activeVersion002 = null;
+  private static String id001 = "dummyId";
+  private static Version activeVersion002 = new Version("dummyVersion");
+  private static final String BASE_DIR = "/vspmanager.csar";
+  private static final String CSAR = "csar";
 
 
   @BeforeMethod
@@ -76,31 +81,69 @@ public class UploadCSARFileTest {
 
   @Test
   public void testSuccessfulUploadFile() throws Exception {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
+    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
-    try (InputStream is = getClass().getResourceAsStream("/vspmanager.csar/SDCmock.csar")) {
-      UploadFileResponse uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is, "csar", "SDCmock");
-      assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.CSAR);
-      assertEquals(0, uploadFileResponse.getErrors().size());
-      assertTrue(uploadFileResponse.getErrors().isEmpty());
+    testCsarUpload("successfulUpload.csar", 0);
+  }
+
+  @Test
+  public void testIllegalUploadInvalidFileInRoot() throws Exception {
+    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
+    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
+
+    UploadFileResponse response = testCsarUpload("invalidFileInRoot.csar", 1);
+    assertTrue(response.getErrors().values().stream().anyMatch(
+        getListPredicate(Messages.CSAR_FILES_NOT_ALLOWED.getErrorMessage().substring(0, 7))));
+  }
+
+  @Test
+  public void testIllegalUploadMissingMainServiceTemplate() throws Exception {
+    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
+    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
+
+    UploadFileResponse response = testCsarUpload("missingMainServiceTemplate.csar", 1);
+    assertTrue(response.getErrors().values().stream().anyMatch(
+        getListPredicate(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage().substring(0, 7))));
+  }
+
+  @Test
+  public void testUploadFileIsNotZip() throws Exception {
+    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
+    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
+
+    UploadFileResponse response = testCsarUpload("notCsar.txt", 1);
+    assertEquals("no csar file was uploaded or file doesn't exist",
+        response.getErrors().values().iterator().next().get(0).getMessage());
+  }
+
+  @Test
+  public void testUploadFileIsEmpty() throws Exception {
+    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
+    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
+
+    try (InputStream is = new ByteArrayInputStream(new byte[]{})) {
+      UploadFileResponse uploadFileResponse = candidateManager.upload(id001,
+          activeVersion002, is, "csar", "file");
+      assertEquals(1, uploadFileResponse.getErrors().size());
     }
   }
 
   @Test
-  public void testFail1UploadFile() throws Exception {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
+  public void testInvalidManifestContent() throws Exception {
+    VspDetails vspDetails = new VspDetails(id001, activeVersion002);
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
-    try (InputStream is = getClass().getResourceAsStream("/vspmanager.csar/SDCmockFail1.csar")) {
-      UploadFileResponse uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is,
-              "csar", "SDCmockFail1");
-      assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.CSAR);
-      assertEquals(1, uploadFileResponse.getErrors().size());
-      assertTrue(uploadFileResponse.getErrors().values().stream().anyMatch(
-          getListPredicate(Messages.CSAR_FILES_NOT_ALLOWED.getErrorMessage().substring(0, 7))));
+
+    try (InputStream is = getClass()
+        .getResourceAsStream(BASE_DIR + "/invalidManifestContent.csar")) {
+      UploadFileResponse response =
+          candidateManager.upload(id001, activeVersion002, is, "csar", "invalidManifestContent");
+      assertEquals(1, response.getErrors().size());
+      assertEquals(response.getErrors().values().iterator().next().get(0).getMessage(),
+          "Manifest " +
+              "contains invalid line : aaa: vCSCF");
+
     }
   }
 
@@ -112,79 +155,16 @@ public class UploadCSARFileTest {
     return error.iterator().next().getMessage().contains(substring);
   }
 
-  @Test
-  public void testFail2UploadFile() throws Exception {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
-    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-
-    try (InputStream is = getClass().getResourceAsStream("/vspmanager.csar/SDCmockFail2.csar")) {
-      UploadFileResponse uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is,
-              "csar", "SDCmockFail2");
-      assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.CSAR);
-      assertEquals(1, uploadFileResponse.getErrors().size());
-      assertTrue(uploadFileResponse.getErrors().values().stream().anyMatch(
-          getListPredicate(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage().substring(0, 7))));
+  private UploadFileResponse testCsarUpload(String csarFileName, int expectedErrorsNumber)
+      throws IOException {
+    UploadFileResponse uploadFileResponse;
+    try (InputStream is = getClass()
+        .getResourceAsStream(BASE_DIR + File.separator + csarFileName)) {
+      uploadFileResponse =
+          candidateManager.upload(id001, activeVersion002, is, CSAR, csarFileName);
+      assertEquals(expectedErrorsNumber, uploadFileResponse.getErrors().size());
     }
-  }
-
-  @Test
-  public void testFail3UploadFile() throws Exception {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
-    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-
-    try (InputStream is = getClass().getResourceAsStream("/vspmanager.csar/SDCmockFail3.csar")) {
-      UploadFileResponse uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is,
-              "csar", "SDCmockFail3");
-      assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.CSAR);
-      assertEquals(1, uploadFileResponse.getErrors().size());
-    }
-  }
-
-  @Test
-  public void testUploadFileIsNotZip() throws Exception {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
-    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-
-    try (InputStream is = new ByteArrayInputStream("Thia is not a zip file".getBytes());) {
-      UploadFileResponse uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is,
-              "csar", "file");
-      assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.CSAR);
-      assertFalse(uploadFileResponse.getErrors().isEmpty());
-      assertTrue(uploadFileResponse.getErrors().values().stream().anyMatch(
-          getListPredicate(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage().substring(0, 7))));
-    }
-  }
-
-  @Test
-  public void testUploadFileIsEmpty() throws Exception {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
-    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-
-    try (InputStream is = new ByteArrayInputStream(new byte[]{})) {
-      UploadFileResponse uploadFileResponse = candidateManager.upload(id001,
-          activeVersion002, is, "csar", "file");
-      assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.CSAR);
-      assertEquals(1, uploadFileResponse.getErrors().size());
-    }
-  }
-
-  @Test
-  public void testMFError() throws Exception {
-    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
-    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-
-    try (InputStream is = getClass().getResourceAsStream("/vspmanager.csar/SDCmockBrokenMF.csar")) {
-      UploadFileResponse uploadFileResponse =
-          candidateManager.upload(id001, activeVersion002, is, "csar", "SDCmockBrokenMF");
-      assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.CSAR);
-      assertEquals(1, uploadFileResponse.getErrors().size());
-      assertTrue(uploadFileResponse.getErrors().values().stream()
-          .anyMatch(getListPredicate(Messages.MANIFEST_NO_METADATA.getErrorMessage())));
-
-    }
+    return uploadFileResponse;
   }
 
 

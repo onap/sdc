@@ -66,19 +66,19 @@ public class CandidateServiceImplTest {
 
   @Test
   public void shouldReturnOptionalPresentIfInputStreamIsNull() {
-    assertTrue(candidateService.validateNonEmptyFileToUpload(null).isPresent());
+    assertTrue(candidateService.validateNonEmptyFileToUpload(null, "zip").isPresent());
   }
 
   // end validateNonEmptyFileToUpload tests
   // start validateNonEmptyFileToUpload tests
   @Test
   public void shouldReturnOptionalEmptyIfUploadedFileDataIsNotNull() {
-    assertEquals(candidateService.validateRawZipData(new byte[]{}), Optional.empty());
+    assertEquals(candidateService.validateRawZipData("zip", new byte[]{}), Optional.empty());
   }
 
   @Test
   public void shouldReturnOptionalPresentIfUploadedFileDataIsNull() {
-    assertTrue(candidateService.validateRawZipData(null).isPresent());
+    assertTrue(candidateService.validateRawZipData("zip", null).isPresent());
   }
   // end validateNonEmptyFileToUpload tests
   // start heatStructureTreeToFileDataStructure tests

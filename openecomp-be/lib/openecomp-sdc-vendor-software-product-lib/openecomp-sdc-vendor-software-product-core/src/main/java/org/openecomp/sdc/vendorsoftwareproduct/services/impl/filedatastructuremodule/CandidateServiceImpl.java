@@ -71,6 +71,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
 public class CandidateServiceImpl implements CandidateService {
   protected static final Logger logger = LoggerFactory.getLogger(CandidateServiceImpl.class);
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
@@ -90,27 +92,32 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   @Override
-  public Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream fileToUpload) {
+  public Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream fileToUpload,
+                                                             String fileSuffix) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null);
 
+    String errorMessage =
+        getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(),
+            fileSuffix);
+
     if (Objects.isNull(fileToUpload)) {
       return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
-          Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
+          errorMessage));
     } else {
       try {
         int available = fileToUpload.available();
         if (available == 0) {
           mdcDataDebugMessage.debugExitMessage(null);
           return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
-              Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
+              errorMessage));
         }
       } catch (IOException e) {
         logger.debug(e.getMessage(), e);
         mdcDataDebugMessage.debugExitMessage(null);
         return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
-            Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
+            errorMessage));
       }
     }
 
@@ -119,10 +126,12 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   @Override
-  public Optional<ErrorMessage> validateRawZipData(byte[] uploadedFileData) {
+  public Optional<ErrorMessage> validateRawZipData(String fileSuffix,
+                                                   byte[] uploadedFileData) {
     if (Objects.isNull(uploadedFileData)) {
       return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
-          Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
+          getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(),
+              fileSuffix)));
     }
     return Optional.empty();
   }

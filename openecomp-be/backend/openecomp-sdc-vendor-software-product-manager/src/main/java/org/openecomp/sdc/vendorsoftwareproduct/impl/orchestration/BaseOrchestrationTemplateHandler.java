@@ -31,12 +31,12 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
                                    CandidateService candidateService) {
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     uploadFileResponse.setOnboardingType(getHandlerType());
-    if (isNotEmptyFileToUpload(fileToUpload, uploadFileResponse, candidateService)) {
+    if (isNotEmptyFileToUpload(fileSuffix, fileToUpload, uploadFileResponse, candidateService)) {
       return uploadFileResponse;
     }
 
     byte[] uploadedFileData = FileUtils.toByteArray(fileToUpload);
-    if (isInvalidRawZipData(uploadFileResponse, uploadedFileData, candidateService)) {
+    if (isInvalidRawZipData(fileSuffix, uploadFileResponse, uploadedFileData, candidateService)) {
       return uploadFileResponse;
     }
 
@@ -75,11 +75,11 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
                                                  CandidateService candidateService,
                                                  UploadFileResponse uploadFileResponse);
 
-  private boolean isNotEmptyFileToUpload(InputStream fileToUpload,
+  private boolean isNotEmptyFileToUpload(String fileSuffix, InputStream fileToUpload,
                                          UploadFileResponse uploadFileResponse,
                                          CandidateService candidateService) {
     Optional<ErrorMessage> errorMessage =
-        candidateService.validateNonEmptyFileToUpload(fileToUpload);
+        candidateService.validateNonEmptyFileToUpload(fileToUpload, fileSuffix);
     if (errorMessage.isPresent()) {
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage.get());
       return true;
@@ -87,11 +87,12 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
     return false;
   }
 
-  protected boolean isInvalidRawZipData(UploadFileResponse uploadFileResponse,
+  protected boolean isInvalidRawZipData(String fileSuffix,
+                                        UploadFileResponse uploadFileResponse,
                                         byte[] uploadedFileData,
                                         CandidateService candidateService) {
     Optional<ErrorMessage> errorMessage;
-    errorMessage = candidateService.validateRawZipData(uploadedFileData);
+    errorMessage = candidateService.validateRawZipData(fileSuffix, uploadedFileData);
     if (errorMessage.isPresent()) {
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage.get());
       return true;

@@ -53,7 +53,7 @@ public enum Messages {
   MODULE_IN_MANIFEST_VOL_ENV_NO_VOL("Module '%s', has volume Env. reference with no Volume " +
       "reference"),
   ILLEGAL_MANIFEST("Illegal Manifest"),
-  NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST("no zip file was uploaded or zip file doesn't exist"),
+  NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST("no %s file was uploaded or file doesn't exist"),
   MAPPING_OBJECTS_FAILURE("Failed to map object %s to %s. Exception message: %s"),
   MORE_THEN_ONE_VOL_FOR_HEAT("heat contains more then one vol. selecting only first vol"),
   FILE_CONTENT_MAP("failed to load %s content"),

@@ -40,9 +40,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface CandidateService {
-  Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream heatFileToUpload);
+  Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream heatFileToUpload,
+                                                      String fileSuffix);
 
-  Optional<ErrorMessage> validateRawZipData(byte[] uploadedFileData);
+  Optional<ErrorMessage> validateRawZipData(String fileSuffix, byte[] uploadedFileData);
 
   OrchestrationTemplateCandidateData createCandidateDataEntity(
       CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest,

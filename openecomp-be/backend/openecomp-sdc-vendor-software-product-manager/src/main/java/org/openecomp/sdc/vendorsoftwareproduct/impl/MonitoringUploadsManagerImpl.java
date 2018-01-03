@@ -57,6 +57,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+
 public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private final ComponentArtifactDao componentArtifactDao;
@@ -109,7 +111,8 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
           LoggerErrorCode.DATA_ERROR.getErrorCode(), INVALID + type
               .toString() + " zip file");
       throw new CoreException(new MonitoringUploadErrorBuilder(
-          Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()).build());
+          getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(),
+              "zip")).build());
     } else {
       Map<String, List<ErrorMessage>> errors = new HashMap<>();
       try {
@@ -137,7 +140,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.UPLOAD_MONITORING_FILE, ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), INVALID + type
-                        .toString() + "zip file" );
+                .toString() + "zip file");
         throw new CoreException(new MonitoringUploadErrorBuilder(exception.getMessage()).build());
       }
     }
