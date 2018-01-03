@@ -35,6 +35,7 @@ public class DeploymentFlavorDaoZusammenImpl implements DeploymentFlavorDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
+    // registerVersioning not implemented for DeploymentFlavorDaoZusammenImpl
   }
 
   @Override
@@ -150,14 +151,6 @@ public class DeploymentFlavorDaoZusammenImpl implements DeploymentFlavorDao {
       });
     }
   }
-
-  /*private ZusammenElement deplymentFlavorQuestionnaireToZusammen(String questionnaireData,
-                                                           Action action) {
-    ZusammenElement questionnaireElement =
-        VspbuildStructuralElement(ElementType.Questionnaire, action);
-    questionnaireElement.setData(new ByteArrayInputStream(questionnaireData.getBytes()));
-    return questionnaireElement;
-  }*/
 
   private ZusammenElement deploymentFlavorToZusammen(DeploymentFlavorEntity deploymentFlavor,
                                                      Action action) {
