@@ -2,8 +2,9 @@ package org.openecomp.core.tools.main;
 
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.UserInfo;
-import org.openecomp.core.tools.Commands.HealAll;
-import org.openecomp.core.tools.Commands.SetHealingFlag;
+import org.openecomp.core.tools.commands.AddContributorCommand;
+import org.openecomp.core.tools.commands.HealAll;
+import org.openecomp.core.tools.commands.SetHealingFlag;
 import org.openecomp.core.tools.exportinfo.ExportDataCommand;
 import org.openecomp.core.tools.importinfo.ImportDataCommand;
 import org.openecomp.core.tools.util.ToolsUtil;
@@ -23,11 +24,23 @@ public class ZusammenMainTool {
 
   public static void main(String[] args) {
 
-    String command = ToolsUtil.getParam("c",args);
+    COMMANDS command = getCommand(args);
+
     if(command == null){
       printMessage(logger,
               "parameter -c is mandatory. script usage: zusammenMainTool.sh -c {command name} " +
                       "[additional arguments depending on the command] ");
+      printMessage(logger,
+          "reset old version: -c RESET_OLD_VERSION [-v {version}]");
+      printMessage(logger,
+          "export: -c EXPORT [-i {item id}]");
+      printMessage(logger,
+          "import: -c IMPORT -f {zip file full path}");
+      printMessage(logger,
+          "heal all: -c HEAL_ALL [-t {number of threads}]");
+      printMessage(logger,
+          "add users as contributors: -c ADD_CONTRIBUTOR [-p {item id list file path}] -u {user " +
+              "list file path}");
       System.exit(-1);
     }
     Instant startTime = Instant.now();
@@ -37,7 +50,8 @@ public class ZusammenMainTool {
     context.setTenant("dox");
 
 
-    switch (COMMANDS.valueOf(command)){
+
+    switch (command){
       case RESET_OLD_VERSION:
         SetHealingFlag.populateHealingTable(ToolsUtil.getParam("v",args));
         break;
@@ -49,6 +63,9 @@ public class ZusammenMainTool {
         break;
       case HEAL_ALL:
         HealAll.healAll(ToolsUtil.getParam("t",args));
+        break;
+      case ADD_CONTRIBUTOR:
+        AddContributorCommand.add(ToolsUtil.getParam("p",args),ToolsUtil.getParam("u",args));
 
     }
 
@@ -66,19 +83,21 @@ public class ZusammenMainTool {
 
   }
 
-  private enum COMMANDS{
-
-
-    RESET_OLD_VERSION("reset-old-version"),
-    EXPORT("export"),
-    IMPORT("import"),
-    HEAL_ALL("heal-all");
-
-    COMMANDS(String command) {
-      this.command  = command;
+  private static COMMANDS getCommand(String[] args) {
+    String commandSrt = ToolsUtil.getParam("c",args);
+    try{
+      return COMMANDS.valueOf(commandSrt);
+    }catch (IllegalArgumentException iae){
+      printMessage(logger,"message:"+commandSrt+ " is illegal.");
     }
-
-    private String command;
+    return null;
   }
 
+  private enum COMMANDS{
+    RESET_OLD_VERSION,
+    EXPORT,
+    IMPORT,
+    HEAL_ALL,
+    ADD_CONTRIBUTOR;
+  }
 }
