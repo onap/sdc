@@ -1,23 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
-
 
 package org.openecomp.sdc.vendorlicense.impl;
 
@@ -42,6 +37,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,11 +46,8 @@ import java.util.Set;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
-/**
- * Created by KATYR on 4/10/2016
- */
 
 public class FeatureGroupTest {
   //JUnit Test Cases using Mockito
@@ -257,6 +250,107 @@ public class FeatureGroupTest {
     verify(featureGroupDao)
         .updateFeatureGroup(existingFG, addedEPs, removedEPs, addedLKGs, removedLKGs);
   }
+
+    @Test
+    public void testUpdateFeatureGroupWithAddedEpsLkgs(){
+        FeatureGroupEntity existingFG = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
+
+        existingFG.setEntitlementPoolIds(new HashSet<String>());
+        existingFG.setLicenseKeyGroupIds(new HashSet<String>());
+        existingFG.setManufacturerReferenceNumber("MRN");
+
+        doReturn(existingFG).when(featureGroupDao).get(anyObject());
+
+        Set<String> removedEPs = new HashSet<>();
+        Set<String> addedEPs = new HashSet<>();
+
+        addedEPs.add(ep1_id);
+        addedEPs.add(ep2_id);
+        EntitlementPoolEntity ep1 = new EntitlementPoolEntity(vlm1_id, VERSION01, ep1_id);
+        EntitlementPoolEntity ep2 = new EntitlementPoolEntity(vlm1_id, VERSION01, ep2_id);
+        doReturn(ep1).when(entitlementPoolDao).get(ep1);
+        doReturn(ep2).when(entitlementPoolDao).get(ep2);
+
+        Set<String> removedLKGs = new HashSet<>();
+        Set<String> addedLKGs = new HashSet<>();
+
+        addedLKGs.add(lkg1_id);
+        addedLKGs.add(lkg2_id);
+        LicenseKeyGroupEntity lkg1 = new LicenseKeyGroupEntity(vlm1_id, VERSION01, lkg1_id);
+        LicenseKeyGroupEntity lkg2 = new LicenseKeyGroupEntity(vlm1_id, VERSION01, lkg2_id);
+        doReturn(lkg1).when(licenseKeyGroupDao).get(lkg1);
+        doReturn(lkg2).when(licenseKeyGroupDao).get(lkg2);
+
+        doNothing().when(vendorLicenseManagerImpl).updateUniqueName(anyObject(), anyObject(),
+            anyObject(),anyObject(), anyObject());
+
+        FeatureGroupEntity fg = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
+        fg.setManufacturerReferenceNumber("MRN_UPD");
+
+        vendorLicenseManagerImpl.updateFeatureGroup(fg,addedLKGs,removedLKGs, addedEPs,
+            removedEPs);
+
+        verify(vendorLicenseManagerImpl).addLicenseKeyGroupsToFeatureGroupsRef(addedLKGs,
+            fg);
+        verify(vendorLicenseManagerImpl).removeLicenseKeyGroupsToFeatureGroupsRef(removedLKGs,
+            fg);
+        verify(vendorLicenseManagerImpl).addEntitlementPoolsToFeatureGroupsRef(addedEPs,fg);
+        verify(vendorLicenseManagerImpl).removeEntitlementPoolsToFeatureGroupsRef(removedEPs,
+            fg);
+
+        verify(featureGroupDao)
+            .updateFeatureGroup(fg,addedEPs,removedEPs, addedLKGs, removedLKGs);
+
+        verify(entitlementPoolDao, times(2)).update(anyObject());
+        verify(licenseKeyGroupDao,times(2)).update(anyObject());
+    }
+
+    @Test
+    public void testUpdateFeatureGroupWithNoAddedEpsLkgs(){
+        FeatureGroupEntity existingFG = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
+
+        HashSet<String> epSet = new HashSet<String>(); epSet.add(ep1_id);
+        HashSet<String> lkgSet = new HashSet<String>(); lkgSet.add(lkg1_id);
+        existingFG.setEntitlementPoolIds(epSet);
+        existingFG.setLicenseKeyGroupIds(lkgSet);
+        existingFG.setManufacturerReferenceNumber("MRN");
+
+        doReturn(existingFG).when(featureGroupDao).get(anyObject());
+
+        EntitlementPoolEntity ep1 = new EntitlementPoolEntity(vlm1_id, VERSION01, ep1_id);
+        doReturn(ep1).when(entitlementPoolDao).get(ep1);
+
+        LicenseKeyGroupEntity lkg1 = new LicenseKeyGroupEntity(vlm1_id, VERSION01, lkg1_id);
+        doReturn(lkg1).when(licenseKeyGroupDao).get(lkg1);
+
+        Set<String> removedEPs = new HashSet<>();
+        Set<String> addedEPs = new HashSet<>();
+        Set<String> removedLKGs = new HashSet<>();
+        Set<String> addedLKGs = new HashSet<>();
+
+        doNothing().when(vendorLicenseManagerImpl).updateUniqueName(anyObject(), anyObject(),
+            anyObject(),anyObject(), anyObject());
+
+        FeatureGroupEntity fg = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
+        fg.setManufacturerReferenceNumber("MRN_UPD");
+
+        vendorLicenseManagerImpl.updateFeatureGroup(fg,addedLKGs,removedLKGs, addedEPs,
+            removedEPs);
+
+        verify(vendorLicenseManagerImpl).addLicenseKeyGroupsToFeatureGroupsRef(addedLKGs,
+            fg);
+        verify(vendorLicenseManagerImpl).removeLicenseKeyGroupsToFeatureGroupsRef(removedLKGs,
+            fg);
+        verify(vendorLicenseManagerImpl).addEntitlementPoolsToFeatureGroupsRef(addedEPs,fg);
+        verify(vendorLicenseManagerImpl).removeEntitlementPoolsToFeatureGroupsRef(removedEPs,
+            fg);
+
+        verify(featureGroupDao)
+            .updateFeatureGroup(fg,addedEPs,removedEPs, addedLKGs, removedLKGs);
+
+        verify(entitlementPoolDao, times(1)).update(anyObject());
+        verify(licenseKeyGroupDao,times(1)).update(anyObject());
+    }
 
 
   @Test
