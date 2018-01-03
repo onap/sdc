@@ -38,6 +38,7 @@ public class ComponentDaoZusammenImpl implements ComponentDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
+    // registerVersioning is not implemented for ComponentDaoZusammenImpl
   }
 
   @Override
