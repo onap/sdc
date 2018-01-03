@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_18de2f40",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/DeploymentFlavorManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-03T09:50:04Z",
+      "side": 1,
+      "message": "In use several times. extract to a class member",
+      "range": {
+        "startLine": 93,
+        "startChar": 32,
+        "endLine": 93,
+        "endChar": 64
+      },
+      "revId": "4fcd5194ebae8bf778d7604e1f46c7782a7357cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_38e3eb08",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/ServiceModelDaoFactoryTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-03T09:50:04Z",
+      "side": 1,
+      "message": "you deleted a validattion: Assert.assertTrue(model instanceof ToscaServiceModel);",
+      "revId": "4fcd5194ebae8bf778d7604e1f46c7782a7357cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
