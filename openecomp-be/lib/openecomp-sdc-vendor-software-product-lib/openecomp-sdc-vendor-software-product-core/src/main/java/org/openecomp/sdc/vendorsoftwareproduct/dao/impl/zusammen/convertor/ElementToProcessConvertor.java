@@ -12,6 +12,11 @@ import java.nio.ByteBuffer;
 
 public class ElementToProcessConvertor extends ElementConvertor<ProcessEntity> {
 
+  public static final String NAME = "name";
+  public static final String ARTIFACT_NAME = "artifactName";
+  public static final String DESCRIPTION = "description";
+  public static final String PROCESS_TYPE = "processType";
+
   @Override
   public ProcessEntity convert(Element element) {
     if (element == null) {
@@ -35,7 +40,6 @@ public class ElementToProcessConvertor extends ElementConvertor<ProcessEntity> {
     return processEntity;
   }
 
-
   public void mapInfoToProcessEntity(ProcessEntity processEntity, Info info) {
     processEntity.setName(info.getProperty(NAME));
     processEntity.setArtifactName(info.getProperty(ARTIFACT_NAME));
@@ -44,10 +48,4 @@ public class ElementToProcessConvertor extends ElementConvertor<ProcessEntity> {
         (PROCESS_TYPE) != null ? ProcessType.valueOf(info.getProperty
         (PROCESS_TYPE)) : null);
   }
-
-
-  public static final String NAME = "name";
-  public static final String ARTIFACT_NAME = "artifactName";
-  public static final String DESCRIPTION = "description";
-  public static final String PROCESS_TYPE = "processType";
 }
