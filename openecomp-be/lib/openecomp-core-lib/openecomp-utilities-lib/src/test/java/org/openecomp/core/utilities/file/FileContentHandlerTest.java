@@ -1,5 +1,6 @@
 package org.openecomp.core.utilities.file;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -26,7 +27,8 @@ public class FileContentHandlerTest {
         final byte[] content = new byte[size];
         Arrays.fill(content, (byte) 44);
         contentHandler.addFile(FILE_NAME, content);
-        assertEquals(contentHandler.processFileContent(FILE_NAME, optional -> {
+
+        byte[] actualContent = contentHandler.processFileContent(FILE_NAME, optional -> {
 
             try {
                 byte[] buffer = new byte[size];
@@ -37,7 +39,8 @@ public class FileContentHandlerTest {
                 throw new RuntimeException("Unexpected error", e);
             }
 
-        }), content);
+        });
+        Assert.assertTrue(Arrays.equals(actualContent, content));
     }
 
     @Test
