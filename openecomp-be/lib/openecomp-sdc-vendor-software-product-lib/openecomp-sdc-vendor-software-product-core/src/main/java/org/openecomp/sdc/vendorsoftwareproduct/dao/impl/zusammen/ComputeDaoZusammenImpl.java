@@ -38,6 +38,7 @@ public class ComputeDaoZusammenImpl implements ComputeDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
+    // registerVersioning not implemented for ComputeDaoZusammenImpl
   }
 
   @Override
@@ -52,11 +53,11 @@ public class ComputeDaoZusammenImpl implements ComputeDao {
   private Collection<ComputeEntity> listComputes(SessionContext context,
                                                  ElementContext elementContext,
                                                  ComputeEntity compute) {
-    ElementToComputeConvertor convertor = new ElementToComputeConvertor();
     return zusammenAdaptor
         .listElementsByName(context, elementContext, new Id(compute.getComponentId()),
             ElementType.Computes.name())
-        .stream().map(elementInfo -> convertor.convert(elementInfo))
+        .stream()
+        .map(new ElementToComputeConvertor()::convert)
         .map(computeEntity -> {
           computeEntity.setComponentId(compute.getComponentId());
           computeEntity.setVspId(compute.getVspId());
