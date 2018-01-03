@@ -1,26 +1,21 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.validation.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -50,7 +45,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -63,43 +58,23 @@ import java.util.zip.ZipInputStream;
 public class UploadValidationManagerImpl implements UploadValidationManager {
 
   private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private static final String HEAT = "heat";
+  private static final String INVALID_TYPE = "invalid type:";
 
 
   private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData)
-      throws IOException, CoreException {
+      throws IOException{
 
-    ZipEntry zipEntry;
-    List<String> folderList = new ArrayList<>();
-    FileContentHandler mapFileContent = new FileContentHandler();
+    FileContentHandler mapFileContent=null;
+    Boolean isFolderPresent=false;
     try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(uploadFileData))) {
-
-      byte[] fileByteContent;
-      String currentEntryName;
-
-      while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-        currentEntryName = zipEntry.getName();
-        // else, get the file content (as byte array) and save it in a map.
-        fileByteContent = FileUtils.toByteArray(inputZipStream);
-
-        int index = lastIndexFileSeparatorIndex(currentEntryName);
-        String currSubstringWithoutSeparator =
-            currentEntryName.substring(index + 1, currentEntryName.length());
-        if (index != -1) {
-          if (currSubstringWithoutSeparator.length() > 0) {
-            mapFileContent.addFile(currentEntryName.substring(index + 1, currentEntryName.length()),
-                fileByteContent);
-          } else {
-            folderList.add(currentEntryName);
-          }
-        } else {
-          mapFileContent.addFile(currentEntryName, fileByteContent);
-        }
+      Map<FileContentHandler,Boolean> validationResultMap=validateZipStructureForEmptyFolder(inputZipStream);
+      for(Map.Entry<FileContentHandler,Boolean> entry:validationResultMap.entrySet()){
+        mapFileContent=entry.getKey();
+        isFolderPresent=entry.getValue();
       }
-    } catch (RuntimeException exception) {
-      throw new IOException(exception);
     }
-
-    if (CollectionUtils.isNotEmpty(folderList)) {
+    if (isFolderPresent) {
       MDC.put(LoggerConstants.ERROR_DESCRIPTION, LoggerErrorDescription.INVALID_ZIP);
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
           .withMessage(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
@@ -109,6 +84,39 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
     }
 
     return mapFileContent;
+  }
+
+  private static Map<FileContentHandler,Boolean> validateZipStructureForEmptyFolder(
+      ZipInputStream inputZipStream) throws IOException {
+
+    ZipEntry zipEntry;
+    Boolean isFolderPresent=false;
+    FileContentHandler mapFileContent = new FileContentHandler();
+    Map<FileContentHandler,Boolean> validationResultMap=new HashMap<>();
+
+    while ((zipEntry = inputZipStream.getNextEntry()) != null) {
+      String currentEntryName;
+      byte[] fileByteContent;
+      currentEntryName = zipEntry.getName();
+      // else, get the file content (as byte array) and save it in a map.
+      fileByteContent = FileUtils.toByteArray(inputZipStream);
+
+      int index = lastIndexFileSeparatorIndex(currentEntryName);
+      String currSubstringWithoutSeparator =
+          currentEntryName.substring(index + 1, currentEntryName.length());
+      if (index != -1) {
+        if (currSubstringWithoutSeparator.length() > 0) {
+          mapFileContent.addFile(currSubstringWithoutSeparator,
+              fileByteContent);
+        } else {
+          isFolderPresent=true;
+        }
+      } else {
+        mapFileContent.addFile(currentEntryName, fileByteContent);
+      }
+    }
+    validationResultMap.put(mapFileContent,isFolderPresent);
+    return validationResultMap;
   }
 
   private static int lastIndexFileSeparatorIndex(String filePath) {
@@ -135,7 +143,7 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
 
     HeatTreeManager tree;
     ValidationStructureList validationStructureList = new ValidationStructureList();
-    if (type.toLowerCase().equals("heat")) {
+    if (HEAT.equalsIgnoreCase(type)) {
       FileContentHandler content = getFileContent(fileToValidate);
       if (!content.containsFile(SdcCommon.MANIFEST_NAME)) {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
@@ -159,7 +167,7 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.VALIDATE_FILE_TYPE, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_FILE_TYPE);
-      throw new RuntimeException("invalid type:" + type);
+      throw new RuntimeException(INVALID_TYPE + type);
     }
     validationFileResponse.setValidationData(validationStructureList);
 
