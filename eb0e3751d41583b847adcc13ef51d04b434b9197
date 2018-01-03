@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f86583e1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/DeploymentFlavorManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-03T08:31:37Z",
+      "side": 1,
+      "message": "fix intellij static analysis error and remove unused code",
+      "range": {
+        "startLine": 40,
+        "startChar": 13,
+        "endLine": 40,
+        "endChar": 44
+      },
+      "revId": "eb0e3751d41583b847adcc13ef51d04b434b9197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b85ffb0d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/DeploymentFlavorManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-03T08:31:37Z",
+      "side": 1,
+      "message": "replace with Collections.singletonList.\nit\u0027s in use several times and could be a class member",
+      "range": {
+        "startLine": 92,
+        "startChar": 4,
+        "endLine": 93,
+        "endChar": 18
+      },
+      "revId": "eb0e3751d41583b847adcc13ef51d04b434b9197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b8485b5c",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/ServiceModelDaoFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-03T08:31:37Z",
+      "side": 1,
+      "message": "fix all intellij static analysis errors",
+      "range": {
+        "startLine": 63,
+        "startChar": 13,
+        "endLine": 63,
+        "endChar": 39
+      },
+      "revId": "eb0e3751d41583b847adcc13ef51d04b434b9197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_787ad389",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/ServiceModelDaoFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-03T08:31:37Z",
+      "side": 1,
+      "message": "did you try to run the tests without it? I don\u0027t think it is needed",
+      "range": {
+        "startLine": 75,
+        "startChar": 2,
+        "endLine": 78,
+        "endChar": 3
+      },
+      "revId": "eb0e3751d41583b847adcc13ef51d04b434b9197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_984b1f59",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/ServiceModelDaoFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-03T08:31:37Z",
+      "side": 1,
+      "message": "It make no since to put 3 time the same key",
+      "range": {
+        "startLine": 175,
+        "startChar": 3,
+        "endLine": 177,
+        "endChar": 88
+      },
+      "revId": "eb0e3751d41583b847adcc13ef51d04b434b9197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
