@@ -150,6 +150,22 @@ public class DeploymentFlavorManagerImplTest {
   }
 
   @Test
+  public void testCreateManualDepFlavorWithNoFGNInDFAndInVSP() {
+    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
+    final DeploymentFlavor deploymentFlavor =
+        JsonUtil.json2Object(expected.getCompositionData(), DeploymentFlavor.class);
+    deploymentFlavor.setFeatureGroupId(null);
+    expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
+
+    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+    VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+    doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+    deploymentFlavorManager.createDeploymentFlavor(expected);
+    verify(compositionEntityDataManagerMock).createDeploymentFlavor(expected);
+  }
+
+  @Test
   public void testCreateManualDepFlavorWithNullCompInAssociation() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     final DeploymentFlavor deploymentFlavor =
