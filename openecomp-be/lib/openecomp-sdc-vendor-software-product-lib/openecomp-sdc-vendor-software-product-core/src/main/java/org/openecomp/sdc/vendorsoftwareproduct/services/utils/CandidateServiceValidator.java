@@ -26,7 +26,6 @@ import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.Module;
 
@@ -40,8 +39,6 @@ import java.util.Optional;
  * Created by Talio on 12/6/2016.
  */
 public class CandidateServiceValidator {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   public Optional<List<ErrorMessage>> validateFileDataStructure(
       FilesDataStructure filesDataStructure) {
     if (Objects.isNull(filesDataStructure)) {
@@ -62,36 +59,22 @@ public class CandidateServiceValidator {
 
 
   private boolean validateAtLeaseOneModuleExist(FilesDataStructure filesDataStructure) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return CollectionUtils.isEmpty(filesDataStructure.getModules());
   }
 
   private void validateNoVolEnvWithoutVol(List<ErrorMessage> errors, Module module) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (StringUtils.isEmpty(module.getVol()) && StringUtils.isNotEmpty(module.getVolEnv())) {
       errors.add(new ErrorMessage(ErrorLevel.ERROR, ErrorMessagesFormatBuilder
           .getErrorWithParameters(Messages.MODULE_IN_MANIFEST_VOL_ENV_NO_VOL.getErrorMessage(),
               module.getName())));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void validateModuleHaveYaml(List<ErrorMessage> errors, Module module) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (StringUtils.isEmpty(module.getYaml())) {
       errors.add(new ErrorMessage(ErrorLevel.ERROR, ErrorMessagesFormatBuilder
           .getErrorWithParameters(Messages.MODULE_IN_MANIFEST_NO_YAML.getErrorMessage(),
               module.getName())));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }

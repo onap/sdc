@@ -54,8 +54,6 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
 
   @Override
   public void translate(TranslateTo translateTo) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> subnetNetwork = getAttachedNetworkResource(translateTo);
 
     if (!subnetNetwork.isPresent() || !subnetNetwork.get().isGetResource()) {
@@ -103,16 +101,10 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
 
       subNetMap.put(translateTo.getResourceId(), properties);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
   protected String generateTranslatedId(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> subnetNetwork = getAttachedNetworkResource(translateTo);
 
     if (!subnetNetwork.isPresent() || !subnetNetwork.get().isGetResource()) {
@@ -120,18 +112,12 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
           + translateTo.getResource().getType()
           + "' include 'network_id/'network'' property without 'get_resource' function, therefore"
           + " this resource will be ignored in TOSCA translation.");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return (String) subnetNetwork.get().getTranslatedId();
   }
 
   private void handleDhcpProperty(TranslateTo translateTo, NodeTemplate networkNodeTemplate) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object dhcpEnabled =
         networkNodeTemplate.getProperties().get(ToscaConstants.DHCP_ENABLED_PROPERTY_NAME);
     if (dhcpEnabled instanceof Map) {
@@ -167,15 +153,9 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
         }
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private Optional<AttachedResourceId> getAttachedNetworkResource(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> subnetNetwork = Optional.empty();
     Optional<AttachedResourceId> attachedNetworkId =
         HeatToToscaUtil.extractAttachedResourceId(translateTo, "network_id");
@@ -195,8 +175,6 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
     } else {
       subnetNetwork = attachedNetworkId;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return subnetNetwork;
   }
 }

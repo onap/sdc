@@ -51,26 +51,16 @@ public class ResourceTranslationContrailV2VmInterfaceImpl extends ResourceTransl
 
   @Override
   protected void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (new ContrailV2VirtualMachineInterfaceHelper().isVlanSubInterfaceResource(translateTo
         .getResource())) {
       translateVlanSubInterfaceResource(translateTo);
     } else {
       translateVirtualMachineInterfaceResource(translateTo);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 
   private void translateVirtualMachineInterfaceResource(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE);
     nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -91,8 +81,6 @@ public class ResourceTranslationContrailV2VmInterfaceImpl extends ResourceTransl
         .connectVmiToNetwork(this, translateTo, nodeTemplate);
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
         nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleVmiMacAddressesInProperties(TranslateTo translateTo,
@@ -127,12 +115,7 @@ public class ResourceTranslationContrailV2VmInterfaceImpl extends ResourceTransl
   }
 
   private void translateVlanSubInterfaceResource(TranslateTo translateTo) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     new ResourceTranslationContrailV2VlanSubInterfaceImpl().translate(translateTo);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 }

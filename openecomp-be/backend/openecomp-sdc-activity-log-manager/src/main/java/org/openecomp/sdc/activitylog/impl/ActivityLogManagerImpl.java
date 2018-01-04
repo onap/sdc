@@ -24,13 +24,11 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;
 
 public class ActivityLogManagerImpl implements ActivityLogManager {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private ActivityLogDao activityLogDao;
 
   public ActivityLogManagerImpl(ActivityLogDao activityLogDao) {
@@ -39,14 +37,12 @@ public class ActivityLogManagerImpl implements ActivityLogManager {
 
   @Override
   public void logActivity(ActivityLogEntity activityLogEntity) {
-    mdcDataDebugMessage.debugEntryMessage("ITEM id", activityLogEntity.getItemId());
     activityLogEntity.setId(CommonMethods.nextUuId());
     activityLogDao.create(activityLogEntity);
   }
 
   @Override
   public Collection<ActivityLogEntity> listLoggedActivities(String itemId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("ITEM id", itemId);
     return activityLogDao.list(new ActivityLogEntity(itemId, version));
   }
 }

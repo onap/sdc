@@ -45,10 +45,6 @@ public class ResourceTranslationContrailV2VlanSubInterfaceImpl extends ResourceT
 
   @Override
   protected void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.CONTRAILV2_VLAN_SUB_INTERFACE);
 
@@ -64,17 +60,11 @@ public class ResourceTranslationContrailV2VlanSubInterfaceImpl extends ResourceT
     connectSubInterfaceToInterface(translateTo, nodeTemplate);
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
         nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   //connection to shared interface is not supported
   private void connectSubInterfaceToInterface(TranslateTo translateTo,
                                               NodeTemplate vlanSubInterfaceNodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object interfaceRefs =
         translateTo.getResource().getProperties().get(HeatConstants.VMI_REFS_PROPERTY_NAME);
     if (Objects.isNull(interfaceRefs) || !(interfaceRefs instanceof List)
@@ -124,8 +114,6 @@ public class ResourceTranslationContrailV2VlanSubInterfaceImpl extends ResourceT
             + "', therefore, this connection will be ignored in TOSCA translation.");
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 }

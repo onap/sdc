@@ -1,6 +1,5 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -16,8 +15,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class UnifiedCompositionManager {
-
-  private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private ConsolidationService consolidationService;
   private TranslationService translationService = new TranslationService();
   private UnifiedCompositionService unifiedCompositionService = new UnifiedCompositionService();
@@ -39,38 +36,28 @@ public class UnifiedCompositionManager {
    */
   public ToscaServiceModel createUnifiedComposition(ToscaServiceModel toscaServiceModel,
                                                     TranslationContext translationContext) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     ServiceTemplate mainServiceTemplate =
         serviceTemplates.get(toscaServiceModel.getEntryDefinitionServiceTemplate());
     createUnifiedComposition(toscaServiceModel, mainServiceTemplate, translationContext);
     ToscaServiceModel unifiedToscaServiceModel =
         HeatToToscaUtil.createToscaServiceModel(mainServiceTemplate, translationContext);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return unifiedToscaServiceModel;
   }
 
   private void createUnifiedComposition(ToscaServiceModel toscaServiceModel,
                                         ServiceTemplate serviceTemplate,
                                         TranslationContext translationContext) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     handleNestedServiceTemplates(toscaServiceModel, serviceTemplate, translationContext);
     consolidationService.serviceTemplateConsolidation(serviceTemplate, translationContext);
     unifiedCompositionService
         .updateUnifiedAbstractNodesConnectivity(serviceTemplate, translationContext);
     translationContext.addUnifiedHandledServiceTeamplte(serviceTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleNestedServiceTemplates(ToscaServiceModel toscaServiceModel,
                                             ServiceTemplate serviceTemplate,
                                             TranslationContext translationContext) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     FileNestedConsolidationData fileNestedConsolidationData =
         translationContext.getConsolidationData().getNestedConsolidationData()
@@ -99,8 +86,6 @@ public class UnifiedCompositionManager {
             substitutedNodeTemplateId);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void createUnifiedCompositionForNestedServiceTemplate(
@@ -109,7 +94,6 @@ public class UnifiedCompositionManager {
       ServiceTemplate substitutionServiceTemplate,
       String substitutedNodeTemplateId,
       TranslationContext translationContext) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     handleNestedServiceTemplates(toscaServiceModel, substitutionServiceTemplate,
         translationContext);
     consolidationService.substitutionServiceTemplateConsolidation(substitutedNodeTemplateId,
@@ -117,7 +101,6 @@ public class UnifiedCompositionManager {
     unifiedCompositionService
         .updateUnifiedAbstractNodesConnectivity(substitutionServiceTemplate, translationContext);
     translationContext.addUnifiedHandledServiceTeamplte(substitutionServiceTemplate);
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }
 

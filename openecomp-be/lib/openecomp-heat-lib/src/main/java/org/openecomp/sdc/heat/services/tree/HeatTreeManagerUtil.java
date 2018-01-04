@@ -29,7 +29,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.PropertiesMapKeyTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 import java.util.Collection;
@@ -41,7 +40,6 @@ import java.util.Set;
 public class HeatTreeManagerUtil {
 
   private static final String TYPE = "type";
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private HeatTreeManagerUtil() {
 
   }
@@ -71,9 +69,6 @@ public class HeatTreeManagerUtil {
    */
   public static Set<String> getNestedFiles(String filename, HeatOrchestrationTemplate hot,
                                            GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     Set<String> nestedFileList = new HashSet<>();
     hot.getResources().values().stream().filter(
             resource -> resource.getType().endsWith(".yaml") || resource.getType().endsWith(".yml"))
@@ -81,8 +76,6 @@ public class HeatTreeManagerUtil {
 
     Set<String> resourceDefNestedFiles = getResourceDefNestedFiles(hot);
     nestedFileList.addAll(resourceDefNestedFiles);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return nestedFileList;
   }
 
@@ -96,9 +89,6 @@ public class HeatTreeManagerUtil {
    */
   public static Set<String> getArtifactFiles(String filename, HeatOrchestrationTemplate hot,
                                              GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     Set<String> artifactSet = new HashSet<>();
     Collection<Resource> resourcesValue =
             hot.getResources() == null ? null : hot.getResources().values();
@@ -111,8 +101,6 @@ public class HeatTreeManagerUtil {
                                       filename, globalContext);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return artifactSet;
   }
 
@@ -134,9 +122,6 @@ public class HeatTreeManagerUtil {
   }
 
   private static Set<String> getResourceDefNestedFiles(HeatOrchestrationTemplate hot) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     Set<String> resourceDefNestedFiles = new HashSet<>();
     hot.getResources()
             .entrySet().stream().filter(entry -> entry.getValue().getType()
@@ -148,8 +133,6 @@ public class HeatTreeManagerUtil {
                                     .getType()))
             .forEach(entry -> resourceDefNestedFiles.add(
                     getResourceDef( entry.getValue()).getType()));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return resourceDefNestedFiles;
   }
 
@@ -161,9 +144,6 @@ public class HeatTreeManagerUtil {
    */
   @SuppressWarnings("unchecked")
   public static Resource getResourceDef( Resource resource) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     Resource resourceDef = null;
     Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? null
             : (Map<String, Object>) resource.getProperties().get(
@@ -178,8 +158,6 @@ public class HeatTreeManagerUtil {
       }
 
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return resourceDef;
   }
 

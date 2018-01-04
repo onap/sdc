@@ -22,7 +22,6 @@ package org.openecomp.sdc.vendorlicense.licenseartifacts.impl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorlicense.HealingServiceFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
@@ -58,15 +57,8 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
       VendorLicenseFacadeFactory.getInstance().createInterface();
   public static final HealingService healingService =
       HealingServiceFactory.getInstance().createInterface();
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
-
   private static byte[] createVnfArtifact(String vspId, String vlmId, Version vlmVersion, String vendorName,
                                   List<String> featureGroups) {
-
-
-    mdcDataDebugMessage.debugEntryMessage("VLM name", vendorName);
-
     VnfLicenseArtifact artifact = new VnfLicenseArtifact();
 
     artifact.setVspId(vspId);
@@ -102,16 +94,10 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
         artifact.getFeatureGroups().add(featureGroupModel);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage("VLM name", vendorName);
     return artifact.toXml().getBytes();
   }
 
   private static byte[] createVendorLicenseArtifact(String vlmId, String vendorName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage("VLM name", vendorName);
-
     VendorLicenseArtifact vendorLicenseArtifact = new VendorLicenseArtifact();
     vendorLicenseArtifact.setVendorName(vendorName);
     Set<EntitlementPoolEntity> entitlementPoolEntities = new HashSet<>();
@@ -152,8 +138,6 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
         healLkgs(filterChangedEntities(prepareForFiltering(licenseKeyGroupEntities, false)));
     vendorLicenseArtifact.setEntitlementPoolEntities(entitlementPoolEntities);
     vendorLicenseArtifact.setLicenseKeyGroupEntities(licenseKeyGroupEntities);
-
-    mdcDataDebugMessage.debugExitMessage("VLM name", vendorName);
     return vendorLicenseArtifact.toXml().getBytes();
   }
 
@@ -187,10 +171,6 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
    */
   public FileContentHandler createLicenseArtifacts(String vspId, String vlmId, Version vlmVersion,
                                                    List<String> featureGroups) {
-
-
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspId);
-
     FileContentHandler artifacts = new FileContentHandler();
     String vendorName = getVendorName(vlmId);
 
@@ -198,9 +178,6 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
         createVnfArtifact(vspId, vlmId, vlmVersion, vendorName, featureGroups));
     artifacts.addFile(VENDOR_LICENSE_MODEL_ARTIFACT_NAME_WITH_PATH,
         createVendorLicenseArtifact(vlmId, vendorName));
-
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
-
     return artifacts;
   }
 

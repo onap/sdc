@@ -33,10 +33,6 @@ public class ResourceTranslationNeutronNetImpl extends ResourceTranslationBase {
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.NEUTRON_NET);
     nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -55,8 +51,6 @@ public class ResourceTranslationNeutronNetImpl extends ResourceTranslationBase {
 
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
         nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 

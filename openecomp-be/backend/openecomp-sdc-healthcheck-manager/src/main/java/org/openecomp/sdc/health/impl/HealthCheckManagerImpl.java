@@ -33,7 +33,6 @@ import org.openecomp.sdc.health.data.HealthCheckStatus;
 import org.openecomp.sdc.health.data.MonitoredModules;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;

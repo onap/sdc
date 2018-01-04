@@ -8,7 +8,6 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -23,7 +22,6 @@ import java.util.Map;
  * Created by TALIO on 2/28/2017.
  */
 public class ContrailNetworkPolicyResourceValidator implements ResourceValidator {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_HNP1 = new ErrorMessageCode("HNP1");
   private static final ErrorMessageCode ERROR_CODE_HNP2 = new ErrorMessageCode("HNP2");
 
@@ -39,8 +37,6 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
                                                   Map.Entry<String, Resource> resourceEntry,
                                                   GlobalValidationContext globalContext,
                                                   HeatResourceValidationContext validationContext) {
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
-
     Map<String, Map<String, List<String>>> referencedNetworkAttachPoliciesResources =
             validationContext.getFileLevelResourceDependencies()
                     .get(HeatResourcesTypes.CONTRAIL_NETWORK_RULE_RESOURCE_TYPE.getHeatResource());
@@ -61,9 +57,6 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
 
     handleNetworkAttachPolicyReferences(fileName, resourceEntry,
             referencedNetworkAttachPoliciesResources, globalContext);
-
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
-
   }
 
   private static void handleNetworkAttachPolicyReferences(String fileName,

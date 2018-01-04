@@ -35,10 +35,6 @@ public class ResourceTranslationContrailNetworkPolicyImpl extends ResourceTransl
 
   @Override
   protected void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.CONTRAIL_NETWORK_RULE);
 
@@ -51,7 +47,5 @@ public class ResourceTranslationContrailNetworkPolicyImpl extends ResourceTransl
 
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
         nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }

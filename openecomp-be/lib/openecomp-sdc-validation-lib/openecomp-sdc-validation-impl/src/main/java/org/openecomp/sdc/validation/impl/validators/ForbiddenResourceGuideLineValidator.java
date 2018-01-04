@@ -29,7 +29,6 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.Validator;
@@ -41,7 +40,6 @@ import java.util.Objects;
 import java.util.Set;
 
 public class ForbiddenResourceGuideLineValidator implements Validator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static Set<String> forbiddenResources = new HashSet<>();
   private static final ErrorMessageCode ERROR_CODE_FRG_1 = new ErrorMessageCode("FRG1");
   private static final ErrorMessageCode ERROR_CODE_FRG_2 = new ErrorMessageCode("FRG2");
@@ -106,12 +104,8 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
   private void validateResourceTypeIsForbidden(String fileName,
                                                HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
     if (MapUtils.isEmpty(resourcesMap)) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -137,7 +131,6 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
         }
       }
     }
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private boolean isResourceForbidden(String resourceType) {

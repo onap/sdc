@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -64,14 +63,9 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
-
-  protected static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
-
   public List<Map<String, RequirementDefinition>> calculateExposedRequirements(
       List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
       Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     if (nodeTypeRequirementsDefinitionList == null) {
       return null;
     }
@@ -105,8 +99,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         }
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return nodeTypeRequirementsDefinitionList;
   }
 
@@ -131,10 +123,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
   public Map<String, CapabilityDefinition> calculateExposedCapabilities(
       Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
       Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinitionMap) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     String capabilityKey;
     String capability;
     String node;
@@ -165,8 +153,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         .entrySet()) {
       exposedCapabilitiesDefinition.put(entry.getKey(), entry.getValue());
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return exposedCapabilitiesDefinition;
   }
 

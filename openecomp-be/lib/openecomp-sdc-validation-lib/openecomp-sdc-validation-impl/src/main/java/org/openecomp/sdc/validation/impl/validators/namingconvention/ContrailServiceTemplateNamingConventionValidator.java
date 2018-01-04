@@ -27,7 +27,6 @@ import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -43,7 +42,6 @@ import java.util.regex.Pattern;
 
 
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_NST1 = new ErrorMessageCode("NST1");
   private static final ErrorMessageCode ERROR_CODE_NST2 = new ErrorMessageCode("NST2");
   private static final ErrorMessageCode ERROR_CODE_NST3 = new ErrorMessageCode("NST3");
@@ -57,9 +55,6 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
   private void validateServiceTemplateImageAndFlavor(String fileName,
                                                      Map.Entry<String, Resource> entry,
                                                      GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     if (MapUtils.isEmpty(entry.getValue().getProperties())) {
       return;
     }
@@ -83,23 +78,16 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
       validateServiceTemplatePropertiesValuesVmtypesAreIdentical(fileName, entry, globalContext,
               propertiesMap);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateServiceTemplatePropertiesValuesVmtypesAreIdentical(String fileName,
                                                                           Map.Entry<String, Resource> entry,
                                                                           GlobalValidationContext globalContext,
                                                                           Map<String, Object> propertiesMap) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Pair<String, String> vmTypeImagePair = new ImmutablePair<>("image_name", "\\_image\\_name");
     Pair<String, String> vmTypeFlavorPair = new ImmutablePair<>("flavor", "\\_flavor\\_name");
     validatePropertiesValuesVmtypesAreIdentical(Arrays.asList(vmTypeImagePair, vmTypeFlavorPair),
             fileName, entry, propertiesMap, globalContext);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validatePropertiesValuesVmtypesAreIdentical(List<Pair> propertiesToMatch,
@@ -107,10 +95,6 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                                                            Map.Entry<String, Resource> resourceEntry,
                                                            Map<String, Object> propertiesMap,
                                                            GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     if (CollectionUtils.isEmpty(propertiesToMatch)) {
       return;
     }
@@ -126,13 +110,10 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                 handleFirstIteration(previousPropertyValueValue, currentPropVmType);
         if (addWarningIfCurrentVmTypeIsDifferentFromPrevious(fileName, resourceEntry, globalContext,
                 previousPropertyValueValue, currentPropVmType)) {
-          MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
           return;
         }
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private boolean addWarningIfCurrentVmTypeIsDifferentFromPrevious(String fileName,

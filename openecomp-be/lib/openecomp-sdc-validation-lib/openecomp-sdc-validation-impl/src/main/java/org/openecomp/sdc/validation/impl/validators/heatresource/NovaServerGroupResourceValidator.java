@@ -25,7 +25,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.PolicyTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class NovaServerGroupResourceValidator implements ResourceValidator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_HNG1 = new ErrorMessageCode("HNG1");
   private static final ErrorMessageCode ERROR_CODE_HNG2 = new ErrorMessageCode("HNG2");
   private static final ErrorMessageCode ERROR_CODE_HNG3 = new ErrorMessageCode("HNG3");
@@ -55,9 +53,6 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
   private static void validateNovaServerGroupPolicy(String fileName,
                                                     Map.Entry<String, Resource> resourceEntry,
                                                     GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Resource resource = resourceEntry.getValue();
     Object policies =
             resource.getProperties() == null ? null : resource.getProperties().get("policies");
@@ -83,8 +78,6 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
                 LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static boolean isGivenPolicyValid(Object policy) {

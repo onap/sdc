@@ -25,7 +25,6 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
@@ -47,8 +46,6 @@ import java.util.Optional;
 public class ContrailV2VirtualMachineInterfaceHelper {
   static Logger logger =
       (Logger) LoggerFactory.getLogger(ContrailV2VirtualMachineInterfaceHelper.class);
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   /**
    * Connect Virtual Machine Interface node template to network node template in TOSCA.
    *
@@ -58,10 +55,6 @@ public class ContrailV2VirtualMachineInterfaceHelper {
    */
   public void connectVmiToNetwork(ResourceTranslationBase resourceTranslationImpl,
                                   TranslateTo translateTo, NodeTemplate vmiNodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object virtualNetworkRefs =
         translateTo.getResource().getProperties()
             .get(HeatConstants.VIRTUAL_NETWORK_REFS_PROPERTY_NAME);
@@ -142,8 +135,6 @@ public class ContrailV2VirtualMachineInterfaceHelper {
         }
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   /**
@@ -164,19 +155,12 @@ public class ContrailV2VirtualMachineInterfaceHelper {
   }
 
   private Optional<Object> getVlanTagPropertyValue(Resource resource) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object vmiProperties = resource.getProperties()
         .get(HeatConstants.VMI_PROPERTIES_PROPERTY_NAME);
     if (vmiProperties != null && vmiProperties instanceof Map) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.ofNullable(((Map) vmiProperties)
           .get(HeatConstants.VMI_SUB_INTERFACE_VLAN_TAG_PROPERTY_NAME));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 

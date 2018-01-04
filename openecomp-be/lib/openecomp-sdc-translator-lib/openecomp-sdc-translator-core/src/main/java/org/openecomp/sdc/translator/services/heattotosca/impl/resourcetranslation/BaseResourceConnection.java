@@ -30,7 +30,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -60,7 +59,6 @@ import java.util.function.Predicate;
 
 abstract class BaseResourceConnection<T> {
   protected static Logger logger = (Logger) LoggerFactory.getLogger(BaseResourceConnection.class);
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   protected TranslateTo translateTo;
   FileData nestedFileData;
   NodeTemplate substitutionNodeTemplate;
@@ -132,10 +130,6 @@ abstract class BaseResourceConnection<T> {
                                                       nestedHeatOrchestrationTemplate,
                                                   String nestedHeatFileName,
                                                   Map.Entry<String, T> connectionPointEntry) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> connectionParameterNameList = new ArrayList<>();
     String mappedTranslatedResourceId =
         getMappedNodeTranslatedResourceId(nestedServiceTemplate, connectionPointEntry);
@@ -177,13 +171,9 @@ abstract class BaseResourceConnection<T> {
             }
           }
         }
-
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return connectionParameterNameList;
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return null;
   }
 
@@ -191,10 +181,6 @@ abstract class BaseResourceConnection<T> {
                                                            HeatOrchestrationTemplate
                                                                nestedHeatOrchestrationTemplate,
                                                            String nestedHeatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> params = new ArrayList<>();
     Optional<List<Map.Entry<String, Resource>>> heatResources =
         getResourceByTranslatedResourceId(translatedResourceId, nestedHeatOrchestrationTemplate);
@@ -209,8 +195,6 @@ abstract class BaseResourceConnection<T> {
         }
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return params;
   }
 
@@ -236,8 +220,6 @@ abstract class BaseResourceConnection<T> {
   RequirementAssignment createRequirementAssignment(Map.Entry<String, RequirementDefinition>
                                                         requirementEntry, String node,
                                                     NodeTemplate nodeTemplate) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     RequirementAssignment requirementAssignment = null;
     if (Objects.nonNull(node)) {
       requirementAssignment = new RequirementAssignment();
@@ -247,7 +229,6 @@ abstract class BaseResourceConnection<T> {
       DataModelUtil
           .addRequirementAssignment(nodeTemplate, requirementEntry.getKey(), requirementAssignment);
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return requirementAssignment;
   }
 

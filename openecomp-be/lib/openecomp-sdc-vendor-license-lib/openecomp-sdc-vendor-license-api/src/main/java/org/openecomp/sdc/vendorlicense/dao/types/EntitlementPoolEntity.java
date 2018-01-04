@@ -27,7 +27,6 @@ import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorlicense.VendorLicenseUtil;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
@@ -43,8 +42,6 @@ import java.util.Set;
 
 @Table(keyspace = "dox", name = "entitlement_pool")
 public class EntitlementPoolEntity implements VersionableEntity {
-
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final String ENTITY_TYPE = "Entitlement Pool";
 
   @PartitionKey
@@ -387,24 +384,18 @@ public class EntitlementPoolEntity implements VersionableEntity {
   }
 
   public String getIsoFormatStartDate() {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("start date", startDate);
     String isoFormatStartDate = null;
     if (!StringUtils.isEmpty(startDate)) {
       isoFormatStartDate = VendorLicenseUtil.getIsoFormatDate(startDate);
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("start date", "iso format start date", startDate,
-          isoFormatStartDate);
     }
     return isoFormatStartDate;
   }
 
 
   public String getIsoFormatExpiryDate() {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("expiry date", expiryDate);
     String isoFormatExpDate = null;
     if (!StringUtils.isEmpty(expiryDate)) {
       isoFormatExpDate = VendorLicenseUtil.getIsoFormatDate(expiryDate);
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("expiry date", "iso format expiry date", expiryDate,
-          isoFormatExpDate);
     }
     return isoFormatExpDate;
   }

@@ -26,7 +26,6 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -82,8 +81,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   private static final LicenseKeyGroupDao
       licenseKeyGroupDao = LicenseKeyGroupDaoFactory.getInstance().createInterface();
   private static final LimitDao limitDao = LimitDaoFactory.getInstance().createInterface();
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   /**
    * Instantiates a new Vendor license facade.
    */
@@ -207,8 +204,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
 
   @Override
   public VendorLicenseModelEntity getVendorLicenseModel(String vlmId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-
     VendorLicenseModelEntity vendorLicenseModel =
         vendorLicenseModelDao.get(new VendorLicenseModelEntity(vlmId, version));
     if (vendorLicenseModel == null) {
@@ -217,8 +212,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
           LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.ENTITY_NOT_FOUND);
       throw new CoreException(new VendorLicenseModelNotFoundErrorBuilder(vlmId).build());
     }
-
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
     return vendorLicenseModel;
   }
 

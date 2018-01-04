@@ -2,7 +2,6 @@ package org.openecomp.sdc.enrichment.impl.tosca;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
@@ -33,15 +32,11 @@ import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRA
 
 public class AbstractSubstituteToscaEnricher {
   private ToscaAnalyzerService toscaAnalyzerService ;
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private ComponentQuestionnaireData componentQuestionnaireData;
 
 
   public Map<String,List<ErrorMessage>> enrich(ToscaServiceModel toscaModel, String vspId, Version
       version) {
-
-    mdcDataDebugMessage.debugEntryMessage(vspId, version.toString());
-
     componentQuestionnaireData = getComponentQuestionnaireData();
     toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
 
@@ -131,8 +126,6 @@ public class AbstractSubstituteToscaEnricher {
                 componentDisplayNameToNodeTempalteIds);
           }
         });
-
-    mdcDataDebugMessage.debugExitMessage(vspId, version.toString());
     return errors;
   }
 

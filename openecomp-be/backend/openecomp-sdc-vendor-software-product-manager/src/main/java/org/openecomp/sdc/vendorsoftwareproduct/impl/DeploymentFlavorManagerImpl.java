@@ -20,7 +20,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -53,8 +52,6 @@ import java.util.List;
 import java.util.Map;
 
 public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
-
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final DeploymentFlavorDao deploymentFlavorDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
@@ -74,8 +71,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
 
   @Override
   public Collection<DeploymentFlavorEntity> listDeploymentFlavors(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP id", vspId);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP id", vspId);
     return deploymentFlavorDao.list(new DeploymentFlavorEntity(vspId, version, null));
   }
 
@@ -83,8 +78,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   public DeploymentFlavorEntity createDeploymentFlavor(
       DeploymentFlavorEntity deploymentFlavorEntity) {
     DeploymentFlavorEntity createDeploymentFlavor;
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP id ", deploymentFlavorEntity.getVspId());
-
     if (!vspInfoDao.isManual(deploymentFlavorEntity.getVspId(),
         deploymentFlavorEntity.getVersion())) {
       ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
@@ -244,9 +237,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   public CompositionEntityResponse<DeploymentFlavor> getDeploymentFlavor(String vspId,
                                                         Version version,
                                                         String deploymentFlavorId) {
-    MDC_DATA_DEBUG_MESSAGE
-        .debugEntryMessage(VSP_ID_DEPLOYMENT_FLAVOR_ID, vspId, deploymentFlavorId);
-
     DeploymentFlavorEntity deploymentFlavorEntity =
         getValidatedDeploymentFlavor(vspId, version, deploymentFlavorId);
     DeploymentFlavor deploymentFlavor = deploymentFlavorEntity.getDeploymentFlavorCompositionData();
@@ -263,9 +253,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
         .generate(SchemaTemplateContext.composition, CompositionEntityType.deployment,
             schemaInput));
     response.setData(deploymentFlavor);
-    MDC_DATA_DEBUG_MESSAGE
-        .debugExitMessage("VSP id, deployment flavor id ", vspId, deploymentFlavorId);
-
     return response;
   }
 
@@ -297,8 +284,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
 
   @Override
   public void deleteDeploymentFlavor(String vspId, Version version, String deploymentFlavorId) {
-    MDC_DATA_DEBUG_MESSAGE
-        .debugEntryMessage(VSP_ID_DEPLOYMENT_FLAVOR_ID, vspId, deploymentFlavorId);
     DeploymentFlavorEntity deploymentFlavorEntity =
         getValidatedDeploymentFlavor(vspId, version, deploymentFlavorId);
     if (!vspInfoDao.isManual(vspId, version)) {
@@ -315,16 +300,11 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
       deploymentFlavorDao.delete(new DeploymentFlavorEntity(vspId, version, deploymentFlavorId));
 
     }
-    MDC_DATA_DEBUG_MESSAGE
-        .debugExitMessage(VSP_ID_DEPLOYMENT_FLAVOR_ID, vspId, deploymentFlavorId);
   }
 
   @Override
   public CompositionEntityValidationData updateDeploymentFlavor(
       DeploymentFlavorEntity deploymentFlavorEntity) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP id, deploymentFlavor id", deploymentFlavorEntity
-        .getVspId(), deploymentFlavorEntity.getId());
-
     if (!vspInfoDao.isManual(deploymentFlavorEntity.getVspId(),
         deploymentFlavorEntity.getVersion())) {
       final ErrorCode updateDeploymentFlavorErrorBuilder =
@@ -366,9 +346,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
       deploymentFlavorDao.update(deploymentFlavorEntity);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP id, deploymentFlavor id",
-        deploymentFlavorEntity.getVspId(), deploymentFlavorEntity.getId());
     return validationData;
   }
 
