@@ -6,7 +6,6 @@ import org.openecomp.sdc.generator.core.services.ManualVspToscaGenerationService
 import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
 import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VspModelInfo;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -22,14 +21,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private ManualVspDataCollectionService
       manualVspDataCollectionService = new ManualVspDataCollectionService();
 
   @Override
   public VspModelInfo gatherVspInformation(String vspId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     VspModelInfo vspModelInfo = new VspModelInfo();
     //Get Release Vendor Name
     Optional<String> releaseVendor;
@@ -104,18 +100,14 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     if (MapUtils.isNotEmpty(vspComponentNics)) {
       vspModelInfo.setNics(vspComponentNics);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return vspModelInfo;
   }
 
   @Override
   public ToscaServiceModel generateToscaModel(VspModelInfo vspModelInfo) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     ManualVspToscaGenerationService vspToscaGenerator = new ManualVspToscaGenerationService();
     ToscaServiceModel manualVspToscaServiceModel =
         vspToscaGenerator.createManualVspToscaServiceModel(vspModelInfo);
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return manualVspToscaServiceModel;
   }
 }
