@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7eaddb87",
+        "filename": "openecomp-be/backend/openecomp-sdc-validation-manager/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T08:43:04Z",
+      "side": 1,
+      "message": "Why is this needed?",
+      "range": {
+        "startLine": 88,
+        "startChar": 1,
+        "endLine": 89,
+        "endChar": 77
+      },
+      "revId": "422bcf64b7b3035efe42cabb41aeb1d8b558f26f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bed123fd",
+        "filename": "openecomp-be/backend/openecomp-sdc-validation-manager/src/main/java/org/openecomp/sdc/validation/impl/UploadValidationManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T08:43:04Z",
+      "side": 1,
+      "message": "Please adhere to the coding style/conventions.",
+      "range": {
+        "startLine": 68,
+        "startChar": 37,
+        "endLine": 68,
+        "endChar": 38
+      },
+      "revId": "422bcf64b7b3035efe42cabb41aeb1d8b558f26f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fee7abe2",
+        "filename": "openecomp-be/backend/openecomp-sdc-validation-manager/src/main/java/org/openecomp/sdc/validation/impl/UploadValidationManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T08:43:04Z",
+      "side": 1,
+      "message": "This class cannot be used as a key. Please read about how to write classes that can be used as a Map key in Java.",
+      "range": {
+        "startLine": 94,
+        "startChar": 4,
+        "endLine": 94,
+        "endChar": 22
+      },
+      "revId": "422bcf64b7b3035efe42cabb41aeb1d8b558f26f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
