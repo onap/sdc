@@ -6,6 +6,8 @@ import java.util.Objects;
 
 class VspZusammenUtil {
 
+  private VspZusammenUtil(){}
+
   static ZusammenElement aggregateElements(ZusammenElement... elements) {
     ZusammenElement head = null;
     ZusammenElement father = null;
