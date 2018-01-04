@@ -71,10 +71,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
                                                                  HeatOrchestrationTemplate
                                                                  nestedHeatOrchestrationTemplate,
                                                                  String nestedHeatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object securityGroups =
         heatResource.getProperties().get(Constants.SECURITY_GROUPS_PROPERTY_NAME);
     List<String> paramsList = new ArrayList<>();
@@ -89,12 +85,8 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
           paramsList.add((String) attachedResourceId.get().getEntityId());
         }
       });
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(paramsList);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -106,10 +98,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
   @Override
   void addRequirementToConnectResources(
       Map.Entry<String, CapabilityDefinition> connectionPointEntry, List<String> paramNames) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (paramNames == null || paramNames.isEmpty()) {
       return;
     }
@@ -119,8 +107,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
     for (String paramName : paramNames) {
       addRequirementToConnectResource(connectionPointEntry, supportedSecurityRulesTypes, paramName);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -129,10 +115,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
                                                       String connectionPointId,
                                                       Resource connectedResource,
                                                       List<String> supportedTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)) {
       logger.warn("Nested resource '" + nestedResourceId + "' property '" + nestedPropertyName
           + "' is pointing to resource with type '" + connectedResource.getType()
@@ -140,25 +122,16 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
           + "' connection, (security rules to port connection). Supported types are: '"
           + supportedTypes.toString() + "', therefore, this TOSCA capability will not be "
           + "connected.");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 
   @Override
   Map.Entry<String, RequirementDefinition> createRequirementDefinition(String capabilityKey) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     RequirementDefinition definition = new RequirementDefinition();
     definition.setCapability(capabilityKey);
     definition.setRelationship(ToscaRelationshipType.ATTACHES_TO);
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return new Map.Entry<String, RequirementDefinition>() {
       @Override
       public String getKey() {

@@ -81,10 +81,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Resource serviceInstanceResource = translateTo.getResource();
     AttachedResourceId contrailServiceTemplateAttached =
         getServiceTemplateAttachedId(translateTo, serviceInstanceResource);
@@ -103,8 +99,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
             + "' in property service_template. Invalid type, resource type should be type of '"
             + HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource()
             + "', therefore this resource will be ignored in TOSCA translation.");
-
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return;
       }
       Optional<String> contrailServiceTemplateTranslatedId =
@@ -119,8 +113,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
             + "' with type '" + contrailServiceTemplateResource.getType()
             + "' in property 'service_template'"
             + ", therefore this resource will be ignored in TOSCA translation.");
-
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return;
         /*throw new CoreException(new ReferenceToUnsupportedResourceErrorBuilder
         (translateTo.getResourceId(), translateTo.getResource().getType(),
@@ -142,8 +134,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
         logger.warn("More than one ServiceInstance pointing to the same ServiceTemplate '"
             + contrailServiceTemplateResourceId + " ' with different number of interfaces."
             + ", therefore this resource will be ignored in TOSCA translation.");
-
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return;
       }
 
@@ -171,18 +161,12 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
           + "' include 'service_template' property without 'get_resource' function, currently not"
           + " supported, therefore this resource will be ignored in TOSCA translation.");
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void addAbstractSubstitutionProperty(TranslateTo translateTo,
                                                Map<String, Object> substitutionProperties,
                                                ServiceTemplate nestedServiceTemplate,
                                                Resource contrailServiceTemplateResource) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, Object> innerProps = new HashMap<>();
     innerProps.put(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME,
         ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
@@ -199,15 +183,9 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     }
     innerProps.put("mandatory", mandatory);
     substitutionProperties.put(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME, innerProps);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private Object handleScaleOutProperty(TranslateTo translateTo, Map<String, Object> innerProps) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object scaleOutPropertyValue =
         translateTo.getResource().getProperties().get(HeatConstants.SCALE_OUT_PROPERTY_NAME);
     Object countValue = null;
@@ -226,17 +204,11 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     } else {
       innerProps.put(ToscaConstants.COUNT_PROPERTY_NAME, 1);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return countValue;
   }
 
   private void handleServiceScalingProperty(TranslateTo translateTo, Map<String, Object> innerProps,
                                             Resource contrailServiceTemplateResource) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object serviceScalingPropertyValue = contrailServiceTemplateResource.getProperties()
         .get(HeatConstants.SERVICE_SCALING_PROPERTY_NAME);
     Object serviceScalingValue = null;
@@ -252,26 +224,17 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
                 .eval(serviceScalingValue) : serviceScalingValue);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private boolean getOrderedInterfaces(Resource contrailServiceTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object orderedInterfaces = contrailServiceTemplate.getProperties().get("ordered_interfaces");
     if (orderedInterfaces == null) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
     if (orderedInterfaces instanceof String) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return HeatBoolean.eval(orderedInterfaces);
     }
     //if get_param, set default value to true
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 
@@ -280,10 +243,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
                                                       String substitutedNodeTypeId,
                                                       NodeTemplate substitutedNodeTemplate,
                                                       boolean orderedInterfaces) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ServiceTemplate nestedSubstitutionServiceTemplate = new ServiceTemplate();
     setNestedServiceTemplateGeneralDetails(translateTo, nestedSubstitutionServiceTemplate);
     String heatStackGroupKey = addHeatStackGroup(translateTo, nestedSubstitutionServiceTemplate);
@@ -296,17 +255,11 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     handleOutputParameters(nestedSubstitutionServiceTemplate, computeNodeTemplateId, translateTo);
     handleServiceInstanceInterfaces(translateTo, nestedSubstitutionServiceTemplate,
         substitutedNodeTemplate, heatStackGroupKey, orderedInterfaces, computeNodeTemplateId);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return nestedSubstitutionServiceTemplate;
   }
 
   private void handleOutputParameters(ServiceTemplate nestedSubstitutionServiceTemplate,
                                       String nodeTemplateId, TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (nodeTemplateId == null) {
       return;
     }
@@ -343,8 +296,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
       nestedSubstitutionServiceTemplate.getTopology_template()
           .setOutputs(nestedSubstitutionServiceTemplateOutputs);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleServiceInstanceInterfaces(TranslateTo translateTo,
@@ -352,10 +303,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
                                                NodeTemplate substitutedNodeTemplate,
                                                String heatStackGroupKey, boolean orderedInterfaces,
                                                String computeNodeTemplateId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Resource serviceInstanceResource = translateTo.getResource();
     Object interfaceListProperty =
         serviceInstanceResource.getProperties().get(HeatConstants.INTERFACE_LIST_PROPERTY_NAME);
@@ -372,8 +319,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
       handleInterface(translateTo, interfaceListProperty, null, nestedSubstitutionServiceTemplate,
           heatStackGroupKey, substitutedNodeTemplate, orderedInterfaces, computeNodeTemplateId);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleInterface(TranslateTo translateTo, Object interfacePropertyValue,
@@ -381,10 +326,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
                                ServiceTemplate nestedSubstitutionServiceTemplate,
                                String heatStackGroupKey, NodeTemplate substitutedNodeTemplate,
                                boolean orderedInterfaces, String computeNodeTemplateId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (index == null) {
       index = new Integer(0);
     }
@@ -400,17 +341,11 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     updateHeatStackGroup(nestedSubstitutionServiceTemplate, heatStackGroupKey, portNodeTemplateId);
     connectPortToNetwork(translateTo, interfacePropertyValue, substitutedNodeTemplate,
         portReqMappingKey);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void connectPortToNetwork(TranslateTo translateTo, Object interfacePropertyValue,
                                     NodeTemplate substitutedNodeTemplate,
                                     String portReqMappingKey) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> validNetworksForConnections = Arrays
         .asList(HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
             HeatResourcesTypes.CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource());
@@ -475,16 +410,10 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
         // MissingMandatoryPropertyErrorBuilder("virtual_network").build());
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private NodeTemplate createPortNodeTemplate(Integer index, boolean orderedInterfaces,
                                               String computeNodeTemplateId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate portNodeTemplate = new NodeTemplate();
     portNodeTemplate.setType(ToscaNodeType.CONTRAIL_PORT);
     Map<String, Object> portProperties = new HashMap<>();
@@ -508,8 +437,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     }
     portNodeTemplate.setProperties(portProperties);
     DataModelUtil.addBindingReqFromPortToCompute(computeNodeTemplateId, portNodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return portNodeTemplate;
   }
 
@@ -517,10 +444,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
   private void addLinkToNetworkRequirementAssignment(NodeTemplate nodeTemplate,
                                                      String connectedNodeTranslatedId,
                                                      String requirementId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (nodeTemplate == null || connectedNodeTranslatedId == null) {
       return;
     }
@@ -530,57 +453,33 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     requirement.setRelationship(ToscaRelationshipType.NATIVE_NETWORK_LINK_TO);
     requirement.setNode(connectedNodeTranslatedId);
     DataModelUtil.addRequirementAssignment(nodeTemplate, requirementId, requirement);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void updateHeatStackGroup(ServiceTemplate serviceTemplate, String heatStackGroupKey,
                                     String memberId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     serviceTemplate.getTopology_template().getGroups().get(heatStackGroupKey).getMembers()
         .add(memberId);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void updateSubstitutionMappingRequirement(ServiceTemplate serviceTemplate,
                                                     String portReqMappingKey,
                                                     String portNodeTemplateId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> portReqMappingValue = new ArrayList<>();
     portReqMappingValue.add(portNodeTemplateId);
     portReqMappingValue.add(ToscaConstants.LINK_REQUIREMENT_ID);
     DataModelUtil
         .addSubstitutionMappingReq(serviceTemplate, portReqMappingKey, portReqMappingValue);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void addSubstitutionMappingEntry(ServiceTemplate nestedSubstitutionServiceTemplate,
                                            String substitutedNodeTypeId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     SubstitutionMapping substitutionMappings = new SubstitutionMapping();
     substitutionMappings.setNode_type(substitutedNodeTypeId);
     DataModelUtil.addSubstitutionMapping(nestedSubstitutionServiceTemplate, substitutionMappings);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleInputParameters(ServiceTemplate nestedSubstitutionServiceTemplate,
                                      TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
 
     Optional<NodeType> contrailAbstractNodeType =
@@ -605,17 +504,11 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
       nestedSubstitutionServiceTemplate.getTopology_template()
           .setInputs(nestedSubstitutionServiceTemplateInputs);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private String handleComputeNodeTemplate(TranslateTo translateTo, String computeNodeTypeId,
                                            ServiceTemplate nestedSubstitutionServiceTemplate,
                                            String heatStackGroupKey) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     Optional<NodeType> contrailComputeNodeType = toscaAnalyzerService
         .fetchNodeType(ToscaNodeType.CONTRAIL_COMPUTE,
@@ -646,16 +539,10 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
         computeNodeTemplate);
     nestedSubstitutionServiceTemplate.getTopology_template().getGroups().get(heatStackGroupKey)
         .getMembers().add(computeNodeTemplateId);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return computeNodeTemplateId;
   }
 
   private String addHeatStackGroup(TranslateTo translateTo, ServiceTemplate serviceTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     GroupDefinition serviceInstanceGroupDefinition = new GroupDefinition();
     serviceInstanceGroupDefinition.setType(ToscaGroupType.HEAT_STACK);
     Map<String, Object> groupProperties = new HashMap<>();
@@ -667,8 +554,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     String heatStackGroupKey = translateTo.getTranslatedId() + "_group";
     DataModelUtil.addGroupDefinitionToTopologyTemplate(serviceTemplate, heatStackGroupKey,
         serviceInstanceGroupDefinition);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return heatStackGroupKey;
   }
 
@@ -676,8 +561,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
   private void setNestedServiceTemplateGeneralDetails(TranslateTo translateTo,
                                                       ServiceTemplate
                                                           nestedSubstitutionServiceTemplate) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, String> nestedTemplateMetadata = new HashMap<>();
     String nestedTemplateName = new ContrailTranslationHelper()
         .getSubstitutionContrailServiceTemplateMetadata(translateTo.getHeatFileName(),
@@ -692,16 +575,12 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     globalTypesImportList.addAll(
         HeatToToscaUtil.createImportList(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME));
     nestedSubstitutionServiceTemplate.setImports(globalTypesImportList);
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private NodeTemplate createSubstitutedNodeTemplate(TranslateTo translateTo,
                                                      Resource contrailServiceTemplateResource,
                                                      String contrailServiceTemplateTranslatedId,
                                                      int numberOfPorts) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     boolean isImportAddedToServiceTemplate =
         DataModelUtil
             .isImportAddedToServiceTemplate(translateTo.getServiceTemplate().getImports(), Constants
@@ -785,16 +664,10 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     String substitutedNodeTemplateId = translateTo.getTranslatedId();
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), substitutedNodeTemplateId,
         substitutesNodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutesNodeTemplate;
   }
 
   private void addNetworkLinkRequirements(NodeType nodeType, int numberOfPorts) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (nodeType.getRequirements() == null) {
       List<Map<String, RequirementDefinition>> requirementList = new ArrayList<>();
       for (int i = 0; i < numberOfPorts; i++) {
@@ -809,15 +682,9 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
         nodeType.setRequirements(requirementList);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private int getServiceInstanceNumberOfPorts(Resource serviceInstanceResource) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     int numberOfPorts;
     Object interfaceTypeProperty =
         serviceInstanceResource.getProperties().get(HeatConstants.INTERFACE_LIST_PROPERTY_NAME);
@@ -830,17 +697,11 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     } else {
       numberOfPorts = 0;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return numberOfPorts;
   }
 
   private AttachedResourceId getServiceTemplateAttachedId(TranslateTo translateTo,
                                                           Resource serviceInstanceResource) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object serviceTemplateProperty =
         serviceInstanceResource.getProperties().get("service_template");
     Optional<AttachedResourceId> serviceTemplateId = HeatToToscaUtil
@@ -848,7 +709,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
             translateTo.getHeatOrchestrationTemplate(), translateTo.getContext(),
             serviceTemplateProperty);
     if (serviceTemplateId.isPresent()) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return serviceTemplateId.get();
     } else {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
