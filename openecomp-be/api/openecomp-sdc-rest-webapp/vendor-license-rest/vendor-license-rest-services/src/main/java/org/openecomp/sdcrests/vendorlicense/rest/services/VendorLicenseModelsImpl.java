@@ -34,7 +34,6 @@ import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.notification.dtos.Event;
@@ -94,8 +93,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   private static final String SUBMIT_HEALED_VERSION_ERROR =
       "VLM Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
   private static final Logger LOGGER = LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
-
   private ItemPermissionsManager permissionsManager = ItemPermissionsManagerFactory.getInstance()
       .createInterface();
   private NotificationPropagationManager notifier =
@@ -111,7 +108,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   @Override
   public Response listLicenseModels(String versionStatus, String user) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
     MdcUtil.initMdc(LoggerServiceName.List_VLM.toString());
 
     Predicate<Item> itemPredicate;
@@ -133,14 +129,11 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     itemManager.list(itemPredicate).stream()
         .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
         .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, ItemDto.class)));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return Response.ok(results).build();
   }
 
   @Override
   public Response createLicenseModel(VendorLicenseModelRequestDto request, String user) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
     LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VLM + request.getVendorName());
     MdcUtil.initMdc(LoggerServiceName.Create_VLM.toString());
 
@@ -172,15 +165,12 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
     activityLogManager.logActivity(new ActivityLogEntity(vlm.getId(), version,
         ActivityType.Create, user, true, "", ""));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return Response.ok(itemCreationDto).build();
   }
 
   @Override
   public Response updateLicenseModel(VendorLicenseModelRequestDto request, String vlmId,
                                      String versionId, String user) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VLM_ID, vlmId);
     MdcUtil.initMdc(LoggerServiceName.Update_VLM.toString());
 
     VendorLicenseModelEntity vlm =
@@ -190,14 +180,11 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     vlm.setVersion(new Version(versionId));
 
     vendorLicenseManager.updateVendorLicenseModel(vlm);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VLM_ID, vlmId);
     return Response.ok().build();
   }
 
   @Override
   public Response getLicenseModel(String vlmId, String versionId, String user) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VLM_ID, vlmId);
     MdcUtil.initMdc(LoggerServiceName.Get_VLM.toString());
 
     Version version = versioningManager.get(vlmId, new Version(versionId));
@@ -222,20 +209,13 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
     VendorLicenseModelEntityDto vlmDto =
         new MapVendorLicenseModelEntityToDto().applyMapping(vlm, VendorLicenseModelEntityDto.class);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VLM_ID, vlmId);
     return Response.ok(vlmDto).build();
   }
 
   @Override
   public Response deleteLicenseModel(String vlmId, String versionId, String user) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VLM_ID, vlmId);
-
     MdcUtil.initMdc(LoggerServiceName.Delete_VLM.toString());
     vendorLicenseManager.deleteVendorLicenseModel(vlmId, new Version(versionId));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VLM_ID, vlmId);
-
     return Response.ok().build();
   }
 

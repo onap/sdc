@@ -22,7 +22,6 @@ package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -56,16 +55,11 @@ import java.util.HashSet;
 @Service("featureGroups")
 @Scope(value = "prototype")
 public class FeatureGroupsImpl implements FeatureGroups {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorLicenseManager vendorLicenseManager =
       VendorLicenseManagerFactory.getInstance().createInterface();
 
   @Override
   public Response listFeatureGroups(String vlmId, String versionId, String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-
     MdcUtil.initMdc(LoggerServiceName.List_FG.toString());
     Collection<FeatureGroupEntity> featureGroupEntities =
         vendorLicenseManager.listFeatureGroups(vlmId, new Version(versionId));
@@ -84,18 +78,12 @@ public class FeatureGroupsImpl implements FeatureGroups {
       outputMapper.doMapping(fg, fgDto);
       results.add(fgDto);
     }
-
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
-
     return Response.ok(results).build();
   }
 
   @Override
   public Response createFeatureGroup(FeatureGroupRequestDto request, String vlmId, String versionId,
                                      String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-
     MdcUtil.initMdc(LoggerServiceName.Create_FG.toString());
     FeatureGroupEntity featureGroupEntity = new MapFeatureGroupDescriptorDtoToFeatureGroupEntity()
         .applyMapping(request, FeatureGroupEntity.class);
@@ -109,18 +97,12 @@ public class FeatureGroupsImpl implements FeatureGroups {
 
     StringWrapperResponse result =
         createdFeatureGroup != null ? new StringWrapperResponse(createdFeatureGroup.getId()) : null;
-
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
-
     return Response.ok(result).build();
   }
 
   @Override
   public Response updateFeatureGroup(FeatureGroupUpdateRequestDto request, String vlmId,
                                      String versionId, String featureGroupId, String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id, FG id", vlmId, featureGroupId);
-
     MdcUtil.initMdc(LoggerServiceName.Update_FG.toString());
     FeatureGroupEntity featureGroupEntity = new MapFeatureGroupDescriptorDtoToFeatureGroupEntity()
         .applyMapping(request, FeatureGroupEntity.class);
@@ -132,18 +114,12 @@ public class FeatureGroupsImpl implements FeatureGroups {
         .updateFeatureGroup(featureGroupEntity, request.getAddedLicenseKeyGroupsIds(),
             request.getRemovedLicenseKeyGroupsIds(), request.getAddedEntitlementPoolsIds(),
             request.getRemovedEntitlementPoolsIds());
-
-    mdcDataDebugMessage.debugExitMessage("VLM id, FG id", vlmId, featureGroupId);
-
     return Response.ok().build();
   }
 
   @Override
   public Response getFeatureGroup(String vlmId, String versionId, String featureGroupId,
                                   String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id, FG id", vlmId, featureGroupId);
-
     MdcUtil.initMdc(LoggerServiceName.Get_FG.toString());
     FeatureGroupEntity fgInput = new FeatureGroupEntity();
     fgInput.setVendorLicenseModelId(vlmId);
@@ -183,27 +159,18 @@ public class FeatureGroupsImpl implements FeatureGroups {
 
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage("VLM id, FG id", vlmId, featureGroupId);
-
     return Response.ok(fgmDto).build();
   }
 
   @Override
   public Response deleteFeatureGroup(String vlmId, String versionId, String featureGroupId,
                                      String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id, FG id", vlmId, featureGroupId);
-
     MdcUtil.initMdc(LoggerServiceName.Delete_FG.toString());
     FeatureGroupEntity fgInput = new FeatureGroupEntity();
     fgInput.setVendorLicenseModelId(vlmId);
     fgInput.setVersion(new Version(versionId));
     fgInput.setId(featureGroupId);
     vendorLicenseManager.deleteFeatureGroup(fgInput);
-
-    mdcDataDebugMessage.debugExitMessage("VLM id, FG id", vlmId, featureGroupId);
-
     return Response.ok().build();
   }
 

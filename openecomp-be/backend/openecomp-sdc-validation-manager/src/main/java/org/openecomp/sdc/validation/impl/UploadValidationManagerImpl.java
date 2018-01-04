@@ -35,7 +35,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -61,10 +60,6 @@ import java.util.zip.ZipInputStream;
  * Created by TALIO on 4/20/2016.
  */
 public class UploadValidationManagerImpl implements UploadValidationManager {
-
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
-
-
   private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData)
       throws IOException, CoreException {
 
@@ -127,10 +122,6 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
   @Override
   public ValidationFileResponse validateFile(String type, InputStream fileToValidate)
       throws IOException {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, (String[]) null);
-
     ValidationFileResponse validationFileResponse = new ValidationFileResponse();
 
     HeatTreeManager tree;
@@ -162,8 +153,6 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
       throw new RuntimeException("invalid type:" + type);
     }
     validationFileResponse.setValidationData(validationStructureList);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, (String[]) null);
     return validationFileResponse;
   }
 

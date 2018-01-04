@@ -22,7 +22,6 @@ package org.openecomp.sdcrests.validation.rest.services;
 
 
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -48,16 +47,11 @@ import java.io.InputStream;
 @Service("validation")
 @Scope(value = "prototype")
 public class ValidationImpl implements Validation {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   @Autowired
   private UploadValidationManager uploadValidationManager;
 
   @Override
   public Response validateFile(String type, InputStream fileToValidate) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     MDC.put(LoggerConstants.SERVICE_NAME,
         LoggerServiceName.Validate.toString());
     ValidationFileResponse validationFileResponse = null;
@@ -73,9 +67,6 @@ public class ValidationImpl implements Validation {
     ValidationFileResponseDto validationFileResponseDto =
         new MapValidationFileResponseToValidationFileResponseDto()
             .applyMapping(validationFileResponse, ValidationFileResponseDto.class);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
-
     return Response.ok(validationFileResponseDto).build();
   }
 
