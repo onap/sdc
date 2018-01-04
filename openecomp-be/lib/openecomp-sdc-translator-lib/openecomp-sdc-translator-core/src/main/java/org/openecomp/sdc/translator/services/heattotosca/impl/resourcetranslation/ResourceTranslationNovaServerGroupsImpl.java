@@ -101,22 +101,16 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
 
   @Override
   protected void translate(TranslateTo translateTo) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String resourceId = translateTo.getResourceId();
     List<String> toscaPolicyTypes = getToscaPolicies(translateTo.getResource(), resourceId);
     if (!CollectionUtils.isEmpty(toscaPolicyTypes)) {
       String translatedGroupId = addGroupToTopology(translateTo, resourceId);
       addPoliciesToTopology(translateTo, translatedGroupId, toscaPolicyTypes);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void addPoliciesToTopology(TranslateTo translateTo, String policyTargetEntityId,
                                      List<String> toscaPolicyTypes) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     logger.info("******** Start creating policies for resource '%s' ********",
         translateTo.getResourceId());
     for (int i = 0; i < toscaPolicyTypes.size(); i++) {
@@ -143,22 +137,15 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
     logger
         .info("******** All policies for resource '%s' created successfully ********",
             translateTo.getResourceId());
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private String getTranslatedPolicyId(TranslateTo translateTo, List<String> toscaPolicyTypes,
                                        int policyIndex) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return translateTo.getResourceId() + (toscaPolicyTypes.size() > 1 ? policyIndex : "")
         + "_policy";
   }
 
   private String addGroupToTopology(TranslateTo translateTo, String resourceId) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     logger.info("******** Start creating group for resource '%s' ********", resourceId);
     GroupDefinition group = new GroupDefinition();
     group.setMembers(new ArrayList<>());
@@ -168,8 +155,6 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
         .addGroupDefinitionToTopologyTemplate(translateTo.getServiceTemplate(),
             translatedGroupId, group);
     logger.info("******** Creating group '%s' for resource '%s' ********", resourceId, resourceId);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return translatedGroupId;
   }
 
@@ -178,8 +163,6 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
   }
 
   private List<String> getToscaPolicies(Resource resource, String resourceId) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, Object> properties = resource.getProperties();
     if (Objects.isNull(properties) || Objects.isNull(properties.get("policies"))) {
       return Arrays.asList(ToscaPolicyType.PLACEMENT_ANTILOCATE);
@@ -192,8 +175,6 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
         retList.add(getToscaPolicyByHotPolicy(policy));
       }
     });
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return retList;
   }
 
