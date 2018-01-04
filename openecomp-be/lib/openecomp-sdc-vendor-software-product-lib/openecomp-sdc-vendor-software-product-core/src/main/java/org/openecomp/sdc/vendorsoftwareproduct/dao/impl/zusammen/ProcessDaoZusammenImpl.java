@@ -45,7 +45,7 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-
+    // registerVersioning not implemented for ProcessDaoZusammenImpl
   }
 
   @Override
@@ -120,18 +120,6 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
     Optional<Element> optionalElement = zusammenAdaptor.getElementByName(context,
         elementContext, new Id(processEntity.getComponentId()), ElementType.Processes.name());
 
-  /*  ZusammenElement aggregatedElement =
-        buildStructuralElement(ElementType.Processes, Action.DELETE);
-
-    if (processEntity.getComponentId() != null) {
-      ZusammenElement componentElement = createParentElement(processEntity);
-      aggregatedElement = VspaggregateElements(componentElement,
-          aggregatedElement);
-    }
-
-    zusammenAdaptor.saveElement(context, elementContext, aggregatedElement, "Delete All
-    processes");*/
-
     if (optionalElement.isPresent()) {
       Element processesElement = optionalElement.get();
       Collection<Element> processes = processesElement.getSubElements();
@@ -147,11 +135,6 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
 
   @Override
   public void deleteVspAll(String vspId, Version version) {
-    /* ProcessEntity processEntity = new ProcessEntity();
-    processEntity.setVersion(version);
-    processEntity.setVspId(vspId);
-    deleteAll(processEntity); */
-
     SessionContext context = createSessionContext();
     ElementContext elementContext =
         new ElementContext(vspId, version.getId());
