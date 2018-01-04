@@ -113,8 +113,8 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
         getFeatureGroupListForVsp(deploymentFlavorEntity.getVspId(), version);
     String featureGroup = deploymentFlavorEntity.getDeploymentFlavorCompositionData()
         .getFeatureGroupId();
-      if (featureGroup != null && featureGroup.trim().length() > 0
-              && isEmpty(featureGroups) || (!(validFeatureGroup(featureGroups, featureGroup)))) {
+    if (featureGroup != null && featureGroup.trim().length() > 0
+          && (isEmpty(featureGroups) || (!(validFeatureGroup(featureGroups, featureGroup))))) {
         ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
             .getFeatureGroupNotexistErrorBuilder(featureGroup, deploymentFlavorEntity.getVspId(),
                 version);
@@ -122,8 +122,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
             LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), deploymentFlavorErrorBuilder.message());
         throw new CoreException(deploymentFlavorErrorBuilder);
-      }
-
+    }
     validateComponentComputeAssociation(deploymentFlavorEntity, version);
   }
 
