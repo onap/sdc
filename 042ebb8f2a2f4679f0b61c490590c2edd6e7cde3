@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_09d25fd2",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/java/org/openecomp/sdcrests/wrappers/StringWrapperResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T13:44:48Z",
+      "side": 1,
+      "message": "I don\u0027t think a default constructor is needed in this case.",
+      "revId": "042ebb8f2a2f4679f0b61c490590c2edd6e7cde3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
