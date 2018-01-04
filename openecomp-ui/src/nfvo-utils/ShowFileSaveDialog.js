@@ -21,7 +21,7 @@ function getTimestampString() {
 }
 
 
-var showFileSaveDialog = function showFileSaveDialog({blob, headers, defaultFilename, addTimestamp}) {
+export default function showFileSaveDialog({blob, headers, defaultFilename, addTimestamp}) {
 	let filename;
 	let contentDisposition = headers['content-disposition'] ? headers['content-disposition'] : '';
 	let match = contentDisposition ? contentDisposition.match(/filename=(.*?)(;|$)/) : false;
@@ -47,7 +47,3 @@ var showFileSaveDialog = function showFileSaveDialog({blob, headers, defaultFile
 		URL.revokeObjectURL(url);
 	}, 0);
 };
-
-
-
-export default showFileSaveDialog;
