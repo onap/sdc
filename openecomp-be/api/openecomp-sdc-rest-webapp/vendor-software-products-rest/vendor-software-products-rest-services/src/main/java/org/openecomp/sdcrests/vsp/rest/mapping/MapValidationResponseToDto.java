@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdcrests.vsp.rest.mapping;
@@ -52,7 +48,7 @@ public class MapValidationResponseToDto
       return null;
     }
     return uploadDataErrors.entrySet().stream().collect(
-        Collectors.toMap(entry -> entry.getKey(), entry -> mapErrorMessages(entry.getValue())));
+        Collectors.toMap(Map.Entry::getKey, entry -> mapErrorMessages(entry.getValue())));
   }
 
   private static QuestionnaireValidationResultDto mapQuestionnaireValidationResult(
@@ -68,51 +64,14 @@ public class MapValidationResponseToDto
     Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
     for (CompositionEntityValidationData validationData : questionnaireValidationResult
         .getValidationData()) {
-      validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping
-          (validationData, CompositionEntityValidationDataDto.class));
+      validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping(
+              validationData, CompositionEntityValidationDataDto.class));
     }
 
     questionnaireValidationResultDto.setValidationData(validationDataDto);
     return questionnaireValidationResultDto;
   }
 
-  /*private static ComponentValidationResultDto mapcomponentValidationResult(
-      ComponentValidationResult componentValidationResult) {
-    if (componentValidationResult == null) {
-      return null;
-    }
-    ComponentValidationResultDto componentValidationResultDto =
-        new ComponentValidationResultDto();
-    componentValidationResultDto.setValid(componentValidationResult.isValid());
-
-    Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
-    for(CompositionEntityValidationData validationData : componentValidationResult.getInfo()){
-      validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping
-          (validationData, CompositionEntityValidationDataDto.class));
-    }
-
-    componentValidationResultDto.setValidationData(validationDataDto);
-    return componentValidationResultDto;
-  }
-
-  private static DeploymentFlavorValidationResultDto mapdeploymentFlavorValidationResult(
-      DeploymentFlavorValidationResult deploymentFlavorValidationResult) {
-    if (deploymentFlavorValidationResult == null) {
-      return null;
-    }
-    DeploymentFlavorValidationResultDto deploymentFlavorValidationResultDto =
-        new DeploymentFlavorValidationResultDto();
-    deploymentFlavorValidationResultDto.setValid(deploymentFlavorValidationResult.isValid());
-
-    Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
-    for(CompositionEntityValidationData validationData : deploymentFlavorValidationResult.getInfo()){
-      validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping
-          (validationData, CompositionEntityValidationDataDto.class));
-    }
-
-    deploymentFlavorValidationResultDto.setValidationData(validationDataDto);
-    return deploymentFlavorValidationResultDto;
-  }*/
 
   private static List<ErrorMessageDto> mapErrorMessages(List<ErrorMessage> errorMessages) {
     return errorMessages == null ? null : errorMessages.stream().map(
