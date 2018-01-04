@@ -2,7 +2,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
@@ -21,10 +20,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.ZipFileUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +35,11 @@ import java.util.Optional;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class OrchestrationTemplateCandidateManagerImplTest {
   private static final String VSP_ID = "vspId";
@@ -78,8 +82,14 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     MockitoAnnotations.initMocks(this);
   }
 
+  @AfterMethod
+  public void tearDown() {
+    candidateManager = null;
+    orchestrationUtil = null;
+  }
+
   @Test
-  public void testProcessEmptyUpload() throws IOException {
+  public void testProcessEmptyUpload() {
     OrchestrationTemplateCandidateData orchTemplate =
         new OrchestrationTemplateCandidateData();
     orchTemplate
@@ -110,92 +120,81 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     OrchestrationTemplateActionResponse response =
         candidateManager.process(VSP_ID, VERSION01);
 
-    Assert.assertNotNull(response);
+    assertNotNull(response);
   }
 
   @Test
   public void testUpdateVspComponentDependenciesHeatReuploadMoreComponents() {
-    Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
-        getExistingComponentDependencies();
-    doReturn(existingComponentsDependencies).when(componentDependencyModelDaoMock)
-        .list(anyObject());
-    Collection<ComponentEntity> componentListWithMoreComponentsInHeat =
-        getComponentListWithMoreComponentsInHeat();
-    doReturn(componentListWithMoreComponentsInHeat).when(componentDaoMock).list(anyObject());
-    Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
-    orchestrationUtil.updateVspComponentDependencies(anyObject(), anyObject(),
-        componentIdNameInfoBeforeProcess);
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(2)).update(anyObject());
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(0)).delete(anyObject());
+    doReturn(getExistingComponentDependencies())
+        .when(componentDependencyModelDaoMock).list(anyObject());
+    doReturn(getComponentListWithMoreComponentsInHeat())
+        .when(componentDaoMock).list(anyObject());
+
+    orchestrationUtil
+        .updateVspComponentDependencies(VSP_ID, VERSION01, getVspInitComponentIdNameInfo());
+
+    verify(componentDependencyModelDaoMock, times(2)).update(anyObject());
+    verify(componentDependencyModelDaoMock, never()).delete(anyObject());
   }
 
   @Test
   public void testUpdateVspComponentDependenciesHeatReuploadLessComponents() {
-    Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
-        getExistingComponentDependencies();
-    doReturn(existingComponentsDependencies).
-        when(componentDependencyModelDaoMock).list(anyObject());
-    Collection<ComponentEntity> componentListWithLessComponentsInHeat =
-        getComponentListWithLessComponentsInHeat();
-    doReturn(componentListWithLessComponentsInHeat).when(componentDaoMock).list(anyObject());
-    Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
-    orchestrationUtil
-        .updateVspComponentDependencies(anyObject(), anyObject(),
-            componentIdNameInfoBeforeProcess);
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(1)).update(anyObject());
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(1)).delete(anyObject());
+    doReturn(getExistingComponentDependencies())
+        .when(componentDependencyModelDaoMock).list(anyObject());
+    doReturn(getComponentListWithLessComponentsInHeat()).when(componentDaoMock).list(anyObject());
+
+    orchestrationUtil.updateVspComponentDependencies(VSP_ID, VERSION01,
+        getVspInitComponentIdNameInfo());
+
+    verify(componentDependencyModelDaoMock).update(anyObject());
+    verify(componentDependencyModelDaoMock).delete(anyObject());
   }
 
   @Test
   public void testUpdateVspComponentDependenciesHeatReuploadSameComponents() {
-    Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
-        getExistingComponentDependencies();
-    doReturn(existingComponentsDependencies).when(componentDependencyModelDaoMock)
-        .list(anyObject());
-    Collection<ComponentEntity> componentListWithSameComponentsInHeat =
-        getComponentListWithSameComponentsInHeat();
-    doReturn(componentListWithSameComponentsInHeat).when(componentDaoMock).list(anyObject());
-    Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
-    orchestrationUtil.updateVspComponentDependencies(anyObject(), anyObject(),
-        componentIdNameInfoBeforeProcess);
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(2)).update(anyObject());
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(0)).delete(anyObject());
+    doReturn(getExistingComponentDependencies())
+        .when(componentDependencyModelDaoMock).list(anyObject());
+    doReturn(getComponentListWithSameComponentsInHeat()).when(componentDaoMock).list(anyObject());
+
+    orchestrationUtil
+        .updateVspComponentDependencies(VSP_ID, VERSION01, getVspInitComponentIdNameInfo());
+
+    verify(componentDependencyModelDaoMock, times(2)).update(anyObject());
+    verify(componentDependencyModelDaoMock, never()).delete(anyObject());
   }
 
   @Test
   public void testUpdateVspComponentDependenciesHeatReuploadNoComponents() {
-    Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
-        getExistingComponentDependencies();
-    doReturn(existingComponentsDependencies).when(componentDependencyModelDaoMock)
-        .list(anyObject());
-    Collection<ComponentEntity> componentListWithMoreComponentsInHeat =
-        new ArrayList<>();
-    doReturn(componentListWithMoreComponentsInHeat).when(componentDaoMock).list(anyObject());
-    Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
-    orchestrationUtil.updateVspComponentDependencies(anyObject(), anyObject(),
-        componentIdNameInfoBeforeProcess);
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(0)).update(anyObject());
-    Mockito.verify(componentDependencyModelDaoMock, Mockito.times(0)).delete(anyObject());
+    doReturn(getExistingComponentDependencies())
+        .when(componentDependencyModelDaoMock).list(anyObject());
+    doReturn(new ArrayList<>()).when(componentDaoMock).list(anyObject());
+
+    orchestrationUtil
+        .updateVspComponentDependencies(VSP_ID, VERSION01, getVspInitComponentIdNameInfo());
+
+    verify(componentDependencyModelDaoMock, never()).update(anyObject());
+    verify(componentDependencyModelDaoMock, never()).delete(anyObject());
   }
 
   @Test
   public void testVspComponentIdNameInfoNoComponents() {
-    Collection<ComponentEntity> initialVspComponents = new ArrayList<>();
     Map<String, String> vspComponentIdNameInfo =
-        orchestrationUtil.getVspComponentIdNameInfo(anyObject(), anyObject());
-    Assert.assertEquals(vspComponentIdNameInfo.size(), 0);
+        orchestrationUtil.getVspComponentIdNameInfo(VSP_ID, VERSION01);
+
+    assertEquals(vspComponentIdNameInfo.size(), 0);
   }
 
   @Test
   public void testVspComponentIdNameInfo() {
-    Collection<ComponentEntity> initialVspComponents = getInitialVspComponents();
-    doReturn(initialVspComponents).when(componentDaoMock).list(anyObject());
+    doReturn(getInitialVspComponents()).when(componentDaoMock).list(anyObject());
+
     Map<String, String> vspComponentIdNameInfo =
-        orchestrationUtil.getVspComponentIdNameInfo(anyObject(), anyObject());
-    Assert.assertEquals(vspComponentIdNameInfo.size(), 3);
-    Assert.assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_1));
-    Assert.assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_2));
-    Assert.assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_3));
+        orchestrationUtil.getVspComponentIdNameInfo(VSP_ID, VERSION01);
+
+    assertEquals(vspComponentIdNameInfo.size(), 3);
+    assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_1));
+    assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_2));
+    assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_3));
   }
 
   @Test
@@ -206,12 +205,14 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     initialVspComponents.add(componentEntity);
 
     doReturn(initialVspComponents).when(componentDaoMock).list(anyObject());
+
     Map<String, String> vspComponentIdNameInfo =
-        orchestrationUtil.getVspComponentIdNameInfo(anyObject(), anyObject());
-    Assert.assertEquals(vspComponentIdNameInfo.size(), 3);
-    Assert.assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_1));
-    Assert.assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_2));
-    Assert.assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_3));
+        orchestrationUtil.getVspComponentIdNameInfo(VSP_ID, VERSION01);
+
+    assertEquals(vspComponentIdNameInfo.size(), 3);
+    assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_1));
+    assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_2));
+    assertNotNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_3));
     Assert.assertNull(vspComponentIdNameInfo.get(COMPONENT_ORIG_ID_4));
   }
 
@@ -246,12 +247,16 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     Collection<ComponentEntity> vspComponents = getInitialVspComponents();
     for (Iterator<ComponentEntity> iterator = vspComponents.iterator(); iterator.hasNext(); ) {
       ComponentEntity componentEntity = iterator.next();
-      if (componentEntity.getComponentCompositionData().getName().equals(COMPONENT_NAME_1)) {
-        iterator.remove();
-      } else if (componentEntity.getComponentCompositionData().getName().equals(COMPONENT_NAME_2)) {
-        componentEntity.setId(COMPONENT_NEW_ID_2);
-      } else if (componentEntity.getComponentCompositionData().getName().equals(COMPONENT_NAME_3)) {
-        componentEntity.setId(COMPONENT_NEW_ID_3);
+      switch (componentEntity.getComponentCompositionData().getName()) {
+        case COMPONENT_NAME_1:
+          iterator.remove();
+          break;
+        case COMPONENT_NAME_2:
+          componentEntity.setId(COMPONENT_NEW_ID_2);
+          break;
+        case COMPONENT_NAME_3:
+          componentEntity.setId(COMPONENT_NEW_ID_3);
+          break;
       }
     }
     return vspComponents;
@@ -293,12 +298,16 @@ public class OrchestrationTemplateCandidateManagerImplTest {
 
   private void createInitialComponentDependencies(Collection<ComponentEntity> vspComponents) {
     for (ComponentEntity componentEntity : vspComponents) {
-      if (componentEntity.getComponentCompositionData().getName().equals(COMPONENT_NAME_1)) {
-        componentEntity.setId(COMPONENT_NEW_ID_1);
-      } else if (componentEntity.getComponentCompositionData().getName().equals(COMPONENT_NAME_2)) {
-        componentEntity.setId(COMPONENT_NEW_ID_2);
-      } else if (componentEntity.getComponentCompositionData().getName().equals(COMPONENT_NAME_3)) {
-        componentEntity.setId(COMPONENT_NEW_ID_3);
+      switch (componentEntity.getComponentCompositionData().getName()) {
+        case COMPONENT_NAME_1:
+          componentEntity.setId(COMPONENT_NEW_ID_1);
+          break;
+        case COMPONENT_NAME_2:
+          componentEntity.setId(COMPONENT_NEW_ID_2);
+          break;
+        case COMPONENT_NAME_3:
+          componentEntity.setId(COMPONENT_NEW_ID_3);
+          break;
       }
     }
   }
