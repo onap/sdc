@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1e5e17e7",
+        "filename": "openecomp-ui/src/nfvo-components/loader/LoaderReducer.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-01-04T07:26:55Z",
+      "side": 1,
+      "message": "1. why do you need to keep the urls and not just counter?\n2. let\u0027s talk about maybe moving this code to a middleware",
+      "revId": "0b275b95e87c257eb147926eb8e99249bbe9fb96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fe0fabdf",
+        "filename": "openecomp-ui/src/nfvo-utils/RestAPIUtil.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-01-04T07:26:55Z",
+      "side": 1,
+      "message": "1. can we please refactor the att names? also on configuration.\n2. why did you remove the (DEBUG) comment from line 80?",
+      "revId": "0b275b95e87c257eb147926eb8e99249bbe9fb96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_def66fd7",
+        "filename": "openecomp-ui/src/nfvo-utils/ShowFileSaveDialog.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-01-04T07:26:55Z",
+      "side": 1,
+      "message": "1. why do you need both showFileSaveDialog as a var and as a function? can\u0027t the function be anonymous? why use var and not const?\n2. Do you know why the original code had the setTimeout ?",
+      "revId": "0b275b95e87c257eb147926eb8e99249bbe9fb96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3e2d1347",
+        "filename": "openecomp-ui/webpack.common.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-01-04T07:26:55Z",
+      "side": 1,
+      "message": "Please remove this from the pull request. it is not related to this feature and it will be part of the next react update pull request anyway.",
+      "revId": "0b275b95e87c257eb147926eb8e99249bbe9fb96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
