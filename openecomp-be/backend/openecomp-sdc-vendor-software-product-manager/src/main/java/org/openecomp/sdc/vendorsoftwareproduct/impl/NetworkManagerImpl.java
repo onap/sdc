@@ -19,7 +19,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -44,8 +43,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.Collection;
 
 public class NetworkManagerImpl implements NetworkManager {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
-
   private final NetworkDao networkDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final VendorSoftwareProductInfoDao VSPInfoDao;
@@ -63,16 +60,11 @@ public class NetworkManagerImpl implements NetworkManager {
 
   @Override
   public Collection<NetworkEntity> listNetworks(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
-
     return networkDao.list(new NetworkEntity(vspId, version, null));
   }
 
   @Override
   public NetworkEntity createNetwork(NetworkEntity network) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, network.getVspId());
-
     if (!VSPInfoDao.isManual(network.getVspId(), network.getVersion())) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.CREATE_NETWORK, ErrorLevel.ERROR.name(),
@@ -81,17 +73,11 @@ public class NetworkManagerImpl implements NetworkManager {
           new CompositionEditNotAllowedErrorBuilder(network.getVspId(), network.getVersion())
               .build());
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, network.getVspId());
-
     return null;
   }
 
   @Override
   public CompositionEntityValidationData updateNetwork(NetworkEntity network) {
-    MDC_DATA_DEBUG_MESSAGE
-        .debugEntryMessage(VSP_ID_NETWORK_ID, network.getVspId(), network.getId());
-
     NetworkEntity retrieved = getValidatedNetwork(network.getVspId(), network.getVersion(), network.getId());
 
     NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
@@ -103,18 +89,12 @@ public class NetworkManagerImpl implements NetworkManager {
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
       networkDao.update(network);
     }
-
-    MDC_DATA_DEBUG_MESSAGE
-        .debugExitMessage(VSP_ID_NETWORK_ID, network.getVspId(), network.getId());
-
     return validationData;
   }
 
   @Override
   public CompositionEntityResponse<Network> getNetwork(String vspId, Version version,
                                                        String networkId) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_NETWORK_ID, vspId, networkId);
-
     NetworkEntity networkEntity = getValidatedNetwork(vspId, version, networkId);
     Network network = networkEntity.getNetworkCompositionData();
 
@@ -126,9 +106,6 @@ public class NetworkManagerImpl implements NetworkManager {
     response.setId(networkId);
     response.setData(network);
     response.setSchema(getCompositionSchema(schemaInput));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_NETWORK_ID, vspId, networkId);
-
     return response;
   }
 
@@ -142,8 +119,6 @@ public class NetworkManagerImpl implements NetworkManager {
 
   @Override
   public void deleteNetwork(String vspId, Version version, String networkId) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_NETWORK_ID, vspId, networkId);
-
     if (!VSPInfoDao.isManual(vspId, version)) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.DELETE_NETWORK, ErrorLevel.ERROR.name(),
@@ -151,8 +126,6 @@ public class NetworkManagerImpl implements NetworkManager {
       throw new CoreException(
           new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_NETWORK_ID, vspId, networkId);
   }
 
 

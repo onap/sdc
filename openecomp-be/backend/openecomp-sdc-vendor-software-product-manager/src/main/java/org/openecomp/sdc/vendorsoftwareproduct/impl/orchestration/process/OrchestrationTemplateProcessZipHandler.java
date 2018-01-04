@@ -30,7 +30,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
@@ -60,7 +59,6 @@ import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_E
 
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private final CandidateService candidateService =
       CandidateServiceFactory.getInstance().createInterface();
   private static final String VSP_ID = "VSP id";
@@ -78,7 +76,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
             candidateData.getContentData().array());
     if (!fileContent.isPresent()) {
       response.addStructureErrors(uploadFileResponse.getErrors());
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
           HEAT_VALIDATION_ERROR));
       return response;
@@ -92,8 +89,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     if (CollectionUtils.isNotEmpty(structure.getUnassigned())) {
       response.addErrorMessageToMap(SdcCommon.UPLOAD_FILE,
           Messages.FOUND_UNASSIGNED_FILES.getErrorMessage(), ErrorLevel.ERROR);
-
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
           HEAT_VALIDATION_ERROR));
       return response;
@@ -157,8 +152,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
 
     LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     uploadFileResponse.addStructureErrors(uploadErrors);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return response;
   }
 

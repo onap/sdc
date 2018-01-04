@@ -146,8 +146,6 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
           getHandlerType().toString()), exception);
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE,
           new ErrorMessage(ErrorLevel.ERROR, exception.getMessage()));
-
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
       return true;
     }
     return false;

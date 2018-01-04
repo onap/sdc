@@ -10,7 +10,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -23,8 +22,6 @@ import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.ge
 public abstract class BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
   protected static final Logger logger =
       LoggerFactory.getLogger(BaseOrchestrationTemplateHandler.class);
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   @Override
   public UploadFileResponse upload(VspDetails vspDetails, InputStream fileToUpload,
                                    String fileSuffix, String networkPackageName,
@@ -48,21 +45,16 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
           getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
               getHandlerType().toString())));
-
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
       return uploadFileResponse;
     }
 
     if (!MapUtils.isEmpty(uploadFileResponse.getErrors())) {
-      mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
       return uploadFileResponse;
     }
     if (updateCandidateData(vspDetails, uploadedFileData, optionalContentMap.get(), fileSuffix,
         networkPackageName, candidateService, uploadFileResponse)) {
       return uploadFileResponse;
     }
-
-    mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
     return uploadFileResponse;
 
   }
