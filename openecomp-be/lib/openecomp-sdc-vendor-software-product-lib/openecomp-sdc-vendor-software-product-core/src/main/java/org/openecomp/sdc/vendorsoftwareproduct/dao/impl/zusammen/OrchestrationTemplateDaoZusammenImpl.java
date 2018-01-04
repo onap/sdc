@@ -34,7 +34,7 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-
+    // registerVersioning not implemented for OrchestrationTemplateDaoZusammenImpl
   }
 
   @Override
@@ -64,9 +64,9 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
       return orchestrationTemplate;
     }
     orchestrationTemplate
-        .setFileSuffix(element.get().getInfo().getProperty(InfoPropertyName.fileSuffix.name()));
+        .setFileSuffix(element.get().getInfo().getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
     orchestrationTemplate
-        .setFileName(element.get().getInfo().getProperty(InfoPropertyName.fileName.name()));
+        .setFileName(element.get().getInfo().getProperty(InfoPropertyName.FILE_NAME.getVal()));
     if (!hasEmptyData(element.get().getData())) {
       orchestrationTemplate
           .setValidationData(new String(FileUtils.toByteArray(element.get().getData())));
@@ -105,9 +105,9 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
             ElementType.OrchestrationTemplateValidationData.name());
     if (validationDataElement.isPresent()) {
       orchestrationTemplate.setFileSuffix(validationDataElement.get().getInfo()
-          .getProperty(InfoPropertyName.fileSuffix.name()));
+          .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
       orchestrationTemplate.setFileName(validationDataElement.get().getInfo()
-          .getProperty(InfoPropertyName.fileName.name()));
+          .getProperty(InfoPropertyName.FILE_NAME.getVal()));
       if (!hasEmptyData(validationDataElement.get().getData())) {
         orchestrationTemplate.setValidationData(
             new String(FileUtils.toByteArray(validationDataElement.get().getData())));
@@ -127,9 +127,9 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
     validationData
         .setData(new ByteArrayInputStream(orchestrationTemplate.getValidationData().getBytes()));
     validationData.getInfo()
-        .addProperty(InfoPropertyName.fileSuffix.name(), orchestrationTemplate.getFileSuffix());
+        .addProperty(InfoPropertyName.FILE_SUFFIX.getVal(), orchestrationTemplate.getFileSuffix());
     validationData.getInfo()
-        .addProperty(InfoPropertyName.fileName.name(), orchestrationTemplate.getFileName());
+        .addProperty(InfoPropertyName.FILE_NAME.getVal(), orchestrationTemplate.getFileName());
 
     ZusammenElement orchestrationTemplateElement =
         buildStructuralElement(ElementType.OrchestrationTemplate, Action.UPDATE);
@@ -159,7 +159,17 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
   }
 
   private enum InfoPropertyName {
-    fileSuffix,
-    fileName
+    FILE_SUFFIX("fileSuffix"),
+    FILE_NAME("fileName");
+
+    private String val;
+
+    InfoPropertyName(String val){
+      this.val=val;
+    }
+
+    public String getVal() {
+      return val;
+    }
   }
 }
