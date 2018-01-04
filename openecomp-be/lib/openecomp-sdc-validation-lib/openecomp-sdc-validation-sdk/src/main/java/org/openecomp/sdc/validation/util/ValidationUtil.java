@@ -18,7 +18,6 @@ import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -36,8 +35,6 @@ import java.util.regex.Pattern;
 import static java.util.Objects.nonNull;
 
 public class ValidationUtil {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final Logger LOG = LoggerFactory.getLogger(ValidationUtil.class.getName());
 
   private ValidationUtil(){}
@@ -125,9 +122,6 @@ public class ValidationUtil {
 
   public static Environment validateEnvContent(String envFileName,
                                          GlobalValidationContext globalContext) {
-
-    mdcDataDebugMessage.debugEntryMessage("file", envFileName);
-
     Environment envContent;
     try {
       Optional<InputStream> fileContent = globalContext.getFileContent(envFileName);
@@ -141,10 +135,8 @@ public class ValidationUtil {
       }
     } catch (Exception exception) {
       LOG.debug("",exception);
-      mdcDataDebugMessage.debugExitMessage("file", envFileName);
       return null;
     }
-    mdcDataDebugMessage.debugExitMessage("file", envFileName);
     return envContent;
   }
 
@@ -153,9 +145,6 @@ public class ValidationUtil {
                                            GlobalValidationContext globalContext,
                                            String propertyName, Object nameValue,
                                            String[] regexList) {
-
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
-
     String propertyValue = getWantedNameFromPropertyValueGetParam(nameValue);
     if (nonNull(propertyValue) && !evalPattern(propertyValue, regexList)) {
         globalContext.addMessage(
@@ -167,11 +156,8 @@ public class ValidationUtil {
                 resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
             LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
-        mdcDataDebugMessage.debugExitMessage("file", fileName);
         return true;
       }
-
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
     return false;
   }
 
@@ -212,9 +198,6 @@ public class ValidationUtil {
 
   public static HeatOrchestrationTemplate checkHeatOrchestrationPreCondition(String fileName,
                                                                          GlobalValidationContext globalContext) {
-
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
-
     HeatOrchestrationTemplate heatOrchestrationTemplate;
     try {
       Optional<InputStream> fileContent = globalContext.getFileContent(fileName);
@@ -231,10 +214,8 @@ public class ValidationUtil {
                       , getParserExceptionReason(exception)),
           LoggerTragetServiceName.VALIDATE_HEAT_FORMAT,
           LoggerErrorDescription.INVALID_HEAT_FORMAT);
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
       return null;
     }
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
     return heatOrchestrationTemplate;
   }
 

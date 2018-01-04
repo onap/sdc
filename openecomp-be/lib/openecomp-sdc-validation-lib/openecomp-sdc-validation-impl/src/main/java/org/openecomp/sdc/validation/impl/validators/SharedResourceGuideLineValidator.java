@@ -33,7 +33,6 @@ import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.Validator;
@@ -44,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class SharedResourceGuideLineValidator implements Validator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final Logger LOGGER = LoggerFactory.getLogger(
           SharedResourceGuideLineValidator.class);
   private static final ErrorMessageCode ERROR_CODE_SRG_1 = new ErrorMessageCode("SRG1");
@@ -78,7 +76,6 @@ public class SharedResourceGuideLineValidator implements Validator {
 
   private Set<String> validateManifest(ManifestContent manifestContent,
                                               GlobalValidationContext globalContext) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", SdcCommon.MANIFEST_NAME);
     Set<String> baseFiles = ManifestUtil.getBaseFiles(manifestContent);
     if (baseFiles == null || baseFiles.isEmpty()) {
       globalContext.addMessage(
@@ -101,7 +98,6 @@ public class SharedResourceGuideLineValidator implements Validator {
           LoggerTragetServiceName.VALIDATE_BASE_FILE,
           LoggerErrorDescription.MULTI_BASE_HEAT);
     }
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", SdcCommon.MANIFEST_NAME);
     return baseFiles;
   }
 
@@ -129,19 +125,14 @@ public class SharedResourceGuideLineValidator implements Validator {
   private void validateBaseFile(String fileName, Set<String> baseFiles,
                                 HeatOrchestrationTemplate heatOrchestrationTemplate,
                                 GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
     //if not base return
     if (baseFiles == null || !baseFiles.contains(fileName)) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
     //if no resources exist return
     if (heatOrchestrationTemplate.getResources() == null
         || heatOrchestrationTemplate.getResources().size() == 0) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -180,27 +171,19 @@ public class SharedResourceGuideLineValidator implements Validator {
               LoggerTragetServiceName.VALIDATE_BASE_FILE,
               LoggerErrorDescription.RESOURCE_NOT_DEFINED_AS_OUTPUT));
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateHeatVolumeFile(String fileName, Map<String, FileData.Type> fileTypeMap,
                                       HeatOrchestrationTemplate heatOrchestrationTemplate,
                                       GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     //if not heat volume return
     if (!fileTypeMap.get(fileName).equals(FileData.Type.HEAT_VOL)) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
     //if no resources exist return
     if (heatOrchestrationTemplate.getResources() == null
         || heatOrchestrationTemplate.getResources().size() == 0) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -237,8 +220,6 @@ public class SharedResourceGuideLineValidator implements Validator {
               LoggerTragetServiceName.VALIDATE_VOLUME_FILE,
               LoggerErrorDescription.VOLUME_FILE_NOT_EXPOSED));
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
 

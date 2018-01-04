@@ -35,7 +35,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.structure.Artifact;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
@@ -75,8 +74,6 @@ import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.ge
 
 public class CandidateServiceImpl implements CandidateService {
   protected static final Logger logger = LoggerFactory.getLogger(CandidateServiceImpl.class);
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   private CandidateServiceValidator candidateServiceValidator = new CandidateServiceValidator();
   private ManifestCreator manifestCreator;
   private OrchestrationTemplateCandidateDao orchestrationTemplateCandidateDao;
@@ -94,10 +91,6 @@ public class CandidateServiceImpl implements CandidateService {
   @Override
   public Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream fileToUpload,
                                                              String fileSuffix) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     String errorMessage =
         getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(),
             fileSuffix);
@@ -109,19 +102,15 @@ public class CandidateServiceImpl implements CandidateService {
       try {
         int available = fileToUpload.available();
         if (available == 0) {
-          mdcDataDebugMessage.debugExitMessage(null);
           return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
               errorMessage));
         }
       } catch (IOException e) {
         logger.debug(e.getMessage(), e);
-        mdcDataDebugMessage.debugExitMessage(null);
         return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
             errorMessage));
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.empty();
   }
 
@@ -166,10 +155,6 @@ public class CandidateServiceImpl implements CandidateService {
   public OrchestrationTemplateCandidateData createCandidateDataEntity(
       CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest,
       AnalyzedZipHeatFiles analyzedZipHeatFiles) throws Exception {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     FileContentHandler zipContentMap = candidateDataEntityTo.getContentMap();
     FilesDataStructure filesDataStructure;
     String dataStructureJson;
@@ -197,8 +182,6 @@ public class CandidateServiceImpl implements CandidateService {
     OrchestrationTemplateCandidateData candidateData = new OrchestrationTemplateCandidateData();
     candidateData.setContentData(ByteBuffer.wrap(candidateDataEntityTo.getUploadedFileData()));
     candidateData.setFilesDataStructure(dataStructureJson);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return candidateData;
   }
 
@@ -278,10 +261,6 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   private FilesDataStructure createFileDataStructureFromManifest(InputStream isManifestContent) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     ManifestContent manifestContent =
         JsonUtil.json2Object(isManifestContent, ManifestContent.class);
     FilesDataStructure structure = new FilesDataStructure();
@@ -300,8 +279,6 @@ public class CandidateServiceImpl implements CandidateService {
         structure.getArtifacts().add(fileData.getFile());
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return structure;
   }
 
@@ -339,28 +316,19 @@ public class CandidateServiceImpl implements CandidateService {
   @Override
   public void updateCandidateUploadData(String vspId, Version version,
                                         OrchestrationTemplateCandidateData uploadData) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     orchestrationTemplateCandidateDao.update(vspId, version, uploadData);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   @Override
   public Optional<FilesDataStructure> getOrchestrationTemplateCandidateFileDataStructure(
       String vspId, Version version) {
-
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspId);
-
     Optional<String> jsonFileDataStructure =
         orchestrationTemplateCandidateDao.getStructure(vspId, version);
 
     if (jsonFileDataStructure.isPresent() && JsonUtil.isValidJson(jsonFileDataStructure.get())) {
-      mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
       return Optional
           .of(JsonUtil.json2Object(jsonFileDataStructure.get(), FilesDataStructure.class));
     } else {
-      mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
       return Optional.empty();
     }
   }
@@ -375,32 +343,21 @@ public class CandidateServiceImpl implements CandidateService {
   @Override
   public OrchestrationTemplateCandidateData getOrchestrationTemplateCandidate(String vspId,
                                                                               Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspId);
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
-
     return orchestrationTemplateCandidateDao.get(vspId, version);
   }
 
   @Override
   public OrchestrationTemplateCandidateData getOrchestrationTemplateCandidateInfo(String vspId,
                                                                                   Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspId);
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
-
     return orchestrationTemplateCandidateDao.getInfo(vspId, version);
   }
 
   @Override
   public String createManifest(VspDetails vspDetails, FilesDataStructure structure) {
-
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspDetails.getId());
-
     Optional<ManifestContent> manifest = manifestCreator.createManifest(vspDetails, structure);
     if (!manifest.isPresent()) {
       throw new RuntimeException(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
     }
-
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspDetails.getId());
     return JsonUtil.object2Json(manifest.get());
   }
 
@@ -408,11 +365,6 @@ public class CandidateServiceImpl implements CandidateService {
   public Optional<ManifestContent> createManifest(VspDetails vspDetails,
                                                   FileContentHandler fileContentHandler,
                                                   AnalyzedZipHeatFiles analyzedZipHeatFiles) {
-
-
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspDetails.getId());
-
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspDetails.getId());
     return manifestCreator.createManifest(vspDetails, fileContentHandler, analyzedZipHeatFiles);
   }
 
@@ -591,10 +543,6 @@ public class CandidateServiceImpl implements CandidateService {
   private void handleSingleHeat(FilesDataStructure structure, List<Module> modules,
                                 HeatStructureTree heat,
                                 Map<String, List<ErrorMessage>> uploadErrors) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Module module = new Module();
     module.setYaml(heat.getFileName());
     module.setIsBase(heat.getBase());
@@ -606,17 +554,11 @@ public class CandidateServiceImpl implements CandidateService {
     }
     handleEnv(module, heat, false, structure);
     modules.add(module);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void handleVolumes(Module module, Set<HeatStructureTree> volumeSet,
                              FilesDataStructure structure, int inx,
                              Map<String, List<ErrorMessage>> uploadErrors) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     for (HeatStructureTree volume : volumeSet) {
       if (inx++ > 0) {
         ErrorsUtil.addStructureErrorToErrorMap(SdcCommon.UPLOAD_FILE,
@@ -629,16 +571,10 @@ public class CandidateServiceImpl implements CandidateService {
       handleEnv(module, volume, true, structure);
       addNestedToFileDataStructure(volume, structure);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void handleEnv(Module module, HeatStructureTree tree, boolean isVolEnv,
                          FilesDataStructure structure) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (Objects.nonNull(tree.getEnv())) {
       if (isVolEnv) {
         module.setVolEnv(tree.getEnv().getFileName());
@@ -647,8 +583,6 @@ public class CandidateServiceImpl implements CandidateService {
       }
       handleArtifactsFromTree(tree.getEnv(), structure);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addNestedToFileDataStructure(HeatStructureTree heat,

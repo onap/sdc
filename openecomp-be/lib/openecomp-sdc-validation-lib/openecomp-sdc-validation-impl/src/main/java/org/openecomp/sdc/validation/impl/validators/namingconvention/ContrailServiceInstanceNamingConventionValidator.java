@@ -24,7 +24,6 @@ import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -35,7 +34,6 @@ import java.util.Map;
 
 
 public class ContrailServiceInstanceNamingConventionValidator implements ResourceValidator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final String AVAILABILITY_ZONE = "availability_zone";
   private static final ErrorMessageCode ERROR_CODE_NSI1 = new ErrorMessageCode("NSI1");
   private static final ErrorMessageCode ERROR_CODE_NSI2 = new ErrorMessageCode("NSI2");
@@ -49,13 +47,8 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
   private void validateAvailabilityZoneName(String fileName,
                                             Map.Entry<String, Resource> resourceEntry,
                                             GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     String[] regexList = new String[]{"availability_zone_(\\d+)"};
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -90,7 +83,6 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
                 LoggerErrorDescription.MISSING_GET_PARAM);
       }
     }
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
 }

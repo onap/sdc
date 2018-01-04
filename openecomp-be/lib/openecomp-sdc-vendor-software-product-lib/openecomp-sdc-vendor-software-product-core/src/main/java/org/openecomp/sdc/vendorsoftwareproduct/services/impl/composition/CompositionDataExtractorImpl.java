@@ -27,7 +27,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -71,8 +70,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
 
   protected static Logger logger;
   private static ToscaAnalyzerService toscaAnalyzerService;
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   static {
     logger = LoggerFactory.getLogger(CompositionDataExtractorImpl.class);
     toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
@@ -85,10 +82,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
    * @return the composition data
    */
   public CompositionData extractServiceCompositionData(ToscaServiceModel toscaServiceModel) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     ExtractCompositionDataContext context = new ExtractCompositionDataContext();
     String entryDefinitionServiceTemplateFileName =
         toscaServiceModel.getEntryDefinitionServiceTemplate();
@@ -100,8 +93,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
     CompositionData compositionData = new CompositionData();
     compositionData.setNetworks(context.getNetworks());
     compositionData.setComponents(context.getComponents());
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return compositionData;
   }
 
@@ -121,10 +112,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
   private void handleSubstitution(ServiceTemplate serviceTemplate,
                                          ToscaServiceModel toscaServiceModel,
                                          ExtractCompositionDataContext context) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, NodeTemplate> substitutableNodeTemplates =
         toscaAnalyzerService.getSubstitutableNodeTemplates(serviceTemplate);
 
@@ -135,8 +122,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
             substitutableNodeTemplates.get(substitutableNodeTemplateId), context);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void handleSubstitutableNodeTemplate(ServiceTemplate serviceTemplate,
@@ -144,10 +129,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
                                                       String substitutableNodeTemplateId,
                                                       NodeTemplate substitutableNodeTemplate,
                                                       ExtractCompositionDataContext context) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
     Optional<String> substituteServiceTemplateFileName = toscaAnalyzerService
         .getSubstituteServiceTemplateName(substitutableNodeTemplateId, substitutableNodeTemplate);
@@ -162,7 +143,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
     if (context.getHandledServiceTemplates().contains(substituteServiceTemplateFileName.get())) {
       //each substitution is should be handled once, and will get the connection to the upper
       // service level according to the first one which was processed
-      mdcDataDebugMessage.debugExitMessage(null);
       return;
     }
 
@@ -175,7 +155,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         substitutableNodeTemplate.getRequirements();
 
     if (CollectionUtils.isEmpty(substitutableRequirements)) {
-      mdcDataDebugMessage.debugExitMessage(null);
       return;
     }
 
@@ -184,8 +163,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         RequirementAssignment reqAssignment = toscaExtensionYamlUtil
             .yamlToObject(toscaExtensionYamlUtil.objectToYaml(substitutableReq.get(reqId)),
                 RequirementAssignment.class);
-
-        mdcDataDebugMessage.debugExitMessage(null);
         return isLinkToNetworkRequirementAssignment(reqAssignment);
       }).forEach(reqId -> {
         RequirementAssignment linkToNetworkRequirement = toscaExtensionYamlUtil
@@ -243,10 +220,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
 
 
   private void connectPortToNetwork(Nic port, NodeTemplate portNodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     List<RequirementAssignment> linkRequirementsToNetwork =
         toscaAnalyzerService.getRequirements(portNodeTemplate, ToscaConstants.LINK_REQUIREMENT_ID);
 
@@ -254,8 +227,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
     for (RequirementAssignment linkRequirementToNetwork : linkRequirementsToNetwork) {
       port.setNetworkName(linkRequirementToNetwork.getNode());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /*
@@ -263,10 +234,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
    */
   private Map<String, List<String>> getComputeToPortsConnection(
       Map<String, NodeTemplate> portNodeTemplates) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, List<String>> computeToPortConnection = new HashMap<>();
     if (MapUtils.isEmpty(portNodeTemplates)) {
       return computeToPortConnection;
@@ -280,18 +247,12 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         computeToPortConnection.get(bindingRequirementToCompute.getNode()).add(portId);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return computeToPortConnection;
   }
 
   private void extractComponents(ServiceTemplate serviceTemplate,
                                         ToscaServiceModel toscaServiceModel,
                                         ExtractCompositionDataContext context) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, NodeTemplate> computeNodeTemplates = toscaAnalyzerService
         .getNodeTemplatesByType(serviceTemplate, ToscaNodeType.NATIVE_COMPUTE,
             toscaServiceModel);
@@ -317,8 +278,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         .forEach(nodeType -> extractComponent(serviceTemplate, computeToPortsConnection,
             computesGroupedByType, imageNodeTemplates, computeFlavorNodeTemplates, nodeType,
             context));
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private Map<String,List<String>> getComponentImages(Map<String, NodeTemplate>
@@ -454,10 +413,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
 
   private Map<String, List<String>> getNodeTemplatesGroupedByType(
       Map<String, NodeTemplate> nodeTemplates) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, List<String>> nodeTemplatesGrouped =
         new HashMap<>();   //key - node type, value - list of node ids with this type
     for (String nodeId : nodeTemplates.keySet()) {
@@ -465,23 +420,16 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
       nodeTemplatesGrouped.putIfAbsent(nodeType, new ArrayList<>());
       nodeTemplatesGrouped.get(nodeType).add(nodeId);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return nodeTemplatesGrouped;
   }
 
   private List<Network> extractNetworks(ServiceTemplate serviceTemplate,
                                                ToscaServiceModel toscaServiceModel) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     List<Network> networks = new ArrayList<>();
     Map<String, NodeTemplate> networkNodeTemplates = toscaAnalyzerService
         .getNodeTemplatesByType(serviceTemplate, ToscaNodeType.NATIVE_NETWORK,
             toscaServiceModel);
     if (MapUtils.isEmpty(networkNodeTemplates)) {
-      mdcDataDebugMessage.debugExitMessage(null);
       return networks;
     }
     for (String networkId : networkNodeTemplates.keySet()) {
@@ -492,35 +440,26 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
       network.setDhcp(networkDhcpValue.isPresent() ? networkDhcpValue.get() : true);
       networks.add(network);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return networks;
   }
 
   //dhcp default value is true
   private Optional<Boolean> getNetworkDhcpValue(ServiceTemplate serviceTemplate,
                                                        NodeTemplate networkNodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (networkNodeTemplate == null) {
       return Optional.empty();
     }
     if (networkNodeTemplate.getProperties() == null
         || networkNodeTemplate.getProperties().get(ToscaConstants.DHCP_ENABLED_PROPERTY_NAME)
         == null) {
-      mdcDataDebugMessage.debugExitMessage(null);
       return Optional.of(true);
     }
 
     Object dhcp =
         networkNodeTemplate.getProperties().get(ToscaConstants.DHCP_ENABLED_PROPERTY_NAME);
     if (dhcp instanceof String) {
-      mdcDataDebugMessage.debugExitMessage(null);
       return Optional.of(Boolean.valueOf((String) dhcp));
     } else if (dhcp instanceof Boolean) {
-      mdcDataDebugMessage.debugExitMessage(null);
       return Optional.of((Boolean) dhcp);
     } else if (dhcp instanceof Map) {
       String inputParameterName =
@@ -530,7 +469,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
             serviceTemplate.getTopology_template().getInputs().get(inputParameterName);
         if (inputParameterDefinition != null) {
           if (inputParameterDefinition.get_default() != null) {
-            mdcDataDebugMessage.debugExitMessage(null);
             return Optional.of(Boolean.valueOf(inputParameterDefinition.get_default().toString()));
           }
         } else {
@@ -544,8 +482,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         }
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.of(true);
   }
 

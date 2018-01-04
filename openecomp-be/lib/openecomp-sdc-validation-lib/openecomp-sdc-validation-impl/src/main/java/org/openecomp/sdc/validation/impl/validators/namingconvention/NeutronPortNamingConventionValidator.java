@@ -26,7 +26,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -38,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 public class NeutronPortNamingConventionValidator implements ResourceValidator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_NNP1 = new ErrorMessageCode("NNP1");
   private static final ErrorMessageCode ERROR_CODE_NNP2 = new ErrorMessageCode("NNP2");
   private static final ErrorMessageCode ERROR_CODE_NNP3 = new ErrorMessageCode("NNP3");
@@ -56,11 +54,7 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
   private void validatePortNetworkNamingConvention(String fileName,
                                                    HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                    GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     if (MapUtils.isEmpty(heatOrchestrationTemplate.getResources())) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
     String[] regexList = new String[]{".*_net_id", ".*_net_name", ".*_net_fqdn"};
@@ -81,18 +75,12 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
                     .forEach(propertyEntry -> validateParamNamingConvention(fileName, entry.getKey(),
                             propertyEntry.getValue(),  regexList,
                             Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES, globalContext)));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateFixedIpsNamingConvention(String fileName,
                                                 HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                 GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     if (MapUtils.isEmpty(heatOrchestrationTemplate.getResources())) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -103,8 +91,6 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
             .filter(entry -> HeatResourcesTypes.findByHeatResource(entry.getValue().getType())
                     .equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE))
             .forEach(entry -> checkNeutronPortFixedIpsName(fileName, entry, globalContext));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void checkNeutronPortFixedIpsName(String fileName,
@@ -172,9 +158,6 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
                                               String[] regexList,
                                              Messages message,
                                              GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Object paramName;
     if (propertyValue instanceof Map) {
       paramName = ((Map) propertyValue).get("get_param");
@@ -200,7 +183,5 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
               LoggerTragetServiceName.VALIDATE_PORT_NETWORK_NAME,
               LoggerErrorDescription.MISSING_GET_PARAM);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 }
