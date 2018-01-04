@@ -21,7 +21,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.impl.tosca.model.PortMirroringConnectionPointDescription;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -64,7 +63,6 @@ public class PortMirroringEnricher {
   //Map of substitution service template name and the list of ports with link requirement from
   // the abstract
   private Map<String, List<String>> portNodeTemplateIdsFromAbstract = new HashMap<>();
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private Map<String, ServiceTemplate> globalTypesServiceTemplate =
       GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.ZIP);
 
@@ -75,7 +73,6 @@ public class PortMirroringEnricher {
    * @return the map          Error descriptor map
    */
   public Map<String, List<ErrorMessage>> enrich(ToscaServiceModel toscaServiceModel) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     serviceTemplates.entrySet().stream()
@@ -89,7 +86,6 @@ public class PortMirroringEnricher {
     filterExternalPorts(toscaServiceModel);
     //Handle external port changes
     handleExternalPorts(toscaServiceModel);
-    mdcDataDebugMessage.debugExitMessage(null);
     return errors;
   }
 

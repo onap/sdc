@@ -27,7 +27,6 @@ import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.lang.reflect.Constructor;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ExternalArtifactEnricher extends Enricher {
-  private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static String EXTERNAL_ARTIFACT_ENRICH_CONF_FILE = "ExternalArtifactConfiguration.json";
   private static Collection<String> implementingClasses =
       getExternalArtifactEnrichedImplClassesList();
@@ -53,10 +51,6 @@ public class ExternalArtifactEnricher extends Enricher {
 
   @Override
   public Map<String, List<ErrorMessage>> enrich() {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
 
         try {
@@ -68,8 +62,6 @@ public class ExternalArtifactEnricher extends Enricher {
           logger.debug("",e);
           logger.error(e.getMessage());
         }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return errors;
   }
 

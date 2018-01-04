@@ -36,7 +36,6 @@ import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.Directive;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
@@ -70,7 +69,6 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
   private EnrichedServiceModelDao enrichedServiceModelDao;
   private ComponentDao componentDao;
   private ComponentArtifactDao componentArtifactDao;
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final String COMPONENT_PREFIX = "org.openecomp.resource.vfc.";
 
   private final Logger LOG = LoggerFactory.getLogger(this.getClass().getName());
@@ -178,10 +176,6 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
                                                   Version version,
                                                   ComponentEntity componentEntry,
                                                   Set<String> abstractNodeTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
 
     List<ComponentMonitoringUploadInfo> componentMonitoringUploadInfoList =
@@ -189,18 +183,12 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
 
     componentMonitoringUploadInfoList.forEach(
         componentUploadInfo -> enrichComponentMib(vspId, version, componentUploadInfo, errors));
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return errors;
   }
 
   private List<ComponentMonitoringUploadInfo> extractComponentMibInfo(String vspId, Version version,
                                                                       ComponentEntity componentEntity,
                                                                       Set<String> abstractNodeTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     String componentId = componentEntity.getId();
     ComponentMonitoringUploadEntity entity = new ComponentMonitoringUploadEntity();
 
@@ -211,17 +199,11 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
 
     abstractNodeTypes.forEach(unifiedComponentNodeType -> componentMonitoringUploadInfoList
         .add(updComponentMibInfoByType(unifiedComponentNodeType, entity)));
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return componentMonitoringUploadInfoList;
   }
 
   private ComponentMonitoringUploadInfo updComponentMibInfoByType(String componentName,
                                                                   ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     ComponentMonitoringUploadInfo componentMonitoringUploadInfo =
         new ComponentMonitoringUploadInfo();
 
@@ -238,8 +220,6 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
           mibArtifact,
           componentMonitoringUploadInfo);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return componentMonitoringUploadInfo;
   }
 
@@ -262,24 +242,15 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
                                   Version version,
                                   ComponentMonitoringUploadInfo componentUploadInfo,
                                   Map<String, List<ErrorMessage>> errors) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     ServiceArtifact mibServiceArtifact = new ServiceArtifact();
     mibServiceArtifact.setVspId(vspId);
     mibServiceArtifact.setVersion(version);
     enrichMibFiles(mibServiceArtifact, componentUploadInfo, errors);
-
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void enrichMibFiles(ServiceArtifact monitoringArtifact,
                               ComponentMonitoringUploadInfo componentMonitoringUploadInfo,
                               Map<String, List<ErrorMessage>> errors) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (componentMonitoringUploadInfo == null) {
       return;
     }
@@ -292,18 +263,12 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     enrichMibByType(componentMonitoringUploadInfo.getVesEvent(), MonitoringUploadType.VES_EVENTS,
         monitoringArtifact,
         errors);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void enrichMibByType(MonitoringArtifactInfo monitoringArtifactInfo,
                                MonitoringUploadType type,
                                ServiceArtifact mibServiceArtifact,
                                Map<String, List<ErrorMessage>> errors) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (monitoringArtifactInfo == null) {
       return;
     }
@@ -324,8 +289,6 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
       mibServiceArtifact.setName(monitoringArtifactInfo.getName() + File.separator + fileName);
       getEnrichedServiceModelDao().storeExternalArtifact(mibServiceArtifact);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private EnrichedServiceModelDao getEnrichedServiceModelDao() {
