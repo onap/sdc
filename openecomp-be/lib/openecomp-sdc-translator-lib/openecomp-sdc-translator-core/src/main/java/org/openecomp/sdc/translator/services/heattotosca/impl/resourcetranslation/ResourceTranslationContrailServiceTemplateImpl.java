@@ -53,15 +53,10 @@ public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTran
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ServiceTemplate globalSubstitutionServiceTemplate =
         getGlobalSubstitutionTypesServiceTemplate(translateTo);
     addSubstitutedNodeType(translateTo, globalSubstitutionServiceTemplate);
     addComputeNodeType(translateTo, globalSubstitutionServiceTemplate, translateTo.getContext());
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -80,7 +75,6 @@ public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTran
   private void addComputeNodeType(TranslateTo translateTo,
                                   ServiceTemplate globalSubstitutionServiceTemplate,
                                   TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     NodeType computeNodeType = new NodeType();
     computeNodeType.setDerived_from(ToscaNodeType.CONTRAIL_COMPUTE);
     String computeNodeTypeId = new ContrailTranslationHelper()
@@ -88,23 +82,15 @@ public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTran
             translateTo.getTranslatedId(), context);
     DataModelUtil
         .addNodeType(globalSubstitutionServiceTemplate, computeNodeTypeId, computeNodeType);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void addSubstitutedNodeType(TranslateTo translateTo,
                                       ServiceTemplate globalSubstitutionServiceTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeType substitutedNodeType = new NodeType();
     substitutedNodeType
         .setDerived_from(ToscaNodeType.CONTRAIL_ABSTRACT_SUBSTITUTE);
     DataModelUtil.addNodeType(globalSubstitutionServiceTemplate,
         getContrailSubstitutedNodeTypeId(translateTo.getTranslatedId()), substitutedNodeType);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -114,10 +100,6 @@ public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTran
   }
 
   private ServiceTemplate getGlobalSubstitutionTypesServiceTemplate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ServiceTemplate globalSubstitutionServiceTemplate =
         translateTo.getContext().getTranslatedServiceTemplates().get(
             Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
@@ -133,8 +115,6 @@ public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTran
           .put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
               globalSubstitutionServiceTemplate);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return globalSubstitutionServiceTemplate;
   }
 
