@@ -38,6 +38,7 @@ public class ImageDaoZusammenImpl implements ImageDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
+    // registerVersioning not implemented for ImageDaoZusammenImpl
   }
 
   @Override
@@ -51,11 +52,10 @@ public class ImageDaoZusammenImpl implements ImageDao {
 
   private Collection<ImageEntity> listImages(SessionContext context,
                                              ElementContext elementContext, ImageEntity image) {
-    ElementToImageConvertor convertor = new ElementToImageConvertor();
     return zusammenAdaptor
         .listElementsByName(context, elementContext, new Id(image.getComponentId()),
             ElementType.Images.name())
-        .stream().map(convertor::convert)
+        .stream().map(new ElementToImageConvertor()::convert)
         .map(imageEntity -> {
           imageEntity.setComponentId(image.getComponentId());
           imageEntity.setVspId(image.getVspId());
@@ -137,9 +137,9 @@ public class ImageDaoZusammenImpl implements ImageDao {
         null, ElementType.Images.name());
 
     if (elementOptional.isPresent()) {
-      Element ImagesElement = elementOptional.get();
-      Collection<Element> Images = ImagesElement.getSubElements();
-      Images.forEach(image -> {
+      Element imagesElement = elementOptional.get();
+      Collection<Element> images = imagesElement.getSubElements();
+      images.forEach(image -> {
         ZusammenElement imageZusammenElement = buildElement(image.getElementId(), Action.DELETE);
         zusammenAdaptor.saveElement(context, elementContext, imageZusammenElement, "Delete image " +
             "with id " + image.getElementId());
