@@ -72,10 +72,6 @@ public class PortToNetResourceConnection extends ResourceConnectionUsingRequirem
                                                                  HeatOrchestrationTemplate
                                                                 nestedHeatOrchestrationTemplate,
                                                                  String nestedHeatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> network = HeatToToscaUtil
         .extractAttachedResourceId(nestedHeatFileName, nestedHeatOrchestrationTemplate,
             translateTo.getContext(), heatResource.getProperties().get("network"));
@@ -89,10 +85,8 @@ public class PortToNetResourceConnection extends ResourceConnectionUsingRequirem
       if (network.isPresent()
           && network.get().isGetParam()
           && network.get().getEntityId() instanceof String) {
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return Optional.of(Collections.singletonList((String) network.get().getEntityId()));
       } else {
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return Optional.empty();
       }
     }
@@ -107,10 +101,6 @@ public class PortToNetResourceConnection extends ResourceConnectionUsingRequirem
   protected void addRequirementToConnectResources(
       Map.Entry<String, RequirementDefinition> requirementDefinitionEntry,
       List<String> paramNames) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (paramNames == null || paramNames.isEmpty()) {
       return;
     }
@@ -125,8 +115,6 @@ public class PortToNetResourceConnection extends ResourceConnectionUsingRequirem
 
     addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue,
         supportedNetworkTypes);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -135,22 +123,14 @@ public class PortToNetResourceConnection extends ResourceConnectionUsingRequirem
                                                       String connectionPointId,
                                                       Resource connectedResource,
                                                       List<String> supportedTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)) {
       logger.warn("Nested resource '" + nestedResourceId + "' property '" + nestedPropertyName
           + "' is pointing to a resource with type '" + connectedResource.getType()
           + "' which is not supported for requirement '" + connectionPointId
           + "' that connect port to network. Supported types are: '" + supportedTypes.toString()
           + "', therefore, this TOSCA requirement will not be connected.");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 

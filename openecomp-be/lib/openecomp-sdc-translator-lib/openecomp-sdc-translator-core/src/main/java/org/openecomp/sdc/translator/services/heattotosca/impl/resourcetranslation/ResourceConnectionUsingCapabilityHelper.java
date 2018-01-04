@@ -58,15 +58,9 @@ public abstract class ResourceConnectionUsingCapabilityHelper
   String getMappedNodeTranslatedResourceId(ServiceTemplate nestedServiceTemplate,
                                            Map.Entry<String,
                                                CapabilityDefinition> connectionPointEntry) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> substitutionMapping =
         nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
             .get(connectionPointEntry.getKey());
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionMapping.get(0);
   }
 
@@ -74,10 +68,6 @@ public abstract class ResourceConnectionUsingCapabilityHelper
   Map.Entry<String, CapabilityDefinition> getMappedConnectionPointEntry(
       ServiceTemplate nestedServiceTemplate,
       Map.Entry<String, CapabilityDefinition> connectionPointEntry) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> substitutionMapping =
         nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
             .get(connectionPointEntry.getKey());
@@ -91,8 +81,6 @@ public abstract class ResourceConnectionUsingCapabilityHelper
             .get(mappedNodeTemplate.getType());
     Optional<CapabilityDefinition> capabilityDefinition =
         DataModelUtil.getCapabilityDefinition(substituteNodeType, mappedCapabilityId);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return new Map.Entry<String, CapabilityDefinition>() {
       @Override
       public String getKey() {
@@ -113,10 +101,6 @@ public abstract class ResourceConnectionUsingCapabilityHelper
 
   @Override
   protected List<Map<String, CapabilityDefinition>> getAllConnectionPoints() {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<Map<String, CapabilityDefinition>> exposedRequirementsList = new ArrayList<>();
     List<Predicate<CapabilityDefinition>> predicates = getPredicatesListForConnectionPoints();
     Map<String, CapabilityDefinition> capabilities = this.nodeType.getCapabilities();
@@ -133,23 +117,16 @@ public abstract class ResourceConnectionUsingCapabilityHelper
           exposedRequirementsMap.put(entry.getKey(), entry.getValue());
           exposedRequirementsList.add(exposedRequirementsMap);
         });
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return exposedRequirementsList;
   }
 
   void addRequirementToConnectResource(Map.Entry<String, CapabilityDefinition> connectionPointEntry,
                                        List<String> supportedSourceNodeTypes, String paramName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object paramValue = translateTo.getResource().getProperties().get(paramName);
     if (paramValue == null) {
       logger.warn("'" + paramName + "' property is not define in nested resource '"
           + translateTo.getResourceId() + "' for the nested heat file, therefore, '"
           + connectionPointEntry.getKey() + "' TOSCA capability will not be connected.");
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return;
     }
 
@@ -201,8 +178,6 @@ public abstract class ResourceConnectionUsingCapabilityHelper
             requirementAssignment);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 }
