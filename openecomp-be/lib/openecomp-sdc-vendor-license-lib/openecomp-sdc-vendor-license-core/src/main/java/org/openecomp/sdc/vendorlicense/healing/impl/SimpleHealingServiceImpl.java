@@ -21,7 +21,6 @@
 package org.openecomp.sdc.vendorlicense.healing.impl;
 
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -43,8 +42,6 @@ public class SimpleHealingServiceImpl implements HealingService {
       EntitlementPoolDaoFactory.getInstance().createInterface();
   private static final LicenseKeyGroupDao licenseKeyGroupDao =
       LicenseKeyGroupDaoFactory.getInstance().createInterface();
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   @Override
   public VersionableEntity heal(VersionableEntity toHeal) {
     return handleMissingVersionId(toHeal);
@@ -60,10 +57,6 @@ public class SimpleHealingServiceImpl implements HealingService {
   }
 
   private VersionableEntity handleMissingVersionId(VersionableEntity toHeal) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (toHeal != null && toHeal.getVersionUuId() != null) {
       return toHeal;
     }
@@ -81,8 +74,6 @@ public class SimpleHealingServiceImpl implements HealingService {
       throw new UnsupportedOperationException(
           "Unsupported operation for 1610 release/1607->1610 migration.");
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return toHeal;
   }
 }

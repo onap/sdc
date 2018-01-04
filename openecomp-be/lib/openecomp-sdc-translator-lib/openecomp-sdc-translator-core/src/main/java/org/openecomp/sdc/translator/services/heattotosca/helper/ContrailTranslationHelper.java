@@ -23,7 +23,6 @@ package org.openecomp.sdc.translator.services.heattotosca.helper;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
@@ -38,8 +37,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ContrailTranslationHelper {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   /**
    * Gets compute node type id.
    *
@@ -52,11 +49,8 @@ public class ContrailTranslationHelper {
                                      String contrailServiceTemplateResourceId,
                                      String contrailServiceTemplateTranslatedId,
                                      TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     NameExtractor nodeTypeNameExtractor =
         context.getNameExtractorImpl(ConfigConstants.CONTRAIL_COMPUTE_NODE_TYPE_IMPL_KEY);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return nodeTypeNameExtractor
         .extractNodeTypeName(contrailServiceTemplateResource, contrailServiceTemplateResourceId,
             contrailServiceTemplateTranslatedId);
@@ -81,11 +75,6 @@ public class ContrailTranslationHelper {
 
   public String getSubstitutionContrailServiceTemplateMetadata(String heatFileName,
                                                                String serviceInstanceTranslatedId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return FileUtils.getFileWithoutExtention(heatFileName) + "_" + serviceInstanceTranslatedId;
   }
 
