@@ -37,7 +37,7 @@ public class NetworkDaoZusammenImpl implements NetworkDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-
+    // registerVersioning not implemented for NetworkDaoZusammenImpl
   }
 
   @Override
@@ -52,10 +52,9 @@ public class NetworkDaoZusammenImpl implements NetworkDao {
       return new ArrayList<>();
     }
 
-    ElementToNetworkConvertor convertor = new ElementToNetworkConvertor();
     return zusammenAdaptor.listElementsByName(context, elementContext, vspModel.get().getId(),
         ElementType.Networks.name()).stream()
-        .map(convertor::convert)
+        .map(new ElementToNetworkConvertor()::convert)
         .map(entity -> {
           entity.setVspId(network.getVspId());
           entity.setVersion(network.getVersion());
