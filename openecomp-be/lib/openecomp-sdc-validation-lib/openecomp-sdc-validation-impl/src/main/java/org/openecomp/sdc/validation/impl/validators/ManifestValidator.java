@@ -27,7 +27,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -42,7 +41,6 @@ import java.util.Optional;
 
 
 public class ManifestValidator implements Validator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final Logger LOGGER = LoggerFactory.getLogger(YamlValidator.class);
   private static final ErrorMessageCode ERROR_CODE_MNF_1 = new ErrorMessageCode("MNF1");
   private static final ErrorMessageCode ERROR_CODE_MNF_2 = new ErrorMessageCode("MNF2");
@@ -55,8 +53,6 @@ public class ManifestValidator implements Validator {
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     Optional<InputStream> content = globalContext.getFileContent(SdcCommon.MANIFEST_NAME);
     ManifestContent manifestContent;
 
@@ -98,8 +94,6 @@ public class ManifestValidator implements Validator {
                                 Messages.MISSING_FILE_IN_MANIFEST.getErrorMessage()),
             LoggerTragetServiceName.VALIDATE_FILE_IN_MANIFEST, LoggerErrorDescription.MISSING_FILE)
     );
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
   }
 
   private boolean isNotManifestFiles(List<String> manifestFiles, String name) {
@@ -113,14 +107,8 @@ public class ManifestValidator implements Validator {
 
   private List<String> getManifestFileList(ManifestContent manifestContent,
                                            GlobalValidationContext context) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     ManifestScanner manifestScanner = new ManifestScanner();
     manifestScanner.scan(null, manifestContent.getData(), context);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
     return manifestScanner.getFileList();
   }
 

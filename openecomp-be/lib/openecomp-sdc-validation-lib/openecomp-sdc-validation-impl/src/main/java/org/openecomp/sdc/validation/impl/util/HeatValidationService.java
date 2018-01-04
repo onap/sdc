@@ -28,7 +28,6 @@ import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -53,7 +52,6 @@ public class HeatValidationService {
   private static final Logger LOGGER = LoggerFactory.getLogger(HeatValidator.class);
   private static final String NESTED_FILE = "nested file";
   private static final String NO_CONTENT_IN_FILE_MSG = "The file ' %s ' has no content";
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private HeatValidationService(){
 
   }
@@ -66,9 +64,6 @@ public class HeatValidationService {
    */
   public static void checkArtifactsExistence(String fileName, Set<String> artifactsNames,
                                              GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
     artifactsNames
             .stream()
             .filter(artifactName -> !globalContext.getFileContextMap().containsKey(artifactName))
@@ -80,8 +75,6 @@ public class HeatValidationService {
                                       Messages.MISSING_ARTIFACT.getErrorMessage(), artifactName),
                       LoggerTragetServiceName.VALIDATE_ARTIFACTS_EXISTENCE,
                       LoggerErrorDescription.MISSING_FILE));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   /**
@@ -125,9 +118,6 @@ public class HeatValidationService {
                                            Map<String, Parameter> parentParameters,
                                            Map<String, Parameter> nestedParameters,
                                            Set<String> nestedParametersNames) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", parentFileName);
-
     HeatOrchestrationTemplate parentHeatOrchestrationTemplate;
     HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
 
@@ -135,7 +125,6 @@ public class HeatValidationService {
       nestedHeatOrchestrationTemplate = getHeatOrchestrationTemplate(nestedFileName, globalContext);
       parentHeatOrchestrationTemplate = getHeatOrchestrationTemplate(parentFileName, globalContext);
     } catch (Exception exception) {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", parentFileName);
       return;
     }
 
@@ -144,8 +133,6 @@ public class HeatValidationService {
     if (!nestedParameters.isEmpty()) {
       nestedParametersNames.addAll(nestedHeatOrchestrationTemplate.getParameters().keySet());
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", parentFileName);
   }
 
   private static HeatOrchestrationTemplate getHeatOrchestrationTemplate(String fileName,
@@ -171,8 +158,6 @@ public class HeatValidationService {
                                                                      String resourceName,
                                                                      Set<String> resourceFileProperties,
                                                                      GlobalValidationContext globalContext) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", parentFileName);
-
     Map<String, Parameter> parentParameters = new HashMap<>();
     Map<String, Parameter> nestedParameters = new HashMap<>();
     Set<String> nestedParametersNames = new HashSet<>();
@@ -181,8 +166,6 @@ public class HeatValidationService {
 
     checkNoMissingParameterInNested(parentFileName, nestedFileName, resourceName,
             resourceFileProperties, nestedParametersNames, globalContext);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", parentFileName);
   }
 
   public static void checkNestedInputValuesAlignWithType(String parentFileName,
@@ -190,8 +173,6 @@ public class HeatValidationService {
                                                          String resourceName, Resource resource,
                                                          Optional<String> indexVarValue,
                                                          GlobalValidationContext globalContext) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", parentFileName);
-
     Map<String, Parameter> parentParameters = new HashMap<>();
     Map<String, Parameter> nestedParameters = new HashMap<>();
     Set<String> nestedParametersNames = new HashSet<>();
@@ -200,8 +181,6 @@ public class HeatValidationService {
 
     checkNestedInputValuesAlignWithType(parentFileName, nestedFileName,
             nestedParameters, resourceName, resource, indexVarValue, globalContext);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", parentFileName);
   }
 
   private static void checkNoMissingParameterInNested(String parentFileName, String nestedFileName,
@@ -209,9 +188,6 @@ public class HeatValidationService {
                                                       Set<String> resourceFileProperties,
                                                       Set<String> nestedParametersNames,
                                                       GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("nested file", nestedFileName);
-
     if (CollectionUtils.isNotEmpty(nestedParametersNames)) {
       resourceFileProperties
               .stream()
@@ -225,8 +201,6 @@ public class HeatValidationService {
                               LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
                               LoggerErrorDescription.MISSING_PARAMETER_IN_NESTED));
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(NESTED_FILE, nestedFileName);
   }
 
   private static void checkNestedInputValuesAlignWithType(String parentFileName,
@@ -235,9 +209,6 @@ public class HeatValidationService {
                                                           String resourceName, Resource resource,
                                                           Optional<String> indexVarValue,
                                                           GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(NESTED_FILE, nestedFileName);
-
     Map<String, Object> properties = resource.getProperties();
     for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
       String parameterName = propertyEntry.getKey();
@@ -251,8 +222,6 @@ public class HeatValidationService {
                 globalContext);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(NESTED_FILE, nestedFileName);
   }
 
   private static void validateStaticValueForNestedInputParameter(String parentFileName,
@@ -263,9 +232,6 @@ public class HeatValidationService {
                                                                  Parameter parameterInNested,
                                                                  GlobalValidationContext
                                                                          globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(NESTED_FILE, nestedFileName);
-
     if (parameterInNested == null) {
       return;
     }
@@ -278,8 +244,6 @@ public class HeatValidationService {
               LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
               LoggerErrorDescription.WRONG_VALUE_ASSIGNED_NESTED_PARAMETER);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(NESTED_FILE, nestedFileName);
   }
 
 
@@ -295,9 +259,6 @@ public class HeatValidationService {
   public static boolean isNestedLoopExistInFile(String callingFileName, String nestedFileName,
                                                 List<String> filesInLoop,
                                                 GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", callingFileName);
-
     HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
     try {
       nestedHeatOrchestrationTemplate = getNestedHeatOrchestrationTemplate(nestedFileName,
@@ -306,8 +267,6 @@ public class HeatValidationService {
       LOGGER.error("Error while reading file :  " + nestedFileName, exception);
       LOGGER.warn("HEAT Validator will not be executed on file " + nestedFileName
               + " due to illegal HEAT format");
-
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", callingFileName);
       return false;
     }
     filesInLoop.add(nestedFileName);
@@ -316,8 +275,6 @@ public class HeatValidationService {
                     : nestedHeatOrchestrationTemplate.getResources().values();
     boolean isNestedLoopExist = addNestedFilesInLoopAndCheckIfNestedLoopExist(nestedResources,
                     callingFileName, filesInLoop, globalContext);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", callingFileName);
     return isNestedLoopExist;
   }
   private static boolean addNestedFilesInLoopAndCheckIfNestedLoopExist(
@@ -329,7 +286,6 @@ public class HeatValidationService {
         String resourceType = resource.getType();
 
         if (Objects.nonNull(resourceType) && isNestedResource(resourceType)) {
-          MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", callingFileName);
           return resourceType.equals(callingFileName) || !filesInLoop.contains(resourceType)
                   && isNestedLoopExistInFile(callingFileName, resourceType, filesInLoop, globalContext);
         }
@@ -368,9 +324,6 @@ public class HeatValidationService {
    */
   public static Environment validateEnvContent(String fileName, String envFileName,
                                                GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("env file", envFileName);
-
     Environment envContent;
     try {
       Optional<InputStream> fileContent = globalContext.getFileContent(envFileName);
@@ -384,7 +337,6 @@ public class HeatValidationService {
       }
     } catch (Exception exception) {
       LOGGER.error("Error while reading env file : " + envFileName, exception);
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("env file", envFileName);
       return null;
     }
     return envContent;

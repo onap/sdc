@@ -38,7 +38,6 @@ import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -59,7 +58,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public class HeatValidator implements Validator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final Logger LOGGER = LoggerFactory.getLogger(HeatValidator.class);
   private static final ErrorMessageCode ERROR_CODE_HOT_1 = new ErrorMessageCode("HOT1");
   private static final ErrorMessageCode ERROR_CODE_HOT_2 = new ErrorMessageCode("HOT2");
@@ -84,9 +82,6 @@ public class HeatValidator implements Validator {
                                                             heatOrchestrationTemplate,
                                                         Set<String> artifacts,
                                                         GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Collection<Resource> resourcesValues = heatOrchestrationTemplate.getResources() == null ? null
         : heatOrchestrationTemplate.getResources().values();
 
@@ -98,8 +93,6 @@ public class HeatValidator implements Validator {
                 artifacts, globalContext);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void validatePropertiesForAllRequiredArtifactsExist(Collection<Object> properties,
@@ -127,9 +120,6 @@ public class HeatValidator implements Validator {
                                                          HeatOrchestrationTemplate
                                                              heatOrchestrationTemplate,
                                                          GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Set<String> resourcesNames = heatOrchestrationTemplate.getResources() == null ? null
         : heatOrchestrationTemplate.getResources().keySet();
     Collection<Resource> resourcesValues = heatOrchestrationTemplate.getResources() == null ? null
@@ -140,18 +130,12 @@ public class HeatValidator implements Validator {
         globalContext);
     checkResourceExistenceFromResourcesMap(fileName, resourcesNames, outputsValues,
         globalContext);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
-
   }
 
   private static void checkResourceExistenceFromResourcesMap(String fileName,
                                       Set<String> resourcesNames,
                                       Collection<?> valuesToSearchIn,
                                       GlobalValidationContext globalContext) {
-
-        MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     if (CollectionUtils.isNotEmpty(valuesToSearchIn)) {
       for (Object value : valuesToSearchIn) {
         if (value instanceof Resource) {
@@ -185,9 +169,6 @@ public class HeatValidator implements Validator {
   private static void handleReferencedResources(String fileName, Object valueToSearchReferencesIn,
                                                 Set<String> resourcesNames,
                                                 GlobalValidationContext globalContext) {
-
-
-        MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
     globalContext.setMessageCode(ERROR_CODE_HOT_13);
     Set<String> referencedResourcesNames = HeatStructureUtil
         .getReferencedValuesByFunctionName(fileName,
@@ -197,18 +178,12 @@ public class HeatValidator implements Validator {
       checkIfResourceReferenceExist(fileName, resourcesNames, referencedResourcesNames,
           globalContext);
     }
-
-        MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void checkIfResourceReferenceExist(String fileName,
                                                     Set<String> referencedResourcesNames,
                                                     Set<String> referencedResources,
                                                     GlobalValidationContext globalContext) {
-
-
-        MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     referencedResources.stream()
                 .filter(referencedResource -> !referencedResourcesNames
                 .contains(referencedResource))
@@ -219,8 +194,6 @@ public class HeatValidator implements Validator {
                       .REFERENCED_RESOURCE_NOT_FOUND.getErrorMessage(), referencedResource),
               LoggerTragetServiceName.VALIDATE_RESOURCE_REFERENCE_EXISTENCE,
                             LoggerErrorDescription.RESOURCE_NOT_FOUND));
-
-        MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   /* validation 16 */
@@ -229,9 +202,6 @@ public class HeatValidator implements Validator {
                                                        HeatOrchestrationTemplate
                                                            heatOrchestrationTemplate,
                                                        GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Set<String> parametersNames = heatOrchestrationTemplate.getParameters() == null ? null
         : heatOrchestrationTemplate.getParameters().keySet();
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
@@ -244,8 +214,6 @@ public class HeatValidator implements Validator {
                   resourceEntry, globalContext);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void validatePropertiesForGetParamPointToParameter(Map<String,
@@ -272,10 +240,6 @@ public class HeatValidator implements Validator {
                                               Set<String> parametersNamesFromFile,
                                               Set<String> referencedParametersNames,
                                               GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     for (String parameterName : referencedParametersNames) {
       if (!isHeatPseudoParameter(parameterName)
           && !parametersNamesFromFile.contains(parameterName)) {
@@ -287,8 +251,6 @@ public class HeatValidator implements Validator {
             LoggerErrorDescription.PARAMETER_NOT_FOUND);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static boolean isHeatPseudoParameter(String parameterName) {
@@ -300,9 +262,6 @@ public class HeatValidator implements Validator {
   private static void validateGetAttr(String fileName,
                                       HeatOrchestrationTemplate heatOrchestrationTemplate,
                                       GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Map<String, Output> outputMap;
     outputMap = heatOrchestrationTemplate.getOutputs();
 
@@ -310,8 +269,6 @@ public class HeatValidator implements Validator {
       loopOverOutputMapAndValidateGetAttrFromNested(fileName, outputMap,
           heatOrchestrationTemplate, globalContext);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void loopOverOutputMapAndValidateGetAttrFromNested(String fileName,
@@ -399,10 +356,6 @@ public class HeatValidator implements Validator {
   private static void validateEnvFile(String fileName, String envFileName,
                                       HeatOrchestrationTemplate heatOrchestrationTemplate,
                                       GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Environment envContent;
 
     if (!envFileName.contains(".env")) {
@@ -419,9 +372,6 @@ public class HeatValidator implements Validator {
       validateEnvParametersMatchDefinedHeatParameterTypes(envFileName, envContent, globalContext,
           heatOrchestrationTemplate);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
-
   }
 
   private static void validateEnvContentIsSubSetOfHeatParameters(String envFile,
@@ -430,9 +380,6 @@ public class HeatValidator implements Validator {
                                                                      globalContext,
                                                                  HeatOrchestrationTemplate
                                                                      heatOrchestrationTemplate) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", envFile);
-
     Set<String> parametersNames = heatOrchestrationTemplate.getParameters() == null ? null
         : heatOrchestrationTemplate.getParameters().keySet();
 
@@ -454,8 +401,6 @@ public class HeatValidator implements Validator {
         }
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", envFile);
   }
 
    private static void validateEnvEntryForvalidateEnvContentIsSubSetOfHeatParameters(
@@ -478,9 +423,6 @@ public class HeatValidator implements Validator {
                                                                     heatOrchestrationTemplate,
                                                                 GlobalValidationContext
                                                                     globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Map<String, Parameter> parametersMap = heatOrchestrationTemplate.getParameters() == null ? null
         : heatOrchestrationTemplate.getParameters();
 
@@ -490,8 +432,6 @@ public class HeatValidator implements Validator {
                         fileName, globalContext);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
     private static void validateParameterEntryForParameterDefaultTypeAlignWithType(
                             Map.Entry<String, Parameter> parameterEntry,
@@ -519,10 +459,6 @@ public class HeatValidator implements Validator {
                                                  Environment envContent,
                                                  GlobalValidationContext globalContext,
                                                  HeatOrchestrationTemplate heatOrchestrationTemplate) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", envFile);
-
     Map<String, Parameter> heatParameters = heatOrchestrationTemplate.getParameters();
 
     if (MapUtils.isNotEmpty(heatParameters) && MapUtils.isNotEmpty(envContent.getParameters())) {
@@ -531,8 +467,6 @@ public class HeatValidator implements Validator {
 
 
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", envFile);
   }
 
   private static void validateEnvEntryForEnvParametersMatchDefinedHeatParameterTypes(
@@ -562,7 +496,6 @@ public class HeatValidator implements Validator {
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
     ManifestContent manifestContent;
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
@@ -592,9 +525,6 @@ public class HeatValidator implements Validator {
                     Messages.ARTIFACT_FILE_NOT_REFERENCED.getErrorMessage()),
             LoggerTragetServiceName.CHECK_FOR_ORPHAN_ARTIFACTS,
             LoggerErrorDescription.ARTIFACT_NOT_REFERENCED));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
-
   }
 
   private boolean isManifestArtifact(Set<String> manifestArtifacts, String fileName) {
@@ -657,10 +587,6 @@ public class HeatValidator implements Validator {
   private static void checkResourceDependsOn(String fileName, Resource resource,
                                              Set<String> resourcesNames,
                                              GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Object dependencies = resource.getDepends_on();
     if (dependencies instanceof Collection) {
       ((Collection<String>) dependencies)
@@ -679,18 +605,12 @@ public class HeatValidator implements Validator {
                 (String) dependencies), LoggerTragetServiceName.CHECK_RESOURCE_DEPENDS_ON,
             LoggerErrorDescription.MISSING_RESOURCE_DEPENDS_ON);
       }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
 
   private void validateHeatBaseStructure(String fileName,
                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
                                          GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     if (heatOrchestrationTemplate.getHeat_template_version() == null) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_HOT_9,Messages
@@ -706,8 +626,6 @@ public class HeatValidator implements Validator {
                "The heat file does not contain any resources"),
           LoggerTragetServiceName.VALIDATE_HEAT_FORMAT, LoggerErrorDescription.INVALID_HEAT_FORMAT);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
 
