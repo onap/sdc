@@ -26,7 +26,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -75,7 +74,6 @@ import java.util.stream.Collectors;
 public class VersioningManagerImpl implements VersioningManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(VersioningManagerImpl.class);
   private static final Version INITIAL_ACTIVE_VERSION = new Version(0, 0);
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES =
       new HashMap<>();
 
@@ -128,10 +126,6 @@ public class VersioningManagerImpl implements VersioningManager {
                                             Version latestFinalVersion,
                                             Set<Version> viewableVersions,
                                             VersionableEntityAction action, String user) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("entity Id", entityId);
-
     Version activeVersion;
 
     if (action == VersionableEntityAction.Write) {
@@ -180,8 +174,6 @@ public class VersioningManagerImpl implements VersioningManager {
         versionInfo.getViewableVersions().add(candidate.getVersion());
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("entity Id", entityId);
     return versionInfo;
   }
 

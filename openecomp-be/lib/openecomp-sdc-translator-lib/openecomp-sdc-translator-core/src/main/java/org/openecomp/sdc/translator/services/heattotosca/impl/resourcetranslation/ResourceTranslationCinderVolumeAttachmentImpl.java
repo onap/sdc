@@ -64,10 +64,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
 
   @Override
   protected void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     RelationshipTemplate relationTemplate = new RelationshipTemplate();
     relationTemplate.setType(ToscaRelationshipType.CINDER_VOLUME_ATTACHES_TO);
     String relationshipTemplateId = translateTo.getTranslatedId();
@@ -92,8 +88,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
           + "' include 'instance_uuid' property without 'get_resource' function, therefore this "
           + "resource will be ignored in TOSCA translation.");
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -107,10 +101,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
   }
 
   private AttachedResourceId getAttachedResourceId(TranslateTo translateTo, String propertyName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> attachedResourceId =
         HeatToToscaUtil.extractAttachedResourceId(translateTo, propertyName);
     if (!attachedResourceId.isPresent()) {
@@ -120,18 +110,12 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
           LoggerErrorDescription.MISSING_MANDATORY_PROPERTY);
       throw new CoreException(new MissingMandatoryPropertyErrorBuilder(propertyName).build());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return attachedResourceId.get();
   }
 
   private void handleNovaGetResource(TranslateTo translateTo, RelationshipTemplate relationTemplate,
                                      String relationshipTemplateId, String heatFileName,
                                      AttachedResourceId volResourceId, String novaResourceId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     RequirementAssignment requirement = new RequirementAssignment();
     requirement.setCapability(toscaCapabilityAttachment);
     if (volResourceId.isGetResource()) {
@@ -145,8 +129,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
             + " The connection to the volume is ignored. "
             + "Supported types are: "
             + HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
-
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return;
       }
       requirement.setNode((String) volResourceId.getTranslatedId());
@@ -169,8 +151,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
               + " The connection to the volume is ignored. "
               + "Supported types are: "
               + HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
-
-          mdcDataDebugMessage.debugExitMessage(null, null);
           return;
         }
         requirement.setNode(
@@ -195,8 +175,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
           + " The connection to the nova server is ignored. "
           + "Supported types are: "
           + HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return;
     }
     Optional<String> translatedNovaServerId =
@@ -215,17 +193,11 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
           novaServerNodeTemplate.getType(), translatedNovaServerId.get(), ToscaConstants
           .LOCAL_STORAGE_REQUIREMENT_ID, requirement);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleUnsharedVolume(TranslateTo translateTo, RelationshipTemplate relationTemplate,
                                     String relationshipTemplateId, String heatFileName,
                                     RequirementAssignment requirement, String volumeResourceId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<FileData> allFilesData = translateTo.getContext().getManifest().getContent().getData();
     Optional<FileData> fileData = HeatToToscaUtil.getFileData(heatFileName, allFilesData);
     if (fileData.isPresent()) {
@@ -237,8 +209,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
           resourceFileDataAndIDs -> addRelationshipToServiceTemplate(translateTo, relationTemplate,
               relationshipTemplateId, requirement, resourceFileDataAndIDs));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private boolean isHeatFileNested(TranslateTo translateTo, String heatFileName) {
@@ -250,10 +220,6 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
                                                 String relationshipTemplateId,
                                                 RequirementAssignment requirement,
                                                 ResourceFileDataAndIDs resourceFileDataAndIDs) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String translatedId = resourceFileDataAndIDs.getTranslatedResourceId();
     String toscaVolIdPropName =
         HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.VOL_ID_PROPERTY_NAME);
@@ -262,7 +228,5 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
     requirement.setRelationship(relationshipTemplateId);
     DataModelUtil.addRelationshipTemplate(translateTo.getServiceTemplate(), relationshipTemplateId,
         relationTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }

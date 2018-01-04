@@ -29,16 +29,10 @@ public class ResourceTranslationDefaultImpl extends ResourceTranslationBase {
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     //no translation is needed, this default is used for unsupported resources
     logger.warn("Heat resource: '" + translateTo.getResourceId() + "' with type: '"
         + translateTo.getResource().getType()
         + "' is not supported, will be ignored in TOSCA translation");
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override

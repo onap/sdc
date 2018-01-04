@@ -33,7 +33,6 @@ import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
@@ -98,7 +97,6 @@ public class UnifiedCompositionService {
 
   protected static Logger logger =
       (Logger) LoggerFactory.getLogger(UnifiedCompositionService.class);
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Map<String, ImplementationConfiguration> unifiedCompositionImplMap;
 
   static {
@@ -142,7 +140,6 @@ public class UnifiedCompositionService {
                                        ServiceTemplate nestedServiceTemplate,
                                        List<UnifiedCompositionData> unifiedCompositionDataList,
                                        UnifiedCompositionMode mode, TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     Optional<UnifiedComposition> unifiedCompositionInstance = getUnifiedCompositionInstance(mode);
     if (!unifiedCompositionInstance.isPresent()) {
       return;
@@ -150,7 +147,6 @@ public class UnifiedCompositionService {
     unifiedCompositionInstance.get()
         .createUnifiedComposition(serviceTemplate, nestedServiceTemplate,
             unifiedCompositionDataList, context);
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   /**

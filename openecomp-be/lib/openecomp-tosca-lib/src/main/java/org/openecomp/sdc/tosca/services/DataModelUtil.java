@@ -27,7 +27,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -83,8 +82,6 @@ public class DataModelUtil {
   /**
    * Add substitution mapping.
    */
-
-  private static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final Logger logger = LoggerFactory.getLogger(DataModelUtil.class);
   private static final String SERVICE_TEMPLATE = "Service Template";
   private static final String NODE_TYPE = "Node Type";
@@ -97,8 +94,6 @@ public class DataModelUtil {
    */
   public static void addSubstitutionMapping(ServiceTemplate serviceTemplate,
                                             SubstitutionMapping substitutionMapping) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -112,8 +107,6 @@ public class DataModelUtil {
       serviceTemplate.setTopology_template(new TopologyTemplate());
     }
     serviceTemplate.getTopology_template().setSubstitution_mappings(substitutionMapping);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   public static List<String> getDirectives(NodeTemplate nodeTemplate) {
@@ -135,10 +128,6 @@ public class DataModelUtil {
   public static void addSubstitutionMappingReq(ServiceTemplate serviceTemplate,
                                                String substitutionMappingRequirementId,
                                                List<String> substitutionMappingRequirementList) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -162,8 +151,6 @@ public class DataModelUtil {
 
     serviceTemplate.getTopology_template().getSubstitution_mappings().getRequirements()
         .put(substitutionMappingRequirementId, substitutionMappingRequirementList);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -176,10 +163,6 @@ public class DataModelUtil {
   public static void addSubstitutionMappingCapability(ServiceTemplate serviceTemplate,
                                                       String substitutionMappingCapabilityId,
                                                       List<String> substitutionMappingCapabilityList) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -203,8 +186,6 @@ public class DataModelUtil {
 
     serviceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
         .putIfAbsent(substitutionMappingCapabilityId, substitutionMappingCapabilityList);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   public static Map<String, NodeTemplate> getNodeTemplates(ServiceTemplate serviceTemplate) {
@@ -226,10 +207,6 @@ public class DataModelUtil {
    */
   public static void addNodeTemplate(ServiceTemplate serviceTemplate, String nodeTemplateId,
                                      NodeTemplate nodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -246,9 +223,6 @@ public class DataModelUtil {
       topologyTemplate.setNode_templates(new HashMap<>());
     }
     topologyTemplate.getNode_templates().put(nodeTemplateId, nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null);
-
   }
 
   /**
@@ -259,8 +233,6 @@ public class DataModelUtil {
    */
   public static void addNodeTypeCapabilitiesDef(NodeType nodeType,
                                                 Map<String, CapabilityDefinition> capabilities) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (MapUtils.isEmpty(capabilities) || capabilities.entrySet().isEmpty()) {
       return;
     }
@@ -279,8 +251,6 @@ public class DataModelUtil {
     for (Map.Entry<String, CapabilityDefinition> entry : capabilities.entrySet()) {
       nodeType.getCapabilities().put(entry.getKey(), entry.getValue());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -292,10 +262,6 @@ public class DataModelUtil {
    */
   public static void addPolicyDefinition(ServiceTemplate serviceTemplate, String policyId,
                                          PolicyDefinition policyDefinition) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -313,8 +279,6 @@ public class DataModelUtil {
       topologyTemplate.setPolicies(new HashMap<>());
     }
     topologyTemplate.getPolicies().put(policyId, policyDefinition);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -326,10 +290,6 @@ public class DataModelUtil {
    */
   public static void addNodeType(ServiceTemplate serviceTemplate, String nodeTypeId,
                                  NodeType nodeType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -341,8 +301,6 @@ public class DataModelUtil {
       serviceTemplate.setNode_types(new HashMap<>());
     }
     serviceTemplate.getNode_types().put(nodeTypeId, nodeType);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   public static void removeNodeType(ServiceTemplate serviceTemplate,
@@ -358,8 +316,6 @@ public class DataModelUtil {
       serviceTemplate.setNode_types(new HashMap<>());
     }
     serviceTemplate.getNode_types().remove(nodeTypeId);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -372,10 +328,6 @@ public class DataModelUtil {
   public static void addRelationshipTemplate(ServiceTemplate serviceTemplate,
                                              String relationshipTemplateId,
                                              RelationshipTemplate relationshipTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -392,8 +344,6 @@ public class DataModelUtil {
     }
     serviceTemplate.getTopology_template().getRelationship_templates()
         .put(relationshipTemplateId, relationshipTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -405,10 +355,6 @@ public class DataModelUtil {
    */
   public static void addRequirementAssignment(NodeTemplate nodeTemplate, String requirementId,
                                               RequirementAssignment requirementAssignment) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (nodeTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -430,8 +376,6 @@ public class DataModelUtil {
     Map<String, RequirementAssignment> requirement = new HashMap<>();
     requirement.put(requirementId, requirementAssignment);
     nodeTemplate.getRequirements().add(requirement);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -443,16 +387,11 @@ public class DataModelUtil {
    */
   public static NodeTemplate getNodeTemplate(ServiceTemplate serviceTemplate,
                                              String nodeTemplateId) {
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null
         || serviceTemplate.getTopology_template() == null
         || serviceTemplate.getTopology_template().getNode_templates() == null) {
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return serviceTemplate.getTopology_template().getNode_templates().get(nodeTemplateId);
   }
 
@@ -464,14 +403,9 @@ public class DataModelUtil {
    * @return the node type
    */
   public static NodeType getNodeType(ServiceTemplate serviceTemplate, String nodeTypeId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
     if (serviceTemplate == null || serviceTemplate.getNode_types() == null) {
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return serviceTemplate.getNode_types().get(nodeTypeId);
   }
 
@@ -485,10 +419,6 @@ public class DataModelUtil {
   public static Optional<RequirementDefinition> getRequirementDefinition(
       NodeType nodeType,
       String requirementDefinitionId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (nodeType == null || nodeType.getRequirements() == null || requirementDefinitionId == null) {
       return Optional.empty();
     }
@@ -497,8 +427,6 @@ public class DataModelUtil {
         return Optional.of(reqMap.get(requirementDefinitionId));
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.empty();
   }
 
@@ -511,19 +439,15 @@ public class DataModelUtil {
   public static Optional<RequirementDefinition> getRequirementDefinition(
       List<Map<String, RequirementDefinition>> requirementsDefinitionList,
       String requirementKey) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     if (CollectionUtils.isEmpty(requirementsDefinitionList)) {
       return Optional.empty();
     }
 
     for (Map<String, RequirementDefinition> requirementMap : requirementsDefinitionList) {
       if (requirementMap.containsKey(requirementKey)) {
-        mdcDataDebugMessage.debugExitMessage(null);
         return Optional.of(requirementMap.get(requirementKey));
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.empty();
   }
 
@@ -537,15 +461,9 @@ public class DataModelUtil {
   public static Optional<CapabilityDefinition> getCapabilityDefinition(
       NodeType nodeType,
       String capabilityDefinitionId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (nodeType == null || nodeType.getCapabilities() == null || capabilityDefinitionId == null) {
       return Optional.empty();
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.ofNullable(nodeType.getCapabilities().get(capabilityDefinitionId));
   }
 
@@ -558,10 +476,6 @@ public class DataModelUtil {
    */
   public static void addGroupDefinitionToTopologyTemplate(ServiceTemplate serviceTemplate,
                                                           String groupName, GroupDefinition group) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -585,7 +499,6 @@ public class DataModelUtil {
     }
 
     serviceTemplate.getTopology_template().getGroups().put(groupName, group);
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -607,10 +520,6 @@ public class DataModelUtil {
                                                               Status status,
                                                               EntrySchema entrySchema,
                                                               Object defaultVal) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     ParameterDefinition paramDef = new ParameterDefinition();
     paramDef.setType(type);
     paramDef.setDescription(description);
@@ -622,8 +531,6 @@ public class DataModelUtil {
     }
     paramDef.setEntry_schema(entrySchema == null ? null : entrySchema.clone());
     paramDef.set_default(defaultVal);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return paramDef;
   }
 
@@ -638,10 +545,6 @@ public class DataModelUtil {
    */
   public static RequirementDefinition createRequirement(String capability, String node,
                                                         String relationship, Object[] occurrences) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     RequirementDefinition requirementDefinition = new RequirementDefinition();
     requirementDefinition.setCapability(capability);
     requirementDefinition.setNode(node);
@@ -649,8 +552,6 @@ public class DataModelUtil {
     if (occurrences != null) {
       requirementDefinition.setOccurrences(occurrences);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return requirementDefinition;
   }
 
@@ -664,10 +565,6 @@ public class DataModelUtil {
    */
   public static EntrySchema createEntrySchema(String type, String description,
                                               List<Constraint> constraints) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (Objects.isNull(type) && Objects.isNull(description) &&
         CollectionUtils.isEmpty(constraints)) {
       return null;
@@ -677,8 +574,6 @@ public class DataModelUtil {
     entrySchema.setType(type);
     entrySchema.setDescription(description);
     entrySchema.setConstraints(constraints);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return entrySchema;
   }
 
@@ -693,10 +588,6 @@ public class DataModelUtil {
   public static Map createGetInputPropertyValueFromListParameter(String inputPropertyListName,
                                                                  int indexInTheList,
                                                                  String... nestedPropertyName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     List propertyList = new ArrayList<>();
     propertyList.add(inputPropertyListName);
     propertyList.add(indexInTheList);
@@ -705,8 +596,6 @@ public class DataModelUtil {
     }
     Map getInputProperty = new HashMap<>();
     getInputProperty.put(ToscaFunctions.GET_INPUT.getDisplayName(), propertyList);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return getInputProperty;
   }
 
@@ -718,10 +607,6 @@ public class DataModelUtil {
    */
   public static ParameterDefinitionExt convertPropertyDefToParameterDef(
       PropertyDefinition propertyDefinition) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (propertyDefinition == null) {
       return null;
     }
@@ -737,8 +622,6 @@ public class DataModelUtil {
         : propertyDefinition.getEntry_schema().clone());
     parameterDefinition.setHidden(false);
     parameterDefinition.setImmutable(false);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return parameterDefinition;
   }
 
@@ -751,18 +634,12 @@ public class DataModelUtil {
    */
   public static ParameterDefinitionExt convertAttributeDefToParameterDef(
       AttributeDefinition attributeDefinition, Map<String, List> outputValue) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (attributeDefinition == null) {
       return null;
     }
     ParameterDefinitionExt parameterDefinition = new ParameterDefinitionExt();
     parameterDefinition.setDescription(attributeDefinition.getDescription());
     parameterDefinition.setValue(outputValue);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return parameterDefinition;
   }
 
@@ -781,10 +658,6 @@ public class DataModelUtil {
   public static void addInputParameterToTopologyTemplate(ServiceTemplate serviceTemplate,
                                                          String parameterDefinitionId,
                                                          ParameterDefinition parameterDefinition) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (Objects.isNull(serviceTemplate)) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -802,9 +675,6 @@ public class DataModelUtil {
       topologyTemplate.setInputs(new HashMap<>());
     }
     topologyTemplate.getInputs().put(parameterDefinitionId, parameterDefinition);
-
-    mdcDataDebugMessage.debugExitMessage(null);
-
   }
 
   /**
@@ -817,10 +687,6 @@ public class DataModelUtil {
   public static void addOutputParameterToTopologyTemplate(ServiceTemplate serviceTemplate,
                                                           String parameterDefinitionId,
                                                           ParameterDefinition parameterDefinition) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (Objects.isNull(serviceTemplate)) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
@@ -838,9 +704,6 @@ public class DataModelUtil {
       topologyTemplate.setOutputs(new HashMap<>());
     }
     topologyTemplate.getOutputs().put(parameterDefinitionId, parameterDefinition);
-
-    mdcDataDebugMessage.debugExitMessage(null);
-
   }
 
   /**
@@ -870,8 +733,6 @@ public class DataModelUtil {
    */
   public static Map<String, RequirementAssignment> getNodeTemplateRequirements(
       NodeTemplate nodeTemplate) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (Objects.isNull(nodeTemplate)) {
       return null;
     }
@@ -892,8 +753,6 @@ public class DataModelUtil {
             .put(requirementEntry.getKey(), requirementAssignment);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return nodeTemplateRequirementsAssignment;
   }
 
@@ -905,7 +764,6 @@ public class DataModelUtil {
    */
   public static List<Map<String, RequirementAssignment>> getNodeTemplateRequirementList(
       NodeTemplate nodeTemplate) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
     //Creating concrete objects
     List<Map<String, RequirementAssignment>> requirements = nodeTemplate.getRequirements();
@@ -930,7 +788,6 @@ public class DataModelUtil {
       requirements.addAll(concreteRequirementList);
       nodeTemplate.setRequirements(requirements);
     }
-    mdcDataDebugMessage.debugExitMessage(null);
     return concreteRequirementList;
   }
 
@@ -943,8 +800,6 @@ public class DataModelUtil {
   public static Optional<List<RequirementAssignment>> getRequirementAssignment(
       List<Map<String, RequirementAssignment>> requirementsAssignmentList,
       String requirementKey) {
-
-    mdcDataDebugMessage.debugEntryMessage(null);
     if (CollectionUtils.isEmpty(requirementsAssignmentList)) {
       return Optional.empty();
     }
@@ -959,8 +814,6 @@ public class DataModelUtil {
         matchRequirementAssignmentList.add(requirementAssignment);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.of(matchRequirementAssignmentList);
   }
 
@@ -973,7 +826,6 @@ public class DataModelUtil {
   public static void removeRequirementsDefinition(
       List<Map<String, RequirementDefinition>> requirementsDefinitionList,
       String requirementKey) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     if (requirementsDefinitionList == null) {
       return;
     }
@@ -988,8 +840,6 @@ public class DataModelUtil {
     for (Map<String, RequirementDefinition> removeMap : mapToBeRemoved) {
       requirementsDefinitionList.remove(removeMap);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -1001,7 +851,6 @@ public class DataModelUtil {
   public static void removeRequirementsAssignment(
       List<Map<String, RequirementAssignment>> requirementsAssignmentList,
       String requirementKey) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     if (requirementsAssignmentList == null) {
       return;
     }
@@ -1016,8 +865,6 @@ public class DataModelUtil {
     for (Map<String, RequirementAssignment> removeMap : mapToBeRemoved) {
       requirementsAssignmentList.remove(removeMap);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
 
@@ -1032,7 +879,6 @@ public class DataModelUtil {
       NodeTemplate nodeTemplate,
       String requirementKey,
       RequirementAssignment requirementAssignmentToBeDeleted) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     List<Map<String, RequirementAssignment>> nodeTemplateRequirements = nodeTemplate
         .getRequirements();
@@ -1055,8 +901,6 @@ public class DataModelUtil {
         }
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -1102,15 +946,11 @@ public class DataModelUtil {
    */
   public static ParameterDefinition getOuputParameter(ServiceTemplate serviceTemplate,
                                                       String outputParameterId) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null
         || serviceTemplate.getTopology_template() == null
         || serviceTemplate.getTopology_template().getOutputs() == null) {
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return serviceTemplate.getTopology_template().getOutputs().get(outputParameterId);
   }
 
@@ -1155,14 +995,10 @@ public class DataModelUtil {
    */
   public static Object getPropertyValue(NodeTemplate nodeTemplate,
                                         String propertyId) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (nodeTemplate == null
         || nodeTemplate.getProperties() == null) {
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return nodeTemplate.getProperties().get(propertyId);
   }
 
@@ -1175,16 +1011,12 @@ public class DataModelUtil {
    */
   public static Map<String, Object> getNodeTemplateProperties(ServiceTemplate serviceTemplate,
                                                               String nodeTemplateId) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null
         || serviceTemplate.getTopology_template() == null
         || serviceTemplate.getTopology_template().getNode_templates() == null
         || serviceTemplate.getTopology_template().getNode_templates().get(nodeTemplateId) == null) {
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return serviceTemplate.getTopology_template().getNode_templates().get(nodeTemplateId)
         .getProperties();
   }
@@ -1196,15 +1028,11 @@ public class DataModelUtil {
    * @return the substitution mappings
    */
   public static SubstitutionMapping getSubstitutionMappings(ServiceTemplate serviceTemplate) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (serviceTemplate == null
         || serviceTemplate.getTopology_template() == null
         || serviceTemplate.getTopology_template().getSubstitution_mappings() == null) {
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return serviceTemplate.getTopology_template().getSubstitution_mappings();
   }
 
@@ -1294,23 +1122,18 @@ public class DataModelUtil {
    */
   public static void addBindingReqFromPortToCompute(String computeNodeTemplateId,
                                                     NodeTemplate portNodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
     RequirementAssignment requirementAssignment = new RequirementAssignment();
     requirementAssignment.setCapability(ToscaCapabilityType.NATIVE_NETWORK_BINDABLE);
     requirementAssignment.setRelationship(ToscaRelationshipType.NATIVE_NETWORK_BINDS_TO);
     requirementAssignment.setNode(computeNodeTemplateId);
     addRequirementAssignment(portNodeTemplate, ToscaConstants.BINDING_REQUIREMENT_ID,
         requirementAssignment);
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   public static SubstitutionMapping createSubstitutionTemplateSubMapping(
       String nodeTypeKey,
       NodeType substitutionNodeType,
       Map<String, Map<String, List<String>>> mapping) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     SubstitutionMapping substitutionMapping = new SubstitutionMapping();
     substitutionMapping.setNode_type(nodeTypeKey);
     substitutionMapping.setCapabilities(
@@ -1318,8 +1141,6 @@ public class DataModelUtil {
     substitutionMapping.setRequirements(
         manageRequirementMapping(substitutionNodeType.getRequirements(),
             mapping.get("requirement")));
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return substitutionMapping;
   }
 
@@ -1350,8 +1171,6 @@ public class DataModelUtil {
   private static Map<String, List<String>> manageRequirementMapping(
       List<Map<String, RequirementDefinition>> requirementList,
       Map<String, List<String>> requirementSubstitutionMapping) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (requirementList == null) {
       return null;
     }
@@ -1365,18 +1184,13 @@ public class DataModelUtil {
         requirementMapping.put(requirementKey, requirementMap);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return requirementMapping;
   }
 
   private static Map<String, List<String>> manageCapabilityMapping(
       Map<String, CapabilityDefinition> capabilities,
       Map<String, List<String>> capabilitySubstitutionMapping) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (capabilities == null) {
-      mdcDataDebugMessage.debugExitMessage(null);
       return null;
     }
 
@@ -1388,8 +1202,6 @@ public class DataModelUtil {
       capabilityMap = capabilitySubstitutionMapping.get(capabilityKey);
       capabilityMapping.put(capabilityKey, capabilityMap);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return capabilityMapping;
   }
 
@@ -1397,8 +1209,6 @@ public class DataModelUtil {
                                                          List<Map<String, RequirementDefinition>>
                                                              requirementsList,
                                                          String templateName) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (CollectionUtils.isEmpty(requirementsList)) {
       return;
     }
@@ -1414,8 +1224,6 @@ public class DataModelUtil {
         substitutionNodeType.getRequirements().add(requirementMap);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   public static boolean isNodeTemplateSectionMissingFromServiceTemplate(

@@ -43,7 +43,6 @@ import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -106,7 +105,6 @@ public class HeatToToscaUtil {
   private static final Logger LOGGER = LoggerFactory.getLogger(HeatToToscaUtil.class);
   public static final String FQ_NAME = "fq_name";
   public static final String GET_PARAM = "get_param";
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final String FORWARDER = "forwarder";
   private static final String GET_ATTR = "get_attr";
   private static final String GET_RESOURCE = "get_resource";
@@ -119,7 +117,6 @@ public class HeatToToscaUtil {
    */
   public static TranslatorOutput loadAndTranslateTemplateData(
       FileContentHandler fileNameContentMap) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     HeatToToscaTranslator heatToToscaTranslator =
         HeatToToscaTranslatorFactory.getInstance().createInterface();
 
@@ -144,8 +141,6 @@ public class HeatToToscaUtil {
 
     try (InputStream structureFile = getHeatStructureTreeFile(fileNameContentMap)) {
       heatToToscaTranslator.addExternalArtifacts(SdcCommon.HEAT_META, structureFile);
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return heatToToscaTranslator.translate();
     } catch (IOException e) {
       // rethrow as a RuntimeException to keep the signature backward compatible
@@ -309,15 +304,9 @@ public class HeatToToscaUtil {
                                        FileDataCollection fileDataCollection,
                                        Map<String, FileData> filteredFiles, Set<String> referenced,
                                        String nestedFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     referenced.add(nestedFileName);
     fileDataCollection.addNestedFiles(filteredFiles.get(nestedFileName));
     translationContext.getNestedHeatsFiles().add(nestedFileName);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private static Map<String, FileData> filterFileDataListByType(List<FileData> fileDataList,
@@ -341,16 +330,10 @@ public class HeatToToscaUtil {
    */
   public static Optional<AttachedResourceId> extractAttachedResourceId(TranslateTo translateTo,
                                                                        String propertyName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object propertyValue = translateTo.getResource().getProperties().get(propertyName);
     if (propertyValue == null) {
       return Optional.empty();
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return extractAttachedResourceId(translateTo.getHeatFileName(),
         translateTo.getHeatOrchestrationTemplate(), translateTo.getContext(), propertyValue);
   }
@@ -433,10 +416,6 @@ public class HeatToToscaUtil {
    */
   public static Optional<String> getContrailAttachedHeatResourceId(
       AttachedResourceId attachedResource) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (attachedResource == null) {
       return Optional.empty();
     }
@@ -448,8 +427,6 @@ public class HeatToToscaUtil {
     if (attachedResource.isGetAttr()) {
       return getResourceId(attachedResource.getEntityId());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -460,8 +437,6 @@ public class HeatToToscaUtil {
    * @return the optional
    */
   public static Optional<AttachedPropertyVal> extractProperty(Object propertyValue) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     Object attachedPropertyVal;
     if (Objects.isNull(propertyValue)) {
       return Optional.empty();
@@ -490,8 +465,6 @@ public class HeatToToscaUtil {
     } else {
       attachedPropertyVal = propertyValue;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.of(new AttachedPropertyVal(attachedPropertyVal, referenceType));
   }
 
@@ -502,14 +475,10 @@ public class HeatToToscaUtil {
    * @param propertyKey  the property key
    */
   public static void mapBoolean(NodeTemplate nodeTemplate, String propertyKey) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object value = nodeTemplate.getProperties().get(propertyKey);
     if (value != null && !(value instanceof Map)) {
       nodeTemplate.getProperties().put(propertyKey, HeatBoolean.eval(value));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   /**
@@ -551,8 +520,6 @@ public class HeatToToscaUtil {
    * @return the boolean
    */
   public static boolean isNestedResource(Resource resource) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String resourceType = resource.getType();
 
     if (resourceType.equals(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource())) {
@@ -569,8 +536,6 @@ public class HeatToToscaUtil {
     } else if (isYamlFile(resourceType)) {
       return true;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return false;
   }
 
@@ -583,7 +548,6 @@ public class HeatToToscaUtil {
    * @return true if the resource represents a VFC and false otherwise.
    */
   public static boolean isNestedVfcResource(Resource resource, TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
     HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
         .yamlToObject(context.getFileContent(nestedHeatFileName.get()),
@@ -596,7 +560,6 @@ public class HeatToToscaUtil {
         }
       }
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return false;
   }
 
@@ -607,8 +570,6 @@ public class HeatToToscaUtil {
    * @return the nested heat file name
    */
   public static Optional<String> getNestedHeatFileName(Resource resource) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!isNestedResource(resource)) {
       return Optional.empty();
     }
@@ -620,8 +581,6 @@ public class HeatToToscaUtil {
       String internalResourceType = (String) ((Map) resourceDef).get("type");
       return Optional.of(internalResourceType);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.of(resourceType);
   }
 
@@ -632,10 +591,6 @@ public class HeatToToscaUtil {
    * @return the nested file
    */
   public static Optional<String> getNestedFile(Resource resource) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!isNestedResource(resource)) {
       return Optional.empty();
     }
@@ -643,11 +598,8 @@ public class HeatToToscaUtil {
     if (resourceType.equals(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource())) {
       Object resourceDef = resource.getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
       String internalResourceType = (String) ((Map) resourceDef).get("type");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(internalResourceType);
     } else {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(resourceType);
     }
   }
@@ -666,10 +618,6 @@ public class HeatToToscaUtil {
    */
   public static Resource getResource(HeatOrchestrationTemplate heatOrchestrationTemplate,
                                      String resourceId, String heatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
     if (resource == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
@@ -678,8 +626,6 @@ public class HeatToToscaUtil {
       throw new CoreException(
           new ResourceNotFoundInHeatFileErrorBuilder(resourceId, heatFileName).build());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return resource;
   }
 
@@ -695,11 +641,6 @@ public class HeatToToscaUtil {
   public static String getResourceType(String resourceId,
                                        HeatOrchestrationTemplate heatOrchestrationTemplate,
                                        String heatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return HeatToToscaUtil.getResource(heatOrchestrationTemplate, resourceId, heatFileName)
         .getType();
   }
@@ -723,10 +664,6 @@ public class HeatToToscaUtil {
    */
   public static Optional<String> extractContrailGetResourceAttachedHeatResourceId(
       Object propertyValue) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (propertyValue instanceof Map) {
       if (((Map) propertyValue).containsKey(GET_ATTR)) {
         return getResourceId(((Map) propertyValue).get(GET_ATTR));
@@ -739,8 +676,6 @@ public class HeatToToscaUtil {
     } else if (propertyValue instanceof List) {
       return evaluateHeatResourceId((List) propertyValue);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -781,9 +716,6 @@ public class HeatToToscaUtil {
    * @return the tosca service model
    */
   public static ToscaServiceModel getToscaServiceModel(TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-    mdcDataDebugMessage.debugExitMessage(null, null);
-
     Map<String, String> metadata = new HashMap<>();
     metadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, Constants.MAIN_TEMPLATE_NAME);
     return getToscaServiceModel(context, metadata);
@@ -799,8 +731,6 @@ public class HeatToToscaUtil {
   public static ToscaServiceModel getToscaServiceModel(
       TranslationContext context,
       Map<String, String> entryDefinitionMetadata) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, ServiceTemplate> serviceTemplates =
         new HashMap<>(context.getGlobalServiceTemplates());
     Collection<ServiceTemplate> tmpServiceTemplates =
@@ -808,8 +738,6 @@ public class HeatToToscaUtil {
     for (ServiceTemplate serviceTemplate : tmpServiceTemplates) {
       ToscaUtil.addServiceTemplateToMapWithKeyFileName(serviceTemplates, serviceTemplate);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return new ToscaServiceModel(null, serviceTemplates,
         ToscaUtil.getServiceTemplateFileName(entryDefinitionMetadata));
   }
@@ -823,18 +751,11 @@ public class HeatToToscaUtil {
    */
   public static Optional<ServiceTemplate> getServiceTemplateFromContext(
       String serviceTemplateFileName, TranslationContext context) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     for (ServiceTemplate serviceTemplate : context.getTranslatedServiceTemplates().values()) {
       if (ToscaUtil.getServiceTemplateFileName(serviceTemplate).equals(serviceTemplateFileName)) {
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return Optional.of(serviceTemplate);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -846,19 +767,12 @@ public class HeatToToscaUtil {
    */
   public static RequirementAssignment addLinkReqFromPortToNetwork(NodeTemplate portNodeTemplate,
                                                                   String networkTranslatedId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     RequirementAssignment requirement = new RequirementAssignment();
     requirement.setCapability(ToscaCapabilityType.NATIVE_NETWORK_LINKABLE);
     requirement.setRelationship(ToscaRelationshipType.NATIVE_NETWORK_LINK_TO);
     requirement.setNode(networkTranslatedId);
     DataModelUtil.addRequirementAssignment(portNodeTemplate,
         ToscaConstants.LINK_REQUIREMENT_ID, requirement);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
-
     return requirement;
   }
 
@@ -870,10 +784,6 @@ public class HeatToToscaUtil {
    */
   public static void addBindingReqFromSubInterfaceToInterface(
       NodeTemplate subInterfaceNodeTemplate, String interfaceTranslatedId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     RequirementAssignment requirement = new RequirementAssignment();
     requirement.setCapability(ToscaCapabilityType.NATIVE_NETWORK_BINDABLE);
     requirement.setRelationship(ToscaRelationshipType.NATIVE_NETWORK_BINDS_TO);
@@ -881,8 +791,6 @@ public class HeatToToscaUtil {
     DataModelUtil
         .addRequirementAssignment(subInterfaceNodeTemplate,
             ToscaConstants.BINDING_REQUIREMENT_ID, requirement);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   /**
@@ -1015,13 +923,10 @@ public class HeatToToscaUtil {
 
   private Map<String, PropertyDefinition> manageSubstitutionNodeTypeProperties(
       ServiceTemplate substitutionServiceTemplate) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, PropertyDefinition> substitutionNodeTypeProperties = new HashMap<>();
     Map<String, ParameterDefinition> properties =
         substitutionServiceTemplate.getTopology_template().getInputs();
     if (properties == null) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
 
@@ -1041,22 +946,15 @@ public class HeatToToscaUtil {
       propertyDefinition.setStatus(parameterDefinition.getStatus());
       substitutionNodeTypeProperties.put(toscaPropertyName, propertyDefinition);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionNodeTypeProperties;
   }
 
   private Map<String, AttributeDefinition> manageSubstitutionNodeTypeAttributes(
       ServiceTemplate substitutionServiceTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, AttributeDefinition> substitutionNodeTypeAttributes = new HashMap<>();
     Map<String, ParameterDefinition> attributes =
         substitutionServiceTemplate.getTopology_template().getOutputs();
     if (attributes == null) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
     AttributeDefinition attributeDefinition;
@@ -1078,8 +976,6 @@ public class HeatToToscaUtil {
       attributeDefinition.setStatus(parameterDefinition.getStatus());
       substitutionNodeTypeAttributes.put(toscaAttributeName, attributeDefinition);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionNodeTypeAttributes;
   }
 
@@ -1199,8 +1095,6 @@ public class HeatToToscaUtil {
       TranslateTo translateTo,
       Template template,
       String templateName) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, Object> substitutionProperties = new HashMap<>();
     Map<String, Object> heatProperties = translateTo.getResource().getProperties();
     if (Objects.nonNull(heatProperties)) {
@@ -1213,24 +1107,16 @@ public class HeatToToscaUtil {
         substitutionProperties.put(entry.getKey(), property);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return addAbstractSubstitutionProperty(templateName, substitutionProperties);
   }
 
   private static Map<String, Object> addAbstractSubstitutionProperty(String templateName,
                                                                      Map<String, Object>
                                                                          substitutionProperties) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, Object> innerProps = new HashMap<>();
     innerProps.put(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME,
         ToscaUtil.getServiceTemplateFileName(templateName));
     substitutionProperties.put(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME, innerProps);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionProperties;
   }
 
@@ -1238,8 +1124,6 @@ public class HeatToToscaUtil {
   getSubstitutionNodeTypeExposedConnectionPoints(NodeType substitutionNodeType,
                                                  ServiceTemplate substitutionServiceTemplate,
                                                  TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, NodeTemplate> nodeTemplates =
         substitutionServiceTemplate.getTopology_template().getNode_templates();
     String nodeTemplateId;
@@ -1292,8 +1176,6 @@ public class HeatToToscaUtil {
         toscaAnalyzerService.calculateExposedCapabilities(nodeTypeCapabilitiesDefinition,
         fullFilledRequirementsDefinition);
     DataModelUtil.addNodeTypeCapabilitiesDef(substitutionNodeType, exposedCapabilitiesDefinition);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionMapping;
   }
 
@@ -1301,8 +1183,6 @@ public class HeatToToscaUtil {
       Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
       Map<String, List<String>> capabilitySubstitutionMapping, String type, String templateName,
       ServiceTemplate serviceTemplate, TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeType flatNodeType =
         getNodeTypeWithFlatHierarchy(type, serviceTemplate, context);
 
@@ -1315,7 +1195,6 @@ public class HeatToToscaUtil {
               addCapabilityToSubMapping(
               templateName, capabilityNodeEntry, nodeTypeCapabilitiesDefinition, capabilitySubstitutionMapping));
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private static boolean shouldCapabilityNeedsToBeAdded(String capabilityKey) {
@@ -1342,7 +1221,6 @@ public class HeatToToscaUtil {
       ServiceTemplate serviceTemplate,
       Map<String, List<String>> requirementSubstitutionMapping,
       TranslationContext context) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     List<Map<String, RequirementDefinition>> requirementList = new ArrayList<>();
     NodeType flatNodeType = getNodeTypeWithFlatHierarchy(type, serviceTemplate, context);
     List<String> requirementMapping;
@@ -1374,8 +1252,6 @@ public class HeatToToscaUtil {
         }
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return requirementList;
   }
 
@@ -1445,20 +1321,12 @@ public class HeatToToscaUtil {
   public static ToscaServiceModel createToscaServiceModel(ServiceTemplate
                                                               entryDefinitionServiceTemplate,
                                                           TranslationContext translationContext) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return new ToscaServiceModel(getCsarArtifactFiles(translationContext),
         getServiceTemplates(translationContext),
         ToscaUtil.getServiceTemplateFileName(entryDefinitionServiceTemplate));
   }
 
   private static FileContentHandler getCsarArtifactFiles(TranslationContext translationContext) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     FileContentHandler artifactFiles = new FileContentHandler();
     artifactFiles.setFiles(translationContext.getFiles());
     artifactFiles.setFiles(translationContext.getExternalArtifacts());
@@ -1471,18 +1339,12 @@ public class HeatToToscaUtil {
     byte[] validationStructureFile =
         FileUtils.convertToBytes(validationStructureList, FileUtils.FileExtension.JSON);
     artifactFiles.addFile("HEAT.meta", validationStructureFile);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return artifactFiles;
   }
 
 
   private static Map<String, ServiceTemplate> getServiceTemplates(TranslationContext
                                                                       translationContext) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<ServiceTemplate> serviceTemplates = new ArrayList<>();
     serviceTemplates.addAll(GlobalTypesGenerator
         .getGlobalTypesServiceTemplate(OnboardingTypesEnum.ZIP).values());
@@ -1492,8 +1354,6 @@ public class HeatToToscaUtil {
     for (ServiceTemplate template : serviceTemplates) {
       serviceTemplatesMap.put(ToscaUtil.getServiceTemplateFileName(template), template);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return serviceTemplatesMap;
   }
 
