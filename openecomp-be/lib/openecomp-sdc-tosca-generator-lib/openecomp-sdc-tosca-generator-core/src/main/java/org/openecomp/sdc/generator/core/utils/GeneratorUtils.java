@@ -1,7 +1,6 @@
 package org.openecomp.sdc.generator.core.utils;
 
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -36,8 +35,6 @@ public class GeneratorUtils {
 
   private static List<String> supportedCapabilities = new ArrayList<>();
   private static List<String> supportedRequirements = new ArrayList<>();
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   static {
     //TODO : Read from configuration
     supportedCapabilities.addAll(Arrays.asList("host", "os", "endpoint", "scalable"));
@@ -215,8 +212,6 @@ public class GeneratorUtils {
       Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
       Map<String, List<String>> capabilitySubstitutionMapping, String type, String templateName,
       ServiceTemplate substitutionServiceTemplate, ToscaServiceModel toscaServiceModel) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     NodeType flatNodeType = (NodeType) toscaAnalyzerService
         .getFlatEntity(ToscaElementTypes.NODE_TYPE, type, substitutionServiceTemplate,
@@ -235,7 +230,6 @@ public class GeneratorUtils {
         capabilitySubstitutionMapping.put(capabilityKey, capabilityMapping);
       }
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 }

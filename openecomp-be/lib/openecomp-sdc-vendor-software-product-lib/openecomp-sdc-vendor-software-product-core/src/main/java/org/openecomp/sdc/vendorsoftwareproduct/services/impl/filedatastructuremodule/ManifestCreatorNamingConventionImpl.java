@@ -20,7 +20,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.HeatFileAnalyzer;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.ManifestCreator;
@@ -44,16 +43,9 @@ import java.util.regex.Pattern;
 public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
   protected static final Logger logger =
       LoggerFactory.getLogger(ManifestCreatorNamingConventionImpl.class);
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
-
   @Override
   public Optional<ManifestContent> createManifest(
       VspDetails vspDetails, FilesDataStructure filesDataStructure) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (Objects.isNull(filesDataStructure)) {
       return Optional.empty();
     }
@@ -63,24 +55,16 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
     addNestedToManifest(filesDataStructure, fileDataList);
     addArtifactsToManifestFileDataList(filesDataStructure, fileDataList);
     ManifestContent manifestContent = createManifest(vspDetails, fileDataList);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.of(manifestContent);
   }
 
   private void addNestedToManifest(
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (CollectionUtils.isNotEmpty(filesDataStructure.getNested())) {
       for (String nested : filesDataStructure.getNested()) {
         fileDataList.add(createBaseFileData(FileData.Type.HEAT, nested));
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   @Override
@@ -158,10 +142,6 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
 
   private void addArtifactsToManifestFileDataList(
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Collection<String> forArtifacts = CollectionUtils
         .union(filesDataStructure.getArtifacts(), filesDataStructure.getUnassigned());
     if (CollectionUtils.isNotEmpty(forArtifacts)) {
@@ -169,16 +149,10 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
         fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addModulesToManifestFileDataList(
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (CollectionUtils.isNotEmpty(filesDataStructure.getModules())) {
       for (Module module : filesDataStructure.getModules()) {
         FileData fileData = createBaseFileData(FileData.Type.HEAT, module.getYaml());
@@ -188,8 +162,6 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
         fileDataList.add(fileData);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addEnv(Module module, FileData fileData) {

@@ -30,7 +30,6 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
@@ -85,8 +84,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   private static final Logger logger =
       LoggerFactory.getLogger(CompositionEntityDataManagerImpl.class);
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   private Map<CompositionEntityId, CompositionEntityData> entities = new HashMap<>();
   private Map<CompositionEntityType, String> nonDynamicSchemas = new HashMap<>();
   private List<CompositionEntityValidationData> roots = new ArrayList<>();
@@ -125,8 +122,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   public CompositionEntityValidationData validateEntity(CompositionEntity entity,
                                                         SchemaTemplateContext schemaTemplateContext,
                                                         SchemaTemplateInput schemaTemplateInput) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (entity == null) {
       throw new CoreException(
           new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
@@ -150,8 +145,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     validationData.setErrors(JsonUtil.validate(
         json == null ? JsonUtil.object2Json(new Object()) : json,
         generateSchema(schemaTemplateContext, entity.getType(), schemaTemplateInput)));
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return validationData;
   }
 
@@ -181,8 +174,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
    */
   @Override
   public Map<CompositionEntityId, Collection<String>> validateEntitiesQuestionnaire() {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<CompositionEntityId, Collection<String>> errorsByEntityId = new HashMap<>();
     entities.entrySet().forEach(entry -> {
       Collection<String> errors = validateQuestionnaire(entry.getValue());
@@ -190,8 +181,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         errorsByEntityId.put(entry.getKey(), errors);
       }
     });
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return errorsByEntityId;
   }
 
@@ -213,16 +202,12 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   @Override
   public void saveCompositionData(String vspId, Version version, CompositionData compositionData) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (Objects.isNull(compositionData)) {
       return;
     }
 
     Map<String, String> networkIdByName = saveNetworks(vspId, version, compositionData);
     saveComponents(vspId, version, compositionData, networkIdByName);
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   @Override
@@ -279,10 +264,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   public void saveComponents(String vspId, Version version, CompositionData compositionData,
                              Map<String, String> networkIdByName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     if (CollectionUtils.isNotEmpty(compositionData.getComponents())) {
       for (Component component : compositionData.getComponents()) {
         ComponentEntity componentEntity = new ComponentEntity(vspId, version, null);
@@ -296,8 +277,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         saveNicsByComponent(vspId, version, networkIdByName, component, componentId);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   public void saveNicsByComponent(String vspId, Version version,
@@ -321,8 +300,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   public Map<String, String> saveNetworks(String vspId, Version version,
                                           CompositionData compositionData) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, String> networkIdByName = new HashMap<>();
     if (CollectionUtils.isNotEmpty(compositionData.getNetworks())) {
       for (Network network : compositionData.getNetworks()) {
@@ -335,25 +312,18 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         }
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return networkIdByName;
   }
 
   @Override
   public NetworkEntity createNetwork(NetworkEntity network) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     //network.setId(CommonMethods.nextUuId()); will be set by the dao
     networkDao.create(network);
-    mdcDataDebugMessage.debugExitMessage(null);
     return network;
   }
 
   @Override
   public ComponentEntity createComponent(ComponentEntity component) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     //component.setId(CommonMethods.nextUuId()); will be set by the dao
     component.setQuestionnaireData(
         new JsonSchemaDataGenerator(
@@ -362,15 +332,11 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
             .generateData());
 
     componentDao.create(component);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return component;
   }
 
   @Override
   public NicEntity createNic(NicEntity nic) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     //nic.setId(CommonMethods.nextUuId()); will be set by the dao
     nic.setQuestionnaireData(
         new JsonSchemaDataGenerator(
@@ -378,8 +344,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
             .generateData());
 
     nicDao.create(nic);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return nic;
   }
 
@@ -392,7 +356,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   * get a flat list of all questionnaire entities that have validation errors
   * */
   public Set<CompositionEntityValidationData> getEntityListWithErrors() {
-    mdcDataDebugMessage.debugEntryMessage(null);
     Set<CompositionEntityValidationData> treeAsList = new HashSet<>();
 
     for (CompositionEntityValidationData entity : roots) {
@@ -403,8 +366,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     }
 
     updateValidationCompositionEntityName(treeAsList);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return treeAsList;
   }
 
@@ -629,8 +590,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   @Override
   public DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavor) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     deploymentFlavor.setId(CommonMethods.nextUuId());
     deploymentFlavorDao.create(deploymentFlavor);
     return deploymentFlavor;
@@ -638,8 +597,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   @Override
   public ImageEntity createImage(ImageEntity image) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     image.setId(CommonMethods.nextUuId());
 
     image.setQuestionnaireData(
@@ -648,7 +605,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
             .generateData());
 
     imageDao.create(image);
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return image;
   }
 
