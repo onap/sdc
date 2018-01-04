@@ -25,7 +25,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -44,8 +43,6 @@ import java.util.Set;
  * Created by TALIO on 2/22/2017.
  */
 public class ResourceGroupResourceValidator implements ResourceValidator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
-
   private static final ErrorMessageCode ERROR_CODE_HRR1 = new ErrorMessageCode("HRR1");
   private static final ErrorMessageCode ERROR_CODE_HRR2 = new ErrorMessageCode("HRR2");
   private static final ErrorMessageCode ERROR_CODE_HRR3 = new ErrorMessageCode("HRR3");
@@ -64,9 +61,6 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
   private static void validateResourceGroupType(String fileName,
                                                 Map.Entry<String, Resource> resourceEntry,
                                                 GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     globalContext.setMessageCode(ERROR_CODE_HRR6);
     HeatTreeManagerUtil
             .checkResourceTypeValid(fileName, resourceEntry.getKey(), resourceEntry.getValue(),
@@ -89,8 +83,6 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
                 globalContext);
 
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static Optional<String> getResourceGroupIndexVarValue(
@@ -118,14 +110,9 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
   private static void handleNestedResourceType(String fileName, String resourceName,
                                                Resource resource, Optional<String> indexVarValue,
                                                GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     validateAllPropertiesMatchNestedParameters(fileName, resourceName, resource, indexVarValue,
             globalContext);
     validateLoopsOfNestingFromFile(fileName, resource.getType(), globalContext);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void validateAllPropertiesMatchNestedParameters(String fileName,
@@ -134,9 +121,6 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
                                                                  Optional<String> indexVarValue,
                                                                  GlobalValidationContext
                                                                          globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     String resourceType = resource.getType();
     if (globalContext.getFileContextMap().containsKey(resourceType)) {
       Set<String> propertiesNames =
@@ -160,15 +144,10 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
               LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
               LoggerErrorDescription.MISSING_FILE);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void validateLoopsOfNestingFromFile(String fileName, String resourceType,
                                                      GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     List<String> filesInLoop = new ArrayList<>(Collections.singletonList(fileName));
     if (HeatValidationService
             .isNestedLoopExistInFile(fileName, resourceType, filesInLoop, globalContext)) {
@@ -178,7 +157,5 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
                               HeatValidationService.drawFilesLoop(filesInLoop)),
               LoggerTragetServiceName.VALIDATE_NESTING_LOOPS, LoggerErrorDescription.NESTED_LOOP);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 }

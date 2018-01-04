@@ -21,7 +21,6 @@ import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
@@ -34,21 +33,16 @@ import java.util.Map;
 import java.util.Optional;
 
 public class YamlValidator implements Validator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_YML_1 = new ErrorMessageCode("YML1");
   private static final ErrorMessageCode ERROR_CODE_YML_2 = new ErrorMessageCode("YML2");
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     Collection<String> files = globalContext.files(
         (fileName, globalValidationContext) -> fileName.endsWith(".yaml")
             || fileName.endsWith(".yml") || fileName.endsWith(".env"));
 
     files.stream().forEach(fileName -> validate(fileName, globalContext));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
   }
 
   private void validate(String fileName, GlobalValidationContext globalContext) {

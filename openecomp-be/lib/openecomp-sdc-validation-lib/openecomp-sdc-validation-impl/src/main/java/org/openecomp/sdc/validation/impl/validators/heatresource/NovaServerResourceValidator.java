@@ -27,7 +27,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.PropertiesMapKeyTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -37,7 +36,6 @@ import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 import java.util.Map;
 
 public class NovaServerResourceValidator implements ResourceValidator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_HNS1 = new ErrorMessageCode("HNS1");
   private static final ErrorMessageCode ERROR_CODE_HNS2 = new ErrorMessageCode("HNS2");
 
@@ -55,15 +53,9 @@ public class NovaServerResourceValidator implements ResourceValidator {
                                                      Map.Entry<String, Resource> resourceEntry,
                                                      HeatResourceValidationContext heatResourceValidationContext,
                                                      GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     validateAssignedValueForImageOrFlavorFromNova(fileName, resourceEntry, globalContext);
     validateAllServerGroupsPointedByServerExistAndDefined (fileName,
             resourceEntry, heatResourceValidationContext.getHeatOrchestrationTemplate(), globalContext );
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
-
   }
 
   private static void validateAssignedValueForImageOrFlavorFromNova(String fileName,
@@ -71,9 +63,6 @@ public class NovaServerResourceValidator implements ResourceValidator {
                                                                             resourceEntry,
                                                                     GlobalValidationContext
                                                                             globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Resource resource = resourceEntry.getValue();
     Map<String, Object> propertiesMap = resource.getProperties();
     if (propertiesMap.get(PropertiesMapKeyTypes.IMAGE.getKeyMap()) == null
@@ -84,8 +73,6 @@ public class NovaServerResourceValidator implements ResourceValidator {
               LoggerTragetServiceName.VALIDATE_ASSIGNED_VALUES_FOR_NOVA_IMAGE_FLAVOR,
               LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   @SuppressWarnings("unchecked")
@@ -93,9 +80,6 @@ public class NovaServerResourceValidator implements ResourceValidator {
                                                                             Map.Entry<String, Resource> resourceEntry,
                                                                             HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                                             GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
     Map<String, Object> resourceProperties = resourceEntry.getValue().getProperties();
     Map<String, Object> schedulerHintsMap =
@@ -107,8 +91,6 @@ public class NovaServerResourceValidator implements ResourceValidator {
     }
 
     validateServerGroupValue(fileName, resourceEntry, globalContext, resourcesMap, schedulerHintsMap);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void validateServerGroupValue(String fileName, Map.Entry<String,

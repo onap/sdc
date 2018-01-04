@@ -30,7 +30,6 @@ import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
@@ -45,7 +44,6 @@ import java.util.Optional;
 
 
 public class ContrailValidator implements Validator {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final Logger LOGGER = LoggerFactory.getLogger(ContrailValidator.class);
   private static final ErrorMessageCode ERROR_CODE_CTL_1 = new ErrorMessageCode("CTL1");
   private static final ErrorMessageCode ERROR_CODE_CTL_2 = new ErrorMessageCode("CTL2");
@@ -54,8 +52,6 @@ public class ContrailValidator implements Validator {
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     ManifestContent manifestContent;
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
@@ -70,8 +66,6 @@ public class ContrailValidator implements Validator {
         .filter(fileName -> FileData.isHeatFile(fileTypeMap.get(fileName)))
         .forEach(fileName -> validate(fileName,
             contrailResourcesMappingTo, globalContext));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
   }
 
 
@@ -87,25 +81,15 @@ public class ContrailValidator implements Validator {
   private void handleContrailV1AndContrailV2ResourceMerging(String fileName,
                ContrailResourcesMappingTo contrailResourcesMappingTo,
                GlobalValidationContext globalContext) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Optional<ContrailResourcesMappingTo> fileContrailResourcesMappingTo =
         collectHeatFileContrailResources(globalContext, fileName);
     fileContrailResourcesMappingTo.ifPresent(contrailResourcesMappingTo::addAll);
     addContrailMergeValidationMessageToGlobalContext(globalContext, contrailResourcesMappingTo);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void addContrailMergeValidationMessageToGlobalContext(
       GlobalValidationContext globalContext,
       ContrailResourcesMappingTo contrailResourcesMappingTo) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
-
     if (!MapUtils.isEmpty(contrailResourcesMappingTo.getContrailV1Resources())
         && !MapUtils.isEmpty(contrailResourcesMappingTo.getContrailV2Resources())) {
       globalContext.addMessage(
@@ -117,8 +101,6 @@ public class ContrailValidator implements Validator {
           LoggerTragetServiceName.MERGE_OF_CONTRAIL_2_AND_3,
           LoggerErrorDescription.MERGE_CONTRAIL_2_AND_3);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
   }
 
   private Optional<ContrailResourcesMappingTo> collectHeatFileContrailResources(
@@ -137,10 +119,6 @@ public class ContrailValidator implements Validator {
 
   private Optional<ContrailResourcesMappingTo> fetchContrailResourcesMapping(String fileName,
           InputStream fileContent ) {
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     ContrailResourcesMappingTo contrailResourcesMappingTo = new ContrailResourcesMappingTo();
     HeatOrchestrationTemplate heatOrchestrationTemplate;
     try {
@@ -149,7 +127,6 @@ public class ContrailValidator implements Validator {
     } catch (Exception ignored) {
       LOGGER.debug("",ignored);
       // the HeatValidator should handle file that is failing to parse
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return Optional.empty();
     }
     if( !MapUtils.isEmpty(heatOrchestrationTemplate.getResources())) {
@@ -163,16 +140,12 @@ public class ContrailValidator implements Validator {
             }
           });
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
     return Optional.of(contrailResourcesMappingTo);
   }
 
 
   private void validateNoContrailResourceTypeIsInUse(String fileName,
                                                      GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
     globalContext.setMessageCode(ERROR_CODE_CTL_4);
     HeatOrchestrationTemplate heatOrchestrationTemplate =
         ValidationUtil.checkHeatOrchestrationPreCondition(fileName, globalContext);
@@ -181,13 +154,10 @@ public class ContrailValidator implements Validator {
       return;
     }
     validateResourcePrefix(fileName, globalContext, heatOrchestrationTemplate);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateResourcePrefix(String fileName, GlobalValidationContext globalContext,
                                       HeatOrchestrationTemplate heatOrchestrationTemplate) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
     if(!MapUtils.isEmpty(resourcesMap)) {
       for (Map.Entry<String, Resource> resourceEntry : resourcesMap.entrySet()) {
@@ -200,7 +170,6 @@ public class ContrailValidator implements Validator {
         }
       }
     }
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
 }

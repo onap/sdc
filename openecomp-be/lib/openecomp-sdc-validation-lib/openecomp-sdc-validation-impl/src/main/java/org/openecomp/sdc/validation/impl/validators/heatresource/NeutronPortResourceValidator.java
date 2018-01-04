@@ -27,7 +27,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
@@ -42,7 +41,6 @@ import java.util.Objects;
 import java.util.Set;
 
 public class NeutronPortResourceValidator implements ResourceValidator {
-  private static final  MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_HPRODE_HPR1 = new ErrorMessageCode("HPR1");
   private static final ErrorMessageCode ERROR_HPRODE_HPR2 = new ErrorMessageCode("HPR2");
   private static final ErrorMessageCode ERROR_HPRODE_HPR3 = new ErrorMessageCode("HPR3");
@@ -61,9 +59,6 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                                                     Map.Entry<String, Resource> resourceEntry,
                                                     HeatResourceValidationContext heatResourceValidationContext,
                                                     GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
-
     Map<String, Map<String, List<String>>> portIdToPointingResources =
             heatResourceValidationContext.getFileLevelResourceDependencies()
                     .get(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource());
@@ -85,8 +80,6 @@ public class NeutronPortResourceValidator implements ResourceValidator {
             portIdToPointingResources.get(portResourceId);
     checkPortBindingFromMap(
             fileName, portResourceId, pointingResourcesToCurrPort, globalContext);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static void checkPortBindingFromMap(String fileName,
@@ -143,9 +136,6 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                                                        Map.Entry<String, Resource> resourceEntry,
                                                        List<String> securityGroupResourceNameList,
                                                        GlobalValidationContext globalContext) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", filename);
-
     Map<String, Object> propertiesMap = resourceEntry.getValue().getProperties();
 
     if (MapUtils.isEmpty(propertiesMap)) {
@@ -167,8 +157,6 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                 securityGroupResourceNameList, globalContext);
       }
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", filename);
   }
 
   private static void removeSecurityGroupNamesFromListByGivenFunction(String filename,
