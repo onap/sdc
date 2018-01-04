@@ -30,7 +30,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -60,7 +59,6 @@ import java.util.Optional;
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private final ComponentArtifactDao componentArtifactDao;
   private static final Logger logger =
       LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
@@ -77,8 +75,6 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   @Override
   public void delete(String vspId, Version version, String componentId,
                      MonitoringUploadType monitoringUploadType) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
-
     ComponentMonitoringUploadEntity componentMonitoringUploadEntity =
         setValuesForComponentArtifactEntityUpload(vspId, version, null, componentId, null,
             monitoringUploadType, null);
@@ -95,16 +91,12 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
     }
 
     componentArtifactDao.delete(retrieved.get());
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   @Override
   public void upload(InputStream object, String filename, String vspId,
                      Version version, String componentId,
                      MonitoringUploadType type) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
-
     if (object == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.UPLOAD_MONITORING_FILE, ErrorLevel.ERROR.name(),
@@ -145,7 +137,6 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
       }
     }
     logger.audit("Uploaded Monitoring File for component id:" + componentId + " ,vspId:" + vspId);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   private void validateVesEventUpload(FileContentHandler upload,
@@ -177,13 +168,8 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
 
   @Override
   public MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
-
     ComponentMonitoringUploadEntity current =
         new ComponentMonitoringUploadEntity(vspId, version, componentId, null);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
-
     return setMonitoringUploadStatusValues(current);
   }
 

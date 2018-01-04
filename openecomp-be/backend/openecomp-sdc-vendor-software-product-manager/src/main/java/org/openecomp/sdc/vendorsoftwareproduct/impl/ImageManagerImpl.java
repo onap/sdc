@@ -22,7 +22,6 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -54,7 +53,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class ImageManagerImpl implements ImageManager {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final ImageDao imageDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
@@ -88,34 +86,24 @@ public class ImageManagerImpl implements ImageManager {
 
   @Override
   public Collection<ImageEntity> listImages(String vspId, Version version, String componentId) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
     Collection<ImageEntity> imageEntities =
         imageDao.list(new ImageEntity(vspId, version, componentId, null));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return imageEntities;
   }
 
   @Override
   public CompositionEntityResponse<Image> getImageSchema(String vspId) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP id, image id", vspId);
-
     CompositionEntityResponse<Image> response = new CompositionEntityResponse<>();
     ImageCompositionSchemaInput inputSchema = new ImageCompositionSchemaInput();
     Image image = new Image();
     inputSchema.setImage(image);
     response.setSchema(getImageCompositionSchema(inputSchema));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP id, image id", vspId);
     return response;
   }
 
   @Override
   public CompositionEntityResponse<Image> getImage(String vspId, Version version, String
       componentId, String imageId) {
-
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP id, componentId, image id", vspId, componentId,
-        imageId);
     ImageEntity imageEntity = getImageEntity(vspId, version, componentId, imageId);
 
     Image image = imageEntity.getImageCompositionData();
@@ -127,17 +115,12 @@ public class ImageManagerImpl implements ImageManager {
     response.setId(imageId);
     response.setData(image);
     response.setSchema(getImageCompositionSchema(schemaInput));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP id, componentId, image id", vspId, componentId,
-        imageId);
-
     return response;
   }
 
   @Override
   public QuestionnaireResponse getImageQuestionnaire(String vspId, Version version, String
       componentId, String imageId) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
     QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
 
     ImageEntity retrieved = imageDao.getQuestionnaireData(vspId, version, componentId, imageId);
@@ -145,16 +128,11 @@ public class ImageManagerImpl implements ImageManager {
         imageId), ComponentEntity.ENTITY_TYPE);
     questionnaireResponse.setData(retrieved.getQuestionnaireData());
     questionnaireResponse.setSchema(getImageQuestionnaireSchema(null));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
-
     return questionnaireResponse;
   }
 
   @Override
   public void deleteImage(String vspId, Version version, String componentId, String imageId) {
-    MDC_DATA_DEBUG_MESSAGE
-        .debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId, imageId);
     ImageEntity imageEntity = getImageEntity(vspId, version, componentId, imageId);
     if (!vspInfoDao.isManual(vspId, version)) {
       final ErrorCode deleteImageErrorBuilder =
@@ -169,8 +147,6 @@ public class ImageManagerImpl implements ImageManager {
     if (imageEntity != null) {
       imageDao.delete(new ImageEntity(vspId, version, componentId, imageId));
     }
-    MDC_DATA_DEBUG_MESSAGE
-        .debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId, imageId);
   }
 
   private void validateHeatVspImageUpdate(String name, String value, String retrivedValue) {
@@ -188,10 +164,6 @@ public class ImageManagerImpl implements ImageManager {
 
   @Override
   public CompositionEntityValidationData updateImage(ImageEntity image) {
-    MDC_DATA_DEBUG_MESSAGE
-        .debugEntryMessage(VSP_ID_COMPONENT_ID, image.getVspId(), image.getComponentId(),
-            image.getId());
-
     boolean isManual = vspInfoDao.isManual(image.getVspId(), image.getVersion());
     ImageEntity retrieved =
         getImageEntity(image.getVspId(), image.getVersion(), image.getComponentId(),
@@ -220,20 +192,12 @@ public class ImageManagerImpl implements ImageManager {
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
       imageDao.update(image);
     }
-
-    MDC_DATA_DEBUG_MESSAGE
-        .debugExitMessage(VSP_ID_COMPONENT_ID, image.getVspId(), image.getComponentId(),
-            image.getId());
-
     return validationData;
   }
 
   @Override
   public void updateImageQuestionnaire(String vspId, Version version, String componentId, String
       imageId, String questionnaireData) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP id, component id, imageId", vspId, componentId,
-        imageId);
-
     getImageEntity(vspId, version, componentId, imageId);
 
 
@@ -274,8 +238,6 @@ public class ImageManagerImpl implements ImageManager {
     }
 
     imageDao.updateQuestionnaireData(vspId, version, componentId, imageId, questionnaireData);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP id, component id, imageId", vspId, componentId,
-        imageId);
   }
 
   private boolean isImageVersionUnique(String vspId, Version version, String componentId,
@@ -320,17 +282,12 @@ public class ImageManagerImpl implements ImageManager {
   }
 
   protected String getImageCompositionSchema(SchemaTemplateInput schemaInput) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return SchemaGenerator
         .generate(SchemaTemplateContext.composition, CompositionEntityType.image,
             schemaInput);
   }
 
   protected String getImageQuestionnaireSchema(SchemaTemplateInput schemaInput) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return SchemaGenerator
         .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.image,
             schemaInput);

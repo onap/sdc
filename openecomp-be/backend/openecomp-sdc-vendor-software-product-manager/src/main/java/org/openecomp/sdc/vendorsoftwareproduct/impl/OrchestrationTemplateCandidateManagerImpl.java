@@ -30,7 +30,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.annotations.Metrics;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -60,8 +59,6 @@ public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(OrchestrationTemplateCandidateManagerImpl.class);
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
-
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final CandidateService candidateService;
   private static final String VSP_ID = "VSP id";
@@ -77,8 +74,6 @@ public class OrchestrationTemplateCandidateManagerImpl
   @Metrics
   public UploadFileResponse upload(String vspId, Version version, InputStream fileToUpload,
                                    String fileSuffix, String networkPackageName) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
         OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(fileSuffix);
 
@@ -93,8 +88,6 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public OrchestrationTemplateActionResponse process(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     OrchestrationTemplateCandidateData candidate = fetchCandidateDataEntity(vspId, version)
         .orElseThrow(
             () -> new CoreException(new OrchestrationTemplateNotFoundErrorBuilder(vspId).build()));
@@ -106,14 +99,11 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     Optional<FilesDataStructure> candidateFileDataStructure =
         candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
     if (candidateFileDataStructure.isPresent()) {
       return candidateFileDataStructure;
     } else {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       return Optional.empty();
     }
   }
@@ -121,8 +111,6 @@ public class OrchestrationTemplateCandidateManagerImpl
   @Override
   public ValidationResponse updateFilesDataStructure(String vspId, Version version,
                                                      FilesDataStructure fileDataStructure) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     ValidationResponse response = new ValidationResponse();
     Optional<List<ErrorMessage>> validateErrors =
         candidateService.validateFileDataStructure(fileDataStructure);
@@ -133,23 +121,17 @@ public class OrchestrationTemplateCandidateManagerImpl
         errorsMap.put(SdcCommon.UPLOAD_FILE, errorMessages);
         response.setUploadDataErrors(errorsMap,
                 LoggerTragetServiceName.VALIDATE_FILE_DATA_STRUCTURE);
-
-        MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
         return response;
       }
     }
     candidateService
         .updateOrchestrationTemplateCandidateFileDataStructure(vspId, version, fileDataStructure);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return response;
   }
 
   @Override
 
   public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     VspDetails vspDetails = getVspDetails(vspId, version);
 
     Optional<OrchestrationTemplateCandidateData> candidateDataEntity =
@@ -160,8 +142,6 @@ public class OrchestrationTemplateCandidateManagerImpl
           getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage
               (), ""));
       LOGGER.error(errorMessage.getMessage());
-
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       return Optional.empty();
     }
     OnboardingTypesEnum type =
@@ -171,8 +151,6 @@ public class OrchestrationTemplateCandidateManagerImpl
       FilesDataStructure structure = JsonUtil
           .json2Object(candidateDataEntity.get().getFilesDataStructure(), FilesDataStructure.class);
       String manifest = candidateService.createManifest(vspDetails, structure);
-
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       return Optional.of(
           new ImmutablePair<>(OnboardingTypesEnum.ZIP.toString(), candidateService
               .replaceManifestInZip(candidateDataEntity.get().getContentData(),
