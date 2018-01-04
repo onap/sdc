@@ -51,10 +51,6 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
 
   @Override
   protected void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     final String heatFileName = translateTo.getHeatFileName();
     Object resourceDef =
         translateTo.getResource().getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
@@ -73,8 +69,6 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
           + HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource()
           + "' with resourceDef which is not pointing to nested heat file is not supported and "
           + "will be ignored in the translation ");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return;
     }
 
@@ -102,19 +96,11 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
                 substitutionNodeTemplate);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handlingIndexVar(TranslateTo translateTo, NodeTemplate substitutionNodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String indexVarValue = getIndexVarValue(translateTo);
     replacePropertiesIndexVarValue(indexVarValue, substitutionNodeTemplate.getProperties());
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private Map<String, List> getNewIndexVarValue() {
@@ -129,10 +115,6 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
 
   private void replacePropertiesIndexVarValue(String indexVarValue,
                                               Map<String, Object> properties) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (properties == null || properties.isEmpty()) {
       return;
     }
@@ -144,15 +126,9 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
         properties.put(propertyEntry.getKey(), newPropertyValue);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private Object getUpdatedPropertyValueWithIndex(String indexVarValue, Object propertyValue) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (propertyValue != null && propertyValue instanceof String) {
       if (propertyValue.equals(indexVarValue)) {
         return getNewIndexVarValue();
@@ -179,8 +155,6 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
         concatMap.put(ToscaFunctions.CONCAT.getDisplayName(), concatList);
         return concatMap;
       }
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return propertyValue; //no update is needed
     } else if (propertyValue instanceof Map && !((Map) propertyValue).isEmpty()) {
       replacePropertiesIndexVarValue(indexVarValue, (Map<String, Object>) propertyValue);
@@ -190,19 +164,12 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
       for (Object entry : ((List) propertyValue)) {
         newPropertyValueList.add(getUpdatedPropertyValueWithIndex(indexVarValue, entry));
       }
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return newPropertyValueList;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return propertyValue;
   }
 
   private String getIndexVarValue(TranslateTo translateTo) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object indexVar =
         translateTo.getResource().getProperties().get(HeatConstants.INDEX_PROPERTY_NAME);
     if (indexVar == null) {
@@ -210,8 +177,6 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
     }
 
     if (indexVar instanceof String) {
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return (String) indexVar;
     } else {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
@@ -225,10 +190,6 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
   private void populateServiceTemplateFilterProperties(TranslateTo translateTo,
                                                        NodeTemplate substitutionNodeTemplate,
                                                        Map serviceTemplateFilter) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     boolean mandatory = false;
     Object countValue = TranslatorHeatToToscaPropertyConverter
         .getToscaPropertyValue(translateTo.getServiceTemplate(),translateTo.getResourceId(),
@@ -249,7 +210,5 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
       mandatory = true;
     }
     serviceTemplateFilter.put("mandatory", mandatory);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }

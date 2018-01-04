@@ -25,7 +25,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -63,8 +62,6 @@ import java.util.stream.Collectors;
 public abstract class ResourceTranslationBase {
 
   protected static Logger logger = (Logger) LoggerFactory.getLogger(ResourceTranslationBase.class);
-  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   protected abstract void translate(TranslateTo translateTo);
 
   /**
@@ -82,8 +79,6 @@ public abstract class ResourceTranslationBase {
                                             HeatOrchestrationTemplate heatOrchestrationTemplate,
                                             Resource resource, String resourceId,
                                             TranslationContext context) {
-
-    mdcDataDebugMessage.debugEntryMessage("file, resource", heatFileName, resourceId);
     Optional<String> translatedId =
         getResourceTranslatedId(heatFileName, heatOrchestrationTemplate, resourceId, context);
     context.getTranslatedResources().putIfAbsent(heatFileName, new HashSet<>());
@@ -112,8 +107,6 @@ public abstract class ResourceTranslationBase {
       context.getHeatStackGroupMembers().get(heatFileName).add(translatedId.get());
       updateResourceDependency(translateTo);
     }
-
-    mdcDataDebugMessage.debugExitMessage("file, resource", heatFileName, resourceId);
     return translatedId;
   }
 
@@ -141,10 +134,6 @@ public abstract class ResourceTranslationBase {
                                                              heatOrchestrationTemplate,
                                                          String resourceId,
                                                          TranslationContext context) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!context.getTranslatedIds().containsKey(heatFileName)) {
       context.getTranslatedIds().put(heatFileName, new HashMap<>());
     }
@@ -163,8 +152,6 @@ public abstract class ResourceTranslationBase {
       throw new CoreException(
           new ResourceNotFoundInHeatFileErrorBuilder(resourceId, heatFileName).build());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return getTranslatedResourceId(resourceId, heatFileName, resource, heatOrchestrationTemplate,
         context
     );
@@ -208,9 +195,6 @@ public abstract class ResourceTranslationBase {
       String heatFileName,
       HeatOrchestrationTemplate heatOrchestrationTemplate,
       String resourceId, TranslationContext context) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
     if (resource == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
@@ -226,8 +210,6 @@ public abstract class ResourceTranslationBase {
     Optional<ToscaTopologyTemplateElements> translatedElementTemplate =
         ResourceTranslationFactory.getInstance(resource)
             .getTranslatedToscaTopologyElement(translateTo);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return translatedElementTemplate;
   }
 
@@ -274,8 +256,6 @@ public abstract class ResourceTranslationBase {
   private void updateResourceDependency(TranslateTo translateTo) {
 
     String heatFileName = translateTo.getHeatFileName();
-    mdcDataDebugMessage.debugEntryMessage("file", heatFileName);
-
     Resource resource = translateTo.getResource();
     HeatOrchestrationTemplate heatOrchestrationTemplate = translateTo
         .getHeatOrchestrationTemplate();
@@ -295,13 +275,9 @@ public abstract class ResourceTranslationBase {
       String dependsOnResourceId = (String) resource.getDepends_on();
       addDependOnRequirement(dependsOnResourceId, translateTo);
     }
-
-    mdcDataDebugMessage.debugExitMessage("file", heatFileName);
   }
 
   private void addDependOnRequirement(String dependsOnResourceId, TranslateTo translateTo) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     String nodeTemplateId = translateTo.getTranslatedId();
     ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
     String heatFileName = translateTo.getHeatFileName();
@@ -340,7 +316,6 @@ public abstract class ResourceTranslationBase {
                 requirementAssignment);
       }
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   Optional<List<Map.Entry<String, Resource>>> getResourceByTranslatedResourceId(
@@ -349,7 +324,6 @@ public abstract class ResourceTranslationBase {
       String translatedResourceId,
       TranslateTo translateTo,
       String heatResourceType) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     List<Map.Entry<String, Resource>> list = heatOrchestrationTemplate.getResources().entrySet()
         .stream()
         .filter(entry -> getPredicatesForTranslatedIdToResourceId(heatFileName,
@@ -359,10 +333,8 @@ public abstract class ResourceTranslationBase {
             .allMatch(p -> p.test(entry)))
         .collect(Collectors.toList());
     if (CollectionUtils.isEmpty(list)) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.empty();
     } else {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(list);
     }
   }

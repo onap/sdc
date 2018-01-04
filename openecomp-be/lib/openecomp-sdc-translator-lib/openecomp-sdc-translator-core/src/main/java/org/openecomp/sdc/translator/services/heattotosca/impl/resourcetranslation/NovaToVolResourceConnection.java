@@ -93,19 +93,13 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
                                                        HeatOrchestrationTemplate
                                                            nestedHeatOrchestrationTemplate,
                                                        String nestedHeatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> volumeId = HeatToToscaUtil
         .extractAttachedResourceId(nestedFileData.getFile(), nestedHeatOrchestrationTemplate,
             translateTo.getContext(), heatResource.getProperties().get("volume_id"));
     if (volumeId.isPresent() && volumeId.get().isGetParam()
         && volumeId.get().getEntityId() instanceof String) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(Collections.singletonList((String) volumeId.get().getEntityId()));
     } else {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.empty();
     }
   }
@@ -119,10 +113,6 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
   void addRequirementToConnectResources(
       Map.Entry<String, RequirementDefinition> requirementDefinitionEntry,
       List<String> paramNames) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (paramNames == null || paramNames.isEmpty()) {
       return;
     }
@@ -135,8 +125,6 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
       addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue,
           supportedVolumeTypes);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -145,10 +133,6 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
                                                       String connectionPointId,
                                                       Resource connectedResource,
                                                       List<String> supportedTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)) {
       logger.warn("Nested resource '" + nestedResourceId + "' property '" + nestedPropertyName
           + "' is pointing to a resource with type '" + connectedResource.getType()
@@ -156,22 +140,14 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
           + "' that connect VolumeAttachment to Volume. Supported types are: '"
           + supportedTypes.toString()
           + "', therefore, this TOSCA requirement will not be connected.");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 
   @Override
   protected Optional<List<Map.Entry<String, Resource>>> getResourceByTranslatedResourceId(
       String translatedResourceId, HeatOrchestrationTemplate nestedHeatOrchestrationTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<Predicate<Map.Entry<String, Resource>>> predicates =
         buildPredicates(nestedFileData.getFile(), nestedHeatOrchestrationTemplate,
             translatedResourceId);
@@ -183,10 +159,8 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
                     .allMatch(p -> p.test(entry)))
             .collect(Collectors.toList());
     if (CollectionUtils.isEmpty(list)) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.empty();
     } else {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(list);
     }
   }
@@ -195,10 +169,6 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
   Optional<String> getConnectionTranslatedNodeUsingGetParamFunc(
       Map.Entry<String, RequirementDefinition> requirementDefinitionEntry, String paramName,
       List<String> supportedTargetNodeTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<String> targetTranslatedNodeId = super
         .getConnectionTranslatedNodeUsingGetParamFunc(requirementDefinitionEntry, paramName,
             supportedTargetNodeTypes);
@@ -225,14 +195,11 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
                     .getFileDataContainingVolume(fileData.get().getData(),
                         (String) resourceId.getEntityId(), translateTo, FileData.Type.HEAT_VOL);
             if (fileDataContainingResource.isPresent()) {
-              mdcDataDebugMessage.debugExitMessage(null, null);
               return Optional.of(fileDataContainingResource.get().getTranslatedResourceId());
             }
           }
         }
       }
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.empty();
     }
   }

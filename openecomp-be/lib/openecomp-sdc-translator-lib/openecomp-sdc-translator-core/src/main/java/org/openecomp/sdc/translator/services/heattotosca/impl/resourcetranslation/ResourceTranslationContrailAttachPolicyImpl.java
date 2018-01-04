@@ -51,14 +51,9 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
 
   @Override
   protected void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String heatFileName = translateTo.getHeatFileName();
     String translatedNetworkResourceId = getTranslatedNetworkResourceId(translateTo);
     if (translatedNetworkResourceId == null) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return;
     }
 
@@ -68,8 +63,6 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
           .addRequirementAssignment(policyNodeTemplate, ToscaConstants.NETWORK_REQUIREMENT_ID,
               createRequirementAssignment(translatedNetworkResourceId));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -86,10 +79,6 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
 
   private NodeTemplate getTranslatedPolicyNodeTemplate(TranslateTo translateTo,
                                                        String heatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     AttachedResourceId attachedPolicyResourceId =
         extractAttachedResourceIdHandleMissing(translateTo, "policy");
     NodeTemplate policyNodeTemplate = new NodeTemplate();
@@ -103,17 +92,11 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
           + "' include 'policy' property without 'get_attr' of 'fq_name'/'get_resource' function,"
           + " therefore this resource will be ignored in TOSCA translation.");
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return policyNodeTemplate;
   }
 
   private NodeTemplate getPolicyNodeTemplate(TranslateTo translateTo, String heatFileName,
                                              String policyResourceId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Resource policyResource = HeatToToscaUtil
         .getResource(translateTo.getHeatOrchestrationTemplate(), policyResourceId, heatFileName);
     Optional<String> translatedPolicyResourceId =
@@ -126,21 +109,13 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
           + translateTo.getResource().getType()
           + "' include unsupported policy resource, therefore this resource will be ignored in "
           + "TOSCA translation. ");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return DataModelUtil
         .getNodeTemplate(translateTo.getServiceTemplate(), translatedPolicyResourceId.get());
   }
 
   private String getTranslatedNetworkResourceId(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     AttachedResourceId attachedNetworkResourceId =
         extractAttachedResourceIdHandleMissing(translateTo, "network");
 
@@ -153,30 +128,19 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
           + "' include 'network' property without 'get_resource' function, therefore this "
           + "resource will be ignored in TOSCA translation.");
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return translatedNetworkResourceId;
   }
 
   private RequirementAssignment createRequirementAssignment(String translatedNetworkResourceId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     RequirementAssignment requirement = new RequirementAssignment();
     requirement.setCapability(ToscaCapabilityType.NATIVE_ATTACHMENT);
     requirement.setNode(translatedNetworkResourceId);
     requirement.setRelationship(ToscaRelationshipType.ATTACHES_TO);
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return requirement;
   }
 
   private AttachedResourceId extractAttachedResourceIdHandleMissing(
       TranslateTo translateTo, String propertyName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> attachedResourceId =
         HeatToToscaUtil.extractAttachedResourceId(translateTo, propertyName);
 
@@ -187,8 +151,6 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
           LoggerErrorDescription.MISSING_MANDATORY_PROPERTY);
       throw new CoreException(new MissingMandatoryPropertyErrorBuilder(propertyName).build());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return attachedResourceId.get();
   }
 }
