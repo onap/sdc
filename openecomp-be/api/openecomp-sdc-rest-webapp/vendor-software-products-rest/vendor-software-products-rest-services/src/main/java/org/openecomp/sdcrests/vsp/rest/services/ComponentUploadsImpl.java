@@ -25,8 +25,7 @@
 //import org.openecomp.sdc.logging.api.Logger;
 //import org.openecomp.sdc.logging.api.LoggerFactory;
 //import org.openecomp.sdc.logging.context.MdcUtil;
-//import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
-//import org.openecomp.sdc.logging.messages.AuditMessages;
+////import org.openecomp.sdc.logging.messages.AuditMessages;
 //import org.openecomp.sdc.logging.types.LoggerServiceName;
 //import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 //import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;

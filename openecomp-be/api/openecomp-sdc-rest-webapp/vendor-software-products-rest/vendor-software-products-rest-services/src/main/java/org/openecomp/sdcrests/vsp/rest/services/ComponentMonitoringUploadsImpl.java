@@ -7,7 +7,6 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
@@ -36,7 +35,6 @@ import java.io.InputStream;
 @Scope(value = "prototype")
 //@Validated
 public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUploads {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private MonitoringUploadsManager
       monitoringUploadsManager = MonitoringUploadsManagerFactory.getInstance().createInterface();
   private ComponentManager componentManager =
@@ -48,7 +46,6 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
   public Response upload(Attachment attachment,
                          String vspId, String versionId, String componentId, String type,
                          String user) throws Exception {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId + "," + componentId);
     MdcUtil.initMdc(LoggerServiceName.Upload_Monitoring_Artifact.toString());
     logger.audit(AuditMessages.AUDIT_MSG + String.format(AuditMessages
         .UPLOAD_MONITORING_FILE, type, vspId, componentId));
@@ -60,8 +57,6 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
     monitoringUploadsManager.upload(attachment.getObject(InputStream.class),
         attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
         monitoringUploadType);
-
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId + "," + componentId);
     return Response.ok().build();
   }
 
@@ -82,7 +77,6 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
   @Override
   public Response delete(String vspId, String versionId, String componentId,
                          String type, String user) throws Exception {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId + "," + componentId);
     MdcUtil.initMdc(LoggerServiceName.Delete_Monitoring_Artifact.toString());
 
     MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
@@ -90,8 +84,6 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     monitoringUploadsManager.delete(vspId, version, componentId, monitoringUploadType);
-
-    mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId + "," + componentId);
     return Response.ok().build();
   }
 
