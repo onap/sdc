@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4975c796",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:43:01Z",
+      "side": 1,
+      "message": "Please moved close to where it\u0027s intitiated",
+      "revId": "abd62cbdc9201e7f6935b3cd8c2df41ad4d58c53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_697a038a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:43:01Z",
+      "side": 1,
+      "message": "Please rewrite this without switch and fall-through.\n\nSomething like if ((onboargingMethod \u003d\u003d NetworkPackage) || (....) {\n    ...\n    return Response.ok(itemCreationDto).build();\n} else {\n    throwUnknownOnboardingMethodException();\n}",
+      "range": {
+        "startLine": 157,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 48
+      },
+      "revId": "abd62cbdc9201e7f6935b3cd8c2df41ad4d58c53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_494e2771",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:43:01Z",
+      "side": 1,
+      "message": "Declare variables where they are used, and not at the beginning of a method.",
+      "revId": "abd62cbdc9201e7f6935b3cd8c2df41ad4d58c53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_096fbfc6",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:43:01Z",
+      "side": 1,
+      "message": "Please make it throw the exception instead of returning it",
+      "revId": "abd62cbdc9201e7f6935b3cd8c2df41ad4d58c53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_894bcf58",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:43:01Z",
+      "side": 1,
+      "message": "It seems like the logic has changed. There are no unit tests for this class to verify the before vs. after. Please make sure it breaks nothing.",
+      "revId": "abd62cbdc9201e7f6935b3cd8c2df41ad4d58c53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
