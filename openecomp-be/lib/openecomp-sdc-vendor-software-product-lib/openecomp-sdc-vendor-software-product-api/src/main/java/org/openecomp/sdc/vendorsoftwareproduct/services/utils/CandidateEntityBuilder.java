@@ -29,7 +29,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.HeatFileAnalyzer;
@@ -46,9 +45,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class CandidateEntityBuilder {
-
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
-
   private final CandidateService candidateService;
 
   public CandidateEntityBuilder(CandidateService candidateService) {
@@ -73,8 +69,6 @@ public class CandidateEntityBuilder {
       OrchestrationTemplateCandidateData candidateDataEntity =
           candidateService.createCandidateDataEntity(candidateDataEntityTo, zipFileManifest,
               analyzedZipHeatFiles);
-
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP Id", vspDetails.getId());
       return candidateDataEntity;
     }
   }
@@ -93,8 +87,6 @@ public class CandidateEntityBuilder {
                                                      FileContentHandler fileContentHandler,
                                                      AnalyzedZipHeatFiles analyzedZipHeatFiles)
       throws IOException {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP Id", vspDetails.getId());
-
     try (InputStream manifest = fileContentHandler.getFileContent(SdcCommon.MANIFEST_NAME)) {
 
       if (Objects.isNull(manifest)) {
@@ -109,7 +101,6 @@ public class CandidateEntityBuilder {
             String.valueOf(JsonUtil.sbObject2Json(manifestContent)).getBytes());
       }
     } finally {
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP Id", vspDetails.getId());
     }
   }
 }

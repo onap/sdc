@@ -6,7 +6,6 @@ import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.notification.dao.SubscribersDao;
 import org.openecomp.sdc.notification.factories.SubscribersDaoFactory;
 import org.openecomp.sdc.versioning.dao.ItemDao;
@@ -24,8 +23,6 @@ import java.util.Objects;
  */
 public class OwnerHealer implements Healer {
   private static final String HEALING_USER_SUFFIX = "_healer";
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   private static final ItemPermissionsDao permissionsDao =
       ItemPermissionsDaoFactory.getInstance().createInterface();
   private static final ItemDao itemDao = ItemDaoFactory.getInstance().createInterface();
@@ -34,8 +31,6 @@ public class OwnerHealer implements Healer {
       .createInterface();
 
   public Object heal(String itemId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Collection<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId);
 
     if (itemPermissions.stream().noneMatch(this::isOwnerPermission)) {

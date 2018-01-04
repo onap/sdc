@@ -18,7 +18,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.quiestionnaire;
 
 
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
@@ -50,13 +49,9 @@ public class QuestionnaireDataServiceImpl implements QuestionnaireDataService {
   private static final NicDao nicDao = NicDaoFactory.getInstance().createInterface();
   private static final VendorSoftwareProductInfoDao vspInfoDao =
       VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   @Override
   public InformationArtifactData generateQuestionnaireDataForInformationArtifact(String vspId,
                                                                                  Version version) {
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspId);
-
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     Collection<ComponentEntity> componentEntities = componentDao.listQuestionnaires(vspId, version);
     Collection<NicEntity> nicEntities = nicDao.listByVsp(vspId, version);
@@ -65,8 +60,6 @@ public class QuestionnaireDataServiceImpl implements QuestionnaireDataService {
     List<ComponentQuestionnaire> componentQuestionnaireList =
         getListOfComponentQuestionnaireFromJson(componentEntities);
     List<NicQuestionnaire> nicQuestionnaireList = getListOfNicQuestionnaireFromJson(nicEntities);
-
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
     return new InformationArtifactData(vspDetails, vspQuestionnaire, componentQuestionnaireList,
         nicQuestionnaireList);
   }
