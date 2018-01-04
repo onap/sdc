@@ -26,7 +26,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
@@ -48,8 +47,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class ContrailPortToNetResourceConnection extends ResourceConnectionUsingRequirementHelper {
-  private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   public ContrailPortToNetResourceConnection(ResourceTranslationBase resourceTranslationBase,
                                              TranslateTo translateTo, FileData nestedFileData,
                                              NodeTemplate substitutionNodeTemplate,
@@ -85,9 +82,6 @@ public class ContrailPortToNetResourceConnection extends ResourceConnectionUsing
                                                                  HeatOrchestrationTemplate
                                                                 nestedHeatOrchestrationTemplate,
                                                                  String nestedHeatFileName) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object interfaceListProperty =
         heatResource.getProperties().get(HeatConstants.INTERFACE_LIST_PROPERTY_NAME);
     if (interfaceListProperty == null) {
@@ -108,8 +102,6 @@ public class ContrailPortToNetResourceConnection extends ResourceConnectionUsing
           }
         }
       }
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(paramsList);
     } else if (interfaceListProperty instanceof Map) {
       Optional<AttachedResourceId> attachedVirtualNetwork = HeatToToscaUtil
@@ -122,8 +114,6 @@ public class ContrailPortToNetResourceConnection extends ResourceConnectionUsing
         return Optional.of(paramsList);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -136,10 +126,6 @@ public class ContrailPortToNetResourceConnection extends ResourceConnectionUsing
   protected void addRequirementToConnectResources(
       Map.Entry<String, RequirementDefinition> requirementDefinitionEntry,
       List<String> paramNames) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (paramNames == null || paramNames.isEmpty()) {
       return;
     }
@@ -156,8 +142,6 @@ public class ContrailPortToNetResourceConnection extends ResourceConnectionUsing
 
     addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue,
         supportedNetworkTypes);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -166,10 +150,6 @@ public class ContrailPortToNetResourceConnection extends ResourceConnectionUsing
                                                       String connectionPointId,
                                                       Resource connectedResource,
                                                       List<String> supportedTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)) {
       logger.warn("Nested resource '" + nestedResourceId + "' property '" + nestedPropertyName
           + "' is pointing to a resource with type '" + connectedResource.getType()
@@ -177,12 +157,8 @@ public class ContrailPortToNetResourceConnection extends ResourceConnectionUsing
           + "' that connect contrail port to network. Supported types are: '"
           + supportedTypes.toString()
           + "', therefore, this TOSCA requirement will not be connected.");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 

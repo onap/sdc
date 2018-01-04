@@ -26,7 +26,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
@@ -47,8 +46,6 @@ import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_V
 
 public class VolumeTranslationHelper {
   private final Logger logger;
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   public VolumeTranslationHelper(Logger logger) {
     this.logger = logger;
   }
@@ -66,12 +63,7 @@ public class VolumeTranslationHelper {
                                                                       String resourceId,
                                                                       TranslateTo translateTo,
                                                                       FileData.Type... types) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (CollectionUtils.isEmpty(filesToSearch)) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.empty();
     }
 
@@ -80,20 +72,13 @@ public class VolumeTranslationHelper {
     Optional<ResourceFileDataAndIDs> fileDataAndIDs =
         getResourceFileDataAndIDsForVolumeConnection(resourceId, translateTo, fileDatas);
     if (fileDataAndIDs.isPresent()) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return fileDataAndIDs;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
   private Optional<ResourceFileDataAndIDs> getResourceFileDataAndIDsForVolumeConnection(
       String resourceId, TranslateTo translateTo, List<FileData> fileDatas) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     for (FileData data : fileDatas) {
       HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
           .yamlToObject(translateTo.getContext().getFiles().getFileContent(data.getFile()),
@@ -130,8 +115,6 @@ public class VolumeTranslationHelper {
         logger.warn("output: '" + resourceId + "' in file '" + data.getFile() + "' is not found");
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -145,10 +128,6 @@ public class VolumeTranslationHelper {
   private Optional<List<Map.Entry<String, Resource>>> getResourceByTranslatedResourceId(
       String fileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
       String translatedResourceId, TranslateTo translateTo, String heatResourceType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
-
     List<Map.Entry<String, Resource>> list = heatOrchestrationTemplate.getResources().entrySet()
         .stream()
         .filter(
@@ -158,10 +137,8 @@ public class VolumeTranslationHelper {
                     .allMatch(p -> p.test(entry)))
         .collect(Collectors.toList());
     if (CollectionUtils.isEmpty(list)) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
       return Optional.empty();
     } else {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
       return Optional.of(list);
     }
   }
