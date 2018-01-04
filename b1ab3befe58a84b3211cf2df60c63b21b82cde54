@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9ea7874f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/main/java/org/openecomp/sdc/vendorlicense/impl/VendorLicenseManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:02:40Z",
+      "side": 1,
+      "message": "This method is already very long. Please don\u0027t make it even longer. As a person not familiar with the code, there\u0027s no way I can understand what it\u0027s doing in a reasonable time :(",
+      "revId": "b1ab3befe58a84b3211cf2df60c63b21b82cde54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
