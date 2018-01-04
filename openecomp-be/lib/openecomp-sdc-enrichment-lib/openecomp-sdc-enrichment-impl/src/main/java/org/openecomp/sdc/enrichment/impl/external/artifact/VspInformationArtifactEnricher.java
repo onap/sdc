@@ -30,7 +30,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -53,7 +52,6 @@ import java.util.Objects;
  * Created by Talio on 11/24/2016
  */
 public class VspInformationArtifactEnricher implements ExternalArtifactEnricherInterface {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static InformationArtifactGenerator informationArtifactGenerator =
       InformationArtifactGeneratorFactory.getInstance().createInterface();
   private EnrichedServiceModelDao enrichedServiceModelDao =
@@ -75,10 +73,6 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
 
   private Map<String, List<ErrorMessage>> enrichInformationArtifact(String vspId, Version version)
       throws IOException {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
     ByteBuffer infoArtifactByteBuffer = ByteBuffer.wrap(informationArtifactGenerator.generate(
         vspId, version).getBytes());
@@ -88,14 +82,10 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
       errorList.add(new ErrorMessage(ErrorLevel.ERROR, String.format(
           "Cannot enrich information artifact for vendor software product with id %s and version %s",
           vspId, version.toString())));
-
-      mdcDataDebugMessage.debugExitMessage(null);
       return errors;
     }
 
     enrichInformationArtifact(vspId, version, infoArtifactByteBuffer);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return errors;
   }
 

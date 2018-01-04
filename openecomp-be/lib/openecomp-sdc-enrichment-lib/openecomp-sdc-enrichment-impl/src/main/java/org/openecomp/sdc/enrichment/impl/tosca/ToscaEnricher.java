@@ -23,7 +23,6 @@ package org.openecomp.sdc.enrichment.impl.tosca;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.inter.Enricher;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.util.Arrays;
@@ -32,9 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ToscaEnricher extends Enricher {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   @Override
   public Map<String, List<ErrorMessage>> enrich() {
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
@@ -45,8 +41,6 @@ public class ToscaEnricher extends Enricher {
   }
 
   private Map<String, List<ErrorMessage>> enrichAbstractSubstitute() {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Map<String, List<ErrorMessage>> enrichErrors = new HashMap<>();
 
     ToscaServiceModel toscaModel = (ToscaServiceModel) model;
@@ -60,13 +54,10 @@ public class ToscaEnricher extends Enricher {
       enrichErrors.put("Tosca Enrich", Arrays.asList(new ErrorMessage(ErrorLevel.ERROR, e
           .getMessage())));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return enrichErrors;
   }
 
   private Map<String, List<ErrorMessage>> enrichPortMirroring() {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
     Map<String, List<ErrorMessage>> enrichErrors = new HashMap<>();
     ToscaServiceModel toscaModel = (ToscaServiceModel) model;
     PortMirroringEnricher portMirroringEnricher = new PortMirroringEnricher();
@@ -77,7 +68,6 @@ public class ToscaEnricher extends Enricher {
       enrichErrors.put("Tosca Enrich", Arrays.asList(new ErrorMessage(ErrorLevel.ERROR, e
           .getMessage())));
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return enrichErrors;
   }
 }

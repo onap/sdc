@@ -9,7 +9,6 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
@@ -31,7 +30,6 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
 
   private ComponentDao componentDao;
   private ProcessDao processDao;
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private EnrichedServiceModelDao enrichedServiceModelDao;
 
   @Override
@@ -51,24 +49,14 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
 
   Map<String, List<ErrorMessage>> enrichComponent(ComponentEntity componentEntry, String vspId,
                                                   Version version) {
-    mdcDataDebugMessage.debugEntryMessage("LifeCycleOperationArtifactEnricher vspId ",
-        vspId);
-
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
     enrichComponentProcessArtifact(componentEntry, vspId, version, errors);
-
-    mdcDataDebugMessage.debugExitMessage("LifeCycleOperationArtifactEnricher vspId ",
-        vspId);
     return errors;
   }
 
   void enrichComponentProcessArtifact(ComponentEntity componentEntity,
                                       String vspId, Version version,
                                       Map<String, List<ErrorMessage>> errors) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String componentId = componentEntity.getId();
     ProcessEntity processEntity = new ProcessEntity(vspId, version, componentId, null);
     final Collection<ProcessEntity> processes = getProcessDao().list(processEntity);
@@ -96,20 +84,13 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
             enrichServiceArtifact(componentProcessInfo, processServiceArtifact);
           }
         });
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   void enrichServiceArtifact(ComponentProcessInfo componentProcessInfo,
                              ServiceArtifact processServiceArtifact) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     processServiceArtifact.setName(componentProcessInfo.getName());
     processServiceArtifact.setContentData(FileUtils.toByteArray(componentProcessInfo.getContent()));
     getEnrichedServiceModelDao().storeExternalArtifact(processServiceArtifact);
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private ComponentDao getComponentDao() {
