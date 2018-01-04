@@ -48,15 +48,9 @@ public abstract class ResourceConnectionUsingRequirementHelper
   String getMappedNodeTranslatedResourceId(ServiceTemplate nestedServiceTemplate,
                                            Map.Entry<String,
                                                RequirementDefinition> connectionPointEntry) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> substitutionMapping =
         nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getRequirements()
             .get(connectionPointEntry.getKey());
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionMapping.get(0);
   }
 
@@ -64,10 +58,6 @@ public abstract class ResourceConnectionUsingRequirementHelper
   Map.Entry<String, RequirementDefinition> getMappedConnectionPointEntry(
       ServiceTemplate nestedServiceTemplate,
       Map.Entry<String, RequirementDefinition> connectionPointEntry) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> substitutionMapping =
         nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getRequirements()
             .get(connectionPointEntry.getKey());
@@ -81,8 +71,6 @@ public abstract class ResourceConnectionUsingRequirementHelper
             .get(mappedNodeTemplate.getType());
     Optional<RequirementDefinition> requirementDefinition =
         DataModelUtil.getRequirementDefinition(substituteNodeType, mappedReqId);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return new Map.Entry<String, RequirementDefinition>() {
       @Override
       public String getKey() {
@@ -103,10 +91,6 @@ public abstract class ResourceConnectionUsingRequirementHelper
 
   @Override
   List<Map<String, RequirementDefinition>> getAllConnectionPoints() {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<Map<String, RequirementDefinition>> exposedRequirementsList = new ArrayList<>();
     List<Predicate<RequirementDefinition>> predicates = getPredicatesListForConnectionPoints();
     List<Map<String, RequirementDefinition>> requirements = this.nodeType.getRequirements();
@@ -124,18 +108,12 @@ public abstract class ResourceConnectionUsingRequirementHelper
               exposedRequirementsMap.put(entry.getKey(), entry.getValue());
               exposedRequirementsList.add(exposedRequirementsMap);
             }));
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return exposedRequirementsList;
   }
 
   void addRequirementToConnectResource(
       Map.Entry<String, RequirementDefinition> requirementDefinitionEntry, String paramName,
       Object paramValue, List<String> supportedNetworkTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (paramValue == null) {
       logger.warn("'" + paramName + "' property is not define in nested resource '"
           + translateTo.getResourceId() + "' for the nested heat file, therefore, '"
@@ -156,7 +134,5 @@ public abstract class ResourceConnectionUsingRequirementHelper
           .ifPresent(targetTranslatedId -> createRequirementAssignment(requirementDefinitionEntry,
               targetTranslatedId, substitutionNodeTemplate));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }

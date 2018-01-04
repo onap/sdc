@@ -76,10 +76,6 @@ public class ContrailV2VlanToInterfaceResourceConnection
                                                                  HeatOrchestrationTemplate
                                                                    nestedHeatOrchestrationTemplate,
                                                                  String nestedHeatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> interfaces = new ArrayList<>();
     Object interfaceRefs = heatResource.getProperties().get(HeatConstants.VMI_REFS_PROPERTY_NAME);
     if (Objects.isNull(interfaceRefs) || !(interfaceRefs instanceof List)
@@ -104,8 +100,6 @@ public class ContrailV2VlanToInterfaceResourceConnection
         && attachedInterfaceResource.get().getEntityId() instanceof String) {
       interfaces.add((String) attachedInterfaceResource.get().getEntityId());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.of(interfaces);
   }
 
@@ -118,10 +112,6 @@ public class ContrailV2VlanToInterfaceResourceConnection
   protected void addRequirementToConnectResources(
       Map.Entry<String, RequirementDefinition> requirementDefinitionEntry,
       List<String> paramNames) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (paramNames == null || paramNames.isEmpty()) {
       return;
     }
@@ -135,8 +125,6 @@ public class ContrailV2VlanToInterfaceResourceConnection
       addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue,
           supportedInterfaceTypes);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -145,10 +133,6 @@ public class ContrailV2VlanToInterfaceResourceConnection
                                                       String connectionPointId,
                                                       Resource connectedResource,
                                                       List<String> supportedTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)
         || (new ContrailV2VirtualMachineInterfaceHelper()
         .isVlanSubInterfaceResource(connectedResource))) {
@@ -160,12 +144,8 @@ public class ContrailV2VlanToInterfaceResourceConnection
           + "' that connect vmi vlan sub interface to interface. Supported types are: '"
           + supportedTypes.toString() + "' (excluding Vlan), therefore, this TOSCA requirement will"
           + " not be connected.");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 }
