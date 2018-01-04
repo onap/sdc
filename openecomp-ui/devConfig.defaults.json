@@ -3,6 +3,26 @@
   "proxyCatalogTarget": null,
   "proxyWebsocketTarget": null,
   "proxyTarget": null,
+  "proxyConfig": {
+    "cookies": null,
+    "cookiesReplaceRules": [],
+    "urlReplaceRules": [],
+    "jsReplaceRules": [],
+    "appContextPath": null,
+    "login": null,
+    "redirectionPath": null,
+    "onboardingProxy": {
+      "rewrite": null,
+      "proxy": []
+    },
+    "catalogProxy": {
+      "rewrite": null,
+      "proxy": []
+    },
+    "websocketProxy": {
+      "proxy": []
+    }
+  },
   "bundles": {
     "bundle": ["sdc-app/sdc.app.jsx"],
     "punch-outs": ["sdc-app/punch-outs.js"],
