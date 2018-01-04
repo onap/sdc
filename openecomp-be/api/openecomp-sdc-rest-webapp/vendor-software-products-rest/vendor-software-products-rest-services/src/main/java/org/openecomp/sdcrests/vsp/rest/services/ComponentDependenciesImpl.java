@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.openecomp.sdc.logging.context.MdcUtil;
@@ -19,24 +35,20 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Named
 @Service("componentDependencies")
 @Scope(value = "prototype")
 public class ComponentDependenciesImpl implements ComponentDependencies {
 
-  private ComponentDependencyModelManager componentDependencyModelManager =
+  private final ComponentDependencyModelManager componentDependencyModelManager =
       ComponentDependencyModelManagerFactory.getInstance().createInterface();
 
   @Override
   public Response create(ComponentDependencyModel request, String vspId, String versionId,
                          String user) {
     MdcUtil.initMdc(LoggerServiceName.CREATE_COMPONENT_DEPENDENCY_MODEL.toString());
-    List<ComponentDependencyModelEntity> modelEntities = new
-        ArrayList<ComponentDependencyModelEntity>();
 
     final Version version = new Version(versionId);
 
@@ -68,7 +80,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
 
     MapComponentDependencyEntityToDto mapper = new MapComponentDependencyEntityToDto();
     GenericCollectionWrapper<ComponentDependencyResponseDto> results = new GenericCollectionWrapper
-        <ComponentDependencyResponseDto>();
+        <>();
     for (ComponentDependencyModelEntity entity : componentDependencies) {
       results.add(mapper.applyMapping(entity, ComponentDependencyResponseDto.class));
     }
