@@ -50,11 +50,12 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private static final String ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE =
       "errorCodesToResponseStatusMapping.json";
   @SuppressWarnings("unchecked")
-  private static Map<String, String> errorCodeToResponseStatus =
+  private static final Map<String, String> ERROR_CODE_TO_RESPONSE_STATUS =
           FileUtils.readViaInputStream(ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE,
-                  stream -> JsonUtil.json2Object(stream, Map.class));
+              stream -> JsonUtil.json2Object(stream, Map.class));
 
-  private static Logger logger = (Logger) LoggerFactory.getLogger(DefaultExceptionMapper.class);
+  private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(DefaultExceptionMapper
+      .class);
 
   @Override
   public Response toResponse(Exception exception) {
@@ -80,16 +81,16 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private Response transform(CoreException coreException) {
     Response response;
     ErrorCode code = coreException.code();
-    logger.error(code.message(), coreException);
+    LOGGER.error(code.message(), coreException);
 
     if (coreException.code().category().equals(ErrorCategory.APPLICATION)) {
-      if (Response.Status.NOT_FOUND.name().equals(errorCodeToResponseStatus.get(code.id()))) {
+      if (Response.Status.NOT_FOUND.name().equals(ERROR_CODE_TO_RESPONSE_STATUS.get(code.id()))) {
         response = Response
             .status(Response.Status.NOT_FOUND)
             .entity(toEntity(Response.Status.NOT_FOUND, code))
             .build();
       } else if (Response.Status.BAD_REQUEST.name()
-          .equals(errorCodeToResponseStatus.get(code.id()))) {
+          .equals(ERROR_CODE_TO_RESPONSE_STATUS.get(code.id()))) {
         response = Response
             .status(Response.Status.BAD_REQUEST)
             .entity(toEntity(Response.Status.BAD_REQUEST, code))
@@ -129,7 +130,7 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
     ErrorCode validationErrorCode = new ValidationErrorBuilder(message, fieldName).build();
 
-    logger.error(validationErrorCode.message(), validationException);
+    LOGGER.error(validationErrorCode.message(), validationException);
     return Response
         .status(Response.Status.EXPECTATION_FAILED) //error 417
         .entity(toEntity(Response.Status.EXPECTATION_FAILED, validationErrorCode))
@@ -138,7 +139,7 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
   private Response transform(JsonMappingException jsonMappingException) {
     ErrorCode jsonMappingErrorCode = new JsonMappingErrorBuilder().build();
-    logger.error(jsonMappingErrorCode.message(), jsonMappingException);
+    LOGGER.error(jsonMappingErrorCode.message(), jsonMappingException);
     return Response
         .status(Response.Status.EXPECTATION_FAILED) //error 417
         .entity(toEntity(Response.Status.EXPECTATION_FAILED, jsonMappingErrorCode))
@@ -147,7 +148,7 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
   private Response transform(Exception exception) {
     ErrorCode generalErrorCode = new GeneralErrorBuilder(exception.getMessage()).build();
-    logger.error(generalErrorCode.message(), exception);
+    LOGGER.error(generalErrorCode.message(), exception);
     return Response
         .status(Response.Status.INTERNAL_SERVER_ERROR)
         .entity(toEntity(Response.Status.INTERNAL_SERVER_ERROR, generalErrorCode))
