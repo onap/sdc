@@ -45,8 +45,6 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
 
   @Override
   public void translate(TranslateTo translateTo) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     TranslationContext context = translateTo.getContext();
     FileData nestedFileData =
         HeatToToscaUtil.getFileData(translateTo.getResource().getType(), context);
@@ -94,7 +92,6 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
     if(DataModelUtil.isNodeTemplateSectionMissingFromServiceTemplate(substitutionServiceTemplate)){
       handleSubstitutionServiceTemplateWithoutNodeTemplates(
           templateName, translateTo);
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return;
     }
     NodeTemplate substitutionNodeTemplate =
@@ -107,8 +104,6 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
 
     //Add nested node template id to consolidation data
     ConsolidationDataUtil.updateNestedNodeTemplateId(translateTo);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleSubstitutionServiceTemplateWithoutNodeTemplates(String templateName,
@@ -137,10 +132,6 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
                                                              FileData nestedFileData,
                                                              NodeTemplate substitutionNodeTemplate,
                                                              String substitutionNodeTypeId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ServiceTemplate globalSubstitutionTemplate =
         translateTo.getContext().getTranslatedServiceTemplates()
             .get(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
@@ -155,24 +146,16 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
         nodeType);
     handleVlanSubInterfaceToInterfaceConnections(translateTo, nestedFileData,
         substitutionNodeTemplate, nodeType);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleVlanSubInterfaceToInterfaceConnections(TranslateTo translateTo,
                                                             FileData nestedFileData,
                                                             NodeTemplate substitutionNodeTemplate,
                                                             NodeType nodeType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ContrailV2VlanToInterfaceResourceConnection linker =
         new ContrailV2VlanToInterfaceResourceConnection(this, translateTo, nestedFileData,
             substitutionNodeTemplate, nodeType);
     linker.connect();
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 
@@ -180,76 +163,46 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
                                                               FileData nestedFileData,
                                                               NodeTemplate substitutionNodeTemplate,
                                                               NodeType nodeType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ContrailV2VmInterfaceToNetResourceConnection linker =
         new ContrailV2VmInterfaceToNetResourceConnection(this, translateTo, nestedFileData,
             substitutionNodeTemplate, nodeType);
     linker.connect();
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleNovaToVolConnection(TranslateTo translateTo, FileData nestedFileData,
                                          NodeTemplate substitutionNodeTemplate, NodeType nodeType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NovaToVolResourceConnection linker =
         new NovaToVolResourceConnection(this, translateTo, nestedFileData, substitutionNodeTemplate,
             nodeType);
     linker.connect();
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleSecurityRulesToPortConnections(TranslateTo translateTo,
                                                     FileData nestedFileData,
                                                     NodeTemplate substitutionNodeTemplate,
                                                     NodeType nodeType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     SecurityRulesToPortResourceConnection linker =
         new SecurityRulesToPortResourceConnection(this, translateTo, nestedFileData,
             substitutionNodeTemplate, nodeType);
     linker.connect();
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handlePortToNetConnections(TranslateTo translateTo, FileData nestedFileData,
                                           NodeTemplate substitutionNodeTemplate,
                                           NodeType nodeType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     PortToNetResourceConnection linker =
         new PortToNetResourceConnection(this, translateTo, nestedFileData, substitutionNodeTemplate,
             nodeType);
     linker.connect();
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleContrailPortToNetConnections(TranslateTo translateTo, FileData nestedFileData,
                                                   NodeTemplate substitutionNodeTemplate,
                                                   NodeType nodeType) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     ContrailPortToNetResourceConnection linker =
         new ContrailPortToNetResourceConnection(this, translateTo, nestedFileData,
             substitutionNodeTemplate, nodeType);
     linker.connect();
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 }

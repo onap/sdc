@@ -30,10 +30,6 @@ public class ResourceTranslationContrailVirtualNetworkImpl extends ResourceTrans
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.CONTRAIL_VIRTUAL_NETWORK);
     nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -44,7 +40,5 @@ public class ResourceTranslationContrailVirtualNetworkImpl extends ResourceTrans
             nodeTemplate, translateTo.getContext()));
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(),
             translateTo.getTranslatedId(),nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }
