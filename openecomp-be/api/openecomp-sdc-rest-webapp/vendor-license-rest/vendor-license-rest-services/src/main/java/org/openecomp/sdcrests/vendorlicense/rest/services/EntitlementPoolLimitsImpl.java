@@ -2,7 +2,6 @@ package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 
 import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -28,7 +27,6 @@ import java.util.Collection;
 @Service("entitlementPoolLimits")
 @Scope(value = "prototype")
 public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorLicenseManager vendorLicenseManager =
       VendorLicenseManagerFactory.getInstance().createInterface();
 
@@ -40,8 +38,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
                               String versionId,
                               String entitlementPoolId,
                               String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId);
-
     MdcUtil.initMdc(LoggerServiceName.Create_LIMIT.toString());
     Version version = new Version(versionId);
     vendorLicenseManager
@@ -61,9 +57,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     /*StringWrapperResponse result =
         createdLimit != null ? new StringWrapperResponse(createdLimit.getId())
             : null;*/
-
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId, "EP id", entitlementPoolId);
-
     //return Response.ok(result).build();
     return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
   }
@@ -71,8 +64,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   @Override
   public Response listLimits(String vlmId, String versionId, String entitlementPoolId, String
       user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId);
-
     MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
     Version version = new Version(versionId);
     vendorLicenseManager
@@ -87,18 +78,12 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     for (LimitEntity limit : limits) {
       result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
     }
-
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId, "EP id", entitlementPoolId);
-
     return Response.ok(result).build();
   }
 
   @Override
   public Response getLimit(String vlmId, String versionId, String entitlementPoolId,
                            String limitId, String user) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId, limitId);
-
     MdcUtil.initMdc(LoggerServiceName.Get_LIMIT.toString());
 
     Version version = new Version(versionId);
@@ -113,10 +98,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
 
     LimitEntityDto entitlementPoolEntityDto = limit == null ? null :
         new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
-
-    mdcDataDebugMessage
-        .debugExitMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId, limitId);
-
     return Response.ok(entitlementPoolEntityDto).build();
   }
 
@@ -127,9 +108,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
                               String entitlementPoolId,
                               String limitId,
                               String user) {
-    mdcDataDebugMessage
-        .debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id", limitId);
-
     MdcUtil.initMdc(LoggerServiceName.Update_LIMIT.toString());
 
     Version version = new Version(versionId);
@@ -145,10 +123,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitEntity.setParent(parent);
 
     vendorLicenseManager.updateLimit(limitEntity);
-
-    mdcDataDebugMessage
-        .debugExitMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id", limitId);
-
     return Response.ok().build();
   }
 
@@ -163,8 +137,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
    */
   public Response deleteLimit(String vlmId, String versionId, String entitlementPoolId,
                               String limitId, String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId,
-        entitlementPoolId, limitId);
     MdcUtil.initMdc(LoggerServiceName.Delete_LIMIT.toString());
 
     Version version = new Version(versionId);
@@ -179,10 +151,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitInput.setParent(parent);
 
     vendorLicenseManager.deleteLimit(limitInput);
-
-    mdcDataDebugMessage.debugExitMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId,
-        entitlementPoolId, limitId);
-
     return Response.ok().build();
   }
 }

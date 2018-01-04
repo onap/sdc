@@ -22,7 +22,6 @@ package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -53,8 +52,6 @@ import java.util.HashSet;
 @Service("licenseAgreements")
 @Scope(value = "prototype")
 public class LicenseAgreementsImpl implements LicenseAgreements {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorLicenseManager vendorLicenseManager =
       VendorLicenseManagerFactory.getInstance().createInterface();
 
@@ -67,9 +64,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    * @return the response
    */
   public Response listLicenseAgreements(String vlmId, String versionId, String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-
     MdcUtil.initMdc(LoggerServiceName.List_LA.toString());
     Collection<LicenseAgreementEntity> licenseAgreements =
         vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId));
@@ -84,9 +78,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
       outputMapper.doMapping(lae, laeDto);
       results.add(laeDto);
     }
-
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
-
     return Response.ok(results).build();
   }
 
@@ -100,9 +91,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response createLicenseAgreement(LicenseAgreementRequestDto request, String vlmId,
                                          String versionId, String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
-
     MdcUtil.initMdc(LoggerServiceName.Create_LA.toString());
     LicenseAgreementEntity licenseAgreementEntity =
         new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
@@ -116,9 +104,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
     StringWrapperResponse result =
         createdLicenseAgreement != null ? new StringWrapperResponse(createdLicenseAgreement.getId())
             : null;
-
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
-
     return Response.ok(result).build();
   }
 
@@ -133,9 +118,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response updateLicenseAgreement(LicenseAgreementUpdateRequestDto request, String vlmId,
                                          String versionId, String licenseAgreementId, String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", vlmId, licenseAgreementId);
-
     MdcUtil.initMdc(LoggerServiceName.Update_LA.toString());
     LicenseAgreementEntity licenseAgreementEntity =
         new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
@@ -147,9 +129,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
     vendorLicenseManager
         .updateLicenseAgreement(licenseAgreementEntity, request.getAddedFeatureGroupsIds(),
             request.getRemovedFeatureGroupsIds());
-
-    mdcDataDebugMessage.debugExitMessage("VLM id, LA id", vlmId, licenseAgreementId);
-
     return Response.ok().build();
   }
 
@@ -164,9 +143,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response getLicenseAgreement(String vlmId, String versionId, String licenseAgreementId,
                                       String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", vlmId, licenseAgreementId);
-
     MdcUtil.initMdc(LoggerServiceName.Get_LA.toString());
     LicenseAgreementModel licenseAgreementModel = vendorLicenseManager
         .getLicenseAgreementModel(vlmId, new Version(versionId), licenseAgreementId);
@@ -195,9 +171,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
         lamDto.getFeatureGroups().add(fgeDto);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage("VLM id, LA id", vlmId, licenseAgreementId);
-
     return Response.ok(lamDto).build();
   }
 
@@ -212,14 +185,8 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response deleteLicenseAgreement(String vlmId, String versionId, String licenseAgreementId,
                                          String user) {
-
-    mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", vlmId, licenseAgreementId);
-
     MdcUtil.initMdc(LoggerServiceName.Delete_LA.toString());
     vendorLicenseManager.deleteLicenseAgreement(vlmId, new Version(versionId), licenseAgreementId);
-
-    mdcDataDebugMessage.debugExitMessage("VLM id, LA id", vlmId, licenseAgreementId);
-
     return Response.ok().build();
   }
 }
