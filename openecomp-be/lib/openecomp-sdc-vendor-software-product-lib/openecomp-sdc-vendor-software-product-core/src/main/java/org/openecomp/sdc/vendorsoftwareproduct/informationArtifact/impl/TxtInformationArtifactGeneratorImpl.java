@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl;
 
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.QuestionnnaireDataServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactData;
@@ -55,8 +54,6 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
   private QuestionnaireDataService questionnaireDataService = QuestionnnaireDataServiceFactory
       .getInstance().createInterface();
   private StringBuilder textArtifact;
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   @Override
   public String generate(String vspId, Version version) {
     InformationArtifactData informationArtifactData =
@@ -65,10 +62,6 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
   }
 
   private String createTxtArtifact(InformationArtifactData informationArtifactData) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     textArtifact = new StringBuilder(TxtInformationArtifactConstants.HEADER);
     addVspVlmEntries(informationArtifactData);
     addAvailabilityEntries();
@@ -92,17 +85,11 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
       addRecoveryEntriesPerComponent(componentQuestionnaire);
     }
     textArtifact.append(TxtInformationArtifactConstants.FOOTER);
-
-    mdcDataDebugMessage.debugExitMessage(null);
     return textArtifact.toString();
 
   }
 
   private void addDataEntries(InformationArtifactData informationArtifactData) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     addEntryWithIndent(STORAGE_BACKUP_DETAILS, "", TAB);
 
     Optional<StorageDataReplication> storageDataReplication =
@@ -124,13 +111,9 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
 
     storageDataReplication.ifPresent(rep -> addEntryWithIndent(DATA_REP_DEST,
         String.valueOf(rep.getStorageReplicationDestination()), TAB + TAB));
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addAvailabilityEntries() {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     addEntryWithIndent(HIGH_AVAILABILITY, "", TAB);
 
     Optional<Availability> availability =
@@ -139,13 +122,9 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
     availability
         .ifPresent(availabilityVal -> addEntryWithIndent(USING_AVAILABILITY_ZONES, String.valueOf(
             availabilityVal.isUseAvailabilityZonesForHighAvailability()), TAB + TAB));
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addVspVlmEntries(InformationArtifactData informationArtifactData) {
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     addEntryWithIndent(TITLE, "", "");
     Optional<VspDetails> vspDetails = Optional.of(informationArtifactData).map
         (InformationArtifactData::getVspDetails);
@@ -166,8 +145,6 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
     addEntryWithIndent(LIST_OF_FEATURE_GROUPS, "", TAB + TAB);
     vspDetails.ifPresent(vspDets -> addListEntriesWithIndent(vspDets
         .getFeatureGroups(), TAB + TAB + TAB));
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   static String roundVersionAsNeeded(Version version) {
@@ -179,9 +156,6 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
   }
 
   private void addRecoveryEntriesPerComponent(ComponentQuestionnaire componentQuestionnaire) {
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     addEntryWithIndent(RECOVERY_DETAILS, "", TAB + TAB + TAB);
     Optional<Recovery> recovery = Optional.of(componentQuestionnaire).map(
         ComponentQuestionnaire::getGeneral).map(
@@ -192,15 +166,9 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
 
     recovery.ifPresent(recoveryVal -> addEntryWithIndent(RECOVERY_DETAILS_TIME, String.valueOf(
         recoveryVal.getTimeObjective()), TAB + TAB + TAB + TAB));
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addEntriesPerNic(NicQuestionnaire nicQuestionnaire) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     addEntryWithIndent(VNICS, "", TAB + TAB + TAB);
     Optional<Network> networkOpt = Optional.of(nicQuestionnaire).map(
         NicQuestionnaire::getNetwork);
@@ -223,15 +191,9 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
         .isIpv4Required()), TAB + TAB + TAB + TAB));
     ipconfigOpt.ifPresent(ipconfig -> addEntryWithIndent(VNICS_IPV6, String.valueOf(ipconfig
         .isIpv6Required()), TAB + TAB + TAB + TAB));
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addEntriesPerComponent(ComponentQuestionnaire componentQuestionnaire) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null);
-
     addEntryWithIndent(VFC_NAME, "", TAB + TAB + TAB);
     addEntryWithIndent(VFC_DESC, "", TAB + TAB + TAB);
     addEntryWithIndent(VFC_IMAGES, "", TAB + TAB + TAB);
@@ -279,9 +241,6 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
 
     numVmsOpt.ifPresent(numVms -> addEntryWithIndent(VFC_INSTANCE_NUMBER_MAX, String.valueOf
         (numVms.getMaximum()), TAB + TAB + TAB + TAB));
-
-
-    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addListEntriesWithIndent(List<String> fieldValues, String indent) {

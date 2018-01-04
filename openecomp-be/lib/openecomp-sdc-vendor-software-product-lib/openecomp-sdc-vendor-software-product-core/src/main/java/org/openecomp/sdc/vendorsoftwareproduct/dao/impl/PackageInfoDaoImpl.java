@@ -27,7 +27,6 @@ import com.datastax.driver.mapping.annotations.Query;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 
@@ -42,9 +41,6 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
       noSqlDb.getMappingManager().mapper(PackageInfo.class);
   private static final PackageInfoAccessor accessor =
       noSqlDb.getMappingManager().createAccessor(PackageInfoAccessor.class);
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
   @Override
   protected Mapper<PackageInfo> getMapper() {
     return mapper;
@@ -62,7 +58,6 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
 
   @Override
   public List<PackageInfo> listByCategory(String category, String subCategory) {
-    mdcDataDebugMessage.debugEntryMessage(null);
     Result<PackageInfo> packages = accessor.listInfo();
 
     List<PackageInfo> filteredPackages = new ArrayList<>();
@@ -79,7 +74,6 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
         filteredPackages.add(packageInfo);
       }
     }
-    mdcDataDebugMessage.debugExitMessage(null);
     return filteredPackages;
   }
 

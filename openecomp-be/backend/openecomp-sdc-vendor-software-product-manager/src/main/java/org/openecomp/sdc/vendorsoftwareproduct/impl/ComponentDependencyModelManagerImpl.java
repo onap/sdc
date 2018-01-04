@@ -7,7 +7,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
@@ -23,8 +22,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.Collection;
 
 public class ComponentDependencyModelManagerImpl implements ComponentDependencyModelManager {
-
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   protected static final Logger logger =
       LoggerFactory.getLogger(ComponentDependencyModelManagerImpl.class);
 
@@ -46,9 +43,6 @@ public class ComponentDependencyModelManagerImpl implements ComponentDependencyM
 
   @Override
   public Collection<ComponentDependencyModelEntity> list(String vspId, Version version) {
-
-    mdcDataDebugMessage.debugExitMessage("VSP id, version", vspId, version.toString());
-
     return componentDependencyModelDao
         .list(new ComponentDependencyModelEntity(vspId, version, null));
   }
@@ -87,20 +81,15 @@ public class ComponentDependencyModelManagerImpl implements ComponentDependencyM
 
   @Override
   public void delete(String vspId, Version version, String dependencyId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, dependencyId", vspId, dependencyId);
     ComponentDependencyModelEntity componentDependencyEntity = getComponentDependency(vspId,
         version, dependencyId);
     if (componentDependencyEntity != null) {
       componentDependencyModelDao.delete(componentDependencyEntity);
     }
-
-    mdcDataDebugMessage.debugExitMessage("VSP id, dependencyId", vspId, dependencyId);
   }
 
   @Override
   public void update(ComponentDependencyModelEntity entity) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, dependencyId", entity.getVspId(),
-        entity.getId());
     ComponentDependencyModelEntity componentDependencyEntity = getComponentDependency(
         entity.getVspId(), entity.getVersion(), entity.getId());
     validateComponentDependency(entity);
@@ -109,7 +98,6 @@ public class ComponentDependencyModelManagerImpl implements ComponentDependencyM
 
   @Override
   public ComponentDependencyModelEntity get(String vspId, Version version, String dependencyId) {
-    mdcDataDebugMessage.debugEntryMessage("VSP id, dependencyId", vspId, dependencyId);
     ComponentDependencyModelEntity componentDependency =
         getComponentDependency(vspId, version, dependencyId);
     return componentDependency;

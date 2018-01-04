@@ -26,7 +26,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -61,7 +60,6 @@ import java.util.stream.Collectors;
 import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.COMPUTE_TYPE_PREFIX;
 
 public class ComponentManagerImpl implements ComponentManager {
-  private static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private final ComponentDao componentDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final NicManager nicManager;
@@ -81,14 +79,11 @@ public class ComponentManagerImpl implements ComponentManager {
 
   @Override
   public Collection<ComponentEntity> listComponents(String vspId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID, vspId);
-    mdcDataDebugMessage.debugExitMessage(VSP_ID, vspId);
     return componentDao.list(new ComponentEntity(vspId, version, null));
   }
 
   @Override
   public void deleteComponents(String vspId, Version version) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID, vspId);
     if (!vspInfoDao.isManual(vspId, version)) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.DELETE_COMPONENT, ErrorLevel.ERROR.name(),
@@ -96,14 +91,10 @@ public class ComponentManagerImpl implements ComponentManager {
       throw new CoreException(
           new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
     }
-
-    mdcDataDebugMessage.debugExitMessage(VSP_ID, vspId);
   }
 
   @Override
   public ComponentEntity createComponent(ComponentEntity component) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID, component.getId());
-
     final String vfcAddNotAllowedInHeatOnboardingMsg =
         "VFCs cannot be added for VSPs onboarded with HEAT.";
 
@@ -121,9 +112,6 @@ public class ComponentManagerImpl implements ComponentManager {
       updateComponentName(component);
       createdComponent = compositionEntityDataManager.createComponent(component);
     }
-
-    mdcDataDebugMessage.debugExitMessage(VSP_ID, component.getId());
-
     return createdComponent;
   }
 
@@ -177,8 +165,6 @@ public class ComponentManagerImpl implements ComponentManager {
 
   @Override
   public CompositionEntityValidationData updateComponent(ComponentEntity component) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID_COMPONENT_ID, component
-        .getVspId(), component.getId());
     ComponentEntity retrieved =
         getValidatedComponent(component.getVspId(), component.getVersion(), component.getId());
 
@@ -199,9 +185,6 @@ public class ComponentManagerImpl implements ComponentManager {
       }
       componentDao.update(component);
     }
-    mdcDataDebugMessage.debugExitMessage(VSP_ID_COMPONENT_ID, component.getVspId(),
-        component.getId());
-
     return validationData;
   }
 
@@ -233,7 +216,6 @@ public class ComponentManagerImpl implements ComponentManager {
   @Override
   public CompositionEntityResponse<ComponentData> getComponent(String vspId, Version version,
                                                                String componentId) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
     ComponentEntity componentEntity = getValidatedComponent(vspId, version, componentId);
     ComponentData component = componentEntity.getComponentCompositionData();
 
@@ -245,15 +227,11 @@ public class ComponentManagerImpl implements ComponentManager {
     response.setId(componentId);
     response.setData(component);
     response.setSchema(getComponentCompositionSchema(schemaInput));
-    mdcDataDebugMessage.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
-
     return response;
   }
 
   @Override
   public void deleteComponent(String vspId, Version version, String componentId) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
-
     if (!vspInfoDao.isManual(vspId, version)) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.DELETE_COMPONENT, ErrorLevel.ERROR.name(),
@@ -261,15 +239,11 @@ public class ComponentManagerImpl implements ComponentManager {
       throw new CoreException(
           new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
     }
-
-    mdcDataDebugMessage.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   @Override
   public QuestionnaireResponse getQuestionnaire(String vspId, Version version,
                                                 String componentId) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
-
     QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
     ComponentEntity component = componentDao.getQuestionnaireData(vspId, version, componentId);
     VersioningUtil
@@ -283,20 +257,15 @@ public class ComponentManagerImpl implements ComponentManager {
         new ComponentQuestionnaireSchemaInput(nicNames, questionnaireResponse.getData() == null
             ? null
             : JsonUtil.json2Object(questionnaireResponse.getData(), Map.class))));
-
-    mdcDataDebugMessage.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
     return questionnaireResponse;
   }
 
   @Override
   public void updateQuestionnaire(String vspId, Version version, String componentId,
                                   String questionnaireData) {
-    mdcDataDebugMessage.debugEntryMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
     validateComponentExistence(vspId, version, componentId);
 
     componentDao.updateQuestionnaireData(vspId, version, componentId, questionnaireData);
-
-    mdcDataDebugMessage.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 
   @Override

@@ -38,7 +38,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -117,7 +116,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
-  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final Logger LOGGER =
       LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
 
@@ -183,8 +181,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public ValidationResponse validate(String vspId, Version version) throws IOException {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     VspDetails vspDetails = getValidatedVsp(vspId, version);
     Collection<ComponentDependencyModelEntity> componentDependencies =
         componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId, version, null));
@@ -224,9 +220,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     validationResponse
         .setVspErrors(vspErrors, LoggerTragetServiceName.SUBMIT_VSP);
     validationResponse.setLicensingDataErrors(validateLicensingData(vspDetails));
-
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return validationResponse;
   }
 
@@ -259,8 +252,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public Map<String, List<ErrorMessage>> compile(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     ToscaServiceModel serviceModel =
         OnboardingMethod.Manual.name().equals(getValidatedVsp(vspId, version).getOnboardingMethod())
             //Generate Tosca service model for Manual Onboarding flow
@@ -269,7 +260,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             : serviceModelDao.getServiceModel(vspId, version);
 
     Map<String, List<ErrorMessage>> compilationErrors = compile(vspId, version, serviceModel);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return compilationErrors;
   }
 
@@ -344,8 +334,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   private Set<CompositionEntityValidationData> componentValidation(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     Set<CompositionEntityValidationData> validationData = new HashSet<>();
     Collection<ComponentEntity> components =
         componentDao.list(new ComponentEntity(vspId, version, null));
@@ -474,15 +462,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   private Collection<ErrorCode> validateLicensingData(VspDetails vspDetails) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspDetails.getId());
-
     if (vspDetails.getVendorId() == null || vspDetails.getVlmVersion() == null
         || vspDetails.getLicenseAgreement() == null
         || CollectionUtils.isEmpty(vspDetails.getFeatureGroups())) {
       return Collections.emptyList();
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspDetails.getId());
     return vendorLicenseFacade
         .validateLicensingData(vspDetails.getVendorId(), vspDetails.getVlmVersion(),
             vspDetails.getLicenseAgreement(), vspDetails.getFeatureGroups());
@@ -490,20 +474,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public VspDetails createVsp(VspDetails vspDetails) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
-
     vspInfoDao.create(vspDetails);
     vspInfoDao.updateQuestionnaireData(vspDetails.getId(), vspDetails.getVersion(),
         new JsonSchemaDataGenerator(getVspQuestionnaireSchema(null)).generateData());
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return vspDetails;
   }
 
   @Override
   public void updateVsp(VspDetails vspDetails) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspDetails.getId());
-
     VspDetails retrieved = vspInfoDao.get(vspDetails);
     // TODO: 6/21/2017 remove this validation when validation will be added in the REST level
     if (retrieved == null) {
@@ -518,8 +496,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     updateUniqueName(retrieved.getName(), vspDetails.getName());
     vspInfoDao.update(vspDetails);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspDetails.getId());
   }
 
   private void updateDeploymentFlavor(VspDetails vspDetails) {
@@ -553,11 +529,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public VspDetails getVsp(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     VspDetails vsp = getValidatedVsp(vspId, version);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return vsp;
   }
 
@@ -574,13 +546,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public void deleteVsp(String vspId) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
         LoggerTragetServiceName.DELETE_VSP, ErrorLevel.ERROR.name(),
         LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Unsupported operation");
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
-
     throw new UnsupportedOperationException(
         VendorSoftwareProductConstants.UNSUPPORTED_OPERATION_ERROR);
   }
@@ -592,7 +560,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public File getTranslatedFile(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
     String errorMessage;
 
     PackageInfo packageInfo = packageInfoDao.get(new PackageInfo(vspId, version));
@@ -625,17 +592,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       throw new CoreException(new TranslationFileCreationErrorBuilder(vspId, version).build(),
           exception);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
-
     return translatedFile;
   }
 
   @Override
 
   public byte[] getOrchestrationTemplateFile(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     OrchestrationTemplateEntity uploadData = orchestrationTemplateDao.get(vspId, version);
     ByteBuffer contentData = uploadData.getContentData();
     if (contentData == null) {
@@ -654,8 +616,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get uploaded HEAT");
       throw new CoreException(new FileCreationErrorBuilder(vspId).build(), exception);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return baos.toByteArray();
   }
 
@@ -666,8 +626,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public PackageInfo createPackage(String vspId, Version version) throws IOException {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     Version vlmVersion = vspDetails.getVlmVersion();
@@ -686,8 +644,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     packageInfoDao.create(packageInfo);
 
     LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_PACKAGE + vspId);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return packageInfo;
   }
 
@@ -706,8 +662,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   @Override
 
   public QuestionnaireResponse getVspQuestionnaire(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     VspQuestionnaireEntity retrieved = vspInfoDao.getQuestionnaire(vspId, version);
     VersioningUtil.validateEntityExistence(retrieved, new VspQuestionnaireEntity(vspId, version),
         VspDetails.ENTITY_TYPE);
@@ -717,19 +671,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
     questionnaireResponse.setData(questionnaireData);
     questionnaireResponse.setSchema(getVspQuestionnaireSchema(null));
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
-
     return questionnaireResponse;
   }
 
   @Override
   public void updateVspQuestionnaire(String vspId, Version version, String questionnaireData) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     vspInfoDao.updateQuestionnaireData(vspId, version, questionnaireData);
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
   }
 
 
@@ -758,8 +705,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private QuestionnaireValidationResult validateQuestionnaire(String vspId, Version version,
                                                               String onboardingMethod) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
-
     // The apis of CompositionEntityDataManager used here are stateful!
     // so, it must be re-created from scratch when it is used!
     CompositionEntityDataManager compositionEntityDataManager =
@@ -800,19 +745,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if (MapUtils.isNotEmpty(errorsByEntityId)) {
       compositionEntityDataManager.buildTrees();
       compositionEntityDataManager.addErrorsToTrees(errorsByEntityId);
-
-      MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
       return new QuestionnaireValidationResult(
           compositionEntityDataManager.getAllErrorsByVsp(vspId));
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return null;
   }
 
   @Override
   public File getInformationArtifact(String vspId, Version version) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(VSP_ID, vspId);
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
 
     if (vspDetails == null) {
@@ -836,14 +776,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     } catch (IOException ex) {
       throw new CoreException(new InformationArtifactCreationErrorBuilder(vspId).build(), ex);
     }
-
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return infoArtifactFile;
   }
 
   String getVspQuestionnaireSchema(SchemaTemplateInput schemaInput) {
-    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
-    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null);
     return SchemaGenerator
         .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, schemaInput);
   }
