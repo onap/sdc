@@ -37,7 +37,7 @@ public class NicDaoZusammenImpl implements NicDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-
+    // registerVersioning is not implemented for NicDaoZusammenImpl
   }
 
   @Override
@@ -48,10 +48,10 @@ public class NicDaoZusammenImpl implements NicDao {
 
   private Collection<NicEntity> listNics(SessionContext context, ElementContext elementContext,
                                          NicEntity nic) {
-    ElementToNicConvertor convertor = new ElementToNicConvertor();
     return zusammenAdaptor.listElementsByName(context, elementContext, new Id(nic.getComponentId()),
         ElementType.Nics.name())
-        .stream().map(convertor::convert)
+        .stream()
+        .map(new ElementToNicConvertor()::convert)
         .map(nicEntity -> {
           nicEntity.setComponentId(nicEntity.getComponentId());
           nicEntity.setVspId(nic.getVspId());
@@ -199,7 +199,7 @@ public class NicDaoZusammenImpl implements NicDao {
 
   @Override
   public void deleteByVspId(String vspId, Version version) {
-
+    // deleteByVspId not implemented for NicDaoZusammenImpl
   }
 
   private ZusammenElement nicToZusammen(NicEntity nic, Action action) {
