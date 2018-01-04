@@ -73,7 +73,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
                                                                  String nestedHeatFileName) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
 
     Object securityGroups =
         heatResource.getProperties().get(Constants.SECURITY_GROUPS_PROPERTY_NAME);
@@ -90,11 +89,9 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
         }
       });
 
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.of(paramsList);
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -108,7 +105,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
       Map.Entry<String, CapabilityDefinition> connectionPointEntry, List<String> paramNames) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
 
     if (paramNames == null || paramNames.isEmpty()) {
       return;
@@ -120,7 +116,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
       addRequirementToConnectResource(connectionPointEntry, supportedSecurityRulesTypes, paramName);
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -131,7 +126,6 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
                                                       List<String> supportedTypes) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
 
     if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)) {
       logger.warn("Nested resource '" + nestedResourceId + "' property '" + nestedPropertyName
@@ -141,11 +135,9 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
           + supportedTypes.toString() + "', therefore, this TOSCA capability will not be "
           + "connected.");
 
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 
@@ -153,12 +145,10 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
   Map.Entry<String, RequirementDefinition> createRequirementDefinition(String capabilityKey) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
 
     RequirementDefinition definition = new RequirementDefinition();
     definition.setCapability(capabilityKey);
     definition.setRelationship(ToscaRelationshipType.ATTACHES_TO);
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return new Map.Entry<String, RequirementDefinition>() {
       @Override
       public String getKey() {

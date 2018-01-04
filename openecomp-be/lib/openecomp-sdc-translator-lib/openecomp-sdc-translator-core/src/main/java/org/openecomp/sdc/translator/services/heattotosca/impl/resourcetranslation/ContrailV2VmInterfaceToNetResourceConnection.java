@@ -76,10 +76,6 @@ public class ContrailV2VmInterfaceToNetResourceConnection
                                                                  HeatOrchestrationTemplate
                                                                nestedHeatOrchestrationTemplate,
                                                                  String nestedHeatFileName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> networks = new ArrayList<>();
     Object virtualNetworkRefs = heatResource.getProperties().get("virtual_network_refs");
     if (Objects.isNull(virtualNetworkRefs) || !(virtualNetworkRefs instanceof List)
@@ -103,8 +99,6 @@ public class ContrailV2VmInterfaceToNetResourceConnection
         && network.get().getEntityId() instanceof String) {
       networks.add((String) network.get().getEntityId());
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.of(networks);
   }
 
@@ -117,10 +111,6 @@ public class ContrailV2VmInterfaceToNetResourceConnection
   protected void addRequirementToConnectResources(
       Map.Entry<String, RequirementDefinition> requirementDefinitionEntry,
       List<String> paramNames) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (paramNames == null || paramNames.isEmpty()) {
       return;
     }
@@ -133,8 +123,6 @@ public class ContrailV2VmInterfaceToNetResourceConnection
       addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue,
           supportedNetworkTypes);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   @Override
@@ -143,10 +131,6 @@ public class ContrailV2VmInterfaceToNetResourceConnection
                                                       String connectionPointId,
                                                       Resource connectedResource,
                                                       List<String> supportedTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)) {
       logger.warn("Nested resource '" + nestedResourceId + "' property '" + nestedPropertyName
           + "' is pointing to a resource with type '" + connectedResource.getType()
@@ -154,12 +138,8 @@ public class ContrailV2VmInterfaceToNetResourceConnection
           + "' that connect virtual machine interface to network. Supported types are: '"
           + supportedTypes.toString()
           + "', therefore, this TOSCA requirement will not be connected.");
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return false;
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return true;
   }
 }

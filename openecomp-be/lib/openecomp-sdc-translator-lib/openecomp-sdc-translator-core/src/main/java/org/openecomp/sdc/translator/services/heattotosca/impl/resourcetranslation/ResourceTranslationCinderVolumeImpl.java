@@ -36,10 +36,6 @@ public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.CINDER_VOLUME);
     nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -57,16 +53,10 @@ public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase
     }
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
         nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 
   private void handleSizeProperty(Map<String, Object> nodeTemplateProperties) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object size = nodeTemplateProperties.get("size");
     if (size == null) {
       return;
@@ -77,14 +67,10 @@ public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase
       for (Map.Entry entry : propMap.entrySet()) {
         String val = "(" + entry.getKey() + " : " + entry.getValue() + ") * 1024";
         nodeTemplateProperties.put("size", val);
-
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return;
       }
     } else {
       nodeTemplateProperties.put("size", size + "*1024");
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }
