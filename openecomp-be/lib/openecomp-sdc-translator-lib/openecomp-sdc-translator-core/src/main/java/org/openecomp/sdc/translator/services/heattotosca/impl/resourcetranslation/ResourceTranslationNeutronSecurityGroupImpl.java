@@ -31,10 +31,6 @@ public class ResourceTranslationNeutronSecurityGroupImpl extends ResourceTransla
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.NEUTRON_SECURITY_RULES);
     nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -46,8 +42,6 @@ public class ResourceTranslationNeutronSecurityGroupImpl extends ResourceTransla
 
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
         nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 

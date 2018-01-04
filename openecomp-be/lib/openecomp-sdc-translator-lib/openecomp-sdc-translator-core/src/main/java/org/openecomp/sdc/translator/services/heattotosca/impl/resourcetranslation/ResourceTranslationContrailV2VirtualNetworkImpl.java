@@ -52,10 +52,6 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.CONTRAILV2_VIRTUAL_NETWORK);
     nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -67,15 +63,9 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
     DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
             nodeTemplate);
     linkToPolicyNodeTemplate(translateTo);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void linkToPolicyNodeTemplate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<AttachedResourceId> networkPolicyIdList = extractNetworkPolicyIdList(translateTo);
     if (CollectionUtils.isEmpty(networkPolicyIdList)) {
       return;
@@ -88,31 +78,19 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
           .addRequirementAssignment(policyNodeTemplate, ToscaConstants.NETWORK_REQUIREMENT_ID,
               createRequirementAssignment(translateTo.getTranslatedId()));
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private List<AttachedResourceId> extractNetworkPolicyIdList(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Object propertyValue = translateTo.getResource().getProperties().get("network_policy_refs");
     if (propertyValue != null) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return extractNetworkPolicyId(propertyValue, translateTo);
     } else {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
   }
 
   private List<AttachedResourceId> extractNetworkPolicyId(Object propertyValue,
                                                           TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<AttachedResourceId> attachedResourceIdList = new ArrayList<>();
 
     if (propertyValue instanceof List) {
@@ -125,20 +103,13 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
         attachedResourceIdList.add(resourceId);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return attachedResourceIdList;
   }
 
   private AttachedResourceId parsNetworkPolicyId(Object propertyValue, TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<String> translatedPolicyResourceId;
     String policyResourceId = extractResourceId(propertyValue, translateTo);
     if (policyResourceId == null) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
 
@@ -147,7 +118,6 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
             translateTo.getHeatFileName());
     if (!policyResource.getType()
         .equals(HeatResourcesTypes.CONTRAIL_V2_NETWORK_RULE_RESOURCE_TYPE.getHeatResource())) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
     translatedPolicyResourceId = ResourceTranslationFactory.getInstance(policyResource)
@@ -159,13 +129,11 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
           + translateTo.getResource().getType()
           + "' property network_policy_refs is referenced to an unsupported resource the "
           + "connection will be ignored in TOSCA translation.");
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return null;
     }
     AttachedResourceId attachedResourceId =
         new AttachedResourceId(translatedPolicyResourceId.get(), policyResourceId,
             ReferenceType.GET_ATTR);
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return attachedResourceId;
   }
 
@@ -223,15 +191,10 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
   }
 
   private RequirementAssignment createRequirementAssignment(String translatedNetworkResourceId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     RequirementAssignment requirement = new RequirementAssignment();
     requirement.setCapability(ToscaCapabilityType.NATIVE_ATTACHMENT);
     requirement.setNode(translatedNetworkResourceId);
     requirement.setRelationship(ToscaRelationshipType.ATTACHES_TO);
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return requirement;
   }
 
