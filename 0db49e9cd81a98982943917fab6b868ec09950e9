@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a91a4b6c",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:28:13Z",
+      "side": 1,
+      "message": "return relationship !\u003d null \u0026\u0026 (requirementAssignment.getRelationship() \u003d\u003d null\n          || !requirementAssignment.getRelationship().equals(relationship));",
+      "range": {
+        "startLine": 428,
+        "startChar": 1,
+        "endLine": 432,
+        "endChar": 17
+      },
+      "revId": "0db49e9cd81a98982943917fab6b868ec09950e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_492707b7",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:28:13Z",
+      "side": 1,
+      "message": "return node !\u003d null \u0026\u0026 (requirementAssignment.getNode() \u003d\u003d null\n          || !requirementAssignment.getNode().equals(node));",
+      "range": {
+        "startLine": 436,
+        "startChar": 0,
+        "endLine": 440,
+        "endChar": 17
+      },
+      "revId": "0db49e9cd81a98982943917fab6b868ec09950e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_692c439a",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:28:13Z",
+      "side": 1,
+      "message": "return capability !\u003d null \u0026\u0026 (requirementAssignment.getCapability() \u003d\u003d null\n          || !requirementAssignment.getCapability().equals(capability));",
+      "range": {
+        "startLine": 444,
+        "startChar": 0,
+        "endLine": 448,
+        "endChar": 17
+      },
+      "revId": "0db49e9cd81a98982943917fab6b868ec09950e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c93a37cd",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 906,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:28:13Z",
+      "side": 1,
+      "message": "It can be as simple as \n\n   for (Map\u003cString, RequirementAssignment\u003e requirement : nodeTemplateRequirements) {\n      if (requirement.containsKey(requirementId) \u0026\u0026  DataModelUtil.compareRequirementAssignment(requirementAssignment, requirement.get(requirementId)) {\n    return true;\n    }\n\nreturn false;\n\nAnd can be further simplified using Java 8 functional style.",
+      "range": {
+        "startLine": 896,
+        "startChar": 1,
+        "endLine": 906,
+        "endChar": 18
+      },
+      "revId": "0db49e9cd81a98982943917fab6b868ec09950e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_89342fdf",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/test/java/org/openecomp/sdc/tosca/TestUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-04T10:28:13Z",
+      "side": 1,
+      "message": "This method is too long and has a high cyclomatic complexity https://en.wikipedia.org/wiki/Cyclomatic_complexity.",
+      "range": {
+        "startLine": 117,
+        "startChar": 1,
+        "endLine": 141,
+        "endChar": 3
+      },
+      "revId": "0db49e9cd81a98982943917fab6b868ec09950e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
