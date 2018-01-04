@@ -42,7 +42,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-
+    // registerVersioning not implemented for OrchestrationTemplateCandidateDaoZusammenImpl
   }
 
   @Override
@@ -71,9 +71,9 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
         candidateData.setContentData(
             ByteBuffer.wrap(FileUtils.toByteArray(candidateContentElement.get().getData())));
         candidateData.setFileSuffix(candidateContentElement.get().getInfo()
-            .getProperty(InfoPropertyName.fileSuffix.name()));
+            .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
         candidateData.setFileName(candidateContentElement.get().getInfo()
-            .getProperty(InfoPropertyName.fileName.name()));
+            .getProperty(InfoPropertyName.FILE_NAME.getVal()));
       }
       logger
           .info("Finished getting orchestration template for VendorSoftwareProduct id -> " + vspId);
@@ -103,9 +103,9 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
 
       if (candidateContentElement.isPresent()) {
         candidateData.setFileSuffix(candidateContentElement.get().getInfo()
-            .getProperty(InfoPropertyName.fileSuffix.name()));
+            .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
         candidateData.setFileName(candidateContentElement.get().getInfo()
-            .getProperty(InfoPropertyName.fileName.name()));
+            .getProperty(InfoPropertyName.FILE_NAME.getVal()));
       }
       logger.info(
           "Finished getting orchestration template info for VendorSoftwareProduct id -> " + vspId);
@@ -132,9 +132,9 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     candidateContentElement
         .setData(new ByteArrayInputStream(candidateData.getContentData().array()));
     candidateContentElement.getInfo()
-        .addProperty(InfoPropertyName.fileSuffix.name(), candidateData.getFileSuffix());
+        .addProperty(InfoPropertyName.FILE_SUFFIX.getVal(), candidateData.getFileSuffix());
     candidateContentElement.getInfo()
-        .addProperty(InfoPropertyName.fileName.name(), candidateData.getFileName());
+        .addProperty(InfoPropertyName.FILE_NAME.getVal(), candidateData.getFileName());
     candidateElement.addSubElement(candidateContentElement);
 
     SessionContext context = createSessionContext();
@@ -203,7 +203,17 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
   }
 
   public enum InfoPropertyName {
-    fileSuffix,
-    fileName
+    FILE_SUFFIX("fileSuffix"),
+    FILE_NAME("fileName");
+
+    private String val;
+
+    InfoPropertyName(String val){
+      this.val=val;
+    }
+
+    public String getVal() {
+      return val;
+    }
   }
 }
