@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.health.impl;
@@ -33,7 +29,6 @@ import org.openecomp.sdc.health.data.HealthCheckStatus;
 import org.openecomp.sdc.health.data.MonitoredModules;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,15 +38,9 @@ import java.util.stream.Collectors;
 
 public class HealthCheckManagerImpl implements HealthCheckManager {
 
-    private static MdcDataDebugMessage mdcDataDebugMessage;
+    private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckManagerImpl.class);
+
     private HealthCheckDao healthCheckDao;
-
-    private static final Logger logger;
-
-    static {
-        mdcDataDebugMessage = new MdcDataDebugMessage();
-        logger = LoggerFactory.getLogger(HealthCheckManagerImpl.class);
-    }
 
     public HealthCheckManagerImpl() {
         healthCheckDao = HealthCheckDaoFactory.getInstance().createInterface();
@@ -76,7 +65,7 @@ public class HealthCheckManagerImpl implements HealthCheckManager {
             try {
                 zeHealthInfos = zusammenAdaptor.checkHealth(context);
             } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
+                LOGGER.error(ex.getMessage(), ex);
                 zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
                         MonitoredModules.ZU, HealthCheckStatus.DOWN,
                         zVersion, ex.getMessage());
@@ -86,7 +75,7 @@ public class HealthCheckManagerImpl implements HealthCheckManager {
             try {
                 cassandraHealth = healthCheckDao.checkHealth();
             } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
+                LOGGER.error(ex.getMessage(), ex);
                 description = ex.getMessage();
                 cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
                         MonitoredModules.CAS, HealthCheckStatus.DOWN, zVersion, ex.getMessage());
@@ -119,7 +108,7 @@ public class HealthCheckManagerImpl implements HealthCheckManager {
 
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
                     MonitoredModules.ZU, HealthCheckStatus.DOWN, zVersion, e.getMessage()
             );
