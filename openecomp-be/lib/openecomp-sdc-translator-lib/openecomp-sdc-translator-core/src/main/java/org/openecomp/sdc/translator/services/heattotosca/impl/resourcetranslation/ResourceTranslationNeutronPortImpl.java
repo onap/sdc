@@ -52,10 +52,6 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
 
   @Override
   public void translate(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     NodeTemplate nodeTemplate = new NodeTemplate();
     nodeTemplate.setType(ToscaNodeType.NEUTRON_PORT);
     nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -70,15 +66,9 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
     String resourceTranslatedId = handleSecurityRulesRequirement(translateTo);
     DataModelUtil
         .addNodeTemplate(translateTo.getServiceTemplate(), resourceTranslatedId, nodeTemplate);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private String handleSecurityRulesRequirement(TranslateTo translateTo) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String resourceTranslatedId = translateTo.getTranslatedId();
     Map<String, Object> properties = translateTo.getResource().getProperties();
     Optional<Object> securityGroups =
@@ -95,17 +85,11 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
                 attachedResourceId));
       });
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return resourceTranslatedId;
   }
 
   private void handleSecurityGroupResourceId(TranslateTo translateTo, String resourceTranslatedId,
                                              AttachedResourceId securityGroupResourceId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     List<String> supportedSecurityGroupsTypes = Collections
         .singletonList(HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource());
     if (securityGroupResourceId.isGetResource()) {
@@ -115,17 +99,12 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
       handleGetParam(translateTo, resourceTranslatedId, securityGroupResourceId,
           supportedSecurityGroupsTypes);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleGetParam(TranslateTo translateTo, String resourceTranslatedId,
                               AttachedResourceId securityGroupResourceId,
                               List<String> supportedSecurityGroupsTypes) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!(securityGroupResourceId.getEntityId() instanceof String)) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return;
     }
     TranslatedHeatResource translatedSharedResourceId =
@@ -135,7 +114,6 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
         && !HeatToToscaUtil.isHeatFileNested(translateTo, translateTo.getHeatFileName())) {
       if (validateResourceTypeSupportedForReqCreation(translateTo, supportedSecurityGroupsTypes,
           translatedSharedResourceId.getHeatResource(), "security_groups")) {
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return;
       }
       final NodeTemplate securityGroupNodeTemplate = DataModelUtil
@@ -154,17 +132,11 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
               ConsolidationEntityType.PORT, translateTo.getResourceId(),
               ToscaConstants.PORT_REQUIREMENT_ID, requirement);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleGetResource(TranslateTo translateTo, String resourceTranslatedId,
                                  AttachedResourceId securityGroupResourceId,
                                  List<String> supportedSecurityGroupsTypes) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String resourceId = (String) securityGroupResourceId.getEntityId();
     Resource securityGroupResource = HeatToToscaUtil
         .getResource(translateTo.getHeatOrchestrationTemplate(), resourceId,
@@ -177,7 +149,6 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
     if (securityGroupTranslatedId.isPresent()) {
       if (validateResourceTypeSupportedForReqCreation(translateTo, supportedSecurityGroupsTypes,
           securityGroupResource, "security_groups")) {
-        mdcDataDebugMessage.debugExitMessage(null, null);
         return;
       }
       final NodeTemplate securityGroupNodeTemplate = DataModelUtil
@@ -194,15 +165,9 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
           ConsolidationEntityType.PORT, translateTo.getResourceId(),
           ToscaConstants.PORT_REQUIREMENT_ID, requirement);
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void handleNetworkRequirement(TranslateTo translateTo, NodeTemplate nodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     Optional<AttachedResourceId> networkResourceId =
         HeatToToscaUtil.extractAttachedResourceId(translateTo, "network");
     if (networkResourceId.isPresent()) {
@@ -215,17 +180,11 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
         addRequirementAssignmentForNetworkResource(translateTo, nodeTemplate, attachedResourceId);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void addRequirementAssignmentForNetworkResource(TranslateTo translateTo,
                                                           NodeTemplate nodeTemplate,
                                                           AttachedResourceId attachedResourceId) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     String networkTranslatedId;
     List<String> supportedNetworkTypes =
         Arrays.asList(HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
@@ -264,8 +223,6 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
             ToscaConstants.LINK_REQUIREMENT_ID, requirementAssignment);
       }
     }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 
@@ -273,21 +230,14 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
                                                               List<String> supportedTypes,
                                                               Resource heatResource,
                                                               final String propertyName) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
     if (!isResourceTypeSupported(heatResource, supportedTypes)) {
       logger.warn(
           "'" + propertyName + "' property of port resource('" + translateTo.getResourceId()
               + "') is pointing to a resource of type '" + heatResource.getType() + "' "
               + "which is not supported for this requirement. "
               + "Supported types are: " + supportedTypes.toString());
-
-      mdcDataDebugMessage.debugExitMessage(null, null);
       return true;
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return false;
   }
 
