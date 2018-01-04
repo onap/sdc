@@ -144,7 +144,6 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
         throw new CoreException(new MonitoringUploadErrorBuilder(exception.getMessage()).build());
       }
     }
-    logger.audit("Uploaded Monitoring File for component id:" + componentId + " ,vspId:" + vspId);
     MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID_COMPONENT_ID, vspId, componentId);
   }
 

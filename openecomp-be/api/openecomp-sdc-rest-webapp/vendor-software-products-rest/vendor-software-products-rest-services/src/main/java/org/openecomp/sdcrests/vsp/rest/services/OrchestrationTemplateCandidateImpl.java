@@ -58,7 +58,6 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   @Override
   public Response upload(String vspId, String versionId, Attachment fileToUpload, String user) {
     MdcUtil.initMdc(LoggerServiceName.Upload_File.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_HEAT + vspId);
 
     String filename = fileToUpload.getContentDisposition().getParameter("filename");
     UploadFileResponse uploadFileResponse = candidateManager

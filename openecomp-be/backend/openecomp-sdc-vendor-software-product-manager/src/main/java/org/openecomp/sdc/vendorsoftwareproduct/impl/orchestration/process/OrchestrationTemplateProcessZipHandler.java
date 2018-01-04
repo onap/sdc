@@ -70,7 +70,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
                                                      OrchestrationTemplateCandidateData candidateData) {
     String vspId = vspDetails.getId();
     Version version = vspDetails.getVersion();
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_STARTED + vspId);
     OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent = OrchestrationUtil
@@ -79,8 +78,7 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     if (!fileContent.isPresent()) {
       response.addStructureErrors(uploadFileResponse.getErrors());
       MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
-      response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
-          HEAT_VALIDATION_ERROR));
+
       return response;
     }
 
@@ -94,8 +92,7 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
           Messages.FOUND_UNASSIGNED_FILES.getErrorMessage(), ErrorLevel.ERROR);
 
       MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
-      response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
-          HEAT_VALIDATION_ERROR));
+
       return response;
     }
 
@@ -107,8 +104,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         .fetchZipFileByteArrayInputStream(
             vspId, candidateData, manifest, OnboardingTypesEnum.ZIP, uploadErrors);
     if (!zipByteArrayInputStream.isPresent()) {
-      response.getErrors().values()
-          .forEach(errorList -> printAuditForErrors(errorList, vspId, HEAT_VALIDATION_ERROR));
       return response;
     }
 
@@ -134,14 +129,8 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         .saveUploadData(vspDetails, candidateData, zipByteArrayInputStream.get(), fileContentMap,
             tree);
 
-    response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
-        HEAT_VALIDATION_ERROR));
-    if (MapUtils
-        .isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, response.getErrors()))) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_COMPLETED + vspId);
-    }
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_STARTED + vspId);
+
 
     TranslatorOutput translatorOutput =
         HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap);
@@ -155,7 +144,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     orchestrationUtil.updateVspComponentDependencies(vspId, version,
         vspComponentIdNameInfoBeforeProcess, componentDependenciesBeforeDelete);
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     uploadFileResponse.addStructureErrors(uploadErrors);
 
     MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
@@ -172,13 +160,4 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     return OrchestrationUtil.createHeatTree(fileContentMap, validationErrors);
   }
 
-  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(
-            AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(), vspId));
-      }
-    });
-  }
 }

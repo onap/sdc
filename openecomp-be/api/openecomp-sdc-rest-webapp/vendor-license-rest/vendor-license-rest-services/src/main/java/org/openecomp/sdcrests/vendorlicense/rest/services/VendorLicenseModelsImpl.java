@@ -141,7 +141,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   @Override
   public Response createLicenseModel(VendorLicenseModelRequestDto request, String user) {
     MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null);
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VLM + request.getVendorName());
     MdcUtil.initMdc(LoggerServiceName.Create_VLM.toString());
 
     Item item = new Item();
@@ -261,7 +260,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   private void submit(String vlmId, Version version, String message, String user) {
     MdcUtil.initMdc(LoggerServiceName.Submit_VLM.toString());
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VLM + vlmId);
 
     vendorLicenseManager.validate(vlmId, version);
     versioningManager.submit(vlmId, version, message);

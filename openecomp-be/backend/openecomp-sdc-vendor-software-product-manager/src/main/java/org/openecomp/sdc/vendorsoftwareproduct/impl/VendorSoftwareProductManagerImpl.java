@@ -459,15 +459,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     enrichmentManager.setModel(serviceModel);
     Map<String, List<ErrorMessage>> enrichErrors = enrichmentManager.enrich();
 
-    if (MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, enrichErrors))) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.ENRICHMENT_COMPLETED
-          + vendorSoftwareProductId);
-    } else {
-      enrichErrors.values().forEach(errorList ->
-          auditIfContainsErrors(errorList, vendorSoftwareProductId,
-              AuditMessages.ENRICHMENT_ERROR));
-    }
-
     enrichedServiceModelDao
         .storeServiceModel(vendorSoftwareProductId, version, enrichmentManager.getModel());
 
@@ -686,8 +677,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     packageInfoDao.create(packageInfo);
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_PACKAGE + vspId);
-
     MDC_DATA_DEBUG_MESSAGE.debugExitMessage(VSP_ID, vspId);
     return packageInfo;
   }
@@ -869,15 +858,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private boolean isServiceModelExist(ToscaServiceModel serviceModel) {
     return serviceModel != null && serviceModel.getEntryDefinitionServiceTemplate() != null;
-  }
-
-  private void auditIfContainsErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
-            vspId));
-      }
-    });
   }
 
 

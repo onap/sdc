@@ -50,8 +50,6 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
                          String user) throws Exception {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId + "," + componentId);
     MdcUtil.initMdc(LoggerServiceName.Upload_Monitoring_Artifact.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + String.format(AuditMessages
-        .UPLOAD_MONITORING_FILE, type, vspId, componentId));
 
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);

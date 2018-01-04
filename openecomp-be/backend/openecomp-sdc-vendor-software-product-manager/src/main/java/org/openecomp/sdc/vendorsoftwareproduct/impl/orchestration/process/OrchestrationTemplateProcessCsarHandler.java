@@ -62,8 +62,6 @@ public class OrchestrationTemplateProcessCsarHandler
   @Override
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
                                   OrchestrationTemplateCandidateData candidateData) {
-    LOGGER.audit(
-        AuditMessages.AUDIT_MSG + AuditMessages.CSAR_VALIDATION_STARTED + vspDetails.getId());
 
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent = OrchestrationUtil

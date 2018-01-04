@@ -99,7 +99,6 @@ public class ProcessesImpl implements Processes {
   public Response uploadFile(Attachment attachment, String vspId, String versionId,
                              String processId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Upload_File_Processes.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_PROCESS_ARTIFACT + vspId);
     return componentProcesses.uploadFile(attachment, vspId, versionId, null, processId, user);
   }
 }

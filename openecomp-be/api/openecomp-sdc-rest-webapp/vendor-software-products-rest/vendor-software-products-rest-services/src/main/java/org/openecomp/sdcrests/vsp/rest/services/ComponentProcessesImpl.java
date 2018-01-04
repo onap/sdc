@@ -180,7 +180,6 @@ public class ComponentProcessesImpl implements ComponentProcesses {
                              String componentId,
                              String processId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Upload_File_Component_Processes.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_PROCESS_ARTIFACT + vspId);
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.uploadProcessArtifact(attachment.getObject(InputStream.class),

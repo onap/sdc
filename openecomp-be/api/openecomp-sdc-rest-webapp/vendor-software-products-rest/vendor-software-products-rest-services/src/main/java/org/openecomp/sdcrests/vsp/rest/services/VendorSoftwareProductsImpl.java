@@ -147,7 +147,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   @Override
   public Response createVsp(VspRequestDto vspRequestDto, String user) {
     MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP + vspRequestDto.getName());
 
     ItemCreationDto itemCreationDto;
 
@@ -432,12 +431,10 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     Response.ResponseBuilder response = Response.ok(zipFile);
     if (zipFile == null) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_FAIL + vspId);
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + zipFile.getName());
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_SUCCESS + vspId);
     return response.build();
   }
 
@@ -507,21 +504,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private Optional<ValidationResponse> submit(String vspId, Version version, String message,
                                               String user) throws IOException {
     MdcUtil.initMdc(LoggerServiceName.Submit_VSP.toString());
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
 
     ValidationResponse validationResponse = vendorSoftwareProductManager.validate(vspId, version);
     Map<String, List<ErrorMessage>> compilationErrors =
         vendorSoftwareProductManager.compile(vspId, version);
     if (!validationResponse.isValid() || MapUtils.isNotEmpty(compilationErrors)) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP_FAIL + vspId);
-      if (validationResponse.getVspErrors() != null) {
-        validationResponse.getVspErrors().forEach(errorCode -> LOGGER.audit(AuditMessages
-            .AUDIT_MSG + String.format(SUBMIT_VSP_ERROR, errorCode.message(), vspId)));
-      }
-      if (validationResponse.getUploadDataErrors() != null) {
-        validationResponse.getUploadDataErrors().values().forEach(errorMessages
-            -> printAuditForErrors(errorMessages, vspId, SUBMIT_VSP_ERROR));
-      }
+
       activityLogManager.logActivity(
           new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false,
               "Failed on validation before submit", ""));
@@ -530,7 +518,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     versioningManager.submit(vspId, version, message);
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
     activityLogManager.logActivity(
         new ActivityLogEntity(vspId, version, ActivityType.Submit, user, true, "", message));
     return Optional.empty();
@@ -644,12 +631,4 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name()));
   }
 
-  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(
-            AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(), vspId));
-      }
-    });
-  }
 }
