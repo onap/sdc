@@ -13,7 +13,8 @@
   "ecmaFeatures": {
     "jsx": true,
     "classes": true,
-    "modules": true
+    "modules": true,
+    "experimentalDecorators": true
   },
   "globals": {
     "Event": true,

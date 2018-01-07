@@ -6,7 +6,8 @@
 		"transform-es2015-spread",
 		"transform-object-rest-spread",
 		"transform-class-properties",
-		"transform-runtime"
+		"transform-runtime",
+		"transform-decorators-legacy"
 	],
 	"sourceMap": "inline"
 }

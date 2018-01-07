@@ -42,6 +42,7 @@ import SoftwareProductComponentsImageActionHelper from './softwareProduct/compon
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import {tabsMapping as attachmentsTabsMapping} from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsConstants.js';
 import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
+import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
 	dispatch({
@@ -69,10 +70,15 @@ const OnboardingActionHelper = {
 		SoftwareProductActionHelper.fetchSoftwareProductList(dispatch);
 		SoftwareProductActionHelper.fetchFinalizedSoftwareProductList(dispatch);
 	},
+	
+	loadFeaturesList(dispatch) {
+		FeaturesActionHelper.getFeaturesList(dispatch);
+	},
 
 	navigateToOnboardingCatalog(dispatch) {
 		UsersActionHelper.fetchUsersList(dispatch);
 		this.loadItemsLists(dispatch);
+		this.loadFeaturesList(dispatch);
 		OnboardActionHelper.resetOnboardStore(dispatch);
 		setCurrentScreen(dispatch, enums.SCREEN.ONBOARDING_CATALOG);
 	},
