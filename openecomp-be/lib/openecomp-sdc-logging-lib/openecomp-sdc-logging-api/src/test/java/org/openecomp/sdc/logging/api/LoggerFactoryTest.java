@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.logging.api;
 
+import org.openecomp.sdc.logging.provider.LoggerCreationService;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;

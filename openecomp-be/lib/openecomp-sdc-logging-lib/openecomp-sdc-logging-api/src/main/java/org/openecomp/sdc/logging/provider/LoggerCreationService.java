@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.api;
+package org.openecomp.sdc.logging.provider;
+
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
  *
