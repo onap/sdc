@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,17 +14,33 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.api.context;
+package org.openecomp.sdc.logging.slf4j;
+
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
- * Should be used to implement a framework-specific mechanism of propagation of a diagnostic context to child threads.
- *
- * @author evitaliy
- * @since 12/09/2016.
+ * @author EVITALIY
+ * @since 08 Jan 18
  */
+class MDCCallableWrapper<V> extends BaseMDCCopyingWrapper implements Callable<V> {
 
-@FunctionalInterface
-public interface ContextPropagationService {
+    private final Callable<V> task;
 
-    Runnable create(Runnable task);
+    MDCCallableWrapper(Callable<V> task) {
+        super();
+        this.task = task;
+    }
+
+    @Override
+    public V call() throws Exception {
+
+        Map<String, String> oldContext = replace();
+
+        try {
+            return task.call();
+        } finally {
+            revert(oldContext);
+        }
+    }
 }

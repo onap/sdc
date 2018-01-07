@@ -16,15 +16,17 @@
 
 package org.openecomp.sdc.logging.context.impl;
 
-import org.openecomp.sdc.logging.context.MdcData;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.slf4j.MDC;
 
 
-public class MdcDataErrorMessage extends MdcData {
+public class MdcDataErrorMessage {
+
   private String targetEntity;
   private String targetServiceName;
   private String errorDescription;
+  private String level;
+  private String errorCode;
 
   /**
    * Instantiates a new Mdc data error message.
@@ -37,7 +39,8 @@ public class MdcDataErrorMessage extends MdcData {
    */
   public MdcDataErrorMessage(String targetEntity, String targetServiceName, String errorCategory,
                              String errorCode, String errorDescription) {
-    super(errorCategory, errorCode);
+    this.level = errorCategory;
+    this.errorCode = errorCode;
     this.targetEntity = targetEntity;
     this.targetServiceName = targetServiceName;
     this.errorDescription = errorDescription;
@@ -62,11 +65,27 @@ public class MdcDataErrorMessage extends MdcData {
             errorDescription);
   }
 
-  @Override
   public void setMdcValues() {
-    super.setMdcValues();
+    MDC.put(LoggerConstants.ERROR_CATEGORY, this.level);
+    MDC.put(LoggerConstants.ERROR_CODE, this.errorCode);
     MDC.put(LoggerConstants.TARGET_ENTITY, this.targetEntity);
     MDC.put(LoggerConstants.TARGET_SERVICE_NAME, this.targetServiceName);
     MDC.put(LoggerConstants.ERROR_DESCRIPTION, this.errorDescription);
+  }
+
+  public String getLevel() {
+    return level;
+  }
+
+  public void setLevel(String level) {
+    this.level = level;
+  }
+
+  public String getErrorCode() {
+    return errorCode;
+  }
+
+  public void setErrorCode(String errorCode) {
+    this.errorCode = errorCode;
   }
 }

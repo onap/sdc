@@ -1,3 +1,0 @@
-{
-  "org.openecomp.sdc.logging.api.BaseFactory": "org.openecomp.sdc.logging.api.LoggerFactory"
-}
