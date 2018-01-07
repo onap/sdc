@@ -1,5 +1,6 @@
 package org.openecomp.sdc.logging.api.context;
 
+import org.openecomp.sdc.logging.api.LoggingContextService;
 import org.testng.annotations.Test;
 
 import java.util.ServiceLoader;
@@ -17,7 +18,7 @@ public class TaskFactoryTest {
   @Test(expectedExceptions = RuntimeException.class)
   public void testNoImplementation() throws Exception {
 
-    assertFalse(ServiceLoader.load(ContextPropagationService.class).iterator().hasNext());
+    assertFalse(ServiceLoader.load(LoggingContextService.class).iterator().hasNext());
 
     try {
       TaskFactory.create(() -> {
@@ -25,7 +26,7 @@ public class TaskFactoryTest {
     } catch (RuntimeException e) {
       Throwable cause = e.getCause();
       assertNotNull(cause);
-      assertTrue(cause.getMessage().contains(ContextPropagationService.class.getName()));
+      assertTrue(cause.getMessage().contains(LoggingContextService.class.getName()));
       throw e;
     }
   }

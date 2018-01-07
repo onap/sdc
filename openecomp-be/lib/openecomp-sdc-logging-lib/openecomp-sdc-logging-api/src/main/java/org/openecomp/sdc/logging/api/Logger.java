@@ -17,7 +17,7 @@
 package org.openecomp.sdc.logging.api;
 
 /**
- * <p>This interface defines logging as specified by Open OPENECOMP logging requirements.</p>
+ * <p>This interface defines logging as specified by ONAP logging requirements.</p>
  *
  * <p>Formatted messages must follow the <a href="http://www.slf4j.org/api/org/slf4j/helpers/MessageFormatter.html>SLF4J
  * format</a>.</p>

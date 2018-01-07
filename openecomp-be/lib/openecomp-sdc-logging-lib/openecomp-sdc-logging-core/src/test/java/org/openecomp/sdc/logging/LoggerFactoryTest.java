@@ -20,6 +20,6 @@ public class LoggerFactoryTest {
     Field factory = LoggerFactory.class.getDeclaredField("SERVICE");
     factory.setAccessible(true);
     Object implementation = factory.get(null);
-    assertEquals(SLF4JLoggerCreationService.class, implementation.getClass());
+    assertEquals(SLF4JLoggingServiceProvider.class, implementation.getClass());
   }
 }
