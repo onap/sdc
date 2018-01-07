@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,8 @@ package org.openecomp.sdc.logging.api;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
-import java.util.ServiceLoader;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -31,40 +29,36 @@ import static org.testng.Assert.assertNotNull;
  */
 public class LoggerFactoryTest {
 
-  @Test
-  public void testNoOpLoggerService() throws Exception {
+    @Test
+    public void testNoOpLoggerService() throws Exception {
+        Field factory = LoggerFactory.class.getDeclaredField("SERVICE");
+        factory.setAccessible(true);
+        Object impl = factory.get(null);
+        assertEquals(impl.getClass().getName(),
+                "org.openecomp.sdc.logging.api.LoggerFactory$NoOpLoggerCreationService");
+    }
 
-    assertFalse(ServiceLoader.load(LoggerCreationService.class).iterator().hasNext());
+    @Test
+    public void testNoOpLoggerByClass() {
+        Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
+        verifyLogger(logger);
+    }
 
-    LoggerFactory.getLogger(LoggerFactoryTest.class);
-    Field factory = LoggerFactory.class.getDeclaredField("SERVICE");
-    factory.setAccessible(true);
-    Object impl = factory.get(null);
-    assertEquals("org.openecomp.sdc.logging.api.LoggerFactory$NoOpLoggerCreationService",
-        impl.getClass().getName());
-  }
+    @Test
+    public void testNoOpLoggerByName() {
+        Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class.getName());
+        verifyLogger(logger);
+    }
 
-  @Test
-  public void testNoOpLoggerByClass() throws Exception {
-    Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
-    verifyLogger(logger);
-  }
+    private void verifyLogger(Logger logger) {
+        assertNotNull(logger);
 
-  @Test
-  public void testNoOpLoggerByName() throws Exception {
-    Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class.getName());
-    verifyLogger(logger);
-  }
-
-  private void verifyLogger(Logger logger) {
-    assertNotNull(logger);
-
-    // make sure no exceptions are thrown
-    logger.error("");
-    logger.warn("");
-    logger.info("");
-    logger.debug("");
-    logger.audit("");
-    logger.metrics("");
-  }
+        // make sure no exceptions are thrown
+        logger.error("");
+        logger.warn("");
+        logger.info("");
+        logger.debug("");
+        logger.audit("");
+        logger.metrics("");
+    }
 }
