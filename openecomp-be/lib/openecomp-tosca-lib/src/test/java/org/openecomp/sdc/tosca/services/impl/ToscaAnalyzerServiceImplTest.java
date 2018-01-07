@@ -1,25 +1,22 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.tosca.services.impl;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -31,12 +28,16 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.tosca.TestUtil;
+import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
@@ -49,6 +50,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,6 +58,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
 
 
@@ -92,6 +95,162 @@ public class ToscaAnalyzerServiceImplTest {
   @Before
   public void init() throws IOException {
     MockitoAnnotations.initMocks(this);
+  }
+
+  @Test
+  public void testGetFlatEntity() throws Exception {
+    ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
+
+      ServiceTemplate
+          serviceTemplateFromYaml =
+          toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+      final NodeType flatEntity = (NodeType) toscaAnalyzerService
+          .getFlatEntity(ToscaElementTypes.NODE_TYPE, "org.openecomp.resource.vfc.nodes.heat" +
+              ".cmaui_image", serviceTemplateFromYaml, toscaServiceModel);
+
+      Assert.assertNotNull(flatEntity);
+      Assert.assertEquals("org.openecomp.resource.vfc.nodes.heat.nova.Server",flatEntity
+          .getDerived_from());
+    }
+  }
+
+  @Test
+  public void testCalculateExposedRequirements() throws Exception {
+    Map<String, RequirementDefinition> nodeTypeRequirementDefinition = new HashMap<>();
+    RequirementDefinition rd = new RequirementDefinition();
+    rd.setCapability("tosca.capabilities.Node");
+    rd.setNode("tosca.nodes.Root");
+    rd.setRelationship("tosca.relationships.DependsOn");
+    Object[] occurences = new Object[]{0, "UNBOUNDED"};
+    rd.setOccurrences(occurences);
+
+    RequirementDefinition rd1 = new RequirementDefinition();
+    rd.setCapability("tosca.capabilities.network.Bindable");
+    rd.setNode(null);
+    rd.setRelationship("tosca.relationships.network.BindsTo");
+    Object[] occurences1 = new Object[]{1, 1};
+    rd1.setOccurrences(occurences1);
+
+    nodeTypeRequirementDefinition.put("binding",rd1);
+    nodeTypeRequirementDefinition.put("dependency",rd);
+
+    Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinition =
+        new HashMap<>();
+    Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment = new HashMap<>();
+    RequirementAssignment ra = new RequirementAssignment();
+    ra.setCapability("tosca.capabilities.network.Bindable");
+    ra.setNode("pd_server");
+    ra.setRelationship("tosca.relationships.network.BindsTo");
+    nodeTemplateRequirementsAssignment.put("binding", ra);
+
+    List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinition = new ArrayList<>();
+    nodeTypeRequirementsDefinition.add(nodeTypeRequirementDefinition);
+
+    List<Map<String, RequirementDefinition>> exposedRequirements = toscaAnalyzerService
+        .calculateExposedRequirements(nodeTypeRequirementsDefinition,
+            nodeTemplateRequirementsAssignment);
+    Assert.assertEquals(1, exposedRequirements.size());
+  }
+
+  @Test
+  public void testCalExpReqWithNullNodeInReqAssignment() throws Exception {
+    Map<String, RequirementDefinition> nodeTypeRequirementDefinition = new HashMap<>();
+    RequirementDefinition rd = new RequirementDefinition();
+    rd.setCapability("tosca.capabilities.Node");
+    rd.setNode("tosca.nodes.Root");
+    rd.setRelationship("tosca.relationships.DependsOn");
+    Object[] occurences = new Object[]{0, "UNBOUNDED"};
+    rd.setOccurrences(occurences);
+
+    RequirementDefinition rd1 = new RequirementDefinition();
+    rd.setCapability("tosca.capabilities.network.Bindable");
+    rd.setNode(null);
+    rd.setRelationship("tosca.relationships.network.BindsTo");
+    Object[] occurences1 = new Object[]{1, 1};
+    rd1.setOccurrences(occurences1);
+
+    nodeTypeRequirementDefinition.put("binding",rd1);
+    nodeTypeRequirementDefinition.put("dependency",rd);
+
+    Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinition =
+        new HashMap<>();
+    Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment = new HashMap<>();
+    RequirementAssignment ra = new RequirementAssignment();
+    ra.setCapability("tosca.capabilities.network.Bindable");
+    ra.setNode(null);
+    ra.setRelationship("tosca.relationships.network.BindsTo");
+    nodeTemplateRequirementsAssignment.put("binding", ra);
+
+    List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinition = new ArrayList<>();
+    nodeTypeRequirementsDefinition.add(nodeTypeRequirementDefinition);
+
+    List<Map<String, RequirementDefinition>> exposedRequirements = toscaAnalyzerService
+        .calculateExposedRequirements(nodeTypeRequirementsDefinition,
+            nodeTemplateRequirementsAssignment);
+    Assert.assertEquals(1, exposedRequirements.size());
+  }
+
+  @Test
+  public void testCalculateExposedCapabilities() throws Exception {
+    Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition = new HashMap<>();
+    CapabilityDefinition cd = new CapabilityDefinition();
+    cd.setType("tosca.capabilities.Scalable");
+    nodeTypeCapabilitiesDefinition.put("tosca.capabilities.network.Bindable_pd_server",cd);
+    Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinition =
+        new HashMap<>();
+    Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment = new HashMap<>();
+    RequirementAssignment ra = new RequirementAssignment();
+    ra.setCapability("tosca.capabilities.network.Bindable");
+    ra.setNode("pd_server");
+    ra.setRelationship("tosca.relationships.network.BindsTo");
+    nodeTemplateRequirementsAssignment.put("binding",ra);
+    fullFilledRequirementsDefinition.put("pd_server", nodeTemplateRequirementsAssignment);
+    Map<String, CapabilityDefinition> exposedCapabilities =
+        toscaAnalyzerService.calculateExposedCapabilities(nodeTypeCapabilitiesDefinition,
+            fullFilledRequirementsDefinition);
+    Assert.assertEquals(1, exposedCapabilities.size());
+  }
+
+  @Test
+  public void testIsRequirementExistsWithInvalidReqId() throws Exception {
+    ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
+
+      ServiceTemplate
+          serviceTemplateFromYaml =
+          toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+      TestUtil.createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml,
+          toscaExtensionYamlUtil);
+
+      NodeTemplate port_0 =
+          serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui_port_0");
+
+      RequirementAssignment ra = new RequirementAssignment();
+      ra.setCapability("tosca.capabilities.network.Bindable");
+      ra.setNode("server_cmaui");
+      ra.setRelationship("tosca.relationships.network.BindsTo");
+
+      //Test With Empty requirementId
+      Assert.assertEquals(false,
+          toscaAnalyzerService.isRequirementExistInNodeTemplate(port_0, "", ra));
+
+      //Test With valid requirementId
+      Assert.assertEquals(true,
+          toscaAnalyzerService.isRequirementExistInNodeTemplate(port_0, "binding", ra));
+
+      //Test With invalid requirement assignment
+      RequirementAssignment ra1 = new RequirementAssignment();
+      ra1.setCapability("tosca.capabilities.network.Bindable1");
+      ra1.setNode("server_cmaui1");
+      ra1.setRelationship("tosca.relationships.network.BindsTo1");
+      Assert.assertEquals(false,
+          toscaAnalyzerService.isRequirementExistInNodeTemplate(port_0, "binding", ra1));
+    }
   }
 
   @Test
