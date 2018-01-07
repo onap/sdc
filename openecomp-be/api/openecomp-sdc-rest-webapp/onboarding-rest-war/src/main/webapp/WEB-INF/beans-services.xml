@@ -38,6 +38,8 @@
     <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/>
     <bean id = "itemPermissions" class="org.openecomp.sdcrests.itempermissions.rest.services.ItemPermissionsImpl"/>
     <bean id = "notifications" class="org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl"/>
+    <bean id = "togglz" class="org.openecomp.sdcrests.togglz.rest.services.TogglzFeatureImpl"/>
+
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">
 
@@ -69,6 +71,7 @@
             <ref bean="healthCheck"/>
             <ref bean="itemPermissions"/>
             <ref bean="notifications"/>
+            <ref bean="togglz"/>
         </jaxrs:serviceBeans>
 
         <jaxrs:providers>
