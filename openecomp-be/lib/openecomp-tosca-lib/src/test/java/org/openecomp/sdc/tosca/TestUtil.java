@@ -23,6 +23,8 @@ package org.openecomp.sdc.tosca;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 
@@ -33,7 +35,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.NotDirectoryException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 public class TestUtil {
@@ -94,6 +99,45 @@ public class TestUtil {
         throw e;
       } catch (IOException e) {
         throw e;
+      }
+    }
+  }
+
+  public static void createConcreteRequirementObjectsInServiceTemplate(
+      ServiceTemplate serviceTemplateFromYaml,
+      ToscaExtensionYamlUtil toscaExtensionYamlUtil){
+
+    if (serviceTemplateFromYaml == null
+        || serviceTemplateFromYaml.getTopology_template() == null
+        || serviceTemplateFromYaml.getTopology_template().getNode_templates() == null) {
+      return;
+    }
+
+    //Creating concrete objects
+    Map<String, NodeTemplate> nodeTemplates =
+        serviceTemplateFromYaml.getTopology_template().getNode_templates();
+    for (Map.Entry<String, NodeTemplate> entry : nodeTemplates.entrySet()) {
+      NodeTemplate nodeTemplate = entry.getValue();
+      List<Map<String, RequirementAssignment>> requirements = nodeTemplate.getRequirements();
+      List<Map<String, RequirementAssignment>> concreteRequirementList = new ArrayList<>();
+      if (requirements != null) {
+        ListIterator<Map<String, RequirementAssignment>> reqListIterator = requirements
+            .listIterator();
+        while (reqListIterator.hasNext()){
+          Map<String, RequirementAssignment> requirement = reqListIterator.next();
+          Map<String, RequirementAssignment> concreteRequirement = new HashMap<>();
+          for (Map.Entry<String, RequirementAssignment> reqEntry : requirement.entrySet()) {
+            RequirementAssignment requirementAssignment = (toscaExtensionYamlUtil
+                .yamlToObject(toscaExtensionYamlUtil.objectToYaml(reqEntry.getValue()),
+                    RequirementAssignment.class));
+            concreteRequirement.put(reqEntry.getKey(), requirementAssignment);
+            concreteRequirementList.add(concreteRequirement);
+            reqListIterator.remove();
+          }
+        }
+        requirements.clear();
+        requirements.addAll(concreteRequirementList);
+        nodeTemplate.setRequirements(requirements);
       }
     }
   }
