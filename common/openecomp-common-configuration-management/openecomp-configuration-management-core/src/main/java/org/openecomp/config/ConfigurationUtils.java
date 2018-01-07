@@ -1,5 +1,6 @@
 package org.openecomp.config;
 
+import com.google.common.collect.ImmutableMap;
 import com.virtlink.commons.configuration2.jackson.JsonConfiguration;
 import net.sf.corn.cps.CPScanner;
 import net.sf.corn.cps.ResourceFilter;
@@ -66,6 +67,7 @@ import java.util.stream.Stream;
 import static org.openecomp.config.api.Hint.EXTERNAL_LOOKUP;
 import static org.openecomp.config.api.Hint.LATEST_LOOKUP;
 import static org.openecomp.config.api.Hint.NODE_SPECIFIC;
+import static com.google.common.collect.ImmutableMap.*;
 
 /**
  * The type Configuration utils.
@@ -75,6 +77,17 @@ public class ConfigurationUtils {
     private ConfigurationUtils() {
     }
 
+    private static ImmutableMap<Class,Class> arrayClassMap;
+
+    static {
+        ImmutableMap.Builder<Class,Class> builder = builder();
+        builder.put(Byte.class,Byte[].class).put(Short.class, Short[].class)
+                .put(Integer.class,Integer[].class).put(Long.class,Long[].class)
+                .put(Float.class,Float[].class).put(Double.class,Double[].class)
+                .put(Boolean.class,Boolean[].class).put(Character.class,Character[].class)
+                .put(String.class,String[].class);
+        arrayClassMap = builder.build();
+    }
 
     /**
      * Gets thread factory.
@@ -119,7 +132,7 @@ public class ConfigurationUtils {
      * Gets comma saperated list.
      *
      * @param list the list
-     * @return the comma saperated list
+     * @return the comma separated list
      */
     public static String getCommaSeparatedList(List list) {
         return ((Stream<String>) list.stream().filter(o -> o != null && !o.toString().trim().isEmpty()).map(o -> o.toString().trim())).collect(Collectors.joining(","));
@@ -427,6 +440,8 @@ public class ConfigurationUtils {
         return String[].class;
     }
 
+
+
     /**
      * Gets array class.
      *
@@ -434,28 +449,7 @@ public class ConfigurationUtils {
      * @return the array class
      */
     public static Class getArrayClass(Class clazz) {
-        switch (clazz.getName()) {
-            case "java.lang.Byte":
-                return Byte[].class;
-            case "java.lang.Short":
-                return Short[].class;
-            case "java.lang.Integer":
-                return Integer[].class;
-            case "java.lang.Long":
-                return Long[].class;
-            case "java.lang.Float":
-                return Float[].class;
-            case "java.lang.Double":
-                return Double[].class;
-            case "java.lang.Boolean":
-                return Boolean[].class;
-            case "java.lang.Character":
-                return Character[].class;
-            case "java.lang.String":
-                return String[].class;
-            default:
-                return null;
-        }
+        return arrayClassMap.getOrDefault(clazz, null);
     }
 
     /**
@@ -733,7 +727,6 @@ public class ConfigurationUtils {
      * @return the primitive array
      */
     public static Object getPrimitiveArray(Collection collection, Class clazz) {
-
         if (clazz == int.class) {
             int[] array = new int[collection.size()];
             Object[] objArray = collection.toArray();
