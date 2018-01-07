@@ -1,5 +1,13 @@
 package org.openecomp.config;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.primitives.Booleans;
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Floats;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+import com.google.common.primitives.Shorts;
 import com.virtlink.commons.configuration2.jackson.JsonConfiguration;
 import net.sf.corn.cps.CPScanner;
 import net.sf.corn.cps.ResourceFilter;
@@ -66,7 +74,7 @@ import java.util.stream.Stream;
 import static org.openecomp.config.api.Hint.EXTERNAL_LOOKUP;
 import static org.openecomp.config.api.Hint.LATEST_LOOKUP;
 import static org.openecomp.config.api.Hint.NODE_SPECIFIC;
-
+import static com.google.common.collect.ImmutableMap.*;
 /**
  * The type Configuration utils.
  */
@@ -75,6 +83,17 @@ public class ConfigurationUtils {
     private ConfigurationUtils() {
     }
 
+    private static ImmutableMap<Class,Class> arrayClassMap;
+
+    static {
+        ImmutableMap.Builder<Class,Class> builder = builder();
+        builder.put(Byte.class,Byte[].class).put(Short.class, Short[].class)
+                .put(Integer.class,Integer[].class).put(Long.class,Long[].class)
+                .put(Float.class,Float[].class).put(Double.class,Double[].class)
+                .put(Boolean.class,Boolean[].class).put(Character.class,Character[].class)
+                .put(String.class,String[].class);
+        arrayClassMap = builder.build();
+    }
 
     /**
      * Gets thread factory.
@@ -427,6 +446,8 @@ public class ConfigurationUtils {
         return String[].class;
     }
 
+
+
     /**
      * Gets array class.
      *
@@ -434,28 +455,7 @@ public class ConfigurationUtils {
      * @return the array class
      */
     public static Class getArrayClass(Class clazz) {
-        switch (clazz.getName()) {
-            case "java.lang.Byte":
-                return Byte[].class;
-            case "java.lang.Short":
-                return Short[].class;
-            case "java.lang.Integer":
-                return Integer[].class;
-            case "java.lang.Long":
-                return Long[].class;
-            case "java.lang.Float":
-                return Float[].class;
-            case "java.lang.Double":
-                return Double[].class;
-            case "java.lang.Boolean":
-                return Boolean[].class;
-            case "java.lang.Character":
-                return Character[].class;
-            case "java.lang.String":
-                return String[].class;
-            default:
-                return null;
-        }
+        return arrayClassMap.getOrDefault(clazz, null);
     }
 
     /**
@@ -733,65 +733,28 @@ public class ConfigurationUtils {
      * @return the primitive array
      */
     public static Object getPrimitiveArray(Collection collection, Class clazz) {
-
         if (clazz == int.class) {
-            int[] array = new int[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (int) objArray[i];
-            }
-            return array;
+            return Ints.toArray(collection);
         }
         if (clazz == byte.class) {
-            byte[] array = new byte[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (byte) objArray[i];
-            }
-            return array;
+            return Bytes.toArray(collection);
         }
         if (clazz == short.class) {
-            short[] array = new short[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (short) objArray[i];
-            }
-            return array;
+            return Shorts.toArray(collection);
         }
         if (clazz == long.class) {
-            long[] array = new long[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (long) objArray[i];
-            }
-            return array;
+            return Longs.toArray(collection);
         }
         if (clazz == float.class) {
-            float[] array = new float[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (float) objArray[i];
-            }
-            return array;
+            return Floats.toArray(collection);
         }
         if (clazz == double.class) {
-            double[] array = new double[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (double) objArray[i];
-            }
-            return array;
+            return Doubles.toArray(collection);
         }
         if (clazz == boolean.class) {
-            boolean[] array = new boolean[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (boolean) objArray[i];
-            }
-            return array;
+            return Booleans.toArray(collection);
         }
-        Object obj = null;
-        return obj;
+        return null;
     }
 
     /**
