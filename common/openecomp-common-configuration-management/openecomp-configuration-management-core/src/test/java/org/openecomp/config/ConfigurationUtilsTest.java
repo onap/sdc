@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ConfigurationUtilsTest {
@@ -20,5 +22,11 @@ public class ConfigurationUtilsTest {
         List list = Arrays.asList(null, "", " ");
         String commaSeparatedList = ConfigurationUtils.getCommaSeparatedList(list);
         assertTrue(commaSeparatedList.isEmpty());
+    }
+
+    @Test
+    public void testGetArrayClassFunction() {
+        assertEquals(String[].class , ConfigurationUtils.getArrayClass(String.class));
+        assertNull(ConfigurationUtils.getArrayClass(ConfigurationUtilsTest.class));
     }
 }
