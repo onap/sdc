@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import versionsPageReducer from './versionsPage/VersionsPageReducer.js';
 import usersReducer from './users/UsersReducers.js';
 import mergeEditorReducer from 'sdc-app/common/merge/MergeEditorReducer.js';
 import revisionsReducer from './revisions/RevisionsReducer.js';
+import featuresReducer from 'sdc-app/features/FeaturesReducer.js';
 
 export default {
 	currentScreen: currentScreenReducer,
@@ -38,5 +39,6 @@ export default {
 	softwareProductList: softwareProductListReducer,
 	users: usersReducer,
 	versionsPage: versionsPageReducer,
-	revisions: revisionsReducer
+	revisions: revisionsReducer,
+	features: featuresReducer
 };
