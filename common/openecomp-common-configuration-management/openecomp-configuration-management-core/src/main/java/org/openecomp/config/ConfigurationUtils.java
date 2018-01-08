@@ -50,7 +50,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -64,10 +63,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.ImmutableMap.builder;
 import static org.openecomp.config.api.Hint.EXTERNAL_LOOKUP;
 import static org.openecomp.config.api.Hint.LATEST_LOOKUP;
 import static org.openecomp.config.api.Hint.NODE_SPECIFIC;
-import static com.google.common.collect.ImmutableMap.*;
 
 /**
  * The type Configuration utils.
@@ -982,7 +981,7 @@ public class ConfigurationUtils {
      * @return the configuration repository key
      */
     public static String getConfigurationRepositoryKey(String[] array) {
-        Stack<String> stack = new Stack<>();
+        Deque<String> stack = new ArrayDeque<>();
         stack.push(Constants.DEFAULT_TENANT);
         for (String element : array) {
             stack.push(element);
