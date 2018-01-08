@@ -3,7 +3,7 @@ storage.hostname=<%= @CASSANDRA_IP %>
 storage.port=9160
 storage.username=<%= @CASSANDRA_USR %>
 storage.password=<%= @CASSANDRA_PWD %>
-storage.connection-timeout=10000
+storage.connection-timeout=<%= @titan_connection_timeout %>
 storage.cassandra.keyspace=sdctitan
 
 storage.cassandra.ssl.enabled=false

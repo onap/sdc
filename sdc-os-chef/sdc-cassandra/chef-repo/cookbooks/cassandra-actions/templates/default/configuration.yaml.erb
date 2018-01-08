@@ -70,6 +70,8 @@ cassandraConfig:
     cassandraHosts: [<%= @cassandra_ip %>]
     localDataCenter: <%= @DC_NAME %>
     reconnectTimeout : 30000
+    socketReadTimeout: <%= @socket_read_timeout %>
+    socketConnectTimeout: <%= @socket_connect_timeout %>
     authenticate: true
     username: asdc_user
     password: Aa1234%^!

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CASSANDRA_USER=asdc_user
-CASSANDRA_PASS='Aa1234%^!'
+CASSANDRA_USER='<%= @cassandra_usr %>'
+CASSANDRA_PASS='<%= @cassandra_pwd %>'
 
 KEYSPACE="CREATE KEYSPACE IF NOT EXISTS dox WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', '<%= @DC_NAME %>': '1'};"
 KEYSPACE1="CREATE KEYSPACE IF NOT EXISTS zusammen_dox WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', '<%= @DC_NAME %>': '1'};"
