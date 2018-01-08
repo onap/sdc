@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.everit.json.schema.EnumSchema;
 import org.everit.json.schema.Schema;
@@ -63,26 +64,28 @@ public class JsonUtil {
     gson = gsonBuilder.create();
   }
 
+  private JsonUtil() {
+  }
+
   /**
    * Object 2 json string.
    *
    * @param obj the obj
    * @return the string
    */
-  //TODO: refactor all other ugly code to use this
   public static String object2Json(Object obj) {
     return sbObject2Json(obj).toString();
 
   }
 
   /**
-   * Sb object 2 json string buffer.
+   * Sb object 2 json string builder.
    *
    * @param obj the obj
-   * @return the string buffer
+   * @return the string builder
    */
-  public static StringBuffer sbObject2Json(Object obj) {
-    return new StringBuffer((new GsonBuilder()).setPrettyPrinting().create().toJson(obj));
+  public static StringBuilder sbObject2Json(Object obj) {
+    return new StringBuilder(new GsonBuilder().setPrettyPrinting().create().toJson(obj));
   }
 
   /**
