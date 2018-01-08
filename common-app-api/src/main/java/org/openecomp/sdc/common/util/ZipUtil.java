@@ -128,13 +128,14 @@ public class ZipUtil {
 
 	public static byte[] zipBytes(byte[] input) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(baos);
-		ZipEntry entry = new ZipEntry("zip");
-		entry.setSize(input.length);
-		zos.putNextEntry(entry);
-		zos.write(input);
-		zos.closeEntry();
-		zos.close();
+		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+			ZipEntry entry = new ZipEntry("zip");
+			entry.setSize(input.length);
+			zos.putNextEntry(entry);
+			zos.write(input);
+			zos.closeEntry();
+			zos.close();
+		}
 		return baos.toByteArray();
 	}
 
