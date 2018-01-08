@@ -1,0 +1,231 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_117365ea",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "groupId and version should be inherited from the parent",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b17711d4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Please remove commented-out code",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d1741dd1",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Please make sure all of these are indeed required",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_71066922",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/src/main/java/org/openecomp/sdcrests/togglz/rest/ITogglzFeature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "The leading \"I\" is not needed.",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9155351f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/src/main/java/org/openecomp/sdcrests/togglz/rest/mapping/MapToggleableFeatureToDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Please write a unit tests - the conversion must work as expected.",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f144b975",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/src/main/java/org/openecomp/sdcrests/togglz/rest/mapping/MapToggleableFeatureToDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "No NPEs here?",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_114a8580",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/src/main/java/org/openecomp/sdcrests/togglz/rest/services/TogglzFeatureImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Please remove this explicit empty constructor.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 5
+      },
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d15bbd52",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/src/test/java/org/openecomp/TogglzFeatureRestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Please check the API response against the backend values without any extra logic.",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7158a956",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-types/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Use parent\u0027s version",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_511ecd71",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-types/src/main/java/org/openecomp/sdcrests/togglz/types/FeatureDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Unit tests?",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b10cf143",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-types/src/main/java/org/openecomp/sdcrests/togglz/types/FeatureSetDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "Unit tests?",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1141255a",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/types/LoggerServiceName.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "enum are constants - please format according to coding conventions.",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3119c188",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/exportinfo/ExportSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-08T13:57:55Z",
+      "side": 1,
+      "message": "I think this was changed by mistake.",
+      "revId": "9921820f921138fb76778c216fc4bc2b78a0cb74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
