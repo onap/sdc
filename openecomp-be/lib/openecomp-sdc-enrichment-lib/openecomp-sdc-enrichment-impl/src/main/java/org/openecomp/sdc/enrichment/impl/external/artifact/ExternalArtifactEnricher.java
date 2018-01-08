@@ -36,7 +36,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ExternalArtifactEnricher extends Enricher {
-  private static String EXTERNAL_ARTIFACT_ENRICH_CONF_FILE = "ExternalArtifactConfiguration.json";
+  private static final String EXTERNAL_ARTIFACT_ENRICH_CONF_FILE = "ExternalArtifactConfiguration"
+      + ".json";
   private static Collection<String> implementingClasses =
       getExternalArtifactEnrichedImplClassesList();
   private static Logger logger = LoggerFactory.getLogger(ExternalArtifactEnricher.class);
