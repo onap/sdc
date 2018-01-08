@@ -66,14 +66,14 @@ public class ZipUtils {
                 out.putNextEntry(new ZipEntry(filePath));
                 continue;
             }
-            try (FileInputStream in = new FileInputStream((files[i].getAbsolutePath()))) {
+            try (FileInputStream in = new FileInputStream((files[i].getAbsolutePath())); ZipOutputStream zos = out) {
                 String filePath = files[i].getAbsolutePath().replace(root + File.separator, "");
                 if (filterItem.isEmpty() || filterItem.stream().anyMatch(s -> filePath.contains(s))) {
-                    out.putNextEntry(new ZipEntry(filePath));
+                    zos.putNextEntry(new ZipEntry(filePath));
                     try {
-                        ByteStreams.copy(in, out);
+                        ByteStreams.copy(in, zos);
                     } finally {
-                        out.closeEntry();
+                        zos.closeEntry();
                     }
                 }
 
