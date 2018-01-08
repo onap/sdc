@@ -32,8 +32,8 @@ import {DATE_FORMAT} from 'sdc-app/onboarding/OnboardingConstants.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 
 function softwareProductCategoriesUrl() {
-	const restATTPrefix = Configuration.get('restATTPrefix');
-	return `${restATTPrefix}/v1/categories/resources/`;
+	const restCatalogPrefix = Configuration.get('restCatalogPrefix');
+	return `${restCatalogPrefix}/v1/categories/resources/`;
 }
 
 function versionUrl(itemId, versionId) {

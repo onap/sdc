@@ -19,15 +19,15 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes} from './UsersConstants.js';
 
 function getUserId() {
-	let attApiHeaders = Configuration.get('ATTApiHeaders');
-	let User = attApiHeaders && attApiHeaders.userId;
+	let catalogApiHeaders = Configuration.get('CatalogApiHeaders');
+	let User = catalogApiHeaders && catalogApiHeaders.userId;
 	let userId = User && User.value ? User.value : '';
 	return userId;
 }
 
 function baseUrl() {
-	const restATTPrefix = Configuration.get('restATTPrefix');
-	return `${restATTPrefix}`;
+	const restCatalogPrefix = Configuration.get('restCatalogPrefix');
+	return `${restCatalogPrefix}`;
 }
 
 

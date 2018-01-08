@@ -45,8 +45,8 @@ export default class DiagramPunchOut {
 	render({options: {data, apiRoot, apiHeaders}, onEvent}, element) {
 
 		if (!this.isConfigSet) {
-			Configuration.setATTApiRoot(apiRoot);
-			Configuration.setATTApiHeaders(apiHeaders);
+			Configuration.setCatalogApiRoot(apiRoot);
+			Configuration.setCatalogApiHeaders(apiHeaders);
 			this.isConfigSet = true;
 		}
 

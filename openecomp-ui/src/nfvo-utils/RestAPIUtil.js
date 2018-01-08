@@ -48,10 +48,10 @@ function applySecurity(options, data) {
 		headers[AUTHORIZATION_HEADER] = authToken;
 	}
 
-	let attApiHeaders = Configuration.get('ATTApiHeaders'),
-		attUidHeader = attApiHeaders && attApiHeaders.userId;
-	if (attUidHeader) {
-		headers[attUidHeader.name] = attUidHeader.value;
+	let catalogApiHeaders = Configuration.get('CatalogApiHeaders'),
+		catalogUidHeader = catalogApiHeaders && catalogApiHeaders.userId;
+	if (catalogUidHeader) {
+		headers[catalogUidHeader.name] = catalogUidHeader.value;
 	}
 
 	headers[REQUEST_ID_HEADER] = uuid.create().toString();

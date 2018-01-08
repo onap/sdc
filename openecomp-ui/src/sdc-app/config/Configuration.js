@@ -27,18 +27,18 @@ class Configuration {
 		return prev;
 	}
 
-	setATTApiRoot(ATTApiRoot) {
-		let restATTPrefix = ATTApiRoot,
-			restPrefix = ATTApiRoot.replace(/\/feProxy\b[^:]*$/, '/feProxy/onboarding-api');
+	setCatalogApiRoot(CatalogApiRoot) {
+		let restCatalogPrefix = CatalogApiRoot,
+			restPrefix = CatalogApiRoot.replace(/\/feProxy\b[^:]*$/, '/feProxy/onboarding-api');
 
 		this.set('restPrefix', restPrefix);
-		this.set('restATTPrefix', restATTPrefix);
+		this.set('restCatalogPrefix', restCatalogPrefix);
 	}
 
-	setATTApiHeaders(ATTApiHeaders) {
-		this.set('ATTApiHeaders', ATTApiHeaders);
+	setCatalogApiHeaders(CatalogApiHeaders) {
+		this.set('CatalogApiHeaders', CatalogApiHeaders);
 
-		let {userId: {value: UserID} = {}} = ATTApiHeaders;
+		let {userId: {value: UserID} = {}} = CatalogApiHeaders;
 		this.set('UserID', UserID);
 	}
 }
@@ -47,7 +47,7 @@ const configuration = new Configuration();
 
 (function setDefaultRestPrefixes(configuration) {
 	configuration.set('restPrefix', configuration.get('defaultRestPrefix'));
-	configuration.set('restATTPrefix', configuration.get('defaultRestATTPrefix'));
+	configuration.set('restCatalogPrefix', configuration.get('defaultRestCatalogPrefix'));
 	configuration.set('appContextPath', configuration.get('appContextPath'));
 })(configuration);
 (function setDefaultWebsocketConfig(configuration) {

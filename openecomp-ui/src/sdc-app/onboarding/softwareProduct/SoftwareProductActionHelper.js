@@ -58,8 +58,8 @@ function baseUrl() {
 	return `${restPrefix}/v1.0/vendor-software-products/`;
 }
 function softwareProductCategoriesUrl() {
-	const restATTPrefix = Configuration.get('restATTPrefix');
-	return `${restATTPrefix}/v1/categories/resources/`;
+	const restCatalogPrefix = Configuration.get('restCatalogPrefix');
+	return `${restCatalogPrefix}/v1/categories/resources/`;
 }
 
 function uploadFile(vspId, formData, version) {

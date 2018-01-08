@@ -205,8 +205,8 @@ export default class OnboardingPunchOut {
 		}
 
 		if (!this.isConfigSet) {
-			Configuration.setATTApiRoot(apiRoot);
-			Configuration.setATTApiHeaders(apiHeaders);
+			Configuration.setCatalogApiRoot(apiRoot);
+			Configuration.setCatalogApiHeaders(apiHeaders);
 			this.isConfigSet = true;
 		}
 
