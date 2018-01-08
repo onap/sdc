@@ -14,40 +14,34 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.api;
+package org.openecomp.sdc.logging.slf4j;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Field;
-
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 /**
- * @author evitaliy
- * @since 14/09/2016.
+ * @author EVITALIY
+ * @since 08 Jan 18
  */
 public class LoggerFactoryTest {
 
-    @Test
-    public void testNoOpLoggerService() throws Exception {
-        Field factory = LoggerFactory.class.getDeclaredField("SERVICE");
-        factory.setAccessible(true);
-        Object impl = factory.get(null);
-        assertEquals(impl.getClass().getName(),
-                "org.openecomp.sdc.logging.api.LoggerFactory$NoOpLoggerCreationService");
-    }
+    private static final String CLASS_NAME = LoggerFactoryTest.class.getName();
 
     @Test
-    public void testNoOpLoggerByClass() {
+    public void testCorrectBindingByClass() {
         Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
-        verifyLogger(logger);
+        assertEquals(logger.getClass(), SLF4JLoggerWrapper.class);
+        assertEquals(logger.getName(), CLASS_NAME);
     }
 
     @Test
-    public void testNoOpLoggerByName() {
-        Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class.getName());
-        verifyLogger(logger);
+    public void testCorrectBindingByName() {
+        Logger logger = LoggerFactory.getLogger(CLASS_NAME);
+        assertEquals(logger.getClass(), SLF4JLoggerWrapper.class);
+        assertEquals(logger.getName(), CLASS_NAME);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
@@ -58,17 +52,5 @@ public class LoggerFactoryTest {
     @Test(expectedExceptions = NullPointerException.class)
     public void testGetLoggerClassNull() {
         LoggerFactory.getLogger((Class<LoggerFactoryTest>) null);
-    }
-
-    private void verifyLogger(Logger logger) {
-        assertNotNull(logger);
-
-        // make sure no exceptions are thrown
-        logger.error("");
-        logger.warn("");
-        logger.info("");
-        logger.debug("");
-        logger.audit("");
-        logger.metrics("");
     }
 }

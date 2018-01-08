@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging;
+package org.openecomp.sdc.logging.slf4j;
 
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -40,6 +40,10 @@ import org.slf4j.MarkerFactory;
  * @see Marker
  */
 public class Markers {
+
+    private Markers() {
+        // prevent instantiation
+    }
 
     public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT");
     public static final Marker METRICS = MarkerFactory.getMarker("METRICS");

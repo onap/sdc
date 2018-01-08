@@ -19,7 +19,7 @@ package org.openecomp.sdc.logging.logback;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.sift.AbstractDiscriminator;
-import org.openecomp.sdc.logging.Markers;
+import org.openecomp.sdc.logging.slf4j.Markers;
 import org.slf4j.Marker;
 
 /**
