@@ -20,8 +20,8 @@ import SequenceDiagramModelHelper from './SequenceDiagramModelHelper.js';
 
 
 function baseUrl(serviceId, artifactId = '') {
-	const restATTPrefix = Configuration.get('restATTPrefix');
-	return `${restATTPrefix}/v1/catalog/services/${serviceId}/artifacts/${artifactId}`;
+	const restCatalogPrefix = Configuration.get('restCatalogPrefix');
+	return `${restCatalogPrefix}/v1/catalog/services/${serviceId}/artifacts/${artifactId}`;
 }
 
 function encodeDataToBase64(dataAsString) {

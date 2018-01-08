@@ -141,7 +141,8 @@
                         <configuration>
                             <arguments>run test-build</arguments>
                         </configuration>
-                        <phase>test</phase>
+                        <!-- for some reason does not fail on test phase -->
+                        <phase>install</phase>
                     </execution>
                 </executions>
             </plugin>
