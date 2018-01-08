@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5166cd52",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/java/org/openecomp/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-08T09:52:19Z",
+      "side": 1,
+      "message": "how about moving it to the constructor?",
+      "range": {
+        "startLine": 82,
+        "startChar": 4,
+        "endLine": 90,
+        "endChar": 5
+      },
+      "revId": "f51efc2b7a5275a26092ad2f333b268444d2c039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f15a7982",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/test/java/org/openecomp/config/ConfigurationUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-08T09:52:19Z",
+      "side": 1,
+      "message": "move to another test and give meaningful name",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 83
+      },
+      "revId": "f51efc2b7a5275a26092ad2f333b268444d2c039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
