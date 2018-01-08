@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import Loader from 'nfvo-components/loader/Loader.jsx';
 import WebSocketUtil from 'nfvo-utils/WebSocketUtil.js';
 import UserNotificationsActionHelper from 'sdc-app/onboarding/userNotifications/UserNotificationsActionHelper.js';
 import store from './AppStore.js';
-
+import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
 
 class Application extends React.Component {
 	static propTypes = {
@@ -32,6 +32,7 @@ class Application extends React.Component {
 		if(openSocket) {
 			UserNotificationsActionHelper.notificationsFirstHandling(store.dispatch);
 		}
+		FeaturesActionHelper.getFeaturesList(store.dispatch);
 	}
 	componentWillUnmount() {
 		WebSocketUtil.close();
