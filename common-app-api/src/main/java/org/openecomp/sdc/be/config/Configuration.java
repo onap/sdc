@@ -597,6 +597,8 @@ public class Configuration extends BasicConfiguration {
 		List<String> cassandraHosts;
 		String localDataCenter;
 		Long reconnectTimeout;
+        Integer socketReadTimeout;
+        Integer socketConnectTimeout;
 		List<KeyspaceConfig> keySpaces;
 		boolean authenticate;
 		String username;
@@ -668,6 +670,14 @@ public class Configuration extends BasicConfiguration {
 		public void setReconnectTimeout(Long reconnectTimeout) {
 			this.reconnectTimeout = reconnectTimeout;
 		}
+
+		public Integer getSocketReadTimeout() { return socketReadTimeout; }
+
+		public void setSocketReadTimeout(Integer socketReadTimeout) { this.socketReadTimeout = socketReadTimeout;}
+
+		public Integer getSocketConnectTimeout() {	return socketConnectTimeout;}
+
+		public void setSocketConnectTimeout(Integer socketConnectTimeout) { this.socketConnectTimeout = socketConnectTimeout; 	}
 
 		public List<String> getCassandraHosts() {
 			return cassandraHosts;

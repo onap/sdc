@@ -696,6 +696,7 @@ public class TitanGenericDao {
 				TitanGraph tGraph = graph.left().value();
 
 				TitanGraphQuery<? extends TitanGraphQuery> query = tGraph.query();
+				query.has(GraphPropertiesDictionary.LABEL.getProperty(), type.getName()).
 				query = query.has(GraphPropertiesDictionary.LABEL.getProperty(), type.getName());
 
 				if (hasProps != null && !hasProps.isEmpty()) {
