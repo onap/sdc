@@ -42,41 +42,43 @@ import java.util.function.Function;
 public class ConfigurationManager {
 
   static final String CONFIGURATION_YAML_FILE = "configuration.yaml";
-
-  private static final String CASSANDRA_KEY = "cassandraConfig";
+  private static final String CASSANDRA = "cassandra";
+  private static final String CASSANDRA_KEY = CASSANDRA + "Config";
   private static final String DEFAULT_KEYSPACE_NAME = "dox";
-  private static final String CASSANDRA_ADDRESSES = "cassandra.addresses";
-  private static final String CASSANDRA_DOX_KEY_STORE = "cassandra.dox.keystore";
-  private static final String CASSANDRA_AUTHENTICATE = "cassandra.authenticate";
-  private static final String CASSANDRA_USER = "cassandra.user";
-  private static final String CASSANDRA_PASSWORD = "cassandra.password";
-  private static final String CASSANDRA_PORT = "cassandra.port";
-  private static final String CASSANDRA_SSL = "cassandra.ssl";
-  private static final String CASSANDRA_TRUSTSTORE = "cassandra.Truststore";
-  private static final String CASSANDRA_TRUSTSTORE_PASSWORD = "cassandra.TruststorePassword";
-  private static final String CASSANDRA_HOSTS_KEY = "cassandraHosts";
+  private static final String CASSANDRA_ADDRESSES = CASSANDRA + ".addresses";
+  private static final String CASSANDRA_DOX_KEY_STORE = CASSANDRA + ".dox.keystore";
+  private static final String CASSANDRA_AUTHENTICATE = CASSANDRA + ".authenticate";
+  private static final String CASSANDRA_USER = CASSANDRA + ".user";
+  private static final String CASSANDRA_PASSWORD = CASSANDRA + ".password";
+  private static final String CASSANDRA_PORT = CASSANDRA + ".port";
+  private static final String CASSANDRA_SSL = CASSANDRA + ".ssl";
+  private static final String CASSANDRA_TRUSTSTORE = CASSANDRA + ".Truststore";
+  private static final String CASSANDRA_TRUSTSTORE_PASSWORD = CASSANDRA + ".TruststorePassword";
+  private static final String CASSANDRA_HOSTS_KEY = CASSANDRA + "Hosts";
   private static final String CASSANDRA_PORT_KEY = "port";
   private static final String CASSANDRA_USERNAME_KEY = "username";
-  private static final String CASSANDRA_PASSWORD_KEY = "password";
+  @SuppressWarnings("squid:S2068")
+  private static final String CASSANDRA_PASSWORD_KEY = "password";          
   private static final String CASSANDRA_AUTHENTICATE_KEY = "authenticate";
   private static final String CASSANDRA_SSL_KEY = "ssl";
   private static final String CASSANDRA_TRUSTSTORE_PATH_KEY = "truststorePath";
-  private static final String CASSANDRA_TRUSTSTORE_PASSWORD_KEY = "truststorePassword";
-  private static final String CONSISTENCY_LEVEL = "cassandra.consistencyLevel";
+  @SuppressWarnings("squid:S2068")
+  private static final String CASSANDRA_TRUSTSTORE_PASSWORD_KEY = "truststorePassword";   
+  private static final String CONSISTENCY_LEVEL = CASSANDRA + ".consistencyLevel";
   private static final String CONSISTENCY_LEVEL_KEY = "consistencyLevel";
   private static final String LOCAL_DATA_CENTER_KEY = "localDataCenter";
-  private static final String LOCAL_DATA_CENTER = "cassandra.localDataCenter";
+  private static final String LOCAL_DATA_CENTER = CASSANDRA + ".localDataCenter";
   private static ConfigurationManager instance = null;
   private final LinkedHashMap<String, Object> cassandraConfiguration;
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private static final Logger LOG = LoggerFactory.getLogger(ConfigurationManager.class);
 
 
   private ConfigurationManager() {
 
     String configurationYamlFile = System.getProperty(CONFIGURATION_YAML_FILE);
 
-    Function<InputStream, Map<String, LinkedHashMap<String, Object>>> reader = (is) -> {
+    Function<InputStream, Map<String, LinkedHashMap<String, Object>>> reader = is -> {
       YamlUtil yamlUtil = new YamlUtil();
       return yamlUtil.yamlToMap(is);
     };
@@ -118,7 +120,7 @@ public class ConfigurationManager {
     }
     List lsAddresses = (ArrayList) cassandraConfiguration.get(CASSANDRA_HOSTS_KEY);
     if (CollectionUtils.isEmpty(lsAddresses)) {
-      log.info("No Cassandra hosts are defined.");
+      LOG.info("No Cassandra hosts are defined.");
     }
 
     String[] addressesArray;
@@ -135,8 +137,6 @@ public class ConfigurationManager {
   public String getKeySpace() {
     String keySpace = System.getProperty(CASSANDRA_DOX_KEY_STORE);
     if (Objects.isNull(keySpace)) {
-      //keySpace = cassandraConfiguration.get(cassandraKeySpaceKey);
-      //if (keySpace == null)
       keySpace = DEFAULT_KEYSPACE_NAME;
     }
     return keySpace;
