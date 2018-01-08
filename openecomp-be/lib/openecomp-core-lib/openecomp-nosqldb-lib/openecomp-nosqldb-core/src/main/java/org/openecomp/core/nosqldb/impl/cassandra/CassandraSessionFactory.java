@@ -154,12 +154,11 @@ public class CassandraSessionFactory {
     }
 
     private static class ReferenceHolder {
+        private static final Session CASSANDRA = newCassandraSession();
 
         private ReferenceHolder() {
             // prevent instantiation
         }
-
-        private static final Session CASSANDRA = newCassandraSession();
     }
 
 
