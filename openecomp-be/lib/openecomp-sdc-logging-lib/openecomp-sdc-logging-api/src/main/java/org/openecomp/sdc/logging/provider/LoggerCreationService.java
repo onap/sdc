@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.api.context;
+package org.openecomp.sdc.logging.provider;
+
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
- * Should be used to implement a framework-specific mechanism of propagation of a diagnostic context to child threads.
+ *
+ * Implements a framework-specific logging, to be used by {@link LoggerFactory}.
  *
  * @author evitaliy
- * @since 12/09/2016.
+ * @since 13/09/2016.
  */
+public interface LoggerCreationService {
 
-@FunctionalInterface
-public interface ContextPropagationService {
+    Logger getLogger(String className);
 
-    Runnable create(Runnable task);
+    Logger getLogger(Class<?> clazz);
 }
