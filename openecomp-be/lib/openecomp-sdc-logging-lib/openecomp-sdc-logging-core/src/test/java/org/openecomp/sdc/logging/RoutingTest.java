@@ -22,6 +22,7 @@ import ch.qos.logback.classic.sift.SiftingAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 import org.openecomp.sdc.logging.logback.EventTypeDiscriminator;
+import org.openecomp.sdc.logging.slf4j.Markers;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -48,7 +49,7 @@ public class RoutingTest {
   private static final String METRICS = "Metrics";
 
   private Logger logger;
-  private Map<String, TestAppender> result = new ConcurrentHashMap<>();
+  private final Map<String, TestAppender> result = new ConcurrentHashMap<>();
 
   @BeforeClass
   public void setUp() {
@@ -137,14 +138,14 @@ public class RoutingTest {
    */
   private static class TestAppender extends AppenderBase<ILoggingEvent> {
 
-    private List<ILoggingEvent> events = Collections.synchronizedList(new ArrayList<>(10));
+    private final List<ILoggingEvent> events = Collections.synchronizedList(new ArrayList<>(10));
 
     @Override
     protected void append(ILoggingEvent event) {
       this.events.add(event);
     }
 
-    public boolean contains(Predicate<ILoggingEvent> predicate) {
+    boolean contains(Predicate<ILoggingEvent> predicate) {
       return events.stream().anyMatch(predicate);
     }
   }
