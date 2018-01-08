@@ -2,7 +2,7 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,10 +11,9 @@ import java.util.stream.Stream;
 public class ConsolidationTypesConnectivity {
 
   private static Map<ConsolidationEntityType, Set<ConsolidationEntityType>>
-      entityToEntitiesWithoutRelationship;
+      entityToEntitiesWithoutRelationship = new EnumMap<>(ConsolidationEntityType.class);
 
   static {
-    entityToEntitiesWithoutRelationship = new HashMap<>();
     entityToEntitiesWithoutRelationship
         .put(ConsolidationEntityType.COMPUTE, getIgnoredComputeRelationships());
     entityToEntitiesWithoutRelationship
@@ -23,8 +22,11 @@ public class ConsolidationTypesConnectivity {
         .put(ConsolidationEntityType.VOLUME, getIgnoredVolumeRelationships());
     entityToEntitiesWithoutRelationship
         .put(ConsolidationEntityType.VFC_NESTED, getIgnoredVfcNestedRelationships());
-    entityToEntitiesWithoutRelationship.
-        put(ConsolidationEntityType.NESTED, getIgnoredNestedRelationships());
+    entityToEntitiesWithoutRelationship
+        .put(ConsolidationEntityType.NESTED, getIgnoredNestedRelationships());
+  }
+
+  private ConsolidationTypesConnectivity() {
   }
 
   private static Set<ConsolidationEntityType> getIgnoredComputeRelationships(){
