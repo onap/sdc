@@ -16,6 +16,24 @@
       "revId": "0b47c43df6c38af164d17688caaae5c8d63eb9f9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_67f2279c",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-01-09T06:52:02Z",
+      "side": 1,
+      "message": "I removed it as I got lot many references of this method so I assumed it is used where ever required.\n\nI have created a task in D2-JIRA with id ATTASDC-5829",
+      "parentUuid": "5a93c517_519b2d18",
+      "revId": "0b47c43df6c38af164d17688caaae5c8d63eb9f9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
