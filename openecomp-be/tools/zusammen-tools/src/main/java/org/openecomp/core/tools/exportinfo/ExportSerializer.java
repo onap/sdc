@@ -8,6 +8,8 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.core.tools.importinfo.ImportProperties;
 import org.openecomp.core.tools.model.ColumnDefinition;
@@ -22,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +35,14 @@ import static org.openecomp.core.tools.importinfo.ImportSingleTable.dataTypesMap
 
 public class ExportSerializer {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExportDataCommand.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExportSerializer.class);
     private static final String ELEMENT_TABLE_NAME = "element";
     private static final String ELEMENT_INFO_COLUMN_NAME = "info";
 
     public void serializeResult(final ResultSet resultSet, final Set<String> filteredItems, final String filteredColumn, Set<String> vlms) {
         try {
             TableData tableData = new TableData();
-            tableData.definitions = resultSet.getColumnDefinitions().asList().stream().map(column -> new ColumnDefinition(column)).collect(Collectors.toList());
+            tableData.definitions = resultSet.getColumnDefinitions().asList().stream().map(ColumnDefinition::new).collect(Collectors.toList());
             String table = tableData.definitions.iterator().next().getTable();
             boolean isElementTable = table.equals(ELEMENT_TABLE_NAME);
             Iterator<Row> iterator = resultSet.iterator();
@@ -78,9 +81,9 @@ public class ExportSerializer {
                 if (string == null) {
                     string = "";
                 }
-                if (checkForVLM && vlms != null){
+                if (checkForVLM && vlms != null) {
                     String vlm = extractVlm(string);
-                    if (vlm!= null) {
+                    if (vlm != null) {
                         vlms.add(vlm);
                     }
                 }
@@ -94,7 +97,12 @@ public class ExportSerializer {
                 data = Base64.getEncoder().encodeToString(bytes.array());
                 break;
             case TIMESTAMP:
-                data = row.getDate(i).getTime();
+                Date rowDate = row.getDate(i);
+                if (rowDate != null) {
+                    data = rowDate.getTime();
+                } else {
+                    data = "";
+                }
                 break;
             case BOOLEAN:
                 data = row.getBool(i);
@@ -109,14 +117,14 @@ public class ExportSerializer {
                 data = row.getFloat(i);
                 break;
             case SET:
-                Set set = row.getSet(i, Object.class);
-                Object joined = set.stream().map(o -> o.toString()).collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
+                Set<Object> set = row.getSet(i, Object.class);
+                Object joined = set.stream().map(Object::toString).collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
                 data = Base64.getEncoder().encodeToString(joined.toString().getBytes());
                 break;
             case MAP:
-                Map<Object,Object> map = row.getMap(i, Object.class, Object.class);
-                Set<Map.Entry<Object,Object>> entrySet = map.entrySet();
-                Object mapAsString = entrySet.parallelStream().map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER +entry.getValue().toString())
+                Map<Object, Object> map = row.getMap(i, Object.class, Object.class);
+                Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
+                Object mapAsString = entrySet.parallelStream().map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER + entry.getValue().toString())
                         .collect(Collectors.joining(ExportDataCommand.MAP_DELIMITER));
                 data = Base64.getEncoder().encodeToString(mapAsString.toString().getBytes());
                 break;
@@ -126,22 +134,28 @@ public class ExportSerializer {
         return data;
     }
 
-    protected String extractVlm(String injson) {
-            if (injson == null){
-                return null;
-            }
-            JsonElement root = new JsonParser().parse(injson);
-            if (root == null){
-                return null;
-            }
-            JsonElement properties = root.getAsJsonObject().get("properties");
-            if (properties == null){
-                return null;
-            }
-            JsonElement vendorId = properties.getAsJsonObject().get("vendorId");
-            if (vendorId == null){
-                return null;
-            }
-            return vendorId.getAsString();
+    protected String extractVlm(String inJson) {
+        if (StringUtils.isEmpty(inJson.trim())) {
+            return null;
+        }
+        JsonElement root;
+        try {
+            root = new JsonParser().parse(inJson);
+        } catch (JsonSyntaxException e) {
+            Utils.logError(logger, "Failed to parse json " + inJson, e);
+            return null;
+        }
+        if (root == null) {
+            return null;
+        }
+        JsonElement properties = root.getAsJsonObject().get("properties");
+        if (properties == null) {
+            return null;
+        }
+        JsonElement vendorId = properties.getAsJsonObject().get("vendorId");
+        if (vendorId == null) {
+            return null;
+        }
+        return vendorId.getAsString();
     }
 }

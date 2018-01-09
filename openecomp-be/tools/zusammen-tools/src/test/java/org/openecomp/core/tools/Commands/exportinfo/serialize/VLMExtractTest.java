@@ -36,12 +36,12 @@ public class VLMExtractTest {
     @Test(expectedExceptions = IllegalStateException.class)
     public void failToExtractVLMBecauseJsonIsCorrupted(){
         String elemenet_info_string = "gfhhhghgh";
-        new CustomExportSerializer().extractVlm(elemenet_info_string);
+        assertNull(new CustomExportSerializer().extractVlm(elemenet_info_string));
     }
 
     private static final class CustomExportSerializer extends ExportSerializer{
-        public String extractVlm(String injson) {
-            return super.extractVlm(injson);
+        public String extractVlm(String inJson) {
+            return super.extractVlm(inJson);
         }
     }
 }
