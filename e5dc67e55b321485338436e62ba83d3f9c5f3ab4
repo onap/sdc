@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_47692bf8",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-09T08:58:05Z",
+      "side": 1,
+      "message": "Expressions like this can be simplified without the need in a local variable and assignments.\n\nif (filesScanned \u003d\u003d null) {\n    return new HashSet\u003c\u003e();\n}\n\nreturn filesScanned;\n\nor even\n\nreturn filesScanner \u003d\u003d null ? new HashSet\u003c\u003e() : filesScanner;",
+      "range": {
+        "startLine": 542,
+        "startChar": 0,
+        "endLine": 546,
+        "endChar": 26
+      },
+      "revId": "e5dc67e55b321485338436e62ba83d3f9c5f3ab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c7745bd1",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-09T08:58:05Z",
+      "side": 1,
+      "message": "Same pattern. You don\u0027t need this local variable. It is very easy to get it wrong with re-assignments. Compare:\n\nboolean findFlatEntity(List\u003cMap\u003cString, Import\u003e\u003e imports) {\n    for (Map\u003cString, Import\u003e importMap : imports) {\n\n        if (isFlatEntity(importMap, entity, serviceTemplate, filesScanned, toscaModel,elementType,typeId);\n            return true;\n    }\n\n    return false;\n}\n\nIt can be even more concise with Java 8 functional style.",
+      "range": {
+        "startLine": 587,
+        "startChar": 0,
+        "endLine": 591,
+        "endChar": 43
+      },
+      "revId": "e5dc67e55b321485338436e62ba83d3f9c5f3ab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
