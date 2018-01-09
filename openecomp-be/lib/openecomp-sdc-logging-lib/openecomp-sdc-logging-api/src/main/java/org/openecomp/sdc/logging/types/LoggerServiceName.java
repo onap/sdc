@@ -168,7 +168,8 @@ public enum LoggerServiceName {
   GET_COMPONENT_DEPENDENCY,
 
   Health_check,
-  notifications
+  notifications,
+  TOGGLZ
   ;
 
   public static String getServiceName(LoggerServiceName serviceName) {
