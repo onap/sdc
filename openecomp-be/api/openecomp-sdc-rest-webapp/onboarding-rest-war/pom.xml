@@ -71,6 +71,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>togglz-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>action-library-rest-services</artifactId>
             <version>${project.version}</version>
