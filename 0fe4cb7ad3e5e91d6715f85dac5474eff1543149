@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_e25865fc",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/ConfigurationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-01-09T12:36:36Z",
+      "side": 1,
+      "message": "Actually CassandraConnectionInitializer is consuming it. All the method which we mode to static block is using ConfigurationManager class for setting all vaues, so should I try to minimize it further as we will have to make changes in CassandraConnectionInitializer class as well",
+      "parentUuid": "5a93c517_4205990f",
+      "revId": "0fe4cb7ad3e5e91d6715f85dac5474eff1543149",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_c210c950",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/ConfigurationManager.java",
         "patchSetId": 1
