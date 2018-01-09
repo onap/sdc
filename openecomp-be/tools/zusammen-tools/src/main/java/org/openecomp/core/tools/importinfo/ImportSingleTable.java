@@ -36,8 +36,8 @@ public class ImportSingleTable {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportSingleTable.class);
 
-    public static final String INSERT_INTO = "INSERT INTO ";
-    public static final String VALUES = " VALUES ";
+    private static final String INSERT_INTO = "INSERT INTO ";
+    private static final String VALUES = " VALUES ";
     private static final Map<String, PreparedStatement> statementsCache = new HashMap<>();
 
     public void importFile(Path file) {
@@ -96,7 +96,11 @@ public class ImportSingleTable {
                 bind.setBytes(i, ByteBuffer.wrap(Base64.getDecoder().decode(rowData.getBytes())));
                 break;
             case TIMESTAMP:
-                bind.setDate(i, new Date(Long.parseLong(rowData)));
+                if (StringUtils.isEmpty(rowData)){
+                    bind.setSet(i, null);
+                } else {
+                    bind.setDate(i, new Date(Long.parseLong(rowData)));
+                }
                 break;
             case BOOLEAN:
                 bind.setBool(i, Boolean.parseBoolean(rowData));
@@ -147,7 +151,7 @@ public class ImportSingleTable {
         ColumnDefinition def = tableData.definitions.iterator().next();
         StringBuilder sb = new StringBuilder();
         sb.append(INSERT_INTO).append(def.getKeyspace()).append(".").append(def.getTable());
-        sb.append(tableData.definitions.stream().map(definition -> definition.getName()).collect(Collectors.joining(" , ", " ( ", " ) ")));
+        sb.append(tableData.definitions.stream().map(ColumnDefinition::getName).collect(Collectors.joining(" , ", " ( ", " ) ")));
         sb.append(VALUES).append(tableData.definitions.stream().map(definition -> "?").collect(Collectors.joining(" , ", " ( ", " ) "))).append(";");
         return sb.toString();
     }
