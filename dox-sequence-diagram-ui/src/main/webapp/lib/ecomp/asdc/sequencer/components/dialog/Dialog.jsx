@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Icon from '../icons/Icon';
 import iconQuestion from '../../../../../../res/ecomp/asdc/sequencer/sprites/icons/question.svg';
 import iconExclaim from '../../../../../../res/ecomp/asdc/sequencer/sprites/icons/exclaim.svg';
@@ -27,7 +27,7 @@ import iconClose from '../../../../../../res/ecomp/asdc/sequencer/sprites/icons/
  * Multi-purpose dialog. Rendered into the page on initialization, and then
  * configured, shown and hidden as required.
  */
-export default class Dialog extends React.Component {
+class Dialog extends React.Component {
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -232,5 +232,7 @@ export default class Dialog extends React.Component {
 }
 
 Dialog.propTypes = {
-  application: React.PropTypes.object.isRequired,
+  application: PropTypes.object.isRequired,
 };
+
+export default Dialog;

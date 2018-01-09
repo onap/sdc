@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 /**
  * Simple icon view.
  * @param glyph glyph definition, from import.
@@ -33,8 +33,8 @@ const Icon = function Icon({ glyph, className }) {
 
 /** Declare properties. */
 Icon.propTypes = {
-  className: React.PropTypes.string,
-  glyph: React.PropTypes.string.isRequired,
+  className: PropTypes.string,
+  glyph: PropTypes.string.isRequired,
 };
 
 export default Icon;

@@ -14,7 +14,8 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-dom/test-utils';
 import { mapStateToProps }  from 'sdc-app/onboarding/softwareProduct/deployment/editor/SoftwareProductDeploymentEditor.js';
 import SoftwareProductDeploymentEditorView from 'sdc-app/onboarding/softwareProduct/deployment/editor/SoftwareProductDeploymentEditorView.jsx';
 import { VSPComponentsFactory } from 'test-utils/factories/softwareProduct/SoftwareProductComponentsFactories.js';
@@ -66,7 +67,7 @@ describe('Software Product Deployment Editor Module Tests', function () {
 
 	it('jsx view test', () => {
 		const componentsList = VSPComponentsFactory.buildList(1);
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<SoftwareProductDeploymentEditorView
 				isReadOnlyMode={true}

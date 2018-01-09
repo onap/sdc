@@ -68,6 +68,12 @@ ModalFooter.defaultProps = {
 	cancelButtonText: i18n('Cancel')
 };
 
+ModalFooter.PropTypes = {
+	type: PropTypes.string,
+	confirmationButtonText: PropTypes.string,
+	cancelButtonText: PropTypes.string
+};
+
 export const mapStateToProps = ({modal}) => {
 	const show = !!modal;
 	return {
@@ -137,6 +143,18 @@ export class  GlobalModalView extends React.Component {
 			setTimeout(this.props.onClose, this.props.timeout);
 		}
 	}
+};
+
+GlobalModalView.propTypes = {
+	show: PropTypes.bool,
+	type: PropTypes.oneOf(['default', 'error', 'warning', 'success']),
+	title: PropTypes.string,
+	modalComponentProps: PropTypes.object,
+	modalComponentName: PropTypes.string,
+	onConfirmed: PropTypes.func,
+	onDeclined: PropTypes.func,
+	confirmationButtonText: PropTypes.string,
+	cancelButtonText: PropTypes.string
 };
 
 export default connect(mapStateToProps, mapActionToProps, null, {withRef: true})(GlobalModalView);

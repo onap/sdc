@@ -9,7 +9,6 @@ try {
 	console.log('Could not find local dev config.');
 }
 let devConfig = Object.assign({}, require('./devConfig.defaults'), localDevConfig);
-
 module.exports = {
 	entry: devConfig.bundles,
 	resolve: {
@@ -27,7 +26,6 @@ module.exports = {
 		rules: [
 			{test: /\.(js|jsx)$/, loader: 'source-map-loader', exclude: [/node_modules/, path.resolve(__dirname, '../dox-sequence-diagram/')], enforce: 'pre'},
 			{test: /\.(js|jsx)$/, use: [
-				{loader : 'react-hot-loader'},
 				{loader : 'babel-loader'},
 				{loader : 'eslint-loader'}], exclude: [/node_modules/, path.resolve(__dirname, '../dox-sequence-diagram/')]},
 			{test: /\.(css|scss)$/, use: [

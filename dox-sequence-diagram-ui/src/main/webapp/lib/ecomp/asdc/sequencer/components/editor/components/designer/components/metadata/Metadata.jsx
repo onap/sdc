@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 /**
  * Metadata view.
  */
@@ -28,7 +28,7 @@ const Metadata = function Metadata(props) {
 };
 
 Metadata.propTypes = {
-  metadata: React.PropTypes.object.isRequired,
+  metadata: PropTypes.object.isRequired,
 };
 
 export default Metadata;

@@ -1,13 +1,28 @@
 {
-    "presets": [["es2015", { "modules": false }],"stage-0", "react"],
+    "presets": ["env","react"],
 	"plugins": [
-		"transform-es2015-modules-commonjs",
-		"transform-es2015-destructuring",
-		"transform-es2015-spread",
 		"transform-object-rest-spread",
 		"transform-class-properties",
 		"transform-runtime",
-		"transform-decorators-legacy"
+		"transform-decorators-legacy",
+		"transform-runtime",
+		"react-hot-loader/babel"
 	],
 	"sourceMap": "inline"
 }
+
+
+//"react-hot-loader/babel",
+// {
+//     "presets": [["latest", { "modules": false }],"stage-0", "react"],
+// 	"plugins": [
+// 		"transform-es2015-modules-commonjs",
+// 		"transform-es2015-destructuring",
+// 		"transform-es2015-spread",
+// 		"transform-object-rest-spread",
+// 		"transform-class-properties",
+// 		"transform-runtime",
+// 		"react-hot-loader/babel"
+// 	],
+// 	"sourceMap": "inline"
+// }

@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-
 import Icon from '../../../icons/Icon';
 import iconEdit from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/edit.svg';
 
@@ -25,7 +24,7 @@ import iconEdit from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/i
  * @returns {XML}
  * @constructor
  */
-export default class Popup extends React.Component {
+class Popup extends React.Component {
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -106,3 +105,5 @@ export default class Popup extends React.Component {
     );
   }
 }
+
+export default Popup;

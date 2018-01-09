@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 /**
  * Editor view, aggregating the designer, the code editor, the toolbar.
  */
@@ -81,6 +81,6 @@ export default class Source extends React.Component {
 }
 
 Source.propTypes = {
-  application: React.PropTypes.object.isRequired,
+  application: PropTypes.object.isRequired,
 };
 

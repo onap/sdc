@@ -15,10 +15,11 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
+import {shallow} from 'enzyme';
 
 describe('Input', function () {
 	it('should render with type text', () => {
@@ -72,10 +73,11 @@ describe('Input', function () {
 	});
 
 	it('should render error overlay when invalid', () => {
-		let renderedOutput = TestUtils.renderIntoDocument(<Input type='text' data-test-id='mytest' isValid={false} errorText='this is an error'/>);
-		const elem = TestUtils.findRenderedComponentWithType(renderedOutput,Overlay);
+		const elem = shallow(<Input type='text' data-test-id='mytest' isValid={false} errorText='this is an error'/>);
 		expect(elem).toBeTruthy();
-		expect(elem.props.show).toBe(true);
+		const  overlay = elem.find(Overlay);
+		expect(overlay).toBeTruthy();
+		expect(overlay.props().show).toBe(true);
 	});
 
 	it('should not render error overlay when valid', () => {

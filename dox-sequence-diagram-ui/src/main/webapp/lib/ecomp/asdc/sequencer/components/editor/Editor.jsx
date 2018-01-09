@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Logger from '../../common/Logger';
 import Common from '../../common/Common';
 import Designer from './components/designer/Designer';
@@ -25,7 +25,7 @@ import Source from './components/source/Source';
 /**
  * Editor view, aggregating the designer, the code editor, the toolbar.
  */
-export default class Editor extends React.Component {
+class Editor extends React.Component {
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,5 +167,8 @@ export default class Editor extends React.Component {
 
 /** Element properties. */
 Editor.propTypes = {
-  application: React.PropTypes.object.isRequired,
+  application: PropTypes.object.isRequired,
 };
+
+export default Editor;
+

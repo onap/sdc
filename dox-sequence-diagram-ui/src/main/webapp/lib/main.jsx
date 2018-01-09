@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render } from 'react-dom';
+import { ReactDOM } from 'react-dom';
 import Sequencer from './ecomp/asdc/sequencer/Sequencer';
 import '../res/ecomp/asdc/sequencer/sequencer-development.scss';
 import '../res/thirdparty/react-select/react-select.min.css';
@@ -25,7 +25,7 @@ function renderApplication() {
   shell.setAttribute('style', 'height:100%;width:100%;margin:0;padding:0');
   document.body.appendChild(shell);
   const options = { demo: true };
-  render(<Sequencer options={options} />, shell);
+  ReactDOM.render(<Sequencer options={options} />, shell);
 }
 
 if (window.addEventListener) {

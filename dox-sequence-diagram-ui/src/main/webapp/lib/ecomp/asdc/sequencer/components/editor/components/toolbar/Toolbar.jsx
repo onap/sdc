@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Common from '../../../../common/Common';
 
 import iconPlus from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/plus.svg';
@@ -270,6 +270,6 @@ export default class Toolbar extends React.Component {
 }
 
 Toolbar.propTypes = {
-  application: React.PropTypes.object.isRequired,
-  editor: React.PropTypes.object.isRequired,
+  application: PropTypes.object.isRequired,
+  editor: PropTypes.object.isRequired,
 };

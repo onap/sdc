@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { DragSource } from 'react-dnd';
 
 import Icon from '../../../../../icons/Icon';
@@ -82,9 +83,9 @@ class MessageNew extends React.Component {
 
 /** Element properties. */
 MessageNew.propTypes = {
-  designer: React.PropTypes.object.isRequired,
-  messages: React.PropTypes.object.isRequired,
-  connectDragSource: React.PropTypes.func.isRequired,
+  designer: PropTypes.object.isRequired,
+  messages: PropTypes.object.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
 };
 
 /** DND. */

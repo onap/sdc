@@ -80,7 +80,7 @@ class SoftwareProductLandingPageView extends React.Component {
 					ref='fileInput'
 					name='fileInput'
 					accept='.zip, .csar'
-					disabled>
+					disabled={isReadOnlyMode}>
 					<div className='draggable-wrapper'>
 						<div className='software-product-landing-view-top'>
 							<div className='row'>

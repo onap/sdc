@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 
@@ -397,7 +397,7 @@ class Designer extends React.Component {
 
 /** Element properties. */
 Designer.propTypes = {
-  application: React.PropTypes.object.isRequired,
+  application: PropTypes.object.isRequired,
 };
 
 export default DragDropContext(HTML5Backend)(Designer);

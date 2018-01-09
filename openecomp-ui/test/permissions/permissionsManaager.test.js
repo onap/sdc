@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 
 import {UserFactory} from 'test-utils/factories/users/UsersFactories.js';
 import {mapStateToProps} from 'sdc-app/onboarding/permissions/PermissionsManager.js';

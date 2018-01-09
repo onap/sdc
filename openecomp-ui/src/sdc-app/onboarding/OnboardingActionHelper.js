@@ -32,7 +32,6 @@ import SoftwareProductDependenciesActionHelper from './softwareProduct/dependenc
 import ComputeFlavorActionHelper from './softwareProduct/components/compute/ComputeFlavorActionHelper.js';
 import OnboardActionHelper from './onboard/OnboardActionHelper.js';
 import MergeEditorActionHelper from 'sdc-app/common/merge/MergeEditorActionHelper.js';
-// import {SyncStates} from 'sdc-app/common/merge/MergeEditorConstants.js';
 import SoftwareProductComponentsMonitoringAction from './softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
 import {actionTypes, enums} from './OnboardingConstants.js';
 import {actionTypes as SoftwareProductActionTypes, onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';

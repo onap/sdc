@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import LicenseAgreement from 'src/sdc-app/onboarding/licenseModel/overview/listItems/LicenseAgreement.jsx';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import {LicenseAgreementListItemFactory} from 'test-utils/factories/licenseModel/LicenseAgreementFactories.js';

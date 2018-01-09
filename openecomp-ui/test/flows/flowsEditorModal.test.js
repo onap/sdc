@@ -15,10 +15,10 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import {mapStateToProps} from 'sdc-app/flows/FlowsEditorModal.js';
 import FlowsEditorModalView from 'sdc-app/flows/FlowsEditorModalView.jsx';
-
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {FlowBasicFactory} from 'test-utils/factories/flows/FlowsFactories.js';
 
 describe('Flows Editor Modal Mapper and View Classes: ', function () {
@@ -54,7 +54,7 @@ describe('Flows Editor Modal Mapper and View Classes: ', function () {
 	});
 
 	it('basic modal view component run with empty artifact', () => {
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<FlowsEditorModalView
 				onCancel={()=>{}}

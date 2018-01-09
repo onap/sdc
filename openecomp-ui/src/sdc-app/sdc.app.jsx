@@ -17,6 +17,7 @@ import '../../resources/scss/bootstrap.scss';
 import 'react-select/dist/react-select.min.css';
 import 'dox-sequence-diagram-ui/src/main/webapp/res/sdc-sequencer.scss';
 import '../../resources/scss/style.scss';
+//import { AppContainer } from 'react-hot-loader';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -30,3 +31,11 @@ SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformTo
 };
 
 ReactDOM.render(<Application><Modules/></Application>, document.getElementById('sdc-app'));
+
+// const render = Component => {
+// 	ReactDOM.render(<AppContainer><Component/></AppContainer>, document.getElementById('sdc-app'));
+// };
+
+// if (module.hot) {
+// 	module.hot.accept('./Application.jsx', () => render(Application));
+// }

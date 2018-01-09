@@ -16,7 +16,7 @@
 
 import GlobalModal, {GlobalModalView, mapStateToProps} from 'src/nfvo-components/modal/GlobalModal.js';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import store from 'sdc-app/AppStore.js';
 import {actionTypes, typeEnum} from 'src/nfvo-components/modal/GlobalModalConstants.js';
 
@@ -31,7 +31,7 @@ describe('Global Modal tests: ', function () {
 	it ('mapStateToProps should return show as true', () => {
 		let state = {
 			modal: {
-				type: ''				
+				type: ''
 			}
 		};
 		let props = mapStateToProps(state);
@@ -49,15 +49,15 @@ describe('Global Modal tests: ', function () {
 		const modal = store.getState().modal;
 		expect(modal).toBeTruthy();
 		expect(modal.title).toBe(title);
-		expect(modal.msg).toBe(msg);	
+		expect(modal.msg).toBe(msg);
 	});
 
 	it('global modal should show with type success with connected component', () => {
 		store.dispatch({type: actionTypes.GLOBAL_MODAL_SHOW, data: {title, msg}});
 
 		expect(store.getState().modal).toBeTruthy();
-			
-		let renderer = TestUtils.createRenderer();
+
+		const renderer = new ShallowRenderer();
 		renderer.render(<GlobalModal store={store}/>);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
@@ -67,10 +67,9 @@ describe('Global Modal tests: ', function () {
 
 	it('global modal should show with type success with connected component and closed after', () => {
 		store.dispatch({type: actionTypes.GLOBAL_MODAL_SHOW, data: {title, msg}});
-		
+
 		expect(store.getState().modal).toBeTruthy();
-			
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<GlobalModal store={store}/>);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
@@ -82,11 +81,11 @@ describe('Global Modal tests: ', function () {
 
 	it('checking component default render', ()=> {
 		expect(window.document).toBeTruthy();
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<GlobalModalView show={true} type={typeEnum.WARNING} title={title} msg={msg} onDeclined={()=>{}} />);
-		let globalModalView = renderer.getRenderOutput();
+		const globalModalView = renderer.getRenderOutput();
 		expect(globalModalView).toBeTruthy();
-	});
+});
 
 });
 
