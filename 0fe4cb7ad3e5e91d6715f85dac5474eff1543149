@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4205990f",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/ConfigurationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-09T10:05:56Z",
+      "side": 1,
+      "message": "Please see org.openecomp.core.zusammen.impl.CassandraConnectionInitializer. Can some of that be reused?",
+      "revId": "0fe4cb7ad3e5e91d6715f85dac5474eff1543149",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c210c950",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/ConfigurationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-09T10:05:56Z",
+      "side": 1,
+      "message": "It is a false positive because Sonar doesn\u0027t understand that this is not a password but a property key. It\u0027s weird, but extracting the prefix \"cassandra.\" to a constant seems to get rid of the violation. In any case, please avoid disable Sonar in general. Instead, use rule-specific suppression. Example @SuppressWarnings(\"squid:S2068\") https://next.sonarqube.com/sonarqube/coding_rules#rule_key\u003dsquid%3AS2068",
+      "range": {
+        "startLine": 52,
+        "startChar": 75,
+        "endLine": 52,
+        "endChar": 85
+      },
+      "revId": "0fe4cb7ad3e5e91d6715f85dac5474eff1543149",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_621d3566",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/ConfigurationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-09T10:05:56Z",
+      "side": 1,
+      "message": "This can be static (and renamed LOG accordingly)",
+      "revId": "0fe4cb7ad3e5e91d6715f85dac5474eff1543149",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
