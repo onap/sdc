@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import Application from './components/application/Application';
 import Common from './common/Common';
 import Options from './common/Options';
@@ -26,7 +27,7 @@ import '../../../../res/sdc-sequencer.scss';
 /**
  * ASDC Sequencer entry point.
  */
-export default class Sequencer extends React.Component {
+class Sequencer extends React.Component {
 
   // //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -193,7 +194,10 @@ export default class Sequencer extends React.Component {
 }
 
 Sequencer.propTypes = {
-  options: React.PropTypes.object.isRequired,
-  model: React.PropTypes.object,
-  metamodel: React.PropTypes.object,
+  options: PropTypes.object.isRequired,
+  model: PropTypes.object,
+  metamodel: PropTypes.object,
 };
+
+
+export default Sequencer;

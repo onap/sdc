@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ import '../../resources/scss/bootstrap.scss';
 import 'react-select/dist/react-select.min.css';
 import 'dox-sequence-diagram-ui/src/main/webapp/res/sdc-sequencer.scss';
 import '../../resources/scss/style.scss';
+//import { AppContainer } from 'react-hot-loader';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -30,3 +31,11 @@ SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformTo
 };
 
 ReactDOM.render(<Application><Modules/></Application>, document.getElementById('sdc-app'));
+
+// const render = Component => {
+// 	ReactDOM.render(<AppContainer><Component/></AppContainer>, document.getElementById('sdc-app'));
+// };
+
+// if (module.hot) {
+// 	module.hot.accept('./Application.jsx', () => render(Application));
+// }

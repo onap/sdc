@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import ComputeFlavors from 'sdc-app/onboarding/softwareProduct/components/compute/computeComponents/ComputeFlavors.js';
 import {ComputeFlavorBaseData} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsComputeFactory.js';
@@ -32,7 +32,7 @@ describe('Software Product Component ComputeFlavors - View Classes.', () => {
 
 		const ComputeFlavorsList = ComputeFlavorBaseData.buildList(1);
 
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<ComputeFlavors
 				store={store}

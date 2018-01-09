@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,8 +66,7 @@ class SoftwareProductComponentsMonitoringView extends Component {
 				disableClick={true}
 				ref={refAndName}
 				name={refAndName}
-				accept='.zip'
-				disabled>
+				accept='.zip'>
 				<div className='draggable-wrapper'>
 					<div className='section-title'>{typeDisplayName}</div>
 					{fileName ? this.renderUploadedFileName(fileName, type, isReadOnlyMode) : this.renderUploadButton(refAndName)}

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
 
 import Common from '../../../../../../common/Common';
@@ -191,17 +192,17 @@ class Lifeline extends React.Component {
  * Declare properties.
  */
 Lifeline.propTypes = {
-  application: React.PropTypes.object.isRequired,
-  designer: React.PropTypes.object.isRequired,
-  lifeline: React.PropTypes.object.isRequired,
-  active: React.PropTypes.bool.isRequired,
-  metamodel: React.PropTypes.object.isRequired,
-  id: React.PropTypes.any.isRequired,
-  index: React.PropTypes.number.isRequired,
-  lifelines: React.PropTypes.object.isRequired,
-  isDragging: React.PropTypes.bool.isRequired,
-  connectDragSource: React.PropTypes.func.isRequired,
-  connectDropTarget: React.PropTypes.func.isRequired,
+  application: PropTypes.object.isRequired,
+  designer: PropTypes.object.isRequired,
+  lifeline: PropTypes.object.isRequired,
+  active: PropTypes.bool.isRequired,
+  metamodel: PropTypes.object.isRequired,
+  id: PropTypes.any.isRequired,
+  index: PropTypes.number.isRequired,
+  lifelines: PropTypes.object.isRequired,
+  isDragging: PropTypes.bool.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
 };
 
 /** DND. */

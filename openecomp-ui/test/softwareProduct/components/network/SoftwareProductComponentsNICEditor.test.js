@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-dom/test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNICEditor.js';
 import SoftwareProductComponentsNICEditorView from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNICEditorView.jsx';
 
@@ -24,6 +25,7 @@ import {SoftwareProductFactory} from 'test-utils/factories/softwareProduct/Softw
 import {VSPComponentsNicFactory, VSPComponentsNetworkQDataFactory, VSPComponentsNicFactoryQGenericFieldInfo,
 	VSPComponentsNicFactoryGenericFieldInfo, VSPComponentsNetworkDataMapFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsNetworkFactories.js';
 import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
+
 
 describe('Software Product Component Network NIC Editor and View Classes', () => {
 	it('mapStateToProps mapper exists', () => {
@@ -80,7 +82,7 @@ describe('Software Product Component Network NIC Editor and View Classes', () =>
 			protocols: []
 		};
 
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<SoftwareProductComponentsNICEditorView {...props}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();

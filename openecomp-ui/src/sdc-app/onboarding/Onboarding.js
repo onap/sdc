@@ -14,28 +14,9 @@
  * permissions and limitations under the License.
  */
 
-import React from 'react';
-import PropTypes from 'prop-types';
-/**
- * Simple icon view.
- * @param glyph glyph definition, from import.
- * @param className optional classname, for svg element.
- * @returns {XML}
- * @constructor
- */
-const Icon = function Icon({ glyph, className }) {
-  return (
-    <svg viewBox="0 0 1000 1000" className={className} >
-      <use xlinkHref={glyph} className="asdcs-icon" />
-    </svg>
-  );
-};
+import OnboardingView from './OnboardingView.jsx';
+import {connect} from 'react-redux';
 
-/** Declare properties. */
-Icon.propTypes = {
-  className: PropTypes.string,
-  glyph: PropTypes.string.isRequired,
-};
-
-export default Icon;
-
+const mapStateToProps = ({currentScreen}) => ({currentScreen});
+const Onboarding = connect(mapStateToProps, null)(OnboardingView);
+export default Onboarding;

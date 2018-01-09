@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ class SoftwareProductLandingPageView extends React.Component {
 					ref='fileInput'
 					name='fileInput'
 					accept='.zip, .csar'
-					disabled>
+					disabled={isReadOnlyMode}>
 					<div className='draggable-wrapper'>
 						<div className='software-product-landing-view-top'>
 							<div className='row'>

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 
 import React from 'react';
-
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-dom/test-utils';
 import VersionController from 'nfvo-components/panel/versionController/VersionController.jsx';
 import {actionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
@@ -36,7 +36,7 @@ describe('versionController UI Component', () => {
 	const store = storeCreator();
 
 	it('function does exist', () => {
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 
 		renderer.render(<Provider store={store}><VersionController {...props} /></Provider>);
 		var renderedOutput = renderer.getRenderOutput();

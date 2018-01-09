@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 
 import {Provider} from 'react-redux';
 import {storeCreator} from 'sdc-app/AppStore.js';
@@ -143,7 +143,7 @@ describe('Software Product Landing Page: ', function () {
 			onUpload: dummyFunc,
 			onInvalidFileSizeUpload: dummyFunc
 		};
-		
+
 		const files = [
 			{
 				name: 'aaa',
@@ -198,7 +198,7 @@ describe('Software Product Landing Page: ', function () {
 		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
 			vspLandingView,
 			SoftwareProductLandingPageView
-		);	
+		);
 		expect(vspLandingView).toBeTruthy();
 		const files = [
 			{

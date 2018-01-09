@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {mapStateToProps, mapActionsToProps} from 'sdc-app/onboarding/softwareProduct/creation/SoftwareProductCreation.js';
 import SoftwareProductCreationView from 'sdc-app/onboarding/softwareProduct/creation/SoftwareProductCreationView.jsx';
 import {SoftwareProductCreationFactory, SoftwareProductCreationFactoryWithSelectedVendor} from 'test-utils/factories/softwareProduct/SoftwareProductCreationFactories.js';
@@ -83,7 +83,7 @@ describe('Software Product Creation Module Tests', function() {
 			}
 		};
 		let props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch));
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<SoftwareProductCreationView {...props}/>
 			);
@@ -107,7 +107,7 @@ describe('Software Product Creation Module Tests', function() {
 			}
 		};
 		let props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch));
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<SoftwareProductCreationView {...props}/>
 		);

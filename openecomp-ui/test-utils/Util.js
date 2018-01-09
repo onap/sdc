@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import deepFreeze from 'deep-freeze';
 import times from 'lodash/times';
 import pick from 'lodash/pick';
 import intersection from 'lodash/intersection';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 
 export const buildListFromFactory = (factory, quantity = 3, overrides) => {
 	let list = [];

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-dom/test-utils';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import SummaryView from 'sdc-app/onboarding/licenseModel/overview/SummaryView.jsx';
 import LicenseModelOverviewView from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewView.jsx';
@@ -37,7 +38,7 @@ describe('License Model Overview - View: ', function () {
 	const baseLAData =  LicenseAgreementListItemFactory.build({isCollapse: false});
 
 	it('should render SummaryView', () => {
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<SummaryView isReadOnly={false} />
 		);
@@ -60,7 +61,7 @@ describe('License Model Overview - View: ', function () {
 			selectedTab: selectedButton.VLM_LIST_VIEW,
 			onTabSelect: () => {}
 		};
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<LicenseModelOverviewView {...params}/>
 		);

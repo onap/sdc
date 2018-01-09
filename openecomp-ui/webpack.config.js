@@ -16,6 +16,7 @@ let webpackCommon = require('./webpack.common');
 function getEntrySources(sources) {
 	for (let i in sources) {
 		if (sources.hasOwnProperty(i)) {
+            sources[i].push('react-hot-loader/patch');
 			sources[i].push('webpack-dev-server/client?http://localhost:' + devPort);
 			sources[i].push('webpack/hot/only-dev-server');
 		}
@@ -36,8 +37,8 @@ let webpackDevConfig = Object.assign({}, webpackCommon, {
 		historyApiFallback: true,
 		publicPath: `http://localhost:${devPort}/onboarding/`,
 		contentBase: path.join(__dirname, 'dist'),
-		hot: true,
 		inline: true,
+		hot: true,
 		stats: {
 			colors: true,
 			exclude: ['node_modules']

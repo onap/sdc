@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Common from '../../../../../../common/Common';
 
 import Lifeline from './Lifeline';
@@ -27,7 +27,7 @@ import LifelineNew from './LifelineNew';
  * @returns {*}
  * @constructor
  */
-export default class Lifelines extends React.Component {
+class Lifelines extends React.Component {
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +130,9 @@ export default class Lifelines extends React.Component {
  * Declare properties.
  */
 Lifelines.propTypes = {
-  application: React.PropTypes.object.isRequired,
-  designer: React.PropTypes.object.isRequired,
-  activeLifelineId: React.PropTypes.string,
+  application: PropTypes.object.isRequired,
+  designer: PropTypes.object.isRequired,
+  activeLifelineId: PropTypes.string,
 };
+
+export default Lifelines;

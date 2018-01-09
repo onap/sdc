@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import DualListboxView from 'nfvo-components/input/dualListbox/DualListboxView.jsx';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 const ITEMS = [{id: '1', name: 'aaa'}, {id: '2', name: 'bbb'}, {id: '3', name: 'ccc'}];
 
@@ -24,7 +25,7 @@ describe('dualListBox Module Tests', function () {
 
 
 	it('should render basically', () => {
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<DualListboxView onChange={()=>{}}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();

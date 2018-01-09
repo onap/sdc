@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
 import Configuration from 'sdc-app/config/Configuration.js';
@@ -72,7 +72,7 @@ describe('Versions Page Module Tests', () => {
 		const additionalProps = VersionsPageAdditionalPropsFactory.build();
 
 		const props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch, additionalProps));
-		const renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<VersionsPageView {...props} />);
 
 		const renderedOutput = renderer.getRenderOutput();

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,8 @@
  * permissions and limitations under the License.
  */
 
-import {combineReducers, createStore, applyMiddleware, compose} from 'redux';
-import onBoardingReducersMap from './onboarding/OnboardingReducersMap.js';
-import flowsReducersMap from './flows/FlowsReducersMap.js';
-import loaderReducer from 'nfvo-components/loader/LoaderReducer.js';
-import globalModalReducer from 'nfvo-components/modal/GlobalModalReducer.js';
-import notificationsReducer from 'sdc-app/onboarding/userNotifications/NotificationsReducer.js';
+import {createStore, applyMiddleware, compose} from 'redux';
+import Reducers from './Reducers.js';
 const thunk = store => next => action =>
 	typeof action === 'function' ?
 		action(store.dispatch, store.getState) :
@@ -27,18 +23,15 @@ const thunk = store => next => action =>
 
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-export const storeCreator = (initialState) => createStore(combineReducers({
-	// on-boarding reducers
-	...onBoardingReducersMap,
-
-	// flows reducers
-	...flowsReducersMap,
-	modal: globalModalReducer,
-	loader: loaderReducer,
-	notifications: notificationsReducer
-}), initialState, composeEnhancers(applyMiddleware(thunk)));
+export const storeCreator = (initialState) => createStore(Reducers, initialState, composeEnhancers(applyMiddleware(thunk)));
 
 
 const store = storeCreator();
+
+if (module.hot) {
+	module.hot.accept('./Reducers.js', () =>
+		store.replaceReducer(require('./Reducers.js').default)
+	);
+}
 
 export default store;

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {mapStateToProps as computeEditorMapStateToProps} from 'sdc-app/onboarding/softwareProduct/components/compute/computeComponents/computeFlavor/ComputeFlavorEditor.js';
 import ComputeEditorView from 'sdc-app/onboarding/softwareProduct/components/compute/computeComponents/computeFlavor/ComputeFlavorEditorView.jsx';
 
@@ -77,7 +77,7 @@ describe('Software Product Component Compute-Editor Mapper and View Classes.', (
 			onCancel: () => {}
 		};
 
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<ComputeEditorView {...props}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {mapStateToProps} from 'sdc-app/flows/FlowsListEditor.js';
 import FlowsListEditorView from 'sdc-app/flows/FlowsListEditorView.jsx';
 
@@ -113,7 +113,7 @@ describe('Flows List Editor Mapper and View Classes: ', function () {
 	});
 
 	it('basic view component run with empty flowList and should show the list', () => {
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		let currentFlow = FlowBasicFactory.build();
 		renderer.render(<FlowsListEditorView shouldShowWorkflowsEditor={true} flowList={[currentFlow]}/>);
 		let renderedOutput = renderer.getRenderOutput();
@@ -122,14 +122,14 @@ describe('Flows List Editor Mapper and View Classes: ', function () {
 
 	it('basic view component run with empty flowList and should show the diagram', () => {
 		const flow = FlowUpdateRequestFactory.build();
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<FlowsListEditorView currentFlow={flow} shouldShowWorkflowsEditor={false} flowList={[flow]}/>);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
 	});
 
 	it('basic view component run with empty flowList and should show popup modal', () => {
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		let currentFlow = FlowBasicFactory.build();
 		renderer.render(<FlowsListEditorView isDisplayModal={true} shouldShowWorkflowsEditor={true} flowList={[currentFlow]}/>);
 		let renderedOutput = renderer.getRenderOutput();
