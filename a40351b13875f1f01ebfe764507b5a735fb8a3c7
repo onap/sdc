@@ -16,6 +16,24 @@
       "revId": "a40351b13875f1f01ebfe764507b5a735fb8a3c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4264b9b8",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/util/ZipUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-09T12:36:37Z",
+      "side": 1,
+      "message": "Since it\u0027s never used, deleting this method is a good idea.",
+      "parentUuid": "5a93c517_623455de",
+      "revId": "a40351b13875f1f01ebfe764507b5a735fb8a3c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
