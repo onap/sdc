@@ -28,6 +28,7 @@
 		<module>item-rest</module>
 		<module>notifications-fe</module>
 		<module>notifications-rest</module>
+		<module>togglz-rest</module>
 	</modules>
 
 </project>
