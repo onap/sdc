@@ -65,7 +65,7 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
       ProcessEntity artifactEntity = new ProcessEntity(vspId, version,
           componentId, entity.getId());
 
-          ProcessEntity artifactProcessEntity = getProcessDao().get(artifactEntity);
+          ProcessEntity artifactProcessEntity = getProcessDao().getArtifact(artifactEntity);
           if (artifactProcessEntity != null && ProcessType.Lifecycle_Operations.equals(
               artifactProcessEntity.getType())
               && artifactProcessEntity.getArtifactName() != null ) {
