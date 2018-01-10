@@ -55,32 +55,6 @@ public class ZipUtils {
         ).collect(Collectors.toSet());
     }
 
-    static void addDir(File dirObj, ZipOutputStream out, String root, Set<String> filterItem) throws IOException {
-        File[] files = dirObj.listFiles();
-        filterItem = cleanStr(filterItem);
-
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].isDirectory()) {
-                addDir(files[i], out, root, filterItem);
-                String filePath = files[i].getAbsolutePath().replace(root + File.separator, "") + File.separator;
-                out.putNextEntry(new ZipEntry(filePath));
-                continue;
-            }
-            try (FileInputStream in = new FileInputStream((files[i].getAbsolutePath())); ZipOutputStream zos = out) {
-                String filePath = files[i].getAbsolutePath().replace(root + File.separator, "");
-                if (filterItem.isEmpty() || filterItem.stream().anyMatch(s -> filePath.contains(s))) {
-                    zos.putNextEntry(new ZipEntry(filePath));
-                    try {
-                        ByteStreams.copy(in, zos);
-                    } finally {
-                        zos.closeEntry();
-                    }
-                }
-
-            }
-        }
-    }
-
     public static void unzip(Path zipFile, Path outputFolder) throws IOException {
         if (zipFile == null || outputFolder == null) {
             return;
