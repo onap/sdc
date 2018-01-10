@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 
 import Common from '../../../../../../common/Common';
@@ -34,7 +35,7 @@ import iconFragmentStop from '../../../../../../../../../../res/ecomp/asdc/seque
 /**
  * Action menu view.
  */
-export default class Actions extends React.Component {
+class Actions extends React.Component {
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -466,6 +467,8 @@ export default class Actions extends React.Component {
 
 /** Element properties. */
 Actions.propTypes = {
-  application: React.PropTypes.object.isRequired,
-  model: React.PropTypes.object.isRequired,
+  application: PropTypes.object.isRequired,
+  model: PropTypes.object.isRequired,
 };
+
+export default Actions;
