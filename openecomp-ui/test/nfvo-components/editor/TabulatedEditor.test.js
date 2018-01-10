@@ -16,7 +16,8 @@
 
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-dom/test-utils';
 import TabulatedEditor from 'nfvo-components/editor/TabulatedEditor.jsx';
 import { Provider } from 'react-redux';
 import {storeCreator} from 'sdc-app/AppStore.js';
@@ -24,7 +25,7 @@ import {storeCreator} from 'sdc-app/AppStore.js';
 describe('Tabulated Editor test: ', function () {
 	const store = storeCreator();
 	it('basic view test', () => {
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<Provider store={store}><TabulatedEditor><button>test</button></TabulatedEditor></Provider>
 		);

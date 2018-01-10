@@ -30,3 +30,4 @@ SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformTo
 };
 
 ReactDOM.render(<Application><Modules/></Application>, document.getElementById('sdc-app'));
+

@@ -24,7 +24,7 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const SoftwareProductProcessEditorPropType = React.PropTypes.shape({
+const SoftwareProductProcessEditorPropType = PropTypes.shape({
 	id: PropTypes.string,
 	name: PropTypes.string,
 	description: PropTypes.string,
@@ -40,10 +40,10 @@ class SoftwareProductProcessesEditorForm extends React.Component {
 	static propTypes = {
 		data: SoftwareProductProcessEditorPropType,
 		previousData: SoftwareProductProcessEditorPropType,
-		isReadOnlyMode: React.PropTypes.bool,
-		onDataChanged: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		onCancel: React.PropTypes.func
+		isReadOnlyMode: PropTypes.bool,
+		onDataChanged: PropTypes.func,
+		onSubmit: PropTypes.func,
+		onCancel: PropTypes.func
 	};
 	state = {
 		dragging: false,

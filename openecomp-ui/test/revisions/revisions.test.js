@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
@@ -31,7 +31,7 @@ import {RevisionsPagePropsFactory} from 'test-utils/factories/revisions/Revision
 import {UserFactory} from 'test-utils/factories/users/UsersFactories.js';
 import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import {screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
 
 const state = {};

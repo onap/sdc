@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Common from '../../../../../../common/Common';
 
 import Message from './Message';
@@ -137,7 +137,7 @@ export default class Messages extends React.Component {
 
 /** Element properties. */
 Messages.propTypes = {
-  application: React.PropTypes.object.isRequired,
-  designer: React.PropTypes.object.isRequired,
-  activeMessageId: React.PropTypes.string,
+  application: PropTypes.object.isRequired,
+  designer: PropTypes.object.isRequired,
+  activeMessageId: PropTypes.string,
 };

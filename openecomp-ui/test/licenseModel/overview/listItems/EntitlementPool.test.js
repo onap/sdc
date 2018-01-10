@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import EntitlementPool from 'src/sdc-app/onboarding/licenseModel/overview/listItems/EntitlementPool.jsx';
 import {EntitlementPoolListItemFactory} from 'test-utils/factories/licenseModel/EntitlementPoolFactories.js';
 

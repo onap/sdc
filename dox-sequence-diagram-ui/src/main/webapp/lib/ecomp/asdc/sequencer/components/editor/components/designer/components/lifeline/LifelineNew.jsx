@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { DragSource } from 'react-dnd';
 
 import Icon from '../../../../../icons/Icon';
@@ -89,9 +90,9 @@ class LifelineNew extends React.Component {
 
 /** Element properties. */
 LifelineNew.propTypes = {
-  designer: React.PropTypes.object.isRequired,
-  lifelines: React.PropTypes.object.isRequired,
-  connectDragSource: React.PropTypes.func.isRequired,
+  designer: PropTypes.object.isRequired,
+  lifelines: PropTypes.object.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
 };
 
 /** DND. */

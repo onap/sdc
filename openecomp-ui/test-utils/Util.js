@@ -17,7 +17,7 @@ import deepFreeze from 'deep-freeze';
 import times from 'lodash/times';
 import pick from 'lodash/pick';
 import intersection from 'lodash/intersection';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 
 export const buildListFromFactory = (factory, quantity = 3, overrides) => {
 	let list = [];

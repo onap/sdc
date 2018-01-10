@@ -15,7 +15,8 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-dom/test-utils';
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoring.js';
 import SoftwareProductComponentsMonitoringView from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringView.jsx';
 
@@ -65,7 +66,7 @@ describe('SoftwareProductComponentsMonitoring Module Tests', function () {
 		expect(results.filenames[trap]).toEqual(undefined);
 		expect(results.filenames[ves]).toEqual(undefined);
 
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<SoftwareProductComponentsMonitoringView {...results} />);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
@@ -79,7 +80,7 @@ describe('SoftwareProductComponentsMonitoring Module Tests', function () {
 		expect(results.filenames[trap]).toEqual(monitoring[trap]);
 		expect(results.filenames[ves]).toEqual(monitoring[ves]);
 
-		let renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(<SoftwareProductComponentsMonitoringView {...results} />);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();

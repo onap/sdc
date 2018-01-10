@@ -66,8 +66,7 @@ class SoftwareProductComponentsMonitoringView extends Component {
 				disableClick={true}
 				ref={refAndName}
 				name={refAndName}
-				accept='.zip'
-				disabled>
+				accept='.zip'>
 				<div className='draggable-wrapper'>
 					<div className='section-title'>{typeDisplayName}</div>
 					{fileName ? this.renderUploadedFileName(fileName, type, isReadOnlyMode) : this.renderUploadButton(refAndName)}

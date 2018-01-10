@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcesses.js';
 import SoftwareProductProcessesView from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessesView.jsx';
 
@@ -24,11 +24,11 @@ import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwarePro
 import {VSPComponentsVersionControllerFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsNetworkFactories.js';
 
 describe('SoftwareProductProcesses Mapper and View Classes', () => {
-	it ('mapStateToProps mapper exists', () => {		
+	it ('mapStateToProps mapper exists', () => {
 		expect(mapStateToProps).toBeTruthy();
 	});
 
-	it ('mapStateToProps data test', () => {		
+	it ('mapStateToProps data test', () => {
 		const currentSoftwareProduct = VSPEditorFactory.build();
 
 		const processesList =   VSPProcessStoreFactory.buildList(2);
@@ -49,19 +49,19 @@ describe('SoftwareProductProcesses Mapper and View Classes', () => {
 		expect(results.processesList).toBeTruthy();
 	});
 
-	it ('view simple test', () => {		
-		const currentSoftwareProduct = VSPEditorFactory.build();			
+	it ('view simple test', () => {
+		const currentSoftwareProduct = VSPEditorFactory.build();
 		const processesList = VSPProcessStoreFactory.buildList(2);
 
 		const versionControllerData = VSPComponentsVersionControllerFactory.build();
-		
-		
-		var renderer = TestUtils.createRenderer();
+
+
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<SoftwareProductProcessesView
 				processesList={processesList}
 				versionControllerData={versionControllerData}
-				currentSoftwareProduct={currentSoftwareProduct}				
+				currentSoftwareProduct={currentSoftwareProduct}
 				onAddProcess={() => {}}
 				onEditProcess={() => {}}
 				onDeleteProcess={() => {}}

@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import _template from 'lodash/template';
 import _merge from 'lodash/merge';
 import * as d3 from 'd3';
@@ -26,7 +27,7 @@ import Popup from './components/popup/Popup';
 /**
  * SVG diagram view.
  */
-export default class Diagram extends React.Component {
+class Diagram extends React.Component {
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -918,5 +919,7 @@ export default class Diagram extends React.Component {
 
 
 Diagram.propTypes = {
-  application: React.PropTypes.object.isRequired,
+  application: PropTypes.object.isRequired,
 };
+
+export default Diagram;

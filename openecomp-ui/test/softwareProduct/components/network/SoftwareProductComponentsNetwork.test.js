@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkList.js';
 import SoftwareProductComponentsNetworkListView from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkListView.jsx';
 
@@ -71,7 +71,7 @@ describe('Software Product Component Network Mapper and View Classes', () => {
 
 		const nicList = VSPComponentsNicWithIdFactory.buildList(1);
 
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<SoftwareProductComponentsNetworkListView
 				versionControllerData={versionControllerData}
