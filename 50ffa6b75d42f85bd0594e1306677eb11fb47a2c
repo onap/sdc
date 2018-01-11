@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5e833104",
+        "filename": "sdc-os-chef/sdc-cassandra/startup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 345
+      },
+      "writtenOn": "2018-01-11T11:42:01Z",
+      "side": 1,
+      "message": "Improvement suggestion:\nMAIN_PID\u003d$!",
+      "revId": "50ffa6b75d42f85bd0594e1306677eb11fb47a2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7e862d15",
+        "filename": "sdc-os-chef/sdc-cassandra/startup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 345
+      },
+      "writtenOn": "2018-01-11T11:42:01Z",
+      "side": 1,
+      "message": "Improvement suggestion (cont.):\nReplace this line with:\nwait $MAIN_PID\n\nThus once $MAIN_PID is ended for some reason - the container will exit as well and, for instance, k8s will start another container instance instead.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 28
+      },
+      "revId": "50ffa6b75d42f85bd0594e1306677eb11fb47a2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
