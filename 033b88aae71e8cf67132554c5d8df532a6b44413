@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_7e24edae",
+        "filename": "openecomp-ui/.babelrc",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-01-11T06:54:34Z",
+      "side": 1,
+      "message": "I think you are missing here a definition for the minimum browser version we support, hence FF 47 - so that the transpilation will work correctly. Please check, something similar to:\n{\n  \"presets\": [\n    [\"env\", {\n      \"targets\": {\n        \"browsers\": [\"last 2 versions\", \"safari \u003e\u003d 7\"]\n      }\n    }]\n  ]\n}",
+      "revId": "033b88aae71e8cf67132554c5d8df532a6b44413",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9819d18a",
         "filename": "openecomp-ui/src/sdc-app/onboarding/OnboardingView.jsx",
         "patchSetId": 1
@@ -13,6 +30,23 @@
       "writtenOn": "2018-01-10T19:14:07Z",
       "side": 1,
       "message": "Can this code be simplified? It hard to believe it\u0027s easy to maintain :(",
+      "revId": "033b88aae71e8cf67132554c5d8df532a6b44413",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_de3421e0",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-01-11T06:54:34Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be controlled by isReadOnlyMode? How is this related to the react upgrade?",
       "revId": "033b88aae71e8cf67132554c5d8df532a6b44413",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
