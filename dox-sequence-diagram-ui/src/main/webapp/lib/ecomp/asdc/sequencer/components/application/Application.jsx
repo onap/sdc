@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Common from '../../common/Common';
 import Logger from '../../common/Logger';
 import Diagram from '../diagram/Diagram';
@@ -27,7 +27,7 @@ import Overlay from '../overlay/Overlay';
 /**
  * Application controller, also a view.
  */
-export default class Application extends React.Component {
+class Application extends React.Component {
 
   /**
    * Construct application view.
@@ -278,6 +278,8 @@ export default class Application extends React.Component {
 
 /** React properties. */
 Application.propTypes = {
-  options: React.PropTypes.object.isRequired,
-  sequencer: React.PropTypes.object.isRequired,
+  options: PropTypes.object.isRequired,
+  sequencer: PropTypes.object.isRequired,
 };
+
+export default Application;

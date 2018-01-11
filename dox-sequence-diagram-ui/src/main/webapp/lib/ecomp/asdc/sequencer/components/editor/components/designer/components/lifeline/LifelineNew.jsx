@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { DragSource } from 'react-dnd';
 
 import Icon from '../../../../../icons/Icon';
@@ -89,9 +90,9 @@ class LifelineNew extends React.Component {
 
 /** Element properties. */
 LifelineNew.propTypes = {
-  designer: React.PropTypes.object.isRequired,
-  lifelines: React.PropTypes.object.isRequired,
-  connectDragSource: React.PropTypes.func.isRequired,
+  designer: PropTypes.object.isRequired,
+  lifelines: PropTypes.object.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
 };
 
 /** DND. */

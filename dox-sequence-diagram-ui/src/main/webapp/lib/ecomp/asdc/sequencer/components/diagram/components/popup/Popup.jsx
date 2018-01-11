@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-
 import Icon from '../../../icons/Icon';
 import iconEdit from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/edit.svg';
 
@@ -25,7 +24,7 @@ import iconEdit from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/i
  * @returns {XML}
  * @constructor
  */
-export default class Popup extends React.Component {
+class Popup extends React.Component {
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -106,3 +105,5 @@ export default class Popup extends React.Component {
     );
   }
 }
+
+export default Popup;

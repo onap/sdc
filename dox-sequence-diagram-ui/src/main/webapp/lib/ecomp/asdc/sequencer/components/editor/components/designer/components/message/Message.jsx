@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { DragSource, DropTarget } from 'react-dnd';
 
@@ -516,17 +517,17 @@ class Message extends React.Component {
  * @type {{designer: *, message: *, from: *, to: *, model: *, connectDragSource: *}}
  */
 Message.propTypes = {
-  application: React.PropTypes.object.isRequired,
-  designer: React.PropTypes.object.isRequired,
-  message: React.PropTypes.object.isRequired,
-  active: React.PropTypes.bool.isRequired,
-  from: React.PropTypes.object.isRequired,
-  to: React.PropTypes.object.isRequired,
-  model: React.PropTypes.object.isRequired,
-  index: React.PropTypes.number.isRequired,
-  messages: React.PropTypes.object.isRequired,
-  connectDragSource: React.PropTypes.func.isRequired,
-  connectDropTarget: React.PropTypes.func.isRequired,
+  application: PropTypes.object.isRequired,
+  designer: PropTypes.object.isRequired,
+  message: PropTypes.object.isRequired,
+  active: PropTypes.bool.isRequired,
+  from: PropTypes.object.isRequired,
+  to: PropTypes.object.isRequired,
+  model: PropTypes.object.isRequired,
+  index: PropTypes.number.isRequired,
+  messages: PropTypes.object.isRequired,
+  connectDragSource: PropTypes.func.isRequired,
+  connectDropTarget: PropTypes.func.isRequired,
 };
 
 /** DND. */

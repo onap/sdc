@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import React from 'react';
@@ -66,6 +66,12 @@ ModalFooter.defaultProps = {
 	type: 'default',
 	confirmationButtonText: i18n('OK'),
 	cancelButtonText: i18n('Cancel')
+};
+
+ModalFooter.PropTypes = {
+	type: PropTypes.string,
+	confirmationButtonText: PropTypes.string,
+	cancelButtonText: PropTypes.string
 };
 
 export const mapStateToProps = ({modal}) => {
@@ -137,6 +143,18 @@ export class  GlobalModalView extends React.Component {
 			setTimeout(this.props.onClose, this.props.timeout);
 		}
 	}
+};
+
+GlobalModalView.propTypes = {
+	show: PropTypes.bool,
+	type: PropTypes.oneOf(['default', 'error', 'warning', 'success']),
+	title: PropTypes.string,
+	modalComponentProps: PropTypes.object,
+	modalComponentName: PropTypes.string,
+	onConfirmed: PropTypes.func,
+	onDeclined: PropTypes.func,
+	confirmationButtonText: PropTypes.string,
+	cancelButtonText: PropTypes.string
 };
 
 export default connect(mapStateToProps, mapActionToProps, null, {withRef: true})(GlobalModalView);

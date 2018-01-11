@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 /**
  * Simple icon view.
  * @param glyph glyph definition, from import.
@@ -33,8 +33,8 @@ const Icon = function Icon({ glyph, className }) {
 
 /** Declare properties. */
 Icon.propTypes = {
-  className: React.PropTypes.string,
-  glyph: React.PropTypes.string.isRequired,
+  className: PropTypes.string,
+  glyph: PropTypes.string.isRequired,
 };
 
 export default Icon;

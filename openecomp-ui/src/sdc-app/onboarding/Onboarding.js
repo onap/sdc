@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-import {createStore, applyMiddleware, compose} from 'redux';
-import Reducers from './Reducers.js';
-const thunk = store => next => action =>
-	typeof action === 'function' ?
-		action(store.dispatch, store.getState) :
-		next(action);
+import OnboardingView from './OnboardingView.jsx';
+import {connect} from 'react-redux';
 
-
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-export const storeCreator = (initialState) => createStore(Reducers, initialState, composeEnhancers(applyMiddleware(thunk)));
-
-
-const store = storeCreator();
-
-if (module.hot) {
-	module.hot.accept('./Reducers.js', () =>
-		store.replaceReducer(require('./Reducers.js').default)
-	);
-}
-
-export default store;
+const mapStateToProps = ({currentScreen}) => ({currentScreen});
+const Onboarding = connect(mapStateToProps, null)(OnboardingView);
+export default Onboarding;
