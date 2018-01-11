@@ -41,11 +41,10 @@ import java.util.zip.ZipFile;
 
 public class ToscaFileOutputServiceCsarImplTest {
 
-  private final ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
-      new ToscaFileOutputServiceCsarImpl();
-
   @Test
   public void testCreationMetaFile() {
+    ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
+        new ToscaFileOutputServiceCsarImpl();
     String createdMeta = toscaFileOutputServiceCSARImpl.createMetaFile("entryFile.yaml");
     String expectedMeta =
         "TOSCA-Meta-File-Version: 1.0\n" +
@@ -57,6 +56,8 @@ public class ToscaFileOutputServiceCsarImplTest {
 
   @Test
   public void testCSARFileCreationWithExternalArtifacts() throws IOException {
+    ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
+        new ToscaFileOutputServiceCsarImpl();
     ServiceTemplate mainServiceTemplate = new ServiceTemplate();
     Map<String, String> metadata1 = new HashMap<>();
     metadata1.put("Template_author", "OPENECOMP");
@@ -133,6 +134,8 @@ public class ToscaFileOutputServiceCsarImplTest {
 
   @Test
   public void testCSARFileCreation_noArtifacts() throws IOException {
+    ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
+        new ToscaFileOutputServiceCsarImpl();
     ServiceTemplate serviceTemplate = new ServiceTemplate();
     Map<String, String> metadata = new HashMap<>();
     metadata.put("Template_author", "OPENECOMP");
