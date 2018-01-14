@@ -80,22 +80,22 @@ public class LoggingContextTest {
     @Test
     public void toRunnableReturnsSameInstance() {
         Runnable test = () -> { /* do nothing */ };
-        assertTrue(test == LoggingContext.toRunnable(test));
+        assertTrue(test == LoggingContext.copyToRunnable(test));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void throwNpeWhenToRunnableWithNull() {
-        LoggingContext.toRunnable(null);
+        LoggingContext.copyToRunnable(null);
     }
 
     @Test
     public void toCallableReturnsSameInstance() {
         Callable<String> test = () -> "";
-        assertTrue(test == LoggingContext.toCallable(test));
+        assertTrue(test == LoggingContext.copyToCallable(test));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void throwNpeWhenToCallableWithNull() {
-        LoggingContext.toCallable(null);
+        LoggingContext.copyToCallable(null);
     }
 }

@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import org.openecomp.sdc.logging.provider.LoggingContextService;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
@@ -46,7 +46,7 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         AtomicBoolean complete = new AtomicBoolean(false);
 
         // pass the callable to the context service first
-        execute(ctx.toCallable(() -> {
+        execute(ctx.copyToCallable(() -> {
             assertEquals(ctx.get(KEY), uuid, EXPECT_PROPAGATED_TO_CHILD);
             complete.set(true);
             return null;
@@ -65,7 +65,7 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         AtomicBoolean innerComplete = new AtomicBoolean(false);
 
         // should run with the context of main thread
-        Callable inner = ctx.toCallable(() -> {
+        Callable inner = ctx.copyToCallable(() -> {
             assertEquals(ctx.get(KEY), innerRandom, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             return null;
@@ -94,7 +94,7 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         assertNull(ctx.get(KEY), EXPECT_EMPTY);
 
         final AtomicBoolean complete = new AtomicBoolean(false);
-        execute(ctx.toCallable(() -> {
+        execute(ctx.copyToCallable(() -> {
             assertNull(ctx.get(KEY), EXPECT_EMPTY);
             complete.set(true);
             return null;
@@ -112,7 +112,7 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
 
         AtomicBoolean innerComplete = new AtomicBoolean(false);
         // should run with the context of main thread
-        Callable inner = ctx.toCallable((() -> {
+        Callable inner = ctx.copyToCallable((() -> {
             assertEquals(ctx.get(KEY), innerRandom, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             return null;
@@ -141,7 +141,7 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
 
         // should run with the context of main thread
         AtomicBoolean innerComplete = new AtomicBoolean(false);
-        Callable inner = ctx.toCallable(() -> {
+        Callable inner = ctx.copyToCallable(() -> {
             assertEquals(ctx.get(KEY), innerRandom, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             throw new IllegalArgumentException();

@@ -33,22 +33,22 @@ public class LoggingContextTest {
 
     @Test
     public void returnMdcWrapperWhenToRunnableCalled() {
-        assertEquals(LoggingContext.toRunnable(() -> {}).getClass(), MDCRunnableWrapper.class);
+        assertEquals(LoggingContext.copyToRunnable(() -> {}).getClass(), MDCRunnableWrapper.class);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void throwNpeWhenToRunnableWithNull() {
-        LoggingContext.toRunnable(null);
+        LoggingContext.copyToRunnable(null);
     }
 
     @Test
     public void returnMdcWrapperWhenToCallableCalled() {
-        assertEquals(LoggingContext.toCallable(() -> "").getClass(), MDCCallableWrapper.class);
+        assertEquals(LoggingContext.copyToCallable(() -> "").getClass(), MDCCallableWrapper.class);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void throwNpeWhenToCallableWithNull() {
-        LoggingContext.toCallable(null);
+        LoggingContext.copyToCallable(null);
     }
 
     @Test

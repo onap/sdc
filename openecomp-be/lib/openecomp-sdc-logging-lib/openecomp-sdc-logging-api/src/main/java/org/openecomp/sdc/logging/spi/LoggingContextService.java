@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.provider;
+package org.openecomp.sdc.logging.spi;
 
 import java.util.concurrent.Callable;
 
@@ -60,11 +60,11 @@ public interface LoggingContextService {
      * Copies logging context of current thread onto a {@link Runnable}, so that the context is available
      * when this {@link Runnable} runs in another thread.
      */
-    Runnable toRunnable(Runnable runnable);
+    Runnable copyToRunnable(Runnable runnable);
 
     /**
      * Copies logging context of current thread onto a {@link Callable}, so that the context is available
      * when this {@link Callable} runs in another thread
      */
-    <V> Callable<V> toCallable(Callable<V> callable);
+    <V> Callable<V> copyToCallable(Callable<V> callable);
 }

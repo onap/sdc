@@ -16,9 +16,9 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.openecomp.sdc.logging.provider.LoggerCreationService;
-import org.openecomp.sdc.logging.provider.LoggingContextService;
-import org.openecomp.sdc.logging.provider.LoggingServiceProvider;
+import org.openecomp.sdc.logging.spi.LoggerCreationService;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
+import org.openecomp.sdc.logging.spi.LoggingServiceProvider;
 
 import java.util.Iterator;
 import java.util.Optional;

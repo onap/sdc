@@ -17,7 +17,7 @@
 package org.openecomp.sdc.logging.slf4j;
 
 import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.provider.LoggingServiceProvider;
+import org.openecomp.sdc.logging.spi.LoggingServiceProvider;
 import org.slf4j.MDC;
 
 import java.util.Objects;
@@ -67,13 +67,13 @@ public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
     }
 
     @Override
-    public Runnable toRunnable(Runnable runnable) {
+    public Runnable copyToRunnable(Runnable runnable) {
         Objects.requireNonNull(runnable, "Runnable cannot be null");
         return new MDCRunnableWrapper(runnable);
     }
 
     @Override
-    public <V> Callable<V> toCallable(Callable<V> callable) {
+    public <V> Callable<V> copyToCallable(Callable<V> callable) {
         Objects.requireNonNull(callable, "Runnable cannot be null");
         return new MDCCallableWrapper<>(callable);
     }

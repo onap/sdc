@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.provider;
+package org.openecomp.sdc.logging.spi;
 
 /**
  * <p>From the application code (consumer) perspective, logger creation (factory) and logging context are independent

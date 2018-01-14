@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.openecomp.sdc.logging.provider.LoggingContextService;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -59,12 +59,12 @@ public class LoggingContext {
         SERVICE.clear();
     }
 
-    public static Runnable toRunnable(Runnable runnable) {
-        return SERVICE.toRunnable(runnable);
+    public static Runnable copyToRunnable(Runnable runnable) {
+        return SERVICE.copyToRunnable(runnable);
     }
 
-    public static <V> Callable<V> toCallable(Callable<V> callable) {
-        return SERVICE.toCallable(callable);
+    public static <V> Callable<V> copyToCallable(Callable<V> callable) {
+        return SERVICE.copyToCallable(callable);
     }
 
     private static class NoOpLoggingContextService implements LoggingContextService {
@@ -95,13 +95,13 @@ public class LoggingContext {
         }
 
         @Override
-        public Runnable toRunnable(Runnable runnable) {
+        public Runnable copyToRunnable(Runnable runnable) {
             Objects.requireNonNull(runnable, "Runnable cannot be null");
             return runnable;
         }
 
         @Override
-        public <V> Callable<V> toCallable(Callable<V> callable) {
+        public <V> Callable<V> copyToCallable(Callable<V> callable) {
             Objects.requireNonNull(callable, "Callable cannot be null");
             return callable;
         }

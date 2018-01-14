@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import org.openecomp.sdc.logging.provider.LoggingContextService;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
@@ -65,7 +65,7 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         AtomicBoolean complete = new AtomicBoolean(false);
 
         // pass the runnable to the context service first
-        Thread thread = new Thread(ctx.toRunnable(() -> {
+        Thread thread = new Thread(ctx.copyToRunnable(() -> {
             assertEquals(ctx.get(KEY), uuid, EXPECT_PROPAGATED_TO_CHILD);
             complete.set(true);
         }));
@@ -87,7 +87,7 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         AtomicBoolean innerComplete = new AtomicBoolean(false);
 
         // should run with the context of main thread
-        Runnable inner = ctx.toRunnable(() -> {
+        Runnable inner = ctx.copyToRunnable(() -> {
             assertEquals(ctx.get(KEY), innerRandom, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
         });
@@ -118,7 +118,7 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         assertNull(ctx.get(KEY), EXPECT_EMPTY);
 
         final AtomicBoolean complete = new AtomicBoolean(false);
-        Runnable runnable = ctx.toRunnable(() -> {
+        Runnable runnable = ctx.copyToRunnable(() -> {
             assertNull(ctx.get(KEY), EXPECT_EMPTY);
             complete.set(true);
         });
@@ -140,7 +140,7 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
 
         AtomicBoolean innerComplete = new AtomicBoolean(false);
         // should run with the context of main thread
-        Runnable inner = ctx.toRunnable(() -> {
+        Runnable inner = ctx.copyToRunnable(() -> {
             assertEquals(ctx.get(KEY), innerRandom, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
         });
@@ -171,7 +171,7 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
 
         // should run with the context of main thread
         AtomicBoolean innerComplete = new AtomicBoolean(false);
-        Runnable inner = ctx.toRunnable(() -> {
+        Runnable inner = ctx.copyToRunnable(() -> {
             assertEquals(ctx.get(KEY), innerRandom, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             throw new IllegalArgumentException();

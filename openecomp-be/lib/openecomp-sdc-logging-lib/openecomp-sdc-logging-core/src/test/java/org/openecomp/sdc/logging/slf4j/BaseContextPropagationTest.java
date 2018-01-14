@@ -17,7 +17,7 @@
 package org.openecomp.sdc.logging.slf4j;
 
 import org.openecomp.sdc.logging.api.LoggingContext;
-import org.openecomp.sdc.logging.provider.LoggingContextService;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
 import org.testng.annotations.DataProvider;
 
 import java.util.concurrent.Callable;
@@ -81,13 +81,13 @@ public abstract class BaseContextPropagationTest {
         }
 
         @Override
-        public Runnable toRunnable(Runnable runnable) {
-            return LoggingContext.toRunnable(runnable);
+        public Runnable copyToRunnable(Runnable runnable) {
+            return LoggingContext.copyToRunnable(runnable);
         }
 
         @Override
-        public <V> Callable<V> toCallable(Callable<V> callable) {
-            return LoggingContext.toCallable(callable);
+        public <V> Callable<V> copyToCallable(Callable<V> callable) {
+            return LoggingContext.copyToCallable(callable);
         }
 
         @Override
