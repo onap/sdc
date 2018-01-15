@@ -38,7 +38,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.NicErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NicInternalNetworkErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NicNetworkIdNotAllowedExternalNetworkErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -61,7 +61,6 @@ public class NicManagerImpl implements NicManager {
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final NetworkManager networkManager;
   private final VendorSoftwareProductInfoDao vspInfoDao;
-  private static final String VSP_ID_COMPONENT_ID = "VSP id, component id";
 
   public NicManagerImpl(NicDao nicDao,
                         CompositionEntityDataManager compositionEntityDataManager,

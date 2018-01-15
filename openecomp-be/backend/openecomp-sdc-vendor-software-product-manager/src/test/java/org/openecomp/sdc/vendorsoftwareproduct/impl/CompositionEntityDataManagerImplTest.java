@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
+package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.mockito.InjectMocks;
@@ -30,6 +30,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.CompositionEntityDataManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;

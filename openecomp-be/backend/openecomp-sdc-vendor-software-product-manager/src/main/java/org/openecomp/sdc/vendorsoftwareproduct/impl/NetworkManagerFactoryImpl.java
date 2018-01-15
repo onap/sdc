@@ -24,7 +24,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 
 public class NetworkManagerFactoryImpl extends NetworkManagerFactory {
   private static final NetworkManager INSTANCE =

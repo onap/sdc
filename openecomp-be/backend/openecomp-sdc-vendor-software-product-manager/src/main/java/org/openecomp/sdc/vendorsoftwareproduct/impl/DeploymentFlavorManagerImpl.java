@@ -33,7 +33,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.DeploymentFlavorErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
@@ -56,7 +56,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   private final DeploymentFlavorDao deploymentFlavorDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final ComputeDao computeDao;
-  private static final String VSP_ID_DEPLOYMENT_FLAVOR_ID = "VSP id, deployment flavor id";
 
   public DeploymentFlavorManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                                      DeploymentFlavorDao deploymentFlavorDao,

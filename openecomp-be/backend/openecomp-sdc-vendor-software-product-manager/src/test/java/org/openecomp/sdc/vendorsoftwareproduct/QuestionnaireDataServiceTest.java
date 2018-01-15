@@ -38,7 +38,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandida
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactData;
 import org.openecomp.sdc.vendorsoftwareproduct.questionnaire.QuestionnaireDataService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.tree.UploadFileTest;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;

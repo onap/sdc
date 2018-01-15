@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
+package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -30,6 +30,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
@@ -46,7 +47,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
@@ -262,8 +262,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     return false;
   }
 
-  public void saveComponents(String vspId, Version version, CompositionData compositionData,
-                             Map<String, String> networkIdByName) {
+  private void saveComponents(String vspId, Version version, CompositionData compositionData,
+                              Map<String, String> networkIdByName) {
     if (CollectionUtils.isNotEmpty(compositionData.getComponents())) {
       for (Component component : compositionData.getComponents()) {
         ComponentEntity componentEntity = new ComponentEntity(vspId, version, null);
@@ -279,9 +279,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     }
   }
 
-  public void saveNicsByComponent(String vspId, Version version,
-                                  Map<String, String> networkIdByName, Component component,
-                                  String componentId) {
+  private void saveNicsByComponent(String vspId, Version version,
+                                   Map<String, String> networkIdByName, Component component,
+                                   String componentId) {
     if (CollectionUtils.isNotEmpty(component.getNics())) {
       for (Nic nic : component.getNics()) {
         if (nic.getNetworkName() != null && MapUtils.isNotEmpty(networkIdByName)) {
@@ -298,8 +298,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     }
   }
 
-  public Map<String, String> saveNetworks(String vspId, Version version,
-                                          CompositionData compositionData) {
+  private Map<String, String> saveNetworks(String vspId, Version version,
+                                           CompositionData compositionData) {
     Map<String, String> networkIdByName = new HashMap<>();
     if (CollectionUtils.isNotEmpty(compositionData.getNetworks())) {
       for (Network network : compositionData.getNetworks()) {
@@ -315,8 +315,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     return networkIdByName;
   }
 
-  @Override
-  public NetworkEntity createNetwork(NetworkEntity network) {
+  private NetworkEntity createNetwork(NetworkEntity network) {
     //network.setId(CommonMethods.nextUuId()); will be set by the dao
     networkDao.create(network);
     return network;
@@ -353,8 +352,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   }
 
   /* *
-  * get a flat list of all questionnaire entities that have validation errors
-  * */
+   * get a flat list of all questionnaire entities that have validation errors
+   * */
   public Set<CompositionEntityValidationData> getEntityListWithErrors() {
     Set<CompositionEntityValidationData> treeAsList = new HashSet<>();
 
@@ -370,8 +369,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   }
 
   private void getEntityListWithErrors(CompositionEntityValidationData entity,
-                                      Set<CompositionEntityValidationData> compositionSet) {
-    if(CollectionUtils.isNotEmpty(entity.getErrors())){
+                                       Set<CompositionEntityValidationData> compositionSet) {
+    if (CollectionUtils.isNotEmpty(entity.getErrors())) {
       addNodeWithErrors(entity, compositionSet);
     }
 
@@ -386,7 +385,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
 
   private void addNodeWithErrors(CompositionEntityValidationData node,
-                                Set<CompositionEntityValidationData> entitiesWithErrors) {
+                                 Set<CompositionEntityValidationData> entitiesWithErrors) {
     CompositionEntityValidationData compositionNodeToAdd = new CompositionEntityValidationData(node
         .getEntityType(), node.getEntityId());
     compositionNodeToAdd.setErrors(node.getErrors());
@@ -580,7 +579,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   // todo - make SchemaGenerator non static and mock it in UT instead of mocking this method (and
   // make the method private
-
   protected String generateSchema(SchemaTemplateContext schemaTemplateContext,
                                   CompositionEntityType compositionEntityType,
                                   SchemaTemplateInput schemaTemplateInput) {
