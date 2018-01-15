@@ -39,15 +39,9 @@ import com.amdocs.zusammen.datatypes.item.Resolution;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
 import com.amdocs.zusammen.datatypes.response.Response;
-import com.amdocs.zusammen.datatypes.response.ReturnCode;
 import org.openecomp.core.zusammen.db.ZusammenConnector;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
-import org.openecomp.core.zusammen.impl.ItemElementLoggerTargetServiceName;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
 
 import java.util.Collection;
 
@@ -57,10 +51,10 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
       "Failed to get element. Item Id: %s, version Id: %s, element Id: %s message: %s";
   private static final String GET_ELEMENT_IN_REV_ERR_MSG =
       "Failed to get element. Item Id: %s, version Id: %s, revision Id: %s, element Id: %s message: %s";
-  private ItemAdaptorFactory itemAdaptorFactory;
-  private ItemVersionAdaptorFactory versionAdaptorFactory;
-  private ElementAdaptorFactory elementAdaptorFactory;
-  private HealthAdaptorFactory healthAdaptorFactory;
+  private final ItemAdaptorFactory itemAdaptorFactory;
+  private final ItemVersionAdaptorFactory versionAdaptorFactory;
+  private final ElementAdaptorFactory elementAdaptorFactory;
+  private final HealthAdaptorFactory healthAdaptorFactory;
 
   public ZusammenConnectorImpl(
       ItemAdaptorFactory itemAdaptorFactory,
@@ -130,8 +124,6 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     Response<Collection<ItemVersion>> versions =
         versionAdaptorFactory.createInterface(context).list(context, Space.PUBLIC, itemId);
     if (!versions.isSuccessful()) {
-      logErrorMessageToMdc(ItemElementLoggerTargetServiceName.ITEM_VERSION_RETRIEVAL, versions
-          .getReturnCode());
       throw new SdcRuntimeException("failed to list public versions. message: " +
               versions.getReturnCode().toString());
     }
@@ -309,8 +301,6 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     if (response.isSuccessful()) {
       return response.getValue();
     } else {
-      logErrorMessageToMdc(ItemElementLoggerTargetServiceName.ELEMENT_GET_BY_PROPERTY,
-          response.getReturnCode());
       throw new SdcRuntimeException(response.getReturnCode().toString());
     }
   }
@@ -399,22 +389,4 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
         elementContext.getRevisionId().getValue(),
         elementId.getValue(), zusammenErrorMessage));
   }
-
-  private void logErrorMessageToMdc(ItemElementLoggerTargetServiceName
-                                        itemElementLoggerTargetServiceName,
-                                    ReturnCode returnCode) {
-    logErrorMessageToMdc(itemElementLoggerTargetServiceName, returnCode.toString());
-  }
-
-  private void logErrorMessageToMdc(ItemElementLoggerTargetServiceName
-                                        itemElementLoggerTargetServiceName,
-                                    String message) {
-    MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-        itemElementLoggerTargetServiceName.getDescription(),
-        ErrorLevel.ERROR.name(),
-        LoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode(),
-        message);
-  }
-
-
 }
