@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,6 +58,7 @@ import {ComponentMetadata} from "./models/component-metadata";
 import {Categories} from "./models/categories";
 import {IUserProperties} from "./models/user";
 import {SearchWithAutoCompleteComponent} from "./ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
+import {DesignerFrameComponent} from "./ng2/components/ui/designer/designer-frame.component";
 
 
 let moduleName:string = 'sdcApp';
@@ -152,7 +153,7 @@ angular.module('sdcApp').directive('ng2SearchWithAutocomplete',
         inputs: ['searchPlaceholder', 'searchBarClass', 'autoCompleteValues'],
         outputs: ['searchChanged', 'searchButtonClicked']
     }) as angular.IDirectiveFactory);
-
+angular.module('sdcApp').directive('designerFrame', downgradeComponent( {component: DesignerFrameComponent, inputs: ['designer']} ) as angular.IDirectiveFactory);
 
 ng1appModule.config([
     '$stateProvider',
@@ -530,6 +531,14 @@ ng1appModule.config([
                 url: '/onboardVendor',
                 templateUrl: './view-models/onboard-vendor/onboard-vendor-view.html',
                 controller: viewModelsModuleName + '.OnboardVendorViewModel'//,
+            }
+        );
+
+        $stateProvider.state(
+            'designers', {
+                url: '/designers/*path',
+                templateUrl: './view-models/designers/designers-view.html',
+                controller: viewModelsModuleName + '.DesignersViewModel'
             }
         );
 

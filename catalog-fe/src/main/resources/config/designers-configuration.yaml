@@ -1,13 +1,17 @@
 designersList:
-    DCAE:
-        displayName: DCAE
-        designerHost: 192.168.50.5
-        designerPort: 8080
-        designerPath: "/dcae"
-        designerProtocol: http
-    WORKFLOW:
-        displayName: WORKFLOW
-        designerHost: 192.168.50.5
-        designerPort: 9527
-        designerPath: ""
-        designerProtocol: http
+   - displayName: DCAE
+     designerHost: 192.168.50.5
+     designerPort: 8080
+     designerPath: "/dcae"
+     designerStateUrl: "dcae"
+     designerProtocol: http
+     buttonLocation: ["top", "tab"]
+     tabPresentation: ["VF", "SERVICE"]
+   - displayName: WORKFLOW
+     designerHost: 192.168.50.5
+     designerPort: 9527
+     designerPath: "/"
+     designerStateUrl: "workflowDesigner"
+     designerProtocol: http
+     buttonLocation: ["top"]
+     tabPresentation: []

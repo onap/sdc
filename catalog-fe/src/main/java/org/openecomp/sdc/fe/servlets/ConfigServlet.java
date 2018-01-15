@@ -124,7 +124,7 @@ public class ConfigServlet extends BasicServlet {
 
 		DesignerStatusBL designerStatusBL = (DesignerStatusBL) context.getAttribute(Constants.DESIGNER_BL_COMPONENT);		
 
-		result = designerStatusBL.checkDesinerListAvailability();
+		result = designerStatusBL.checkDesignerListAvailability();
 
 		return Response.status(Status.OK).entity(result).build();
 

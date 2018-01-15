@@ -24,6 +24,7 @@ import {MenuItemGroup, MenuItem} from "app/utils";
 import {UserService} from "../../../services/user.service";
 import {SdcConfigToken, ISdcConfig} from "../../../config/sdc-config.config";
 import {TranslateService} from "../../../shared/translator/translate.service";
+import {DesignersConfiguration, Designer} from "app/models";
 
 
 declare const window:any;
@@ -62,10 +63,20 @@ export class TopNavComponent {
         let result = -1;
 
         //set result to current state
-        this.topLvlMenu.menuItems.forEach((item:MenuItem, index:number)=> {
+        this.topLvlMenu.menuItems.every((item:MenuItem, index:number)=> {
             if (item.state === this.$state.current.name) {
-                result = index;
+                if (this.$state.current.name === 'designers') {
+                    const designerIdx = _.findIndex(DesignersConfiguration.designers, (designer: Designer) => designer.designerStateUrl === this.$state.params.path);
+                    if (designerIdx !== -1) {
+                        result = index + designerIdx;
+                        return false;
+                    }
+                } else {
+                    result = index;
+                    return false;
+                }
             }
+            return true;
         });
 
         //if it's a different state , checking previous state param
@@ -109,6 +120,10 @@ export class TopNavComponent {
                         tmpArray.push(new MenuItem(hostedApp.navTitle, null, hostedApp.defaultState, "goToState", null, null));
                     }
                 });
+
+                _.each(DesignersConfiguration.designers, (designer: Designer) => {
+                    tmpArray.push(new MenuItem(designer.displayName, null, "designers", "goToState", {path: designer.designerStateUrl}, null));
+                })
             }
 
             this.topLvlMenu = new MenuItemGroup(0, tmpArray, true);
@@ -124,9 +139,9 @@ export class TopNavComponent {
         }
     }
 
-    goToState(state:string, params:Array<any>):Promise<boolean> {
+    goToState(state:string, params:any):Promise<boolean> {
         return new Promise((resolve, reject) => {
-            this.$state.go(state, params && params.length > 0 ? [0] : undefined);
+            this.$state.go(state, params || undefined);
             resolve(true);
         });
     }

@@ -4,8 +4,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
@@ -30,12 +30,12 @@ public class DesignerStatusBLTest {
 	private static  Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
-	final static DesignersConfiguration designersConfiguraiton = Mockito.mock(DesignersConfiguration.class);
+	final static DesignersConfiguration designersConfiguration = Mockito.mock(DesignersConfiguration.class);
 	final static Designer offlineDesigner = new Designer();
-	final static Designer onlineDesinger = new Designer();	
+	final static Designer onlineDesigner = new Designer();
 	final static CloseableHttpResponse httpResponse = Mockito.mock(CloseableHttpResponse.class);
 	final static StatusLine statusLine = Mockito.mock(StatusLine.class); 
-	final static Map<String, Designer> testDesignersList = new HashMap<String, Designer>();
+	final static List<Designer> testDesignersList = new ArrayList<>();
 
 	final static String offlineDesignerDisplayName = "offlineDesigner";
 	final static String offlineDesignerHost = "192.168.10.1";
@@ -48,14 +48,11 @@ public class DesignerStatusBLTest {
 	final static int onlineDesignerPort = 2000;
 	final static String onlineDesignerPath = "/online";
 	final static String onlineDesignerProtocol = "http";
-	
-	StringBuilder offlineRequestString = new StringBuilder();
-	StringBuilder onlineRequestString = new StringBuilder();
 
 	@BeforeClass
 	public static void beforeClass() {
 		ConfigurationManager.setTestInstance(configurationManager);
-		when(configurationManager.getDesignersConfiguration()).thenReturn(designersConfiguraiton);
+		when(configurationManager.getDesignersConfiguration()).thenReturn(designersConfiguration);
 		
 		offlineDesigner.setDisplayName(offlineDesignerDisplayName);
 		offlineDesigner.setDesignerHost(offlineDesignerHost);
@@ -67,11 +64,11 @@ public class DesignerStatusBLTest {
 		offlineRequestString.append(offlineDesignerProtocol).append("://").append(onlineDesignerHost).append(":")
 				.append(offlineDesignerPort).append(offlineDesignerPath);
 
-		onlineDesinger.setDisplayName(onlineDesignerDisplayName);
-		onlineDesinger.setDesignerHost(onlineDesignerHost);
-		onlineDesinger.setDesignerPort(onlineDesignerPort);
-		onlineDesinger.setDesignerPath(onlineDesignerPath);
-		onlineDesinger.setDesignerProtocol(onlineDesignerProtocol);
+		onlineDesigner.setDisplayName(onlineDesignerDisplayName);
+		onlineDesigner.setDesignerHost(onlineDesignerHost);
+		onlineDesigner.setDesignerPort(onlineDesignerPort);
+		onlineDesigner.setDesignerPath(onlineDesignerPath);
+		onlineDesigner.setDesignerProtocol(onlineDesignerProtocol);
 
 		StringBuilder onlineRequestString = new StringBuilder();
 		onlineRequestString.append(onlineDesignerProtocol).append("://").append(onlineDesignerHost).append(":")
@@ -80,22 +77,22 @@ public class DesignerStatusBLTest {
 	}
 
 	@Test
-	public void TestOfflineDesignerNotBeingReturnedWhenCallingCheckDesinerListAvailability() throws ClientProtocolException, IOException {
-		testDesignersList.put("offlineDesigner", offlineDesigner);
-		when(designersConfiguraiton.getDesignersList()).thenReturn(testDesignersList);
+	public void TestOfflineDesignerNotBeingReturnedWhenCallingCheckDesignerListAvailability() throws ClientProtocolException, IOException {
+		testDesignersList.add(offlineDesigner);
+		when(designersConfiguration.getDesignersList()).thenReturn(testDesignersList);
 		
 		when(statusLine.getStatusCode()).thenReturn(404);		
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
 		when(httpClient.execute(Mockito.any(HttpHead.class))).thenReturn(httpResponse);
 		
-		assertTrue(designerStatusBL.checkDesinerListAvailability().equals("{}"));
+		assertTrue(designerStatusBL.checkDesignerListAvailability().equals("[]"));
 		
 	}
 	
 	@Test
-	public void TestOnlineDesignerNotBeingReturnedWhenCallingCheckDesinerListAvailability() throws ClientProtocolException, IOException {
-		testDesignersList.put("onlineDesigner", onlineDesinger);
-		when(designersConfiguraiton.getDesignersList()).thenReturn(testDesignersList);
+	public void TestOnlineDesignerNotBeingReturnedWhenCallingCheckDesignerListAvailability() throws ClientProtocolException, IOException {
+		testDesignersList.add(onlineDesigner);
+		when(designersConfiguration.getDesignersList()).thenReturn(testDesignersList);
 		
 		when(statusLine.getStatusCode()).thenReturn(200);		
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
@@ -103,7 +100,7 @@ public class DesignerStatusBLTest {
 		
 		String result = gson.toJson(testDesignersList);
 		
-		assertTrue(designerStatusBL.checkDesinerListAvailability().equals(result));
+		assertTrue(designerStatusBL.checkDesignerListAvailability().contains(result));
 		
 	}
 

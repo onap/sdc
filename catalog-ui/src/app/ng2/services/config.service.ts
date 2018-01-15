@@ -25,7 +25,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
-import {IAppConfigurtaion, ValidationConfiguration, Validations} from "app/models";
+import {IAppConfigurtaion, ValidationConfiguration, Validations, Designers, DesignersConfiguration} from "app/models";
 import {IApi} from "app/models/app-config";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 
@@ -69,15 +69,18 @@ export class ConfigService {
         return promise;
     }
 
-    loadDesignersConfiguration(): void {
+    loadDesignersConfiguration(): Promise<DesignersConfiguration> {
         let url:string = this.api.no_proxy_root + this.api.GET_designers_configuration;
         let promise: Promise<any> = this.http.get(url).map((res: Response) => res.json()).toPromise();
-
-        promise.then((config:any) => {
-            console.log(config);
+        promise.then((designersData: Designers) => {
+            DesignersConfiguration.designers = designersData;
         }).catch((ex) => {
-            console.error('Error was:', ex);
-        })
+           console.error("Error loading designers configuration from BE", ex);
+
+            DesignersConfiguration.designers = [] as Designers;
+        });
+
+        return promise;
     }
 
 }

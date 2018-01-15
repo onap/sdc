@@ -46,6 +46,7 @@ import {UserService} from "./services/user.service";
 import {SdcConfig} from "./config/sdc-config.config";
 import { TranslateModule } from "./shared/translator/translate.module";
 import { TranslationServiceConfig } from "./config/translation.service.config";
+import {DesignerFrameModule} from "./components/ui/designer/designer-frame.module";
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -72,7 +73,8 @@ export function configServiceFactory(config:ConfigService) {
 
         //We need to import them here since we use them in angular1
         ConnectionWizardModule,
-        PropertiesAssignmentModule
+        PropertiesAssignmentModule,
+        DesignerFrameModule
     ],
     exports: [],
     entryComponents: [],
