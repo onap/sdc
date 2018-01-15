@@ -22,6 +22,9 @@
   &:hover {
     border-color: $gray;
   }
+  &.custom-select {
+    padding-top: 3px;
+  }
 }
 
 label {

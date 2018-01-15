@@ -99,6 +99,7 @@ class Input extends React.Component {
 						data-test-id={this.props['data-test-id']} />}
 					{type === 'select' &&
 					<FormControl onClick={ (e) => this.optionSelect(e) }
+						 className='custom-select'
 						 componentClass={type}
 						 inputRef={(input) => this.input = input}
 						 name={name} {...inputProps}
