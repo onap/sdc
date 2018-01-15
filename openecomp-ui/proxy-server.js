@@ -93,7 +93,7 @@ module.exports = function (server) {
 	var wsProxy = proxy(devConfig.proxyConfig.websocketProxy.proxy, Object.assign({}, proxyConfigDefaults, {
 		target: websocketTarget,
 		ws: true
-	}))
+	}));
 	middlewares.push(wsProxy);
 
 
