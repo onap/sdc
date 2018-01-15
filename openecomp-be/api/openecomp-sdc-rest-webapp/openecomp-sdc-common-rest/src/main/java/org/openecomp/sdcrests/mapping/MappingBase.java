@@ -17,12 +17,7 @@
 package org.openecomp.sdcrests.mapping;
 
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 
 /**
  * Base class for all mapping classes. Mapping classes will perform data mapping from source object
@@ -62,8 +57,8 @@ public abstract class MappingBase<S, T> {
   /**
    * This method is called before the <code>doMapping</code> method.
    */
-
   public void preMapping(final S source, T target) {
+    // extension point
   }
 
   /**
@@ -80,8 +75,8 @@ public abstract class MappingBase<S, T> {
   /**
    * This method is called after the <code>doMapping</code> method.
    */
-
   public void postMapping(final S source, T target) {
+    // extension point
   }
 
   /**
@@ -91,26 +86,13 @@ public abstract class MappingBase<S, T> {
    */
 
   private Object instantiateTarget(final Class<?> clazz) {
-    Object object = null;
+
     try {
-      object = clazz.newInstance();
-
+      return clazz.newInstance();
     } catch (InstantiationException | IllegalAccessException exception ) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(
-          LoggerConstants.TARGET_ENTITY,
-          LoggerServiceName.Create_LIMIT.toString(), ErrorLevel.ERROR.name(),
-          exception.getMessage(), exception.getMessage());
-
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-          .withMessage(exception.getMessage())
-          .withId(exception.getMessage())
-          .withCategory(ErrorCategory.APPLICATION).build());
-
-
+          .withMessage(exception.getMessage()).build(), exception);
     }
-    return object;
-
   }
-
 }
 
