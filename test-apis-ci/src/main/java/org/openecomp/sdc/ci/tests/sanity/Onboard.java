@@ -86,6 +86,11 @@ public class Onboard extends ComponentBaseTest {
 		System.out.println("print - >" + makeDistributionValue);
 		runOnboardToDistributionFlow(filePath, vnfFile);
 	}
+
+	@Test
+	public void passTest() {
+		System.out.println("print - >" + "test Passed");
+	}
 	
 
 	
