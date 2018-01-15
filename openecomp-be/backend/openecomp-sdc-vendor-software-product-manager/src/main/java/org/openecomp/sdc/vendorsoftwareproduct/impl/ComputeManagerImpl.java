@@ -39,7 +39,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.DuplicateComputeInComponentErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ListComputeResponse;
@@ -66,9 +66,6 @@ public class ComputeManagerImpl implements ComputeManager {
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final DeploymentFlavorDao deploymentFlavorDao;
-  private static final  String VSP_ID_COMPONENT_ID = "VSP id, component id";
-  private static final  String VSP_ID_COMPONENT_ID_COMPUTE_ID
-          = "VSP id, component id, compute id";
 
   public ComputeManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                             ComputeDao computeDao,

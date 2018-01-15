@@ -25,7 +25,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 
 public class NicManagerFactoryImpl extends NicManagerFactory {
   private static final NicManager INSTANCE =

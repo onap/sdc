@@ -57,7 +57,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;

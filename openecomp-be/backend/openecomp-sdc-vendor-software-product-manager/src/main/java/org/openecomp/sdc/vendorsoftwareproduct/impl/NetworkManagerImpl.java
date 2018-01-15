@@ -29,7 +29,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.CompositionEditNotAllowedErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
@@ -46,9 +46,6 @@ public class NetworkManagerImpl implements NetworkManager {
   private final NetworkDao networkDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final VendorSoftwareProductInfoDao VSPInfoDao;
-
-  private static final  String VSP_ID = "VSP id";
-  private static final String VSP_ID_NETWORK_ID = "VSP id, network id";
 
   public NetworkManagerImpl(NetworkDao networkDao,
                             CompositionEntityDataManager compositionEntityDataManager,

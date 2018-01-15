@@ -18,11 +18,10 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.vendorsoftwareproduct.factory;
+package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 
 public abstract class CompositionEntityDataManagerFactory extends
     AbstractComponentFactory<CompositionEntityDataManager> {

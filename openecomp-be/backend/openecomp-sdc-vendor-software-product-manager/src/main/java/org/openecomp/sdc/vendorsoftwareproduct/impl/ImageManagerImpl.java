@@ -34,7 +34,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ImageErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -56,8 +56,6 @@ public class ImageManagerImpl implements ImageManager {
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final ImageDao imageDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
-  private  static final String VSP_ID = "VSP id";
-  private static final String VSP_ID_COMPONENT_ID = "VSP id, component id";
 
   public ImageManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                           ImageDao imageDao,

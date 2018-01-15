@@ -82,9 +82,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageInvalidErrorBuilder
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireValidationResult;
@@ -134,7 +134,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private final ComputeDao computeDao;
   private final ImageDao imageDao;
   private final ManualVspToscaManager manualVspToscaManager;
-  private static final String VSP_ID = "VSP id";
   private static final String PACKAGE_NOT_FOUND = "Package not found";
 
   public VendorSoftwareProductManagerImpl(

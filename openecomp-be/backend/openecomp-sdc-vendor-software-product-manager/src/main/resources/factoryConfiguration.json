@@ -1,5 +1,6 @@
 {
   "org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.VspManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.CompositionEntityDataManagerFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ComponentManagerFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.NetworkManagerFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.NicManagerFactoryImpl",

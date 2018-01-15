@@ -38,7 +38,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.CompositionEditNotAllowedErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -64,8 +64,6 @@ public class ComponentManagerImpl implements ComponentManager {
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final NicManager nicManager;
   private final VendorSoftwareProductInfoDao vspInfoDao;
-  private static final String VSP_ID = "VSP id";
-  private static final String VSP_ID_COMPONENT_ID = "VSP id, component id";
 
   public ComponentManagerImpl(ComponentDao componentDao,
                               CompositionEntityDataManager compositionEntityDataManager,

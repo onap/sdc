@@ -5,7 +5,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.ComputeManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 
 public class ComputeManagerFactoryImpl extends ComputeManagerFactory {
 

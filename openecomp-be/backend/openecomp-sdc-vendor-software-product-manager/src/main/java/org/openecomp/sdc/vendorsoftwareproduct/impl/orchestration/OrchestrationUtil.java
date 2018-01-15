@@ -61,9 +61,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEnt
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionDataExtractorFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
-import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
