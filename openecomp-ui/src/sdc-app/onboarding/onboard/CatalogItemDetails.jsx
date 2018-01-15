@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {catalogItemTypes, migrationStatusMapper} from './onboardingCatalog/OnboardingCatalogConstants.js';
-import {Tile, TileInfo, TileInfoLine} from 'sdc-ui/lib/react';
+import {Tile, TileInfo, TileInfoLine, TileFooter, TileFooterCell} from 'sdc-ui/lib/react';
 import {TooltipWrapper} from './onboardingCatalog/Tooltip.jsx';
 
 const ITEM_TYPE_MAP = {
@@ -35,7 +35,7 @@ const ITEM_TYPE_MAP = {
 
 const CatalogItemDetails = ({catalogItemData, catalogItemTypeClass, onSelect, onMigrate}) => {
 
-	let {vendorName, name} = catalogItemData;
+	let {vendorName, name, owner} = catalogItemData;
 	let {headerText, color, contentIconName} = ITEM_TYPE_MAP[catalogItemTypeClass];
 
 	let onClick = (e) => {
@@ -66,6 +66,11 @@ const CatalogItemDetails = ({catalogItemData, catalogItemTypeClass, onSelect, on
 					<TooltipWrapper className='with-overlay' tooltipClassName='tile-title-info' dataTestId='catalog-item-name'>{name}</TooltipWrapper>
 				</TileInfoLine>
 			</TileInfo>
+				<TileFooter>
+				{owner &&
+					<TileFooterCell>Owner - {owner}</TileFooterCell>
+				}
+				</TileFooter>
 		</Tile>
 	);
 
