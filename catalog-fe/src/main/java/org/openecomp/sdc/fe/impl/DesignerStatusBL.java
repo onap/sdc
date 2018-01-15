@@ -1,8 +1,8 @@
 package org.openecomp.sdc.fe.impl;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpHead;
@@ -32,31 +32,31 @@ public class DesignerStatusBL {
 				
 	}
 
-	public String checkDesinerListAvailability() {
+	public String checkDesignerListAvailability() {
 		String result = null;
 
-		DesignersConfiguration designersConfiguarion = ConfigurationManager.getConfigurationManager()
+		DesignersConfiguration designersConfiguration = ConfigurationManager.getConfigurationManager()
 				.getDesignersConfiguration();
 
-		if (designersConfiguarion == null || designersConfiguarion.getDesignersList() == null) {
+		if (designersConfiguration == null || designersConfiguration.getDesignersList() == null) {
 			log.warn("Configuration of type {} was not found", DesignersConfiguration.class);
 		} else {
-			log.debug("The value returned from getConfig is {}", designersConfiguarion);
+			log.debug("The value returned from getConfig is {}", designersConfiguration);
 
-			Map<String, Designer> avaiableDesignersMap = new HashMap<String, Designer>();
+			List<Designer> availableDesignersList = new ArrayList<>();
 
-			designersConfiguarion.getDesignersList().forEach((key, value) -> {
-				if (CheckDesignerAvailabilty(value)) {
-					avaiableDesignersMap.put(key, value);
+			designersConfiguration.getDesignersList().forEach(value -> {
+				if (checkDesignerAvailability(value)) {
+					availableDesignersList.add(value);
 				}
 
 			});
-			result = gson.toJson(avaiableDesignersMap);
+			result = gson.toJson(availableDesignersList);
 		}
 		return result;
 	}
 
-	private boolean CheckDesignerAvailabilty(Designer designer) {
+	private boolean checkDesignerAvailability(Designer designer) {
 
 		StringBuilder requestString = new StringBuilder();
 		boolean result = false;

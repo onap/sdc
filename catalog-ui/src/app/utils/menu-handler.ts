@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ export class MenuItem {
     callback:(...args:Array<any>) => ng.IPromise<boolean>;
     state:string;
     action:string;
-    params:Array<any>;
+    params:any;
     isDisabled:boolean;
     disabledRoles:Array<string>;
     blockedForTypes:Array<string>;  // This item will not be shown for specific components types.
@@ -42,7 +42,7 @@ export class MenuItem {
     url:string;                     // Data added to menu item, in case the function need to use it, example: for function "changeLifecycleState", I need to pass also the state "CHECKOUT" that I want the state to change to.
 
 
-    constructor(text:string, callback:(...args:Array<any>) => ng.IPromise<boolean>, state:string, action:string, params?:Array<any>, blockedForTypes?:Array<string>) {
+    constructor(text:string, callback:(...args:Array<any>) => ng.IPromise<boolean>, state:string, action:string, params?:any, blockedForTypes?:Array<string>) {
         this.text = text;
         this.callback = callback;
         this.state = state;

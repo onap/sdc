@@ -94,7 +94,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 	
 	public DesignersConfiguration getDesignersConfiguration() {
 		
-		log.info("requested designers configuration and got this:{}", (DesignersConfiguration) configurations.get(getKey(DesignersConfiguration.class)));
+		log.info("requested designers configuration and got this:{}", configurations.get(getKey(DesignersConfiguration.class)));
 		
 		return (DesignersConfiguration) configurations.get(getKey(DesignersConfiguration.class));
 	}
