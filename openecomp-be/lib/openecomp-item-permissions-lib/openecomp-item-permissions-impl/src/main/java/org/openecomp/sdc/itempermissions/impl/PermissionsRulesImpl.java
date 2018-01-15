@@ -56,7 +56,8 @@ public class PermissionsRulesImpl implements PermissionsRules {
           break;
 
         case Submit_Item:
-          if (permission.equals(PermissionTypes.Owner.name())) {
+          if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
+              (PermissionTypes.Owner.name())) {
             return true;
           }
           break;

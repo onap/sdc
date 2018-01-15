@@ -1,17 +1,17 @@
-/*
+/*!
  * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 
@@ -105,10 +105,22 @@ describe('versionController UI Component', () => {
 		expect(elem.length).toBe(1);
 	});
 
-	it('Doesn\'t show the submit button when user is not owner', () => {
-		const permissions = {owner: {userId: '111'}},
-			userInfo = {userId: '222'};
+	it('Shows the submit button when callVCAction available and user is contributor', () => {
+		const permissions = {owner: {userId: '111'}, contributors: ['232']},
+			userInfo = {userId: '232'};
 		let callVCActionProps = { ...props, callVCAction: function(){}, permissions, userInfo};
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...callVCActionProps} /></Provider>);
+		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-submit-btn');
+		expect(elem).toBeTruthy();
+		expect(elem.length).toBe(1);
+	});
+
+	it('Doesn\'t show the submit button when user is not owner or contributor', () => {
+		const permissions = {owner: {userId: '111'}, contributors: ['232']},
+			userInfo = {userId: '222'};
+		const propsViewer = {...props,
+			itemPermission: {isCertified: false, isCollaborator: false, isDirty: false}};
+		let callVCActionProps = { ...propsViewer, callVCAction: function(){}, permissions, userInfo};
 		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...callVCActionProps} /></Provider>);
 		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-submit-btn');
 		expect(elem).toBeTruthy();

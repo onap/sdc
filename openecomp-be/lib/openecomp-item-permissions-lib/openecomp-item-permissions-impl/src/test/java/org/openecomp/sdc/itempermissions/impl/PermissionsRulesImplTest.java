@@ -61,7 +61,7 @@ public class PermissionsRulesImplTest {
 
   @Test
   public void testIsAllowedCaseSubmitNotOwner(){
-    Assert.assertFalse(permissionsRules.isAllowed(PERMISSION_CONTRIBUTOR,SUBMIT_ACTION));
+    Assert.assertTrue(permissionsRules.isAllowed(PERMISSION_CONTRIBUTOR,SUBMIT_ACTION));
   }
 
   @Test

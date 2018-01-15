@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2017 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ const ActionButtons = ({isReadOnlyMode, onSubmit, onRevert, onSave, isFormDataVa
 				<VCButton dataTestId='vc-revert-btn' onClick={onOpenRevisionsModal}
 					name='version-controller-revert' tooltipText={i18n('Revert')} disabled={isReadOnlyMode || isOutOfSync} />
 			}
-			{onSubmit && (permissions.owner && permissions.owner.userId === userInfo.userId) &&
+			{onSubmit &&
 				<div className='vc-submit-section'>
 					<Separator />
 					<SubmitButton onClick={onSubmit}
