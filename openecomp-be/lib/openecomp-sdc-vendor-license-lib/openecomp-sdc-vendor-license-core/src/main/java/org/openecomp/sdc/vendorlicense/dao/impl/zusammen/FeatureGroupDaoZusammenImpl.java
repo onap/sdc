@@ -201,14 +201,14 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
                   .createRelation(RelationType.FeatureGroupToLicenseKeyGroup, relation))
               .collect(Collectors.toList()));
 
-      Collection<Relation> LaRelations = elementInfo.get().getRelations().stream().filter
+      Collection<Relation> laRelations = elementInfo.get().getRelations().stream().filter
           (rel -> rel.getType()
               .equals(RelationType.FeatureGroupToReferencingLicenseAgreement.name()))
           .map(rel -> VlmZusammenUtil.createRelation(RelationType
               .FeatureGroupToReferencingLicenseAgreement, rel.getEdge2().getElementId().toString()))
           .collect(Collectors.toList());
 
-      featureGroupElement.getRelations().addAll(LaRelations);
+      featureGroupElement.getRelations().addAll(laRelations);
 
       zusammenAdaptor
           .saveElement(context, elementContext, featureGroupElement, "update feature group");
@@ -277,7 +277,7 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
     featureGroupElement.setRelations(new ArrayList<>());
 
     if (featureGroup.getEntitlementPoolIds() != null &&
-        featureGroup.getEntitlementPoolIds().size() > 0) {
+        !featureGroup.getEntitlementPoolIds().isEmpty()) {
       featureGroupElement.getRelations().addAll(featureGroup.getEntitlementPoolIds().stream()
           .map(rel -> VlmZusammenUtil
               .createRelation(RelationType.FeatureGroupToEntitlmentPool, rel))
@@ -285,7 +285,7 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
     }
 
     if (featureGroup.getLicenseKeyGroupIds() != null &&
-        featureGroup.getLicenseKeyGroupIds().size() > 0) {
+        !featureGroup.getLicenseKeyGroupIds().isEmpty()) {
       featureGroupElement.getRelations()
           .addAll(featureGroup.getLicenseKeyGroupIds().stream()
               .map(rel -> VlmZusammenUtil
@@ -294,7 +294,7 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
     }
 
     if (featureGroup.getReferencingLicenseAgreements() != null &&
-        featureGroup.getReferencingLicenseAgreements().size() > 0) {
+        !featureGroup.getReferencingLicenseAgreements().isEmpty()) {
       featureGroupElement.getRelations()
           .addAll(featureGroup.getReferencingLicenseAgreements().stream()
               .map(rel -> VlmZusammenUtil
