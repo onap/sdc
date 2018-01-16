@@ -112,7 +112,7 @@ public class ManifestValidator implements Validator {
   private class ManifestScanner {
     private List<String> fileList = new ArrayList<>();
 
-    public void scan(FileData fileData, List<FileData> data,
+    void scan(FileData fileData, List<FileData> data,
                      GlobalValidationContext globalContext) {
       if (fileData == null) {
         for (FileData childFileData : data) {

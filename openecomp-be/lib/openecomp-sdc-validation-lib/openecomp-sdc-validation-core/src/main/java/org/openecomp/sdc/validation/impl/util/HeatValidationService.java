@@ -112,7 +112,7 @@ public class HeatValidationService {
    * @param nestedParameters nested parameters.
    * @param nestedParametersNames nested parameter names.
    */
-  public static void checkNestedParameters(String parentFileName, String nestedFileName,
+  private static void checkNestedParameters(String parentFileName, String nestedFileName,
                                            GlobalValidationContext globalContext,
                                            Map<String, Parameter> parentParameters,
                                            Map<String, Parameter> nestedParameters,
@@ -309,12 +309,11 @@ public class HeatValidationService {
   /**
    * Validate env content environment.
    *
-   * @param fileName the file name
    * @param envFileName the env file name
    * @param globalContext the global context
    * @return the environment
    */
-  public static Environment validateEnvContent(String fileName, String envFileName,
+  public static Environment validateEnvContent(String envFileName,
                                                GlobalValidationContext globalContext) {
     Environment envContent;
     try {
