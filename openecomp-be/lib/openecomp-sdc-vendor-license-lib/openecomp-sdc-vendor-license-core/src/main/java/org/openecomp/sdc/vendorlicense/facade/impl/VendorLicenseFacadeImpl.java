@@ -25,12 +25,6 @@ import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
@@ -207,9 +201,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     VendorLicenseModelEntity vendorLicenseModel =
         vendorLicenseModelDao.get(new VendorLicenseModelEntity(vlmId, version));
     if (vendorLicenseModel == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_VLM, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.ENTITY_NOT_FOUND);
       throw new CoreException(new VendorLicenseModelNotFoundErrorBuilder(vlmId).build());
     }
     return vendorLicenseModel;
@@ -217,7 +208,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
 
   @Override
   public LicenseAgreementEntity createLicenseAgreement(LicenseAgreementEntity licenseAgreement) {
-    //licenseAgreement.setId(CommonMethods.nextUuId());
     VersioningUtil.validateEntitiesExistence(licenseAgreement.getFeatureGroupIds(),
         new FeatureGroupEntity(licenseAgreement.getVendorLicenseModelId(),
             licenseAgreement.getVersion(),
@@ -296,16 +286,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   public Collection<ErrorCode> validateLicensingData(String vlmId, Version version,
                                                      String licenseAgreementId,
                                                      Collection<String> featureGroupIds) {
-    // TODO: 5/21/2017 validate version exists and final
-/*    try {
-      VersionInfo versionInfo = getVersionInfo(vlmId, VersionableEntityAction.Read, "");
-      if (version == null || !version.isFinal()
-          || !versionInfo.getViewableVersions().contains(version)) {
-        return Collections.singletonList(new RequestedVersionInvalidErrorBuilder().build());
-      }
-    } catch (CoreException exception) {
-      return Collections.singletonList(exception.code());
-    }*/
 
     List<ErrorCode> errorMessages = new ArrayList<>();
 
@@ -385,9 +365,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     if (CollectionUtils.isNotEmpty(licenseAgreements)) {
       licenseAgreements.forEach(licenseAgreement -> {
         if (CollectionUtils.isEmpty(licenseAgreement.getFeatureGroupIds())) {
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.SUBMIT_ENTITY);
           throw new CoreException(
               new SubmitUncompletedLicenseModelErrorBuilder(
                   SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG).build());
@@ -399,9 +376,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
         FeatureGroupEntity featureGroupEntity =
             featureGroupDao.get(new FeatureGroupEntity(vendorLicenseModelId, version, fg));
         if (CollectionUtils.isEmpty(featureGroupEntity.getEntitlementPoolIds())) {
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.SUBMIT_ENTITY);
           throw new CoreException(
               new SubmitUncompletedLicenseModelErrorBuilder(
                   SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP).build());

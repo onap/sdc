@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.vendorlicense.errors;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class SubmitUncompletedLicenseModelErrorBuilder {
@@ -30,12 +29,9 @@ public class SubmitUncompletedLicenseModelErrorBuilder {
 
     /**
      * Instantiates a new Submit uncompleted license model error builder.
-     *
-     * @param error
      */
     public SubmitUncompletedLicenseModelErrorBuilder(UncompletedVendorLicenseModelErrorType error) {
         builder.withId(VendorLicenseErrorCodes.SUBMIT_UNCOMPLETED_LICENSE_MODEL);
-        builder.withCategory(ErrorCategory.APPLICATION);
         builder.withMessage(error.getErrorMessage());
     }
 

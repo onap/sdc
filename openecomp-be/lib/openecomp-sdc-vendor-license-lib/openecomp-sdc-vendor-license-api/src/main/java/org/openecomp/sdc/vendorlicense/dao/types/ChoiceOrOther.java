@@ -19,14 +19,7 @@ package org.openecomp.sdc.vendorlicense.dao.types;
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 @UDT(keyspace = "dox", name = "choice_or_other")
 public class ChoiceOrOther<E extends Enum<E>> {
@@ -117,13 +110,9 @@ public class ChoiceOrOther<E extends Enum<E>> {
       try {
         choice = E.valueOf(enumClass, OTHER_ENUM_VALUE);
       } catch (IllegalArgumentException ex) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.VALIDATE_CHOICE_VALUE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
         throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-            .withId(CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID)
-            .withMessage(CHOICE_OR_OTHER_INVALID_ENUM_MSG)
-            .withCategory(ErrorCategory.APPLICATION).build());
+                .withId(CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID)
+                .withMessage(CHOICE_OR_OTHER_INVALID_ENUM_MSG).build());
       }
       other = result;
     }

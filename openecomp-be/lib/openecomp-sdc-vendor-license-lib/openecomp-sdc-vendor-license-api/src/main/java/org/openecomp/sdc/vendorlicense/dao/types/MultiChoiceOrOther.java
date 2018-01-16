@@ -20,24 +20,20 @@ import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @UDT(keyspace = "dox", name = "multi_choice_or_other")
 public class MultiChoiceOrOther<E extends Enum<E>> {
+
   private static final String MULTI_CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID =
       "MULTI_CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID";
+
   private static final String MULTI_CHOICE_OR_OTHER_INVALID_ENUM_MSG =
       "Enum used as part of MultiChoiceOrOther type must contain the value 'Other'";
+
   public static final String OTHER_ENUM_VALUE = "Other";
 
   @Transient
@@ -137,14 +133,9 @@ public class MultiChoiceOrOther<E extends Enum<E>> {
         try {
           choices.add(E.valueOf(enumClass, OTHER_ENUM_VALUE));
         } catch (IllegalArgumentException ex) {
-
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.VALIDATE_CHOICE_VALUE, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
           throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-              .withId(MULTI_CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID)
-              .withMessage(MULTI_CHOICE_OR_OTHER_INVALID_ENUM_MSG)
-              .withCategory(ErrorCategory.APPLICATION).build());
+                  .withId(MULTI_CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID)
+                  .withMessage(MULTI_CHOICE_OR_OTHER_INVALID_ENUM_MSG).build());
         }
         other = result;
       }
