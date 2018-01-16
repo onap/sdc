@@ -29,7 +29,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatPseudoParameters;
-import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -45,6 +44,7 @@ import org.openecomp.sdc.validation.util.ValidationUtil;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,29 +85,29 @@ public class HeatValidator implements Validator {
         Collection<Object> properties =
             resource.getProperties() == null ? null : resource.getProperties().values();
         validatePropertiesForAllRequiredArtifactsExist(properties, fileName,
-                artifacts, globalContext);
+            artifacts, globalContext);
       }
     }
   }
 
   private static void validatePropertiesForAllRequiredArtifactsExist(Collection<Object> properties,
-                                                 String fileName,
-                                                 Set<String> artifacts,
-                                                 GlobalValidationContext globalContext) {
-      if (CollectionUtils.isNotEmpty(properties)) {
-          for (Object property : properties) {
-              if (property instanceof Map) {
-                  globalContext.setMessageCode(ERROR_CODE_HOT_14);
-                  Set<String> artifactNames = HeatStructureUtil
-                          .getReferencedValuesByFunctionName(fileName,
-                                  ResourceReferenceFunctions.GET_FILE.getFunction(), property, globalContext);
-                  artifacts.addAll(artifactNames);
-                  globalContext.setMessageCode(ERROR_CODE_HOT_15);
-                  HeatValidationService.checkArtifactsExistence(fileName, artifactNames,
-                          globalContext);
-              }
-          }
+                                                                     String fileName,
+                                                                     Set<String> artifacts,
+                                                                     GlobalValidationContext globalContext) {
+    if (CollectionUtils.isNotEmpty(properties)) {
+      for (Object property : properties) {
+        if (property instanceof Map) {
+          globalContext.setMessageCode(ERROR_CODE_HOT_14);
+          Set<String> artifactNames = HeatStructureUtil
+              .getReferencedValuesByFunctionName(fileName,
+                  ResourceReferenceFunctions.GET_FILE.getFunction(), property, globalContext);
+          artifacts.addAll(artifactNames);
+          globalContext.setMessageCode(ERROR_CODE_HOT_15);
+          HeatValidationService.checkArtifactsExistence(fileName, artifactNames,
+              globalContext);
+        }
       }
+    }
   }
   /* validation 14 */
 
@@ -128,14 +128,14 @@ public class HeatValidator implements Validator {
   }
 
   private static void checkResourceExistenceFromResourcesMap(String fileName,
-                                      Set<String> resourcesNames,
-                                      Collection<?> valuesToSearchIn,
-                                      GlobalValidationContext globalContext) {
+                                                             Set<String> resourcesNames,
+                                                             Collection<?> valuesToSearchIn,
+                                                             GlobalValidationContext globalContext) {
     if (CollectionUtils.isNotEmpty(valuesToSearchIn)) {
       for (Object value : valuesToSearchIn) {
         if (value instanceof Resource) {
-                  extractResourceProperty(fileName, resourcesNames, globalContext,
-                          (Resource) value);
+          extractResourceProperty(fileName, resourcesNames, globalContext,
+              (Resource) value);
         } else if (value instanceof Output) {
           Output output = (Output) value;
           Object outputsValue = output.getValue();
@@ -149,15 +149,16 @@ public class HeatValidator implements Validator {
   private static void extractResourceProperty(String fileName, Set<String> resourcesNames,
                                               GlobalValidationContext globalContext,
                                               Resource value) {
+
+      Map<String, Object> properties = value.getProperties();
       Collection<Object> resourcePropertiesValues =
-        value.getProperties() == null ? null : value.getProperties()
-            .values();
+              MapUtils.isEmpty(properties) ? Collections.emptyList() : properties.values();
+
     if (CollectionUtils.isNotEmpty(resourcePropertiesValues)) {
       for (Object propertyValue : resourcePropertiesValues) {
         handleReferencedResources(fileName, propertyValue, resourcesNames,
             globalContext);
       }
-    }
   }
 
   private static void handleReferencedResources(String fileName, Object valueToSearchReferencesIn,
@@ -179,13 +180,13 @@ public class HeatValidator implements Validator {
                                                     Set<String> referencedResources,
                                                     GlobalValidationContext globalContext) {
     referencedResources.stream()
-                .filter(referencedResource -> !referencedResourcesNames
-                .contains(referencedResource))
-                .forEach(referencedResource ->
-          globalContext.addMessage(fileName,
-              ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(ERROR_CODE_HOT_16,Messages
-                      .REFERENCED_RESOURCE_NOT_FOUND.getErrorMessage(), referencedResource)));
+        .filter(referencedResource -> !referencedResourcesNames
+            .contains(referencedResource))
+        .forEach(referencedResource ->
+            globalContext.addMessage(fileName,
+                ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                    .getErrorWithParameters(ERROR_CODE_HOT_16, Messages
+                        .REFERENCED_RESOURCE_NOT_FOUND.getErrorMessage(), referencedResource)));
   }
 
   /* validation 16 */
@@ -202,30 +203,31 @@ public class HeatValidator implements Validator {
       for (Map.Entry<String, Resource> resourceEntry : resourcesMap.entrySet()) {
         Resource resource = resourceEntry.getValue();
         Map<String, Object> properties = resource.getProperties();
-          validatePropertiesForGetParamPointToParameter(properties, fileName, parametersNames,
-                  resourceEntry, globalContext);
+        validatePropertiesForGetParamPointToParameter(properties, fileName, parametersNames,
+            resourceEntry, globalContext);
       }
     }
   }
 
   private static void validatePropertiesForGetParamPointToParameter(Map<String,
-                                            Object> properties,
-                                            String fileName, Set<String> parametersNames,
-                                            Map.Entry<String, Resource> resourceEntry,
-                                            GlobalValidationContext globalContext) {
-      if (MapUtils.isNotEmpty(properties)) {
-          Collection<Object> propertiesValues = properties.values();
-          if (CollectionUtils.isNotEmpty(propertiesValues)) {
-              for (Object propertyObject : propertiesValues) {
-                  Set<String> referencedParameterNames = HeatStructureUtil
-                          .getReferencedValuesByFunctionName(fileName, "get_param", propertyObject,
-                                  globalContext);
+      Object> properties,
+                                                                    String fileName,
+                                                                    Set<String> parametersNames,
+                                                                    Map.Entry<String, Resource> resourceEntry,
+                                                                    GlobalValidationContext globalContext) {
+    if (MapUtils.isNotEmpty(properties)) {
+      Collection<Object> propertiesValues = properties.values();
+      if (CollectionUtils.isNotEmpty(propertiesValues)) {
+        for (Object propertyObject : propertiesValues) {
+          Set<String> referencedParameterNames = HeatStructureUtil
+              .getReferencedValuesByFunctionName(fileName, "get_param", propertyObject,
+                  globalContext);
 
-                  validateReferenceParams(fileName, resourceEntry.getKey(), parametersNames,
-                          referencedParameterNames, globalContext);
-              }
-          }
+          validateReferenceParams(fileName, resourceEntry.getKey(), parametersNames,
+              referencedParameterNames, globalContext);
+        }
       }
+    }
   }
 
   private static void validateReferenceParams(String fileName, String resourceName,
@@ -236,7 +238,7 @@ public class HeatValidator implements Validator {
       if (!isHeatPseudoParameter(parameterName)
           && !parametersNamesFromFile.contains(parameterName)) {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                        .getErrorWithParameters(ERROR_CODE_HOT_1,Messages
+                .getErrorWithParameters(ERROR_CODE_HOT_1, Messages
                         .REFERENCED_PARAMETER_NOT_FOUND.getErrorMessage(),
                     parameterName, resourceName));
       }
@@ -262,11 +264,11 @@ public class HeatValidator implements Validator {
   }
 
   private static void loopOverOutputMapAndValidateGetAttrFromNested(String fileName,
-                                             Map<String, Output> outputMap,
-                                             HeatOrchestrationTemplate
-                                             heatOrchestrationTemplate,
-                                             GlobalValidationContext
-                                             globalContext) {
+                                                                    Map<String, Output> outputMap,
+                                                                    HeatOrchestrationTemplate
+                                                                        heatOrchestrationTemplate,
+                                                                    GlobalValidationContext
+                                                                        globalContext) {
     for (Output output : outputMap.values()) {
       Object outputValue = output.getValue();
       if (outputValue != null && outputValue instanceof Map) {
@@ -274,33 +276,34 @@ public class HeatValidator implements Validator {
         List<String> getAttrValue =
             (List<String>) outputValueMap.get(
                 ResourceReferenceFunctions.GET_ATTR.getFunction());
-                handleGetAttrValueList(getAttrValue, fileName, heatOrchestrationTemplate,
-                        globalContext);
+        handleGetAttrValueList(getAttrValue, fileName, heatOrchestrationTemplate,
+            globalContext);
 
-            }
-        }
+      }
     }
+  }
 
-    private static void handleGetAttrValueList(List<String> getAttrValue, String fileName,
-                                               HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                               GlobalValidationContext globalContext) {
-        if (!CollectionUtils.isEmpty(getAttrValue)) {
-            String resourceName = getAttrValue.get(0);
-            String attNameObject = getAttrValue.get(1);
-            if (attNameObject == null) {
-                return;
-            }
-            String attName = getAttrValue.get(1);
-            String resourceType =
-                    getResourceTypeFromResourcesMap(resourceName, heatOrchestrationTemplate);
+  private static void handleGetAttrValueList(List<String> getAttrValue, String fileName,
+                                             HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                             GlobalValidationContext globalContext) {
+    if (!CollectionUtils.isEmpty(getAttrValue)) {
+      String resourceName = getAttrValue.get(0);
+      String attNameObject = getAttrValue.get(1);
+      if (attNameObject == null) {
+        return;
+      }
+      String attName = getAttrValue.get(1);
+      String resourceType =
+          getResourceTypeFromResourcesMap(resourceName, heatOrchestrationTemplate);
 
-            if (Objects.nonNull(resourceType)
-                    && HeatValidationService.isNestedResource(resourceType)) {
-                handleGetAttrNestedResource(fileName, globalContext, resourceName, attName,
-                        resourceType);
-            }
-        }
+      if (Objects.nonNull(resourceType)
+          && HeatValidationService.isNestedResource(resourceType)) {
+        handleGetAttrNestedResource(fileName, globalContext, resourceName, attName,
+            resourceType);
+      }
     }
+  }
+
   private static void handleGetAttrNestedResource(String fileName,
                                                   GlobalValidationContext globalContext,
                                                   String resourceName, String attName,
@@ -316,16 +319,16 @@ public class HeatValidator implements Validator {
         throw new Exception("The file '" + resourceType + "' has no content");
       }
     } catch (Exception exception) {
-            LOGGER.debug("",exception);
+      LOGGER.debug("", exception);
       return;
     }
     nestedOutputMap = nestedHeatOrchestrationTemplate.getOutputs();
 
     if (MapUtils.isEmpty(nestedOutputMap) || !nestedOutputMap.containsKey(attName)) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                            .getErrorWithParameters(ERROR_CODE_HOT_17,Messages
-                            .GET_ATTR_NOT_FOUND.getErrorMessage(),
-                            attName, resourceName));
+              .getErrorWithParameters(ERROR_CODE_HOT_17, Messages
+                      .GET_ATTR_NOT_FOUND.getErrorMessage(),
+                  attName, resourceName));
     }
   }
 
@@ -336,18 +339,18 @@ public class HeatValidator implements Validator {
   }
 
   /* validation 17 + */
-  private static void validateEnvFile(String fileName, String envFileName,
+  private static void validateEnvFile(String envFileName,
                                       HeatOrchestrationTemplate heatOrchestrationTemplate,
                                       GlobalValidationContext globalContext) {
     Environment envContent;
 
     if (!envFileName.contains(".env")) {
       globalContext.addMessage(envFileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_HOT_2,Messages
+              .getErrorWithParameters(ERROR_CODE_HOT_2, Messages
                   .WRONG_ENV_FILE_EXTENSION.getErrorMessage(), envFileName));
     }
 
-    envContent = HeatValidationService.validateEnvContent(fileName, envFileName, globalContext);
+    envContent = HeatValidationService.validateEnvContent(envFileName, globalContext);
     if (envContent != null) {
       validateEnvContentIsSubSetOfHeatParameters(envFileName, envContent, globalContext,
           heatOrchestrationTemplate);
@@ -370,13 +373,13 @@ public class HeatValidator implements Validator {
         for (Map.Entry<String, Object> envEntry : envContent.getParameters().entrySet()) {
 
 
-            validateEnvEntryForvalidateEnvContentIsSubSetOfHeatParameters(envEntry,
-                    parametersNames, envFile, globalContext);
+          validateEnvEntryForValidateEnvContentIsSubSetOfHeatParameters(envEntry,
+              parametersNames, envFile, globalContext);
         }
       } else {
         for (Map.Entry<String, Object> envEntry : envContent.getParameters().entrySet()) {
           globalContext.addMessage(envFile, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(ERROR_CODE_HOT_3,Messages
+                  .getErrorWithParameters(ERROR_CODE_HOT_3, Messages
                           .ENV_INCLUDES_PARAMETER_NOT_IN_HEAT.getErrorMessage(),
                       envFile, envEntry.getKey()));
         }
@@ -384,20 +387,21 @@ public class HeatValidator implements Validator {
     }
   }
 
-   private static void validateEnvEntryForvalidateEnvContentIsSubSetOfHeatParameters(
-                        Map.Entry<String, Object> envEntry,
-                        Set<String> parametersNames,
-                        String envFile,
-                        GlobalValidationContext globalContext) {
+  private static void validateEnvEntryForValidateEnvContentIsSubSetOfHeatParameters(
+      Map.Entry<String, Object> envEntry,
+      Set<String> parametersNames,
+      String envFile,
+      GlobalValidationContext globalContext) {
     String envParameter = envEntry.getKey();
     if (parametersNames != null && !parametersNames.contains(envParameter)) {
-        globalContext.addMessage(envFile, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                        .getErrorWithParameters(
-                                ERROR_CODE_HOT_3,Messages
-                                .ENV_INCLUDES_PARAMETER_NOT_IN_HEAT.getErrorMessage(), envFile,
-                                envParameter));
+      globalContext.addMessage(envFile, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+              .getErrorWithParameters(
+                  ERROR_CODE_HOT_3, Messages
+                      .ENV_INCLUDES_PARAMETER_NOT_IN_HEAT.getErrorMessage(), envFile,
+                  envParameter));
     }
-}
+  }
+
   private static void validateParameterDefaultTypeAlignWithType(String fileName,
                                                                 HeatOrchestrationTemplate
                                                                     heatOrchestrationTemplate,
@@ -407,67 +411,68 @@ public class HeatValidator implements Validator {
 
     if (parametersMap != null && MapUtils.isNotEmpty(parametersMap)) {
       for (Map.Entry<String, Parameter> parameterEntry : parametersMap.entrySet()) {
-          validateParameterEntryForParameterDefaultTypeAlignWithType(parameterEntry,
-                        fileName, globalContext);
+        validateParameterEntryForParameterDefaultTypeAlignWithType(parameterEntry,
+            fileName, globalContext);
       }
     }
   }
-    private static void validateParameterEntryForParameterDefaultTypeAlignWithType(
-                            Map.Entry<String, Parameter> parameterEntry,
-                            String fileName, GlobalValidationContext globalContext){
-        Parameter parameter = parameterEntry.getValue();
-        String parameterType = parameter.getType();
-        Object parameterDefault = parameter.get_default();
-        if (parameterDefault != null && parameterType != null) {
-            boolean isValueMatchDefault =
-                    DefinedHeatParameterTypes.isValueIsFromGivenType(parameterDefault,
-                            parameterType);
-            if (!isValueMatchDefault) {
-                globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                                .getErrorWithParameters(
-                                ERROR_CODE_HOT_4,Messages
-                                .PARAMETER_DEFAULT_VALUE_NOT_ALIGN_WITH_TYPE.getErrorMessage(),
-                                parameterEntry.getKey(), parameterType));
-            }
-        }
+
+  private static void validateParameterEntryForParameterDefaultTypeAlignWithType(
+      Map.Entry<String, Parameter> parameterEntry,
+      String fileName, GlobalValidationContext globalContext) {
+    Parameter parameter = parameterEntry.getValue();
+    String parameterType = parameter.getType();
+    Object parameterDefault = parameter.get_default();
+    if (parameterDefault != null && parameterType != null) {
+      boolean isValueMatchDefault =
+          DefinedHeatParameterTypes.isValueIsFromGivenType(parameterDefault,
+              parameterType);
+      if (!isValueMatchDefault) {
+        globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                .getErrorWithParameters(
+                    ERROR_CODE_HOT_4, Messages
+                        .PARAMETER_DEFAULT_VALUE_NOT_ALIGN_WITH_TYPE.getErrorMessage(),
+                    parameterEntry.getKey(), parameterType));
+      }
     }
+  }
 
   private static void validateEnvParametersMatchDefinedHeatParameterTypes(String envFile,
-                                                 Environment envContent,
-                                                 GlobalValidationContext globalContext,
-                                                 HeatOrchestrationTemplate heatOrchestrationTemplate) {
+                                                                          Environment envContent,
+                                                                          GlobalValidationContext globalContext,
+                                                                          HeatOrchestrationTemplate heatOrchestrationTemplate) {
     Map<String, Parameter> heatParameters = heatOrchestrationTemplate.getParameters();
 
     if (MapUtils.isNotEmpty(heatParameters) && MapUtils.isNotEmpty(envContent.getParameters())) {
-        validateEnvEntryForEnvParametersMatchDefinedHeatParameterTypes(envContent,
-                        heatParameters, envFile, globalContext);
+      validateEnvEntryForEnvParametersMatchDefinedHeatParameterTypes(envContent,
+          heatParameters, envFile, globalContext);
 
 
     }
   }
 
   private static void validateEnvEntryForEnvParametersMatchDefinedHeatParameterTypes(
-                                                          Environment envContent,
-                                                          Map<String, Parameter> heatParameters,
-                                                          String envFile,
-                                                          GlobalValidationContext globalContext) {
-      for (Map.Entry<String, Object> envEntry : envContent.getParameters().entrySet()) {
-          String parameterName = envEntry.getKey();
-          Object parameterEnvValue = envEntry.getValue();
-          Parameter parameterFromHeatFile = heatParameters.get(parameterName);
-          if (parameterFromHeatFile != null) {
-              String parameterType = parameterFromHeatFile.getType();
-              if (!DefinedHeatParameterTypes.isEmptyValueInEnv(parameterEnvValue)
-                      && !DefinedHeatParameterTypes
-                      .isValueIsFromGivenType(parameterEnvValue, parameterType)) {
-                  globalContext.addMessage(envFile, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                                  .getErrorWithParameters(
-                                  ERROR_CODE_HOT_5,Messages
-                                  .PARAMETER_ENV_VALUE_NOT_ALIGN_WITH_TYPE.getErrorMessage(),
-                                  parameterName));
-              }
-          }
+      Environment envContent,
+      Map<String, Parameter> heatParameters,
+      String envFile,
+      GlobalValidationContext globalContext) {
+    for (Map.Entry<String, Object> envEntry : envContent.getParameters().entrySet()) {
+      String parameterName = envEntry.getKey();
+      Object parameterEnvValue = envEntry.getValue();
+      Parameter parameterFromHeatFile = heatParameters.get(parameterName);
+      if (parameterFromHeatFile != null) {
+        String parameterType = parameterFromHeatFile.getType();
+        if (!DefinedHeatParameterTypes.isEmptyValueInEnv(parameterEnvValue)
+            && !DefinedHeatParameterTypes
+            .isValueIsFromGivenType(parameterEnvValue, parameterType)) {
+          globalContext.addMessage(envFile, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                  .getErrorWithParameters(
+                      ERROR_CODE_HOT_5, Messages
+                          .PARAMETER_ENV_VALUE_NOT_ALIGN_WITH_TYPE.getErrorMessage(),
+                      parameterName));
+        }
       }
+    }
   }
 
   @Override
@@ -476,7 +481,7 @@ public class HeatValidator implements Validator {
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
-      LOGGER.debug("",exception);
+      LOGGER.debug("", exception);
       return;
     }
     Map<String, FileData.Type> fileTypeMap = ManifestUtil.getFileTypeMap(manifestContent);
@@ -487,14 +492,14 @@ public class HeatValidator implements Validator {
         .filter(fileName -> FileData.isHeatFile(fileTypeMap.get(fileName))).forEach(
         fileName -> validate(fileName, fileEnvMap.get(fileName) == null ? null : fileEnvMap.get(
             fileName).getFile(), artifacts,
-             globalContext));
+            globalContext));
 
 
     Set<String> manifestArtifacts = ManifestUtil.getArtifacts(manifestContent);
 
     globalContext.getFiles().stream()
         .filter(fileName -> isManifestArtifact(manifestArtifacts, fileName)
-        && isNotArtifact(artifacts, fileName))
+            && isNotArtifact(artifacts, fileName))
         .forEach(fileName -> globalContext.addMessage(fileName, ErrorLevel.WARNING,
             ErrorMessagesFormatBuilder
                 .getErrorWithParameters(ERROR_CODE_HOT_11,
@@ -521,7 +526,7 @@ public class HeatValidator implements Validator {
     if (heatOrchestrationTemplate != null) {
       if (!(fileName.contains(".yaml") || fileName.contains(".yml"))) {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(ERROR_CODE_HOT_6,Messages
+                .getErrorWithParameters(ERROR_CODE_HOT_6, Messages
                     .WRONG_HEAT_FILE_EXTENSION.getErrorMessage(), fileName));
       }
 
@@ -535,7 +540,7 @@ public class HeatValidator implements Validator {
           globalContext);
 
       if (envFileName != null) {
-        validateEnvFile(fileName, envFileName, heatOrchestrationTemplate, globalContext);
+        validateEnvFile(envFileName, heatOrchestrationTemplate, globalContext);
       }
     }
   }
@@ -544,13 +549,13 @@ public class HeatValidator implements Validator {
                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
                                          GlobalValidationContext globalContext) {
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
-    if(MapUtils.isEmpty(resourcesMap)) {
+    if (MapUtils.isEmpty(resourcesMap)) {
       return;
     }
 
     Set<String> resourcesNames = resourcesMap.keySet();
 
-    resourcesMap.entrySet().stream()
+    resourcesMap.entrySet()
         .forEach(entry -> checkResourceDependsOn(fileName, entry.getValue(),
             resourcesNames, globalContext));
   }
@@ -566,13 +571,15 @@ public class HeatValidator implements Validator {
           .filter(resourceId -> !resourcesNames.contains(resourceId))
           .forEach(resourceId -> globalContext.addMessage(fileName, ErrorLevel.ERROR,
               ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(ERROR_CODE_HOT_7,
-                          Messages.MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(), resourceId)));
+                  .getErrorWithParameters(ERROR_CODE_HOT_7, Messages
+                          .MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(),
+                      (String) resourceId)));
     } else if (dependencies instanceof String && !resourcesNames.contains(dependencies)) {
-        globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(ERROR_CODE_HOT_8,
-                        Messages.MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(), String.valueOf(dependencies)));
-      }
+      globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+              .getErrorWithParameters(ERROR_CODE_HOT_8, Messages
+                      .MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(),
+                  (String) dependencies));
+    }
   }
 
 
@@ -581,48 +588,16 @@ public class HeatValidator implements Validator {
                                          GlobalValidationContext globalContext) {
     if (heatOrchestrationTemplate.getHeat_template_version() == null) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_HOT_9,
-                      Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
+              .getErrorWithParameters(ERROR_CODE_HOT_9, Messages
+                      .INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
                   "missing template version"));
     }
     if (heatOrchestrationTemplate.getResources() == null
         || heatOrchestrationTemplate.getResources().size() == 0) {
       globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_HOT_10,
-                      Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
-               "The heat file does not contain any resources"));
+              .getErrorWithParameters(ERROR_CODE_HOT_10, Messages
+                      .INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
+                  "The heat file does not contain any resources"));
     }
   }
-
-
-  @SuppressWarnings("unchecked")
-  private void getSecurityGroupsReferencedResourcesFromOutputs(
-      Set<String> securityGroupsNamesFromOutputsMap, Map<String, Output> outputMap,
-      Map<String, Resource> resourceMap) {
-    if (MapUtils.isNotEmpty(outputMap)) {
-      for (Map.Entry<String, Output> outputEntry : outputMap.entrySet()) {
-
-          validateOutputEntryForGetSecurityGroupsReferencedResourcesFromOutputs(outputEntry,
-                  resourceMap, securityGroupsNamesFromOutputsMap);
-
-      }
-    }
-  }
-    private void validateOutputEntryForGetSecurityGroupsReferencedResourcesFromOutputs(
-            Map.Entry<String, Output> outputEntry,
-            Map<String, Resource> resourceMap, Set<String> securityGroupsNamesFromOutputsMap){
-        Object outputValue = outputEntry.getValue().getValue();
-        if (Objects.nonNull(outputValue) && outputValue instanceof Map) {
-            String resourceName = (String) ((Map) outputValue)
-                    .get(ResourceReferenceFunctions.GET_RESOURCE.getFunction());
-            if (Objects.nonNull(resourceName)) {
-                Resource resource = resourceMap.get(resourceName);
-                if (Objects.nonNull(resource) && resource.getType().equals(
-                        HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource())) {
-                    securityGroupsNamesFromOutputsMap.add(outputEntry.getKey());
-                }
-            }
-        }
-    }
-
 }
