@@ -76,7 +76,7 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
         licenseKeyGroupElement.setRelations(new ArrayList<>());
       }
 
-      if (lkgFromDb.get().getRelations() != null && lkgFromDb.get().getRelations().size() > 0) {
+      if (lkgFromDb.get().getRelations() != null && !lkgFromDb.get().getRelations().isEmpty()) {
         licenseKeyGroupElement.getRelations().addAll(lkgFromDb.get().getRelations());
       }
     }
@@ -212,7 +212,7 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
     lkgElement.setInfo(info);
 
     if (licenseKeyGroup.getReferencingFeatureGroups() != null
-        && licenseKeyGroup.getReferencingFeatureGroups().size() > 0) {
+        && !licenseKeyGroup.getReferencingFeatureGroups().isEmpty()) {
       lkgElement.setRelations(licenseKeyGroup.getReferencingFeatureGroups().stream()
           .map(rel -> VlmZusammenUtil
               .createRelation(RelationType.LicenseKeyGroupToReferencingFeatureGroup, rel))
