@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f476d93d",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/commands/AddContributorCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-16T07:40:27Z",
+      "side": 1,
+      "message": "1. this message is repeated. please set in constant.\n2. move the try/catch inside the getItemList function",
+      "range": {
+        "startLine": 36,
+        "startChar": 50,
+        "endLine": 37,
+        "endChar": 16
+      },
+      "revId": "a687aa88e3520b816b1d8a9dac01ddb1bbd324e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b4905144",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/commands/AddContributorCommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-16T07:40:27Z",
+      "side": 1,
+      "message": "1. move the try/catch inside the getItemList function",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 45,
+        "endChar": 5
+      },
+      "revId": "a687aa88e3520b816b1d8a9dac01ddb1bbd324e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_34a441a5",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/main/ZusammenMainTool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-16T07:40:27Z",
+      "side": 1,
+      "message": "you are not protecting against a command value received from command line and is not part of the COMMAND enum. maybe use default to log an error or throw exception?",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 52,
+        "endChar": 37
+      },
+      "revId": "a687aa88e3520b816b1d8a9dac01ddb1bbd324e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_549f8d50",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/main/ZusammenMainTool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-01-16T07:40:27Z",
+      "side": 1,
+      "message": "this member is not in use and therefor the constructor and the enum string are not in use",
+      "range": {
+        "startLine": 97,
+        "startChar": 19,
+        "endLine": 97,
+        "endChar": 26
+      },
+      "revId": "a687aa88e3520b816b1d8a9dac01ddb1bbd324e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
