@@ -78,6 +78,9 @@
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <systemPropertyVariables>
+                        <config.location>${project.basedir}/../../../tools/configuration/src/main/validation</config.location>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
