@@ -103,7 +103,7 @@ public class ManifestValidator implements Validator {
   private class ManifestScanner {
     private final List<String> fileList = new ArrayList<>();
 
-    public void scan(FileData fileData, List<FileData> data,
+    void scan(FileData fileData, List<FileData> data,
                      GlobalValidationContext globalContext) {
       if (fileData == null) {
         for (FileData childFileData : data) {
@@ -135,7 +135,7 @@ public class ManifestValidator implements Validator {
                         Messages.INVALID_FILE_TYPE.getErrorMessage()));
       } else if (type.equals(FileData.Type.HEAT_NET) || type.equals(FileData.Type.HEAT_VOL)
               || type.equals(FileData.Type.HEAT)) {
-        validateIfFileHasYamlExtenstion(globalValidationContext,fileName);
+        validateIfFileHasYamlExtension(globalValidationContext,fileName);
       } else if (type.equals(FileData.Type.HEAT_ENV)) {
         validateIfFileHasEnvExtension(globalValidationContext,fileName);
       }
@@ -163,8 +163,8 @@ public class ManifestValidator implements Validator {
       }
     }
 
-    private void validateIfFileHasYamlExtenstion(GlobalValidationContext globalValidationContext,
-                                                 String fileName) {
+    private void validateIfFileHasYamlExtension(GlobalValidationContext globalValidationContext,
+                                                String fileName) {
       if (fileName != null && !fileName.endsWith(".yml") && !fileName.endsWith(".yaml")) {
         globalValidationContext.addMessage(fileName, ErrorLevel.ERROR,
                 ErrorMessagesFormatBuilder
