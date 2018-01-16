@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_943f55d6",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-license-lib/openecomp-sdc-vendor-license-core/src/main/java/org/openecomp/sdc/vendorlicense/dao/impl/LicenseAgreementDaoFactoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-16T10:05:02Z",
+      "side": 1,
+      "message": "Seems like this can be \"static final\", as I don\u0027t see it changing. And then it should be called INSTANCE.",
+      "revId": "d384cca8c5bbe508399376c812e4e09251e10e81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
