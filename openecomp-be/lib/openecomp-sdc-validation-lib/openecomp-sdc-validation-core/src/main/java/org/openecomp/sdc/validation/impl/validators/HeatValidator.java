@@ -154,9 +154,8 @@ public class HeatValidator implements Validator {
   private static void extractResourceProperty(String fileName, Set<String> resourcesNames,
                                               GlobalValidationContext globalContext,
                                               Resource value) {
-    Resource resource = value;
     Collection<Object> resourcePropertiesValues =
-        resource.getProperties() == null ? null : resource.getProperties()
+        value.getProperties() == null ? null : value.getProperties()
             .values();
     if (CollectionUtils.isNotEmpty(resourcePropertiesValues)) {
       for (Object propertyValue : resourcePropertiesValues) {
@@ -365,7 +364,7 @@ public class HeatValidator implements Validator {
           LoggerTragetServiceName.VALIDATE_ENV_FILE, LoggerErrorDescription.WRONG_FILE_EXTENSION);
     }
 
-    envContent = HeatValidationService.validateEnvContent(fileName, envFileName, globalContext);
+    envContent = HeatValidationService.validateEnvContent(envFileName, globalContext);
     if (envContent != null) {
       validateEnvContentIsSubSetOfHeatParameters(envFileName, envContent, globalContext,
           heatOrchestrationTemplate);
@@ -423,8 +422,7 @@ public class HeatValidator implements Validator {
                                                                     heatOrchestrationTemplate,
                                                                 GlobalValidationContext
                                                                     globalContext) {
-    Map<String, Parameter> parametersMap = heatOrchestrationTemplate.getParameters() == null ? null
-        : heatOrchestrationTemplate.getParameters();
+    Map<String, Parameter> parametersMap = heatOrchestrationTemplate.getParameters();
 
     if (parametersMap != null && MapUtils.isNotEmpty(parametersMap)) {
       for (Map.Entry<String, Parameter> parameterEntry : parametersMap.entrySet()) {
@@ -578,7 +576,7 @@ public class HeatValidator implements Validator {
 
     Set<String> resourcesNames = resourcesMap.keySet();
 
-    resourcesMap.entrySet().stream()
+    resourcesMap.entrySet()
         .forEach(entry -> checkResourceDependsOn(fileName, entry.getValue(),
             resourcesNames, globalContext));
   }
