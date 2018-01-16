@@ -159,7 +159,7 @@ public class LimitZusammenDaoImpl implements LimitDao {
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-
+    //registerVersioning not implemented for LimitZusammenDaoImpl
   }
 
   private ZusammenElement limitToZusammen(LimitEntity limit, Action action) {
