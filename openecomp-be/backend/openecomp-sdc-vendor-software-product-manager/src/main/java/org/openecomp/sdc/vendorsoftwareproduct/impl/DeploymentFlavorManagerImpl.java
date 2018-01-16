@@ -19,11 +19,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
@@ -33,7 +29,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.DeploymentFlavorErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
@@ -81,9 +76,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
         deploymentFlavorEntity.getVersion())) {
       ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
           .getAddDeploymentNotSupportedHeatOnboardErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), deploymentFlavorErrorBuilder.message());
       throw new CoreException(deploymentFlavorErrorBuilder);
     } else {
       validateDeploymentFlavor(deploymentFlavorEntity, deploymentFlavorEntity.getVersion());
@@ -110,9 +102,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
         ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
             .getFeatureGroupNotexistErrorBuilder(featureGroup, deploymentFlavorEntity.getVspId(),
                 version);
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), deploymentFlavorErrorBuilder.message());
         throw new CoreException(deploymentFlavorErrorBuilder);
     }
     validateComponentComputeAssociation(deploymentFlavorEntity, version);
@@ -127,9 +116,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
             .getDuplicateDeploymentFlavorModelErrorBuilder(
                 deploymentFlavorEntity.getDeploymentFlavorCompositionData().getModel(),
                 deploymentFlavorEntity.getVspId());
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), deploymentFlavorModelErrorBuilder.message());
         throw new CoreException(deploymentFlavorModelErrorBuilder);
       }
     });
@@ -174,10 +160,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
         if (vfcCount != 1) {
           ErrorCode duplicateVfcAssociationErrorBuilder = DeploymentFlavorErrorBuilder
               .getDuplicateVfcAssociationErrorBuilder();
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(),
-              duplicateVfcAssociationErrorBuilder.message());
           throw new CoreException(duplicateVfcAssociationErrorBuilder);
         }
       }
@@ -196,9 +178,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
             .getComputeFlavorId().trim().length() > 0)) {
       ErrorCode invalidAssociationErrorBuilder = DeploymentFlavorErrorBuilder
           .getInvalidAssociationErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), invalidAssociationErrorBuilder.message());
       throw new CoreException(invalidAssociationErrorBuilder);
     } else if (componentComputeAssociation.getComponentId() != null
             && componentComputeAssociation.getComponentId().trim().length() > 0) {
@@ -222,10 +201,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
         ErrorCode invalidComputeIdErrorBuilder = DeploymentFlavorErrorBuilder
             .getInvalidComputeIdErrorBuilder(componentComputeAssociation.getComputeFlavorId(),
                 componentComputeAssociation.getComponentId());
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(),
-            invalidComputeIdErrorBuilder.message());
         throw new CoreException(invalidComputeIdErrorBuilder);
       }
     }
@@ -288,10 +263,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
       final ErrorCode deleteDeploymentFlavorErrorBuilder =
           NotSupportedHeatOnboardMethodErrorBuilder
               .getDelDeploymentFlavorNotSupportedHeatOnboardMethodErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.DELETE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          deleteDeploymentFlavorErrorBuilder.message());
       throw new CoreException(deleteDeploymentFlavorErrorBuilder);
     }
     if (deploymentFlavorEntity != null) {
@@ -308,10 +279,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
       final ErrorCode updateDeploymentFlavorErrorBuilder =
           NotSupportedHeatOnboardMethodErrorBuilder
               .getUpdateDfNotSupportedHeatOnboardMethodErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          updateDeploymentFlavorErrorBuilder.message());
       throw new CoreException(updateDeploymentFlavorErrorBuilder);
     }
     DeploymentFlavorEntity retrieved =

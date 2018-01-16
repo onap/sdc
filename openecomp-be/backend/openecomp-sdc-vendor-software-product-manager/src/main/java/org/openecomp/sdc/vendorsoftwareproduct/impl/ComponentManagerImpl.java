@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
@@ -23,14 +19,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -38,7 +29,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.CompositionEditNotAllowedErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -83,9 +73,6 @@ public class ComponentManagerImpl implements ComponentManager {
   @Override
   public void deleteComponents(String vspId, Version version) {
     if (!vspInfoDao.isManual(vspId, version)) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.DELETE_COMPONENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't delete component");
       throw new CoreException(
           new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
     }
@@ -98,11 +85,8 @@ public class ComponentManagerImpl implements ComponentManager {
 
     ComponentEntity createdComponent;
     if (!vspInfoDao.isManual(component.getVspId(), component.getVersion())) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_COMPONENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create component");
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+          new ErrorCode.ErrorCodeBuilder()
               .withId(VendorSoftwareProductErrorCodes.VFC_ADD_NOT_ALLOWED_IN_HEAT_ONBOARDING)
               .withMessage(vfcAddNotAllowedInHeatOnboardingMsg).build());
     } else {
@@ -128,25 +112,17 @@ public class ComponentManagerImpl implements ComponentManager {
 
     Collection<ComponentEntity> vspComponentList =
         listComponents(component.getVspId(), component.getVersion());
-    if (!vspComponentList.isEmpty()) //1707 release only supports 1 VFC in VSP (manual creation)
-    {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_COMPONENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create component: "
-              + "vsp component count exceed");
+    if (!vspComponentList.isEmpty()) {
+      //1707 release only supports 1 VFC in VSP (manual creation)
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+          new ErrorCode.ErrorCodeBuilder()
               .withId(VendorSoftwareProductErrorCodes.VSP_VFC_COUNT_EXCEED)
               .withMessage(vspVfcCountExceedMsg).build());
     }
     if (!isVfcNameUnique(vspComponentList,
         component.getComponentCompositionData().getDisplayName())) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_COMPONENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create component: "
-              + "vsp component duplicate name");
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+          new ErrorCode.ErrorCodeBuilder()
               .withId(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME)
               .withMessage(vspVfcDuplicateNameMsg).build());
     }
@@ -199,12 +175,8 @@ public class ComponentManagerImpl implements ComponentManager {
     }
     if (!isVfcNameUnique(vspComponentList, component.getComponentCompositionData()
         .getDisplayName())) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_COMPONENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Component with same name already " +
-              "exists for specified VSP");
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+          new ErrorCode.ErrorCodeBuilder()
               .withId(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME)
               .withMessage("VFC with specified name already present in given VSP.").build());
 
@@ -231,9 +203,6 @@ public class ComponentManagerImpl implements ComponentManager {
   @Override
   public void deleteComponent(String vspId, Version version, String componentId) {
     if (!vspInfoDao.isManual(vspId, version)) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.DELETE_COMPONENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't delete component");
       throw new CoreException(
           new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
     }

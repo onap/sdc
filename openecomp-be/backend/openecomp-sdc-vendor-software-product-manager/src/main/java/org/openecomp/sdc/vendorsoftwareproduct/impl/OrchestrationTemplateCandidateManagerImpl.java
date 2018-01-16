@@ -48,6 +48,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,10 +118,8 @@ public class OrchestrationTemplateCandidateManagerImpl
     if (validateErrors.isPresent()) {
       List<ErrorMessage> errorMessages = validateErrors.get();
       if (CollectionUtils.isNotEmpty(errorMessages)) {
-        Map<String, List<ErrorMessage>> errorsMap = new HashMap<>();
-        errorsMap.put(SdcCommon.UPLOAD_FILE, errorMessages);
-        response.setUploadDataErrors(errorsMap,
-                LoggerTragetServiceName.VALIDATE_FILE_DATA_STRUCTURE);
+        Map<String, List<ErrorMessage>> errorsMap = Collections.singletonMap(SdcCommon.UPLOAD_FILE, errorMessages);
+        response.setUploadDataErrors(errorsMap);
         return response;
       }
     }
