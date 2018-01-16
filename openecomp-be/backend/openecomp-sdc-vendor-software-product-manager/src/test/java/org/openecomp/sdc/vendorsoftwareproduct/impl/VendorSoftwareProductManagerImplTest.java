@@ -456,7 +456,7 @@ public class VendorSoftwareProductManagerImplTest {
 
     doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(), "")).when
         (enrichedServiceModelDaoMock).getServiceModel(VSP_ID, VERSION10);
-
+    doNothing().when(vendorSoftwareProductManager).populateVersionsForVlm(anyObject(), anyObject());
     VspDetails vsp = new VspDetails(VSP_ID, VERSION10);
     vsp.setVendorId("vendorId");
     vsp.setVlmVersion(VERSION10);

@@ -100,6 +100,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComponentQu
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.ComponentDependencyTracker;
+import org.openecomp.sdc.versioning.VersioningManager;
+import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
@@ -628,7 +630,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     Version vlmVersion = vspDetails.getVlmVersion();
-
+    if (vlmVersion != null) {
+      populateVersionsForVlm(vspDetails.getVendorId(), vlmVersion);
+    }
     PackageInfo packageInfo = createPackageInfo(vspDetails);
 
     ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar =
@@ -644,6 +648,18 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_PACKAGE + vspId);
     return packageInfo;
+  }
+
+  protected void populateVersionsForVlm(String vlmId, Version vlmVersion) {
+    VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
+    Version vlmVersionTmp = versioningManager.list(vlmId).stream()
+        .filter(version -> version.getId().equalsIgnoreCase(vlmVersion.getId()))
+        .findAny()
+        .orElse(null);
+    if (vlmVersionTmp != null) {
+      vlmVersion.setMajor(vlmVersionTmp.getMajor());
+      vlmVersion.setMinor(vlmVersionTmp.getMinor());
+    }
   }
 
   private PackageInfo createPackageInfo(VspDetails vspDetails) {
