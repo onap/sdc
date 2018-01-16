@@ -77,7 +77,7 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
       if (entitlmentpoolElement.getRelations() == null) {
         entitlmentpoolElement.setRelations(new ArrayList<>());
       }
-      if (epFromDb.get().getRelations() != null && epFromDb.get().getRelations().size() > 0) {
+      if (epFromDb.get().getRelations() != null && !epFromDb.get().getRelations().isEmpty()) {
         entitlmentpoolElement.getRelations().addAll(epFromDb.get().getRelations());
       }
     }
@@ -228,7 +228,7 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
     entitlementPoolElement.setInfo(info);
 
     if (entitlementPool.getReferencingFeatureGroups() != null
-        && entitlementPool.getReferencingFeatureGroups().size() > 0) {
+        && !entitlementPool.getReferencingFeatureGroups().isEmpty()) {
       entitlementPoolElement.setRelations(entitlementPool.getReferencingFeatureGroups().stream()
           .map(rel -> VlmZusammenUtil
               .createRelation(RelationType.EntitlmentPoolToReferencingFeatureGroup, rel))
