@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_77b16be0",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-16T15:55:17Z",
+      "side": 1,
+      "message": "You don\u0027t need a temp variable here and checking for null. I assume this code does the same in the functional way (consistent with the rest of the method):\n\n            .findAny()\n            .ifPresent(version -\u003e {\n              vlmVersion.setMajor(version.getMajor());\n              vlmVersion.setMinor(version.getMinor());\n            });",
+      "revId": "7b407fb73e94c2d99f22bd6a9cb04fbe544f57be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
