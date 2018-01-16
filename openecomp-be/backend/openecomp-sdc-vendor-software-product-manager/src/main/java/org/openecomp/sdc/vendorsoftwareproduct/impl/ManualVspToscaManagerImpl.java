@@ -1,15 +1,26 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.generator.core.services.ManualVspToscaGenerationService;
 import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
 import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VspModelInfo;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.ManualVspDataCollectionService;
@@ -21,7 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
-  private ManualVspDataCollectionService
+
+  private final ManualVspDataCollectionService
       manualVspDataCollectionService = new ManualVspDataCollectionService();
 
   @Override
@@ -33,10 +45,6 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
       releaseVendor = manualVspDataCollectionService.getReleaseVendor(vspId, version);
     } catch (Exception ex) {
       releaseVendor = Optional.empty();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Release Vendor not found : "
-              + ex.getMessage());
     }
     releaseVendor.ifPresent(vspModelInfo::setReleaseVendor);
 
@@ -45,10 +53,6 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     try {
       allowedFlavors = manualVspDataCollectionService.getAllowedFlavors(vspId, version);
     } catch (Exception ex) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect allowed flavors : "
-              + ex.getMessage());
       allowedFlavors = null;
     }
     if (MapUtils.isNotEmpty(allowedFlavors)) {
@@ -61,10 +65,6 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
       vspComponentImages =
           manualVspDataCollectionService.getVspComponentImages(vspId, version);
     } catch (Exception ex) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect vsp component images : "
-              + ex.getMessage());
       vspComponentImages = null;
     }
     if (MapUtils.isNotEmpty(vspComponentImages)) {
@@ -76,10 +76,6 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     try {
       vspComponents = manualVspDataCollectionService.getVspComponents(vspId, version);
     } catch (Exception ex) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect vsp components : "
-              + ex.getMessage());
       vspComponents = null;
     }
     if (MapUtils.isNotEmpty(vspComponents)) {
@@ -91,10 +87,6 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     try {
       vspComponentNics = manualVspDataCollectionService.getVspComponentNics(vspId, version);
     } catch (Exception ex) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect vsp component nics : "
-              + ex.getMessage());
       vspComponentNics = null;
     }
     if (MapUtils.isNotEmpty(vspComponentNics)) {
@@ -106,8 +98,6 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
   @Override
   public ToscaServiceModel generateToscaModel(VspModelInfo vspModelInfo) {
     ManualVspToscaGenerationService vspToscaGenerator = new ManualVspToscaGenerationService();
-    ToscaServiceModel manualVspToscaServiceModel =
-        vspToscaGenerator.createManualVspToscaServiceModel(vspModelInfo);
-    return manualVspToscaServiceModel;
+    return vspToscaGenerator.createManualVspToscaServiceModel(vspModelInfo);
   }
 }

@@ -27,7 +27,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
@@ -103,15 +102,8 @@ public class VendorSoftwareProductUtils {
   /**
    * Sets errors into logger.
    *  @param errors            the errors
-   * @param targetServiceName the target service name
    */
-  public static void setErrorsIntoLogger(Map<String, List<ErrorMessage>> errors,
-                                         String targetServiceName) {
-    MdcDataErrorMessage mdcDataErrorMessage =
-        new MdcDataErrorMessage(targetServiceName, LoggerConstants.TARGET_ENTITY_DB,
-            ErrorLevel.ERROR.name(), null, null);
-    mdcDataErrorMessage.setMdcValues();
-
+  public static void setErrorsIntoLogger(Map<String, List<ErrorMessage>> errors) {
     if (MapUtils.isEmpty(errors)) {
       return;
     }
@@ -127,14 +119,8 @@ public class VendorSoftwareProductUtils {
   /**
    * Sets errors into logger.
    *  @param errors            the errors
-   * @param targetServiceName the target service name
    */
-  public static void setErrorsIntoLogger(Collection<ErrorCode> errors,
-                                         String targetServiceName) {
-    MdcDataErrorMessage mdcDataErrorMessage =
-        new MdcDataErrorMessage(targetServiceName, LoggerConstants.TARGET_ENTITY_DB,
-            ErrorLevel.ERROR.name(), null, null);
-    mdcDataErrorMessage.setMdcValues();
+  public static void setErrorsIntoLogger(Collection<ErrorCode> errors) {
 
     if (CollectionUtils.isEmpty(errors)) {
       return;
