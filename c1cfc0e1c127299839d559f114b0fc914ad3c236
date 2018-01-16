@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d72f1ff5",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-16T16:16:15Z",
+      "side": 1,
+      "message": "This can easily break. It\u0027s also not clear why you rely on some external (sitting in another module) configuration for unit tests.",
+      "revId": "c1cfc0e1c127299839d559f114b0fc914ad3c236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_77364b54",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-core/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-16T16:16:15Z",
+      "side": 1,
+      "message": "Same problem with external configuration.",
+      "revId": "c1cfc0e1c127299839d559f114b0fc914ad3c236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b77a93ef",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-core/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-16T16:16:15Z",
+      "side": 1,
+      "message": "You\u0027re getting properties twice here: once to check for null, and another to return. What if getProperties() were actually reading from disk? You would perform an expensive I/O operation twice. The right way is to get properties into a local variable. But you don\u0027t even need it here. Because resourcePropertiesValues \u003d value.getProperties() will hold null if getProperties() returns null, and some value otherwise.",
+      "revId": "c1cfc0e1c127299839d559f114b0fc914ad3c236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
