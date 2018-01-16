@@ -1,15 +1,25 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
@@ -22,8 +32,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.Collection;
 
 public class ComponentDependencyModelManagerImpl implements ComponentDependencyModelManager {
-  protected static final Logger logger =
-      LoggerFactory.getLogger(ComponentDependencyModelManagerImpl.class);
 
   private ComponentManager componentManager;
   private ComponentDependencyModelDao componentDependencyModelDao;
@@ -32,13 +40,6 @@ public class ComponentDependencyModelManagerImpl implements ComponentDependencyM
       ComponentManager componentManager, ComponentDependencyModelDao componentDependencyModelDao) {
     this.componentManager = componentManager;
     this.componentDependencyModelDao = componentDependencyModelDao;
-  }
-
-  private void raiseException(ErrorCode errorCode) {
-    MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-        LoggerTragetServiceName.CREATE_COMPONENT_DEPENDENCY_MODEL, ErrorLevel.ERROR.name(),
-        errorCode.id(), errorCode.message());
-    throw new CoreException(errorCode);
   }
 
   @Override
@@ -65,12 +66,12 @@ public class ComponentDependencyModelManagerImpl implements ComponentDependencyM
       if (entity.getSourceComponentId().equals(entity.getTargetComponentId())) {
         ErrorCode errorCode =
             ComponentDependencyModelErrorBuilder.getSourceTargetComponentEqualErrorBuilder();
-        raiseException(errorCode);
+        throw new CoreException(errorCode);
       }
     } else {
       ErrorCode errorCode = ComponentDependencyModelErrorBuilder
           .getNoSourceComponentErrorBuilder();
-      raiseException(errorCode);
+      throw new CoreException(errorCode);
     }
 
     if (!StringUtils.isEmpty(entity.getTargetComponentId())) {
@@ -90,17 +91,14 @@ public class ComponentDependencyModelManagerImpl implements ComponentDependencyM
 
   @Override
   public void update(ComponentDependencyModelEntity entity) {
-    ComponentDependencyModelEntity componentDependencyEntity = getComponentDependency(
-        entity.getVspId(), entity.getVersion(), entity.getId());
+    getComponentDependency(entity.getVspId(), entity.getVersion(), entity.getId());
     validateComponentDependency(entity);
     componentDependencyModelDao.update(entity);
   }
 
   @Override
   public ComponentDependencyModelEntity get(String vspId, Version version, String dependencyId) {
-    ComponentDependencyModelEntity componentDependency =
-        getComponentDependency(vspId, version, dependencyId);
-    return componentDependency;
+    return getComponentDependency(vspId, version, dependencyId);
   }
 
   private ComponentDependencyModelEntity getComponentDependency(String vspId, Version version,

@@ -19,13 +19,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
@@ -44,10 +38,10 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 
 public class ProcessManagerImpl implements ProcessManager {
+
   private static final String PROCESS_ARTIFACT_NOT_EXIST_MSG =
       "Process artifact for process with Id %s does not exist for %s with Id %s and version %s";
   private final ProcessDao processDao;
-  private static final String VSP_ID_COMPONENT_ID = "VSP id, component id";
 
   public ProcessManagerImpl(ProcessDao processDao) {
     this.processDao = processDao;
@@ -128,9 +122,6 @@ public class ProcessManagerImpl implements ProcessManager {
     try (FileOutputStream fos = new FileOutputStream(file)) {
       fos.write(retrieved.getArtifact().array());
     } catch (IOException exception) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_PROCESS_ARTIFACT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get process artifact");
       throw new CoreException(new UploadInvalidErrorBuilder().build(), exception);
     }
     return file;
@@ -163,17 +154,11 @@ public class ProcessManagerImpl implements ProcessManager {
 
   private ByteBuffer readArtifact(InputStream artifactInputStream) {
     if (artifactInputStream == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPLOAD_PROCESS_ARTIFACT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't upload process artifact");
       throw new CoreException(new UploadInvalidErrorBuilder().build());
     }
     try {
       return ByteBuffer.wrap(FileUtils.toByteArray(artifactInputStream));
     } catch (RuntimeException exception) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPLOAD_PROCESS_ARTIFACT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't upload process artifact");
       throw new CoreException(new UploadInvalidErrorBuilder().build(), exception);
     }
   }
@@ -192,7 +177,6 @@ public class ProcessManagerImpl implements ProcessManager {
     VersioningUtil.validateEntityExistence(retrieved, inputProcess, VspDetails.ENTITY_TYPE);
     if (retrieved.getArtifact() == null) {
       throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-          .withCategory(ErrorCategory.APPLICATION)
           .withId(VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND)
           .withMessage(String.format(PROCESS_ARTIFACT_NOT_EXIST_MSG,
               processId, VspDetails.ENTITY_TYPE, vspId, version)).build());

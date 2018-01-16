@@ -44,16 +44,14 @@ public class ValidationResponse {
   /**
    * Sets vsp errors.
    *  @param vspErrors         the vsp errors
-   * @param targetServiceName the target service name
    */
-  public void setVspErrors(Collection<ErrorCode> vspErrors,
-                           String targetServiceName) {
+  public void setVspErrors(Collection<ErrorCode> vspErrors) {
     this.vspErrors = vspErrors;
     if (CollectionUtils.isNotEmpty(vspErrors)) {
       valid = false;
     }
 
-    VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors, targetServiceName);
+    VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors);
   }
 
 
@@ -80,17 +78,15 @@ public class ValidationResponse {
   /**
    * Sets upload data errors.
    *  @param uploadDataErrors  the upload data errors
-   * @param targetServiceName the target service name
    */
-  public void setUploadDataErrors(Map<String, List<ErrorMessage>> uploadDataErrors,
-                                  String targetServiceName) {
+  public void setUploadDataErrors(Map<String, List<ErrorMessage>> uploadDataErrors) {
     this.uploadDataErrors = uploadDataErrors;
     if (MapUtils.isNotEmpty(uploadDataErrors)) {
       valid = false;
     }
 
     VendorSoftwareProductUtils
-            .setErrorsIntoLogger(uploadDataErrors, targetServiceName);
+            .setErrorsIntoLogger(uploadDataErrors);
   }
 
   public QuestionnaireValidationResult getQuestionnaireValidationResult() {

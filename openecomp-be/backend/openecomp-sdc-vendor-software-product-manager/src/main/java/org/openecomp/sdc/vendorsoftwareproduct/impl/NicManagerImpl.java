@@ -19,11 +19,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
@@ -99,10 +94,6 @@ public class NicManagerImpl implements NicManager {
     if (!vspInfoDao.isManual(nic.getVspId(), nic.getVersion())) {
       ErrorCode onboardingMethodUpdateErrorCode = NotSupportedHeatOnboardMethodErrorBuilder
           .getAddNicNotSupportedHeatOnboardMethodErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          onboardingMethodUpdateErrorCode.message());
       throw new CoreException(onboardingMethodUpdateErrorCode);
     } else {
       validateNic(nic);
@@ -123,11 +114,6 @@ public class NicManagerImpl implements NicManager {
             .matches(VendorSoftwareProductConstants.NAME_PATTERN)) {
       ErrorCode errorCode = NicErrorBuilder
               .getNicNameFormatErrorBuilder(VendorSoftwareProductConstants.NAME_PATTERN);
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-              errorCode.id(),errorCode.message());
-
       throw new CoreException(errorCode);
     }
 
@@ -140,10 +126,6 @@ public class NicManagerImpl implements NicManager {
             && !(networkId == null || networkId.isEmpty())) {
         final ErrorCode nicNetworkIdNotAllowedExternalNetworkErrorBuilder =
             new NicNetworkIdNotAllowedExternalNetworkErrorBuilder().build();
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(),
-            nicNetworkIdNotAllowedExternalNetworkErrorBuilder.message());
         throw new CoreException(nicNetworkIdNotAllowedExternalNetworkErrorBuilder);
     }
   }
@@ -157,9 +139,6 @@ public class NicManagerImpl implements NicManager {
     if (!(networkDescription == null || networkDescription.isEmpty())) {
       final ErrorCode nicNetworkDescriptionErrorBuilder =
           NicInternalNetworkErrorBuilder.getNetworkDescriptionInternalNetworkErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), nicNetworkDescriptionErrorBuilder.message());
       throw new CoreException(nicNetworkDescriptionErrorBuilder);
     }
   }
@@ -171,10 +150,6 @@ public class NicManagerImpl implements NicManager {
         final ErrorCode duplicateNicInComponentErrorBuilder =
             new DuplicateNicInComponentErrorBuilder(nic.getNicCompositionData().getName(),
                 nic.getComponentId()).build();
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(),
-            duplicateNicInComponentErrorBuilder.message());
         throw new CoreException(duplicateNicInComponentErrorBuilder);
       }
 
@@ -216,10 +191,6 @@ public class NicManagerImpl implements NicManager {
     if (!vspInfoDao.isManual(vspId, version)) {
       final ErrorCode deleteNicErrorBuilder =
           DeleteNicErrorBuilder.getDeleteNicForHeatOnboardedVspErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.DELETE_NIC, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          deleteNicErrorBuilder.message());
       throw new CoreException(deleteNicErrorBuilder);
     }
 
@@ -240,11 +211,6 @@ public class NicManagerImpl implements NicManager {
             .matches(VendorSoftwareProductConstants.NAME_PATTERN)) {
       ErrorCode errorCode = NicErrorBuilder
               .getNicNameFormatErrorBuilder(VendorSoftwareProductConstants.NAME_PATTERN);
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.UPDATE_NIC, ErrorLevel.ERROR.name(),
-              errorCode.id(),errorCode.message());
-
       throw new CoreException(errorCode);
     }
 

@@ -21,11 +21,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ImageManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -34,7 +30,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ImageErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -71,11 +66,6 @@ public class ImageManagerImpl implements ImageManager {
     if (!isManual) {
       ErrorCode errorCode = NotSupportedHeatOnboardMethodErrorBuilder
           .getAddImageNotSupportedHeatOnboardMethodErrorBuilder();
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_IMAGE, ErrorLevel.ERROR.name(),
-          errorCode.id(), errorCode.message());
-
       throw new CoreException(errorCode);
     }
     compositionEntityDataManager.createImage(imageEntity);
@@ -84,9 +74,7 @@ public class ImageManagerImpl implements ImageManager {
 
   @Override
   public Collection<ImageEntity> listImages(String vspId, Version version, String componentId) {
-    Collection<ImageEntity> imageEntities =
-        imageDao.list(new ImageEntity(vspId, version, componentId, null));
-    return imageEntities;
+    return imageDao.list(new ImageEntity(vspId, version, componentId, null));
   }
 
   @Override
@@ -136,10 +124,6 @@ public class ImageManagerImpl implements ImageManager {
       final ErrorCode deleteImageErrorBuilder =
           NotSupportedHeatOnboardMethodErrorBuilder
               .getDelImageNotSupportedHeatOnboardMethodErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.DELETE_IMAGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          deleteImageErrorBuilder.message());
       throw new CoreException(deleteImageErrorBuilder);
     }
     if (imageEntity != null) {
@@ -151,11 +135,6 @@ public class ImageManagerImpl implements ImageManager {
     if (value != null && !value.equals(retrivedValue)) {
       final ErrorCode updateHeatImageErrorBuilder =
           ImageErrorBuilder.getImageHeatReadOnlyErrorBuilder(name);
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          updateHeatImageErrorBuilder.message());
       throw new CoreException(updateHeatImageErrorBuilder);
     }
   }
@@ -207,9 +186,6 @@ public class ImageManagerImpl implements ImageManager {
       }
     } catch (IllegalArgumentException exception) {
       ErrorCode errorCode = ImageErrorBuilder.getInvalidImageFormatErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
-          errorCode.id(), errorCode.message() + exception);
       throw new CoreException(errorCode, exception);
     }
 
@@ -227,11 +203,6 @@ public class ImageManagerImpl implements ImageManager {
     if (!isImageVersionUnique(vspId, version, componentId, imageId, image)) {
       ErrorCode errorCode = ImageErrorBuilder.getDuplicateImageVersionErrorBuilder(image
           .getVersion(), componentId);
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
-          errorCode.id(), errorCode.message());
-
       throw new CoreException(errorCode);
     }
 

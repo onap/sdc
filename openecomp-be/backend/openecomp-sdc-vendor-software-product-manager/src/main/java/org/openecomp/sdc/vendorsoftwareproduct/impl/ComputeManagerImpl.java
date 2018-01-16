@@ -21,13 +21,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComputeManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
@@ -39,7 +34,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.DuplicateComputeInComponentErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ListComputeResponse;
@@ -82,10 +76,6 @@ public class ComputeManagerImpl implements ComputeManager {
     if (!vspInfoDao.isManual(compute.getVspId(), compute.getVersion())) {
       ErrorCode onboardingMethodUpdateErrorCode = NotSupportedHeatOnboardMethodErrorBuilder
           .getAddComputeNotSupportedHeatOnboardMethodErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_COMPUTE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          onboardingMethodUpdateErrorCode.message());
       throw new CoreException(onboardingMethodUpdateErrorCode);
     } else {
       validateUniqueName(compute.getVspId(), compute.getVersion(), compute.getComponentId(),
@@ -106,10 +96,7 @@ public class ComputeManagerImpl implements ComputeManager {
                                                       String componentId) {
     Collection<ComputeEntity> computes =
         computeDao.list(new ComputeEntity(vspId, version, componentId, null));
-
-    Collection<ListComputeResponse> computeResponse =
-        getListComputeResponse(vspId, version, computes);
-    return computeResponse;
+    return getListComputeResponse(vspId, version, computes);
   }
 
   private Collection<ListComputeResponse> getListComputeResponse(String vspId, Version version,
@@ -232,11 +219,6 @@ public class ComputeManagerImpl implements ComputeManager {
 
       final ErrorCode updateHeatComputeErrorBuilder =
           DuplicateComputeInComponentErrorBuilder.getComputeHeatReadOnlyErrorBuilder(name);
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_COMPUTE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          updateHeatComputeErrorBuilder.message());
       throw new CoreException(updateHeatComputeErrorBuilder);
     }
   }
@@ -258,11 +240,8 @@ public class ComputeManagerImpl implements ComputeManager {
         "Composition entities may not be created / deleted for Vendor Software Product "
             + "whose entities were uploaded";
     if (!vspInfoDao.isManual(vspId, version)) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.DELETE_COMPUTE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't delete compute");
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+          new ErrorCode.ErrorCodeBuilder()
               .withId(VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED)
               .withMessage(vspCompositionEditNotAllowedMsg).build());
     }

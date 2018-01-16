@@ -36,18 +36,13 @@ import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
-import org.openecomp.sdc.logging.messages.AuditMessages;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.VendorLicenseArtifactsService;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
@@ -82,9 +77,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageInvalidErrorBuilder
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireValidationResult;
@@ -113,13 +106,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
 
   private final OrchestrationTemplateDao orchestrationTemplateDao;
   private final VendorSoftwareProductInfoDao vspInfoDao;
@@ -136,7 +135,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private final ComputeDao computeDao;
   private final ImageDao imageDao;
   private final ManualVspToscaManager manualVspToscaManager;
-  private static final String PACKAGE_NOT_FOUND = "Package not found";
 
   public VendorSoftwareProductManagerImpl(
           OrchestrationTemplateDao orchestrationTemplateDataDao,
@@ -191,8 +189,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         validateQuestionnaire(vspDetails.getId(), vspDetails.getVersion(),
             vspDetails.getOnboardingMethod()));
 
-    List<ErrorCode> vspErrors = new ArrayList<>();
-    vspErrors.addAll(validateVspFields(vspDetails));
+    List<ErrorCode> vspErrors = new ArrayList<>(validateVspFields(vspDetails));
     if (validateComponentDependencies(componentDependencies)) {
       vspErrors
           .add(ComponentDependencyModelErrorBuilder.getcyclicDependencyComponentErrorBuilder());
@@ -215,11 +212,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             .vendorSoftwareProductMissingServiceModelErrorBuilder(vspDetails.getId(),
                 vspDetails.getVersion()));
       }
-      validationResponse.setUploadDataErrors(validateOrchestrationTemplate(orchestrationTemplate),
-              LoggerTragetServiceName.SUBMIT_VSP);
+      validationResponse.setUploadDataErrors(validateOrchestrationTemplate(orchestrationTemplate));
     }
     validationResponse
-        .setVspErrors(vspErrors, LoggerTragetServiceName.SUBMIT_VSP);
+        .setVspErrors(vspErrors);
     validationResponse.setLicensingDataErrors(validateLicensingData(vspDetails));
     return validationResponse;
   }
@@ -260,8 +256,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             .generateToscaModel(manualVspToscaManager.gatherVspInformation(vspId, version))
             : serviceModelDao.getServiceModel(vspId, version);
 
-    Map<String, List<ErrorMessage>> compilationErrors = compile(vspId, version, serviceModel);
-    return compilationErrors;
+      return compile(vspId, version, serviceModel);
   }
 
   private boolean validateComponentDependencies(
@@ -447,15 +442,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     enrichmentManager.setModel(serviceModel);
     Map<String, List<ErrorMessage>> enrichErrors = enrichmentManager.enrich();
 
-    if (MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, enrichErrors))) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.ENRICHMENT_COMPLETED
-          + vendorSoftwareProductId);
-    } else {
-      enrichErrors.values().forEach(errorList ->
-          auditIfContainsErrors(errorList, vendorSoftwareProductId,
-              AuditMessages.ENRICHMENT_ERROR));
-    }
-
     enrichedServiceModelDao
         .storeServiceModel(vendorSoftwareProductId, version, enrichmentManager.getModel());
 
@@ -530,16 +516,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public VspDetails getVsp(String vspId, Version version) {
-    VspDetails vsp = getValidatedVsp(vspId, version);
-    return vsp;
+      return getValidatedVsp(vspId, version);
   }
 
   private VspDetails getValidatedVsp(String vspId, Version version) {
     VspDetails vsp = vspInfoDao.get(new VspDetails(vspId, version));
     if (vsp == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_VSP, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Requested VSP not found");
       throw new CoreException(new VendorSoftwareProductNotFoundErrorBuilder(vspId).build());
     }
     return vsp;
@@ -547,9 +529,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public void deleteVsp(String vspId) {
-    MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-        LoggerTragetServiceName.DELETE_VSP, ErrorLevel.ERROR.name(),
-        LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Unsupported operation");
     throw new UnsupportedOperationException(
         VendorSoftwareProductConstants.UNSUPPORTED_OPERATION_ERROR);
   }
@@ -561,23 +540,13 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public File getTranslatedFile(String vspId, Version version) {
-    String errorMessage;
-
     PackageInfo packageInfo = packageInfoDao.get(new PackageInfo(vspId, version));
     if (packageInfo == null) {
-      errorMessage = PACKAGE_NOT_FOUND;
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new PackageNotFoundErrorBuilder(vspId, version).build());
     }
 
     ByteBuffer translatedFileBuffer = packageInfo.getTranslatedFile();
     if (translatedFileBuffer == null) {
-      errorMessage = PACKAGE_NOT_FOUND;
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new PackageInvalidErrorBuilder(vspId, version).build());
     }
 
@@ -586,10 +555,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     try (FileOutputStream fos = new FileOutputStream(translatedFile)) {
       fos.write(translatedFileBuffer.array());
     } catch (IOException exception) {
-      errorMessage = "Can't create package";
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new TranslationFileCreationErrorBuilder(vspId, version).build(),
           exception);
     }
@@ -612,9 +577,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
              new ByteArrayInputStream(contentData.array()))) {
       zos.write(contentData.array());
     } catch (IOException exception) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_UPLOADED_HEAT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get uploaded HEAT");
       throw new CoreException(new FileCreationErrorBuilder(vspId).build(), exception);
     }
     return baos.toByteArray();
@@ -626,7 +588,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   @Override
-  public PackageInfo createPackage(String vspId, Version version) throws IOException {
+  public PackageInfo createPackage(String vspId, Version version) {
     ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     Version vlmVersion = vspDetails.getVlmVersion();
@@ -645,8 +607,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));
 
     packageInfoDao.create(packageInfo);
-
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_PACKAGE + vspId);
     return packageInfo;
   }
 
@@ -819,15 +779,5 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private boolean isServiceModelExist(ToscaServiceModel serviceModel) {
     return serviceModel != null && serviceModel.getEntryDefinitionServiceTemplate() != null;
   }
-
-  private void auditIfContainsErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
-            vspId));
-      }
-    });
-  }
-
 
 }
