@@ -125,7 +125,7 @@ public class ExportSerializer {
                 Map<Object, Object> map = row.getMap(i, Object.class, Object.class);
                 Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
                 Object mapAsString = entrySet.parallelStream().map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER + entry.getValue().toString())
-                        .collect(Collectors.joining(ExportDataCommand.MAP_DELIMITER));
+                        .collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
                 data = Base64.getEncoder().encodeToString(mapAsString.toString().getBytes());
                 break;
             default:
