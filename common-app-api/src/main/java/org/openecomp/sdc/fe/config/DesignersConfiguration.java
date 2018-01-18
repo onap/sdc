@@ -2,6 +2,7 @@ package org.openecomp.sdc.fe.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openecomp.sdc.common.api.BasicConfiguration;
 
@@ -23,29 +24,20 @@ public class DesignersConfiguration extends BasicConfiguration {
 
     public static class Designer {
 
-        private String displayName;
+        private String designerId;
         private String designerHost;
         private Integer designerPort;
         private String designerPath;
         private String designerStateUrl;
         private String designerProtocol;
-        private List<String> designerButtonLocation;
-        private List<String> designerTabPresentation;
+        private Map<String, DesignerDisplayOptions> designerDisplayOptions;
 
-        public List<String> getDesignerButtonLocation() {
-            return designerButtonLocation;
+        public Map<String, DesignerDisplayOptions> getDesignerDisplayOptions() {
+            return designerDisplayOptions;
         }
 
-        public void setDesignerButtonLocation(List<String> designerButtonLocation) {
-            this.designerButtonLocation = designerButtonLocation;
-        }
-
-        public List<String> getDesignerTabPresentation() {
-            return designerTabPresentation;
-        }
-
-        public void setDesignerTabPresentation(List<String> designerTabPresentation) {
-            this.designerTabPresentation = designerTabPresentation;
+        public void setDesignerDisplayOptions(Map<String, DesignerDisplayOptions> designerDisplayOptions) {
+            this.designerDisplayOptions = designerDisplayOptions;
         }
 
         public String getDesignerStateUrl() {
@@ -64,12 +56,12 @@ public class DesignersConfiguration extends BasicConfiguration {
             this.designerProtocol = designerProtocol;
         }
 
-        public String getDisplayName() {
-            return displayName;
+        public String getDesignerId() {
+            return designerId;
         }
 
-        public void setDisplayName(String displayName) {
-            this.displayName = displayName;
+        public void setDesignerId(String designerId) {
+            this.designerId = designerId;
         }
 
         public String getDesignerHost() {
@@ -96,6 +88,28 @@ public class DesignersConfiguration extends BasicConfiguration {
             this.designerPath = designerPath;
         }
 
+    }
+
+    public static class DesignerDisplayOptions {
+
+        private String displayName;
+        private List<String> validResourceTypes;
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public void setDisplayName(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public List<String> getValidResourceTypes() {
+            return validResourceTypes;
+        }
+
+        public void setValidResourceTypes(List<String> validResourceTypes) {
+            this.validResourceTypes = validResourceTypes;
+        }
     }
 
 }

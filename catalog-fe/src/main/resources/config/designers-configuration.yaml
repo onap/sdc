@@ -1,17 +1,22 @@
 designersList:
-   - displayName: DCAE
+   - designerId: DCAE
      designerHost: 192.168.50.5
      designerPort: 8080
      designerPath: "/dcae"
      designerStateUrl: "dcae"
      designerProtocol: http
-     buttonLocation: ["top", "tab"]
-     tabPresentation: ["VF", "SERVICE"]
-   - displayName: WORKFLOW
+     designerDisplayOptions:
+        tab:
+            displayName: "monitor"
+            validResourceTypes: ["VF", "SERVICE"]
+        top:
+            displayName: "DCAE"
+   - designerId: WORKFLOW
      designerHost: 192.168.50.5
      designerPort: 9527
      designerPath: "/"
      designerStateUrl: "workflowDesigner"
      designerProtocol: http
-     buttonLocation: ["top"]
-     tabPresentation: []
+     designerDisplayOptions:
+        top:
+            displayName: "Workflow Designer"

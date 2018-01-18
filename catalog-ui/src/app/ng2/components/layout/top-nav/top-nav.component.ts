@@ -122,7 +122,9 @@ export class TopNavComponent {
                 });
 
                 _.each(DesignersConfiguration.designers, (designer: Designer) => {
-                    tmpArray.push(new MenuItem(designer.displayName, null, "designers", "goToState", {path: designer.designerStateUrl}, null));
+                    if (designer.designerDisplayOptions["top"]) {
+                        tmpArray.push(new MenuItem(designer.designerDisplayOptions["top"].displayName, null, "designers", "goToState", {path: designer.designerStateUrl}, null));
+                    }
                 })
             }
 

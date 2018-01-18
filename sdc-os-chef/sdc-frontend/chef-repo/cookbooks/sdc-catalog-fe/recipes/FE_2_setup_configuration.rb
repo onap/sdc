@@ -23,20 +23,12 @@ template "designers-fe-config" do
    group "jetty"
    mode "0755"
    variables({
+      :dcae_protocol             => node['Designers']['DCAE']['dcae_protocol'],
       :dcae_host                 => node['Designers']['DCAE']['dcae_host'],
       :dcae_port                 => node['Designers']['DCAE']['dcae_port'],
-      :dcae_path                 => node['Designers']['DCAE']['dcae_path'],
-      :dcae_state_url            => node['Designers']['DCAE']['dcae_state_url'],
-      :dcae_protocol             => node['Designers']['DCAE']['dcae_protocol'],
-      :dcae_button_location      => node['Designers']['DCAE']['dcae_button_location'],
-      :dcae_tab_presentation     => node['Designers']['DCAE']['dcae_tab_presentation'],
+      :workflow_protocol         => node['Designers']['WORKFLOW']['workflow_protocol'],
       :workflow_host             => node['Designers']['WORKFLOW']['workflow_host'],
       :workflow_port             => node['Designers']['WORKFLOW']['workflow_port'],
-      :workflow_path             => node['Designers']['WORKFLOW']['workflow_path'],
-      :workflow_state_url        => node['Designers']['WORKFLOW']['workflow_state_url'],
-      :workflow_protocol         => node['Designers']['WORKFLOW']['workflow_protocol'],
-      :workflow_button_location  => node['Designers']['WORKFLOW']['workflow_button_location'],
-      :workflow_tab_presentation => node['Designers']['WORKFLOW']['workflow_tab_presentation']
    })
 end
 
