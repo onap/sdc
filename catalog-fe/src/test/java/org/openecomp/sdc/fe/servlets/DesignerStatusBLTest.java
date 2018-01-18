@@ -54,7 +54,7 @@ public class DesignerStatusBLTest {
 		ConfigurationManager.setTestInstance(configurationManager);
 		when(configurationManager.getDesignersConfiguration()).thenReturn(designersConfiguration);
 		
-		offlineDesigner.setDisplayName(offlineDesignerDisplayName);
+		offlineDesigner.setDesignerId(offlineDesignerDisplayName);
 		offlineDesigner.setDesignerHost(offlineDesignerHost);
 		offlineDesigner.setDesignerPort(offlineDesignerPort);
 		offlineDesigner.setDesignerPath(offlineDesignerPath);
@@ -64,7 +64,7 @@ public class DesignerStatusBLTest {
 		offlineRequestString.append(offlineDesignerProtocol).append("://").append(onlineDesignerHost).append(":")
 				.append(offlineDesignerPort).append(offlineDesignerPath);
 
-		onlineDesigner.setDisplayName(onlineDesignerDisplayName);
+		onlineDesigner.setDesignerId(onlineDesignerDisplayName);
 		onlineDesigner.setDesignerHost(onlineDesignerHost);
 		onlineDesigner.setDesignerPort(onlineDesignerPort);
 		onlineDesigner.setDesignerPath(onlineDesignerPath);

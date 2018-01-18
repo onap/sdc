@@ -1,13 +1,17 @@
 
 export class Designer {
-    displayName: string;
+    designerId: string;
     designerHost: string;
     designerPort: number;
     designerPath: string;
     designerStateUrl: string;
     designerProtocol: string;
-    designerButtonLocation: Array<string>;
-    designerTabPresentation: Array<string>;
+    designerDisplayOptions: Map<string, DesignerDisplayOptions>;
+}
+
+export class DesignerDisplayOptions {
+    displayName: string;
+    validResourceTypes: Array<string>;
 }
 
 export type Designers = Array<Designer>;

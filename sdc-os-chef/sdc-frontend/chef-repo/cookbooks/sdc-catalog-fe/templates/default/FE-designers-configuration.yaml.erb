@@ -1,17 +1,22 @@
 designersList:
-   - displayName: DCAE
+   - designerId: DCAE
+     designerProtocol: <%= @dcae_protocol %>
      designerHost: <%= @dcae_host %>
      designerPort: <%= @dcae_port %>
-     designerPath: <%= @dcae_path %>
-     designerStateUrl: <%= @dcae_state_url %>
-     designerProtocol: <%= @dcae_protocol %>
-     designerButtonLocation: <%= @dcae_button_location %>
-     designerTabPresentation: <%= @dcae_tab_presentation %>
-   - displayName: WORKFLOW
+     designerPath: "/dace"
+     designerStateUrl: "dcae"
+     designerDisplayOptions:
+        tab:
+            displayName: "monitor"
+            validResourceTypes: ["VF", "SERVICE"]
+        top:
+            displayName: "DCAE"
+   - designerId: WORKFLOW
+     designerProtocol: <%= @workflow_protocol %>
      designerHost: <%= @workflow_host %>
      designerPort: <%= @workflow_port %>
-     designerPath: <%= @workflow_path %>
-     designerStateUrl: <%= @workflow_state_url %>
-     designerProtocol: <%= @workflow_protocol %>
-     designerButtonLocation: <%= @workflow_button_location %>
-     designerTabPresentation: <%= @workflow_tab_presentation %>
+     designerPath: "/"
+     designerStateUrl: "workflowDesigner"
+     designerDisplayOptions:
+        top:
+            displayName: "Workflow Designer"

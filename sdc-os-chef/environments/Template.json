@@ -42,22 +42,14 @@
         },
         "Designers": {
             "DCAE": {
-                "dcae_host": "yyy",
-                "dcae_port": "yyy",
-                "dcae_path": "yyy",
-                "dcae_state_url": "yyy",
                 "dcae_protocol": "yyy",
-                "dcae_button_position": ["xxx", "yyy"],
-                "dcae_tab_presentation": ["xxx", "yyy"]
+                "dcae_host": "yyy",
+                "dcae_port": "yyy"
             },
             "WORKFLOW": {
-                "workflow_host": "yyy",
-                "workflow_port": "yyy",
-                "workflow_path": "yyy",
-                "workflow_state_url": "yyy",
                 "workflow_protocol": "yyy",
-                "workflow_button_position": ["xxx", "yyy"],
-                "workflow_tab_presentation": ["xxx", "yyy"]
+                "workflow_host": "yyy",
+                "workflow_port": "yyy"
             }
         }
     },
