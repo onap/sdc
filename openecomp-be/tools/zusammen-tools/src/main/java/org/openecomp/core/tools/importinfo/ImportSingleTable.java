@@ -97,7 +97,7 @@ public class ImportSingleTable {
                 break;
             case TIMESTAMP:
                 if (StringUtils.isEmpty(rowData)){
-                    bind.setSet(i, null);
+                    bind.setDate(i, null);
                 } else {
                     bind.setDate(i, new Date(Long.parseLong(rowData)));
                 }
