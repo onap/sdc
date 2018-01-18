@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import {defaultStoreFactory} from 'test-utils/factories/onboard/OnboardingCatalogFactories.js';
 import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';

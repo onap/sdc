@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
+
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/details/SoftwareProductDetails.js';
 import SoftwareProductDetailsView from 'sdc-app/onboarding/softwareProduct/details/SoftwareProductDetailsView.jsx';
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
@@ -189,7 +189,7 @@ describe('Software Product Details: ', function () {
 			genericFieldInfo,
 			qGenericFieldInfo,
 		};
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(
 			<SoftwareProductDetailsView
 				{...params}

@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
 import Configuration from 'sdc-app/config/Configuration.js';
@@ -72,7 +72,7 @@ describe('Versions Page Module Tests', () => {
 		const additionalProps = VersionsPageAdditionalPropsFactory.build();
 
 		const props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch, additionalProps));
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<VersionsPageView {...props} />);
 
 		const renderedOutput = renderer.getRenderOutput();

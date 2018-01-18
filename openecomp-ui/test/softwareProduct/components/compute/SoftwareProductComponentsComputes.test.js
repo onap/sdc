@@ -16,7 +16,7 @@
 
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import ComputeFlavors from 'sdc-app/onboarding/softwareProduct/components/compute/computeComponents/ComputeFlavors.js';
 import {ComputeFlavorBaseData} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsComputeFactory.js';
@@ -32,7 +32,7 @@ describe('Software Product Component ComputeFlavors - View Classes.', () => {
 
 		const ComputeFlavorsList = ComputeFlavorBaseData.buildList(1);
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(
 			<ComputeFlavors
 				store={store}

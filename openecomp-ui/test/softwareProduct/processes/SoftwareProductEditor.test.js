@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessesEditor.js';
 import SoftwareProductProcessesEditorView from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessesEditorView.jsx';
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';

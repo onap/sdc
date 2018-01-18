@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps } from 'sdc-app/onboarding/licenseModel/creation/LicenseModelCreation.js';
 import LicenseModelCreationView from 'sdc-app/onboarding/licenseModel/creation/LicenseModelCreationView.jsx';
 import {LicenseModelCreationFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
@@ -66,7 +66,7 @@ describe('License Model Creation Module Tests', function() {
 
 	it('simple jsx test', () => {
 		let data = LicenseModelCreationFactory.build();
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(
 			<LicenseModelCreationView
 				data={data}

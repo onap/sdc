@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import FeatureGroup from 'src/sdc-app/onboarding/licenseModel/overview/listItems/FeatureGroup.jsx';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import {FeatureGroupListItemFactory} from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';

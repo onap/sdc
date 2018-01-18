@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 
 import {mapStateToProps, SummaryCountList} from 'sdc-app/onboarding/licenseModel/overview/summary/SummaryCountList.js';
 import LicenseModelDescriptionEdit from 'sdc-app/onboarding/licenseModel/overview/summary/LicenseModelDescriptionEdit.jsx';

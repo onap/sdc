@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/deployment/SoftwareProductDeployment.js';
 import SoftwareProductDeploymentView from 'sdc-app/onboarding/softwareProduct/deployment/SoftwareProductDeploymentView.jsx';
 
@@ -60,7 +60,7 @@ describe('SoftwareProductDeployment Mapper and View Classes', () => {
 
 		const deploymentFlavors = VSPDeploymentStoreFactory.buildList(2);
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(
 			<SoftwareProductDeploymentView
 				deploymentFlavors={deploymentFlavors}

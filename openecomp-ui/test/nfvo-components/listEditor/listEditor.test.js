@@ -16,7 +16,7 @@
 
 import React from 'react';
 import {mount} from 'enzyme';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import ListEditorView from 'src/nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'src/nfvo-components/listEditor/ListEditorItemView.jsx';
 

@@ -15,8 +15,8 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
-import TestUtils from 'react-dom/test-utils';
+
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNICEditor.js';
 import SoftwareProductComponentsNICEditorView from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNICEditorView.jsx';
 
@@ -82,7 +82,7 @@ describe('Software Product Component Network NIC Editor and View Classes', () =>
 			protocols: []
 		};
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<SoftwareProductComponentsNICEditorView {...props}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();

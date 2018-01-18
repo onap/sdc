@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/components/general/SoftwareProductComponentsGeneral.js';
 import SoftwareProductComponentsGeneralView from 'sdc-app/onboarding/softwareProduct/components/general/SoftwareProductComponentsGeneralView.jsx';
 //import {statusEnum as versionStatusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
@@ -73,7 +73,7 @@ describe('SoftwareProductComponentsGeneral Mapper and View Classes', () => {
 			name: ''
 		};
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(
 			<SoftwareProductComponentsGeneralView
 				componentData={componentData}

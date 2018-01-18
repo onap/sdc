@@ -16,7 +16,7 @@
 
 import GlobalModal, {GlobalModalView, mapStateToProps} from 'src/nfvo-components/modal/GlobalModal.js';
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import store from 'sdc-app/AppStore.js';
 import {actionTypes, typeEnum} from 'src/nfvo-components/modal/GlobalModalConstants.js';
 
@@ -57,7 +57,7 @@ describe('Global Modal tests: ', function () {
 
 		expect(store.getState().modal).toBeTruthy();
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<GlobalModal store={store}/>);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
@@ -69,7 +69,7 @@ describe('Global Modal tests: ', function () {
 		store.dispatch({type: actionTypes.GLOBAL_MODAL_SHOW, data: {title, msg}});
 
 		expect(store.getState().modal).toBeTruthy();
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<GlobalModal store={store}/>);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
@@ -81,7 +81,7 @@ describe('Global Modal tests: ', function () {
 
 	it('checking component default render', ()=> {
 		expect(window.document).toBeTruthy();
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<GlobalModalView show={true} type={typeEnum.WARNING} title={title} msg={msg} onDeclined={()=>{}} />);
 		const globalModalView = renderer.getRenderOutput();
 		expect(globalModalView).toBeTruthy();

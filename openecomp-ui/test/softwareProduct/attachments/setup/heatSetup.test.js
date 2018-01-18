@@ -15,7 +15,7 @@
  */
 import React from 'react';
 
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/attachments/setup/HeatSetup.js';
 import HeatSetupView from 'sdc-app/onboarding/softwareProduct/attachments/setup/HeatSetupView.jsx';
 import {storeCreator} from 'sdc-app/AppStore.js';

@@ -15,8 +15,8 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
-import TestUtils from 'react-dom/test-utils';
+
+import TestUtils from 'react-addons-test-utils';
 import {VSPAttachmentTreeNodeWithChildrenFactory, VSPAttachmentDetailedError} from 'test-utils/factories/softwareProduct/SoftwareProductAttachmentsFactories.js';
 import {defaultStoreFactory} from 'test-utils/factories/onboard/OnboardingCatalogFactories.js';
 
@@ -69,7 +69,7 @@ describe('SoftwareProduct Attachments - View: ', function () {
 		let data = defaultStoreFactory.build({softwareProduct: {softwareProductAttachments, softwareProductEditor: {data: {...versionControllerData}}}});
 		var params = mapStateToProps(data);
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<SoftwareProductAttachmentsView {...params}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
