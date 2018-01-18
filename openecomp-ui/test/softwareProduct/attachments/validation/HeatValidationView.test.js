@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/attachments/validation/HeatValidation.js';
 
 import HeatValidationView from 'sdc-app/onboarding/softwareProduct/attachments/validation/HeatValidationView.jsx';
@@ -165,7 +165,7 @@ describe('SoftwareProductAttachments Modal Mapper and View Classes', () => {
 		var onDeSelect = () => { return null; } ;
 		var onToggle = () => { return null; } ;
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<HeatValidationView
 			attachmentsTree={atTree}
 			errorList={errorList}

@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import LicenseKeyGroup from 'src/sdc-app/onboarding/licenseModel/overview/listItems/LicenseKeyGroup.jsx';
 import {LicenseKeyGroupListItemFactory} from 'test-utils/factories/licenseModel/LicenseKeyGroupFactories.js';
 

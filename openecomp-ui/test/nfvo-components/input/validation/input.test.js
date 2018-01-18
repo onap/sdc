@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Overlay from 'react-bootstrap/lib/Overlay.js';

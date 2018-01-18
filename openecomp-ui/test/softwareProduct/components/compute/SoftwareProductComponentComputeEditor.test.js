@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps as computeEditorMapStateToProps} from 'sdc-app/onboarding/softwareProduct/components/compute/computeComponents/computeFlavor/ComputeFlavorEditor.js';
 import ComputeEditorView from 'sdc-app/onboarding/softwareProduct/components/compute/computeComponents/computeFlavor/ComputeFlavorEditorView.jsx';
 
@@ -77,7 +77,7 @@ describe('Software Product Component Compute-Editor Mapper and View Classes.', (
 			onCancel: () => {}
 		};
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<ComputeEditorView {...props}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();

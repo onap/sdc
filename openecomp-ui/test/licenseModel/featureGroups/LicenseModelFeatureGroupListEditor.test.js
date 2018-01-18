@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps} from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupListEditor.js';
 import FeatureGroupsListEditorView from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupListEditorView.jsx';
 import { FeatureGroupStoreFactory } from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';

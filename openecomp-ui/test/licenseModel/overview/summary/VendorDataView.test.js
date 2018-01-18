@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps, VendorDataView} from 'sdc-app/onboarding/licenseModel/overview/summary/VendorDataView.js';
 import {LicenseModelOverviewFactory, LicenseModelStoreFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
 

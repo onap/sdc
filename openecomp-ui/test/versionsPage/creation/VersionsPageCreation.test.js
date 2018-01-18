@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps, mapActionsToProps} from 'sdc-app/onboarding/versionsPage/creation/VersionsPageCreation.js';
 import {VERSION_CREATION_FORM_NAME} from 'sdc-app/onboarding/versionsPage/creation/VersionsPageCreationConstants.js';
 import VersionsPageCreationActionHelper from 'sdc-app/onboarding/versionsPage/creation/VersionsPageCreationActionHelper.js';
@@ -92,7 +92,7 @@ describe('Versions Page Creation Module Tests', function() {
 		};
 
 		const props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch, additionalProps), additionalProps);
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<VersionsPageCreationView {...props} />);
 
 		const renderedOutput = renderer.getRenderOutput();

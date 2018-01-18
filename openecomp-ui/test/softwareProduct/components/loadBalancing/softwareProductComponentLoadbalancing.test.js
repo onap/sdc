@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/components/loadBalancing/SoftwareProductComponentLoadBalancing.js';
 import SoftwareProductComponentLoadBalancingView from 'sdc-app/onboarding/softwareProduct/components/loadBalancing/SoftwareProductComponentLoadBalancingRefView.jsx';
 
@@ -65,7 +65,7 @@ describe('SoftwareProductComponentLoadBalancing Mapper and View Classes', () => 
 
 		const versionControllerData = VSPComponentsVersionControllerFactory.build();
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(
 			<SoftwareProductComponentLoadBalancingView
 				softwareProductComponents={softwareProductComponents}

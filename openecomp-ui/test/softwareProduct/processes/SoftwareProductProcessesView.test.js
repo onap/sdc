@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcesses.js';
 import SoftwareProductProcessesView from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessesView.jsx';
 
@@ -56,7 +56,7 @@ describe('SoftwareProductProcesses Mapper and View Classes', () => {
 		const versionControllerData = VSPComponentsVersionControllerFactory.build();
 
 
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(
 			<SoftwareProductProcessesView
 				processesList={processesList}

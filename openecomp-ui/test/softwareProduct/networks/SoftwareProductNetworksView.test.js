@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/networks/SoftwareProductNetworks.js';
 import SoftwareProductNetworksView from 'sdc-app/onboarding/softwareProduct/networks/SoftwareProductNetworksView.jsx';
 //import {statusEnum as versionStatusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
@@ -57,7 +57,7 @@ describe('SoftwareProductNetworks Mapper and View Classes', () => {
 		const networksList = VSPNetworkFactory.buildList(2);
 
 		const versionControllerData = VSPComponentsVersionControllerFactory.build();
-		const renderer = new ShallowRenderer();
+		var renderer = TestUtils.createRenderer();
 		renderer.render(<SoftwareProductNetworksView isReadOnlyMode={true} networksList={networksList} versionControllerData={versionControllerData} currentSoftwareProduct={currentSoftwareProduct}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
