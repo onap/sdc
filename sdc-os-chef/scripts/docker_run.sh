@@ -36,6 +36,7 @@ function monitor_docker {
 
         if [ -n "$MATCH" ]; then
             echo DOCKER start finished in $TIME seconds
+            docker logs $1 > ${WORKSPACE}/data/logs/dockerLogs_$1.log
             break
         fi
 
