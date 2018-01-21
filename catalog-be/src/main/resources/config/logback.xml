@@ -324,5 +324,5 @@
 		</if>
 	</root>
 
-	<logger name="org.openecomp.sdc" level="INFO" />
+	<logger name="org.openecomp.sdc" level="DEBUG" />
 </configuration>

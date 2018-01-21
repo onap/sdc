@@ -36,6 +36,7 @@ function monitor_docker {
 
         if [ -n "$MATCH" ]; then
             echo DOCKER start finished in $TIME seconds
+            docker logs $1 > ${WORKSPACE}/data/logs/dockerLogs_$1.log
             break
         fi
 
@@ -54,12 +55,15 @@ function healthCheck {
 	curl localhost:9200/_cluster/health?pretty=true
 
 	echo "BE health-Check:"
-	curl http://localhost:8080/sdc2/rest/healthCheck
+	#curl http://localhost:8080/sdc2/rest/healthCheck
+	curl -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://localhost:8080/sdc2/rest/healthCheck
 
 	echo ""
 	echo ""
 	echo "FE health-Check:"
-	curl http://localhost:8181/sdc1/rest/healthCheck
+	#curl http://localhost:8181/sdc1/rest/healthCheck
+	curl -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://localhost:8181/sdc1/rest/healthCheck
+
 
 
 	echo ""
