@@ -95,6 +95,7 @@
     "jsx-loader": "^0.13.2",
     "mkdirp": "^0.5.1",
     "moment": "^2.18.1",
+    "node-sass": "^4.7.2",
     "node-watch": "^0.3.5",
     "prompt": "^0.2.14",
     "react-addons-test-utils": "~15.3.2",
