@@ -4,7 +4,7 @@
 	<property scope="system" name="ECOMP-component-name" value="SDC" />
 	<property scope="system" name="ECOMP-subcomponent-name" value="SDC-BE" />
 	<property file="${config.home}/catalog-be/configuration.yaml" />
-	<property scope="context" name="enable-all-log" value="false" />
+	<property scope="context" name="enable-all-log" value="true" />
 
 	<!-- value used by pattern field list (| - is inter-field separator, || - unavailable or not applicable field value) (m - mandatory, o- optional)-->
 	<!--timestamp(m)| requestID(m)| serviceInstanceID(o)| threadID(m)| physicalServerName(o)| serviceName(m)| userID(m)| logLevel(m)| severity(o)| serverIpAddress(m)| serverName(m)| clientIpAddress(o)| className(m)| timer(o)| detailedMessage(o)-->
@@ -311,7 +311,7 @@
 		</sift>
 	</appender>-->
 
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="ASYNC_ERROR" />
 		<appender-ref ref="ASYNC_DEBUG" />
 		<appender-ref ref="AUDIT_ROLLING" />
