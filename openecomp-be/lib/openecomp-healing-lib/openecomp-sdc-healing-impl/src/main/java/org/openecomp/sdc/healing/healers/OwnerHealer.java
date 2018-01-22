@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by ayalaben on 8/28/2017
@@ -46,7 +47,12 @@ public class OwnerHealer implements Healer {
       subscribersDao.subscribe(currentUserId,itemId);
 
       return currentUserId;
-    }
+    } else if (!itemHasOwnerProperty(itemId)){
+    Optional<ItemPermissionsEntity> ownerOpt = itemPermissions.stream().filter
+        (this::isOwnerPermission).findFirst();
+    ownerOpt.ifPresent(
+        itemPermissionsEntity -> updateItemOwner(itemId, itemPermissionsEntity.getUserId()));
+  }
     return itemPermissions.stream().filter(this::isOwnerPermission).findFirst().get().getUserId();
   }
 
@@ -58,6 +64,18 @@ public class OwnerHealer implements Healer {
       retrievedItem.setOwner(userId);
       itemDao.update(retrievedItem);
     }
+  }
+
+  private boolean itemHasOwnerProperty(String itemId){
+    Item item = new Item();
+    item.setId(itemId);
+    Item retrievedItem = itemDao.get(item);
+    if (Objects.nonNull(retrievedItem)) {
+      if (Objects.nonNull(retrievedItem.getOwner())){
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean isOwnerPermission(ItemPermissionsEntity permissionsEntity) {
