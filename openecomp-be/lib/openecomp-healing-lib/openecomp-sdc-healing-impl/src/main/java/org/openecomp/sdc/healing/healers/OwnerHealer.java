@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Created by ayalaben on 8/28/2017
@@ -31,9 +33,11 @@ public class OwnerHealer implements Healer {
       .createInterface();
 
   public Object heal(String itemId, Version version) {
-    Collection<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId);
+    Stream<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId)
+        .stream();
 
-    if (itemPermissions.stream().noneMatch(this::isOwnerPermission)) {
+
+    if (itemPermissions.noneMatch(this::isOwnerPermission)) {
       String currentUserId =
           SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId()
               .replace(HEALING_USER_SUFFIX, "");
@@ -46,8 +50,13 @@ public class OwnerHealer implements Healer {
       subscribersDao.subscribe(currentUserId,itemId);
 
       return currentUserId;
-    }
-    return itemPermissions.stream().filter(this::isOwnerPermission).findFirst().get().getUserId();
+    } else if (!itemHasOwnerProperty(itemId)){
+    Optional<ItemPermissionsEntity> ownerOpt = itemPermissions.filter
+        (this::isOwnerPermission).findFirst();
+    ownerOpt.ifPresent(
+        itemPermissionsEntity -> updateItemOwner(itemId, itemPermissionsEntity.getUserId()));
+  }
+    return itemPermissions.filter(this::isOwnerPermission).findFirst().get().getUserId();
   }
 
   private void updateItemOwner(String itemId,String userId) {
@@ -58,6 +67,13 @@ public class OwnerHealer implements Healer {
       retrievedItem.setOwner(userId);
       itemDao.update(retrievedItem);
     }
+  }
+
+  private boolean itemHasOwnerProperty(String itemId){
+    Item item = new Item();
+    item.setId(itemId);
+    Item retrievedItem = itemDao.get(item);
+    return Objects.nonNull(retrievedItem) && Objects.nonNull(retrievedItem.getOwner());
   }
 
   private boolean isOwnerPermission(ItemPermissionsEntity permissionsEntity) {
