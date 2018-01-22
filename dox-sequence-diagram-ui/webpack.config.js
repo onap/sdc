@@ -9,8 +9,7 @@ var PATHS = {
 var devmode = (process.env.npm_lifecycle_event === 'start');
 
 var entry = [];
-if (devmode) {
-	entry.push('babel-polyfill');
+if (devmode) {	
 	entry.push(path.resolve(PATHS.SRC, 'lib/main.jsx'));
 } else {
 	entry.push(path.resolve(PATHS.SRC, 'lib/ecomp/asdc/sequencer/Sequencer.jsx'));
@@ -46,11 +45,6 @@ var config = {
                 test: /\.html$/,
                 include: path.join(PATHS.SRC, 'lib'),
                 loaders: ['raw-loader']
-            },
-			{
-                test: /\.json$/,
-                include: path.join(PATHS.SRC, 'lib'),
-                loaders: ['json-loader']
             },
             {
                 test: /\.svg$/,
