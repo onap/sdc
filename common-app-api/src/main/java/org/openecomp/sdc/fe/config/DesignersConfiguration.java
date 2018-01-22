@@ -93,7 +93,15 @@ public class DesignersConfiguration extends BasicConfiguration {
     public static class DesignerDisplayOptions {
 
         private String displayName;
-        private List<String> validResourceTypes;
+        private List<String> displayContext;
+
+        public List<String> getDisplayContext() {
+            return displayContext;
+        }
+
+        public void setDisplayContext(List<String> displayContext) {
+            this.displayContext = displayContext;
+        }
 
         public String getDisplayName() {
             return displayName;
@@ -103,13 +111,6 @@ public class DesignersConfiguration extends BasicConfiguration {
             this.displayName = displayName;
         }
 
-        public List<String> getValidResourceTypes() {
-            return validResourceTypes;
-        }
-
-        public void setValidResourceTypes(List<String> validResourceTypes) {
-            this.validResourceTypes = validResourceTypes;
-        }
     }
 
 }

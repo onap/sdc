@@ -3,14 +3,12 @@ designersList:
      designerProtocol: <%= @dcae_protocol %>
      designerHost: <%= @dcae_host %>
      designerPort: <%= @dcae_port %>
-     designerPath: "/dace"
+     designerPath: "/openoui/vnfmarket/#!/marketplace"
      designerStateUrl: "dcae"
      designerDisplayOptions:
-        tab:
-            displayName: "monitor"
-            validResourceTypes: ["VF", "SERVICE"]
-        top:
-            displayName: "DCAE"
+        context:
+            displayName: "Monitor"
+            displayContext: ["RESOURCE", "SERVICE"]
    - designerId: WORKFLOW
      designerProtocol: <%= @workflow_protocol %>
      designerHost: <%= @workflow_host %>
@@ -19,4 +17,7 @@ designersList:
      designerStateUrl: "workflowDesigner"
      designerDisplayOptions:
         top:
+            displayName: "WORKFLOW"
+        context:
             displayName: "Workflow Designer"
+            displayContext: ["RESOURCE"]

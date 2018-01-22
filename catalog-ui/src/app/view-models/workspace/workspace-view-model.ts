@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
  * Created by obarda on 3/30/2016.
  */
 'use strict';
-import {IUserProperties, IAppMenu, Resource, Component} from "app/models";
+import {IUserProperties, IAppMenu, Resource, Component, Designer, DesignersConfiguration, DesignerDisplayOptions} from "app/models";
 import {
     WorkspaceMode, ComponentFactory, ChangeLifecycleStateHandler, Role, ComponentState, MenuItemGroup, MenuHandler,
     MenuItem, ModalsHandler, States, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ResourceType
@@ -58,6 +58,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     changeVersion:any;
     isComposition:boolean;
     isDeployment:boolean;
+    isDesigners:boolean;
     $state:ng.ui.IStateService;
     user:IUserProperties;
     thirdParty:boolean;
@@ -70,7 +71,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     showChangeStateButton():boolean;
     getComponent():Component;
     setComponent(component:Component):void;
-    onMenuItemPressed(state:string):ng.IPromise<boolean>;
+    onMenuItemPressed(state:string, params:any):ng.IPromise<boolean>;
     save():ng.IPromise<boolean>;
     setValidState(isValid:boolean):void;
     revert():void;
@@ -88,6 +89,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     getStatus():string;
     showLifecycleIcon():boolean;
     updateSelectedMenuItem(state:string):void;
+    isSelected(menuItem:MenuItem):boolean;
     uploadFileChangedInGeneralTab():void;
     updateMenuComponentName(ComponentName:string):void;
     getTabTitle():string;
@@ -214,14 +216,15 @@ export class WorkspaceViewModel {
             }
         };
 
-        this.$scope.onMenuItemPressed = (state:string):ng.IPromise<boolean> => {
+        this.$scope.onMenuItemPressed = (state:string, params:any):ng.IPromise<boolean> => {
             let deferred = this.$q.defer();
             let goToState = ():void => {
-                this.$scope.updateSelectedMenuItem(state);
-                this.$state.go(state, {
+                this.$state.go(state, Object.assign({
                     id: this.$scope.component.uniqueId,
                     type: this.$scope.component.componentType.toLowerCase(),
                     components: this.components
+                }, params)).then(() => {
+                    this.$scope.updateSelectedMenuItem(state);
                 });
                 deferred.resolve(true);
             };
@@ -616,18 +619,32 @@ export class WorkspaceViewModel {
         };
 
         this.$scope.updateSelectedMenuItem = (state:string):void => {
-            let stateArray:Array<string> = state.split('.');
+            let stateArray:Array<string> = state.split('.', 2);
             let stateWithoutInternalNavigate:string = stateArray[0] + '.' + stateArray[1];
             let selectedItem:MenuItem = _.find(this.$scope.leftBarTabs.menuItems, (item:MenuItem) => {
-                return _.startsWith(item.state, stateWithoutInternalNavigate);
+                let itemStateArray: Array<string> = item.state.split('.', 2);
+                let itemStateWithoutNavigation:string = itemStateArray[0] + '.' + itemStateArray[1];
+                return (itemStateWithoutNavigation === stateWithoutInternalNavigate);
             });
-            this.$scope.leftBarTabs.selectedIndex = selectedItem ? this.$scope.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
+
+            let selectedIndex = selectedItem ? this.$scope.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
+
+            if (stateArray[1] === 'designers') {
+                selectedIndex += _.findIndex(DesignersConfiguration.designers, (designer: Designer) => designer.designerStateUrl === this.$state.params.path);
+            }
+
+            this.$scope.leftBarTabs.selectedIndex = selectedIndex;
         };
+
+        this.$scope.isSelected = (menuItem:MenuItem): boolean => {
+            return this.$scope.leftBarTabs.selectedIndex === _.indexOf(this.$scope.leftBarTabs.menuItems, menuItem);
+        }
 
         this.$scope.$watch('$state.current.name', (newVal:string):void => {
             if (newVal) {
                 this.$scope.isComposition = (newVal.indexOf(States.WORKSPACE_COMPOSITION) > -1);
                 this.$scope.isDeployment = newVal == States.WORKSPACE_DEPLOYMENT;
+                this.$scope.isDesigners = newVal == States.WORKSPACE_DESIGNERS;
             }
         });
 
@@ -669,9 +686,9 @@ export class WorkspaceViewModel {
         return new MenuItem(text, null, States.WORKSPACE_GENERAL, 'goToState', [this.$state.params]);
     };
 
-    private updateMenuItemByRole = (menuItems:Array<MenuItem>, role:string) => {
-        let tempMenuItems:Array<MenuItem> = new Array<MenuItem>();
-        menuItems.forEach((item:MenuItem) => {
+    private updateMenuItemByRole = (menuItems:Array<any>, role:string) : Array<any> => {
+        let tempMenuItems:Array<any> = new Array<any>();
+        menuItems.forEach((item:any) => {
             //remove item if role is disabled
             if (!(item.disabledRoles && item.disabledRoles.indexOf(role) > -1)) {
                 tempMenuItems.push(item);
@@ -700,13 +717,37 @@ export class WorkspaceViewModel {
 
         let inCreateMode = this.$scope.isCreateMode();
         this.$scope.leftBarTabs = new MenuItemGroup();
-        this.$scope.leftBarTabs.menuItems = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()], this.role);
+        const menuItemsObjects:Array<any> = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()], this.role);
 
-        this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
-            item.params = [item.state];
-            item.callback = this.$scope.onMenuItemPressed;
+        // Only need to add designers to the menu if the current role is Designer
+        if (this.role === "DESIGNER") {
+            _.each(DesignersConfiguration.designers, (designer: Designer) => {
+                if (designer.designerDisplayOptions["context"]) {
+                    let displayOptions : DesignerDisplayOptions = designer.designerDisplayOptions["context"];
+
+                    if (displayOptions.displayContext.indexOf(this.$scope.component.getComponentSubType()) !== -1) {
+                        menuItemsObjects.push({
+                            text: displayOptions.displayName,
+                            action: 'onMenuItemPressed',
+                            state: 'workspace.designers',
+                            params: {path: designer.designerStateUrl}
+                        });
+                    }
+                }
+            });
+        }
+
+        this.$scope.leftBarTabs.menuItems = menuItemsObjects.map((item:MenuItem) => {
+            if (item.params) {
+                item.params.state = item.state;
+            }
+            else {
+                item.params = {state: item.state};
+            }
+            item.callback = () => this.$scope[item.action](item.state, item.params);
             item.isDisabled = (inCreateMode && States.WORKSPACE_GENERAL != item.state) ||
                 (States.WORKSPACE_DEPLOYMENT === item.state && this.$scope.component.groups && this.$scope.component.groups.length === 0 && this.$scope.component.isResource());
+            return new MenuItem(item.text, item.callback, item.state, item.action, item.params, item.blockedForTypes);
         });
 
         if (this.cacheService.get('breadcrumbsComponents')) {
@@ -722,16 +763,12 @@ export class WorkspaceViewModel {
 
     private disableMenuItems() {
         this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
-            item.params = [item.state];
-            item.callback = this.$scope.onMenuItemPressed;
             item.isDisabled = (States.WORKSPACE_GENERAL != item.state);
         });
     }
 
     private enableMenuItems() {
         this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
-            item.params = [item.state];
-            item.callback = this.$scope.onMenuItemPressed;
             item.isDisabled = false;
         });
     }

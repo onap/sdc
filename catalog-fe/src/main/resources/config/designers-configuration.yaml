@@ -6,9 +6,9 @@ designersList:
      designerStateUrl: "dcae"
      designerProtocol: http
      designerDisplayOptions:
-        tab:
-            displayName: "monitor"
-            validResourceTypes: ["VF", "SERVICE"]
+        context:
+            displayName: "Monitor"
+            displayContext: ["VF", "SERVICE"]
         top:
             displayName: "DCAE"
    - designerId: WORKFLOW
@@ -19,4 +19,4 @@ designersList:
      designerProtocol: http
      designerDisplayOptions:
         top:
-            displayName: "Workflow Designer"
+            displayName: "WORKFLOW"

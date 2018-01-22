@@ -518,6 +518,15 @@ ng1appModule.config([
         );
 
         $stateProvider.state(
+            'workspace.designers', {
+                url: 'designers/*path',
+                parent: 'workspace',
+                templateUrl: './view-models/workspace/tabs/designers/designers-tab-view.html',
+                controller: viewModelsModuleName + '.DesignersTabViewModel'
+            }
+        );
+
+        $stateProvider.state(
             'adminDashboard', {
                 url: '/adminDashboard',
                 templateUrl: './view-models/admin-dashboard/admin-dashboard-view.html',

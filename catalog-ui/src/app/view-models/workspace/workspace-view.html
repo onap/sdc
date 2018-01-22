@@ -6,8 +6,8 @@
             <div class="menu-header" tooltips tooltip-content="{{menuComponentTitle}}">
                 {{menuComponentTitle}}
             </div>
-            <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': menuItem.state == $state.current.name}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
-                <div class="expand-collapse-menu-box-item-text" ng-click="onMenuItemPressed(menuItem.state)" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu">{{menuItem.text}}</div>
+            <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': isSelected(menuItem)}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
+                <div class="expand-collapse-menu-box-item-text" ng-click="menuItem.callback()" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu">{{menuItem.text}}</div>
             </div>
         </div>
 
@@ -63,14 +63,14 @@
 
                     <span data-ng-if="isDesigner()" data-ng-class="{'disabled' :isDisableMode() || isViewMode()}"  ng-click="revert()" class="sprite-new revert-btn" data-tests-id="revert"
                           data-ng-show="showFullIcons()" sdc-smart-tooltip="">Revert</span>
-                    
+
                     <span class="delimiter"></span>
                     <span class="sprite-new x-btn" data-ng-click="goToBreadcrumbHome()" sdc-smart-tooltip="">Close</span>
 
                 </div>
             </div>
             <div class="w-sdc-main-container-body-content-wrapper">
-                <div class="tab-title" data-ng-if="!isComposition && !isDeployment">
+                <div class="tab-title" data-ng-if="!isComposition && !isDeployment && !isDesigners">
                     {{getTabTitle()}}
                 </div>
                 <div class="w-sdc-main-container-body-content" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>

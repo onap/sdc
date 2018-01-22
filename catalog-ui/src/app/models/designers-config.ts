@@ -11,7 +11,7 @@ export class Designer {
 
 export class DesignerDisplayOptions {
     displayName: string;
-    validResourceTypes: Array<string>;
+    displayContext: Array<string>;
 }
 
 export type Designers = Array<Designer>;
