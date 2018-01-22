@@ -46,7 +46,7 @@ public class ImportSingleTable {
             TableData tableData = objectMapper.readValue(file.toFile(), TableData.class);
             Session session = CassandraSessionFactory.getSession();
             PreparedStatement ps = getPrepareStatement(tableData, session);
-            tableData.rows.parallelStream().forEach(row -> executeQuery(session, ps, tableData.definitions, row));
+            tableData.rows.forEach(row -> executeQuery(session, ps, tableData.definitions, row));
         } catch (IOException e) {
             Utils.logError(logger, e);
         }
@@ -71,18 +71,7 @@ public class ImportSingleTable {
             Name name = dataTypesMap.get(columnDefinition.getType());
             handleByType(bind, i, rowData, name);
         }
-        ResultSetFuture resultSetFuture = session.executeAsync(bind);
-        Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
-            @Override
-            public void onSuccess(ResultSet resultSet) {
-                Utils.printMessage(logger, "successful write ");
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Utils.logError(logger, t);
-            }
-        });
+        session.execute(bind);
     }
 
     private void handleByType(BoundStatement bind, int i, String rowData, Name name) {
