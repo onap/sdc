@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_7d4e2198",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1867
+      },
+      "writtenOn": "2018-01-23T08:44:35Z",
+      "side": 1,
+      "message": "we decided to get the configuration file outside of class resources, so in order for it to get recognized, we need to write the specific configuration location",
+      "parentUuid": "5a93c517_d72f1ff5",
+      "revId": "c1cfc0e1c127299839d559f114b0fc914ad3c236",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_77364b54",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-core/pom.xml",
         "patchSetId": 1
