@@ -1,6 +1,7 @@
-import {Designer, IUserProperties, DesignersConfiguration} from "app/models";
+import {Designer, IUserProperties} from "app/models";
 import {CacheService} from "app/services";
 import {MenuItemGroup} from "app/utils";
+import {DesignersService} from "../../ng2/services/designers.service";
 
 
 interface IDesignerViewModelScope extends ng.IScope {
@@ -14,25 +15,20 @@ export class DesignersViewModel {
     static '$inject' = [
         '$scope',
         '$stateParams',
-        '$sce',
-        'Sdc.Services.CacheService'
+        'Sdc.Services.CacheService',
+        'DesignersService'
     ];
 
     constructor(private $scope:IDesignerViewModelScope,
                 private $stateParams:any,
-                private $sce:any,
-                private cacheService:CacheService) {
+                private cacheService:CacheService,
+                private designersService:DesignersService) {
 
         this.initScope();
     }
 
     private initScope = ():void => {
-        // get the designer object by using the path parameter
-        let designerKey: any = _.findKey(DesignersConfiguration.designers, (designerConfig: Designer) =>{
-            return designerConfig.designerStateUrl ===  this.$stateParams.path;
-        });
-
-        this.$scope.designer = DesignersConfiguration.designers[designerKey];
+        this.$scope.designer = this.designersService.getDesignerByStateUrl(this.$stateParams.path);
 
         this.$scope.version = this.cacheService.get('version');
         this.$scope.topNavMenuModel = [];
