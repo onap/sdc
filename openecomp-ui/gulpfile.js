@@ -1,12 +1,13 @@
 'use strict';
 
 let gulp = require('gulp');
-let gulpHelpers = require('gulp-helpers');
-let replace = require('gulp-replace');
-let taskMaker = gulpHelpers.taskMaker(gulp);
-let runSequence = gulpHelpers.framework('run-sequence');
-let gulpCssUsage = require('gulp-css-usage').default;
 
+let replace = require('gulp-replace');
+let del = require('del');
+let zip = require('gulp-zip');
+let gulpSass = require('gulp-sass');
+let runSequence = require('run-sequence');
+let gulpCssUsage = require('gulp-css-usage').default;
 let prodTask = require('./tools/gulp/tasks/prod');
 let i18nTask = require('./tools/gulp/tasks/i18n.js');
 
@@ -52,24 +53,57 @@ const path = {
 	//storybookDistResources: './.storybook-dist/onboarding/resources/images/svg'
 };
 // cleans up the output directory
-taskMaker.defineTask('clean', {taskName: 'clean', src: path.output});
-// copies for all relevant files to the output directory
-taskMaker.defineTask('copy', {taskName: 'copy-json', src: path.json, dest: path.output, changed: {extension: '.json'}});
-taskMaker.defineTask('copy', {taskName: 'copy-index.html', src: path.index, dest: path.output, rename: 'index.html'});
-taskMaker.defineTask('copy', {taskName: 'copy-heat.html', src: path.heat, dest: path.output, rename: 'heat.html'});
-//taskMaker.defineTask('copy', {taskName: 'copy-svg', src: path.svgSrc, dest: path.svg});
-taskMaker.defineTask('copy', {taskName: 'copy-storybook-fonts', src: path.storybookFonts, dest: path.storybookDist});
-//taskMaker.defineTask('copy', {taskName: 'copy-storybook-resources', src: path.svgSrc, dest: path.storybookResources});
-//taskMaker.defineTask('copy', {taskName: 'copy-storybook-resources-prod', src: path.svgSrc, dest: path.storybookDistResources});
-// used for compressing war files
-taskMaker.defineTask('compress', {taskName: 'compress-war', src: path.war, filename: appName + '.war', dest: path.wardest});
-taskMaker.defineTask('compress', {taskName: 'compress-heat-war', src: path.heatWar, filename: 'heat-validation.war', dest: path.wardest});
-// used for watching for changes for test
-taskMaker.defineTask('watch', {taskName: 'watch-stuff', src: [path.json, path.index, path.heat], tasks: ['copy-stuff']});
 
+gulp.task('clean', callback => {
+	return del([path.output], callback);
+})
+// copies for all relevant files to the output directory'
+
+gulp.task('copy-json', () => {
+	gulp.src(path.json)
+		.pipe(gulp.dest(path.output));
+});
+
+gulp.task('copy-index.html', () => {
+	gulp.src(path.index)
+		.pipe(gulp.dest(path.output));
+});
+
+gulp.task('copy-heat.html', () => {
+	gulp.src(path.heat)
+		.pipe(gulp.dest(path.output));
+});
+
+gulp.task('copy-storybook-fonts', () => {
+	gulp.src(path.storybookFonts)
+		.pipe(gulp.dest(path.storybookDist));
+});
+
+// used for compressing war files
+
+/**
+ * replaced with gulp
+ */
+gulp.task('compress-war', ()=> {
+	gulp.src(path.war)
+		.pipe(zip(appName + '.war'))
+		.pipe(gulp.dest(path.wardest));
+});
+
+gulp.task('compress-heat-war', ()=> {
+	gulp.src(path.heatWar)
+		.pipe(zip('heat-validation.war'))
+		.pipe(gulp.dest(path.wardest));
+});
 
 //TODO: delete this task after gulp-css-usage support for SCSS files
-taskMaker.defineTask('sass', {taskName: 'sass', src: path.scss, dest: path.css, config: {outputStyle: 'compressed'}});
+gulp.task('sass', () => {
+	return gulp.src(path.scss)
+		.pipe(gulpSass({outputStyle: 'compressed'}).on('error', gulpSass.logError))
+		.pipe(gulp.dest(path.css));
+});
+
+
 
 // copy the healthcheck file and replace the version with command line argument
 gulp.task('healthcheck', function(){
