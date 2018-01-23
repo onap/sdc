@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,6 +51,7 @@ import {ServiceServiceNg2} from "../ng2/services/component-services/service.serv
 import {ConnectionWizardService} from "../ng2/pages/connection-wizard/connection-wizard.service";
 import {ComponentInstanceServiceNg2} from "../ng2/services/component-instance-services/component-instance.service";
 import {UserService as UserServiceNg2} from "../ng2/services/user.service";
+import {DesignersService} from "../ng2/services/designers.service";
 
 let moduleName:string = 'Sdc.Services';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
@@ -95,3 +96,4 @@ serviceModule.factory('ModalServiceNg2', downgradeInjectable(ModalService));
 serviceModule.factory('ConnectionWizardServiceNg2', downgradeInjectable(ConnectionWizardService));
 serviceModule.factory('ComponentInstanceServiceNg2', downgradeInjectable(ComponentInstanceServiceNg2));
 serviceModule.factory('UserServiceNg2', downgradeInjectable(UserServiceNg2));
+serviceModule.factory('DesignersService', downgradeInjectable(DesignersService));
