@@ -39,13 +39,13 @@ public class DesignerStatusBLTest {
 
 	final static String offlineDesignerDisplayName = "offlineDesigner";
 	final static String offlineDesignerHost = "192.168.10.1";
-	final static int offlineDesignerPort = 1000;
+	final static String offlineDesignerPort = "1000";
 	final static String offlineDesignerPath = "/offline";
 	final static String offlineDesignerProtocol = "http";
 
 	final static String onlineDesignerDisplayName = "onlineDesigner";
 	final static String onlineDesignerHost = "192.168.20.2";
-	final static int onlineDesignerPort = 2000;
+	final static String onlineDesignerPort = "2000";
 	final static String onlineDesignerPath = "/online";
 	final static String onlineDesignerProtocol = "http";
 
