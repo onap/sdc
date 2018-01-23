@@ -26,7 +26,7 @@ public class DesignersConfiguration extends BasicConfiguration {
 
         private String designerId;
         private String designerHost;
-        private Integer designerPort;
+        private String designerPort;
         private String designerPath;
         private String designerStateUrl;
         private String designerProtocol;
@@ -72,11 +72,11 @@ public class DesignersConfiguration extends BasicConfiguration {
             this.designerHost = designerHost;
         }
 
-        public Integer getDesignerPort() {
+        public String getDesignerPort() {
             return designerPort;
         }
 
-        public void setDesignerPort(Integer designerPort) {
+        public void setDesignerPort(String designerPort) {
             this.designerPort = designerPort;
         }
 

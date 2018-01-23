@@ -2,7 +2,7 @@
 export class Designer {
     designerId: string;
     designerHost: string;
-    designerPort: number;
+    designerPort: string;
     designerPath: string;
     designerStateUrl: string;
     designerProtocol: string;

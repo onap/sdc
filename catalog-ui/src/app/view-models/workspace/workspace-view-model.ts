@@ -725,7 +725,7 @@ export class WorkspaceViewModel {
                 if (designer.designerDisplayOptions["context"]) {
                     let displayOptions : DesignerDisplayOptions = designer.designerDisplayOptions["context"];
 
-                    if (displayOptions.displayContext.indexOf(this.$scope.component.getComponentSubType()) !== -1) {
+                    if (displayOptions.displayContext.indexOf(this.$scope.component.componentType) !== -1) {
                         menuItemsObjects.push({
                             text: displayOptions.displayName,
                             action: 'onMenuItemPressed',

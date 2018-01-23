@@ -47,6 +47,7 @@ import {SdcConfig} from "./config/sdc-config.config";
 import { TranslateModule } from "./shared/translator/translate.module";
 import { TranslationServiceConfig } from "./config/translation.service.config";
 import {DesignerFrameModule} from "./components/ui/designer/designer-frame.module";
+import {DesignersService} from "./services/designers.service";
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -97,6 +98,7 @@ export function configServiceFactory(config:ConfigService) {
         SdcConfig,
         ComponentInstanceServiceNg2,
         TranslationServiceConfig,
+        DesignersService,
         {
             provide: APP_INITIALIZER,
             useFactory: configServiceFactory,

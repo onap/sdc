@@ -1,4 +1,5 @@
-import {Designer, DesignersConfiguration} from "app/models";
+import {Designer} from "app/models";
+import {DesignersService} from "../../../../ng2/services/designers.service";
 
 
 interface IDesignerTabViewModelScope extends ng.IScope {
@@ -8,21 +9,18 @@ interface IDesignerTabViewModelScope extends ng.IScope {
 export class DesignersTabViewModel {
     static '$inject' = [
         '$scope',
-        '$stateParams'
+        '$stateParams',
+        'DesignersService'
     ];
 
     constructor(private $scope:IDesignerTabViewModelScope,
-                private $stateParams:any) {
+                private $stateParams:any,
+                private designersService:DesignersService) {
 
         this.initScope();
     }
 
     private initScope = ():void => {
-        // get the designer object by using the path parameter
-        let designerKey: any = _.findKey(DesignersConfiguration.designers, (designerConfig: Designer) =>{
-            return designerConfig.designerStateUrl ===  this.$stateParams.path;
-        });
-
-        this.$scope.designer = DesignersConfiguration.designers[designerKey];
+        this.$scope.designer = this.designersService.getDesignerByStateUrl(this.$stateParams.path);
     }
 }
