@@ -1,9 +1,10 @@
 {
-	"presets": [["es2015", { "modules": false }],"stage-0", "react"],
+	"presets": [["env", {
+		"targets": {
+			"browsers": ["last 2 versions", "Firefox >= 47"]
+		}
+	}], "react"],
 	"plugins": [
-		"transform-es2015-modules-commonjs",
-		"transform-es2015-destructuring",
-		"transform-es2015-spread",
 		"transform-object-rest-spread",
 		"transform-class-properties",
 		"transform-runtime",
