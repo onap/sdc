@@ -392,7 +392,22 @@
                                         </tags>
                                     </build>
                                 </image>
-
+                                
+                                <!-- Build init-elastic search image -->
+								<image>
+                                    <name>onap/sdc-init-elasticsearch</name>
+                                    <alias>sdc-init-elasticsearch</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-init-elasticsearch</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>${docker.latest.tag}</tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
+                                
                                 <!-- Build elastic search image -->
                                 <image>
                                     <name>onap/sdc-elasticsearch</name>
@@ -464,7 +479,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/sdc-backend,onap/sdc-frontend,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
+                                    <image>onap/sdc-backend,onap/sdc-frontend,onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
                                 </configuration>
                             </execution>
 
@@ -483,8 +498,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>
-                                        onap/sdc-backend,onap/sdc-frontend,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
+                                    <image>onap/sdc-backend,onap/sdc-frontend,onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
                                 </configuration>
                             </execution>
                         </executions>

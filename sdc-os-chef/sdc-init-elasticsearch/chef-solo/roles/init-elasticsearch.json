@@ -1,0 +1,21 @@
+{
+  "name": "init-elasticsearch",
+  "description": "Initialization of application - elasticsearch",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[init-sdc-elasticsearch::ES_1_create_audit_template]",
+    "recipe[init-sdc-elasticsearch::ES_2_create_resources_template]",
+    "recipe[init-sdc-elasticsearch::ES_3_create_monitoring_template]",
+    "recipe[init-sdc-elasticsearch::ES_4_create_kibana_dashboard_virtualization]"
+  ],
+  "env_run_lists": {
+  }
+}
+

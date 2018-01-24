@@ -140,10 +140,17 @@ if [ ${LOCAL} = false ]; then
 	echo "pulling code"
 	docker pull ${PREFIX}/sdc-elasticsearch:${RELEASE}
 fi
-docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m -e ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume ${WORKSPACE}/data/ES:/usr/share/elasticsearch/data --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE}
+docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m --env ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --env ES_HEAP_SIZE=1024M --volume ${WORKSPACE}/data/ES:/usr/share/elasticsearch/data --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE}
 
+# Init-Elastic-Search
+echo "docker run sdc-init-elasticsearch..."
+if [ ${LOCAL} = false ]; then
+	echo "pulling code"
+	docker pull ${PREFIX}/sdc-init-elasticsearch:${RELEASE}
+fi
+docker run --detach --name sdc-init-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE}
 
-# cassandra
+# Cassandra
 echo "docker run sdc-cassandra..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
