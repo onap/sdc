@@ -38,7 +38,7 @@ module.exports = {
 			{test: /\.(ttf|eot|otf)(\?.*)?$/, loader: 'file-loader'},
 			{test: /\.(png|jpg|svg)(\?.*)?$/, loader: 'url-loader?limit=16384', exclude: path.join(__dirname, 'resources/images/svg') },
 			{test: /\.html$/, use: [ {loader: 'html-loader'}]}
-			]
+		]
 	},
 	plugins: []
 };

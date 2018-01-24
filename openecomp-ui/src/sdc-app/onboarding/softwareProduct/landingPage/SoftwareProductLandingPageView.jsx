@@ -57,7 +57,7 @@ class SoftwareProductLandingPageView extends React.Component {
 		currentSoftwareProduct: SoftwareProductPropType,
 		isReadOnlyMode: PropTypes.bool,
 		componentsList: PropTypes.arrayOf(ComponentPropType),
-		version: PropTypes.object,
+		version: PropTypes.string,
 		onDetailsSelect: PropTypes.func,
 		onUpload: PropTypes.func,
 		onUploadConfirmation: PropTypes.func,
