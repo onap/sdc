@@ -36,9 +36,9 @@
                                 <fileset>
                                     <directory>${basedir}/dist</directory>
                                 </fileset>
-                                <!--<fileset>-->
-                                    <!--<directory>${basedir}/node_modules</directory>-->
-                                <!--</fileset>-->
+                                <fileset>
+                                    <directory>${basedir}/node_modules</directory>
+                                </fileset>
                                 <fileset>
                                     <directory>${basedir}/coverage</directory>
                                 </fileset>
@@ -46,10 +46,10 @@
                                     <directory>${basedir}/../dox-sequence-diagram-ui/dist
                                     </directory>
                                 </fileset>
-                                <!--<fileset>-->
-                                    <!--<directory>${basedir}/../dox-sequence-diagram-ui/node_modules-->
-                                    <!--</directory>-->
-                                <!--</fileset>-->
+                                <fileset>
+                                    <directory>${basedir}/../dox-sequence-diagram-ui/node_modules
+                                    </directory>
+                                </fileset>
                             </filesets>
                         </configuration>
                     </execution>
@@ -62,7 +62,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>1.6</version>
 
                 <configuration>
                     <installDirectory>${project.parent.parent.basedir}</installDirectory>
@@ -71,30 +71,20 @@
                 <executions>
 
                     <execution>
-                        <id>install node and npm</id>
+                        <id>install node and yarn</id>
                         <goals>
-                            <goal>install-node-and-npm</goal>
+                            <goal>install-node-and-yarn</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v6.9.5</nodeVersion>
-                            <npmVersion>3.10.10</npmVersion>
+                            <nodeVersion>v9.4.0</nodeVersion>
+                            <yarnVersion>v1.3.2</yarnVersion>
                         </configuration>
-                    </execution>
+                    </execution>                    
 
                     <execution>
-                        <id>npm set progress off</id>
+                        <id>yarn install in dox-sequence-diagram-ui</id>
                         <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>set progress=false</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm install in dox-sequence-diagram-ui</id>
-                        <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <configuration>
                             <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
@@ -103,21 +93,22 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm build in dox-sequence-diagram-ui</id>
+                        <id>yarn build in dox-sequence-diagram-ui</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <configuration>
                             <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
                             </workingDirectory>
+                             <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
                             <arguments>run build</arguments>
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>npm install</id>
+                        <id>yarn install</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <configuration>
                             <arguments>install</arguments>
@@ -125,20 +116,22 @@
                     </execution>
 
                     <execution>
-                        <id>npm run build</id>
+                        <id>yarn run build</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build -- --version=${project.version}</arguments>
+                            <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
+                            <arguments>run build --version=${project.version}</arguments>
                         </configuration>
                     </execution>
                     <execution>
                         <id>ui test</id>
                         <goals>
-                            <goal>npm</goal>
-                        </goals>
+                            <goal>yarn</goal>
+                        </goals>                        
                         <configuration>
+                            <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
                             <arguments>run test-build</arguments>
                         </configuration>
                         <!-- for some reason does not fail on test phase -->
