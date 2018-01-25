@@ -117,6 +117,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_1b9fe051",
+        "filename": "sdc-os-chef/sdc-elasticsearch/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-01-25T14:28:03Z",
+      "side": 1,
+      "message": "Yes, it is must to keep alive the docker process\nTried to run without it, the process finishes execution",
+      "parentUuid": "5a93c517_40b7b586",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 28
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_c0aae518",
         "filename": "sdc-os-chef/sdc-init-elasticsearch/chef-install.sh",
         "patchSetId": 2
