@@ -1,0 +1,31 @@
+#!/bin/bash
+
+CASSANDRA_PASS=<%= @cassandra_pwd %>
+CASSANDRA_IP=<%= @cassandra_ip %>
+
+pass_changed=99
+retry_num=1
+is_up=0
+while [ $is_up -eq 0 -a $retry_num -le 100 ]; do
+   echo "exit" | cqlsh -u cassandra -p cassandra $CASSANDRA_IP  > /dev/null 2>&1
+   res1=$?
+   echo "exit" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP  > /dev/null 2>&1
+   res2=$?
+
+   if [ $res1 -eq 0 -o $res2 -eq 0 ]; then
+      echo "`date` --- cqlsh is enabled to connect."
+      is_up=1
+   else
+      echo "`date` --- cqlsh is NOT enabled to connect yet. sleep 5"
+      sleep 5
+   fi
+   let "retry_num++"
+done
+
+if [ $res1 -eq 0 -a $res2 -eq 1 -a $is_up -eq 1 ]; then
+ echo "Modify cassandra password"
+ echo "ALTER USER cassandra WITH PASSWORD '$CASSANDRA_PASS';" | cqlsh -u cassandra -p cassandra $CASSANDRA_IP
+elif [ $res1 -eq 1 -a $res2 -eq 0 -a $is_up -eq 1 ]; then
+ echo "cassandra password already modified"
+else exit 1
+fi
