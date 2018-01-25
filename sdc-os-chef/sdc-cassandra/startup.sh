@@ -1,26 +1,16 @@
 #!/bin/bash
 
 cd /root/chef-solo
-echo "normal['HOST_IP'] = \"${HOST_IP}\"" >> /root/chef-solo/cookbooks/cassandra-actions/attributes/default.rb
-
-export CHEFNAME=${ENVNAME}
-
-sed -i "s/HOSTIP/${HOST_IP}/g" /root/chef-solo/cookbooks/cassandra-actions/recipes/02-createCsUser.rb
-sed -i "s/HOSTIP/${HOST_IP}/g" /root/chef-solo/cookbooks/cassandra-actions/recipes/03-createDoxKeyspace.rb
-sed -i "s/HOSTIP/${HOST_IP}/g" /root/chef-solo/cookbooks/cassandra-actions/recipes/04-schemaCreation.rb
-
-chef-solo -c solo.rb -o recipe[cassandra-actions::01-configureCassandra] -E ${CHEFNAME}
+chef-solo -c solo.rb -o recipe[cassandra-actions::01-configureCassandra] -E ${ENVNAME}
 rc=$?
-
 if [[ $rc != 0 ]]; then exit $rc; fi
+
 echo "########### starting cassandra ###########"
 # start cassandra
 /docker-entrypoint.sh cassandra -f &
 
-sleep 10
-
-chef-solo -c solo.rb  -E ${CHEFNAME}
-rc=$?
+chef-solo -c solo.rb  -E ${ENVNAME}
 if [[ $rc != 0 ]]; then exit $rc; fi
-while true; do sleep 2; done
+
+exec "$@";
 
