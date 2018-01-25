@@ -3,9 +3,10 @@ template "/tmp/create_cassandra_user.sh" do
   sensitive true
   mode 0755
   variables({
-     :cassandra_ip => "HOSTIP",
-     :cassandra_pwd => node['cassandra'][:cassandra_password],
-     :cassandra_usr => node['cassandra'][:cassandra_user]
+     :cassandra_ip => node['Nodes']['CS'],
+     :cassandra_pwd => ENV['CS_PASSWORD'],
+     :sdc_usr => ENV['SDC_USER'],
+     :sdc_pwd => ENV['SDC_PASSWORD']
   })
 end
 
