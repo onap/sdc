@@ -14,12 +14,6 @@
     </parent>
 
 
-    <properties>
-        <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-latest</docker.latest.tag>    
-		<sonar.skip>true</sonar.skip>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -74,10 +68,6 @@
                                     <includes>
                                         <include>**/default.rb</include>
                                     </includes>
-                                </fileset>
-                                <fileset>
-                                    <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools</directory>
-                                    <followSymlinks>false</followSymlinks>
                                 </fileset>
                                 <!-- Sanity jar -->
                                 <fileset>
@@ -278,34 +268,7 @@
                                         </resource>
                                     </resources>
                                 </configuration>
-                            </execution>
-                            
-                            
-                            <execution>
-                                <id>copy-dox-files</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/openecomp-be</directory>
-                                            <includes>
-                                                <include>tools/build/**</include>
-                                            </includes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/openecomp-be</directory>
-                                            <includes>
-                                                <include>tools/install/**</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            
+                            </execution>                         
                             <execution>
 								<id>copy-normatives</id>
 								<phase>validate</phase>
@@ -323,26 +286,7 @@
 										</resource>
 									</resources>
 								</configuration>
-							</execution>
-							
-	                        <execution>
-	                        	<id>copy-sdctool</id>
-	                        	<phase>validate</phase>
-	                        	<goals>
-	                            	<goal>copy-resources</goal>
-	                        	</goals>
-	                        	<configuration>
-	                            	<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
-	                            	<resources>
-	                                	<resource>
-	                                    	<directory>${project.parent.basedir}/asdctool/target</directory>
-	                                    	<includes>
-	                                        	<include>sdctool.tar</include>
-	                                    	</includes>
-	                                	</resource>
-	                            	</resources>
-	                        	</configuration>
-	                    	</execution>
+							</execution>	
                         </executions>
                     </plugin>
                         

@@ -10,8 +10,10 @@
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[cassandra-actions::02-changeCSpass]",
-    "recipe[cassandra-actions::03-prepareProbeFile]"
+    "recipe[cassandra-actions::01-createCsUser]",
+    "recipe[cassandra-actions::02-createDoxKeyspace]",
+    "recipe[cassandra-actions::03-schemaCreation]",
+    "recipe[cassandra-actions::04-importComformance]"
   ],
 
   "env_run_lists": {
