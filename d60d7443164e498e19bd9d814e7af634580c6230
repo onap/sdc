@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1b64c0e3",
+        "filename": "asdctool/sdc-cassandra-init/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "i think part of the logic for thsi is missing no?",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 29
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db5df816",
+        "filename": "asdctool/sdc-cassandra-init/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "do we want to move this to the sanity base?",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 28
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7b9ce4c0",
+        "filename": "asdctool/sdc-cassandra-init/chef-install.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "this file can be deleted since it is installed in the base and has no use here....",
+      "range": {
+        "startLine": 2,
+        "startChar": 7,
+        "endLine": 2,
+        "endChar": 26
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9b9f70b4",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/attributes/default.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "talk to Tal this file is out generated and should not be in the source code",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 26
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fbaf94e1",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/recipes/migrateZusammenFromDox.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "remove commented out code!!!!!",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 33
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dbb41837",
+        "filename": "sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/templates/default/change_cassandra_pass.sh.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "please update the ecos in the script, we are not changeing the sdc user but the CS user . and update the input to the script we do not need the asdc_user here...",
+      "range": {
+        "startLine": 33,
+        "startChar": 8,
+        "endLine": 33,
+        "endChar": 49
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7b838456",
+        "filename": "sdc-os-chef/sdc-cassandra/chef-solo/roles/cassandra-actions.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "don\u0027t we need the list of roles so that chef will know what to run?",
+      "range": {
+        "startLine": 13,
+        "startChar": 1,
+        "endLine": 13,
+        "endChar": 5
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3b7dfc6e",
+        "filename": "sdc-os-chef/sdc-cassandra/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "since we need to call the recpise in a seperate manner we need to check if thsi is the cleans way....",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 87
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fb96b493",
+        "filename": "sdc-os-chef/sdc-cassandra/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "i think you should change the order do create user and then the livness",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 48
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bb902c96",
+        "filename": "sdc-os-chef/sdc-cassandra/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "we use the livness for the status of thsi docker we do not need status code here",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db8bb866",
+        "filename": "sdc-os-chef/sdc-cassandra/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "why do we need this.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 28
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7beaa410",
+        "filename": "sdc-os-chef/sdc-sanity/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T12:53:21Z",
+      "side": 1,
+      "message": "not used ? \u003d\u003d remove :)",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 23
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
