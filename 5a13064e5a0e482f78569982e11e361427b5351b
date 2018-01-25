@@ -1,0 +1,303 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2085c9ac",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "we are missing logic to chek if the ES is up.",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 143,
+        "endChar": 31
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e08e01d0",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "in the init container we can use the chef return code to see if it finished sucsesfully.",
+      "range": {
+        "startLine": 151,
+        "startChar": 1,
+        "endLine": 151,
+        "endChar": 20
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a0c0f9e0",
+        "filename": "sdc-os-chef/sdc-elasticsearch/chef-repo/cookbooks/sdc-elasticsearch/recipes/ES_1_setup_elasticsearch.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "why wasn\u0027t thsi changed to use node[\u0027elasticsearch\u0027][:cluster_name]+node.chef_environment ?",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 42
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_60baf16f",
+        "filename": "sdc-os-chef/sdc-elasticsearch/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "didn\u0027t you say we did not need this?",
+      "range": {
+        "startLine": 4,
+        "startChar": 21,
+        "endLine": 4,
+        "endChar": 34
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_40b7b586",
+        "filename": "sdc-os-chef/sdc-elasticsearch/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "why do we need this?",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 28
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c0aae518",
+        "filename": "sdc-os-chef/sdc-init-elasticsearch/chef-install.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "we do not need this file... it is downloaded in the docker base, it was one of the items haraly marked...",
+      "range": {
+        "startLine": 2,
+        "startChar": 7,
+        "endLine": 2,
+        "endChar": 27
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8064dd22",
+        "filename": "sdc-os-chef/sdc-init-elasticsearch/chef-repo/cookbooks/init-sdc-elasticsearch/attributes/default.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "why is this here?\ni am not sure thsi file needs to be in source control is it not generated?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 1
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_607191df",
+        "filename": "sdc-os-chef/sdc-init-elasticsearch/chef-repo/cookbooks/init-sdc-elasticsearch/recipes/ES_1_create_audit_template.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "why? did you have issues?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 16
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0078cdc2",
+        "filename": "sdc-os-chef/sdc-init-elasticsearch/chef-repo/cookbooks/init-sdc-elasticsearch/recipes/ES_2_create_resources_template.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "is thsi needed according to ruby?",
+      "range": {
+        "startLine": 16,
+        "startChar": 12,
+        "endLine": 16,
+        "endChar": 18
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_207389e8",
+        "filename": "sdc-os-chef/sdc-init-elasticsearch/chef-repo/cookbooks/init-sdc-elasticsearch/recipes/ES_3_create_monitoring_template.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "why do we need this?",
+      "range": {
+        "startLine": 16,
+        "startChar": 11,
+        "endLine": 16,
+        "endChar": 18
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c0818590",
+        "filename": "sdc-os-chef/sdc-init-elasticsearch/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "didnt you say we did not need this?",
+      "range": {
+        "startLine": 4,
+        "startChar": 21,
+        "endLine": 4,
+        "endChar": 34
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_804b7d86",
+        "filename": "sdc-os-chef/sdc-init-elasticsearch/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "if this is not needed remove it",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 29
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6048b187",
+        "filename": "sdc-os-chef/sdc-sanity/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-01-25T11:02:35Z",
+      "side": 1,
+      "message": "i guss your removed it becouse it was commented out.\nhowever i think we should return a status code and our put an error if we faile in addition to the report please create a task for this.",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 35
+      },
+      "revId": "5a13064e5a0e482f78569982e11e361427b5351b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
