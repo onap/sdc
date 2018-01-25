@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
-  "scripts": {
-    "prepublish": "npm run build",
+  "scripts": {    
     "build": "webpack",
     "start": "webpack-dev-server",
     "lint": "eslint . --ext .js --ext .jsx --cache"
@@ -39,11 +38,11 @@
     "eslint-plugin-jsx-a11y": "^1.2.2",
     "eslint-plugin-react": "^5.1.1",
     "file-loader": "^1.1.6",
-    "node-sass": "^3.7.0",
+    "node-sass": "^4.7.2",
     "path": "^0.12.7",
     "raw-loader": "^0.5.1",
     "redux-devtools": "^3.3.1",
-    "sass-loader": "^3.2.0",
+    "sass-loader": "^6.0.6",
     "style-loader": "^0.19.1",
     "svg-sprite-loader": "0.0.19",
     "url-loader": "^0.6.2",
@@ -51,7 +50,7 @@
     "webpack-dev-server": "^2.4.2"
   },
   "engines": {
-    "node": ">=5.1",
-    "npm": ">=3.3"
+    "node": ">=8.0.0",
+    "npm": ">=5.0.0"
   }
 }
