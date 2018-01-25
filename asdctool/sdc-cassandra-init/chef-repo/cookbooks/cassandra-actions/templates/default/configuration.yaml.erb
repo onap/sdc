@@ -390,8 +390,8 @@ resourceDeploymentArtifacts:
     DCAE_DOC:
         acceptedTypes:
         validForResourceTypes:
-            - VF 
-            - VFCMT       
+            - VF
+            - VFCMT
     DCAE_EVENT:
         acceptedTypes:
         validForResourceTypes:
@@ -533,8 +533,8 @@ dcae:
 
 # #GSS IDNS
 switchoverDetector:
-    gBeFqdn: 
-    gFeFqdn: 
+    gBeFqdn:
+    gFeFqdn:
     beVip: 1.2.3.4
     feVip: 1.2.3.4
     beResolveAttempts: 3
@@ -543,7 +543,7 @@ switchoverDetector:
     interval: 60
     changePriorityUser: ecompasdc
     changePriorityPassword: ecompasdc123
-    publishNetworkUrl: 
+    publishNetworkUrl:
     publishNetworkBody: '{"note":"comment"}'
     groups:
       beSet: { changePriorityUrl: "", changePriorityBody: '{"name":"","uri":"","no_ad_redirection":false,"v4groups":{"failover_groups":["","","failover_policy":["FAILALL"]},"comment":"","intended_app_proto":"DNS"}'}
@@ -589,7 +589,7 @@ genericAssetNodeTypes:
   VFC: org.openecomp.resource.abstract.nodes.VFC
   VF : org.openecomp.resource.abstract.nodes.VF
   Service: org.openecomp.resource.abstract.nodes.service
-  
+
 workloadContext: Production
 
 environmentContext:

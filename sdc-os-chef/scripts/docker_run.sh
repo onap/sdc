@@ -115,7 +115,7 @@ while [ $# -gt 0 ]; do
 done
 
 
-[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || DEP_ENV=__ENV-NAME__
+[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || echo ${DEP_ENV}
 [ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
 [ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
 [ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=nexus3.onap.org:${PORT}
@@ -153,6 +153,18 @@ docker run --detach --name sdc-cs --env RELEASE="${RELEASE}" --env ENVNAME="${DE
 
 echo "please wait while CS is starting..."
 monitor_docker sdc-cs
+
+
+# cassandra-init
+echo "docker run sdc-cassandra-init..."
+if [ ${LOCAL} = false ]; then
+        docker pull ${PREFIX}/sdc-cassandra-init:${RELEASE}
+fi
+docker run --detach --name sdc-cs-init --env RELEASE="${RELEASE}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE}
+
+
+echo "please wait while CS-Init is starting..."
+monitor_docker sdc-cs-init
 
 # kibana
 echo "docker run sdc-kibana..."
@@ -200,7 +212,7 @@ healthCheck
 if [[ (${RUNTESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
     echo "docker run sdc-sanity..."
     echo "Triger sanity docker, please wait..."
-	
+
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-sanity:${RELEASE}
     fi

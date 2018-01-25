@@ -1,0 +1,45 @@
+#!/bin/bash
+
+CASSANDRA_USER=<%= @cassandra_usr %>
+CASSANDRA_PASS=<%= @cassandra_pwd %>
+CASSANDRA_IP=<%= @cassandra_ip %>
+
+pass_changed=99
+retry_num=1
+is_up=0
+while [ $is_up -eq 0 -a $retry_num -le 100 ]; do
+
+   echo "exit" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP  > /dev/null 2>&1
+   res2=$?
+
+   if [ $res2 -eq 0 ]; then
+      echo "`date` --- cqlsh is enabled to connect."
+      is_up=1
+      
+      [ $res2 -eq 0 ] && pass_changed=1
+   else
+      echo "`date` --- cqlsh is NOT enabled to connect yet. sleep 5"
+      sleep 5
+   fi
+   let "retry_num++"
+done
+
+
+echo "pass_changed=[$pass_changed]"
+case $pass_changed in
+
+   1)
+        cassandra_user_exist=`echo "list users;" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP  |grep -c $CASSANDRA_USER`
+        if [ $cassandra_user_exist -eq 1 ] ; then
+                echo "cassandra user $CASSANDRA_USER already exist"
+                                echo "alter user $CASSANDRA_USER with password '$CASSANDRA_PASS' nosuperuser;" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP 
+        else
+                echo "Going to create $CASSANDRA_USER"
+                echo "create user $CASSANDRA_USER with password '$CASSANDRA_PASS' nosuperuser;" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP 
+        fi
+    ;;
+    *)
+       echo "pass_changed doen't have value"
+    ;;
+esac
+

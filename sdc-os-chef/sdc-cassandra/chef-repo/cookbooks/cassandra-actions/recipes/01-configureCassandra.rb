@@ -48,3 +48,10 @@ template "cassandra-rackdc.properties" do
         :rack => "Rack"+"#{rackNum}-"+node.chef_environment
     })
 end
+cookbook_file '/var/lib/ready-probe.sh' do
+    source 'ready-probe.sh'
+    owner 'root'
+    group 'root'
+    mode '0755'
+    action :create
+end

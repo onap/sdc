@@ -18,7 +18,8 @@ template "titan.properties" do
   source "titan.properties.erb"
   mode "0755"
   variables({
-      :DC_NAME      => node['cassandra'][:cluster_name]+node.chef_environment,
+     :DC_NAME      => node['cassandra'][:cluster_name]+node.chef_environment,
+     :cassandra_ip             => node['Nodes']['CS'],
      :cassandra_pwd => node['cassandra'][:cassandra_password],
      :cassandra_usr => node['cassandra'][:cassandra_user],
      :titan_connection_timeout => node['cassandra']['titan_connection_timeout']
@@ -31,7 +32,7 @@ template "/tmp/sdctool/config/configuration.yaml" do
   source "configuration.yaml.erb"
   mode 0755
   variables({
-      :host_ip                => node['HOST_IP'],
+      :host_ip                => node['Nodes']['BE'],
       :catalog_port           => node['BE'][:http_port],
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'],
@@ -51,15 +52,22 @@ template "/tmp/sdctool/config/elasticsearch.yml" do
   source "elasticsearch.yml.erb"
   mode 0755
   variables({
-     :elastic_ip => "HOSTIP"    
+     :elastic_ip => node['Nodes']['ES']
   })
 end
-
 
 bash "excuting-schema-creation" do
    code <<-EOH
      cd /tmp
      chmod +x /tmp/sdctool/scripts/schemaCreation.sh
      /tmp/sdctool/scripts/schemaCreation.sh /tmp/sdctool/config
+   EOH
+end
+
+bash "excuting-titanSchemaCreation.sh" do
+  code <<-EOH
+     echo "XXXXXXXXXXXX executing /tmp/sdctool/scripts/titanSchemaCreation.sh XXXXXXXXXXXX"
+     chmod +x /tmp/sdctool/scripts/titanSchemaCreation.sh
+     /tmp/sdctool/scripts/titanSchemaCreation.sh /tmp/sdctool/config
    EOH
 end
