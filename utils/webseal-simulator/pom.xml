@@ -15,6 +15,8 @@
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
 		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+		<docker.latest.tag>${project.version}-latest</docker.latest.tag>
 	</properties>
 
 	<dependencies>
@@ -157,20 +159,50 @@
 				<plugins>
 					
 					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>3.0.0</version>
+						<executions>
+							<execution>
+								<id>clean-static-files</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>clean</goal>
+								</goals>
+								<configuration>
+									<filesets>
+										<fileset>
+											<directory>${project.basedir}/sdc-simulator</directory>
+											<includes>
+												<include>*.war</include>
+											</includes>
+											<followSymlinks>false</followSymlinks>
+										</fileset>
+										<fileset>
+											<directory>${project.basedir}/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default</directory>
+											<includes>logback.xml</includes>
+											<followSymlinks>false</followSymlinks>
+										</fileset>
+									</filesets>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
 						<version>3.0.2</version>
 						<executions>
 							<execution>
 								<id>copy-resources-simulator</id>
-								<phase>package</phase>
+								<phase>verify</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${basedir}/sdc-simulator</outputDirectory>
+									<outputDirectory>${project.basedir}/sdc-simulator</outputDirectory>
 									<resources>
 										<resource>
-											<directory>${basedir}/target</directory>
+											<directory>${project.basedir}/target</directory>
 											<includes>
 												<include>WSSimulator.war</include>
 											</includes>
@@ -180,7 +212,7 @@
 							</execution>
 							<execution>
 								<id>copy-configurations-simulator</id>
-								<phase>validate</phase>
+								<phase>verify</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
@@ -224,7 +256,7 @@
 									<alias>sdc-simulator</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>${basedir}/sdc-simulator</dockerFileDir>
+										<dockerFileDir>${basedir}\sdc-simulator</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
@@ -249,7 +281,7 @@
 
 							<execution>
 								<id>generate-images</id>
-								<phase>package</phase>
+								<phase>install</phase>
 								<goals>
 									<goal>build</goal>
 								</goals>
