@@ -21,7 +21,29 @@ function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
     chmod -R 777 ${WORKSPACE}/data/logs
 }
+function probe_cs {
 
+cs_stat=false
+docker exec -it $1 /var/lib/ready-probe.sh > /dev/null 2>&1
+rc=$?
+if [[ $rc == 0 ]]; then
+  echo DOCKER start finished in $2 seconds
+  cs_stat=true
+fi
+
+}
+
+function probe_docker {
+
+match_result=false
+MATCH=`docker logs --tail 30 $1 | grep "DOCKER STARTED"`
+echo MATCH is -- $MATCH
+
+if [ -n "$MATCH" ]; then
+   echo DOCKER start finished in $2 seconds
+   match_result=true
+fi
+}
 function monitor_docker {
 
     echo monitor $1 Docker
@@ -30,15 +52,13 @@ function monitor_docker {
     INTERVAL=20
     TIME=0
     while [ "$TIME" -lt "$TIME_OUT" ]; do
-
-        MATCH=`docker logs --tail 30 $1 | grep "DOCKER STARTED"`
-        echo MATCH is -- $MATCH
-
-        if [ -n "$MATCH" ]; then
-            echo DOCKER start finished in $TIME seconds
-            break
+       if [ "$1" == "sdc-cs" ]; then
+            probe_cs $1 $TIME
+            if [[ $cs_stat == true ]]; then break; fi
+        else
+            probe_docker $1 $TIME
+            if [[ $match_result == true ]]; then break; fi
         fi
-
         echo Sleep: $INTERVAL seconds before testing if $1 DOCKER is up. Total wait time up now is: $TIME seconds. Timeout is: $TIME_OUT seconds
         sleep $INTERVAL
         TIME=$(($TIME+$INTERVAL))
@@ -141,7 +161,7 @@ while [ $# -gt 0 ]; do
 done
 
 
-[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || DEP_ENV=__ENV-NAME__
+[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || echo ${DEP_ENV}
 [ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
 [ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
 [ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=nexus3.onap.org:${PORT}
@@ -189,11 +209,22 @@ echo "docker run sdc-cassandra..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
 fi
-docker run --detach --name sdc-cs --env RELEASE="${RELEASE}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${PREFIX}/sdc-cassandra:${RELEASE}
+docker run -dit --name sdc-cs --env RELEASE="${RELEASE}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --env JVM_OPTS="-Xms1024m -Xmx1024m" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${PREFIX}/sdc-cassandra:${RELEASE} /bin/sh
 
 
 echo "please wait while CS is starting..."
 monitor_docker sdc-cs
+
+
+# cassandra-init
+echo "docker run sdc-cassandra-init..."
+if [ ${LOCAL} = false ]; then
+        docker pull ${PREFIX}/sdc-cassandra-init:${RELEASE}
+fi
+docker run --name sdc-cs-init --env RELEASE="${RELEASE}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE} > /dev/null 2>&1
+rc=$?
+if [[ $rc != 0 ]]; then exit $rc; fi
+
 
 # kibana
 echo "docker run sdc-kibana..."
@@ -241,7 +272,7 @@ healthCheck
 if [[ (${RUNTESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
     echo "docker run sdc-sanity..."
     echo "Triger sanity docker, please wait..."
-	
+
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-sanity:${RELEASE}
     fi
