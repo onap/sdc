@@ -18,7 +18,6 @@ import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -128,9 +127,6 @@ public class ValidationUtil {
       if (fileContent.isPresent()) {
         envContent = new YamlUtil().yamlToObject(fileContent.get(), Environment.class);
       } else {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-            LoggerTragetServiceName.VALIDATE_ENV_FILE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.EMPTY_FILE);
         throw new Exception("The file '" + envFileName + "' has no content");
       }
     } catch (Exception exception) {
@@ -164,9 +160,6 @@ public class ValidationUtil {
   public static ManifestContent validateManifest(GlobalValidationContext globalContext) {
     Optional<InputStream> manifest = globalContext.getFileContent(SdcCommon.MANIFEST_NAME);
     if (!manifest.isPresent()) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.MISSING_FILE);
       throw new RuntimeException("Can't load manifest file for Heat Validator");
     }
     ManifestContent manifestContent;
@@ -174,9 +167,6 @@ public class ValidationUtil {
       manifestContent = JsonUtil.json2Object(manifest.get(), ManifestContent.class);
     } catch (Exception exception) {
       LOG.debug("",exception);
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_MANIFEST);
       throw new SdcRuntimeException("Can't load manifest file for Heat Validator");
     }
 

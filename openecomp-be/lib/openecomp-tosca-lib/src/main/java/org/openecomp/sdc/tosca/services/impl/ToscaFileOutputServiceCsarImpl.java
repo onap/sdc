@@ -23,7 +23,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -76,9 +75,6 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         packArtifacts(zos, artifactFiles);
       }
       if (toscaServiceModel.getEntryDefinitionServiceTemplate() == null) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.CREATE_CSAR, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.CREATE_CSAR);
         throw new CoreException(new CsarMissingEntryPointErrorBuilder().build());
       }
       createAndPackToscaMetaFile(zos, toscaServiceModel.getEntryDefinitionServiceTemplate());
@@ -86,9 +82,6 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         packExternalArtifacts(zos, externalArtifacts);
       }
     } catch (IOException ex) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_CSAR, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.CREATE_CSAR);
       throw new CoreException(new CsarCreationErrorBuilder().build(), ex);
     }
     return baos.toByteArray();
@@ -137,9 +130,6 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         writeBytesToZip(zos, externalArtifacts.getFileContent(filenameIncludingPath));
 
       } catch (IOException ex) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.PACK_ARTIFACTS, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.PACK_ARTIFACTS);
         throw new RuntimeException(ex);
       } finally {
         try {
@@ -160,9 +150,6 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         writeBytesToZip(zos, artifacts.getFileContent(fileName));
 
       } catch (IOException ex) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.PACK_ARTIFACTS, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.PACK_ARTIFACTS);
         throw new RuntimeException(ex);
       } finally {
         try {
