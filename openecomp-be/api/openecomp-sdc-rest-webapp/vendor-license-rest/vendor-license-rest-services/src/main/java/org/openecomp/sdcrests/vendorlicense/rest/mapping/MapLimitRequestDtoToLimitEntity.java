@@ -5,7 +5,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
@@ -54,9 +53,6 @@ public class MapLimitRequestDtoToLimitEntity extends MappingBase<LimitRequestDto
     private void throwInvalidValueError(String attribute, String vendorLicenseErrorCode) {
         ErrorCode errorCode = LimitErrorBuilder.getInvalidValueErrorBuilder(attribute,
                 vendorLicenseErrorCode);
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-                LoggerServiceName.Create_LIMIT.toString(), ErrorLevel.ERROR.name(),
-                errorCode.id(), errorCode.message());
         throw new CoreException(errorCode);
     }
 }

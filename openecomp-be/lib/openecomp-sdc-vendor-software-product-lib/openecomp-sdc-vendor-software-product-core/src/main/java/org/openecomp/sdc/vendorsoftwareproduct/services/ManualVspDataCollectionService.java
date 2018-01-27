@@ -11,7 +11,6 @@ import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VendorInfo;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
@@ -307,10 +306,6 @@ public class ManualVspDataCollectionService {
     } catch (Exception ex) {
       log.debug("", ex);
       computeQuestionnaire = null;
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Failed to get compute questionnaire : "
-              + ex.getMessage());
     }
     if (Objects.nonNull(computeQuestionnaire)) {
       String computeQuestionnaireData = computeQuestionnaire.getQuestionnaireData();
@@ -321,10 +316,6 @@ public class ManualVspDataCollectionService {
         } catch (Exception ex) {
           log.debug("", ex);
           compute = null;
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-              LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to parse compute questionnaire : "
-                  + ex.getMessage());
         }
         if (compute != null && Objects.nonNull(compute.getVmSizing())) {
           computeFlavor = new ComputeFlavor();
@@ -385,10 +376,6 @@ public class ManualVspDataCollectionService {
           } catch (Exception ex) {
             log.debug("", ex);
             imageDetails = null;
-            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-                LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
-                LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to parse image questionnaire : "
-                    + ex.getMessage());
           }
           if (Objects.nonNull(imageDetails)
               && Objects.nonNull(imageDetails.getVersion())) {

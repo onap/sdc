@@ -1,7 +1,6 @@
 package org.openecomp.sdc.generator.core.utils;
 
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
@@ -155,10 +154,6 @@ public class GeneratorUtils {
 
       DataModelUtil.addNodeTypeCapabilitiesDef(substitutionNodeType, exposedCapabilitiesDefinition);
     } catch (Exception ex) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.GENERATE_MANUAL_VSP_TOSCA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          "Error occured in get node type exposed points : " + ex.getMessage());
       return null;
     }
     return substitutionMapping;

@@ -22,7 +22,6 @@ package org.openecomp.sdcrests.validation.rest.services;
 
 
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -58,9 +57,6 @@ public class ValidationImpl implements Validation {
     try {
       validationFileResponse = uploadValidationManager.validateFile(type, fileToValidate);
     } catch (IOException exception) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.VALIDATE_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.VALIDATE_FILE);
       throw new RuntimeException(exception);
     }
 

@@ -32,7 +32,6 @@ import org.openecomp.sdc.healing.dao.HealingDao;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.healing.types.HealCode;
 import org.openecomp.sdc.healing.types.HealerType;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -196,9 +195,6 @@ public class HealingManagerImpl implements HealingManager {
     try {
       healer = getHealerImplInstance(healerClassName);
     } catch (Exception e) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(), LoggerErrorCode
-              .DATA_ERROR.getErrorCode(), LoggerErrorDescription.CANT_HEAL);
       healingFailureMessages
           .add(String.format(Messages.CANT_LOAD_HEALING_CLASS.getErrorMessage(),
               healerClassName));
@@ -208,9 +204,6 @@ public class HealingManagerImpl implements HealingManager {
     try {
       return healer.heal(itemId, version);
     } catch (Exception e) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(), LoggerErrorCode
-              .DATA_ERROR.getErrorCode(), LoggerErrorDescription.CANT_HEAL);
       healingFailureMessages.add(e.getMessage() + " ,healer name :" + healerClassName);
     }
     return null;

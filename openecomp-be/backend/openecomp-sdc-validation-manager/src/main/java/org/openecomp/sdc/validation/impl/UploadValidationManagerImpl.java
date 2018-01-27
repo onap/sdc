@@ -35,7 +35,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -129,9 +128,6 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
     if (type.toLowerCase().equals("heat")) {
       FileContentHandler content = getFileContent(fileToValidate);
       if (!content.containsFile(SdcCommon.MANIFEST_NAME)) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-            LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ZIP);
         throw new CoreException((new ErrorCode.ErrorCodeBuilder())
             .withMessage(Messages.MANIFEST_NOT_EXIST.getErrorMessage())
             .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
@@ -147,9 +143,6 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
       }
 
     } else {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.VALIDATE_FILE_TYPE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_FILE_TYPE);
       throw new RuntimeException("invalid type:" + type);
     }
     validationFileResponse.setValidationData(validationStructureList);

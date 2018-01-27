@@ -47,7 +47,6 @@ import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -200,9 +199,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private void throwUnknownOnboardingMethodException() {
     ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
         .getInvalidOnboardingMethodErrorBuilder();
-    MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-        LoggerTragetServiceName.ADD_VSP, ErrorLevel.ERROR.name(),
-        LoggerErrorCode.DATA_ERROR.getErrorCode(), onboardingMethodUpdateErrorCode.message());
     throw  new CoreException(onboardingMethodUpdateErrorCode);
   }
 
@@ -407,24 +403,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     if (versionName == null) {
       version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
           .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName()))).orElseThrow(() -> {
-            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-                LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-                LoggerErrorCode.DATA_ERROR.getErrorCode(), "Package not found");
             return new CoreException(new PackageNotFoundErrorBuilder(vspId).build());
           });
     } else {
       version = versions.stream().filter(ver -> versionName.equals(ver.getName()))
           .findFirst().orElseThrow(() -> {
-            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-                LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-                LoggerErrorCode.DATA_ERROR.getErrorCode(), "Package not found");
             return new CoreException(new PackageNotFoundErrorBuilder(vspId).build());
           });
 
       if (version.getStatus() != VersionStatus.Certified) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.GET_VERSION_INFO, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid requested version");
         throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
       }
     }
@@ -599,9 +586,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     Version retrievedVersion = versioningManager.get(vspId, version);
     if (retrievedVersion.getStatus() != VersionStatus.Certified) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_PACKAGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create package");
       throw new CoreException(
           new CreatePackageForNonFinalVendorSoftwareProductErrorBuilder(vspId, version)
               .build());

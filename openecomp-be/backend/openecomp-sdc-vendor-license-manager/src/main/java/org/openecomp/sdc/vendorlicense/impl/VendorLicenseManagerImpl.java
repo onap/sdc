@@ -22,7 +22,6 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -121,9 +120,6 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public void deleteVendorLicenseModel(String vlmId, Version version) {
-    MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-        LoggerTragetServiceName.DELETE_ENTITY, ErrorLevel.ERROR.name(),
-        LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.UNSUPPORTED_OPERATION);
     throw new UnsupportedOperationException(VendorLicenseConstants.UNSUPPORTED_OPERATION_ERROR);
   }
 
@@ -346,18 +342,12 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     if (startDate != null && expiryDate == null
                       && parsedStartDate.atStartOfDay().isBefore
           (LocalDate.now().atStartOfDay())) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
         throw new CoreException(
             new InvalidDateErrorBuilder(vendorLicenseModelId)
                 .build());
     }
 
     if (startDate == null && expiryDate != null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
       throw new CoreException(
           new InvalidDateErrorBuilder(vendorLicenseModelId)
               .build());
@@ -371,9 +361,6 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
                                                      LocalDate parsedExpiryDate) {
     if (startDate != null && expiryDate != null
             && isValidatStartAndExpiryDate(parsedStartDate, parsedExpiryDate)) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
       throw new CoreException(
               new InvalidDateErrorBuilder(vendorLicenseModelId)
                       .build());
@@ -404,18 +391,12 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
             && (parsedExpiryDate.atStartOfDay()
             .isEqual(parsedStartDate.atStartOfDay())
             || parsedExpiryDate.isBefore(parsedStartDate ))) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.VALIDATE_DATE_RANGE,ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
       throw new CoreException(
               new InvalidDateErrorBuilder(vendorLicenseModelId)
                       .build());
     }
 
     if (startDate == null && expiryDate != null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.VALIDATE_DATE_RANGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
       throw new CoreException(
           new InvalidDateErrorBuilder(vendorLicenseModelId)
               .build());
@@ -564,10 +545,6 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     if (!isLimitNameUnique(limitList, limit.getName(), limit.getType(), limit.getId())) {
       final ErrorCode duplicateLimitNameErrorBuilder =
           LimitErrorBuilder.getDuplicateNameErrorbuilder(limit.getName(), limit.getType().name());
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerServiceName.Create_LIMIT.toString(), ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          duplicateLimitNameErrorBuilder.message());
       throw new CoreException(duplicateLimitNameErrorBuilder);
     }
   }

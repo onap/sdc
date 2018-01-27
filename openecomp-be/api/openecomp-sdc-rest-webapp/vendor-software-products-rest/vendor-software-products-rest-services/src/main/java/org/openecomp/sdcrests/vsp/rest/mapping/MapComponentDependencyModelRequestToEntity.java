@@ -6,7 +6,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
@@ -32,9 +31,6 @@ public class MapComponentDependencyModelRequestToEntity extends
       logger.debug("",exception);
       ErrorCode errorCode =
           ComponentDependencyModelErrorBuilder.getInvalidRelationTypeErrorBuilder();
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_COMPONENT_DEPENDENCY_MODEL, ErrorLevel.ERROR.name(),
-          errorCode.id(), errorCode.message() );
       logger.error(errorCode.message(), exception);
       throw new CoreException(errorCode);
     }

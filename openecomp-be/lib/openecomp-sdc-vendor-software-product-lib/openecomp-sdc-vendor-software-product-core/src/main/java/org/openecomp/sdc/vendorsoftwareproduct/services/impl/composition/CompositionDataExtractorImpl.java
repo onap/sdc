@@ -27,7 +27,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -133,10 +132,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
     Optional<String> substituteServiceTemplateFileName = toscaAnalyzerService
         .getSubstituteServiceTemplateName(substitutableNodeTemplateId, substitutableNodeTemplate);
     if (!substituteServiceTemplateFileName.isPresent()) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.EXTRACT_COMPOSITION_DATA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          LoggerErrorDescription.EXTRACT_COMPOSITION_DATA);
       throw new CoreException(
           new ToscaInvalidSubstituteNodeTemplateErrorBuilder(substitutableNodeTemplateId).build());
     }
@@ -179,10 +174,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
               .getSubstitutionMappedNodeTemplateByExposedReq(
                   substituteServiceTemplateFileName.get(), substituteServiceTemplate, reqId);
           if (!mappedNodeTemplate.isPresent()) {
-            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-                LoggerTragetServiceName.EXTRACT_COMPOSITION_DATA, ErrorLevel.ERROR.name(),
-                LoggerErrorCode.DATA_ERROR.getErrorCode(),
-                LoggerErrorDescription.EXTRACT_COMPOSITION_DATA);
             throw new CoreException(new ToscaMissingSubstitutionMappingForReqCapErrorBuilder(
                 ToscaMissingSubstitutionMappingForReqCapErrorBuilder.MappingExposedEntry
                     .REQUIREMENT, connectedNodeId).build());
@@ -201,10 +192,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
             }
           }
         } else if (!connectedNodeTemplate.isPresent()) {
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-              LoggerTragetServiceName.EXTRACT_COMPOSITION_DATA, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(),
-              LoggerErrorDescription.EXTRACT_COMPOSITION_DATA);
           throw new CoreException(
               new ToscaInvalidEntryNotFoundErrorBuilder("Node Template", connectedNodeId).build());
         }
@@ -402,10 +389,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
       connectPortToNetwork(port, portNodeTemplate.get());
       return port;
     } else {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-          LoggerTragetServiceName.EXTRACT_COMPOSITION_DATA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          LoggerErrorDescription.EXTRACT_COMPOSITION_DATA);
       throw new CoreException(
           new ToscaInvalidEntryNotFoundErrorBuilder("Node Template", portNodeTemplateId).build());
     }
@@ -472,10 +455,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
             return Optional.of(Boolean.valueOf(inputParameterDefinition.get_default().toString()));
           }
         } else {
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-              LoggerTragetServiceName.EXTRACT_COMPOSITION_DATA, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(),
-              LoggerErrorDescription.EXTRACT_COMPOSITION_DATA);
           throw new CoreException(
               new ToscaInvalidEntryNotFoundErrorBuilder("Input Parameter", inputParameterName)
                   .build());
