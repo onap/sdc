@@ -24,7 +24,6 @@ import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -80,10 +79,6 @@ public class EnrichedServiceArtifactEntity implements ServiceElementEntity {
         try {
             this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
         } catch (IOException ioException) {
-            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-                    LoggerTragetServiceName.CREATE_SERVICE_ENRICH_ARTIFACT, ErrorLevel.ERROR.name(),
-                    LoggerErrorCode.DATA_ERROR.getErrorCode(),
-                    LoggerErrorDescription.CREATE_ENRICH_SERVICE_ARTIFACT);
             throw new SdcRuntimeException(ioException);
         }
 

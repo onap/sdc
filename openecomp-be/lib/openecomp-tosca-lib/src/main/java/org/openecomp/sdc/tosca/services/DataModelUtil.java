@@ -27,7 +27,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -95,9 +94,6 @@ public class DataModelUtil {
   public static void addSubstitutionMapping(ServiceTemplate serviceTemplate,
                                             SubstitutionMapping substitutionMapping) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping", SERVICE_TEMPLATE)
               .build());
@@ -129,9 +125,6 @@ public class DataModelUtil {
                                                String substitutionMappingRequirementId,
                                                List<String> substitutionMappingRequirementList) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping Requirements",
               SERVICE_TEMPLATE).build());
@@ -164,9 +157,6 @@ public class DataModelUtil {
                                                       String substitutionMappingCapabilityId,
                                                       List<String> substitutionMappingCapabilityList) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping Capabilities",
               SERVICE_TEMPLATE).build());
@@ -208,9 +198,6 @@ public class DataModelUtil {
   public static void addNodeTemplate(ServiceTemplate serviceTemplate, String nodeTemplateId,
                                      NodeTemplate nodeTemplate) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Node Template", SERVICE_TEMPLATE).build());
     }
@@ -263,9 +250,6 @@ public class DataModelUtil {
   public static void addPolicyDefinition(ServiceTemplate serviceTemplate, String policyId,
                                          PolicyDefinition policyDefinition) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Policy Definition", SERVICE_TEMPLATE)
               .build());
@@ -291,9 +275,6 @@ public class DataModelUtil {
   public static void addNodeType(ServiceTemplate serviceTemplate, String nodeTypeId,
                                  NodeType nodeType) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder(NODE_TYPE, SERVICE_TEMPLATE).build());
     }
@@ -306,9 +287,6 @@ public class DataModelUtil {
   public static void removeNodeType(ServiceTemplate serviceTemplate,
                                     String nodeTypeId) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder(NODE_TYPE, SERVICE_TEMPLATE).build());
     }
@@ -329,9 +307,6 @@ public class DataModelUtil {
                                              String relationshipTemplateId,
                                              RelationshipTemplate relationshipTemplate) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Relationship Template", SERVICE_TEMPLATE)
               .build());
@@ -356,17 +331,11 @@ public class DataModelUtil {
   public static void addRequirementAssignment(NodeTemplate nodeTemplate, String requirementId,
                                               RequirementAssignment requirementAssignment) {
     if (nodeTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Requirement Assignment", "Node Template")
               .build());
     }
     if (requirementAssignment.getNode() == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(new InvalidRequirementAssignmentErrorBuilder(requirementId).build());
     }
 
@@ -477,9 +446,6 @@ public class DataModelUtil {
   public static void addGroupDefinitionToTopologyTemplate(ServiceTemplate serviceTemplate,
                                                           String groupName, GroupDefinition group) {
     if (serviceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Group Definition", SERVICE_TEMPLATE)
               .build());
@@ -659,9 +625,6 @@ public class DataModelUtil {
                                                          String parameterDefinitionId,
                                                          ParameterDefinition parameterDefinition) {
     if (Objects.isNull(serviceTemplate)) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Topology Template Input Parameter",
               SERVICE_TEMPLATE).build());
@@ -688,9 +651,6 @@ public class DataModelUtil {
                                                           String parameterDefinitionId,
                                                           ParameterDefinition parameterDefinition) {
     if (Objects.isNull(serviceTemplate)) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
       throw new CoreException(
           new InvalidAddActionNullEntityErrorBuilder("Topology Template Output Parameter",
               SERVICE_TEMPLATE).build());

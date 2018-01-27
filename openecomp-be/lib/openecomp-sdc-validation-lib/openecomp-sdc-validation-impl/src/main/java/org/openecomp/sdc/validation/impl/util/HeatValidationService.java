@@ -28,7 +28,6 @@ import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -143,10 +142,6 @@ public class HeatValidationService {
     if (fileContent.isPresent()) {
       return new YamlUtil().yamlToObject(fileContent.get(), HeatOrchestrationTemplate.class);
     } else {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-              LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
-              ErrorLevel.ERROR.name(), LoggerErrorCode.DATA_ERROR.getErrorCode(),
-              LoggerErrorDescription.EMPTY_FILE);
       Exception exception = new Exception(String.format(NO_CONTENT_IN_FILE_MSG, fileName));
       LOGGER.error("Error while reading file : " + fileName , exception);
       throw exception;
@@ -301,9 +296,6 @@ public class HeatValidationService {
       nestedHeatOrchestrationTemplate =
               new YamlUtil().yamlToObject(fileContent.get(), HeatOrchestrationTemplate.class);
     } else {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-              LoggerTragetServiceName.VALIDATE_NESTING_LOOPS, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.EMPTY_FILE);
       throw new Exception(String.format(NO_CONTENT_IN_FILE_MSG, nestedFileName));
     }
 
@@ -330,9 +322,6 @@ public class HeatValidationService {
       if (fileContent.isPresent()) {
         envContent = new YamlUtil().yamlToObject(fileContent.get(), Environment.class);
       } else {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-                LoggerTragetServiceName.VALIDATE_ENV_FILE, ErrorLevel.ERROR.name(),
-                LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.EMPTY_FILE);
         throw new Exception(String.format(NO_CONTENT_IN_FILE_MSG, envFileName));
       }
     } catch (Exception exception) {
