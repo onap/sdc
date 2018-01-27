@@ -27,7 +27,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -243,10 +242,6 @@ class NovaToVolResourceConnection extends ResourceConnectionUsingRequirementHelp
             && resourceTranslatedId.get().equals(novaTranslatedResourceId);
 
       } else {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.GET_RESOURCE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(),
-            LoggerErrorDescription.MISSING_MANDATORY_PROPERTY);
         throw new CoreException(new MissingMandatoryPropertyErrorBuilder("instance_uuid").build());
       }
     });

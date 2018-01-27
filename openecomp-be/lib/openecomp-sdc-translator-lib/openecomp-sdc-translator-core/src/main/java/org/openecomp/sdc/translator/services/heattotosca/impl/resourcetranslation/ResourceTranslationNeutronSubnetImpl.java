@@ -26,7 +26,6 @@ import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -163,10 +162,6 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
       Optional<AttachedResourceId> attachedNetwork =
           HeatToToscaUtil.extractAttachedResourceId(translateTo, "network");
       if (!attachedNetwork.isPresent()) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.GET_RESOURCE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(),
-            LoggerErrorDescription.MISSING_MANDATORY_PROPERTY);
         throw new CoreException(
             new MissingMandatoryPropertyErrorBuilder("network_id/'network'").build());
       } else {

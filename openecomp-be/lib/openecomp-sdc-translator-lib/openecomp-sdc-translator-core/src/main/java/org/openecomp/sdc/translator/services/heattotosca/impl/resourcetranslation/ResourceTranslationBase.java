@@ -25,7 +25,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -146,9 +145,6 @@ public abstract class ResourceTranslationBase {
 
     Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
     if (resource == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_RESOURCE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.TRANSLATE_HEAT);
       throw new CoreException(
           new ResourceNotFoundInHeatFileErrorBuilder(resourceId, heatFileName).build());
     }
@@ -197,9 +193,6 @@ public abstract class ResourceTranslationBase {
       String resourceId, TranslationContext context) {
     Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
     if (resource == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_RESOURCE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.TRANSLATE_HEAT);
       throw new CoreException(
           new ResourceNotFoundInHeatFileErrorBuilder(resourceId, heatFileName).build());
     }

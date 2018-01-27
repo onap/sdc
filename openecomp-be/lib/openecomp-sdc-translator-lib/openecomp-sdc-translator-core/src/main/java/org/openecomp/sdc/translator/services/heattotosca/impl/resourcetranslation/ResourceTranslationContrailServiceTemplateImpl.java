@@ -22,7 +22,6 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -63,10 +62,6 @@ public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTran
   protected boolean isEssentialRequirementsValid(TranslateTo translateTo) {
     Map<String, Object> properties = translateTo.getResource().getProperties();
     if (Objects.isNull(properties) || Objects.isNull(properties.get("image_name"))) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GENERATE_TRANSLATED_ID, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          LoggerErrorDescription.MISSING_MANDATORY_PROPERTY);
       throw new CoreException(new MissingMandatoryPropertyErrorBuilder("image_name").build());
     }
     return true;

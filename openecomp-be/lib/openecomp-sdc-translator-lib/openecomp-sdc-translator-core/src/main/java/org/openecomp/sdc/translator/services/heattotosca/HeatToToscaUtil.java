@@ -43,7 +43,6 @@ import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -620,9 +619,6 @@ public class HeatToToscaUtil {
                                      String resourceId, String heatFileName) {
     Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
     if (resource == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_RESOURCE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.TRANSLATE_HEAT);
       throw new CoreException(
           new ResourceNotFoundInHeatFileErrorBuilder(resourceId, heatFileName).build());
     }
