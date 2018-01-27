@@ -30,7 +30,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -205,9 +204,6 @@ abstract class BaseResourceConnection<T> {
             nestedHeatOrchestrationTemplate, translatedResourceId, translateTo,
             getDesiredResourceType());
     if (!resourceByTranslatedResourceId.isPresent()) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_RESOURCE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.TRANSLATE_HEAT);
       throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(
           "Failed to get original resource from heat for translate resource id '"
               + translatedResourceId + "'")

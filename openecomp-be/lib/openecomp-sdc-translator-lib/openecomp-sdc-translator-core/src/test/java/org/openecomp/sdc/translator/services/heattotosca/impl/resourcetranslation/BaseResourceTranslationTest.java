@@ -39,7 +39,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
@@ -183,9 +182,6 @@ public class BaseResourceTranslationTest {
     if (MapUtils.isNotEmpty(translatorOutput.getErrorMessages()) && MapUtils.isNotEmpty(
         MessageContainerUtil
             .getMessageByLevel(ErrorLevel.ERROR, translatorOutput.getErrorMessages()))) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.VALIDATE_HEAT_BEFORE_TRANSLATE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't translate HEAT file");
       throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(
           "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());

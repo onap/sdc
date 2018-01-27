@@ -25,7 +25,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -145,10 +144,6 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
         HeatToToscaUtil.extractAttachedResourceId(translateTo, propertyName);
 
     if (!attachedResourceId.isPresent()) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_REQUIREMENT_ASSIGNMENT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(),
-          LoggerErrorDescription.MISSING_MANDATORY_PROPERTY);
       throw new CoreException(new MissingMandatoryPropertyErrorBuilder(propertyName).build());
     }
     return attachedResourceId.get();
