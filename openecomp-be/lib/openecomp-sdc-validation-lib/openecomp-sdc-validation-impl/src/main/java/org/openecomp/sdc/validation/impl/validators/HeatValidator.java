@@ -38,7 +38,6 @@ import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -323,11 +322,6 @@ public class HeatValidator implements Validator {
         nestedHeatOrchestrationTemplate =
             new YamlUtil().yamlToObject(fileContent.get(), HeatOrchestrationTemplate.class);
       } else {
-        MdcDataErrorMessage
-            .createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-                LoggerTragetServiceName.VALIDATE_GET_ATTR_FROM_NESTED,
-                ErrorLevel.ERROR.name(), LoggerErrorCode.DATA_ERROR.getErrorCode(),
-                LoggerErrorDescription.EMPTY_FILE);
         throw new Exception("The file '" + resourceType + "' has no content");
       }
     } catch (Exception exception) {

@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -304,9 +303,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         return Optional.of(substituteServiceTemplate.toString());
       }
     }
-    MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-        LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-        LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_PROPERTY);
     throw new CoreException(
         new ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder(substituteNodeTemplateId)
             .build());
@@ -315,9 +311,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
   private void handleNoSubstituteServiceTemplate(String substituteNodeTemplateId,
                                                  Object substituteServiceTemplate) {
     if (substituteServiceTemplate == null) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_PROPERTY);
       throw new CoreException(
           new ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder(substituteNodeTemplateId)
               .build());
@@ -441,9 +434,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         returnEntity = new NodeType();
         break;
       default:
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.UNSUPPORTED_ENTITY);
         throw new RuntimeException(
             "Entity[" + elementType + "] id[" + typeId + "] flat not supported");
     }
@@ -654,9 +644,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         }
         break;
       default:
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.UNSUPPORTED_ENTITY);
         throw new RuntimeException(
             "Entity[" + elementType + "] id[" + typeId + "] flat not supported");
     }

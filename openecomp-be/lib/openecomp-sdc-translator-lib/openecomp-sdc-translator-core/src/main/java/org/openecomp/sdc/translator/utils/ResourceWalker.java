@@ -21,7 +21,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
@@ -65,11 +64,6 @@ public class ResourceWalker {
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
         filesContent.put(fileName, IOUtils.toString(reader));
       } catch (IOException exception) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-            LoggerTragetServiceName.READ_RESOURCE_FILE, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(),
-            LoggerErrorDescription.RESOURCE_FILE_READ_ERROR
-                + " File name = " + fileName);
         throw new CoreException((new ErrorCode.ErrorCodeBuilder())
             .withMessage(LoggerErrorDescription.RESOURCE_FILE_READ_ERROR
                 + " File name = " + fileName)
