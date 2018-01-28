@@ -1,4 +1,5 @@
 import {Component, OnInit, Input} from "@angular/core";
+import { URLSearchParams } from '@angular/http';
 import {Designer} from "app/models";
 
 @Component({
@@ -10,9 +11,12 @@ import {Designer} from "app/models";
 export class DesignerFrameComponent implements OnInit {
 
     @Input() designer: Designer;
+    @Input() queryParams: Object;
     designerUrl: string;
+    private urlSearchParams: URLSearchParams;
 
     constructor() {
+        this.urlSearchParams = new URLSearchParams();
     }
 
     ngOnInit(): void {
@@ -21,5 +25,14 @@ export class DesignerFrameComponent implements OnInit {
             this.designer.designerHost + ":" +
             this.designer.designerPort +
             this.designer.designerPath;
+
+        if (this.queryParams && !_.isEmpty(this.queryParams)) {
+            _.forOwn(this.queryParams, (value, key) => {
+                this.urlSearchParams.set(key, value);
+            });
+
+            this.designerUrl += '?';
+            this.designerUrl += this.urlSearchParams.toString();
+        }
     }
 }
