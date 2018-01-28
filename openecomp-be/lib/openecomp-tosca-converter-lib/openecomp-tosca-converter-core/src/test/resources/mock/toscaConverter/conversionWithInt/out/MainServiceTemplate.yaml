@@ -34,7 +34,7 @@ topology_template:
           capability: virtual_storage
           node: SCU_Storage
       capabilities:
-      - virtual_compute:
+        virtual_compute:
           properties:
             virtual_memory:
               virtual_mem_size: 24G

@@ -34,7 +34,7 @@ public class NodeTemplate implements Template {
   private Map<String, Object> properties;
   private Map<String, Object> attributes;
   private List<Map<String, RequirementAssignment>> requirements;
-  private List<Map<String, CapabilityAssignment>> capabilities;
+  private Map<String, CapabilityAssignment> capabilities;
   private Map<String, InterfaceDefinition> interfaces;
   private Map<String, ArtifactDefinition> artifacts;
   private NodeFilter node_filter;
@@ -88,11 +88,11 @@ public class NodeTemplate implements Template {
     this.requirements = requirements;
   }
 
-  public List<Map<String, CapabilityAssignment>> getCapabilities() {
+  public Map<String, CapabilityAssignment> getCapabilities() {
     return capabilities;
   }
 
-  public void setCapabilities(List<Map<String, CapabilityAssignment>> capabilities) {
+  public void setCapabilities(Map<String, CapabilityAssignment> capabilities) {
     this.capabilities = capabilities;
   }
 

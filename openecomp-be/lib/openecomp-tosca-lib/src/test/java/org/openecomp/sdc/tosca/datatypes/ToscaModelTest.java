@@ -238,8 +238,7 @@ public class ToscaModelTest {
     capAtts.put("num_cpus", "66");
     capAss.setAttributes(capAtts);
     nodeTemplateCapability.put("cap1", capAss);
-    nodeTemplate.setCapabilities(new ArrayList<>());
-    nodeTemplate.getCapabilities().add(nodeTemplateCapability);
+    nodeTemplate.setCapabilities(nodeTemplateCapability);
 
     NodeFilter nodeTemplateNodeFilter = new NodeFilter();
     Map<String, List<Constraint>> ntProp = new HashMap<>();

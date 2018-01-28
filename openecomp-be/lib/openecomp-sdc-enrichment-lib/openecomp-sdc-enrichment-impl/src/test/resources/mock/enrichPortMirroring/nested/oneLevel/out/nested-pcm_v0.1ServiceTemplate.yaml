@@ -255,7 +255,7 @@ topology_template:
         network:
           get_input: oam_net_name
       capabilities:
-      - port_mirroring:
+        port_mirroring:
           properties:
             connection_point:
               nf_type: ''
@@ -324,7 +324,7 @@ topology_template:
           node: server_pcm
           relationship: tosca.relationships.network.BindsTo
       capabilities:
-      - port_mirroring:
+        port_mirroring:
           properties:
             connection_point:
               nf_type: ''
