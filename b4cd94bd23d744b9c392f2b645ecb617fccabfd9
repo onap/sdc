@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1f46e723",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-28T14:49:12Z",
+      "side": 1,
+      "message": "Please check if there\u0027s a reason to override the default configuration. If not, please remove this.",
+      "revId": "b4cd94bd23d744b9c392f2b645ecb617fccabfd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ff421b0f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-impl/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-28T14:49:12Z",
+      "side": 1,
+      "message": "Is there any special reason to override default configuration of the surefire plugin? If no, remove the custom configuration.",
+      "revId": "b4cd94bd23d744b9c392f2b645ecb617fccabfd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bf4c9343",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-01-28T14:49:12Z",
+      "side": 1,
+      "message": "Again, you have to understand why custom configuration was used here.",
+      "revId": "b4cd94bd23d744b9c392f2b645ecb617fccabfd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
