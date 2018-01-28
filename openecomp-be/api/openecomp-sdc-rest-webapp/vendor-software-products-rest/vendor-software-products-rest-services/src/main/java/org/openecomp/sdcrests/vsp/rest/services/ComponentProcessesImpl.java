@@ -25,11 +25,6 @@ import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.messages.AuditMessages;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManager;
@@ -63,12 +58,9 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   private ActivityLogManager activityLogManager =
       ActivityLogManagerFactory.getInstance().createInterface();
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(ComponentProcessesImpl.class);
-
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_Component_Processes.toString());
+
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     Collection<ProcessEntity> processes = processManager.listProcesses(vspId, version, componentId);
@@ -84,7 +76,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
 
   @Override
   public Response deleteList(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_List_Component_Processes.toString());
+
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.deleteProcesses(vspId, version, componentId);
@@ -95,7 +87,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   @Override
   public Response create(ProcessRequestDto request, String vspId, String versionId,
                          String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_Component_Processes.toString());
+
     ProcessEntity process =
         new MapProcessRequestDtoToProcessEntity().applyMapping(request, ProcessEntity.class);
     process.setVspId(vspId);
@@ -113,7 +105,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   @Override
   public Response get(String vspId, String versionId, String componentId, String processId,
                       String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Component_Processes.toString());
+
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     ProcessEntity process = processManager.getProcess(vspId, version, componentId, processId);
@@ -125,7 +117,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   @Override
   public Response delete(String vspId, String versionId, String componentId, String processId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Component_Processes.toString());
+
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.deleteProcess(vspId, version, componentId, processId);
@@ -136,7 +128,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   public Response update(ProcessRequestDto request, String vspId, String versionId,
                          String componentId,
                          String processId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Component_Processes.toString());
+
     ProcessEntity process =
         new MapProcessRequestDtoToProcessEntity().applyMapping(request, ProcessEntity.class);
     process.setVspId(vspId);
@@ -151,7 +143,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   @Override
   public Response getUploadedFile(String vspId, String versionId, String componentId,
                                   String processId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Uploaded_File_Component_Processes.toString());
+
     Version vspVersion = new Version(versionId);
     validateComponentExistence(vspId, vspVersion, componentId, user);
     File file = processManager.getProcessArtifact(vspId, vspVersion, componentId, processId);
@@ -168,7 +160,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   public Response deleteUploadedFile(String vspId, String versionId, String componentId,
                                      String processId,
                                      String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Uploaded_File_Component_Processes.toString());
+
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.deleteProcessArtifact(vspId, version, componentId, processId);
@@ -179,8 +171,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   public Response uploadFile(Attachment attachment, String vspId, String versionId,
                              String componentId,
                              String processId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Upload_File_Component_Processes.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_PROCESS_ARTIFACT + vspId);
+
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.uploadProcessArtifact(attachment.getObject(InputStream.class),

@@ -9,11 +9,6 @@ import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.messages.AuditMessages;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
@@ -52,13 +47,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   private ActivityLogManager activityLogManager =
       ActivityLogManagerFactory.getInstance().createInterface();
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(OrchestrationTemplateCandidateImpl.class);
-
   @Override
   public Response upload(String vspId, String versionId, Attachment fileToUpload, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Upload_File.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_HEAT + vspId);
 
     String filename = fileToUpload.getContentDisposition().getParameter("filename");
     UploadFileResponse uploadFileResponse = candidateManager

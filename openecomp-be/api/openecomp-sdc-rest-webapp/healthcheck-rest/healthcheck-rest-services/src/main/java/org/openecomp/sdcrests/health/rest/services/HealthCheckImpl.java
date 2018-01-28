@@ -29,10 +29,6 @@ import org.openecomp.sdc.health.data.HealthCheckStatus;
 import org.openecomp.sdc.health.data.HealthInfo;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
-import org.openecomp.sdcrests.health.types.HealthInfoDtos;
-import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +59,6 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
     SessionContextProviderFactory.getInstance().createInterface().create("public");
 
     try {
-      MdcUtil.initMdc(LoggerServiceName.Health_check.toString());
       Collection<HealthInfo> healthInfos = healthCheckManager.checkHealth();
       healthCheckResult.setComponentsInfo(healthInfos);
       boolean someIsDown = healthInfos.stream()
@@ -81,7 +76,6 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
     } catch (Exception ex) {
       logger.error("Health check failed", ex);
       Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
-      GenericCollectionWrapper<HealthInfoDtos> results = new GenericCollectionWrapper<>();
       HealthInfo healthInfo = new HealthInfo(org.openecomp.sdc.health.data.MonitoredModules.BE,
           HealthCheckStatus.DOWN,
           "", "Failed to perform Health Check");

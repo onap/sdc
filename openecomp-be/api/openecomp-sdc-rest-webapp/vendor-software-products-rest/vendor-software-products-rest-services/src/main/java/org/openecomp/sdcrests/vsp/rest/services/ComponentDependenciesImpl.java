@@ -16,8 +16,6 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
@@ -48,8 +46,6 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
   @Override
   public Response create(ComponentDependencyModel request, String vspId, String versionId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.CREATE_COMPONENT_DEPENDENCY_MODEL.toString());
-
     final Version version = new Version(versionId);
 
     ComponentDependencyModelEntity modelEntity =
@@ -72,7 +68,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
 
   @Override
   public Response list(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.GET_LIST_COMPONENT_DEPENDENCY.toString());
+
     Version vspVersion = new Version(versionId);
 
     Collection<ComponentDependencyModelEntity> componentDependencies =
@@ -90,7 +86,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
 
   @Override
   public Response delete(String vspId, String versionId, String dependencyId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.DELETE_COMPONENT_DEPENDENCY.toString());
+
     Version vspVersion = new Version(versionId);
     componentDependencyModelManager.delete(vspId, vspVersion, dependencyId);
     return Response.ok().build();
@@ -99,8 +95,6 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
   @Override
   public Response update(ComponentDependencyModel request, String vspId, String versionId, String
       dependencyId, String user) {
-
-    MdcUtil.initMdc(LoggerServiceName.UPDATE_COMPONENT_DEPENDENCY.toString());
 
     final Version version = new Version(versionId);
     ComponentDependencyModelEntity modelEntity =
@@ -116,7 +110,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
 
   @Override
   public Response get(String vspId, String version, String dependencyId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.GET_COMPONENT_DEPENDENCY.toString());
+
     ComponentDependencyModelEntity componentDependencyModelEntity = componentDependencyModelManager
         .get(vspId, new Version(version), dependencyId);
 

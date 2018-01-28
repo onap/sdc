@@ -1,7 +1,5 @@
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
@@ -29,7 +27,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
   private VendorLicenseManager vendorLicenseManager =
       VendorLicenseManagerFactory.getInstance().createInterface();
 
-  public static final String parent = "LicenseKeyGroup";
+  private static final String PARENT = "LicenseKeyGroup";
 
 
   @Override
@@ -38,7 +36,6 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
                               String versionId,
                               String licenseKeyGroupId,
                               String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_LIMIT.toString());
     Version version = new Version(versionId);
     vendorLicenseManager.getLicenseKeyGroup(
         new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
@@ -48,22 +45,17 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     limitEntity.setVendorLicenseModelId(vlmId);
     limitEntity.setVersion(version);
     limitEntity.setEpLkgId(licenseKeyGroupId);
-    limitEntity.setParent(parent);
+    limitEntity.setParent(PARENT);
 
     LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
     MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
     LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
-    /*StringWrapperResponse result =
-        createdLimit != null ? new StringWrapperResponse(createdLimit.getId())
-            : null;*/
-    //return Response.ok(result).build();
     return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
   }
 
   @Override
   public Response listLimits(String vlmId, String versionId, String licenseKeyGroupId,
                              String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
     Version version = new Version(versionId);
     vendorLicenseManager
         .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
@@ -87,8 +79,6 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
                               String licenseKeyGroupId,
                               String limitId,
                               String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_LIMIT.toString());
-
     Version version = new Version(versionId);
     vendorLicenseManager
         .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
@@ -99,7 +89,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     limitEntity.setVersion(version);
     limitEntity.setEpLkgId(licenseKeyGroupId);
     limitEntity.setId(limitId);
-    limitEntity.setParent(parent);
+    limitEntity.setParent(PARENT);
 
     vendorLicenseManager.updateLimit(limitEntity);
     return Response.ok().build();
@@ -116,8 +106,6 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
    */
   public Response deleteLimit(String vlmId, String versionId, String licenseKeyGroupId,
                               String limitId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_LIMIT.toString());
-
     Version version = new Version(versionId);
     vendorLicenseManager
         .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
@@ -127,7 +115,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     limitInput.setVersion(version);
     limitInput.setEpLkgId(licenseKeyGroupId);
     limitInput.setId(limitId);
-    limitInput.setParent(parent);
+    limitInput.setParent(PARENT);
 
     vendorLicenseManager.deleteLimit(limitInput);
     return Response.ok().build();
@@ -136,7 +124,6 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
   @Override
   public Response getLimit(String vlmId, String versionId, String licenseKeyGroupId,
                            String limitId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_LIMIT.toString());
     Version version = new Version(versionId);
     vendorLicenseManager
         .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));

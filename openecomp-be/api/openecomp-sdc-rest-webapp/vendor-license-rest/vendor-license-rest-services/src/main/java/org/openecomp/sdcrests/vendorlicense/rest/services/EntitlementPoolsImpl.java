@@ -20,8 +20,6 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -56,7 +54,6 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    * @return the response
    */
   public Response listEntitlementPools(String vlmId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
     Collection<EntitlementPoolEntity> entitlementPools =
         vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId));
 
@@ -79,7 +76,6 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    */
   public Response createEntitlementPool(EntitlementPoolRequestDto request, String vlmId,
                                         String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_EP.toString());
     EntitlementPoolEntity entitlementPoolEntity =
         new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
             .applyMapping(request, EntitlementPoolEntity.class);
@@ -105,7 +101,6 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    */
   public Response updateEntitlementPool(EntitlementPoolRequestDto request, String vlmId,
                                         String versionId, String entitlementPoolId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_EP.toString());
     EntitlementPoolEntity entitlementPoolEntity =
         new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
             .applyMapping(request, EntitlementPoolEntity.class);
@@ -128,7 +123,6 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    */
   public Response getEntitlementPool(String vlmId, String versionId, String entitlementPoolId,
                                      String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_EP.toString());
     EntitlementPoolEntity epInput = new EntitlementPoolEntity();
     epInput.setVendorLicenseModelId(vlmId);
     epInput.setVersion(new Version(versionId));
@@ -151,7 +145,6 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    */
   public Response deleteEntitlementPool(String vlmId, String versionId, String entitlementPoolId,
                                         String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_EP.toString());
     EntitlementPoolEntity epInput = new EntitlementPoolEntity();
     epInput.setVendorLicenseModelId(vlmId);
     epInput.setId(entitlementPoolId);

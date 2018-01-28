@@ -1,8 +1,6 @@
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -30,7 +28,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   private VendorLicenseManager vendorLicenseManager =
       VendorLicenseManagerFactory.getInstance().createInterface();
 
-  public static final String parent = "EntitlementPool";
+  private static final String PARENT = "EntitlementPool";
 
   @Override
   public Response createLimit(LimitRequestDto request,
@@ -38,7 +36,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
                               String versionId,
                               String entitlementPoolId,
                               String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_LIMIT.toString());
     Version version = new Version(versionId);
     vendorLicenseManager
         .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
@@ -48,23 +45,18 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitEntity.setVendorLicenseModelId(vlmId);
     limitEntity.setVersion(version);
     limitEntity.setEpLkgId(entitlementPoolId);
-    limitEntity.setParent(parent);
+    limitEntity.setParent(PARENT);
 
     LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
     MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
     LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
 
-    /*StringWrapperResponse result =
-        createdLimit != null ? new StringWrapperResponse(createdLimit.getId())
-            : null;*/
-    //return Response.ok(result).build();
     return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
   }
 
   @Override
   public Response listLimits(String vlmId, String versionId, String entitlementPoolId, String
       user) {
-    MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
     Version version = new Version(versionId);
     vendorLicenseManager
         .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
@@ -84,8 +76,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   @Override
   public Response getLimit(String vlmId, String versionId, String entitlementPoolId,
                            String limitId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_LIMIT.toString());
-
     Version version = new Version(versionId);
     vendorLicenseManager
         .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
@@ -108,8 +98,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
                               String entitlementPoolId,
                               String limitId,
                               String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_LIMIT.toString());
-
     Version version = new Version(versionId);
     vendorLicenseManager
         .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
@@ -120,7 +108,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitEntity.setVersion(version);
     limitEntity.setEpLkgId(entitlementPoolId);
     limitEntity.setId(limitId);
-    limitEntity.setParent(parent);
+    limitEntity.setParent(PARENT);
 
     vendorLicenseManager.updateLimit(limitEntity);
     return Response.ok().build();
@@ -137,8 +125,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
    */
   public Response deleteLimit(String vlmId, String versionId, String entitlementPoolId,
                               String limitId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_LIMIT.toString());
-
     Version version = new Version(versionId);
     vendorLicenseManager.getEntitlementPool(
         new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
@@ -148,7 +134,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitInput.setVersion(version);
     limitInput.setEpLkgId(entitlementPoolId);
     limitInput.setId(limitId);
-    limitInput.setParent(parent);
+    limitInput.setParent(PARENT);
 
     vendorLicenseManager.deleteLimit(limitInput);
     return Response.ok().build();

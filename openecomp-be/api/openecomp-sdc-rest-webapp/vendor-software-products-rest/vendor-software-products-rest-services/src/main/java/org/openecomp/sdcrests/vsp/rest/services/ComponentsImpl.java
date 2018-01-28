@@ -21,8 +21,6 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
@@ -62,7 +60,7 @@ public class ComponentsImpl implements Components {
 
   @Override
   public Response list(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_Components.toString());
+
     Collection<ComponentEntity> components =
         componentManager.listComponents(vspId, new Version(versionId));
 
@@ -77,14 +75,13 @@ public class ComponentsImpl implements Components {
 
   @Override
   public Response deleteList(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_List_Components.toString());
     componentManager.deleteComponents(vspId, new Version(versionId));
     return Response.ok().build();
   }
 
   @Override
   public Response create(ComponentRequestDto request, String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_Component.toString());
+
     ComponentEntity component =
         new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
     component.setVspId(vspId);
@@ -102,7 +99,7 @@ public class ComponentsImpl implements Components {
 
   @Override
   public Response get(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Component.toString());
+
     CompositionEntityResponse<ComponentData> response =
         componentManager.getComponent(vspId, new Version(versionId), componentId);
 
@@ -114,7 +111,6 @@ public class ComponentsImpl implements Components {
 
   @Override
   public Response delete(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Component.toString());
     componentManager.deleteComponent(vspId, new Version(versionId), componentId);
     return Response.ok().build();
   }
@@ -123,7 +119,6 @@ public class ComponentsImpl implements Components {
   public Response update(ComponentRequestDto request, String vspId, String versionId,
                          String componentId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Component.toString());
     ComponentEntity componentEntity =
         new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
     componentEntity.setVspId(vspId);
@@ -141,7 +136,6 @@ public class ComponentsImpl implements Components {
   @Override
   public Response getQuestionnaire(String vspId, String versionId, String componentId,
                                    String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_Component.toString());
     QuestionnaireResponse questionnaireResponse =
         componentManager.getQuestionnaire(vspId, new Version(versionId), componentId);
 
@@ -153,7 +147,6 @@ public class ComponentsImpl implements Components {
   @Override
   public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId,
                                       String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_Component.toString());
     componentManager
         .updateQuestionnaire(vspId, new Version(versionId), componentId, questionnaireData);
     return Response.ok().build();

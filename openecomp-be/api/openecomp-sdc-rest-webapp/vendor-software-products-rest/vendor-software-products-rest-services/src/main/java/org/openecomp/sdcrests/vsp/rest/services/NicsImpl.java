@@ -21,8 +21,6 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
@@ -65,7 +63,6 @@ public class NicsImpl implements Nics {
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_nics.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     Collection<NicEntity> nics = nicManager.listNics(vspId, vspVersion, componentId);
@@ -82,7 +79,6 @@ public class NicsImpl implements Nics {
   @Override
   public Response create(NicRequestDto request, String vspId, String versionId, String componentId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_nic.toString());
     NicEntity nic = new MapNicRequestDtoToNicEntity().applyMapping(request, NicEntity.class);
     nic.setVspId(vspId);
     nic.setVersion(new Version(versionId));
@@ -101,7 +97,6 @@ public class NicsImpl implements Nics {
   @Override
   public Response get(String vspId, String versionId, String componentId, String nicId,
                       String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_nic.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     CompositionEntityResponse<Nic> response =
@@ -116,7 +111,6 @@ public class NicsImpl implements Nics {
   @Override
   public Response delete(String vspId, String versionId, String componentId, String nicId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_nic.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     nicManager.deleteNic(vspId, vspVersion, componentId, nicId);
@@ -127,7 +121,6 @@ public class NicsImpl implements Nics {
   public Response update(NicRequestDto request, String vspId, String versionId, String componentId,
                          String nicId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_nic.toString());
     NicEntity nicEntity = new MapNicRequestDtoToNicEntity().applyMapping(request, NicEntity.class);
     nicEntity.setVspId(vspId);
     nicEntity.setVersion(new Version(versionId));
@@ -147,7 +140,6 @@ public class NicsImpl implements Nics {
   @Override
   public Response getQuestionnaire(String vspId, String versionId, String componentId, String nicId,
                                    String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_nic.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     QuestionnaireResponse questionnaireResponse =
@@ -162,7 +154,6 @@ public class NicsImpl implements Nics {
   public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId,
                                       String componentId,
                                       String nicId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_nic.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     nicManager

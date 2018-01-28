@@ -21,8 +21,6 @@
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -60,7 +58,6 @@ public class FeatureGroupsImpl implements FeatureGroups {
 
   @Override
   public Response listFeatureGroups(String vlmId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_FG.toString());
     Collection<FeatureGroupEntity> featureGroupEntities =
         vendorLicenseManager.listFeatureGroups(vlmId, new Version(versionId));
 
@@ -84,7 +81,6 @@ public class FeatureGroupsImpl implements FeatureGroups {
   @Override
   public Response createFeatureGroup(FeatureGroupRequestDto request, String vlmId, String versionId,
                                      String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_FG.toString());
     FeatureGroupEntity featureGroupEntity = new MapFeatureGroupDescriptorDtoToFeatureGroupEntity()
         .applyMapping(request, FeatureGroupEntity.class);
     featureGroupEntity.setVendorLicenseModelId(vlmId);
@@ -103,7 +99,6 @@ public class FeatureGroupsImpl implements FeatureGroups {
   @Override
   public Response updateFeatureGroup(FeatureGroupUpdateRequestDto request, String vlmId,
                                      String versionId, String featureGroupId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_FG.toString());
     FeatureGroupEntity featureGroupEntity = new MapFeatureGroupDescriptorDtoToFeatureGroupEntity()
         .applyMapping(request, FeatureGroupEntity.class);
     featureGroupEntity.setVendorLicenseModelId(vlmId);
@@ -120,7 +115,6 @@ public class FeatureGroupsImpl implements FeatureGroups {
   @Override
   public Response getFeatureGroup(String vlmId, String versionId, String featureGroupId,
                                   String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_FG.toString());
     FeatureGroupEntity fgInput = new FeatureGroupEntity();
     fgInput.setVendorLicenseModelId(vlmId);
     fgInput.setVersion(new Version(versionId));
@@ -165,7 +159,6 @@ public class FeatureGroupsImpl implements FeatureGroups {
   @Override
   public Response deleteFeatureGroup(String vlmId, String versionId, String featureGroupId,
                                      String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_FG.toString());
     FeatureGroupEntity fgInput = new FeatureGroupEntity();
     fgInput.setVendorLicenseModelId(vlmId);
     fgInput.setVersion(new Version(versionId));

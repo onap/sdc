@@ -42,6 +42,7 @@
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-logging-core</artifactId>
             <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
     
