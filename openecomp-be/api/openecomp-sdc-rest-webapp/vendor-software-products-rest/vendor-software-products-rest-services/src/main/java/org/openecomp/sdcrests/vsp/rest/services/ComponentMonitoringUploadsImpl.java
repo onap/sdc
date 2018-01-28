@@ -4,11 +4,6 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.messages.AuditMessages;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
@@ -39,16 +34,11 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
       monitoringUploadsManager = MonitoringUploadsManagerFactory.getInstance().createInterface();
   private ComponentManager componentManager =
       ComponentManagerFactory.getInstance().createInterface();
-  private static final Logger logger =
-      LoggerFactory.getLogger(ComponentMonitoringUploadsImpl.class);
 
   @Override
   public Response upload(Attachment attachment,
                          String vspId, String versionId, String componentId, String type,
                          String user) throws Exception {
-    MdcUtil.initMdc(LoggerServiceName.Upload_Monitoring_Artifact.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + String.format(AuditMessages
-        .UPLOAD_MONITORING_FILE, type, vspId, componentId));
 
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
@@ -77,7 +67,6 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
   @Override
   public Response delete(String vspId, String versionId, String componentId,
                          String type, String user) throws Exception {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Monitoring_Artifact.toString());
 
     MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
 
@@ -90,7 +79,6 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
   @Override
   public Response list(String vspId, String versionId, String componentId,
                        String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_Monitoring_Artifacts.toString());
 
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);

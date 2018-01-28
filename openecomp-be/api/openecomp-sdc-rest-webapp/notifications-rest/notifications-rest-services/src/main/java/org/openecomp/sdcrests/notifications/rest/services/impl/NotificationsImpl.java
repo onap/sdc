@@ -5,8 +5,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.notification.dao.types.NotificationEntity;
 import org.openecomp.sdc.notification.dtos.NotificationsStatus;
 import org.openecomp.sdc.notification.exceptons.NotificationNotExistException;
@@ -43,7 +41,6 @@ public class NotificationsImpl implements Notifications {
 
     @Override
     public Response getNotifications(String user, UUID lastDelivered, UUID endOfPage) {
-        MdcUtil.initMdc(LoggerServiceName.notifications.toString());
         NotificationsStatus notificationsStatus = notificationsService
             .getNotificationsStatus(user, lastDelivered, selectionLimit, endOfPage);
         MapNotificationsStatusToDto converter = new MapNotificationsStatusToDto();
@@ -91,8 +88,6 @@ public class NotificationsImpl implements Notifications {
 
     @Override
     public Response getNewNotificationsByOwnerId(String user, String eventId, String limitStr) {
-        MdcUtil.initMdc(LoggerServiceName.notifications.toString());
-
         int limit = selectionLimit;
 
         if (Objects.nonNull(limitStr)) {

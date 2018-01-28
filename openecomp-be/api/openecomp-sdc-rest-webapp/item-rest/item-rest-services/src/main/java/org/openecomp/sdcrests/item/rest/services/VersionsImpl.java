@@ -32,8 +32,6 @@ import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
 import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
@@ -131,8 +129,6 @@ public class VersionsImpl implements Versions {
 
   @Override
   public Response getActivityLog(String itemId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_List_Activity_Log.toString());
-
     GenericCollectionWrapper<ActivityLogDto> results = new GenericCollectionWrapper<>();
     MapActivityLogEntityToDto mapper = new MapActivityLogEntityToDto();
 

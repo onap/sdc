@@ -16,17 +16,6 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
@@ -46,12 +35,7 @@ import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
 import org.openecomp.sdc.logging.messages.AuditMessages;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
@@ -115,6 +99,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+
 
 @Named
 @Service("vendorSoftwareProducts")
@@ -143,8 +138,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response createVsp(VspRequestDto vspRequestDto, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP + vspRequestDto.getName());
 
     OnboardingMethod onboardingMethod = null;
     try {
@@ -204,8 +197,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response listVsps(String versionStatus, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_VSP.toString());
-
     Predicate<Item> itemPredicate;
     if (VersionStatus.Certified.name().equals(versionStatus)) {
       itemPredicate = item -> ItemType.vsp.name().equals(item.getType())
@@ -231,8 +222,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response getVsp(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_VSP.toString());
-
     Version version = versioningManager.get(vspId, new Version(versionId));
     VspDetails vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
     vspDetails.setWritetimeMicroSeconds(version.getModificationTime().getTime());
@@ -281,7 +270,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   @Override
   public Response updateVsp(String vspId, String versionId, VspDescriptionDto vspDescriptionDto,
                             String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_VSP.toString());
     VspDetails vspDetails =
         new MapVspDescriptionDtoToVspDetails().applyMapping(vspDescriptionDto, VspDetails.class);
     vspDetails.setId(vspId);
@@ -294,7 +282,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response deleteVsp(String vspId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_VSP.toString());
     vendorSoftwareProductManager.deleteVsp(vspId);
 
     return Response.ok().build();
@@ -365,7 +352,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response getOrchestrationTemplate(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Uploaded_File.toString());
     byte[] orchestrationTemplateFile =
         vendorSoftwareProductManager.getOrchestrationTemplateFile(vspId, new Version(versionId));
 
@@ -379,7 +365,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response listPackages(String category, String subCategory, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_Packages.toString());
     List<PackageInfo> packageInfoList =
         vendorSoftwareProductManager.listPackages(category, subCategory);
 
@@ -396,20 +381,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response getTranslatedFile(String vspId, String versionName, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Translated_File.toString());
-
     List<Version> versions = versioningManager.list(vspId);
     Version version;
-    if (versionName == null) {
-      version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
-          .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName()))).orElseThrow(() -> {
-            return new CoreException(new PackageNotFoundErrorBuilder(vspId).build());
-          });
-    } else {
+    if (versionName == null) version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
+            .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
+            .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
+    else {
       version = versions.stream().filter(ver -> versionName.equals(ver.getName()))
-          .findFirst().orElseThrow(() -> {
-            return new CoreException(new PackageNotFoundErrorBuilder(vspId).build());
-          });
+          .findFirst().orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
 
       if (version.getStatus() != VersionStatus.Certified) {
         throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
@@ -431,7 +410,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response getQuestionnaire(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_VSP.toString());
     QuestionnaireResponse questionnaireResponse =
         vendorSoftwareProductManager.getVspQuestionnaire(vspId, new Version(versionId));
 
@@ -449,7 +427,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   @Override
   public Response updateQuestionnaire(String questionnaireData, String vspId, String
       versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_VSP.toString());
     vendorSoftwareProductManager
         .updateVspQuestionnaire(vspId, new Version(versionId), questionnaireData);
     return Response.ok().build();
@@ -464,7 +441,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response getVspInformationArtifact(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Information_Artifact.toString());
     File textInformationArtifact =
         vendorSoftwareProductManager.getInformationArtifact(vspId, new Version(versionId));
 
@@ -494,8 +470,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   private Optional<ValidationResponse> submit(String vspId, Version version, String message,
                                               String user) throws IOException {
-    MdcUtil.initMdc(LoggerServiceName.Submit_VSP.toString());
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
 
     ValidationResponse validationResponse = vendorSoftwareProductManager.validate(vspId, version);
     Map<String, List<ErrorMessage>> compilationErrors =
@@ -582,8 +556,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   private Response createPackage(String vspId, Version version) throws IOException {
-    MdcUtil.initMdc(LoggerServiceName.Create_Package.toString());
-
     Version retrievedVersion = versioningManager.get(vspId, version);
     if (retrievedVersion.getStatus() != VersionStatus.Certified) {
       throw new CoreException(

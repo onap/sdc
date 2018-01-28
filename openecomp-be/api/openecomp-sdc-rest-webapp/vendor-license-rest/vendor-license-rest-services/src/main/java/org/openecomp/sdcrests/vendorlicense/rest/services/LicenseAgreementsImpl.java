@@ -21,8 +21,6 @@
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
@@ -64,7 +62,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    * @return the response
    */
   public Response listLicenseAgreements(String vlmId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_LA.toString());
     Collection<LicenseAgreementEntity> licenseAgreements =
         vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId));
 
@@ -91,7 +88,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response createLicenseAgreement(LicenseAgreementRequestDto request, String vlmId,
                                          String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_LA.toString());
     LicenseAgreementEntity licenseAgreementEntity =
         new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
             .applyMapping(request, LicenseAgreementEntity.class);
@@ -118,7 +114,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response updateLicenseAgreement(LicenseAgreementUpdateRequestDto request, String vlmId,
                                          String versionId, String licenseAgreementId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_LA.toString());
     LicenseAgreementEntity licenseAgreementEntity =
         new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
             .applyMapping(request, LicenseAgreementEntity.class);
@@ -143,7 +138,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response getLicenseAgreement(String vlmId, String versionId, String licenseAgreementId,
                                       String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_LA.toString());
     LicenseAgreementModel licenseAgreementModel = vendorLicenseManager
         .getLicenseAgreementModel(vlmId, new Version(versionId), licenseAgreementId);
 
@@ -185,7 +179,6 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    */
   public Response deleteLicenseAgreement(String vlmId, String versionId, String licenseAgreementId,
                                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_LA.toString());
     vendorLicenseManager.deleteLicenseAgreement(vlmId, new Version(versionId), licenseAgreementId);
     return Response.ok().build();
   }

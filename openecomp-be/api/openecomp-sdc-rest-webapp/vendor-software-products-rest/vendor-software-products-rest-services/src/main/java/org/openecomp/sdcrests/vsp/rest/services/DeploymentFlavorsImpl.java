@@ -1,8 +1,6 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
@@ -41,7 +39,6 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
   @Override
   public Response create(DeploymentFlavorRequestDto request, String vspId, String versionId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_Deployment_Flavor.toString());
     DeploymentFlavorEntity deploymentFlavorEntity =
         new MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity()
             .applyMapping(request, DeploymentFlavorEntity.class);
@@ -60,7 +57,6 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
 
   @Override
   public Response list(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_List_Deployment_flavor.toString());
     Collection<DeploymentFlavorEntity> deploymentFlavors =
         deploymentFlavorManager.listDeploymentFlavors(vspId, new Version(versionId));
 
@@ -76,7 +72,6 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
 
   @Override
   public Response get(String vspId, String versionId, String deploymentFlavorId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Deployment_flavor.toString());
     CompositionEntityResponse<DeploymentFlavor> response = deploymentFlavorManager
         .getDeploymentFlavor(vspId, new Version(versionId), deploymentFlavorId);
 
@@ -90,7 +85,6 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
 
   @Override
   public Response getSchema(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Deployment_flavor.toString());
     CompositionEntityResponse<DeploymentFlavor> response = deploymentFlavorManager
         .getDeploymentFlavorSchema(vspId, new Version(versionId));
     return Response.ok(response).build();
@@ -98,7 +92,6 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
 
   @Override
   public Response delete(String vspId, String versionId, String deploymentFlavorId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Deployment_flavor.toString());
     Version version = new Version(versionId);
     deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId);
     return Response.ok().build();
@@ -107,7 +100,6 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
   @Override
   public Response update(DeploymentFlavorRequestDto request, String vspId, String versionId,
                          String deploymentFlavorId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Deployment_flavor.toString());
     DeploymentFlavorEntity deploymentFlavorEntity =
         new MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity().applyMapping(request,
             DeploymentFlavorEntity.class);

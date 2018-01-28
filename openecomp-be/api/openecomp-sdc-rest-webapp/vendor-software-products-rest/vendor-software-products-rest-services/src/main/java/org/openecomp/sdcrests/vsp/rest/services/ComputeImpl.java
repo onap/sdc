@@ -1,8 +1,6 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComputeManager;
@@ -47,7 +45,7 @@ public class ComputeImpl implements Compute {
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_Computes.toString());
+
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     Collection<ListComputeResponse> computes =
@@ -65,7 +63,7 @@ public class ComputeImpl implements Compute {
   @Override
   public Response get(String vspId, String versionId, String componentId, String computeId,
                       String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Compute.toString());
+
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     CompositionEntityResponse<ComputeData> response =
@@ -81,7 +79,7 @@ public class ComputeImpl implements Compute {
   @Override
   public Response create(ComputeDetailsDto request, String vspId, String versionId,
                          String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_Compute.toString());
+
     ComputeEntity compute = new MapComputeDetailsDtoToComputeEntity().applyMapping(request,
         ComputeEntity.class);
     compute.setVspId(vspId);
@@ -100,7 +98,7 @@ public class ComputeImpl implements Compute {
   @Override
   public Response update(ComputeDetailsDto request, String vspId, String versionId,
                          String componentId, String computeFlavorId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Compute.toString());
+
     ComputeEntity compute =
         new MapComputeDetailsDtoToComputeEntity().applyMapping(request, ComputeEntity.class);
     compute.setVspId(vspId);
@@ -119,7 +117,7 @@ public class ComputeImpl implements Compute {
   @Override
   public Response delete(String vspId, String versionId, String componentId, String computeFlavorId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Compute.toString());
+
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     computetManager.deleteCompute(vspId, version, componentId, computeFlavorId);
@@ -129,7 +127,7 @@ public class ComputeImpl implements Compute {
   @Override
   public Response getQuestionnaire(String vspId, String versionId, String componentId,
                                    String computeFlavorId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_Compute.toString());
+
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     QuestionnaireResponse questionnaireResponse =
@@ -143,7 +141,7 @@ public class ComputeImpl implements Compute {
   @Override
   public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId,
                                       String componentId, String computeFlavorId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_Compute.toString());
+
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     computetManager.updateComputeQuestionnaire(vspId, version, componentId, computeFlavorId,

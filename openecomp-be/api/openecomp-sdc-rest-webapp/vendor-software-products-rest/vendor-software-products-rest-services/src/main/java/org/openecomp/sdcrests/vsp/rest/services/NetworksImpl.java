@@ -21,8 +21,6 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
@@ -59,7 +57,6 @@ public class NetworksImpl implements Networks {
 
   @Override
   public Response list(String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_Network.toString());
     Collection<NetworkEntity> networks =
         networkManager.listNetworks(vspId, new Version(versionId));
 
@@ -74,7 +71,6 @@ public class NetworksImpl implements Networks {
 
   @Override
   public Response create(NetworkRequestDto request, String vspId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_Network.toString());
     NetworkEntity network =
         new MapNetworkRequestDtoToNetworkEntity().applyMapping(request, NetworkEntity.class);
     network.setVspId(vspId);
@@ -87,7 +83,6 @@ public class NetworksImpl implements Networks {
 
   @Override
   public Response get(String vspId, String versionId, String networkId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Network.toString());
     CompositionEntityResponse<Network> response =
         networkManager.getNetwork(vspId,
             new Version(versionId), networkId
@@ -101,7 +96,6 @@ public class NetworksImpl implements Networks {
 
   @Override
   public Response delete(String vspId, String versionId, String networkId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Network.toString());
     networkManager
         .deleteNetwork(vspId, new Version(versionId),
             networkId);
@@ -111,7 +105,6 @@ public class NetworksImpl implements Networks {
   @Override
   public Response update(NetworkRequestDto request, String vspId, String versionId,
                          String networkId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Network.toString());
     NetworkEntity networkEntity =
         new MapNetworkRequestDtoToNetworkEntity().applyMapping(request, NetworkEntity.class);
     networkEntity.setVspId(vspId);

@@ -2,8 +2,6 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ImageManager;
@@ -46,7 +44,6 @@ public class ImagesImpl implements Images {
   @Override
   public Response create(ImageRequestDto request, String vspId, String versionId,
                          String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_Image.toString());
     ImageEntity image =
         new MapImageRequestDtoToImageEntity().applyMapping(request, ImageEntity.class);
     image.setVspId(vspId);
@@ -63,7 +60,6 @@ public class ImagesImpl implements Images {
 
   @Override
   public Response getImageSchema(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.GET_Image_Schema.toString());
     CompositionEntityResponse<Image> response = imageManager.getImageSchema(vspId);
     return Response.ok(response).build();
   }
@@ -71,7 +67,6 @@ public class ImagesImpl implements Images {
   @Override
   public Response get(String vspId, String versionId, String componentId, String imageId,
                       String user) {
-    MdcUtil.initMdc(LoggerServiceName.GET_Image.toString());
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     CompositionEntityResponse<Image> response =
@@ -82,7 +77,6 @@ public class ImagesImpl implements Images {
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_Images.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     Collection<ImageEntity> images = imageManager.listImages(vspId, vspVersion, componentId);
@@ -99,7 +93,6 @@ public class ImagesImpl implements Images {
   @Override
   public Response delete(String vspId, String versionId, String componentId, String imageId,
                          String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_Image.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     imageManager.deleteImage(vspId, vspVersion, componentId, imageId);
@@ -109,7 +102,6 @@ public class ImagesImpl implements Images {
   @Override
   public Response update(ImageRequestDto request, String vspId, String versionId,
                          String componentId, String imageId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Image.toString());
     ImageEntity imageEntity = new MapImageRequestDtoToImageEntity().applyMapping(request,
         ImageEntity.class);
     imageEntity.setVspId(vspId);
@@ -129,7 +121,6 @@ public class ImagesImpl implements Images {
   @Override
   public Response getQuestionnaire(String vspId, String versionId, String componentId,
                                    String imageId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_Compute.toString());
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     QuestionnaireResponse questionnaireResponse =
@@ -144,7 +135,6 @@ public class ImagesImpl implements Images {
   @Override
   public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId,
                                       String componentId, String imageId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_Compute.toString());
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     imageManager.updateImageQuestionnaire(vspId, version, componentId, imageId, questionnaireData);

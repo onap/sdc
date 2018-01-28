@@ -33,9 +33,6 @@ import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.context.MdcUtil;
-import org.openecomp.sdc.logging.messages.AuditMessages;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
@@ -88,7 +85,6 @@ import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActio
 @Validated
 public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
-  private static final String VLM_ID = "VLM id";
   private static final String SUBMIT_ITEM_ACTION = "Submit_Item";
   private static final String SUBMIT_HEALED_VERSION_ERROR =
       "VLM Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
@@ -108,8 +104,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   @Override
   public Response listLicenseModels(String versionStatus, String user) {
-    MdcUtil.initMdc(LoggerServiceName.List_VLM.toString());
-
     Predicate<Item> itemPredicate;
     if (VersionStatus.Certified.name().equals(versionStatus)) {
       itemPredicate = item -> ItemType.vlm.name().equals(item.getType()) &&
@@ -134,8 +128,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   @Override
   public Response createLicenseModel(VendorLicenseModelRequestDto request, String user) {
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VLM + request.getVendorName());
-    MdcUtil.initMdc(LoggerServiceName.Create_VLM.toString());
 
     Item item = new Item();
     item.setType(ItemType.vlm.name());
@@ -171,8 +163,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   @Override
   public Response updateLicenseModel(VendorLicenseModelRequestDto request, String vlmId,
                                      String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Update_VLM.toString());
-
     VendorLicenseModelEntity vlm =
         new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
             .applyMapping(request, VendorLicenseModelEntity.class);
@@ -185,8 +175,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   @Override
   public Response getLicenseModel(String vlmId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Get_VLM.toString());
-
     Version version = versioningManager.get(vlmId, new Version(versionId));
     VendorLicenseModelEntity vlm = vendorLicenseManager.getVendorLicenseModel(vlmId, version);
     vlm.setWritetimeMicroSeconds(version.getModificationTime().getTime());
@@ -214,7 +202,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   @Override
   public Response deleteLicenseModel(String vlmId, String versionId, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Delete_VLM.toString());
     vendorLicenseManager.deleteVendorLicenseModel(vlmId, new Version(versionId));
     return Response.ok().build();
   }
@@ -240,8 +227,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   }
 
   private void submit(String vlmId, Version version, String message, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Submit_VLM.toString());
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VLM + vlmId);
 
     vendorLicenseManager.validate(vlmId, version);
     versioningManager.submit(vlmId, version, message);
