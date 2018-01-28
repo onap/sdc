@@ -1,4 +1,4 @@
-package org.openecomp.core.tools.commands;
+package org.openecomp.core.tools.commandsTmp;
 
 import com.datastax.driver.core.ResultSet;
 import org.openecomp.core.tools.store.HealingHandler;

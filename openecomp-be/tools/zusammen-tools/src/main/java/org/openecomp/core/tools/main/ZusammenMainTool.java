@@ -2,9 +2,9 @@ package org.openecomp.core.tools.main;
 
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.UserInfo;
-import org.openecomp.core.tools.commands.AddContributorCommand;
-import org.openecomp.core.tools.commands.HealAll;
-import org.openecomp.core.tools.commands.SetHealingFlag;
+import org.openecomp.core.tools.commandsTmp.AddContributorCommand;
+import org.openecomp.core.tools.commandsTmp.HealAll;
+import org.openecomp.core.tools.commandsTmp.SetHealingFlag;
 import org.openecomp.core.tools.exportinfo.ExportDataCommand;
 import org.openecomp.core.tools.importinfo.ImportDataCommand;
 import org.openecomp.core.tools.util.ToolsUtil;

@@ -1,4 +1,4 @@
-package org.openecomp.core.tools.commands;
+package org.openecomp.core.tools.commandsTmp;
 
 import org.openecomp.core.tools.concurrent.ItemAddContributorsTask;
 import org.openecomp.core.tools.exceptions.CommandExecutionRuntimeException;
