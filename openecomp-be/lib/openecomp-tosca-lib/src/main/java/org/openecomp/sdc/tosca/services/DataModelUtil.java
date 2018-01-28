@@ -1114,16 +1114,14 @@ public class DataModelUtil {
   public static void addNodeTemplateCapability(NodeTemplate nodeTemplate, String capabilityId,
                                                Map<String, Object> capabilityProperties,
                                                Map<String, Object> capabilityAttributes) {
-    List<Map<String, CapabilityAssignment>> capabilities = nodeTemplate.getCapabilities();
+    Map<String, CapabilityAssignment> capabilities = nodeTemplate.getCapabilities();
     if (Objects.isNull(capabilities)) {
-      capabilities = new ArrayList<>();
+      capabilities = new HashMap<>();
     }
     CapabilityAssignment capabilityAssignment = new CapabilityAssignment();
     capabilityAssignment.setProperties(capabilityProperties);
     capabilityAssignment.setAttributes(capabilityAttributes);
-    Map<String, CapabilityAssignment> nodeTemplateCapability = new HashMap<>();
-    nodeTemplateCapability.put(capabilityId, capabilityAssignment);
-    capabilities.add(nodeTemplateCapability);
+    capabilities.put(capabilityId, capabilityAssignment);
     nodeTemplate.setCapabilities(capabilities);
   }
 

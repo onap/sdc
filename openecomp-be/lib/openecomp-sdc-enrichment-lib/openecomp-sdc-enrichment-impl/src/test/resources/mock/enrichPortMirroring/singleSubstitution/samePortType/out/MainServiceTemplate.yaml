@@ -266,7 +266,7 @@ topology_template:
     template_VMInt_OAM_lb_external_VMI:
       type: org.openecomp.resource.cp.v2.extContrailCP
       capabilities:
-      - port_mirroring:
+        port_mirroring:
           properties:
             connection_point:
               nf_type: ''
@@ -306,7 +306,7 @@ topology_template:
           mac_count_required:
             is_required: false
       capabilities:
-      - port_mirroring:
+        port_mirroring:
           properties:
             connection_point:
               nf_type: ''

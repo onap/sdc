@@ -79,21 +79,24 @@ import java.util.regex.Pattern;
 public class ToscaConverterImpl implements ToscaConverter {
 
     private static final String ORIGINAL = ".original";
+  public ToscaConverterImpl() {
 
-    @Override
-    public ToscaServiceModel convert(FileContentHandler fileContentHandler)
-        throws IOException {
-        Map<String, byte[]> csarFiles = new HashMap<>(fileContentHandler.getFiles());
-        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
-        Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
-        FileContentHandler artifacts = new FileContentHandler();
-        GlobalSubstitutionServiceTemplate gsst = new GlobalSubstitutionServiceTemplate();
-        for (Map.Entry<String, byte[]> fileEntry : csarFiles.entrySet()) {
-            CsarFileTypes fileType = getFileType(fileEntry.getKey());
-            switch (fileType) {
-                case mainServiceTemplate:
-                    handleServiceTemplate(mainStName, fileEntry.getKey(), csarFiles, serviceTemplates);
-                    break;
+  }
+
+  @Override
+  public ToscaServiceModel convert(FileContentHandler fileContentHandler)
+      throws IOException {
+    Map<String, byte[]> csarFiles = new HashMap<>(fileContentHandler.getFiles());
+    ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+    Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
+    FileContentHandler artifacts = new FileContentHandler();
+    GlobalSubstitutionServiceTemplate gsst = new GlobalSubstitutionServiceTemplate();
+    for (Map.Entry<String, byte[]> fileEntry : csarFiles.entrySet()) {
+      CsarFileTypes fileType = getFileType(fileEntry.getKey());
+      switch (fileType) {
+        case mainServiceTemplate:
+          handleServiceTemplate(mainStName, fileEntry.getKey(), csarFiles, serviceTemplates);
+          break;
 
                 case globalServiceTemplate:
                     handleServiceTemplate(globalStName, fileEntry.getKey(), csarFiles, serviceTemplates);
@@ -284,58 +287,58 @@ public class ToscaConverterImpl implements ToscaConverter {
             return;
         }
 
-        for (Map.Entry<String, Object> nodeTypeEntry : nodeTypes.entrySet()) {
-            Optional<NodeType> nodeType = ToscaConverterUtil
-                .createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
-                    NodeType.class);
+    for (Map.Entry<String, Object> nodeTypeEntry : nodeTypes.entrySet()) {
+      Optional<NodeType> nodeType = ToscaConverterUtil
+          .createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
+              NodeType.class);
 
-            nodeType.ifPresent(nodeTypeValue -> DataModelUtil
-                .addNodeType(serviceTemplate, nodeTypeEntry.getKey(), nodeTypeValue));
-        }
+      nodeType.ifPresent(nodeTypeValue -> DataModelUtil
+          .addNodeType(serviceTemplate, nodeTypeEntry.getKey(), nodeTypeValue));
+    }
+  }
+
+  private void convertTopologyTemplate(ServiceTemplate serviceTemplate,
+                                       ServiceTemplateReaderService readerService) {
+
+    convertInputs(serviceTemplate, readerService);
+    convertNodeTemplates(serviceTemplate, readerService);
+    convertOutputs(serviceTemplate, readerService);
+    convertSubstitutionMappings(serviceTemplate, readerService);
+  }
+
+  private void convertInputs(ServiceTemplate serviceTemplate,
+                             ServiceTemplateReaderService readerService) {
+    Map<String, Object> inputs = readerService.getInputs();
+    addInputsOrOutputsToServiceTemplate(serviceTemplate, inputs, Constants.inputs);
+  }
+
+  private void convertOutputs(ServiceTemplate serviceTemplate,
+                              ServiceTemplateReaderService readerService) {
+    Map<String, Object> outputs = readerService.getOutputs();
+    addInputsOrOutputsToServiceTemplate(serviceTemplate, outputs, Constants.outputs);
+  }
+
+  private void addInputsOrOutputsToServiceTemplate(ServiceTemplate serviceTemplate,
+                                                   Map<String, Object> mapToConvert,
+                                                   String inputsOrOutputs) {
+    if (MapUtils.isEmpty(mapToConvert)) {
+      return;
     }
 
-    private void convertTopologyTemplate(ServiceTemplate serviceTemplate,
-                                         ServiceTemplateReaderService readerService) {
+    for (Map.Entry<String, Object> entry : mapToConvert.entrySet()) {
+      Optional<ParameterDefinition> parameterDefinition =
+          ToscaConverterUtil.createObjectFromClass(
+              entry.getKey(), entry.getValue(), ParameterDefinition.class);
 
-        convertInputs(serviceTemplate, readerService);
-        convertNodeTemplates(serviceTemplate, readerService);
-        convertOutputs(serviceTemplate, readerService);
-        convertSubstitutionMappings(serviceTemplate, readerService);
+      parameterDefinition.ifPresent(parameterDefinitionValue -> {
+        Optional<Object> defaultValue =
+            ToscaConverterUtil.getDefaultValue(entry.getValue(), parameterDefinition.get());
+        defaultValue.ifPresent(parameterDefinitionValue::set_default);
+        addToServiceTemplateAccordingToSection(
+            serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition.get());
+      });
     }
-
-    private void convertInputs(ServiceTemplate serviceTemplate,
-                               ServiceTemplateReaderService readerService) {
-        Map<String, Object> inputs = readerService.getInputs();
-        addInputsOrOutputsToServiceTemplate(serviceTemplate, inputs, Constants.inputs);
-    }
-
-    private void convertOutputs(ServiceTemplate serviceTemplate,
-                                ServiceTemplateReaderService readerService) {
-        Map<String, Object> outputs = readerService.getOutputs();
-        addInputsOrOutputsToServiceTemplate(serviceTemplate, outputs, Constants.outputs);
-    }
-
-    private void addInputsOrOutputsToServiceTemplate(ServiceTemplate serviceTemplate,
-                                                     Map<String, Object> mapToConvert,
-                                                     String inputsOrOutputs) {
-        if (MapUtils.isEmpty(mapToConvert)) {
-            return;
-        }
-
-        for (Map.Entry<String, Object> entry : mapToConvert.entrySet()) {
-            Optional<ParameterDefinition> parameterDefinition =
-                ToscaConverterUtil.createObjectFromClass(
-                    entry.getKey(), entry.getValue(), ParameterDefinition.class);
-
-            parameterDefinition.ifPresent(parameterDefinitionValue -> {
-                Optional<Object> defaultValue =
-                    ToscaConverterUtil.getDefaultValue(entry.getValue(), parameterDefinition.get());
-                defaultValue.ifPresent(parameterDefinitionValue::set_default);
-                addToServiceTemplateAccordingToSection(
-                    serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition.get());
-            } );
-        }
-    }
+  }
 
     private void addToServiceTemplateAccordingToSection(ServiceTemplate serviceTemplate,
                                                         String inputsOrOutputs,
@@ -350,177 +353,175 @@ public class ToscaConverterImpl implements ToscaConverter {
         }
     }
 
-    private void convertNodeTemplates(ServiceTemplate serviceTemplate,
-                                      ServiceTemplateReaderService readerService) {
-        Map<String, Object> nodeTemplates = readerService.getNodeTemplates();
-        if (MapUtils.isEmpty(nodeTemplates)) {
-            return;
-        }
-
-        for (Map.Entry<String, Object> nodeTemplateEntry : nodeTemplates.entrySet()) {
-            NodeTemplate nodeTemplate = convertNodeTemplate(nodeTemplateEntry.getValue());
-            DataModelUtil.addNodeTemplate(serviceTemplate, nodeTemplateEntry.getKey(), nodeTemplate);
-        }
+  private void convertNodeTemplates(ServiceTemplate serviceTemplate,
+                                    ServiceTemplateReaderService readerService) {
+    Map<String, Object> nodeTemplates = readerService.getNodeTemplates();
+    if (MapUtils.isEmpty(nodeTemplates)) {
+      return;
     }
 
-    private void convertSubstitutionMappings(ServiceTemplate serviceTemplate,
-                                             ServiceTemplateReaderService readerService) {
-        Map<String, Object> substitutionMappings = readerService.getSubstitutionMappings();
-        if (MapUtils.isEmpty(substitutionMappings)) {
-            return;
-        }
-        SubstitutionMapping substitutionMapping = convertSubstitutionMappings(substitutionMappings);
-        DataModelUtil.addSubstitutionMapping(serviceTemplate, substitutionMapping);
+    for (Map.Entry<String, Object> nodeTemplateEntry : nodeTemplates.entrySet()) {
+      NodeTemplate nodeTemplate = convertNodeTemplate(nodeTemplateEntry.getValue());
+      DataModelUtil.addNodeTemplate(serviceTemplate, nodeTemplateEntry.getKey(), nodeTemplate);
+    }
+  }
+
+  private void convertSubstitutionMappings(ServiceTemplate serviceTemplate,
+                                           ServiceTemplateReaderService readerService) {
+    Map<String, Object> substitutionMappings = readerService.getSubstitutionMappings();
+    if (MapUtils.isEmpty(substitutionMappings)) {
+      return;
+    }
+    SubstitutionMapping substitutionMapping = convertSubstitutionMappings(substitutionMappings);
+    DataModelUtil.addSubstitutionMapping(serviceTemplate, substitutionMapping);
+  }
+
+  private SubstitutionMapping convertSubstitutionMappings(
+      Map<String, Object> substitutionMappings) {
+    SubstitutionMapping substitutionMapping = new SubstitutionMapping();
+
+    substitutionMapping.setNode_type((String) substitutionMappings.get(nodeType));
+    substitutionMapping.setCapabilities(
+        convertSubstitutionMappingsSections(capabilities, substitutionMappings.get(capabilities)));
+    substitutionMapping.setRequirements(
+        convertSubstitutionMappingsSections(requirements, substitutionMappings.get(requirements)));
+
+    return substitutionMapping;
+  }
+
+  private Map<String, List<String>> convertSubstitutionMappingsSections(String sectionName,
+                                                                        Object sectionToConvert) {
+
+    if (Objects.isNull(sectionToConvert)) {
+      return null;
     }
 
-    private SubstitutionMapping convertSubstitutionMappings(Map<String, Object> substitutionMappings) {
-        SubstitutionMapping substitutionMapping = new SubstitutionMapping();
-
-        substitutionMapping.setNode_type((String) substitutionMappings.get(nodeType));
-        substitutionMapping.setCapabilities(
-            convertSubstitutionMappingsSections(capabilities, substitutionMappings.get(capabilities)));
-        substitutionMapping.setRequirements(
-            convertSubstitutionMappingsSections(requirements, substitutionMappings.get(requirements)));
-
-        return substitutionMapping;
+    if (!(sectionToConvert instanceof Map)) {
+      throw new CoreException(
+          new SubstitutionMappingsConverterErrorBuilder(
+              sectionName, sectionToConvert.getClass().getSimpleName()).build());
     }
 
-    private Map<String, List<String>> convertSubstitutionMappingsSections(String sectionName,
-                                                                          Object sectionToConvert) {
+    return convertSection(sectionToConvert);
+  }
 
-        if(Objects.isNull(sectionToConvert)){
-            return null;
-        }
+  private Map<String, List<String>> convertSection(Object sectionToConvert) {
 
-        if(!(sectionToConvert instanceof Map)) {
-            throw new CoreException(
-                new SubstitutionMappingsConverterErrorBuilder(
-                    sectionName, sectionToConvert.getClass().getSimpleName()).build());
-        }
+    Map<String, Object> sectionAsMap = (Map<String, Object>) sectionToConvert;
+    Map<String, List<String>> convertedSection = new HashMap<>();
 
-        return convertSection(sectionToConvert);
+    if (MapUtils.isEmpty(sectionAsMap)) {
+      return null;
     }
 
-    private Map<String, List<String>> convertSection(Object sectionToConvert) {
-
-        Map<String, Object> sectionAsMap = (Map<String, Object>)sectionToConvert;
-        Map<String, List<String>> convertedSection = new HashMap<>();
-
-        if (MapUtils.isEmpty(sectionAsMap)) {
-            return null;
-        }
-
-        for (Map.Entry<String, Object> entry : sectionAsMap.entrySet()) {
-            if (entry.getValue() instanceof List) {
-                convertedSection.put(entry.getKey(), (List<String>) entry.getValue());
-            }
-        }
-
-        return convertedSection;
+    for (Map.Entry<String, Object> entry : sectionAsMap.entrySet()) {
+      if (entry.getValue() instanceof List) {
+        convertedSection.put(entry.getKey(), (List<String>) entry.getValue());
+      }
     }
 
-    private CsarFileTypes getFileType(String fileName) {
-        if (isMainServiceTemplate(fileName)) {
-            return CsarFileTypes.mainServiceTemplate;
-        } else if (isGlobalServiceTemplate(fileName)) {
-            return CsarFileTypes.globalServiceTemplate;
-        } else if (isDefinitions(fileName)) {
-            return CsarFileTypes.definitionsFile;
-        } else if (isMetadataFile(fileName)) {
-            return CsarFileTypes.toscaMetadata;
-        }
-        return CsarFileTypes.externalFile;
+    return convertedSection;
+  }
+
+  private CsarFileTypes getFileType(String fileName) {
+    if (isMainServiceTemplate(fileName)) {
+      return CsarFileTypes.mainServiceTemplate;
+    } else if (isGlobalServiceTemplate(fileName)) {
+      return CsarFileTypes.globalServiceTemplate;
+    } else if (isDefinitions(fileName)) {
+      return CsarFileTypes.definitionsFile;
+    } else if (isMetadataFile(fileName)) {
+      return CsarFileTypes.toscaMetadata;
+    }
+    return CsarFileTypes.externalFile;
+  }
+
+  private Optional<Manifest> getCsarManifest(Map<String, byte[]> csarFiles) throws IOException {
+    Optional<byte[]> manifestContent = getManifestContent(csarFiles);
+
+    if (manifestContent.isPresent()) {
+      ByteArrayInputStream byteInputStream = new ByteArrayInputStream(manifestContent.get());
+
+      return Optional.of(new Manifest(byteInputStream));
     }
 
-    private Optional<Manifest> getCsarManifest(Map<String, byte[]> csarFiles) throws IOException {
-        Optional<byte[]> manifestContent = getManifestContent(csarFiles);
+    return Optional.empty();
+  }
 
-        if (manifestContent.isPresent()) {
-            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(manifestContent.get());
+  private NodeTemplate convertNodeTemplate(Object candidateNodeTemplate) {
+    NodeTemplate nodeTemplate = new NodeTemplate();
 
-            return Optional.of(new Manifest(byteInputStream));
-        }
+    Map<String, Object> nodeTemplateAsMap = (Map<String, Object>) candidateNodeTemplate;
+    nodeTemplate.setArtifacts((Map<String, ArtifactDefinition>) nodeTemplateAsMap.get("artifacts"));
+    nodeTemplate.setAttributes((Map<String, Object>) nodeTemplateAsMap.get("attributes"));
+    nodeTemplate.setCopy((String) nodeTemplateAsMap.get("copy"));
+    nodeTemplate.setDescription((String) nodeTemplateAsMap.get("description"));
+    nodeTemplate.setDirectives((List<String>) nodeTemplateAsMap.get("directives"));
+    nodeTemplate.setInterfaces(
+        (Map<String, InterfaceDefinition>) nodeTemplateAsMap.get("interfaces"));
+    nodeTemplate.setNode_filter((NodeFilter) nodeTemplateAsMap.get("node_filter"));
+    nodeTemplate.setProperties((Map<String, Object>) nodeTemplateAsMap.get("properties"));
+    nodeTemplate.setRequirements(
+        (List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
+    nodeTemplate.setType((String) nodeTemplateAsMap.get("type"));
+    nodeTemplate.setCapabilities(
+        convertCapabilities((Map<String, Object>) nodeTemplateAsMap.get("capabilities")));
 
-        return Optional.empty();
+    return nodeTemplate;
+  }
+
+  private Map<String, CapabilityAssignment> convertCapabilities(Map<String, Object> capabilities) {
+    if (MapUtils.isEmpty(capabilities)) {
+      return null;
     }
 
-    private NodeTemplate convertNodeTemplate(Object candidateNodeTemplate) {
-        NodeTemplate nodeTemplate = new NodeTemplate();
+    Map<String, CapabilityAssignment> convertedCapabilities = new HashMap<>();
+    for (Map.Entry<String, Object> capabilityAssignmentEntry : capabilities.entrySet()) {
+      Optional<CapabilityAssignment> capabilityAssignment = ToscaConverterUtil.createObjectFromClass
+          (capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(),
+              CapabilityAssignment.class);
 
-        Map<String, Object> nodeTemplateAsMap = (Map<String, Object>) candidateNodeTemplate;
-        nodeTemplate.setArtifacts((Map<String, ArtifactDefinition>) nodeTemplateAsMap.get("artifacts"));
-        nodeTemplate.setAttributes((Map<String, Object>) nodeTemplateAsMap.get("attributes"));
-        nodeTemplate.setCopy((String) nodeTemplateAsMap.get("copy"));
-        nodeTemplate.setDescription((String) nodeTemplateAsMap.get("description"));
-        nodeTemplate.setDirectives((List<String>) nodeTemplateAsMap.get("directives"));
-        nodeTemplate.setInterfaces(
-            (Map<String, InterfaceDefinition>) nodeTemplateAsMap.get("interfaces"));
-        nodeTemplate.setNode_filter((NodeFilter) nodeTemplateAsMap.get("node_filter"));
-        nodeTemplate.setProperties((Map<String, Object>) nodeTemplateAsMap.get("properties"));
-        nodeTemplate.setRequirements(
-            (List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
-        nodeTemplate.setType((String) nodeTemplateAsMap.get("type"));
-        nodeTemplate.setCapabilities(
-            convertCapabilities((Map<String, Object>) nodeTemplateAsMap.get("capabilities")));
+      capabilityAssignment.ifPresent(capabilityAssignmentValue ->
+          convertedCapabilities.put(capabilityAssignmentEntry.getKey(), capabilityAssignmentValue));
 
-        return nodeTemplate;
     }
+    return convertedCapabilities;
+  }
 
-    private List<Map<String, CapabilityAssignment>> convertCapabilities(Map<String, Object> capabilities) {
-        List<Map<String, CapabilityAssignment>> convertedCapabilities = new ArrayList<>();
-        if (MapUtils.isEmpty(capabilities)) {
-            return null;
-        }
-        for (Map.Entry<String, Object> capabilityAssignmentEntry : capabilities.entrySet()) {
-            Map<String, CapabilityAssignment> tempMap = new HashMap<>();
-            Optional<CapabilityAssignment> capabilityAssignment = ToscaConverterUtil.createObjectFromClass
-                (capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(),
-                    CapabilityAssignment.class);
 
-            capabilityAssignment.ifPresent(capabilityAssignmentValue -> {
-                tempMap.put(capabilityAssignmentEntry.getKey(), capabilityAssignmentValue);
-                convertedCapabilities.add(tempMap);
-                }
-            );
+  private boolean isMainServiceTemplate(String fileName) {
+    return fileName.endsWith(mainStName);
+  }
 
-        }
-        return convertedCapabilities;
+  private boolean isMetadataFile(String fileName) {
+    return fileName.equals(metadataFile);
+  }
+
+  private boolean isGlobalServiceTemplate(String fileName) {
+    return fileName.endsWith(globalStName);
+  }
+
+  private boolean isDefinitions(String fileName) {
+    return fileName.startsWith(definitionsDir);
+  }
+
+  private String getTemplateNameFromStName(String serviceTemplateName) {
+    String fileNameWithoutDirectories;
+    fileNameWithoutDirectories = getFileNameWithoutDirectories(serviceTemplateName);
+    return fileNameWithoutDirectories.split("ServiceTemplate")[0];
+  }
+
+  private String getFileNameWithoutDirectories(String serviceTemplateName) {
+    String fileNameWithoutDirectories;
+    if (serviceTemplateName.contains("/")) {
+      String[] split = serviceTemplateName.split("/");
+      fileNameWithoutDirectories = split[split.length - 1];
+    } else if (serviceTemplateName.contains(File.separator)) {
+      String[] split = serviceTemplateName.split(Pattern.quote(File.separator));
+      fileNameWithoutDirectories = split[split.length - 1];
+    } else {
+      fileNameWithoutDirectories = serviceTemplateName;
     }
-
-
-    private boolean isMainServiceTemplate(String fileName) {
-        return fileName.endsWith(mainStName);
-    }
-
-    private boolean isMetadataFile(String fileName) {
-        return fileName.equals(metadataFile);
-    }
-
-    private boolean isGlobalServiceTemplate(String fileName) {
-        return fileName.endsWith(globalStName);
-    }
-
-    private boolean isDefinitions(String fileName) {
-        return fileName.startsWith(definitionsDir);
-    }
-
-    private String getTemplateNameFromStName(String serviceTemplateName) {
-        String fileNameWithoutDirectories;
-        fileNameWithoutDirectories = getFileNameWithoutDirectories(serviceTemplateName);
-        return fileNameWithoutDirectories.split("ServiceTemplate")[0];
-    }
-
-    private String getFileNameWithoutDirectories(String serviceTemplateName) {
-        String fileNameWithoutDirectories;
-        if (serviceTemplateName.contains("/")) {
-            String[] split = serviceTemplateName.split("/");
-            fileNameWithoutDirectories = split[split.length - 1];
-        } else if (serviceTemplateName.contains(File.separator)) {
-            String[] split = serviceTemplateName.split(Pattern.quote(File.separator));
-            fileNameWithoutDirectories = split[split.length - 1];
-        } else {
-            fileNameWithoutDirectories = serviceTemplateName;
-        }
-        return fileNameWithoutDirectories;
-    }
+    return fileNameWithoutDirectories;
+  }
 }

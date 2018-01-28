@@ -135,7 +135,7 @@ topology_template:
           mac_count_required:
             is_required: false
       capabilities:
-      - port_mirroring:
+        port_mirroring:
           properties:
             connection_point:
               nf_type: ''
@@ -156,7 +156,7 @@ topology_template:
           mac_count_required:
             is_required: false
       capabilities:
-      - port_mirroring:
+        port_mirroring:
           properties:
             connection_point:
               nf_type: ''
