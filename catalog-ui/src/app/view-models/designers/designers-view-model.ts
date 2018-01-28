@@ -1,14 +1,13 @@
 import {Designer, IUserProperties} from "app/models";
 import {CacheService} from "app/services";
-import {MenuItemGroup} from "app/utils";
 import {DesignersService} from "../../ng2/services/designers.service";
 
 
 interface IDesignerViewModelScope extends ng.IScope {
     designer: Designer
-    topNavMenuModel:Array<MenuItemGroup>;
-    user:IUserProperties;
-    version:string;
+    user: IUserProperties;
+    version: string;
+    queryParams: Object;
 }
 
 export class DesignersViewModel {
@@ -31,8 +30,11 @@ export class DesignersViewModel {
         this.$scope.designer = this.designersService.getDesignerByStateUrl(this.$stateParams.path);
 
         this.$scope.version = this.cacheService.get('version');
-        this.$scope.topNavMenuModel = [];
 
         this.$scope.user = this.cacheService.get('user');
+
+        this.$scope.queryParams = {
+            userId: this.$scope.user.userId
+        };
     }
 }
