@@ -29,13 +29,13 @@ import org.openecomp.sdc.tosca.services.DataModelUtil;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Tosca service model.
  */
 public class ToscaServiceModel implements AsdcModel {
   private FileContentHandler artifactFiles;
-  private FileContentHandler externalFiles;
   private Map<String, ServiceTemplate> serviceTemplates;
   private String entryDefinitionServiceTemplate;
 
@@ -53,16 +53,6 @@ public class ToscaServiceModel implements AsdcModel {
                            Map<String, ServiceTemplate> serviceTemplates,
                            String entryDefinitionServiceTemplate) {
     this.artifactFiles = artifactFiles;
-    this.serviceTemplates = serviceTemplates;
-    this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
-  }
-
-  public ToscaServiceModel(FileContentHandler artifactFiles,
-                           FileContentHandler externalFiles,
-                           Map<String, ServiceTemplate> serviceTemplates,
-                           String entryDefinitionServiceTemplate) {
-    this.artifactFiles = artifactFiles;
-    this.externalFiles = externalFiles;
     this.serviceTemplates = serviceTemplates;
     this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
   }
@@ -87,6 +77,11 @@ public class ToscaServiceModel implements AsdcModel {
    */
   public Map<String, ServiceTemplate> getServiceTemplates() {
     return Collections.unmodifiableMap(serviceTemplates);
+  }
+
+  public Optional<ServiceTemplate> getServiceTemplate(String serviceTemplateName) {
+    return MapUtils.isEmpty(this.serviceTemplates) ? Optional.empty()
+        : Optional.of(this.serviceTemplates.get(serviceTemplateName));
   }
 
   public void addServiceTemplate(String serviceTemplateName,

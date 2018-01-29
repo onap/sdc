@@ -45,4 +45,11 @@ public class EnrichedServiceModelDaoImpl extends AbstractServiceModelDao
     templateDao.deleteAll(vspId, version);
     artifactDao.deleteAll(vspId, version);
   }
+
+  @Override
+  public void overrideServiceModel(String vspId, Version version, ToscaServiceModel serviceModel) {
+    storeServiceModel(vspId, version, serviceModel);
+  }
+
+
 }
