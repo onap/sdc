@@ -44,7 +44,7 @@ public class MessageContainerUtil {
       return null;
     }
     Map<String, List<ErrorMessage>> filteredMessages = new HashMap<>();
-    messages.entrySet().stream().forEach(
+    messages.entrySet().forEach(
         entry -> entry.getValue().stream().filter(message -> message.getLevel().equals(level))
             .forEach(message -> addMessage(entry.getKey(), message, filteredMessages
             )));
@@ -53,11 +53,33 @@ public class MessageContainerUtil {
 
   private static void addMessage(String fileName, ErrorMessage message,
                                  Map<String, List<ErrorMessage>> messages) {
-    List<ErrorMessage> messageList = messages.get(fileName);
-    if (messageList == null) {
-      messageList = new ArrayList<>();
-      messages.put(fileName, messageList);
-    }
+    List<ErrorMessage> messageList = messages.computeIfAbsent(fileName, k -> new ArrayList<>());
     messageList.add(message);
+  }
+
+  public static String getErrorMessagesListAsString(Map<String, List<ErrorMessage>> messages) {
+    StringBuilder concatErrorMessage = new StringBuilder();
+
+    for (Map.Entry<String, List<ErrorMessage>> errorMessageEntry : messages.entrySet()) {
+      appendErrorMessageAsString(concatErrorMessage, errorMessageEntry.getKey(),
+          errorMessageEntry.getValue());
+    }
+    return concatErrorMessage.toString();
+  }
+
+  private static void appendErrorMessageAsString(StringBuilder concatErrorMessage,
+                                                 String fileName,
+                                                 List<ErrorMessage> errorMessageList) {
+    for (ErrorMessage errorMessage : errorMessageList) {
+      addErrorMessage(concatErrorMessage, fileName, errorMessage);
+    }
+  }
+
+  private static void addErrorMessage(StringBuilder concatErrorMessage,
+                                      String fileName,
+                                      ErrorMessage errorMessage) {
+    concatErrorMessage.append(fileName).append(" : ");
+    concatErrorMessage.append(errorMessage.getMessage());
+    concatErrorMessage.append("\n");
   }
 }

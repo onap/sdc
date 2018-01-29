@@ -37,7 +37,4 @@ public interface HealingManager {
    */
   Optional<Version> healItemVersion(String itemId, Version version, ItemType itemType,
                                     boolean force);
-
-  Object heal(String itemId, Version version, HealerType healerType, HealCode code,
-              ItemType itemType);
 }
