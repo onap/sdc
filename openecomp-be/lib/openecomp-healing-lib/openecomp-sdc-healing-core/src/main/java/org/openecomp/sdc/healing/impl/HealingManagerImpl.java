@@ -152,20 +152,6 @@ public class HealingManagerImpl implements HealingManager {
     }
   }
 
-  @Override
-  public Object heal(String itemId, Version version, HealerType healerType, HealCode code,
-                     ItemType itemType) {
-    String healerClassName = getItemHealers(itemType).get(healerType.name()).get(code.name());
-    ArrayList<String> healingFailureMessages = new ArrayList<>();
-
-    Object result = executeHealer(itemId, version, healerClassName, healingFailureMessages);
-
-    if (!healingFailureMessages.isEmpty()) {
-      throw new RuntimeException(CommonMethods.listToSeparatedString(healingFailureMessages, '\n'));
-    }
-    return result;
-  }
-
   private Optional<String> executeHealers(String itemId, Version version,
                                           Map<String, Map<String, String>> itemHealers) {
     List<String> healers = itemHealers.values().stream()
