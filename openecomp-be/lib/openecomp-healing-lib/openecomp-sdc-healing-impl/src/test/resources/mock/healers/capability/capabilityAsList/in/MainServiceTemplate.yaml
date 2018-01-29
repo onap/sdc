@@ -1,0 +1,76 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pcrf_psm:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.pcm:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    Internal2_name:
+      label: Internal2_name
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_name
+  node_templates:
+    pd_server:
+      type: org.openecomp.resource.vfc.nodes.heat.pd_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_pd_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_pd_server_name
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_pd_server_user_data_format
+          - index_value
+    pd_server_pd01_port:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        ip_requirements:
+          get_input: port_pd01_port_ip_requirements
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pd_server
+          relationship: tosca.relationships.network.BindsTo
+      capabilities:
+      - port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: pd_server
+              network_role:
+                get_input: port_pd01_port_network_role
+              pps_capacity: ''
+  groups:
+    ep-jsa_net:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ep-jsa_net.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - pcm_port_1
+      - FSB1_Internal2
+      - FSB1_Internal1
+      - FSB1_OAM
+      - psm01_port_0
+      - pcm_port_0
+      - server_pcm
+      - pcrf_server_psm
+      - FSB2
+      - FSB1

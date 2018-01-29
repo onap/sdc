@@ -26,10 +26,12 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.types.ElementPropertyName;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
@@ -162,6 +164,78 @@ public class ServiceModelDaoZusammenImpl
         elementType.name(), vspId, version.getId());
   }
 
+  @Override
+  public void overrideServiceModel(String vspId,
+                                   Version version,
+                                   ToscaServiceModel serviceModel) {
+    SessionContext context = ZusammenUtil.createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
+
+    ZusammenElement serviceModelElement = buildStructuralElement(elementType, Action.UPDATE);
+
+    Optional<ElementInfo> origServiceModel = getServiceModelElementInfo(context, elementContext);
+    if (!origServiceModel.isPresent()) {
+      return;
+    }
+
+    Id serviceModelElementId = origServiceModel.get().getId();
+    overrideServiceModel(serviceModelElementId, serviceModel, context, elementContext,
+        serviceModelElement, ElementType.ServiceTemplate, this::overrideServiceTemplateInElement);
+    overrideServiceModel(serviceModelElementId, serviceModel, context, elementContext,
+        serviceModelElement, ElementType.Artifact, this::overrideArtifactInElement);
+    serviceModelElement.getInfo()
+        .addProperty(BASE_PROPERTY, serviceModel.getEntryDefinitionServiceTemplate());
+
+    zusammenAdaptor
+        .saveElement(context, elementContext, serviceModelElement, "Override service model");
+  }
+
+
+  private void overrideServiceModel(Id serviceModelElementId,
+                                    ToscaServiceModel serviceModel,
+                                    SessionContext context,
+                                    ElementContext elementContext,
+                                    ZusammenElement serviceModelElement,
+                                    ElementType type,
+                                    BiFunction<Element, ToscaServiceModel, ZusammenElement> function) {
+    Optional<ElementInfo> elementInfo = zusammenAdaptor.getElementInfoByName(
+        context, elementContext, serviceModelElementId, type.name());
+    if (!elementInfo.isPresent()) {
+      return;
+    }
+    ZusammenElement zusammenElement = buildStructuralElement(type, Action.UPDATE);
+    Collection<Element> elements = zusammenAdaptor.listElementData(context, elementContext,
+        elementInfo.get().getId());
+
+    elements
+        .forEach(element -> zusammenElement.addSubElement(function.apply(element, serviceModel)));
+
+    serviceModelElement.addSubElement(zusammenElement);
+  }
+
+  private ZusammenElement overrideServiceTemplateInElement(Element element,
+                                                           ToscaServiceModel serviceModel) {
+    ZusammenElement serviceTemplateElement = (ZusammenElement) element;
+    String templateName = element.getInfo().getName();
+    Optional<ServiceTemplate> serviceTemplate = serviceModel.getServiceTemplate(templateName);
+    serviceTemplate.ifPresent(serviceTemplateFile -> {
+      String yaml = new ToscaExtensionYamlUtil().objectToYaml(serviceTemplateFile);
+      serviceTemplateElement.setData(new ByteArrayInputStream(yaml.getBytes()));
+    });
+    return serviceTemplateElement;
+  }
+
+  private ZusammenElement overrideArtifactInElement(Element element,
+                                                    ToscaServiceModel serviceModel) {
+    FileContentHandler artifactFiles = serviceModel.getArtifactFiles();
+    ZusammenElement artifactElement = (ZusammenElement) element;
+    InputStream fileContent = artifactFiles.getFileContent(element.getInfo().getName());
+    if(Objects.nonNull(fileContent)) {
+      artifactElement.setData(fileContent);
+    }
+    return artifactElement;
+  }
+
   private Optional<ElementInfo> getServiceModelElementInfo(SessionContext context,
                                                            ElementContext elementContext) {
     Collection<ElementInfo> vspModelSubs = zusammenAdaptor
@@ -240,7 +314,7 @@ public class ServiceModelDaoZusammenImpl
       String yamlContent = IOUtils.toString(element.getData());
       return new ToscaExtensionYamlUtil().
           yamlToObject(yamlContent, ServiceTemplate.class);
-    }catch (Exception e){
+    } catch (Exception e) {
       throw new CoreException(
           new RetrieveServiceTemplateFromDbErrorBuilder(
               element.getInfo().getName(), e.getMessage()).build());
