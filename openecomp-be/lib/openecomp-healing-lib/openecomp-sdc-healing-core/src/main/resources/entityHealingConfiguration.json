@@ -2,6 +2,9 @@
   "vsp": {
     "structure": {
       "ownerHealer": "org.openecomp.sdc.healing.healers.OwnerHealer"
+    },
+    "data": {
+      "toscaServiceModelHealer": "org.openecomp.sdc.healing.healers.ToscaServiceModelHealer"
     }
   },
   "vlm": {

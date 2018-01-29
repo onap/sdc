@@ -44,6 +44,17 @@
             <artifactId>openecomp-item-permissions-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-tosca-converter-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-tosca-converter-core</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
     </dependencies>
 
