@@ -64,13 +64,39 @@ function healthCheck {
 
 	echo ""
 	echo ""
-	healthCheck_http_code=$(curl -o out.html -w '%{http_code}' -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://localhost:8080/sdc2/rest/v1/user/demo;)
+	healthCheck_http_code=$(curl -o /dev/null -w '%{http_code}' -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://localhost:8080/sdc2/rest/v1/user/demo;)
 	if [[ ${healthCheck_http_code} != 200 ]]
 	then
 		echo "Error [${healthCheck_http_code}] while user existance check"
 		return ${healthCheck_http_code}
 	fi
 	echo "check user existance: OK"
+	return ${healthCheck_http_code}
+}
+
+function elasticHealthCheck {
+	echo "Elastic Health-Check:"
+	
+	COUNTER=0
+    while [  $COUNTER -lt 20 ]; do
+    	echo "Waiting ES docker to start"
+  		health_Check_http_code=$(curl -o /dev/null -w '%{http_code}' http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
+  		if [[ "$health_Check_http_code" -eq 200 ]]
+		then
+			break
+		fi
+		let COUNTER=COUNTER+1 
+		sleep 4
+	done
+	
+	healthCheck_http_code=$(curl -o /dev/null -w '%{http_code}' http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
+	if [[ "$health_Check_http_code" != 200 ]]
+	then
+		echo "Error [${healthCheck_http_code}] ES NOT started correctly"
+		exit ${healthCheck_http_code}
+	fi
+	echo "ES started correctly"
+	curl localhost:9200/_cluster/health?pretty=true
 	return ${healthCheck_http_code}
 }
 
@@ -140,7 +166,9 @@ if [ ${LOCAL} = false ]; then
 	echo "pulling code"
 	docker pull ${PREFIX}/sdc-elasticsearch:${RELEASE}
 fi
-docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m --env ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --env ES_HEAP_SIZE=1024M --volume ${WORKSPACE}/data/ES:/usr/share/elasticsearch/data --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE}
+docker run -dit --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m --env ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --env ES_HEAP_SIZE=1024M --volume ${WORKSPACE}/data/ES:/usr/share/elasticsearch/data --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE} /bin/sh
+
+elasticHealthCheck
 
 # Init-Elastic-Search
 echo "docker run sdc-init-elasticsearch..."
@@ -148,7 +176,13 @@ if [ ${LOCAL} = false ]; then
 	echo "pulling code"
 	docker pull ${PREFIX}/sdc-init-elasticsearch:${RELEASE}
 fi
-docker run --detach --name sdc-init-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE}
+docker run --name sdc-init-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE} 
+
+# Checking Elastic-Search-Init chef status
+if [ ! $? -eq 0 ]; then
+    echo "Elastic-Search Initialization failed"
+    exit $?
+fi
 
 # Cassandra
 echo "docker run sdc-cassandra..."
