@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4d62853f",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/types/GlobalValidationContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-01-29T13:43:44Z",
+      "side": 1,
+      "message": "1. ConcurrentHashMap could remove the synchronized block.\n2. Performance issue. Logger.debug should be inside an if cluase:\nif (logger.isDebugEnabled(){\nlogger.deubg()\n}",
+      "range": {
+        "startLine": 69,
+        "startChar": 27,
+        "endLine": 69,
+        "endChar": 46
+      },
+      "revId": "7f9f8e359e39e14b1a28ff70f7bcd53c1e445551",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
