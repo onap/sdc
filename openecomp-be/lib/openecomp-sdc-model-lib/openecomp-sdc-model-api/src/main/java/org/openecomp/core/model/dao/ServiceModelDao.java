@@ -32,4 +32,7 @@ public interface ServiceModelDao<M, E> extends VersionableDao {
   E getServiceModelInfo(String vspId, Version version, String name);
 
   void deleteAll(String vspId, Version version);
+
+  default void overrideServiceModel(String vspId, Version version,
+                                    M serviceModel) {}
 }
