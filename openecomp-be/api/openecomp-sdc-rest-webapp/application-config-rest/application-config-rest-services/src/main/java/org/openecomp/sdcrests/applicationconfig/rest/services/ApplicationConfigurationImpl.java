@@ -24,15 +24,12 @@ import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfig
 import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.applicationconfig.ApplicationConfigManager;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdcrests.applicationconfig.rest.ApplicationConfiguration;
 import org.openecomp.sdcrests.applicationconfig.rest.mapping.MapApplicationConfigEntityToApplicationConfigDto;
 import org.openecomp.sdcrests.applicationconfig.rest.mapping.MapConfigurationDataToConfigurationDataDto;
 import org.openecomp.sdcrests.applicationconfiguration.types.ApplicationConfigDto;
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -55,18 +52,13 @@ public class ApplicationConfigurationImpl implements ApplicationConfiguration {
 
   @Override
   public Response insertToTable(String namespace, String key, InputStream fileContainingSchema) {
-    MDC.put(LoggerConstants.SERVICE_NAME,
-        LoggerServiceName.Insert_To_ApplicationConfig_Table.toString());
     String value = new String(FileUtils.toByteArray(fileContainingSchema));
-
     applicationConfigManager.insertIntoTable(namespace, key, value);
     return Response.ok().build();
   }
 
   @Override
   public Response getFromTable(String namespace, String key) {
-    MDC.put(LoggerConstants.SERVICE_NAME,
-        LoggerServiceName.Get_From_ApplicationConfig_Table.toString());
     ConfigurationData value = applicationConfigManager.getFromTable(namespace, key);
     ConfigurationDataDto valueDto = new MapConfigurationDataToConfigurationDataDto()
         .applyMapping(value, ConfigurationDataDto.class);
@@ -75,8 +67,6 @@ public class ApplicationConfigurationImpl implements ApplicationConfiguration {
 
   @Override
   public Response getListOfConfigurationByNamespaceFromTable(String namespace) {
-    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName
-        .Get_List_From_ApplicationConfig_Table_By_Namespace.toString());
     Collection<ApplicationConfigEntity> applicationConfigEntities =
         applicationConfigManager.getListOfConfigurationByNamespace(namespace);
     GenericCollectionWrapper<ApplicationConfigDto> applicationConfigWrapper =
