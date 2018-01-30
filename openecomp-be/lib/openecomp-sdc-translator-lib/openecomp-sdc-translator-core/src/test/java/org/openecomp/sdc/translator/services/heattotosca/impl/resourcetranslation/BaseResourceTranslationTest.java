@@ -39,9 +39,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -99,9 +96,6 @@ public class BaseResourceTranslationTest {
 
   private Map<String, byte[]> expectedResultMap = new HashMap<>();
   private Set<String> expectedResultFileNameSet = new HashSet<>();
-
-  private final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
-  private String validationFilename = "validationOutput.json";
 
   protected static TestFeatureManager manager;
 
@@ -229,9 +223,11 @@ public class BaseResourceTranslationTest {
 
         fileContent = FileUtils.toByteArray(fis);
 
+        String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
         if (file.getName().equals(MANIFEST_NAME)) {
           addManifest(translationContext, MANIFEST_NAME, fileContent);
         } else {
+          String validationFilename = "validationOutput.json";
           if (!file.getName().equals(zipFilename) && (!file.getName().equals(validationFilename))) {
             addFile(translationContext, file.getName(), fileContent);
           }
@@ -257,8 +253,8 @@ public class BaseResourceTranslationTest {
     translationContext.addFile(name, content);
   }
 
-  private static void addFilesFromManifestToTranslationContextManifestFilesMap(TranslationContext
-                                                                                   translationContext, List<FileData> fileDataListFromManifest) {
+  private static void addFilesFromManifestToTranslationContextManifestFilesMap(TranslationContext translationContext, List<FileData> fileDataListFromManifest) {
+
     for (FileData fileFromManfiest : fileDataListFromManifest) {
       translationContext.addManifestFile(fileFromManfiest.getFile(), fileFromManfiest.getType());
     }
