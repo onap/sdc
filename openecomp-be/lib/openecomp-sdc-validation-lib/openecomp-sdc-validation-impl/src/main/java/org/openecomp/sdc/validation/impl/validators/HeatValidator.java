@@ -38,8 +38,6 @@ import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
@@ -153,9 +151,8 @@ public class HeatValidator implements Validator {
   private static void extractResourceProperty(String fileName, Set<String> resourcesNames,
                                               GlobalValidationContext globalContext,
                                               Resource value) {
-    Resource resource = value;
-    Collection<Object> resourcePropertiesValues =
-        resource.getProperties() == null ? null : resource.getProperties()
+      Collection<Object> resourcePropertiesValues =
+        value.getProperties() == null ? null : value.getProperties()
             .values();
     if (CollectionUtils.isNotEmpty(resourcePropertiesValues)) {
       for (Object propertyValue : resourcePropertiesValues) {
@@ -417,8 +414,7 @@ public class HeatValidator implements Validator {
                                                                     heatOrchestrationTemplate,
                                                                 GlobalValidationContext
                                                                     globalContext) {
-    Map<String, Parameter> parametersMap = heatOrchestrationTemplate.getParameters() == null ? null
-        : heatOrchestrationTemplate.getParameters();
+    Map<String, Parameter> parametersMap = heatOrchestrationTemplate.getParameters();
 
     if (parametersMap != null && MapUtils.isNotEmpty(parametersMap)) {
       for (Map.Entry<String, Parameter> parameterEntry : parametersMap.entrySet()) {

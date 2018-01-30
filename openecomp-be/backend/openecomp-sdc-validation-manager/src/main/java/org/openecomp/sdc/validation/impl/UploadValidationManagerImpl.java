@@ -30,19 +30,13 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.UploadValidationManager;
 import org.openecomp.sdc.validation.types.ValidationFileResponse;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
-import org.slf4j.MDC;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -94,7 +88,6 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
     }
 
     if (CollectionUtils.isNotEmpty(folderList)) {
-      MDC.put(LoggerConstants.ERROR_DESCRIPTION, LoggerErrorDescription.INVALID_ZIP);
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
           .withMessage(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
           .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
@@ -125,7 +118,7 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
 
     HeatTreeManager tree;
     ValidationStructureList validationStructureList = new ValidationStructureList();
-    if (type.toLowerCase().equals("heat")) {
+    if (type.equalsIgnoreCase("heat")) {
       FileContentHandler content = getFileContent(fileToValidate);
       if (!content.containsFile(SdcCommon.MANIFEST_NAME)) {
         throw new CoreException((new ErrorCode.ErrorCodeBuilder())

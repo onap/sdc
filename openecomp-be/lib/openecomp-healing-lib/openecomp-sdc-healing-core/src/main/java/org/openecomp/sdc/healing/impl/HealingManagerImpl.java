@@ -25,17 +25,12 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.healing.dao.HealingDao;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.healing.types.HealCode;
 import org.openecomp.sdc.healing.types.HealerType;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
@@ -211,9 +206,7 @@ public class HealingManagerImpl implements HealingManager {
 
   private boolean isPrivateHealingNeededByFlag(String itemId, String version, String user) {
     Optional<Boolean> userHealingFlag = getHealingFlag(itemId, version, user);
-    return userHealingFlag.isPresent()
-        ? userHealingFlag.get()
-        : isPublicHealingNeededByFlag(itemId, version);
+    return userHealingFlag.orElseGet(() -> isPublicHealingNeededByFlag(itemId, version));
   }
 
   private boolean isPublicHealingNeededByFlag(String itemId, String versionId) {

@@ -28,13 +28,8 @@ import org.openecomp.sdc.applicationconfig.ApplicationConfigManager;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 import java.util.Collection;
 
@@ -43,7 +38,7 @@ import java.util.Collection;
  */
 public class ApplicationConfigManagerImpl implements ApplicationConfigManager {
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String SCHEMA_GENERATOR_INITIALIZATION_ERROR =
       "SCHEMA_GENERATOR_INITIALIZATION_ERROR";
