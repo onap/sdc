@@ -21,17 +21,12 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
@@ -75,8 +70,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTranslationBase {
-  protected static Logger logger =
-      (Logger) LoggerFactory.getLogger(ResourceTranslationContrailServiceInstanceImpl.class);
+
+  protected static Logger logger = LoggerFactory.getLogger(ResourceTranslationContrailServiceInstanceImpl.class);
 
   @Override
   public void translate(TranslateTo translateTo) {
@@ -113,10 +108,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
             + "' in property 'service_template'"
             + ", therefore this resource will be ignored in TOSCA translation.");
         return;
-        /*throw new CoreException(new ReferenceToUnsupportedResourceErrorBuilder
-        (translateTo.getResourceId(), translateTo.getResource().getType(),
-         contrailServiceTemplateResourceId, contrailServiceTemplateResource
-         .getType(), "service_template").build());*/
       }
 
       ServiceTemplate globalSubstitutionServiceTemplate =
@@ -210,7 +201,7 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
                                             Resource contrailServiceTemplateResource) {
     Object serviceScalingPropertyValue = contrailServiceTemplateResource.getProperties()
         .get(HeatConstants.SERVICE_SCALING_PROPERTY_NAME);
-    Object serviceScalingValue = null;
+    Object serviceScalingValue;
     if (serviceScalingPropertyValue != null) {
       serviceScalingValue = TranslatorHeatToToscaPropertyConverter
           .getToscaPropertyValue(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
@@ -326,7 +317,7 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
                                String heatStackGroupKey, NodeTemplate substitutedNodeTemplate,
                                boolean orderedInterfaces, String computeNodeTemplateId) {
     if (index == null) {
-      index = new Integer(0);
+      index = 0;
     }
     NodeTemplate portNodeTemplate =
         createPortNodeTemplate(index, orderedInterfaces, computeNodeTemplateId);
@@ -405,8 +396,6 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
             + translateTo.getResource().getType()
             + "' missing 'virtual_network' property in 'interface_list' entry, therefore, no "
             + "network connection is define for this entry.");
-        //throw new CoreException(new
-        // MissingMandatoryPropertyErrorBuilder("virtual_network").build());
       }
     }
   }

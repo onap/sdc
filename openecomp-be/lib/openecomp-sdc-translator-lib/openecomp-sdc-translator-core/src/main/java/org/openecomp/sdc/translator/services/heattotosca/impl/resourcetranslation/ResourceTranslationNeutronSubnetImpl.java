@@ -21,15 +21,10 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
@@ -48,8 +43,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBase {
-  protected static Logger logger =
-      (Logger) LoggerFactory.getLogger(ResourceTranslationNeutronSubnetImpl.class);
+
+  protected static Logger logger = LoggerFactory.getLogger(ResourceTranslationNeutronSubnetImpl.class);
 
   @Override
   public void translate(TranslateTo translateTo) {
@@ -155,7 +150,7 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
   }
 
   private Optional<AttachedResourceId> getAttachedNetworkResource(TranslateTo translateTo) {
-    Optional<AttachedResourceId> subnetNetwork = Optional.empty();
+    Optional<AttachedResourceId> subnetNetwork;
     Optional<AttachedResourceId> attachedNetworkId =
         HeatToToscaUtil.extractAttachedResourceId(translateTo, "network_id");
     if (!attachedNetworkId.isPresent()) {

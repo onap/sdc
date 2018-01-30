@@ -43,10 +43,6 @@ import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
@@ -800,10 +796,7 @@ public class HeatToToscaUtil {
       return Optional.empty();
     }
     Optional<AttachedPropertyVal> extractedProperty = extractProperty(property);
-    if (extractedProperty.isPresent()) {
-      return getParameterName(extractedProperty.get());
-    }
-    return Optional.empty();
+    return extractedProperty.flatMap(HeatToToscaUtil::getParameterName);
   }
 
   private static Optional<String> getParameterName(AttachedPropertyVal extractedProperty) {

@@ -25,7 +25,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -33,10 +32,6 @@ import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
@@ -68,7 +63,7 @@ import java.util.Set;
 
 public class TranslationService {
 
-  protected static Logger logger = (Logger) LoggerFactory.getLogger(TranslationService.class);
+  protected static Logger logger = LoggerFactory.getLogger(TranslationService.class);
   /**
    * Gets types to process by translator.
    *
@@ -232,9 +227,7 @@ public class TranslationService {
     Optional<String> substitutableGroupMemberId =
         ToscaUtil.getSubstitutableGroupMemberId(heatFileName, serviceTemplate);
 
-    if (substitutableGroupMemberId.isPresent()) {
-      updatedMembersIds.add(substitutableGroupMemberId.get());
-    }
+    substitutableGroupMemberId.ifPresent(updatedMembersIds::add);
   }
 
   private void translateInputParameters(ServiceTemplate serviceTemplate,
