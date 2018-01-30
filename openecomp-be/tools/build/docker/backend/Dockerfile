@@ -1,0 +1,19 @@
+FROM onap/base_sdc-jetty:1.2.0-SNAPSHOT-latest
+
+COPY target/chef-solo /root/chef-solo/
+
+COPY target/chef-repo/cookbooks/. /root/chef-solo/cookbooks/
+
+ADD target/onboarding-be-*.war    ${JETTY_BASE}/webapps/
+
+ADD target/api-docs.war           ${JETTY_BASE}/webapps/
+
+USER root
+
+RUN chown -R jetty:jetty   ${JETTY_BASE}/webapps
+
+COPY startup.sh /root/
+
+RUN chmod 770 /root/startup.sh
+
+ENTRYPOINT [ "/root/startup.sh" ]
