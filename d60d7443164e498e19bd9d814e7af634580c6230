@@ -94,6 +94,29 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3f3963a4",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/recipes/03-schemaCreation.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2018-01-30T08:58:42Z",
+      "side": 1,
+      "message": "remove echo",
+      "range": {
+        "startLine": 69,
+        "startChar": 39,
+        "endLine": 69,
+        "endChar": 46
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_fbaf94e1",
         "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/recipes/migrateZusammenFromDox.rb",
         "patchSetId": 1
@@ -110,6 +133,121 @@
         "startChar": 0,
         "endLine": 3,
         "endChar": 33
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3f6083a4",
+        "filename": "asdctool/sdc-cassandra-init/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2018-01-30T08:58:42Z",
+      "side": 1,
+      "message": "remove export line and replace CHEFNAME with ENVNAME",
+      "range": {
+        "startLine": 5,
+        "startChar": 27,
+        "endLine": 5,
+        "endChar": 35
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7f560bd4",
+        "filename": "asdctool/sdc-cassandra-init/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2018-01-30T08:58:42Z",
+      "side": 1,
+      "message": "remove comment",
+      "range": {
+        "startLine": 8,
+        "startChar": 25,
+        "endLine": 8,
+        "endChar": 29
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1f5d87e9",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/vsp_component_process1",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2018-01-30T08:58:42Z",
+      "side": 1,
+      "message": "add to gitIgnore",
+      "range": {
+        "startLine": 1,
+        "startChar": 4,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bf73337f",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2018-01-30T08:58:42Z",
+      "side": 1,
+      "message": "remove detach and check exit status",
+      "range": {
+        "startLine": 163,
+        "startChar": 13,
+        "endLine": 163,
+        "endChar": 19
+      },
+      "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_df6e3f96",
+        "filename": "sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/recipes/02-changeCSpass.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2018-01-30T08:58:42Z",
+      "side": 1,
+      "message": "remove status - status will be generated in startup",
+      "range": {
+        "startLine": 19,
+        "startChar": 19,
+        "endLine": 19,
+        "endChar": 21
       },
       "revId": "d60d7443164e498e19bd9d814e7af634580c6230",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
