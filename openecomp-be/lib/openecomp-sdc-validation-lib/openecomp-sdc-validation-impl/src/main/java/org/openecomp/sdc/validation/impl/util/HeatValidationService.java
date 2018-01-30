@@ -28,8 +28,6 @@ import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
@@ -49,7 +47,6 @@ import java.util.Set;
 public class HeatValidationService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HeatValidator.class);
-  private static final String NESTED_FILE = "nested file";
   private static final String NO_CONTENT_IN_FILE_MSG = "The file ' %s ' has no content";
   private HeatValidationService(){
 
@@ -268,9 +265,8 @@ public class HeatValidationService {
     Collection<Resource> nestedResources =
             nestedHeatOrchestrationTemplate.getResources() == null ? null
                     : nestedHeatOrchestrationTemplate.getResources().values();
-    boolean isNestedLoopExist = addNestedFilesInLoopAndCheckIfNestedLoopExist(nestedResources,
+    return addNestedFilesInLoopAndCheckIfNestedLoopExist(nestedResources,
                     callingFileName, filesInLoop, globalContext);
-    return isNestedLoopExist;
   }
   private static boolean addNestedFilesInLoopAndCheckIfNestedLoopExist(
                 Collection<Resource> nestedResources,String callingFileName,

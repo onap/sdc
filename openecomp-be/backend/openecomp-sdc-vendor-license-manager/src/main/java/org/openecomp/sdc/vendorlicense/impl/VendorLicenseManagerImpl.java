@@ -21,12 +21,6 @@ import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
@@ -65,12 +59,6 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
   private EntitlementPoolDao entitlementPoolDao;
   private LicenseKeyGroupDao licenseKeyGroupDao;
   private LimitDao limitDao;
-  private static final String VLM_ID = "VLM id";
-  private static final String EP_LKGID = "EP/LKGId";
-  private static final String VLM_ID_LKG_ID = "VLM id, LKG id";
-  private static final String VLM_ID_LA_ID = "VLM id, LA id";
-  private static final String VLM_ID_FG_ID = "VLM id, FG id";
-  private static final String VLM_ID_EP_ID = "VLM id, EP id";
   private static final String EP_POOL_START_TIME = "T00:00:00Z";
   private static final String EP_POOL_EXPIRY_TIME = "T23:59:59Z";
   private static final  DateTimeFormatter FORMATTER

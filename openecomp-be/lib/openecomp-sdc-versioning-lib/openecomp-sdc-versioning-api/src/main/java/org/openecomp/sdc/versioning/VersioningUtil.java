@@ -39,6 +39,10 @@ import java.util.stream.Collectors;
  */
 public class VersioningUtil {
 
+  private VersioningUtil() {
+    // prevent instantiation
+  }
+
   /**
    * Validate entity existence.
    *
@@ -51,10 +55,6 @@ public class VersioningUtil {
                                                                            T inputEntity,
                                                                            String firstClassCitizenType) {
     if (retrievedEntity == null) {
-      //MdcDataErrorMessage.createErrorMessageAndUpdateMDC(LoggerServiceName
-      // .getServiceName(LoggerServiceName.Submit_Entity),
-      // LoggerConstants.TARGET_ENTITY_DB, LoggerTragetServiceName.SUBMIT_ENTITY,
-      // ErrorLevel.ERROR.name(), null, LoggerErrorDescription.SUBMIT_ENTITY);
       throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
           inputEntity.getEntityType(),
           inputEntity.getId(),
@@ -88,11 +88,7 @@ public class VersioningUtil {
       }
     }
 
-    if (nonExistingIds.size() > 0) {
-      //MdcDataErrorMessage.createErrorMessageAndUpdateMDC
-      // (LoggerServiceName.getServiceName(LoggerServiceName.Submit_Entity),
-      // LoggerConstants.TARGET_ENTITY_DB, LoggerTragetServiceName.SUBMIT_ENTITY,
-      // ErrorLevel.ERROR.name(), null, LoggerErrorDescription.SUBMIT_ENTITY);
+    if (!nonExistingIds.isEmpty()) {
       if (nonExistingIds.size() == 1) {
         throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
             entity.getEntityType(),
@@ -130,12 +126,8 @@ public class VersioningUtil {
         .filter(entityId -> !retrievedContainedEntityIds.contains(entityId))
         .collect(Collectors.toList());
 
-    if (nonExistingIds.size() > 0) {
+    if (!nonExistingIds.isEmpty()) {
       if (nonExistingIds.size() == 1) {
-        //MdcDataErrorMessage.createErrorMessageAndUpdateMDC(LoggerServiceName
-        // .getServiceName(LoggerServiceName.Submit_Entity), LoggerConstants.TARGET_ENTITY_DB,
-        // LoggerTragetServiceName.ENTIT, ErrorLevel.ERROR.name(),
-        // null, LoggerErrorDescription.SUBMIT_ENTITY);
         throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
             containedEntityType,
             nonExistingIds.get(0),
@@ -143,10 +135,6 @@ public class VersioningUtil {
             containingEntity.getId(),
             containingEntity.getVersion()).build());
       }
-      //MdcDataErrorMessage.createErrorMessageAndUpdateMDC(LoggerServiceName
-      // .getServiceName(LoggerServiceName.Submit_Entity),
-      // LoggerConstants.TARGET_ENTITY_DB, LoggerTragetServiceName.SUBMIT_ENTITY,
-      // ErrorLevel.ERROR.name(), null, LoggerErrorDescription.SUBMIT_ENTITY);
       throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
           containedEntityType,
           nonExistingIds,
