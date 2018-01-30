@@ -1,9 +1,5 @@
 package org.openecomp.sdc.generator.core.utils;
 
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
@@ -20,6 +16,7 @@ import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,12 +29,16 @@ import static org.openecomp.sdc.tosca.services.DataModelUtil.addSubstitutionNode
  */
 public class GeneratorUtils {
 
+  private GeneratorUtils() {
+    // prevent instantiation
+  }
+
   private static List<String> supportedCapabilities = new ArrayList<>();
   private static List<String> supportedRequirements = new ArrayList<>();
   static {
     //TODO : Read from configuration
     supportedCapabilities.addAll(Arrays.asList("host", "os", "endpoint", "scalable"));
-    supportedRequirements.addAll(Arrays.asList("link"));
+    supportedRequirements.addAll(Collections.singletonList("link"));
   }
 
 
