@@ -34,7 +34,9 @@ export class PluginsTabViewModel {
         this.$scope.user = this.cacheService.get('user');
 
         this.$scope.queryParams = {
-            userId: this.$scope.user.userId
+            userId: this.$scope.user.userId,
+            userRole: this.$scope.user.role,
+            displayType: "tab"
         };
     }
 }

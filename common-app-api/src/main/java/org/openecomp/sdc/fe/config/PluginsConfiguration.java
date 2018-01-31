@@ -25,19 +25,33 @@ public class PluginsConfiguration extends BasicConfiguration {
     public static class Plugin {
 
         private String pluginId;
-        private String pluginHost;
-        private String pluginPort;
-        private String pluginPath;
+        private String pluginDiscoveryUrl;
+        private String pluginSourceUrl;
         private String pluginStateUrl;
-        private String pluginProtocol;
         private Map<String, PluginDisplayOptions> pluginDisplayOptions;
 
-        public Map<String, PluginDisplayOptions> getPluginDisplayOptions() {
-            return pluginDisplayOptions;
+        public String getPluginId() {
+            return pluginId;
         }
 
-        public void setPluginDisplayOptions(Map<String, PluginDisplayOptions> pluginDisplayOptions) {
-            this.pluginDisplayOptions = pluginDisplayOptions;
+        public void setPluginId(String pluginId) {
+            this.pluginId = pluginId;
+        }
+
+        public String getPluginDiscoveryUrl() {
+            return pluginDiscoveryUrl;
+        }
+
+        public void setPluginDiscoveryUrl(String pluginDiscoveryUrl) {
+            this.pluginDiscoveryUrl = pluginDiscoveryUrl;
+        }
+
+        public String getPluginSourceUrl() {
+            return pluginSourceUrl;
+        }
+
+        public void setPluginSourceUrl(String pluginSourceUrl) {
+            this.pluginSourceUrl = pluginSourceUrl;
         }
 
         public String getPluginStateUrl() {
@@ -48,44 +62,12 @@ public class PluginsConfiguration extends BasicConfiguration {
             this.pluginStateUrl = pluginStateUrl;
         }
 
-        public String getPluginProtocol() {
-            return pluginProtocol;
+        public Map<String, PluginDisplayOptions> getPluginDisplayOptions() {
+            return pluginDisplayOptions;
         }
 
-        public void setPluginProtocol(String pluginProtocol) {
-            this.pluginProtocol = pluginProtocol;
-        }
-
-        public String getPluginId() {
-            return pluginId;
-        }
-
-        public void setPluginId(String pluginId) {
-            this.pluginId = pluginId;
-        }
-
-        public String getPluginHost() {
-            return pluginHost;
-        }
-
-        public void setPluginHost(String pluginHost) {
-            this.pluginHost = pluginHost;
-        }
-
-        public String getPluginPort() {
-            return pluginPort;
-        }
-
-        public void setPluginPort(String pluginPort) {
-            this.pluginPort = pluginPort;
-        }
-
-        public String getPluginPath() {
-            return pluginPath;
-        }
-
-        public void setPluginPath(String pluginPath) {
-            this.pluginPath = pluginPath;
+        public void setPluginDisplayOptions(Map<String, PluginDisplayOptions> pluginDisplayOptions) {
+            this.pluginDisplayOptions = pluginDisplayOptions;
         }
 
     }
@@ -94,6 +76,15 @@ public class PluginsConfiguration extends BasicConfiguration {
 
         private String displayName;
         private List<String> displayContext;
+        private List<String> displayRoles;
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public void setDisplayName(String displayName) {
+            this.displayName = displayName;
+        }
 
         public List<String> getDisplayContext() {
             return displayContext;
@@ -103,13 +94,15 @@ public class PluginsConfiguration extends BasicConfiguration {
             this.displayContext = displayContext;
         }
 
-        public String getDisplayName() {
-            return displayName;
+        public List<String> getDisplayRoles() {
+            return displayRoles;
         }
 
-        public void setDisplayName(String displayName) {
-            this.displayName = displayName;
+        public void setDisplayRoles(List<String> displayRoles) {
+            this.displayRoles = displayRoles;
         }
+
+
 
     }
 

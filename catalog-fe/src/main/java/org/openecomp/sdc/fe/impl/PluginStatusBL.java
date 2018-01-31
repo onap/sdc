@@ -57,14 +57,9 @@ public class PluginStatusBL {
 	}
 
 	private boolean checkPluginAvailability(Plugin plugin) {
-
-		StringBuilder requestString = new StringBuilder();
 		boolean result = false;
 
-		requestString.append(plugin.getPluginProtocol()).append("://").append(plugin.getPluginHost()).append(":")
-				.append(plugin.getPluginPort()).append(plugin.getPluginPath());
-
-		HttpHead head = new HttpHead(requestString.toString());
+		HttpHead head = new HttpHead(plugin.getPluginDiscoveryUrl());
 
 		try (CloseableHttpResponse response = this.client.execute(head)) {
 			result = response != null && response.getStatusLine().getStatusCode() == 200;

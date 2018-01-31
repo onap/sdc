@@ -719,23 +719,21 @@ export class WorkspaceViewModel {
         this.$scope.leftBarTabs = new MenuItemGroup();
         const menuItemsObjects:Array<any> = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()], this.role);
 
-        // Only need to add plugins to the menu if the current role is Designer
-        if (this.role === "DESIGNER") {
-            _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
-                if (plugin.pluginDisplayOptions["context"]) {
-                    let displayOptions : PluginDisplayOptions = plugin.pluginDisplayOptions["context"];
+        // Only adding plugins to the workspace if they can be displayed for the current user role
+        _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
+            if (plugin.pluginDisplayOptions["context"] && plugin.pluginDisplayOptions["context"].displayRoles.includes(this.role)) {
+                let displayOptions : PluginDisplayOptions = plugin.pluginDisplayOptions["context"];
 
-                    if (displayOptions.displayContext.indexOf(this.$scope.component.componentType) !== -1) {
-                        menuItemsObjects.push({
-                            text: displayOptions.displayName,
-                            action: 'onMenuItemPressed',
-                            state: 'workspace.plugins',
-                            params: {path: plugin.pluginStateUrl}
-                        });
-                    }
+                if (displayOptions.displayContext.indexOf(this.$scope.component.getComponentSubType()) !== -1) {
+                    menuItemsObjects.push({
+                        text: displayOptions.displayName,
+                        action: 'onMenuItemPressed',
+                        state: 'workspace.plugins',
+                        params: {path: plugin.pluginStateUrl}
+                    });
                 }
-            });
-        }
+            }
+        });
 
         this.$scope.leftBarTabs.menuItems = menuItemsObjects.map((item:MenuItem) => {
             if (item.params) {

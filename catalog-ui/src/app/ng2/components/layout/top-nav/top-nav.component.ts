@@ -120,13 +120,14 @@ export class TopNavComponent {
                         tmpArray.push(new MenuItem(hostedApp.navTitle, null, hostedApp.defaultState, "goToState", null, null));
                     }
                 });
-
-                _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
-                    if (plugin.pluginDisplayOptions["top"]) {
-                        tmpArray.push(new MenuItem(plugin.pluginDisplayOptions["top"].displayName, null, "plugins", "goToState", {path: plugin.pluginStateUrl}, null));
-                    }
-                })
             }
+
+            // Adding plugins to top-nav only if they can be displayed for the current connected user role
+            _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
+                if (plugin.pluginDisplayOptions["tab"] && (this.user && plugin.pluginDisplayOptions["tab"].displayRoles.includes(this.user.role))) {
+                    tmpArray.push(new MenuItem(plugin.pluginDisplayOptions["tab"].displayName, null, "plugins", "goToState", {path: plugin.pluginStateUrl}, null));
+                }
+            });
 
             this.topLvlMenu = new MenuItemGroup(0, tmpArray, true);
             this.topLvlMenu.selectedIndex = isNaN(this.topLvlSelectedIndex) ? this._getTopLvlSelectedIndexByState() : this.topLvlSelectedIndex;

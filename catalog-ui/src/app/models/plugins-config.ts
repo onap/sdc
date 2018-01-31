@@ -1,17 +1,16 @@
 
 export class Plugin {
     pluginId: string;
-    pluginHost: string;
-    pluginPort: string;
-    pluginPath: string;
+    pluginDiscoveryUrl: string;
+    pluginSourceUrl: string;
     pluginStateUrl: string;
-    pluginProtocol: string;
     pluginDisplayOptions: Map<string, PluginDisplayOptions>;
 }
 
 export class PluginDisplayOptions {
     displayName: string;
     displayContext: Array<string>;
+    displayRoles: Array<string>;
 }
 
 export type Plugins = Array<Plugin>;
