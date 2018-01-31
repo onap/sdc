@@ -33,6 +33,8 @@ export class PluginsContextViewModel {
 
         this.$scope.queryParams = {
             userId: this.$scope.user.userId,
+            userRole: this.$scope.user.role,
+            displayType: "context",
             contextType: this.$scope.component.componentType,
             uuid: this.$scope.component.uuid,
             lifecycleState: this.$scope.component.lifecycleState,

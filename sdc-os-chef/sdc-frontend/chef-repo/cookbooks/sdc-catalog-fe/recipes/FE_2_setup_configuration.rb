@@ -23,12 +23,10 @@ template "plugins-fe-config" do
    group "jetty"
    mode "0755"
    variables({
-      :dcae_protocol             => node['Plugins']['DCAE']['dcae_protocol'],
-      :dcae_host                 => node['Plugins']['DCAE']['dcae_host'],
-      :dcae_port                 => node['Plugins']['DCAE']['dcae_port'],
-      :workflow_protocol         => node['Plugins']['WORKFLOW']['workflow_protocol'],
-      :workflow_host             => node['Plugins']['WORKFLOW']['workflow_host'],
-      :workflow_port             => node['Plugins']['WORKFLOW']['workflow_port']
+      :dcae_discovery_url     => node['Plugins']['DCAE']['dcae_discovery_url'],
+      :dcae_source_url        => node['Plugins']['DCAE']['dcae_source_url'],
+      :workflow_discovery_url => node['Plugins']['WORKFLOW']['workflow_discovery_url'],
+      :workflow_source_url    => node['Plugins']['WORKFLOW']['workflow_source_url']
    })
 end
 

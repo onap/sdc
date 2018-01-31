@@ -1,23 +1,25 @@
 pluginsList:
    - pluginId: DCAE
-     pluginProtocol: <%= @dcae_protocol %>
-     pluginHost: <%= @dcae_host %>
-     pluginPort: <%= @dcae_port %>
-     pluginPath: "/openoui/vnfmarket/#!/marketplace"
+     pluginDiscoveryUrl: <%= @dcae_discovery_url %>
+     pluginSourceUrl: <%= @dcae_source_url %>
      pluginStateUrl: "dcae"
      pluginDisplayOptions:
+        tab:
+            displayName: "DCAE"
+            displayRoles: ["TESTER"]
         context:
             displayName: "Monitor"
-            displayContext: ["RESOURCE", "SERVICE"]
+            displayContext: ["VF", "SERVICE"]
+            displayRoles: ["DESIGNER"]
    - pluginId: WORKFLOW
-     pluginProtocol: <%= @workflow_protocol %>
-     pluginHost: <%= @workflow_host %>
-     pluginPort: <%= @workflow_port %>
-     pluginPath: "/"
+     pluginDiscoveryUrl: <%= @workflow_discovery_url %>
+     pluginSourceUrl: <%= @workflow_source_url %>
      pluginStateUrl: "workflowDesigner"
      pluginDisplayOptions:
-        top:
+        tab:
             displayName: "WORKFLOW"
+            displayRoles: ["DESIGNER", "TESTER"]
         context:
             displayName: "Workflow Designer"
-            displayContext: ["RESOURCE"]
+            displayContext: ["VF"]
+            displayRoles: ["DESIGNER", "TESTER"]

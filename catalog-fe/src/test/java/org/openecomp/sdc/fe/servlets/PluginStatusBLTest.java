@@ -38,16 +38,10 @@ public class PluginStatusBLTest {
 	final static List<Plugin> testPluginsList = new ArrayList<>();
 
 	final static String offlinePluginsDisplayName = "offlinePlugin";
-	final static String offlinePluginHost = "192.168.10.1";
-	final static String offlinePluginPort = "1000";
-	final static String offlinePluginPath = "/offline";
-	final static String offlinePluginProtocol = "http";
+	final static String offlinePluginDiscoveryPath = "http://192.168.10.1:1000/offline";
 
 	final static String onlinePluginDisplayName = "onlinePlugin";
-	final static String onlinePluginHost = "192.168.20.2";
-	final static String onlinePluginPort = "2000";
-	final static String onlinePluginPath = "/online";
-	final static String onlinePluginProtocol = "http";
+	final static String onlinePluginDiscoveryPath = "http://192.168.10.1:2000/online";
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -55,24 +49,10 @@ public class PluginStatusBLTest {
 		when(configurationManager.getPluginsConfiguration()).thenReturn(pluginsConfiguration);
 		
 		offlinePlugin.setPluginId(offlinePluginsDisplayName);
-		offlinePlugin.setPluginHost(offlinePluginHost);
-		offlinePlugin.setPluginPort(offlinePluginPort);
-		offlinePlugin.setPluginPath(offlinePluginPath);
-		offlinePlugin.setPluginProtocol(offlinePluginProtocol);
-
-		StringBuilder offlineRequestString = new StringBuilder();
-		offlineRequestString.append(offlinePluginProtocol).append("://").append(onlinePluginHost).append(":")
-				.append(offlinePluginPort).append(offlinePluginPath);
+		offlinePlugin.setPluginDiscoveryUrl(offlinePluginDiscoveryPath);
 
 		onlinePlugin.setPluginId(onlinePluginDisplayName);
-		onlinePlugin.setPluginHost(onlinePluginHost);
-		onlinePlugin.setPluginPort(onlinePluginPort);
-		onlinePlugin.setPluginPath(onlinePluginPath);
-		onlinePlugin.setPluginProtocol(onlinePluginProtocol);
-
-		StringBuilder onlineRequestString = new StringBuilder();
-		onlineRequestString.append(onlinePluginProtocol).append("://").append(onlinePluginHost).append(":")
-				.append(offlinePluginPort).append(offlinePluginPath);
+		onlinePlugin.setPluginDiscoveryUrl(onlinePluginDiscoveryPath);
 		
 	}
 

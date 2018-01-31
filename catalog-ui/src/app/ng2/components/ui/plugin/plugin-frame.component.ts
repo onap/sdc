@@ -21,10 +21,7 @@ export class PluginFrameComponent implements OnInit {
 
     ngOnInit(): void {
 
-        this.pluginUrl = this.plugin.pluginProtocol + "://" +
-            this.plugin.pluginHost + ":" +
-            this.plugin.pluginPort +
-            this.plugin.pluginPath;
+        this.pluginUrl = this.plugin.pluginSourceUrl;
 
         if (this.queryParams && !_.isEmpty(this.queryParams)) {
             _.forOwn(this.queryParams, (value, key) => {
