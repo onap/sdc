@@ -53,7 +53,7 @@ export interface IApi {
     GET_resource_artifact_types:string;
     GET_activity_log:string;
     GET_configuration_ui:string;
-    GET_designers_configuration:string;
+    GET_plugins_configuration:string;
     GET_service:string;
     GET_ecomp_menu_items:string;
     GET_service_validate_name:string;

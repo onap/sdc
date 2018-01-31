@@ -26,7 +26,7 @@ export * from './models/activity';
 export * from './models/additional-information';
 export * from './models/app-config';
 export * from './models/validation-config';
-export * from './models/designers-config';
+export * from './models/plugins-config';
 export * from './models/artifacts';
 export * from './models/aschema-property';
 export * from './models/schema-attribute';

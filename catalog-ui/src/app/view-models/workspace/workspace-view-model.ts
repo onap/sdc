@@ -22,7 +22,7 @@
  * Created by obarda on 3/30/2016.
  */
 'use strict';
-import {IUserProperties, IAppMenu, Resource, Component, Designer, DesignersConfiguration, DesignerDisplayOptions} from "app/models";
+import {IUserProperties, IAppMenu, Resource, Component, Plugin, PluginsConfiguration, PluginDisplayOptions} from "app/models";
 import {
     WorkspaceMode, ComponentFactory, ChangeLifecycleStateHandler, Role, ComponentState, MenuItemGroup, MenuHandler,
     MenuItem, ModalsHandler, States, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ResourceType
@@ -58,7 +58,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     changeVersion:any;
     isComposition:boolean;
     isDeployment:boolean;
-    isDesigners:boolean;
+    isPlugins:boolean;
     $state:ng.ui.IStateService;
     user:IUserProperties;
     thirdParty:boolean;
@@ -629,8 +629,8 @@ export class WorkspaceViewModel {
 
             let selectedIndex = selectedItem ? this.$scope.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
 
-            if (stateArray[1] === 'designers') {
-                selectedIndex += _.findIndex(DesignersConfiguration.designers, (designer: Designer) => designer.designerStateUrl === this.$state.params.path);
+            if (stateArray[1] === 'plugins') {
+                selectedIndex += _.findIndex(PluginsConfiguration.plugins, (plugin: Plugin) => plugin.pluginStateUrl === this.$state.params.path);
             }
 
             this.$scope.leftBarTabs.selectedIndex = selectedIndex;
@@ -644,7 +644,7 @@ export class WorkspaceViewModel {
             if (newVal) {
                 this.$scope.isComposition = (newVal.indexOf(States.WORKSPACE_COMPOSITION) > -1);
                 this.$scope.isDeployment = newVal == States.WORKSPACE_DEPLOYMENT;
-                this.$scope.isDesigners = newVal == States.WORKSPACE_DESIGNERS;
+                this.$scope.isPlugins = newVal == States.WORKSPACE_PLUGINS;
             }
         });
 
@@ -719,18 +719,18 @@ export class WorkspaceViewModel {
         this.$scope.leftBarTabs = new MenuItemGroup();
         const menuItemsObjects:Array<any> = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()], this.role);
 
-        // Only need to add designers to the menu if the current role is Designer
+        // Only need to add plugins to the menu if the current role is Designer
         if (this.role === "DESIGNER") {
-            _.each(DesignersConfiguration.designers, (designer: Designer) => {
-                if (designer.designerDisplayOptions["context"]) {
-                    let displayOptions : DesignerDisplayOptions = designer.designerDisplayOptions["context"];
+            _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
+                if (plugin.pluginDisplayOptions["context"]) {
+                    let displayOptions : PluginDisplayOptions = plugin.pluginDisplayOptions["context"];
 
                     if (displayOptions.displayContext.indexOf(this.$scope.component.componentType) !== -1) {
                         menuItemsObjects.push({
                             text: displayOptions.displayName,
                             action: 'onMenuItemPressed',
-                            state: 'workspace.designers',
-                            params: {path: designer.designerStateUrl}
+                            state: 'workspace.plugins',
+                            params: {path: plugin.pluginStateUrl}
                         });
                     }
                 }

@@ -1,33 +1,33 @@
-import {Designer, IUserProperties} from "app/models";
+import {Plugin, IUserProperties} from "app/models";
 import {CacheService} from "app/services";
-import {DesignersService} from "../../../../ng2/services/designers.service";
+import {PluginsService} from "../../../../ng2/services/plugins.service";
 import {IWorkspaceViewModelScope} from "../../workspace-view-model";
 
 
-interface IDesignerTabViewModelScope extends IWorkspaceViewModelScope {
-    designer: Designer;
+interface IPluginsContextViewModelScope extends IWorkspaceViewModelScope {
+    plugin: Plugin;
     user:IUserProperties;
     queryParams: Object;
 }
 
-export class DesignersTabViewModel {
+export class PluginsContextViewModel {
     static '$inject' = [
         '$scope',
         '$stateParams',
         'Sdc.Services.CacheService',
-        'DesignersService'
+        'PluginsService'
     ];
 
-    constructor(private $scope:IDesignerTabViewModelScope,
+    constructor(private $scope:IPluginsContextViewModelScope,
                 private $stateParams:any,
                 private cacheService:CacheService,
-                private designersService:DesignersService) {
+                private pluginsService:PluginsService) {
 
         this.initScope();
     }
 
     private initScope = ():void => {
-        this.$scope.designer = this.designersService.getDesignerByStateUrl(this.$stateParams.path);
+        this.$scope.plugin = this.pluginsService.getPluginByStateUrl(this.$stateParams.path);
 
         this.$scope.user = this.cacheService.get('user');
 

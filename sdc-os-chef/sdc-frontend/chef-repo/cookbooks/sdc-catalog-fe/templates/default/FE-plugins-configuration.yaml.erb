@@ -1,0 +1,23 @@
+pluginsList:
+   - pluginId: DCAE
+     pluginProtocol: <%= @dcae_protocol %>
+     pluginHost: <%= @dcae_host %>
+     pluginPort: <%= @dcae_port %>
+     pluginPath: "/openoui/vnfmarket/#!/marketplace"
+     pluginStateUrl: "dcae"
+     pluginDisplayOptions:
+        context:
+            displayName: "Monitor"
+            displayContext: ["RESOURCE", "SERVICE"]
+   - pluginId: WORKFLOW
+     pluginProtocol: <%= @workflow_protocol %>
+     pluginHost: <%= @workflow_host %>
+     pluginPort: <%= @workflow_port %>
+     pluginPath: "/"
+     pluginStateUrl: "workflowDesigner"
+     pluginDisplayOptions:
+        top:
+            displayName: "WORKFLOW"
+        context:
+            displayName: "Workflow Designer"
+            displayContext: ["RESOURCE"]

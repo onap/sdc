@@ -141,6 +141,6 @@ public interface Constants {
 	public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";
 	public static final String HC_COMPONENT_DCAE = "DCAE";
 	
-	//Designer BL
-	public static final String DESIGNER_BL_COMPONENT = "designerStatusBL";
+	//Plugin BL
+	public static final String PLUGIN_BL_COMPONENT = "pluginStatusBL";
 }

@@ -1,0 +1,22 @@
+pluginsList:
+   - pluginId: DCAE
+     pluginHost: localhost
+     pluginPort: 8080
+     pluginPath: "/dcae"
+     pluginStateUrl: "dcae"
+     pluginProtocol: http
+     pluginDisplayOptions:
+        context:
+            displayName: "Monitor"
+            displayContext: ["VF", "SERVICE"]
+        top:
+            displayName: "DCAE"
+   - pluginId: WORKFLOW
+     pluginHost: localhost
+     pluginPort: 9527
+     pluginPath: "/"
+     pluginStateUrl: "workflowDesigner"
+     pluginProtocol: http
+     pluginDisplayOptions:
+        top:
+            displayName: "WORKFLOW"

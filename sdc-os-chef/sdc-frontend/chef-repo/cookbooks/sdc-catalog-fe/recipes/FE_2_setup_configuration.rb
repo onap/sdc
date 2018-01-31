@@ -16,19 +16,19 @@ template "catalog-fe-config" do
    })
 end
 
-template "designers-fe-config" do
-   path "#{jetty_base}/config/catalog-fe/designers-configuration.yaml"
-   source "FE-designers-configuration.yaml.erb"
+template "plugins-fe-config" do
+   path "#{jetty_base}/config/catalog-fe/plugins-configuration.yaml"
+   source "FE-plugins-configuration.yaml.erb"
    owner "jetty"
    group "jetty"
    mode "0755"
    variables({
-      :dcae_protocol             => node['Designers']['DCAE']['dcae_protocol'],
-      :dcae_host                 => node['Designers']['DCAE']['dcae_host'],
-      :dcae_port                 => node['Designers']['DCAE']['dcae_port'],
-      :workflow_protocol         => node['Designers']['WORKFLOW']['workflow_protocol'],
-      :workflow_host             => node['Designers']['WORKFLOW']['workflow_host'],
-      :workflow_port             => node['Designers']['WORKFLOW']['workflow_port'],
+      :dcae_protocol             => node['Plugins']['DCAE']['dcae_protocol'],
+      :dcae_host                 => node['Plugins']['DCAE']['dcae_host'],
+      :dcae_port                 => node['Plugins']['DCAE']['dcae_port'],
+      :workflow_protocol         => node['Plugins']['WORKFLOW']['workflow_protocol'],
+      :workflow_host             => node['Plugins']['WORKFLOW']['workflow_host'],
+      :workflow_port             => node['Plugins']['WORKFLOW']['workflow_port']
    })
 end
 
