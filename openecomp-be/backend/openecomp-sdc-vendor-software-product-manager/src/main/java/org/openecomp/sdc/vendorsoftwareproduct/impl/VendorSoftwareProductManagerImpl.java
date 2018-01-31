@@ -616,8 +616,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         .filter(version -> version.getId().equalsIgnoreCase(vlmVersion.getId()))
         .findAny()
         .ifPresent(version -> {
-          vlmVersion.setMinor(vlmVersion.getMinor());
-          vlmVersion.setMajor(vlmVersion.getMajor());
+          vlmVersion.setMinor(version.getMinor());
+          vlmVersion.setMajor(version.getMajor());
         });
   }
 
