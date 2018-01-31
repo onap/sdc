@@ -46,15 +46,15 @@ import {UserService} from "./services/user.service";
 import {SdcConfig} from "./config/sdc-config.config";
 import { TranslateModule } from "./shared/translator/translate.module";
 import { TranslationServiceConfig } from "./config/translation.service.config";
-import {DesignerFrameModule} from "./components/ui/designer/designer-frame.module";
-import {DesignersService} from "./services/designers.service";
+import {PluginFrameModule} from "./components/ui/plugin/plugin-frame.module";
+import {PluginsService} from "./services/plugins.service";
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
 export function configServiceFactory(config:ConfigService) {
     return () => {
         config.loadValidationConfiguration();
-        config.loadDesignersConfiguration();
+        config.loadPluginsConfiguration();
     }
 }
 
@@ -75,7 +75,7 @@ export function configServiceFactory(config:ConfigService) {
         //We need to import them here since we use them in angular1
         ConnectionWizardModule,
         PropertiesAssignmentModule,
-        DesignerFrameModule
+        PluginFrameModule
     ],
     exports: [],
     entryComponents: [],
@@ -98,7 +98,7 @@ export function configServiceFactory(config:ConfigService) {
         SdcConfig,
         ComponentInstanceServiceNg2,
         TranslationServiceConfig,
-        DesignersService,
+        PluginsService,
         {
             provide: APP_INITIALIZER,
             useFactory: configServiceFactory,

@@ -1,33 +1,33 @@
-import {Designer, IUserProperties} from "app/models";
+import {Plugin, IUserProperties} from "app/models";
 import {CacheService} from "app/services";
-import {DesignersService} from "../../ng2/services/designers.service";
+import {PluginsService} from "../../ng2/services/plugins.service";
 
 
-interface IDesignerViewModelScope extends ng.IScope {
-    designer: Designer
+interface IPluginsTabViewModelScope extends ng.IScope {
+    plugin: Plugin
     user: IUserProperties;
     version: string;
     queryParams: Object;
 }
 
-export class DesignersViewModel {
+export class PluginsTabViewModel {
     static '$inject' = [
         '$scope',
         '$stateParams',
         'Sdc.Services.CacheService',
-        'DesignersService'
+        'PluginsService'
     ];
 
-    constructor(private $scope:IDesignerViewModelScope,
+    constructor(private $scope:IPluginsTabViewModelScope,
                 private $stateParams:any,
                 private cacheService:CacheService,
-                private designersService:DesignersService) {
+                private pluginsService:PluginsService) {
 
         this.initScope();
     }
 
     private initScope = ():void => {
-        this.$scope.designer = this.designersService.getDesignerByStateUrl(this.$stateParams.path);
+        this.$scope.plugin = this.pluginsService.getPluginByStateUrl(this.$stateParams.path);
 
         this.$scope.version = this.cacheService.get('version');
 

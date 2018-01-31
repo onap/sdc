@@ -24,7 +24,7 @@ import {MenuItemGroup, MenuItem} from "app/utils";
 import {UserService} from "../../../services/user.service";
 import {SdcConfigToken, ISdcConfig} from "../../../config/sdc-config.config";
 import {TranslateService} from "../../../shared/translator/translate.service";
-import {DesignersConfiguration, Designer} from "app/models";
+import {PluginsConfiguration, Plugin} from "app/models";
 
 
 declare const window:any;
@@ -65,10 +65,10 @@ export class TopNavComponent {
         //set result to current state
         this.topLvlMenu.menuItems.every((item:MenuItem, index:number)=> {
             if (item.state === this.$state.current.name) {
-                if (this.$state.current.name === 'designers') {
-                    const designerIdx = _.findIndex(DesignersConfiguration.designers, (designer: Designer) => designer.designerStateUrl === this.$state.params.path);
-                    if (designerIdx !== -1) {
-                        result = index + designerIdx;
+                if (this.$state.current.name === 'plugins') {
+                    const pluginIdx = _.findIndex(PluginsConfiguration.plugins, (plugin: Plugin) => plugin.pluginStateUrl === this.$state.params.path);
+                    if (pluginIdx !== -1) {
+                        result = index + pluginIdx;
                         return false;
                     }
                 } else {
@@ -121,9 +121,9 @@ export class TopNavComponent {
                     }
                 });
 
-                _.each(DesignersConfiguration.designers, (designer: Designer) => {
-                    if (designer.designerDisplayOptions["top"]) {
-                        tmpArray.push(new MenuItem(designer.designerDisplayOptions["top"].displayName, null, "designers", "goToState", {path: designer.designerStateUrl}, null));
+                _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
+                    if (plugin.pluginDisplayOptions["top"]) {
+                        tmpArray.push(new MenuItem(plugin.pluginDisplayOptions["top"].displayName, null, "plugins", "goToState", {path: plugin.pluginStateUrl}, null));
                     }
                 })
             }

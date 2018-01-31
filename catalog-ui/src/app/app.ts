@@ -58,7 +58,7 @@ import {ComponentMetadata} from "./models/component-metadata";
 import {Categories} from "./models/categories";
 import {IUserProperties} from "./models/user";
 import {SearchWithAutoCompleteComponent} from "./ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
-import {DesignerFrameComponent} from "./ng2/components/ui/designer/designer-frame.component";
+import {PluginFrameComponent} from "./ng2/components/ui/plugin/plugin-frame.component";
 
 
 let moduleName:string = 'sdcApp';
@@ -153,7 +153,7 @@ angular.module('sdcApp').directive('ng2SearchWithAutocomplete',
         inputs: ['searchPlaceholder', 'searchBarClass', 'autoCompleteValues'],
         outputs: ['searchChanged', 'searchButtonClicked']
     }) as angular.IDirectiveFactory);
-angular.module('sdcApp').directive('designerFrame', downgradeComponent( {component: DesignerFrameComponent, inputs: ['designer', 'queryParams']} ) as angular.IDirectiveFactory);
+angular.module('sdcApp').directive('pluginFrame', downgradeComponent( {component: PluginFrameComponent, inputs: ['plugin', 'queryParams']} ) as angular.IDirectiveFactory);
 
 ng1appModule.config([
     '$stateProvider',
@@ -518,11 +518,11 @@ ng1appModule.config([
         );
 
         $stateProvider.state(
-            'workspace.designers', {
-                url: 'designers/*path',
+            'workspace.plugins', {
+                url: 'plugins/*path',
                 parent: 'workspace',
-                templateUrl: './view-models/workspace/tabs/designers/designers-tab-view.html',
-                controller: viewModelsModuleName + '.DesignersTabViewModel'
+                templateUrl: './view-models/workspace/tabs/plugins/plugins-context-view.html',
+                controller: viewModelsModuleName + '.PluginsContextViewModel'
             }
         );
 
@@ -544,10 +544,10 @@ ng1appModule.config([
         );
 
         $stateProvider.state(
-            'designers', {
-                url: '/designers/*path',
-                templateUrl: './view-models/designers/designers-view.html',
-                controller: viewModelsModuleName + '.DesignersViewModel'
+            'plugins', {
+                url: '/plugins/*path',
+                templateUrl: './view-models/plugins/plugins-tab-view.html',
+                controller: viewModelsModuleName + '.PluginsTabViewModel'
             }
         );
 

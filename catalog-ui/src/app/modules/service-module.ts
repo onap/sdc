@@ -51,7 +51,7 @@ import {ServiceServiceNg2} from "../ng2/services/component-services/service.serv
 import {ConnectionWizardService} from "../ng2/pages/connection-wizard/connection-wizard.service";
 import {ComponentInstanceServiceNg2} from "../ng2/services/component-instance-services/component-instance.service";
 import {UserService as UserServiceNg2} from "../ng2/services/user.service";
-import {DesignersService} from "../ng2/services/designers.service";
+import {PluginsService} from "../ng2/services/plugins.service";
 
 let moduleName:string = 'Sdc.Services';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
@@ -96,4 +96,4 @@ serviceModule.factory('ModalServiceNg2', downgradeInjectable(ModalService));
 serviceModule.factory('ConnectionWizardServiceNg2', downgradeInjectable(ConnectionWizardService));
 serviceModule.factory('ComponentInstanceServiceNg2', downgradeInjectable(ComponentInstanceServiceNg2));
 serviceModule.factory('UserServiceNg2', downgradeInjectable(UserServiceNg2));
-serviceModule.factory('DesignersService', downgradeInjectable(DesignersService));
+serviceModule.factory('PluginsService', downgradeInjectable(PluginsService));
