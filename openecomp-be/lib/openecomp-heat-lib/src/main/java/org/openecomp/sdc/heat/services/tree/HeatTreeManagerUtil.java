@@ -29,7 +29,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.PropertiesMapKeyTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -175,8 +174,7 @@ public class HeatTreeManagerUtil {
                         .getErrorWithParameters(
                                 globalContext.getMessageCode(),
                                 Messages.INVALID_RESOURCE_GROUP_TYPE.getErrorMessage(),
-                                resourceName, resourceDefType.toString()),
-                LoggerTragetServiceName.VALIDATE_RESOURCE_GROUP_TYPE, "Invalid resource group type");
+                                resourceName, resourceDefType.toString()));
       }
     }
   }
@@ -194,8 +192,7 @@ public class HeatTreeManagerUtil {
         globalContext.addMessage(filename, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(
                                 globalContext.getMessageCode(), Messages.INVALID_RESOURCE_TYPE.getErrorMessage(),
-                                "null", resourceName), LoggerTragetServiceName.VALIDATE_RESOURCE_GROUP_TYPE,
-                "Invalid resource type");
+                                "null", resourceName));
       }
     }
   }
@@ -219,9 +216,7 @@ public class HeatTreeManagerUtil {
                         .getErrorWithParameters(
                                 globalContext.getMessageCode(),
                                 Messages.INVALID_RESOURCE_GROUP_TYPE.getErrorMessage(),
-                                resourceName, resourceDefType.toString()),
-                LoggerTragetServiceName.VALIDATE_RESOURCE_GROUP_TYPE,
-                "Invalid resource group type");
+                                resourceName, resourceDefType.toString()));
         return true;
       }
     }

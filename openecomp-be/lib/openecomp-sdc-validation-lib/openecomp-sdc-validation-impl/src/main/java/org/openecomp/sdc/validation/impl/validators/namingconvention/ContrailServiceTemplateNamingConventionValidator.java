@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
-import static java.util.Objects.nonNull;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -27,8 +26,6 @@ import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.util.ValidationUtil;
@@ -39,6 +36,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
+
+import static java.util.Objects.nonNull;
 
 
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {
@@ -126,9 +125,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                       .getErrorWithParameters(
                               ERROR_CODE_NST1, Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
                                       .getErrorMessage(),
-                              resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_CONTRAIL_VM_NAME,
-              LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                              resourceEntry.getKey()));
       return true;
     }
 
@@ -158,9 +155,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                         .getErrorWithParameters(
                                 ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(),
                                 propertyName,
-                                resourceEntry.getKey()),
-                LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
-                LoggerErrorDescription.MISSING_GET_PARAM);
+                                resourceEntry.getKey()));
         return true;
       }
 
@@ -192,9 +187,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                         .getErrorWithParameters(
                                 ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(),
                                 propertyName,
-                                resourceEntry.getKey()),
-                LoggerTragetServiceName.VALIDATE_VM_SYNC_IN_IMAGE_FLAVOR,
-                LoggerErrorDescription.MISSING_GET_PARAM);
+                                resourceEntry.getKey()));
         return Optional.empty();
       }
     }

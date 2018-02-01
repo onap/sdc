@@ -25,8 +25,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.impl.util.HeatValidationService;
@@ -100,9 +98,7 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(
                               ERROR_CODE_HRR1, Messages.RESOURCE_GROUP_INVALID_INDEX_VAR.getErrorMessage(),
-                              resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_RESOURCE_GROUP_TYPE,
-              LoggerErrorDescription.INVALID_INDEX_VAR);
+                              resourceEntry.getKey()));
       return Optional.empty();
     }
   }
@@ -140,9 +136,7 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
       globalContext.addMessage(resourceType, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(
                               ERROR_CODE_HRR2, Messages.MISSING_NESTED_FILE.getErrorMessage(),
-                              resourceType),
-              LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
-              LoggerErrorDescription.MISSING_FILE);
+                              resourceType));
     }
   }
 
@@ -154,8 +148,7 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(
                               ERROR_CODE_HRR3, Messages.NESTED_LOOP.getErrorMessage(),
-                              HeatValidationService.drawFilesLoop(filesInLoop)),
-              LoggerTragetServiceName.VALIDATE_NESTING_LOOPS, LoggerErrorDescription.NESTED_LOOP);
+                              HeatValidationService.drawFilesLoop(filesInLoop)));
     }
   }
 }

@@ -28,8 +28,6 @@ import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.impl.validators.HeatValidator;
 
@@ -68,9 +66,7 @@ public class HeatValidationService {
                       ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                               .getErrorWithParameters(
                                       globalContext.getMessageCode(),
-                                      Messages.MISSING_ARTIFACT.getErrorMessage(), artifactName),
-                      LoggerTragetServiceName.VALIDATE_ARTIFACTS_EXISTENCE,
-                      LoggerErrorDescription.MISSING_FILE));
+                                      Messages.MISSING_ARTIFACT.getErrorMessage(), artifactName)));
   }
 
   /**
@@ -189,9 +185,7 @@ public class HeatValidationService {
                                       .getErrorWithParameters(
                                               globalContext.getMessageCode(),
                                               Messages.MISSING_PARAMETER_IN_NESTED.getErrorMessage(),
-                                              nestedFileName, resourceName, propertyName),
-                              LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
-                              LoggerErrorDescription.MISSING_PARAMETER_IN_NESTED));
+                                              nestedFileName, resourceName, propertyName)));
     }
   }
 
@@ -232,9 +226,7 @@ public class HeatValidationService {
       globalContext.addMessage(parentFileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(globalContext.getMessageCode(),
                               Messages.WRONG_VALUE_TYPE_ASSIGNED_NESTED_INPUT.getErrorMessage(),
-                              resourceName, parameterName, nestedFileName),
-              LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
-              LoggerErrorDescription.WRONG_VALUE_ASSIGNED_NESTED_PARAMETER);
+                              resourceName, parameterName, nestedFileName));
     }
   }
 

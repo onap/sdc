@@ -33,8 +33,6 @@ import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
@@ -83,9 +81,7 @@ public class SharedResourceGuideLineValidator implements Validator {
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_SRG_3,Messages
-                  .MISSIN_BASE_HEAT_FILE.getErrorMessage()),
-          LoggerTragetServiceName.VALIDATE_BASE_FILE,
-          LoggerErrorDescription.MISSING_BASE_HEAT);
+                  .MISSIN_BASE_HEAT_FILE.getErrorMessage()));
     } else if (baseFiles.size() > 1) {
       String baseFileList = getElementListAsString(baseFiles);
       globalContext.addMessage(
@@ -94,9 +90,7 @@ public class SharedResourceGuideLineValidator implements Validator {
           ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_SRG_4,Messages
                       .MULTI_BASE_HEAT_FILE.getErrorMessage(),
-                  baseFileList),
-          LoggerTragetServiceName.VALIDATE_BASE_FILE,
-          LoggerErrorDescription.MULTI_BASE_HEAT);
+                  baseFileList));
     }
     return baseFiles;
   }
@@ -165,11 +159,9 @@ public class SharedResourceGuideLineValidator implements Validator {
           .forEach(name -> globalContext.addMessage(
               fileName,
               ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(ERROR_CODE_SRG_1,Messages
-                          .RESOURCE_NOT_DEFINED_IN_OUTPUT.getErrorMessage(),
-                      name),
-              LoggerTragetServiceName.VALIDATE_BASE_FILE,
-              LoggerErrorDescription.RESOURCE_NOT_DEFINED_AS_OUTPUT));
+                  .getErrorWithParameters(ERROR_CODE_SRG_1,
+                          Messages.RESOURCE_NOT_DEFINED_IN_OUTPUT.getErrorMessage(),
+                          name)));
     }
   }
 
@@ -215,10 +207,8 @@ public class SharedResourceGuideLineValidator implements Validator {
           .forEach(name -> globalContext.addMessage(
               fileName,
               ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(ERROR_CODE_SRG_2,Messages
-                      .VOLUME_HEAT_NOT_EXPOSED.getErrorMessage(), name),
-              LoggerTragetServiceName.VALIDATE_VOLUME_FILE,
-              LoggerErrorDescription.VOLUME_FILE_NOT_EXPOSED));
+                  .getErrorWithParameters(ERROR_CODE_SRG_2,
+                          Messages.VOLUME_HEAT_NOT_EXPOSED.getErrorMessage(), name)));
     }
   }
 

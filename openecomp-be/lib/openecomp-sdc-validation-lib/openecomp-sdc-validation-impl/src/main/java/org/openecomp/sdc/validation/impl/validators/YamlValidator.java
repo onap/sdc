@@ -21,8 +21,6 @@ import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.impl.util.YamlValidatorUtil;
@@ -51,9 +49,7 @@ public class YamlValidator implements Validator {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_YML_1, Messages
                       .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-                  Messages.EMPTY_YAML_FILE.getErrorMessage()),
-          LoggerTragetServiceName.VALIDATE_YAML_CONTENT,
-          LoggerErrorDescription.INVALID_YAML_FORMAT);
+                  Messages.EMPTY_YAML_FILE.getErrorMessage()));
       return; /* no need to continue validation */
     }
 
@@ -64,9 +60,7 @@ public class YamlValidator implements Validator {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_YML_2, Messages
                       .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-                  YamlValidatorUtil.getParserExceptionReason(exception)),
-          LoggerTragetServiceName.VALIDATE_YAML_CONTENT,
-          LoggerErrorDescription.INVALID_YAML_FORMAT);
+                  YamlValidatorUtil.getParserExceptionReason(exception)));
     }
   }
 

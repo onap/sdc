@@ -38,8 +38,6 @@ import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.impl.util.HeatValidationService;
@@ -187,9 +185,7 @@ public class HeatValidator implements Validator {
           globalContext.addMessage(fileName,
               ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                   .getErrorWithParameters(ERROR_CODE_HOT_16,Messages
-                      .REFERENCED_RESOURCE_NOT_FOUND.getErrorMessage(), referencedResource),
-              LoggerTragetServiceName.VALIDATE_RESOURCE_REFERENCE_EXISTENCE,
-                            LoggerErrorDescription.RESOURCE_NOT_FOUND));
+                      .REFERENCED_RESOURCE_NOT_FOUND.getErrorMessage(), referencedResource)));
   }
 
   /* validation 16 */
@@ -242,9 +238,7 @@ public class HeatValidator implements Validator {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_HOT_1,Messages
                         .REFERENCED_PARAMETER_NOT_FOUND.getErrorMessage(),
-                    parameterName, resourceName),
-            LoggerTragetServiceName.VALIDATE_PARAMETER_REFERENCE_EXITENCE,
-            LoggerErrorDescription.PARAMETER_NOT_FOUND);
+                    parameterName, resourceName));
       }
     }
   }
@@ -292,8 +286,8 @@ public class HeatValidator implements Validator {
                                                GlobalValidationContext globalContext) {
         if (!CollectionUtils.isEmpty(getAttrValue)) {
             String resourceName = getAttrValue.get(0);
-            Object attNameObject = getAttrValue.get(1);
-            if (!(attNameObject instanceof String)) {
+            String attNameObject = getAttrValue.get(1);
+            if (attNameObject == null) {
                 return;
             }
             String attName = getAttrValue.get(1);
@@ -331,9 +325,7 @@ public class HeatValidator implements Validator {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                             .getErrorWithParameters(ERROR_CODE_HOT_17,Messages
                             .GET_ATTR_NOT_FOUND.getErrorMessage(),
-                            attName, resourceName),
-          LoggerTragetServiceName.VALIDATE_GET_ATTR_FROM_NESTED,
-          LoggerErrorDescription.GET_ATTR_NOT_FOUND);
+                            attName, resourceName));
     }
   }
 
@@ -352,8 +344,7 @@ public class HeatValidator implements Validator {
     if (!envFileName.contains(".env")) {
       globalContext.addMessage(envFileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_HOT_2,Messages
-                  .WRONG_ENV_FILE_EXTENSION.getErrorMessage(), envFileName),
-          LoggerTragetServiceName.VALIDATE_ENV_FILE, LoggerErrorDescription.WRONG_FILE_EXTENSION);
+                  .WRONG_ENV_FILE_EXTENSION.getErrorMessage(), envFileName));
     }
 
     envContent = HeatValidationService.validateEnvContent(fileName, envFileName, globalContext);
@@ -387,8 +378,7 @@ public class HeatValidator implements Validator {
           globalContext.addMessage(envFile, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                   .getErrorWithParameters(ERROR_CODE_HOT_3,Messages
                           .ENV_INCLUDES_PARAMETER_NOT_IN_HEAT.getErrorMessage(),
-                      envFile, envEntry.getKey()), LoggerTragetServiceName.VALIDATE_ENV_FILE,
-              LoggerErrorDescription.ENV_PARAMETER_NOT_IN_HEAT);
+                      envFile, envEntry.getKey()));
         }
       }
     }
@@ -405,8 +395,7 @@ public class HeatValidator implements Validator {
                         .getErrorWithParameters(
                                 ERROR_CODE_HOT_3,Messages
                                 .ENV_INCLUDES_PARAMETER_NOT_IN_HEAT.getErrorMessage(), envFile,
-                                envParameter), LoggerTragetServiceName.VALIDATE_ENV_FILE,
-                LoggerErrorDescription.ENV_PARAMETER_NOT_IN_HEAT);
+                                envParameter));
     }
 }
   private static void validateParameterDefaultTypeAlignWithType(String fileName,
@@ -438,9 +427,7 @@ public class HeatValidator implements Validator {
                                 .getErrorWithParameters(
                                 ERROR_CODE_HOT_4,Messages
                                 .PARAMETER_DEFAULT_VALUE_NOT_ALIGN_WITH_TYPE.getErrorMessage(),
-                                parameterEntry.getKey(), parameterType),
-                        LoggerTragetServiceName.VALIDATE_PARAMTER_DEFAULT_MATCH_TYPE,
-                        LoggerErrorDescription.PARAMETER_DEFAULT_VALUE_NOT_ALIGNED_WITH_TYPE);
+                                parameterEntry.getKey(), parameterType));
             }
         }
     }
@@ -477,8 +464,7 @@ public class HeatValidator implements Validator {
                                   .getErrorWithParameters(
                                   ERROR_CODE_HOT_5,Messages
                                   .PARAMETER_ENV_VALUE_NOT_ALIGN_WITH_TYPE.getErrorMessage(),
-                                  parameterName), LoggerTragetServiceName.VALIDATE_ENV_PARAMETER_MATCH_TYPE,
-                          LoggerErrorDescription.PARAMETER_DEFAULT_VALUE_NOT_ALIGNED_WITH_TYPE);
+                                  parameterName));
               }
           }
       }
@@ -512,9 +498,7 @@ public class HeatValidator implements Validator {
         .forEach(fileName -> globalContext.addMessage(fileName, ErrorLevel.WARNING,
             ErrorMessagesFormatBuilder
                 .getErrorWithParameters(ERROR_CODE_HOT_11,
-                    Messages.ARTIFACT_FILE_NOT_REFERENCED.getErrorMessage()),
-            LoggerTragetServiceName.CHECK_FOR_ORPHAN_ARTIFACTS,
-            LoggerErrorDescription.ARTIFACT_NOT_REFERENCED));
+                    Messages.ARTIFACT_FILE_NOT_REFERENCED.getErrorMessage())));
   }
 
   private boolean isManifestArtifact(Set<String> manifestArtifacts, String fileName) {
@@ -538,9 +522,7 @@ public class HeatValidator implements Validator {
       if (!(fileName.contains(".yaml") || fileName.contains(".yml"))) {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                 .getErrorWithParameters(ERROR_CODE_HOT_6,Messages
-                    .WRONG_HEAT_FILE_EXTENSION.getErrorMessage(), fileName),
-            LoggerTragetServiceName.CHECK_FOR_VALID_FILE_EXTENTION,
-            LoggerErrorDescription.WRONG_FILE_EXTENSION);
+                    .WRONG_HEAT_FILE_EXTENSION.getErrorMessage(), fileName));
       }
 
       validateHeatBaseStructure(fileName, heatOrchestrationTemplate, globalContext);
@@ -584,16 +566,12 @@ public class HeatValidator implements Validator {
           .filter(resourceId -> !resourcesNames.contains(resourceId))
           .forEach(resourceId -> globalContext.addMessage(fileName, ErrorLevel.ERROR,
               ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(ERROR_CODE_HOT_7,Messages
-                  .MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(),
-                  (String) resourceId), LoggerTragetServiceName.CHECK_RESOURCE_DEPENDS_ON,
-              LoggerErrorDescription.MISSING_RESOURCE_DEPENDS_ON));
+                  .getErrorWithParameters(ERROR_CODE_HOT_7,
+                          Messages.MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(), resourceId)));
     } else if (dependencies instanceof String && !resourcesNames.contains(dependencies)) {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(ERROR_CODE_HOT_8,Messages
-                .MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(),
-                (String) dependencies), LoggerTragetServiceName.CHECK_RESOURCE_DEPENDS_ON,
-            LoggerErrorDescription.MISSING_RESOURCE_DEPENDS_ON);
+                .getErrorWithParameters(ERROR_CODE_HOT_8,
+                        Messages.MISSING_RESOURCE_IN_DEPENDS_ON.getErrorMessage(), String.valueOf(dependencies)));
       }
   }
 
@@ -603,18 +581,16 @@ public class HeatValidator implements Validator {
                                          GlobalValidationContext globalContext) {
     if (heatOrchestrationTemplate.getHeat_template_version() == null) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_HOT_9,Messages
-              .INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
-                  "missing template version"), LoggerTragetServiceName.VALIDATE_HEAT_FORMAT,
-          LoggerErrorDescription.INVALID_HEAT_FORMAT);
+              .getErrorWithParameters(ERROR_CODE_HOT_9,
+                      Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
+                  "missing template version"));
     }
     if (heatOrchestrationTemplate.getResources() == null
         || heatOrchestrationTemplate.getResources().size() == 0) {
       globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_HOT_10,Messages
-              .INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
-               "The heat file does not contain any resources"),
-          LoggerTragetServiceName.VALIDATE_HEAT_FORMAT, LoggerErrorDescription.INVALID_HEAT_FORMAT);
+              .getErrorWithParameters(ERROR_CODE_HOT_10,
+                      Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
+               "The heat file does not contain any resources"));
     }
   }
 

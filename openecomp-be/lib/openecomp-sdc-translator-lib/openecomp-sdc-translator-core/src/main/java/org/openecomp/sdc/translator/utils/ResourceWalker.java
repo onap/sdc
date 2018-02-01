@@ -20,7 +20,6 @@ import org.apache.commons.io.IOUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,6 +41,8 @@ import java.util.zip.ZipFile;
 
 public class ResourceWalker {
 
+  private static final String RESOURCE_FILE_READ_ERROR = "Can't read resource file from class path.";
+
   private ResourceWalker() {
   }
 
@@ -61,7 +62,7 @@ public class ResourceWalker {
         filesContent.put(fileName, IOUtils.toString(reader));
       } catch (IOException exception) {
         throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-            .withMessage(LoggerErrorDescription.RESOURCE_FILE_READ_ERROR
+            .withMessage(RESOURCE_FILE_READ_ERROR
                 + " File name = " + fileName)
             .withId("Resource Read Error").withCategory(ErrorCategory.APPLICATION).build(),
             exception);

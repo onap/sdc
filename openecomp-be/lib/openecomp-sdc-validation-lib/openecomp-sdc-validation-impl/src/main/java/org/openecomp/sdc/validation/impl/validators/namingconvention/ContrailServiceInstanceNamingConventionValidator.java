@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
-import static java.util.Objects.nonNull;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -24,13 +23,13 @@ import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
 import java.util.Map;
+
+import static java.util.Objects.nonNull;
 
 
 public class ContrailServiceInstanceNamingConventionValidator implements ResourceValidator {
@@ -69,18 +68,14 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
                             Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                             ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
                             "Availability Zone",
-                            availabilityZoneName, resourceEntry.getKey()),
-                    LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
-                    LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                            availabilityZoneName, resourceEntry.getKey()));
           }
       } else {
         globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_NSI2, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                                AVAILABILITY_ZONE, resourceEntry.getKey()),
-                LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
-                LoggerErrorDescription.MISSING_GET_PARAM);
+                                AVAILABILITY_ZONE, resourceEntry.getKey()));
       }
     }
   }
