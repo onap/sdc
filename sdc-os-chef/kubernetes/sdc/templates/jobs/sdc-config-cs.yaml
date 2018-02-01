@@ -1,0 +1,53 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sdc-config-cassandra
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+  labels:
+    app: sdc-config-cassandra
+spec:
+  template:
+    metadata:
+      name: sdc-cs-init
+    spec:
+      initContainers:
+      - name: sdc-init-cs-readiness
+        image: {{ .Values.image.readiness }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        command:
+        - /root/ready.py
+        args:
+        - --container-name
+        - sdc-cs
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      containers:
+      - name: sdc-config-cs
+        image: {{ .Values.image.sdcCassandraInit }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /root/chef-solo/environments/
+          name: sdc-environments
+        env:
+        - name: ENVNAME
+          value: "AUTO"
+        - name: SDC_USER
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_user}
+        - name: SDC_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_password}
+      volumes:
+        - name: sdc-environments
+          configMap:
+            name: sdc-environment
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
+      restartPolicy: Never

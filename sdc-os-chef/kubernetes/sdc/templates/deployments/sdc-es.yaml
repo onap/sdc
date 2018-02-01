@@ -1,0 +1,63 @@
+#{{ if not .Values.disableSdcSdcEs }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: sdc-es
+  name: sdc-es
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+spec:
+  selector:
+    matchLabels:
+      app: sdc-es
+  template:
+    metadata:
+      labels:
+        app: sdc-es
+      name: sdc-es
+    spec:
+      containers:
+      - image: {{ .Values.image.sdcElasticsearch }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        name: sdc-es
+        env:
+        - name: ENVNAME
+          value: "AUTO"
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: ES_HEAP_SIZE
+          value: "1024M"
+        volumeMounts:
+        - mountPath: /root/chef-solo/environments/
+          name: sdc-environments
+        - mountPath: /etc/localtime
+          name: sdc-localtime
+          readOnly: true
+        - mountPath: /var/lib/jetty/logs
+          name: sdc-logs
+        ports:
+        - containerPort: 9200
+        - containerPort: 9300
+        readinessProbe:
+          httpGet:
+            path: "_cluster/health?wait_for_status=yellow&timeout=120s"
+            port: 9200
+            scheme: HTTP
+          initialDelaySeconds: 60
+          timeoutSeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: sdc-environments
+        configMap:
+          name: sdc-environment
+      - name: sdc-localtime
+        hostPath:
+          path:  /etc/localtime
+      - name:  sdc-logs
+        hostPath:
+          path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/logs
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
+#{{ end }}

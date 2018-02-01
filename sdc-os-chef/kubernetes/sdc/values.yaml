@@ -1,0 +1,21 @@
+nsPrefix: onap
+pullPolicy: IfNotPresent
+nodePortPrefix: 302
+image:
+  readiness: oomk8s/readiness-check:1.0.0
+  sdcKibana: nexus3.onap.org:10001/onap/sdc-kibana:1.2-STAGING-latest
+  sdcFrontend: nexus3.onap.org:10001/onap/sdc-frontend:1.2-STAGING-latest
+  sdcElasticsearch: nexus3.onap.org:10001/onap/sdc-elasticsearch:1.2.0-STAGING-latest
+  sdcCassandra: nexus3.onap.org:10001/onap/sdc-cassandra:1.2.0-STAGING-latest
+  sdcBackend: nexus3.onap.org:10001/onap/sdc-backend:1.2-STAGING-latest
+  sdcElasticsearchInit: nexus3.onap.org:10001/onap/sdc-init-elasticsearch:1.2-STAGING-latest
+  sdcCassandraInit: vulpe03/cqlsh
+  filebeat: docker.elastic.co/beats/filebeat:5.5.0
+
+env:
+  name: AUTO
+  vip: sdc-cs.onap-sdc
+  nodeCS: sdc-cs.onap-sdc
+  nodeES: sdc-es.onap-sdc
+  nodeBE: sdc-be.onap-sdc
+  nodeFe: sdc-fe.onap-sdc
