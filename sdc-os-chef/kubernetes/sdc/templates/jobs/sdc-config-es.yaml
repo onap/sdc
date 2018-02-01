@@ -1,0 +1,47 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sdc-config-elasticsearch
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+  labels:
+    app: sdc-config-elasticsearch
+spec:
+  template:
+    metadata:
+      name: sdc-es-init
+    spec:
+      initContainers:
+      - name: sdc-init-es-readiness
+        image: {{ .Values.image.readiness }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        command:
+        - /root/ready.py
+        args:
+        - --container-name
+        - sdc-es
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      containers:
+      - name: sdc-config-es
+        image: {{ .Values.image.sdcElasticsearchInit }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /root/chef-solo/environments/
+          name: sdc-environments
+        env:
+        - name: ENVNAME
+          value: "AUTO"
+      volumes:
+        - name: sdc-environments
+          configMap:
+            name: sdc-environment
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
+      restartPolicy: Never
