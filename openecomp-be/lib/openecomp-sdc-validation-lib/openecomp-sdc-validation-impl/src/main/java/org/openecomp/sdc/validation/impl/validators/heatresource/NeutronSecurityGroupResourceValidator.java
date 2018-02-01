@@ -8,8 +8,6 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
@@ -58,9 +56,7 @@ public class NeutronSecurityGroupResourceValidator implements ResourceValidator 
               ErrorMessagesFormatBuilder
                       .getErrorWithParameters(
                               ERROR_CODE_HSG1, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                              ValidatorConstants.Security_Group, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
-              LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
+                              ValidatorConstants.Security_Group, resourceEntry.getKey()));
     }
 
   }

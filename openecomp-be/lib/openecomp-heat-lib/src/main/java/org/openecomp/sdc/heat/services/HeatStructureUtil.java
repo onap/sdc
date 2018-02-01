@@ -26,7 +26,6 @@ import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +37,10 @@ import java.util.Set;
  * Created by TALIO on 2/19/2017.
  */
 public class HeatStructureUtil {
+
+    private HeatStructureUtil() {
+        // prevent instantiation
+    }
 
   /**
    * Gets referenced values by function name.
@@ -59,9 +62,9 @@ public class HeatStructureUtil {
         if (!(getFunctionValue instanceof String) && functionName.equals(
             ResourceReferenceFunctions.GET_RESOURCE.getFunction())) {
           globalContext.addMessage(filename, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(globalContext.getMessageCode(), Messages.INVALID_GET_RESOURCE_SYNTAX.getErrorMessage(),
-                      getFunctionValue == null ? "null" : getFunctionValue.toString()),
-              LoggerTragetServiceName.VALIDATE_GET_RESOURCE, "Invalid get_resource syntax");
+                  .getErrorWithParameters(globalContext.getMessageCode(),
+                          Messages.INVALID_GET_RESOURCE_SYNTAX.getErrorMessage(),
+                      getFunctionValue == null ? "null" : getFunctionValue.toString()));
           return valuesNames;
         }
         if (getFunctionValue instanceof String) {

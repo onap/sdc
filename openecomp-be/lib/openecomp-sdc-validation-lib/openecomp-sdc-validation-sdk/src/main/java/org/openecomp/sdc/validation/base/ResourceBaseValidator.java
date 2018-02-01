@@ -16,8 +16,6 @@ import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.Validator;
@@ -33,8 +31,8 @@ import java.util.Objects;
  */
 public class ResourceBaseValidator implements Validator {
 
-  protected Map<String, ImplementationConfiguration> resourceTypeToImpl = new HashMap<>();
-  private static Logger logger = LoggerFactory.getLogger(ResourceBaseValidator.class);
+  protected final Map<String, ImplementationConfiguration> resourceTypeToImpl = new HashMap<>();
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBaseValidator.class);
   private static final ErrorMessageCode ERROR_CODE_RBV_1 = new ErrorMessageCode("RBV1");
   private static final ErrorMessageCode ERROR_CODE_RBV_2 = new ErrorMessageCode("RBV2");
 
@@ -56,7 +54,7 @@ public class ResourceBaseValidator implements Validator {
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
-      logger.debug("",exception);
+      LOGGER.debug("",exception);
       return;
     }
 
@@ -94,8 +92,7 @@ public class ResourceBaseValidator implements Validator {
         globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                 .getErrorWithParameters(ERROR_CODE_RBV_1,
                         Messages.INVALID_RESOURCE_TYPE.getErrorMessage(),"null",
-                    resourceEntry.getKey()), LoggerTragetServiceName.VALIDATE_RESOURCE_TYPE,
-            LoggerErrorDescription.INVALID_RESOURCE_TYPE);
+                    resourceEntry.getKey()));
       } else {
         ResourceValidator
             resourceValidatorImpl = getResourceValidatorInstance(resourceType, resourceTypeToImpl);

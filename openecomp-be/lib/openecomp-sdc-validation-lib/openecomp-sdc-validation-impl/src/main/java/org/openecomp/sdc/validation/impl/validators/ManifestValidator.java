@@ -27,8 +27,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.Validator;
 
 import java.io.InputStream;
@@ -64,9 +62,7 @@ public class ManifestValidator implements Validator {
       globalContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
               ErrorMessagesFormatBuilder
                       .getErrorWithParameters(ERROR_CODE_MNF_6,
-                              Messages.INVALID_MANIFEST_FILE.getErrorMessage()),
-          LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT,
-          LoggerErrorDescription.INVALID_MANIFEST);
+                              Messages.INVALID_MANIFEST_FILE.getErrorMessage()));
       return;
     }
 
@@ -76,8 +72,7 @@ public class ManifestValidator implements Validator {
     ).forEach(name -> globalContext
         .addMessage(name, ErrorLevel.ERROR,ErrorMessagesFormatBuilder
                 .getErrorWithParameters(ERROR_CODE_MNF_4,
-                        Messages.MISSING_FILE_IN_ZIP.getErrorMessage()),
-            LoggerTragetServiceName.VALIDATE_FILE_IN_ZIP, LoggerErrorDescription.MISSING_FILE));
+                        Messages.MISSING_FILE_IN_ZIP.getErrorMessage())));
 
     globalContext.getFileContextMap().keySet().stream().filter(name ->
         isNotManifestFiles(manifestFiles, name) && isNotManifestName(name)
@@ -85,9 +80,7 @@ public class ManifestValidator implements Validator {
         globalContext.addMessage(name, ErrorLevel.WARNING,
                 ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_MNF_5,
-                                Messages.MISSING_FILE_IN_MANIFEST.getErrorMessage()),
-            LoggerTragetServiceName.VALIDATE_FILE_IN_MANIFEST, LoggerErrorDescription.MISSING_FILE)
-    );
+                                Messages.MISSING_FILE_IN_MANIFEST.getErrorMessage())));
   }
 
   private boolean isNotManifestFiles(List<String> manifestFiles, String name) {
@@ -108,7 +101,7 @@ public class ManifestValidator implements Validator {
 
 
   private class ManifestScanner {
-    private List<String> fileList = new ArrayList<>();
+    private final List<String> fileList = new ArrayList<>();
 
     public void scan(FileData fileData, List<FileData> data,
                      GlobalValidationContext globalContext) {
@@ -139,8 +132,7 @@ public class ManifestValidator implements Validator {
       if (type == null) {
         globalValidationContext.addMessage(fileName, ErrorLevel.ERROR,
                 ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_MNF_8,
-                        Messages.INVALID_FILE_TYPE.getErrorMessage()),
-                LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME, "Invalid file type");
+                        Messages.INVALID_FILE_TYPE.getErrorMessage()));
       } else if (type.equals(FileData.Type.HEAT_NET) || type.equals(FileData.Type.HEAT_VOL)
               || type.equals(FileData.Type.HEAT)) {
         validateIfFileHasYamlExtenstion(globalValidationContext,fileName);
@@ -156,9 +148,7 @@ public class ManifestValidator implements Validator {
         globalContext.addMessage(childFileData.getFile(), ErrorLevel.ERROR,
                 ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_MNF_1,
-                                Messages.ENV_NOT_ASSOCIATED_TO_HEAT.getErrorMessage()),
-                LoggerTragetServiceName.SCAN_MANIFEST_STRUCTURE,
-                "env file is not associated to HEAT file");
+                                Messages.ENV_NOT_ASSOCIATED_TO_HEAT.getErrorMessage()));
       }
     }
 
@@ -169,8 +159,7 @@ public class ManifestValidator implements Validator {
                 ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_MNF_3,
                                 Messages.WRONG_ENV_FILE_EXTENSION.getErrorMessage(),
-                                fileName), LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
-                "Wrong env file extention");
+                                fileName));
       }
     }
 
@@ -181,8 +170,7 @@ public class ManifestValidator implements Validator {
                 ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_MNF_2,
                                 Messages.WRONG_HEAT_FILE_EXTENSION.getErrorMessage(),
-                                fileName), LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
-                "Wrong HEAT file extention");
+                                fileName));
       }
     }
 
@@ -192,9 +180,7 @@ public class ManifestValidator implements Validator {
         globalValidationContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
                 ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_MNF_7,
-                                Messages.MISSING_FILE_NAME_IN_MANIFEST.getErrorMessage()),
-                LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
-                "Missing file name in manifest");
+                                Messages.MISSING_FILE_NAME_IN_MANIFEST.getErrorMessage()));
 
       }
     }

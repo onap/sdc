@@ -30,7 +30,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.annotations.Metrics;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
@@ -49,7 +48,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,7 +60,6 @@ public class OrchestrationTemplateCandidateManagerImpl
       LoggerFactory.getLogger(OrchestrationTemplateCandidateManagerImpl.class);
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final CandidateService candidateService;
-  private static final String VSP_ID = "VSP id";
 
   public OrchestrationTemplateCandidateManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                                                    CandidateService candidateService
@@ -100,13 +97,7 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version) {
-    Optional<FilesDataStructure> candidateFileDataStructure =
-        candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
-    if (candidateFileDataStructure.isPresent()) {
-      return candidateFileDataStructure;
-    } else {
-      return Optional.empty();
-    }
+    return candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
   }
 
   @Override

@@ -18,8 +18,6 @@ import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.InputStream;
@@ -147,9 +145,7 @@ public class ValidationUtil {
             ErrorMessagesFormatBuilder.getErrorWithParameters(globalContext.getMessageCode(),
                 Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                 getMessagePartAccordingToResourceType(resourceEntry), propertyName, propertyValue,
-                resourceEntry.getKey()),
-            LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
-            LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                resourceEntry.getKey()));
         return true;
       }
     return false;
@@ -199,9 +195,7 @@ public class ValidationUtil {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(globalContext.getMessageCode(),
                       Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage()
-                      , getParserExceptionReason(exception)),
-          LoggerTragetServiceName.VALIDATE_HEAT_FORMAT,
-          LoggerErrorDescription.INVALID_HEAT_FORMAT);
+                      , getParserExceptionReason(exception)));
       return null;
     }
     return heatOrchestrationTemplate;

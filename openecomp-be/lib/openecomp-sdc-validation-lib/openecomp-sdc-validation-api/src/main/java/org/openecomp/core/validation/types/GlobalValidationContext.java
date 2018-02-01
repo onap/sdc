@@ -52,13 +52,10 @@ public class GlobalValidationContext {
    * @param fileName the file name
    * @param level    the level
    * @param message  the message
-   * @param targetService  the target service name
-   * @param description  validation event details
    */
-  public void addMessage(String fileName, ErrorLevel level, String message,
-                         String targetService, String description) {
+  public void addMessage(String fileName, ErrorLevel level, String message) {
 
-    LOGGER.debug("{}: {} [{}]. Target: {}. Description: {}", fileName, message, level, targetService, description);
+    LOGGER.debug("'{}' [{}] in file '{}' ", message, level, fileName);
 
     if (fileContextMap.containsKey(fileName)) {
       fileContextMap.get(fileName).getMessageContainer().getMessageBuilder()
