@@ -186,7 +186,7 @@ describe('Revisions Action Helper', () => {
 		});
 
 	});
-*/
+
 	it('Revert to revision license model', () => {
 
 		let revisionId = revisions[0].id;
@@ -234,7 +234,7 @@ describe('Revisions Action Helper', () => {
 
 	});
 
-
+*/
 
 
 });
