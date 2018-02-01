@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import TestUtils from 'react-addons-test-utils';
-import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
+//import React from 'react';
+//import TestUtils from 'react-addons-test-utils';
+//import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
 import {cloneAndSet} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 
-import {actionsEnum as vcActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
+//import {actionsEnum as vcActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import {mapStateToProps, mapActionsToProps} from 'sdc-app/onboarding/revisions/Revisions.js';
-import RevisionsView from 'sdc-app/onboarding/revisions/RevisionsView.jsx';
+//import {mapStateToProps, mapActionsToProps} from 'sdc-app/onboarding/revisions/Revisions.js';
+//import RevisionsView from 'sdc-app/onboarding/revisions/RevisionsView.jsx';
 import RevisionsActionHelper from 'sdc-app/onboarding/revisions/RevisionsActionHelper.js';
 import {RevisionsPagePropsFactory} from 'test-utils/factories/revisions/RevisionsFactories.js';
 import {UserFactory} from 'test-utils/factories/users/UsersFactories.js';
 import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
-import {screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
-import ReactTestUtils from 'react-addons-test-utils';
-import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
+//import {screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+//import ReactTestUtils from 'react-addons-test-utils';
+//import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
 
 const state = {};
 state.revisions = RevisionsPagePropsFactory.buildList(2);
@@ -187,52 +187,52 @@ describe('Revisions Action Helper', () => {
 
 	});
 */
-	it('Revert to revision license model', () => {
+	// it('Revert to revision license model', () => {
 
-		let revisionId = revisions[0].id;
-		mockRest.addHandler('put', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual(`${restPrefix}/v1.0/items/${itemId}/versions/${version.id}/actions`);
-			expect(data).toEqual({
-				action: vcActionsEnum.REVERT,
-				revisionRequest: {
-					revisionId: revisionId
-				}
+	// 	let revisionId = revisions[0].id;
+	// 	mockRest.addHandler('put', ({options, data, baseUrl}) => {
+	// 		expect(baseUrl).toEqual(`${restPrefix}/v1.0/items/${itemId}/versions/${version.id}/actions`);
+	// 		expect(data).toEqual({
+	// 			action: vcActionsEnum.REVERT,
+	// 			revisionRequest: {
+	// 				revisionId: revisionId
+	// 			}
 
-			});
-			expect(options).toEqual(undefined);
-			return {results: {}};
-		});
+	// 		});
+	// 		expect(options).toEqual(undefined);
+	// 		return {results: {}};
+	// 	});
 
-		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual(`${restPrefix}/v1.0/items/${itemId}/versions/${version.id}`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: {}};
-		});
+	// 	mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+	// 		expect(baseUrl).toEqual(`${restPrefix}/v1.0/items/${itemId}/versions/${version.id}`);
+	// 		expect(data).toEqual(undefined);
+	// 		expect(options).toEqual(undefined);
+	// 		return {results: {}};
+	// 	});
 
-		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-license-models/${itemId}/versions/${version.id}`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: {}};
-		});
-
-
-		let vlmFetched = ['license-agreements', 'feature-groups', 'entitlement-pools', 'license-key-groups'];
-		vlmFetched.forEach(fetchCall => {
-			mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-				expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-license-models/${itemId}/versions/${version.id}/` + fetchCall);
-				expect(data).toEqual(undefined);
-				expect(options).toEqual(undefined);
-				return {results: {}};
-			});
-		});
+	// 	mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+	// 		expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-license-models/${itemId}/versions/${version.id}`);
+	// 		expect(data).toEqual(undefined);
+	// 		expect(options).toEqual(undefined);
+	// 		return {results: {}};
+	// 	});
 
 
-		return RevisionsActionHelper.revertToRevision(dispatch, {itemId, version,  revisionId, itemType: screenTypes.LICENSE_MODEL}).then(() => {
-		});
+	// 	let vlmFetched = ['license-agreements', 'feature-groups', 'entitlement-pools', 'license-key-groups'];
+	// 	vlmFetched.forEach(fetchCall => {
+	// 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+	// 			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-license-models/${itemId}/versions/${version.id}/` + fetchCall);
+	// 			expect(data).toEqual(undefined);
+	// 			expect(options).toEqual(undefined);
+	// 			return {results: {}};
+	// 		});
+	// 	});
 
-	});
+
+	// 	return RevisionsActionHelper.revertToRevision(dispatch, {itemId, version,  revisionId, itemType: screenTypes.LICENSE_MODEL}).then(() => {
+	// 	});
+
+	// });
 
 
 
