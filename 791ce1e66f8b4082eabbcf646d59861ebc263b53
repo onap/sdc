@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f1132764",
+        "filename": "openecomp-be/tools/build/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-01T07:37:30Z",
+      "side": 1,
+      "message": "I think that the docker plugin should be part of the onboarding pom. If that\u0027s not possible, at least it should be at the same level as the application assembly. Here it looks like buried deep in a sub-module.",
+      "revId": "791ce1e66f8b4082eabbcf646d59861ebc263b53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
