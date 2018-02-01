@@ -27,7 +27,7 @@ public class TogglzFeatureRestTest {
 
     @Test
     public void shouldConvertDataProperly() {
-        ToggleStatus tf = mock(ToggleStatus.class);
+        ToggleableFeature tf = mock(ToggleableFeature.class);
         final String TF_NAME = "tf";
         final boolean ACTIVE = true;
         when(tf.name()).thenReturn(TF_NAME);
