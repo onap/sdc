@@ -35,7 +35,7 @@ export class PluginsContextViewModel {
             userId: this.$scope.user.userId,
             userRole: this.$scope.user.role,
             displayType: "context",
-            contextType: this.$scope.component.componentType,
+            contextType: this.$scope.component.getComponentSubType(),
             uuid: this.$scope.component.uuid,
             lifecycleState: this.$scope.component.lifecycleState,
             isOwner: this.$scope.component.lastUpdaterUserId === this.$scope.user.userId
