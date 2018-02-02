@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.openecomp.sdc</groupId>
+	<groupId>org.onap.sdc</groupId>
 	<artifactId>webseal-simulator</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
@@ -194,7 +194,7 @@
 						<executions>
 							<execution>
 								<id>copy-resources-simulator</id>
-								<phase>verify</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
@@ -212,7 +212,7 @@
 							</execution>
 							<execution>
 								<id>copy-configurations-simulator</id>
-								<phase>verify</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
@@ -252,11 +252,11 @@
 
 								<!-- Build simulator image -->
 								<image>
-									<name>openecomp/sdc-simulator</name>
+									<name>onap/sdc-simulator</name>
 									<alias>sdc-simulator</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>${basedir}\sdc-simulator</dockerFileDir>
+										<dockerFileDir>${basedir}${file.separator}sdc-simulator</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
@@ -275,7 +275,7 @@
 								</goals>
 								<configuration>
 								<removeAll>true</removeAll>
-								<image>openecomp/sdc-simulator</image>
+								<image>onap/sdc-simulator</image>
 								</configuration>
 							</execution>
 
@@ -295,7 +295,7 @@
 									<goal>push</goal>
                                 </goals>
                                 <configuration>
-                                <image>openecomp/sdc-simulator</image>
+                                <image>onap/sdc-simulator</image>
                                 </configuration>
 							</execution>
 						</executions>
