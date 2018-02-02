@@ -13,7 +13,7 @@ OpenECOMP SDC is delivered with 5 Docker containers:
 4. sdc-cs	- hosting cassandra
 5. sdc-es	- hosting elastic search
 
-All containers runs on the same machine and can be started by runnin the command:
+All containers runs on the same machine and can be started by running the command:
 /data/scripts/docker_run.sh -e <environment name> -r <release> -p <docker-hub-port>
 Example: /data/scripts/docker_run.sh -e OS-ETE-DFW -p 51220
 
@@ -41,7 +41,7 @@ Docker containers are build with the following profile
 
 # Getting the containers
 
-***to be changed for rrelease*** OpenECOMP SDC containers are stored on the Rackspace Nexus Docker Registry
+***to be changed for release*** OpenECOMP SDC containers are stored on the Rackspace Nexus Docker Registry
 
 The following Docker images are the actual deployment images used for running SDC
 
@@ -93,7 +93,7 @@ Example: set DOCKER_HOST=tcp://127.0.0.1:2375
 --To check if the variable set succeeded issue `echo %DOCKER_HOST%`
 
 - To compile sdc-simulator docker:
-1. Run `mvn clean install -Ddocker.buildArg.http_proxy=<http_proxy> -Ddocker.buildArg.https_proxy=<https_proxy> -P docker`
+1. Run `mvn clean package docker:build -Ddocker.buildArg.http_proxy=<http_proxy> -Ddocker.buildArg.https_proxy=<https_proxy> -P docker`
 -- The proxy arguments are passed and used as environmental variables in Dockerfiles 
 2. Copy the script /webseal-simulator/scripts/simulator_docker_run.sh to the docker engine environment and run:
 `simulator_docker_run.sh -r 1.1-STAGING-latest`
