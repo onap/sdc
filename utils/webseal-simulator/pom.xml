@@ -225,7 +225,7 @@
 									<alias>sdc-simulator</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>${basedir}/sdc-simulator</dockerFileDir>
+										<dockerFileDir>${basedir}${file.separator}sdc-simulator</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
