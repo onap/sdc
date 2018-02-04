@@ -1,0 +1,50 @@
+{
+  "artifacts": {},
+  "toscaArtifacts": {},
+  "contactId": "REPLACE USER_ID",
+  "categories": [
+    {
+      "name": "Generic",
+      "normalizedName": "generic",
+      "uniqueId": "REPLACE CATEGORY VSP",
+      "icons": null,
+      "subcategories": [
+        {
+          "name": "Abstract",
+          "normalizedName": "abstract",
+          "uniqueId": "REPLACE SUBCATEGORY VSP",
+          "icons": [
+            "objectStorage",
+            "compute"
+          ],
+          "groupings": null,
+          "ownerId": null,
+          "empty": false
+        }
+      ],
+      "ownerId": null,
+      "empty": false
+    }
+  ],
+  "description": "REPLACE VSP DESCRIPTION",
+  "icon": "defaulticon",
+  "componentInstancesProperties": {},
+  "componentInstancesAttributes": {},
+  "name": "REPLACE VSP NAME",
+  "tags": [
+    "REPLACE VSP NAME"
+  ],
+  "capabilities": {},
+  "requirements": {},
+  "deploymentArtifacts": {},
+  "componentType": "RESOURCE",
+  "vendorName": "REPLACE VLM NAME",
+  "vendorRelease": "1.0",
+  "componentInstances": [],
+  "properties": [],
+  "attributes": [],
+  "groups": [],
+  "resourceType": "VF",
+  "csarUUID": "REPLACE VSP ID",
+  "csarVersion": "1.0"
+}

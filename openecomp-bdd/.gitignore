@@ -1,0 +1,9 @@
+.idea
+.vscode
+.history
+debug.log
+dist
+docs
+node_modules
+.npmrc
+npm-debug.log

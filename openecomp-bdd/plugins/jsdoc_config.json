@@ -1,0 +1,15 @@
+{
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "templates": {
+    "default": {
+      "outputSourceFiles": false
+    }
+  },
+  "plugins": ["plugins/steps"],
+  "opts": {
+    "template": "node_modules/jsdoc-one-page",
+    "destination": "docs/"
+  }
+}
