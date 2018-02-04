@@ -1,0 +1,91 @@
+heat_template_version: 2013-05-23
+
+description: >
+ BASE TEMPLATE
+
+parameters:
+    vnf_name:
+        type: string
+        description: Unique name for this VF instance
+        
+    vnf_id:
+        type: string
+        description: Unique ID for this VF instance        
+      
+    network_in_cidr:
+      type: string
+      description: IN network address (CIDR notation)
+      
+    network_out_cidr:
+      type: string
+      description: MUX out network address (CIDR notation)
+
+    network_in_gw_ip:
+      type: string
+      description: IN network gw address 
+
+    network_out_gw_ip:
+      type: string
+      description: MUX out network gw address 
+    
+resources:
+ 
+    random-str:
+      type: OS::Heat::RandomString
+      properties:
+        length: 4
+        
+    CB_IN_Net:
+        type: OS::Neutron::Net
+        properties:
+            name: 
+              str_replace:
+                template: CB_IN_Net_rand
+                params:
+                  rand: { get_resource: random-str }
+
+    CB_IN_Subnet:
+      type: OS::Neutron::Subnet
+      properties:
+        name:
+          str_replace:
+            template: CB_IN_Net_rand
+            params:
+              rand: { get_resource: random-str }
+        network_id: { get_resource: CB_IN_Net }
+        cidr: { get_param: network_in_cidr }
+        gateway_ip: { get_param: network_in_gw_ip }
+      
+    CB_OUT_Net:
+        type: OS::Neutron::Net
+        properties:
+            name: 
+              str_replace:
+                template: CB_OUT_Net_rand
+                params:
+                  rand: { get_resource: random-str }
+
+    CB_OUT_Subnet:
+        type: OS::Neutron::Subnet
+        properties:
+            network_id: { get_resource: CB_OUT_Net }
+            cidr: { get_param: network_out_cidr }
+            gateway_ip: { get_param: network_out_gw_ip }
+            
+outputs:
+
+    CB_IN_Net:
+      description: ID of the customer facing network
+      value: { get_resource: CB_IN_Net }
+      
+    CB_IN_Subnet:
+      description: ID of the customer facing subnet
+      value: { get_resource: CB_IN_Subnet }
+      
+    CB_OUT_Net:
+      description: ID of the Internet Facing network
+      value: { get_resource: CB_OUT_Net }
+      
+    CB_OUT_Subnet:
+      description: ID of the Internet Facing subnet
+      value: { get_resource: CB_OUT_Subnet }

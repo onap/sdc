@@ -1,0 +1,31 @@
+{
+  "name": "sdctests",
+  "version": "1.0.0",
+  "description": "SDC Cucumber testing",
+  "main": "reporter.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "cucumber-js",
+    "test-and-report": "npm-run-all -c -s test cucumber-html-report",
+    "cucumber-html-report": "node plugins/reporter.js",
+    "cucumber-docs": "jsdoc ./stepDefinitions  -c plugins/jsdoc_config.json --readme plugins/README.md"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "cucumber": "^3.2.1",
+    "cucumber-html-reporter": "^3.0.4",
+    "docdash": "^0.4.0",
+    "jsdoc": "^3.5.5",
+    "jsdoc-one-page": "0.0.5",
+    "lodash": "^4.17.4",
+    "node-zip": "^1.1.1",
+    "normalize-newline": "^3.0.0",
+    "npm-run-all": "^4.1.2",
+    "request": "^2.83.0",
+    "yamljs": "^0.3.0"
+  }
+}

@@ -1,0 +1,2687 @@
+[
+  {
+    "keyword": "Feature",
+    "name": "Collaboration Example File",
+    "line": 1,
+    "id": "collaboration-example-file",
+    "tags": [],
+    "uri": "features\\Example_Collaboration.feature",
+    "elements": [
+      {
+        "id": "collaboration-example-file;testing-permissions-for-contributors-and-owners",
+        "keyword": "Scenario",
+        "line": 5,
+        "name": "Testing permissions for contributors and Owners",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 249
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 6,
+            "name": "I want to check user \"mb033001\" has no permissions on this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:82"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I want to add user \"mb0001\" as a contributor to this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:26"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I want to get the permissions for this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:100"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 10,
+            "name": "I want to check property \"listCount\" for value 2",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 11,
+            "name": "I want to check user \"cs0008\" has role \"owner\" on this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:63"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "I want to check user \"mb0001\" has role \"contributor\" on this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:63"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 14,
+            "name": "I want to set the user to \"aaaa\"",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:111"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "I want the following to fail",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:160"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 16,
+            "name": "I want to get the permissions for this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:100"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 8
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 18,
+            "name": "I want to set the user to \"mb0001\"",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:111"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I want the following to fail",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:160"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 20,
+            "name": "I want to change the owner to user \"mb0001\" on this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:50"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 7
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 22,
+            "name": "I want to set the user to \"cs0008\"",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:111"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 23,
+            "name": "I want to change the owner to user \"mb0001\" on this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:50"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 15
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 24,
+            "name": "I want to get the permissions for this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:100"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 25,
+            "name": "I want to check user \"cs0008\" has role \"contributor\" on this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:63"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 26,
+            "name": "I want to check user \"mb0001\" has role \"owner\" on this Item",
+            "match": {
+              "location": "stepDefinitions\\Collaboration_Steps.js:63"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "Heat Example File",
+    "line": 1,
+    "id": "heat-example-file",
+    "tags": [],
+    "uri": "features\\Example_HEAT.feature",
+    "elements": [
+      {
+        "id": "heat-example-file;test-with-update-for-heat-file-and-check-for-validation-warning",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "Test with update for heat file and check for validation warning",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 137
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 314
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 8,
+            "name": "I want to make sure this Item has status \"Draft\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 21
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 10,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/BASE_MUX.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 69
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1846
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "I want to download the NetworkPackage for this VSP to path \"resources/downloads/base_mux.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:40"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 73
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "I want to check property \"data[0].file\" for value \"CB_BASE.yaml\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [
+              {
+                "content": "{\"modules\":[{\"name\":\"module_1\",\"isBase\":false,\"yaml\":\"CB_BASE.yaml\"}],\"unassigned\":[],\"artifacts\":[\"MUX_Parameters.env\",\"CB_MUX.yaml\"],\"nested\":[]}",
+                "line": 17
+              }
+            ],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "I want to set the input data to:",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:41"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "I want to update for path \"/vendor-software-products/{item.id}/versions/{item.versionId}/orchestration-template-candidate/manifest\" with the input data from the context",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 49
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1111
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 22,
+            "name": "I want to check property \"errors['CB_MUX.yaml'][0].level\" for value \"WARNING\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "Example for checking response data",
+    "line": 1,
+    "id": "example-for-checking-response-data",
+    "tags": [],
+    "uri": "features\\Example_ResponseData_CheckAndManipulation.feature",
+    "elements": [
+      {
+        "id": "example-for-checking-response-data;example-checks",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "Example Checks",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [
+              {
+                "content": "{\n  \"field1\" : \"string field\",\n  \"field2\" : \"true\",\n  \"field3\": \"5\",\n  \"field4\" : [{\"entry1\":\"a\"},{\"entry2\":\"b\"},{\"entry3\":\"c\"}]\n}",
+                "line": 5
+              }
+            ],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "Response Data:",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:44"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "I want to print the context data",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:149"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "I want to check property \"field1\" for value \"string field\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "I want to check property \"field2\" to be \"true\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:111"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I want to check property \"field3\" for value 5",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "I want to check property \"field4\" to have length 3",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:120"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "I want to check property \"field4[0].entry1\" exists",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:130"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 22,
+            "name": "I want to check property \"field4[0].no_exist\" does not exist",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:139"
+            },
+            "result": {
+              "status": "passed"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "Example Rest Calls",
+    "line": 1,
+    "id": "example-rest-calls",
+    "tags": [],
+    "uri": "features\\Example_Rest_Calls.feature",
+    "elements": [
+      {
+        "id": "example-rest-calls;call-rest-crud",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "Call Rest CRUD",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 156
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 6,
+            "name": "I want to create a VSP with onboarding type \"Manual\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 345
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I want to get path \"/vendor-software-products/{item.id}/versions/{item.versionId}\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 59
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "I want to remove \"id\" from the input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:71"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "I want to remove \"version\" from the input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "I want to remove \"candidateOnboardingOrigin\" from the input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "I want to remove \"onboardingOrigin\" from the input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:71"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "I want to remove \"onboardingMethod\" from the input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:71"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "I want to update the input property \"description\" with value \"updated\"",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:61"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "I want to update for path \"/vendor-software-products/{item.id}/versions/{item.versionId}\" with the input data from the context",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "I want to create input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:28"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 22,
+            "name": "I want to update the input property \"name\" with a random value",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:81"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 23,
+            "name": "I want to create for path \"/vendor-software-products/{item.id}/versions/{item.versionId}/processes\" with the input data from the context",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:66"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 24,
+            "name": "I want to copy to property \"lastProcessId\" from response data path \"value\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:73"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 26,
+            "name": "I want to delete for path \"/vendor-software-products/{item.id}/versions/{item.versionId}/processes\" with the value from saved property \"lastProcessId\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:42"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 29
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 28,
+            "name": "I want to set property \"lastProcessId\" to value \"NotExisting\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:83"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 29,
+            "name": "I want the following to fail",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:160"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 30,
+            "name": "I want to delete for path \"/vendor-software-products/{item.id}/versions/{item.versionId}/processes\" with the value from saved property \"lastProcessId\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:42"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 23
+            }
+          }
+        ]
+      },
+      {
+        "id": "example-rest-calls;create-vlm-through-commands",
+        "keyword": "Scenario",
+        "line": 32,
+        "name": "Create VLM through commands",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 33,
+            "name": "I want to set the input data to file \"resources/json/createVLM.json\"",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 34,
+            "name": "I want to update the input property \"vendorName\" with a random value",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:81"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "I want to create for path \"/vendor-license-models\" with the input data from the context",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:66"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 173
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "Tosca Validation Flow",
+    "line": 1,
+    "id": "tosca-validation-flow",
+    "tags": [],
+    "uri": "features\\Example_ToscaTranslationFlow.feature",
+    "elements": [
+      {
+        "id": "tosca-validation-flow;full---create-and-submit-vsp-network-package-and-create-vf",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "Full - Create and submit VSP Network Package and Create VF",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 317
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/BASE_MUX.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 173
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1612
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "I want to commit this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 862
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 13,
+            "name": "I want to submit this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:69"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1606
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "I want to package this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:80"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 272
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "I want to make sure this Item has status \"Certified\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "I want to get the package for this Item to path \"resources/downloads/VSPPackage.zip\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:107"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 89
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 19,
+            "name": "I want to compare the content of the entry \"Artifacts/CB_BASE.yaml\" in the zip \"resources/downloads/VSPPackage.zip\" with file \"resources/yaml/CB_BASE.yaml\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:181"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 47
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "I want to create a VF for this Item",
+            "match": {
+              "location": "stepDefinitions\\VF_steps.js:28"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2521
+            }
+          }
+        ]
+      },
+      {
+        "id": "tosca-validation-flow;full---same-flow-for-different-heat-file",
+        "keyword": "Scenario",
+        "line": 23,
+        "name": "Full - Same flow for different HEAT file",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 151
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 24,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 315
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 26,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/NEW_NC_with_manifest.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 62
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 27,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1280
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 29,
+            "name": "I want to commit this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1003
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 30,
+            "name": "I want to submit this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:69"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1503
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 31,
+            "name": "I want to package this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:80"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 243
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 33,
+            "name": "I want to get the package for this Item to path \"resources/downloads/VSPPackage.zip\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:107"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 42
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 34,
+            "name": "I want to create a VF for this Item",
+            "match": {
+              "location": "stepDefinitions\\VF_steps.js:28"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2765
+            }
+          }
+        ]
+      },
+      {
+        "id": "tosca-validation-flow;test-validation-error",
+        "keyword": "Scenario",
+        "line": 36,
+        "name": "Test Validation Error",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 134
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 37,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 293
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 39,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/errorHeat.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 48
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 40,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 390
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 41,
+            "name": "I want to print the context data",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:149"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 43,
+            "name": "I want to check property \"errors['first.env'][0].level\" for value \"ERROR\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 44,
+            "name": "I want to check property \"errors['first.env'][0].message\" for value \"ERROR: [YML1]: Invalid YAML format Problem - [empty yaml]\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed"
+            }
+          }
+        ]
+      },
+      {
+        "id": "tosca-validation-flow;yaml-to-json",
+        "keyword": "Scenario",
+        "line": 46,
+        "name": "yaml to json",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 115
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 47,
+            "name": "I want to load the yaml content of the entry \"CB_BASE.yaml\" in the zip \"resources/uploads/BASE_MUX.zip\" to context",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:195"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 8
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 48,
+            "name": "I want to check property \"parameters.vnf_name.description\" for value \"Unique name for this VF instance\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "VLM Example File",
+    "line": 1,
+    "id": "vlm-example-file",
+    "tags": [],
+    "uri": "features\\Example_VLM.feature",
+    "elements": [
+      {
+        "id": "vlm-example-file;vlm-defaults",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "VLM Defaults",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 135
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 5,
+            "name": "I want to make sure this Item has status \"Draft\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 6,
+            "name": "I want to submit this VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:42"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 52
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 7,
+            "name": "I want to make sure this Item has status \"Certified\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 8,
+            "name": "I want to create a new version for this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 104
+            }
+          }
+        ]
+      },
+      {
+        "id": "vlm-example-file;testing-revisions-with-vlm",
+        "keyword": "Scenario",
+        "line": 10,
+        "name": "Testing revisions with VLM",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 11,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 120
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "I want to get path \"/items/{item.id}/versions/{item.versionId}/revisions\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "I want to check property \"listCount\" for value 1",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "I want to create input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:28"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "I want to update the input property \"name\" with a random value",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:81"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I want to update the input property \"type\" with value \"Universal\"",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:61"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "I want to create for path \"/vendor-license-models/{item.id}/versions/{item.versionId}/license-key-groups\" with the input data from the context",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:66"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 30
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "I want to copy to property \"lastProcessId\" from response data path \"value\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:73"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 22,
+            "name": "I want to commit this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 49
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 24,
+            "name": "I want to get path \"/items/{item.id}/versions/{item.versionId}/revisions\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 25,
+            "name": "I want to check property \"listCount\" for value 2",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 26,
+            "name": "I want to copy to property \"setRevision\" from response data path \"results[1].id\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:73"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 28,
+            "name": "I want to revert this Item to the revision with the value from saved property \"setRevision\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:62"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 29,
+            "name": "I want to get path \"/items/{item.id}/versions/{item.versionId}/revisions\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 30,
+            "name": "I want to check property \"listCount\" for value 2",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 32,
+            "name": "I want to get path \"/vendor-license-models/{item.id}/versions/{item.versionId}/license-key-groups\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 33,
+            "name": "I want to check property \"listCount\" for value 0",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "I want to create input data",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:28"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 36,
+            "name": "I want to update the input property \"name\" with a random value",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:81"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 37,
+            "name": "I want to update the input property \"type\" with value \"Universal\"",
+            "match": {
+              "location": "stepDefinitions\\InputData_steps.js:61"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 38,
+            "name": "I want to create for path \"/vendor-license-models/{item.id}/versions/{item.versionId}/license-key-groups\" with the input data from the context",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:66"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 39,
+            "name": "I want to copy to property \"newLKG\" from response data path \"value\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:73"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 40,
+            "name": "I want to delete for path \"/vendor-license-models/{item.id}/versions/{item.versionId}/license-key-groups\" with the value from saved property \"newLKG\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:42"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 43
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 42,
+            "name": "I want to set property \"NotExisting\" to value \"NotExisting\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:83"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 43,
+            "name": "I want the following to fail with error code \"GENERAL_ERROR_REST_ID\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:170"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 44,
+            "name": "I want to revert this Item to the revision with the value from saved property \"NotExisting\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:62"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 45,
+            "name": "I want to revert this Item to the revision with the value from saved property \"setRevision\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:62"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 55
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "VSP Example File",
+    "line": 1,
+    "id": "vsp-example-file",
+    "tags": [],
+    "uri": "features\\Example_VSP.feature",
+    "elements": [
+      {
+        "id": "vsp-example-file;create-and-submit-vsp-network-package",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "Create and submit VSP Network Package",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 132
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 298
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 8,
+            "name": "I want to make sure this Item has status \"Draft\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 10,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/BASE_MUX.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 58
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1580
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "I want to commit this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 844
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "I want to submit this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:69"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1510
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 15,
+            "name": "I want to package this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:80"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 218
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "I want to make sure this Item has status \"Certified\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 18,
+            "name": "I want to get the package for this Item to path \"resources/downloads/VSPPackage.zip\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:107"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 46
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I want to compare the content of the entry \"Artifacts/CB_BASE.yaml\" in the zip \"resources/downloads/VSPPackage.zip\" with file \"resources/yaml/CB_BASE.yaml\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:181"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 20,
+            "name": "I want to load the yaml content of the entry \"Artifacts/CB_BASE.yaml\" in the zip \"resources/downloads/VSPPackage.zip\" to context",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:195"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "I want to check property \"parameters.vnf_name.description\" for value \"Unique name for this VF instance\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 22,
+            "name": "I want to load the json content of the entry \"Artifacts/MANIFEST.json\" in the zip \"resources/downloads/VSPPackage.zip\" to context",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:211"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 23,
+            "name": "I want to check property \"description\" for value \"for testing\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "vsp-example-file;create-vsp-manual",
+        "keyword": "Scenario",
+        "line": 24,
+        "name": "Create VSP Manual",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 140
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 25,
+            "name": "I want to create a VSP with onboarding type \"Manual\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 274
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 26,
+            "name": "I want to make sure this Item has status \"Draft\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 28,
+            "name": "I want to create a VSP with onboarding type \"Manual\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 280
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 29,
+            "name": "I want to get path \"/vendor-software-products/{item.id}/versions/{item.versionId}\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 55
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 31,
+            "name": "I want to get path \"/vendor-software-products/{item.id}/versions/{item.versionId}/components\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 25
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 32,
+            "name": "I want to check property \"listCount\" for value 0",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 34,
+            "name": "I want to add a component",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:92"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 99
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "I want to get path \"/vendor-software-products/{item.id}/versions/{item.versionId}/components\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 32
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 36,
+            "name": "I want to check property \"listCount\" for value 1",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 38,
+            "name": "I want the following to fail with error code \"VSP_VFC_COUNT_EXCEED\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:170"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 39,
+            "name": "I want to add a component",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:92"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 38
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 41,
+            "name": "I want to commit this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 155
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 42,
+            "name": "I want the following to fail",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:160"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 43,
+            "name": "I want to submit this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:69"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 675
+            }
+          }
+        ]
+      },
+      {
+        "id": "vsp-example-file;vsp-questionnaire-examples",
+        "keyword": "Scenario",
+        "line": 46,
+        "name": "VSP Questionnaire Examples",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 129
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 47,
+            "name": "I want to create a VSP with onboarding type \"Manual\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 303
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 49,
+            "name": "I want to get the questionnaire for this item",
+            "match": {
+              "location": "stepDefinitions\\Questionnaire_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 21
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 51,
+            "name": "I want to add a component",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:92"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 87
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 52,
+            "name": "I want to get path \"/vendor-software-products/{item.id}/versions/{item.versionId}/components\"",
+            "match": {
+              "location": "stepDefinitions\\REST_Steps.js:31"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 25
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 53,
+            "name": "I want to check property \"listCount\" for value 1",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:102"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 55,
+            "name": "I want to get the questionnaire for this item",
+            "match": {
+              "location": "stepDefinitions\\Questionnaire_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 56,
+            "name": "I want to update this questionnaire with value \"15\" for property \"general/storageDataReplication/storageReplicationSize\"",
+            "match": {
+              "location": "stepDefinitions\\Questionnaire_steps.js:58"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 57,
+            "name": "I want to update this questionnaire",
+            "match": {
+              "location": "stepDefinitions\\Questionnaire_steps.js:78"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 25
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 59,
+            "name": "I want to get the questionnaire for this item",
+            "match": {
+              "location": "stepDefinitions\\Questionnaire_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 60,
+            "name": "I want to check this questionnaire has value \"15\" for property \"general/storageDataReplication/storageReplicationSize\"",
+            "match": {
+              "location": "stepDefinitions\\Questionnaire_steps.js:68"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "Tosca Validation Flow",
+    "line": 1,
+    "id": "tosca-validation-flow",
+    "tags": [],
+    "uri": "features\\TOSCA\\CapabilityDataType.feature",
+    "elements": [
+      {
+        "id": "tosca-validation-flow;test-capability-type-in-service-template",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "Test Capability type in service template",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 115
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 289
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/zipWithExternalPort.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 50
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 945
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "I want to commit this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 671
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 13,
+            "name": "I want to submit this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:69"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1319
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "I want to package this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:80"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 261
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "I want to get the package for this Item to path \"resources/downloads/VSPPackage.zip\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:107"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 49
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 17,
+            "name": "I want to compare the content of the entry \"Definitions/Nested_FSB1ServiceTemplate.yaml\" in the zip \"resources/downloads/VSPPackage.zip\" with file \"resources/yaml/Nested_FSB1ServiceTemplate.yaml\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:181"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 28,
+              "error_message": "AssertionError [ERR_ASSERTION]: 'tosca_definitions_version: tosca_simple_yaml_1_0_0\\nmetadata:\\n  template_name: Nested_FSB1\\nimports:\\n- openecomp_heat_index:\\ == 'tosca_definitions_version: tosca_simple_yaml_1_0_0\\nmetadata:\\n  template_name: Nested_FSB1\\nimports:\\n- openecomp_heat_index:\\\n    + expected - actual\n\n               get_input: port_FSB1_OAM_ip_requirements\n             network_role:\n               get_input: port_FSB1_OAM_network_role\n             fixed_ips:\n    -          get_input:\n    -          - port_FSB1_OAM_fixed_ips\n    -          - index_value\n    +          get_input: port_FSB1_OAM_fixed_ips\n             subnetpoolid:\n               get_input: port_FSB1_OAM_subnetpoolid\n             mac_requirements:\n               get_input: port_FSB1_OAM_mac_requirements\n               capability: tosca.capabilities.network.Bindable\n               node: FSB1\n               relationship: tosca.relationships.network.BindsTo\n           capabilities:\n    -        port_mirroring:\n    +      - port_mirroring:\n               properties:\n                 connection_point:\n                   nf_type: ''\n                   nfc_type: FSB1\n           - disk.root.size\n           feature_FSB1:\n           - FSB1\n           - feature\n    -      forwarder_FSB1_FSB1_OAM:\n    -      - FSB1_FSB1_OAM\n    -      - forwarder\n           memory.resident_FSB1:\n           - FSB1\n           - memory.resident\n           network.incoming.packets.rate_FSB1_FSB1_OAM:\n\n    at CustomWorld.<anonymous> (C:\\work\\remote-onap\\sdc\\openecomp-bdd\\stepDefinitions\\General_Steps.js:186:9)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 19,
+            "name": "I want to create a VF for this Item",
+            "match": {
+              "location": "stepDefinitions\\VF_steps.js:28"
+            },
+            "result": {
+              "status": "skipped"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "Tosca Validation Flow",
+    "line": 1,
+    "id": "tosca-validation-flow",
+    "tags": [],
+    "uri": "features\\TOSCA\\HeatToToscaTranslation.feature",
+    "elements": [
+      {
+        "id": "tosca-validation-flow;full---create-and-submit-vsp-network-package-and-create-vf",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "Full - Create and submit VSP Network Package and Create VF",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 128
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 293
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/BASE_MUX.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 47
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1507
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 12,
+            "name": "I want to commit this Item",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 815
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 13,
+            "name": "I want to submit this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:69"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1482
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "I want to package this VSP",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:80"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 275
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "I want to make sure this Item has status \"Certified\"",
+            "match": {
+              "location": "stepDefinitions\\Item_steps.js:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 14
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "I want to get the package for this Item to path \"resources/downloads/VSPPackage.zip\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:107"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 36
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "I want to create a VF for this Item",
+            "match": {
+              "location": "stepDefinitions\\VF_steps.js:28"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2519
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "Tosca Validation Flow",
+    "line": 1,
+    "id": "tosca-validation-flow",
+    "tags": [],
+    "uri": "features\\TOSCA\\HeatValidation.feature",
+    "elements": [
+      {
+        "id": "tosca-validation-flow;test-validation-error",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "Test Validation Error",
+        "tags": [],
+        "type": "scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I want to create a VLM",
+            "match": {
+              "location": "stepDefinitions\\VLM_steps.js:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 122
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I want to create a VSP with onboarding type \"NetworkPackage\"",
+            "match": {
+              "location": "stepDefinitions\\VSP_steps.js:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 343
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I want to upload a NetworkPackage for this VSP from path \"resources/uploads/errorHeat.zip\"",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 56
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I want to process the NetworkPackage file for this VSP",
+            "match": {
+              "location": "stepDefinitions\\NetworkPackage_steps.js:51"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 400
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "I want to print the context data",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:149"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "I want to check property \"errors['first.env'][0].level\" for value \"ERROR\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "I want to check property \"errors['first.env'][0].message\" for value \"ERROR: [YML1]: Invalid YAML format Problem - [empty yaml]\"",
+            "match": {
+              "location": "stepDefinitions\\General_Steps.js:93"
+            },
+            "result": {
+              "status": "passed"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
