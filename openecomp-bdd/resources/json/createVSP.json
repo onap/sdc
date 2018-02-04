@@ -1,0 +1,11 @@
+{
+        "vendorId":"REPLACE",
+        "name": "RANDOM",
+        "category":"resourceNewCategory.generic",
+        "subCategory":"resourceNewCategory.generic.abstract",
+        "onboardingMethod":"REPLACE",
+        "description":"for testing",
+        "vendorName":"REPLACE",
+        "icon":"icon",
+        "licensingData":{}
+}
