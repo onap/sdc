@@ -2,38 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-- CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-- NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-- NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-- NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-- NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-- CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-- ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-- ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-- AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-- ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
-- ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-- ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-- ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-- ContrailV2VirtualNetworkGlobalType:
-    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
-- ContrailV2NetworkRuleGlobalType:
-    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
-- ContrailV2VLANSubInterfaceGlobalType:
-    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 topology_template:
   inputs:
     template_PortTuple_LB1:
@@ -171,7 +141,7 @@ topology_template:
         virtual_network_refs: [
           ]
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -185,7 +155,7 @@ topology_template:
           - jsa_net3
           - fq_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -195,7 +165,7 @@ topology_template:
         security_group_refs:
         - get_input: oam_sec_group_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -208,7 +178,7 @@ topology_template:
         - jsa_net1
         - jsa_net5
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -234,7 +204,7 @@ topology_template:
             - jsa_net5
             - fq_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -256,7 +226,7 @@ topology_template:
           - jsa_net5
           - fq_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -275,7 +245,7 @@ topology_template:
           - jsa_net4
           - fq_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
