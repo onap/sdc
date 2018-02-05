@@ -306,6 +306,51 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: perimeta_ssc_a_server_0
           relationship: tosca.relationships.network.BindsTo
+    perimeta_ssc_a_untrusted_0_vlan_ports:
+      type: org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual
+      directives:
+      - substitutable
+      properties:
+        perimeta_parent_interface: perimeta_ssc_a_untrusted_parent_0_port
+        perimeta_v6_vip_0:
+          get_input: ssc_untrusted_v6_vip_0
+        service_template_filter:
+          substitute_service_template: vlan_subinterface_dualServiceTemplate.yaml
+          count:
+            get_input: perimeta_untrusted_num_vlans
+          mandatory: false
+        perimeta_subinterface_name_prefix:
+          str_replace:
+            template: $VNF_NAME_$VM_untrusted_port_vlan
+            params:
+              $VM:
+                get_input: ssc_a_name_0
+              $VNF_NAME:
+                get_input: vnf_name
+        perimeta_vlan_networks:
+          get_input: perimeta_untrusted_vlan_networks
+        perimeta_subinterface_instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        perimeta_ip_0:
+          get_input: ssc_a_untrusted_ip_0
+        perimeta_vip_0:
+          get_input: ssc_untrusted_vip_0
+        perimeta_vlan_ids:
+          get_input: perimeta_untrusted_vlan_ids
+        perimeta_mac_address:
+          get_attribute:
+          - perimeta_ssc_a_untrusted_parent_0_port
+          - mac_address
+        perimeta_v6_ip_0:
+          get_input: ssc_a_untrusted_v6_ip_0
+      requirements:
+      - binding_contrail_vmi_subinterface:
+          capability: tosca.capabilities.network.Bindable
+          node: perimeta_ssc_a_untrusted_parent_0_port
+          relationship: tosca.relationships.network.BindsTo
     perimeta_ssc_a_trusted_0_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -458,6 +503,7 @@ topology_template:
       - perimeta_ssc_a_ha_0_port
       - perimeta_ssc_a_untrusted_parent_0_port
       - perimeta_ssc_a_mgmt_1_port
+      - perimeta_ssc_a_untrusted_0_vlan_ports
       - perimeta_ssc_a_trusted_0_port
       - perimeta_ssc_a_unused_0_port
       - perimeta_ssc_a_mgmt_0_port
@@ -540,6 +586,9 @@ topology_template:
       network.outgoing.packets.rate_perimeta_ssc_a_unused_0_port:
       - perimeta_ssc_a_unused_0_port
       - network.outgoing.packets.rate
+      feature_contrail_vmi_subinterface_perimeta_ssc_a_untrusted_0_vlan_ports:
+      - perimeta_ssc_a_untrusted_0_vlan_ports
+      - feature_contrail_vmi_subinterface
       feature_perimeta_ssc_a_mgmt_1_port:
       - perimeta_ssc_a_mgmt_1_port
       - feature
@@ -651,6 +700,9 @@ topology_template:
       network.incoming.packets_perimeta_ssc_a_mgmt_0_port:
       - perimeta_ssc_a_mgmt_0_port
       - network.incoming.packets
+      feature_perimeta_ssc_a_untrusted_0_vlan_ports:
+      - perimeta_ssc_a_untrusted_0_vlan_ports
+      - feature
       disk.device.latency_perimeta_ssc_a_server_0:
       - perimeta_ssc_a_server_0
       - disk.device.latency
@@ -811,6 +863,9 @@ topology_template:
       dependency_perimeta_ssc_a_mgmt_1_port:
       - perimeta_ssc_a_mgmt_1_port
       - dependency
+      dependency_contrail_vmi_subinterface_perimeta_ssc_a_untrusted_0_vlan_ports:
+      - perimeta_ssc_a_untrusted_0_vlan_ports
+      - dependency_contrail_vmi_subinterface
       dependency_perimeta_ssc_a_untrusted_parent_0_port:
       - perimeta_ssc_a_untrusted_parent_0_port
       - dependency
@@ -829,6 +884,9 @@ topology_template:
       dependency_perimeta_ssc_a_ha_0_port:
       - perimeta_ssc_a_ha_0_port
       - dependency
+      link_contrail_vmi_subinterface_perimeta_ssc_a_untrusted_0_vlan_ports:
+      - perimeta_ssc_a_untrusted_0_vlan_ports
+      - link_contrail_vmi_subinterface
       link_perimeta_ssc_a_mgmt_0_port:
       - perimeta_ssc_a_mgmt_0_port
       - link
@@ -843,6 +901,9 @@ topology_template:
       - link
       dependency_perimeta_ssc_a_mgmt_0_port:
       - perimeta_ssc_a_mgmt_0_port
+      - dependency
+      dependency_perimeta_ssc_a_untrusted_0_vlan_ports:
+      - perimeta_ssc_a_untrusted_0_vlan_ports
       - dependency
       dependency_perimeta_ssc_a_server_0:
       - perimeta_ssc_a_server_0
