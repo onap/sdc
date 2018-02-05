@@ -1,0 +1,137 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: vlan_subinterface_dual
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    perimeta_parent_interface:
+      hidden: false
+      immutable: false
+      type: string
+      description: Parent Contrail interface
+    perimeta_v6_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: virtual IPv6 address associated with subinterfaces
+    perimeta_subinterface_name_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
+    perimeta_vlan_networks:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
+      entry_schema:
+        type: string
+    perimeta_subinterface_instance_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+      constraints:
+      - in_range:
+        - 1
+        - 1001
+    perimeta_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPv4 address associated with subinterfaces
+    perimeta_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: virtual IPv4 address associated with subinterfaces
+    perimeta_vlan_ids:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of VLAN IDs to use for subinterfaces
+      entry_schema:
+        type: string
+    perimeta_mac_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: MAC address to use for subinterface
+    perimeta_v6_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPv6 address associated with subinterfaces
+  node_templates:
+    contrail_vmi_subinterface:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_input: perimeta_parent_interface
+        name:
+          str_replace:
+            template: $NAME_$VLAN
+            params:
+              $NAME:
+                get_input: perimeta_subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - perimeta_vlan_ids
+                - get_input: perimeta_subinterface_instance_index
+        virtual_network_refs:
+        - get_input:
+          - perimeta_vlan_networks
+          - get_input: perimeta_subinterface_instance_index
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input:
+            - perimeta_vlan_ids
+            - get_input: perimeta_subinterface_instance_index
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: perimeta_vip_0
+              ip_prefix_len: 32
+            mac:
+              get_input: perimeta_mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: perimeta_v6_vip_0
+              ip_prefix_len: 128
+            mac:
+              get_input: perimeta_mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: perimeta_mac_address
+  groups:
+    vlan_subinterface_dual_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vlan_subinterface_dual.yaml
+        description: |
+          HOT template to instantiate a single Contrail VLAN sub-interface with associated instance IP addresses and allowed address pairs
+      members:
+      - contrail_vmi_subinterface
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual
+    capabilities:
+      feature_contrail_vmi_subinterface:
+      - contrail_vmi_subinterface
+      - feature
+    requirements:
+      binding_contrail_vmi_subinterface:
+      - contrail_vmi_subinterface
+      - binding
+      link_contrail_vmi_subinterface:
+      - contrail_vmi_subinterface
+      - link
+      dependency_contrail_vmi_subinterface:
+      - contrail_vmi_subinterface
+      - dependency

@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator;
@@ -48,6 +44,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.RequirementAssignmentData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.TypeComputeConsolidationData;
 
 import java.io.File;
@@ -103,13 +100,14 @@ public class TestUtils {
 
   /**
    * Get tosca service template models for the files in a directory
+   *
    * @param baseDirPath base directory for the tosca file
    * @return Map of <ServiceTemplateFilename, ServiceTemplate> for the files in this directory
    */
-  public static Map<String, ServiceTemplate> getServiceTemplates(String baseDirPath){
+  private static Map<String, ServiceTemplate> getServiceTemplates(String baseDirPath) {
     Map<String, ServiceTemplate> serviceTemplateMap = new HashMap<>();
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    baseDirPath = "."+baseDirPath+"/";
+    baseDirPath = "." + baseDirPath + "/";
     try {
       String[] fileList = {};
       URL filesDirUrl = TestUtils.class.getClassLoader().getResource(baseDirPath);
@@ -118,16 +116,16 @@ public class TestUtils {
       } else {
         Assert.fail("Invalid expected output files directory");
       }
-      for (int i = 0; i < fileList.length; i++) {
+      for (String fileName : fileList) {
 
-        URL resource = TestUtils.class.getClassLoader().getResource(baseDirPath + fileList[i]);
+        URL resource = TestUtils.class.getClassLoader().getResource(baseDirPath + fileName);
         ServiceTemplate serviceTemplate = FileUtils.readViaInputStream(resource,
-                        stream -> toscaExtensionYamlUtil.yamlToObject(stream, ServiceTemplate.class));
+            stream -> toscaExtensionYamlUtil.yamlToObject(stream, ServiceTemplate.class));
 
-        serviceTemplateMap.put(fileList[i], serviceTemplate);
+        serviceTemplateMap.put(fileName, serviceTemplate);
       }
     } catch (Exception e) {
-      logger.debug("",e);
+      logger.debug("", e);
       Assert.fail(e.getMessage());
     }
     return serviceTemplateMap;
@@ -135,14 +133,15 @@ public class TestUtils {
 
   /**
    * Get tosca service template models
+   *
    * @param expectedResultMap Map of filename and payload of the expected result files
    * @return Map of <ServiceTemplateFilename, ServiceTemplate> for the files in this directory
    */
   public static Map<String, ServiceTemplate> getServiceTemplates(Map<String, byte[]>
-                                                                     expectedResultMap){
+                                                                     expectedResultMap) {
     Map<String, ServiceTemplate> serviceTemplateMap = new HashMap<>();
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    for(String fileName : expectedResultMap.keySet()){
+    for (String fileName : expectedResultMap.keySet()) {
       ServiceTemplate serviceTemplate = toscaExtensionYamlUtil.yamlToObject
           (new String(expectedResultMap.get(fileName)), ServiceTemplate.class);
       serviceTemplateMap.put(fileName, serviceTemplate);
@@ -181,11 +180,12 @@ public class TestUtils {
         try (InputStream yamlFile = new FileInputStream(file)) {
           serviceTemplateFromYaml =
               toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
-          createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml, toscaExtensionYamlUtil);
+          createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml,
+              toscaExtensionYamlUtil);
           try {
             yamlFile.close();
           } catch (IOException ignore) {
-            logger.debug("",ignore);
+            logger.debug("", ignore);
           }
         } catch (FileNotFoundException e) {
           throw e;
@@ -226,12 +226,13 @@ public class TestUtils {
       try (InputStream yamlFile = new FileInputStream(file)) {
         ServiceTemplate serviceTemplateFromYaml =
             toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
-        createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml, toscaExtensionYamlUtil);
+        createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml,
+            toscaExtensionYamlUtil);
         serviceTemplates.put(file.getName(), serviceTemplateFromYaml);
         try {
           yamlFile.close();
         } catch (IOException ignore) {
-          logger.debug("",ignore);
+          logger.debug("", ignore);
         }
       } catch (FileNotFoundException e) {
         throw e;
@@ -242,9 +243,9 @@ public class TestUtils {
   }
 
   private static void createConcreteRequirementObjectsInServiceTemplate(ServiceTemplate
-                                                                          serviceTemplateFromYaml,
-                                                                      ToscaExtensionYamlUtil
-                                                                          toscaExtensionYamlUtil) {
+                                                                            serviceTemplateFromYaml,
+                                                                        ToscaExtensionYamlUtil
+                                                                            toscaExtensionYamlUtil) {
 
     if (serviceTemplateFromYaml == null
         || serviceTemplateFromYaml.getTopology_template() == null
@@ -262,7 +263,7 @@ public class TestUtils {
       if (requirements != null) {
         ListIterator<Map<String, RequirementAssignment>> reqListIterator = requirements
             .listIterator();
-        while (reqListIterator.hasNext()){
+        while (reqListIterator.hasNext()) {
           Map<String, RequirementAssignment> requirement = reqListIterator.next();
           Map<String, RequirementAssignment> concreteRequirement = new HashMap<>();
           for (Map.Entry<String, RequirementAssignment> reqEntry : requirement.entrySet()) {
@@ -290,12 +291,40 @@ public class TestUtils {
                                                           List<List<String>> groupIds,
                                                           List<List<String>> getAttrInIds,
                                                           List<List<Pair<String, GetAttrFuncData>>> getAttrOutFuncDataList,
-                                                          ConsolidationData consolidationData){
-    for(int i = 0; i < portNodeTemplateIds.size(); i++){
+                                                          ConsolidationData consolidationData) {
+    for (int i = 0; i < portNodeTemplateIds.size(); i++) {
       updatePortConsolidationData(serviceTemplateName, portNodeTemplateIds.get(i),
           nodesConnectedInIds.get(i), nodesConnectedOutIds.get(i),
-          groupIds.get(i), getAttrInIds.get(i),getAttrOutFuncDataList.get(i), consolidationData);
+          groupIds.get(i), getAttrInIds.get(i), getAttrOutFuncDataList.get(i), consolidationData);
     }
+  }
+
+  public static void addPortSubInterface(String serviceTemplateFileName,
+                                         String portNodeTemplateId,
+                                         String subInterfaceId,
+                                         String subInterfaceType,
+                                         String networkRole,
+                                         int resourceGroupCount,
+                                         List<String> nodesConnectedIn,
+                                         List<String> nodesConnectedOut,
+                                         List<String> nodesGetAttrIn,
+                                         List<Pair<String, GetAttrFuncData>> nodesGetAttrOut,
+                                         ConsolidationData consolidationData) {
+    PortTemplateConsolidationData portTemplateConsolidationData =
+        consolidationData.getPortConsolidationData().getFilePortConsolidationData
+            (serviceTemplateFileName).getPortTemplateConsolidationData(portNodeTemplateId);
+
+    SubInterfaceTemplateConsolidationData subInterface =
+        new SubInterfaceTemplateConsolidationData();
+    subInterface.setNodeTemplateId(subInterfaceId);
+    subInterface.setNetworkRole(networkRole);
+    subInterface.setResourceGroupCount(resourceGroupCount);
+
+    updateRelationsForEntityConsolidationData(
+        nodesConnectedIn, nodesConnectedOut, null, nodesGetAttrIn, nodesGetAttrOut, subInterface);
+
+    portTemplateConsolidationData.addSubInterfaceConsolidationData(subInterfaceType, subInterface);
+
   }
 
   public static void updatePortConsolidationData(String serviceTemplateFileName,
@@ -309,8 +338,9 @@ public class TestUtils {
     PortTemplateConsolidationData portTemplateConsolidationData =
         createPortTemplateConsolidationData(portNodeTemplateId);
 
-    updateRelationsForEntityConsolidationData(portNodeTemplateId, nodesConnectedInIds,
-        nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOutFuncDataList, portTemplateConsolidationData);
+    updateRelationsForEntityConsolidationData(nodesConnectedInIds,
+        nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOutFuncDataList,
+        portTemplateConsolidationData);
 
     consolidationData.getPortConsolidationData()
         .getFilePortConsolidationData(serviceTemplateFileName)
@@ -355,8 +385,9 @@ public class TestUtils {
     ComputeTemplateConsolidationData computeTemplateConsolidationData =
         createComputeTemplateConsolidationData(computeNodeTemplateId, portTypeToIdList, volumes);
 
-    updateRelationsForEntityConsolidationData(computeNodeTemplateId, nodeIdsConnectedIn,
-        nodeIdsConnectedOut, groupIds, getAttrInIds, getAttrOutIds, computeTemplateConsolidationData);
+    updateRelationsForEntityConsolidationData(nodeIdsConnectedIn,
+        nodeIdsConnectedOut, groupIds, getAttrInIds, getAttrOutIds,
+        computeTemplateConsolidationData);
 
     updateVolumes(computeTemplateConsolidationData, volumeIds);
 
@@ -367,27 +398,27 @@ public class TestUtils {
             computeTemplateConsolidationData);
   }
 
-  private static void updateRelationsForEntityConsolidationData(String entityNodeTemplateId,
-                                                                List<String> nodeIdsConnectedIn,
+  private static void updateRelationsForEntityConsolidationData(List<String> nodeIdsConnectedIn,
                                                                 List<String> nodeIdsConnectedOut,
                                                                 List<String> groupIds,
                                                                 List<String> getAttrInIds,
                                                                 List<Pair<String, GetAttrFuncData>> getAttrOutFuncDataList,
                                                                 EntityConsolidationData entity) {
     updateRelationsIn(entity, nodeIdsConnectedIn);
-    updateRelationsOut(entity, entityNodeTemplateId, nodeIdsConnectedOut);
+    updateRelationsOut(entity, nodeIdsConnectedOut);
     updateGetAttrIn(entity, getAttrInIds);
     updateGetAttrOut(entity, getAttrOutFuncDataList);
     entity.setGroupIds(groupIds);
   }
 
   public static void initComputeNodeTemplateIdInConsolidationData(String serviceTemplateFileName,
-                                                                   String computeNodeTypeName,
-                                                                   String computeNodeTemplateId,
-                                                                   ConsolidationData consolidationData) {
+                                                                  String computeNodeTypeName,
+                                                                  String computeNodeTemplateId,
+                                                                  ConsolidationData consolidationData) {
 
-    if(Objects.isNull(consolidationData.getComputeConsolidationData().getFileComputeConsolidationData
-        (serviceTemplateFileName))) {
+    if (Objects
+        .isNull(consolidationData.getComputeConsolidationData().getFileComputeConsolidationData
+            (serviceTemplateFileName))) {
       consolidationData.getComputeConsolidationData().setFileComputeConsolidationData
           (serviceTemplateFileName, new FileComputeConsolidationData());
     }
@@ -395,36 +426,42 @@ public class TestUtils {
         consolidationData.getComputeConsolidationData().getFileComputeConsolidationData
             (serviceTemplateFileName).getTypeComputeConsolidationData(computeNodeTypeName);
 
-    if(
-        typeComputeConsolidationData.getComputeTemplateConsolidationData(computeNodeTemplateId) == null) {
+    if (
+        typeComputeConsolidationData.getComputeTemplateConsolidationData(computeNodeTemplateId) ==
+            null) {
 
       consolidationData.getComputeConsolidationData()
           .getFileComputeConsolidationData(serviceTemplateFileName)
           .getTypeComputeConsolidationData(computeNodeTypeName)
-          .setComputeTemplateConsolidationData(computeNodeTemplateId, new ComputeTemplateConsolidationData());
+          .setComputeTemplateConsolidationData(computeNodeTemplateId,
+              new ComputeTemplateConsolidationData());
 
     }
   }
 
   public static void updateNestedConsolidationData(String serviceTemplateName,
                                                    List<String> substitutionNodeTemplateIds,
-                                                   ConsolidationData consolidationData){
-    if(Objects.isNull(consolidationData.getNestedConsolidationData())){
+                                                   ConsolidationData consolidationData) {
+    if (Objects.isNull(consolidationData.getNestedConsolidationData())) {
       consolidationData.setNestedConsolidationData(new NestedConsolidationData());
     }
 
     FileNestedConsolidationData fileNestedConsolidationData = new FileNestedConsolidationData();
-    for(String substitutionNodeTemplateId : substitutionNodeTemplateIds) {
-      NestedTemplateConsolidationData nestedTemplateConsolidationData = new NestedTemplateConsolidationData();
+    for (String substitutionNodeTemplateId : substitutionNodeTemplateIds) {
+      NestedTemplateConsolidationData nestedTemplateConsolidationData =
+          new NestedTemplateConsolidationData();
       nestedTemplateConsolidationData.setNodeTemplateId(substitutionNodeTemplateId);
-      fileNestedConsolidationData.setNestedTemplateConsolidationData(substitutionNodeTemplateId, nestedTemplateConsolidationData);
+      fileNestedConsolidationData.setNestedTemplateConsolidationData(substitutionNodeTemplateId,
+          nestedTemplateConsolidationData);
     }
-    consolidationData.getNestedConsolidationData().setFileNestedConsolidationData(serviceTemplateName, fileNestedConsolidationData);
+    consolidationData.getNestedConsolidationData()
+        .setFileNestedConsolidationData(serviceTemplateName, fileNestedConsolidationData);
   }
 
-  public static ComputeTemplateConsolidationData createComputeTemplateConsolidationData(String computeNodeTemplateId,
-                                                                                        List<Pair<String, String>> portTypeToIdList,
-                                                                                        Map<String,List<RequirementAssignmentData>> volumes) {
+  public static ComputeTemplateConsolidationData createComputeTemplateConsolidationData(
+      String computeNodeTemplateId,
+      List<Pair<String, String>> portTypeToIdList,
+      Map<String, List<RequirementAssignmentData>> volumes) {
     ComputeTemplateConsolidationData compute = new ComputeTemplateConsolidationData();
     compute.setNodeTemplateId(computeNodeTemplateId);
     if (portTypeToIdList != null) {
@@ -436,58 +473,58 @@ public class TestUtils {
     return compute;
   }
 
-  public static void updateRelationsIn(EntityConsolidationData entity,
-                                       List<String> idsPontingTome){
-    if(CollectionUtils.isEmpty(idsPontingTome)){
+  private static void updateRelationsIn(EntityConsolidationData entity,
+                                        List<String> idsPontingTome) {
+    if (CollectionUtils.isEmpty(idsPontingTome)) {
       return;
     }
 
-    for(String pointingId : idsPontingTome){
-      entity.addNodesConnectedIn(pointingId, entity.getNodeTemplateId(), new RequirementAssignment());
+    for (String pointingId : idsPontingTome) {
+      entity
+          .addNodesConnectedIn(pointingId, entity.getNodeTemplateId(), new RequirementAssignment());
     }
   }
 
-  public static void updateRelationsOut(EntityConsolidationData entity,
-                                        String nodeTemplateId,
-                                        List<String> idsToUpdate){
-    if(CollectionUtils.isEmpty(idsToUpdate)){
+  private static void updateRelationsOut(EntityConsolidationData entity,
+                                         List<String> idsToUpdate) {
+    if (CollectionUtils.isEmpty(idsToUpdate)) {
       return;
     }
 
-    for(String id : idsToUpdate){
+    for (String id : idsToUpdate) {
       entity.addNodesConnectedOut(id, id, new RequirementAssignment());
     }
   }
 
-  public static void updateGetAttrIn(EntityConsolidationData entity,
-                                     List<String> idsToUpdate){
-    if(CollectionUtils.isEmpty(idsToUpdate)){
+  private static void updateGetAttrIn(EntityConsolidationData entity,
+                                      List<String> idsToUpdate) {
+    if (CollectionUtils.isEmpty(idsToUpdate)) {
       return;
     }
 
-    for(String id : idsToUpdate){
+    for (String id : idsToUpdate) {
       entity.addNodesGetAttrIn(id, new GetAttrFuncData());
     }
   }
 
-  public static void updateGetAttrOut(EntityConsolidationData entity,
-                                      List<Pair<String, GetAttrFuncData>> getAttrOutIds){
-    if(CollectionUtils.isEmpty(getAttrOutIds)){
+  private static void updateGetAttrOut(EntityConsolidationData entity,
+                                       List<Pair<String, GetAttrFuncData>> getAttrOutIds) {
+    if (CollectionUtils.isEmpty(getAttrOutIds)) {
       return;
     }
 
-    for(Pair<String, GetAttrFuncData> getAttrOutFunc : getAttrOutIds){
+    for (Pair<String, GetAttrFuncData> getAttrOutFunc : getAttrOutIds) {
       entity.addNodesGetAttrOut(getAttrOutFunc.getLeft(), getAttrOutFunc.getRight());
     }
   }
 
-  public static void updateVolumes(ComputeTemplateConsolidationData compute,
-                                   List<String> volumeIds){
-    if(CollectionUtils.isEmpty(volumeIds)){
+  private static void updateVolumes(ComputeTemplateConsolidationData compute,
+                                    List<String> volumeIds) {
+    if (CollectionUtils.isEmpty(volumeIds)) {
       return;
     }
 
-    for(String id : volumeIds){
+    for (String id : volumeIds) {
       RequirementAssignment requirementAssignment = new RequirementAssignment();
       requirementAssignment.setNode(id);
       compute.addVolume(id, requirementAssignment);
@@ -552,9 +589,9 @@ public class TestUtils {
 
   public static void updatePortsInComputeTemplateConsolidationData(
       List<Pair<String, String>> portIdToTypeList, ComputeTemplateConsolidationData
-      compute){
+      compute) {
     compute.setPorts(new HashMap<>());
-    for(Pair<String, String> portIdToType : portIdToTypeList){
+    for (Pair<String, String> portIdToType : portIdToTypeList) {
       compute.getPorts().putIfAbsent(portIdToType.getLeft(), new ArrayList<>());
       compute.getPorts().get(portIdToType.getLeft()).add(portIdToType.getRight());
     }
@@ -607,12 +644,14 @@ public class TestUtils {
     for (Map.Entry<String, GroupDefinition> entry : groups.entrySet()) {
       String groupId = entry.getKey();
       GroupDefinition groupDefinition = entry.getValue();
-      if (groupDefinition.getType().contains("HeatStack"))
+      if (groupDefinition.getType().contains("HeatStack")) {
         continue;
+      }
       List<String> groupMembers = groupDefinition.getMembers();
       for (String member : groupMembers) {
-        if (groups.containsKey(member))
+        if (groups.containsKey(member)) {
           continue;
+        }
         if (member.equals(nodeTemplateId)) {
           entityGroups.add(groupId);
         }
@@ -654,7 +693,6 @@ public class TestUtils {
     }
     return Optional.empty();
   }
-
 
 
 }

@@ -1,11 +1,43 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
-/**
- * Created by TALIO on 3/7/2017.
- */
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.translator.TestUtils;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionMode;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.GetAttrFuncData;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 public class ConsolidationServiceTest {
 
-  /*
+
   @Spy
   private TranslationContext translationContext = new TranslationContext();
   private static String mainST = "MainServiceTemplate.yaml";
@@ -65,7 +97,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
 
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
@@ -101,7 +133,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.SingleSubstitution);
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -137,7 +169,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.SingleSubstitution);
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -181,7 +213,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.SingleSubstitution);
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
 
   }
@@ -230,7 +262,7 @@ public class ConsolidationServiceTest {
     translationContext.setConsolidationData(consolidationData);
 
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -279,7 +311,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.SingleSubstitution);
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -376,8 +408,8 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(
-            UnifiedCompositionMode.ScalingInstances, UnifiedCompositionMode.SingleSubstitution);
+        Arrays.asList(UnifiedCompositionMode.ScalingInstances,
+            UnifiedCompositionMode.SingleSubstitution);
     verifyMainServiceTemplateConsolidation(2, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -424,7 +456,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -540,7 +572,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -584,7 +616,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -596,7 +628,8 @@ public class ConsolidationServiceTest {
         ("/mock/services/heattotosca/consolidation/translatedfiles/computeportconsolidation/one_exCP_naming_diff",
             null, null);
 
-    TestUtils.initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
@@ -626,12 +659,12 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
   @Test
-  public void testFalsePortConsolidationForOneDiffExpcNaming(){
+  public void testFalsePortConsolidationForOneDiffExpcNaming() {
 
   }
 
@@ -674,7 +707,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -717,7 +750,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -760,7 +793,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -799,21 +832,24 @@ public class ConsolidationServiceTest {
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -832,8 +868,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"),
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -842,8 +879,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -852,30 +890,34 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"), null, null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("group_id1"), null,
+        null,
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
 
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -894,8 +936,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"), null, null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"), null, null,
         portTypeToIdList,
         consolidationData);
 
@@ -903,8 +947,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -913,8 +958,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_2"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"), null, null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_2"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"), null, null,
         portTypeToIdList,
         consolidationData);
 
@@ -925,7 +972,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -944,8 +991,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"), null, null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"), null, null,
         portTypeToIdList,
         consolidationData);
 
@@ -953,8 +1002,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -963,8 +1013,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume_1"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume_1"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -976,7 +1027,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -995,8 +1046,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"), null, null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"), null, null,
         portTypeToIdList,
         consolidationData);
 
@@ -1004,8 +1057,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1014,8 +1068,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume_1"), Arrays.asList("group_id1"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume_1"),
+        Collections.singletonList("group_id1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1027,7 +1082,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1046,8 +1101,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"), null,
         null,
         portTypeToIdList,
         consolidationData);
@@ -1056,8 +1113,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1066,8 +1124,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_2"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_2"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1079,7 +1138,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1098,8 +1157,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"), null,
         null,
         portTypeToIdList,
         consolidationData);
@@ -1108,8 +1169,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1118,29 +1180,33 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1159,8 +1225,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"), null,
         null,
         portTypeToIdList,
         consolidationData);
@@ -1169,8 +1237,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1179,29 +1248,33 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_2"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_2"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1220,8 +1293,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"), null,
         null,
         portTypeToIdList,
         consolidationData);
@@ -1230,8 +1305,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1240,29 +1316,33 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_2"), Arrays.asList("group_id_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_2"),
+        Collections.singletonList("group_id_1"), null,
         null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1281,8 +1361,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"), null,
         null,
         portTypeToIdList,
         consolidationData);
@@ -1291,8 +1373,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1301,29 +1384,30 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_3"), null, null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1343,9 +1427,11 @@ public class ConsolidationServiceTest {
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1353,9 +1439,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_2"), null,
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_2"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1363,29 +1450,30 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_3"), null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_3"), null,
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1405,9 +1493,11 @@ public class ConsolidationServiceTest {
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("server_ps02"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("server_ps02"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1415,9 +1505,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_1"), null,
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1425,29 +1516,30 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_2"), null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_2"), null,
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
         Arrays.asList("group_id_1", "group_id_2"), null, null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1467,8 +1559,10 @@ public class ConsolidationServiceTest {
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"), null,
         null,
         portTypeToIdList,
         consolidationData);
@@ -1477,8 +1571,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1487,8 +1582,9 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
         null, null,
         portTypeToIdList,
         consolidationData);
@@ -1497,18 +1593,22 @@ public class ConsolidationServiceTest {
     List<String> portNodeTemplateIds =
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3");
     List<List<String>> nodesConnectedInIds =
-        Arrays.asList(Arrays.asList("node_in_1"), Arrays.asList("node_in_1"),
-            Arrays.asList("node_in_1"));
+        Arrays.asList(Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"));
     List<List<String>> nodesConnectedOutIds =
-        Arrays.asList(Arrays.asList("node_out_1"), Arrays.asList("node_out_1"),
-            Arrays.asList("node_out_1"));
+        Arrays.asList(Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"));
     List<List<String>> getAttrInIds =
-        Arrays.asList(Arrays.asList("get_attr_1"), Arrays.asList("get_attr_2"),
-            Arrays.asList("get_attr_3"));
+        Arrays.asList(Collections.singletonList("get_attr_1"),
+            Collections.singletonList("get_attr_2"),
+            Collections.singletonList("get_attr_3"));
     List<List<String>> groupIds =
-        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
-            "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
-    List<List<Pair<String, GetAttrFuncData>>> getAttrOut = Arrays.asList(null, null, null);
+        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
+    List<List<Pair<String, GetAttrFuncData>>> getAttrOut =
+        Arrays.asList(null, null, null);
 
     TestUtils.updateMultiplePortConsolidationDatas(
         mainST, portNodeTemplateIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
@@ -1516,7 +1616,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1537,9 +1637,11 @@ public class ConsolidationServiceTest {
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1547,9 +1649,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_2"), null,
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_2"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1557,9 +1660,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("node_3"), null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("node_3"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1567,18 +1671,22 @@ public class ConsolidationServiceTest {
     List<String> portNodeTemplateIds =
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3");
     List<List<String>> nodesConnectedInIds =
-        Arrays.asList(Arrays.asList("node_in_1"), Arrays.asList("node_in_1"),
-            Arrays.asList("node_in_1"));
+        Arrays.asList(Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"));
     List<List<String>> nodesConnectedOutIds =
-        Arrays.asList(Arrays.asList("node_out_1"), Arrays.asList("node_out_1"),
-            Arrays.asList("node_out_1"));
+        Arrays.asList(Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"));
     List<List<String>> getAttrInIds =
-        Arrays.asList(Arrays.asList("get_attr_1"), Arrays.asList("get_attr_2"),
-            Arrays.asList("cm01_port_1"));
+        Arrays.asList(Collections.singletonList("get_attr_1"),
+            Collections.singletonList("get_attr_2"),
+            Collections.singletonList("cm01_port_1"));
     List<List<String>> groupIds =
-        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
-            "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
-    List<List<Pair<String, GetAttrFuncData>>> getAttrOut = Arrays.asList(null, null, null);
+        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
+    List<List<Pair<String, GetAttrFuncData>>> getAttrOut =
+        Arrays.asList(null, null, null);
 
     TestUtils.updateMultiplePortConsolidationDatas(
         mainST, portNodeTemplateIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
@@ -1586,7 +1694,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1607,9 +1715,11 @@ public class ConsolidationServiceTest {
 
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1617,9 +1727,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_2"), null,
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_2"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1627,9 +1738,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_3"), null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_3"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1637,18 +1749,22 @@ public class ConsolidationServiceTest {
     List<String> portNodeTemplateIds =
         Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3");
     List<List<String>> nodesConnectedInIds =
-        Arrays.asList(Arrays.asList("node_in_1"), Arrays.asList("node_in_1"),
-            Arrays.asList("node_in_1"));
+        Arrays.asList(Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"));
     List<List<String>> nodesConnectedOutIds =
-        Arrays.asList(Arrays.asList("node_out_1"), Arrays.asList("node_out_1"),
-            Arrays.asList("node_out_1"));
+        Arrays.asList(Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"));
     List<List<String>> getAttrInIds =
-        Arrays.asList(Arrays.asList("get_attr_1"), Arrays.asList("get_attr_2"),
-            Arrays.asList("get_attr_3"));
+        Arrays.asList(Collections.singletonList("get_attr_1"),
+            Collections.singletonList("get_attr_2"),
+            Collections.singletonList("get_attr_3"));
     List<List<String>> groupIds =
-        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
-            "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
-    List<List<Pair<String, GetAttrFuncData>>> getAttrOut = Arrays.asList(null, null, null);
+        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
+    List<List<Pair<String, GetAttrFuncData>>> getAttrOut =
+        Arrays.asList(null, null, null);
 
     TestUtils.updateMultiplePortConsolidationDatas(
         mainST, portNodeTemplateIds, nodesConnectedInIds, nodesConnectedOutIds, groupIds,
@@ -1656,7 +1772,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1676,10 +1792,13 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_1", getAttrFuncData)),
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_1", getAttrFuncData)),
         portTypeToIdList,
         consolidationData);
 
@@ -1687,10 +1806,12 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_1", getAttrFuncData)),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_1", getAttrFuncData)),
         portTypeToIdList,
         consolidationData);
 
@@ -1698,30 +1819,35 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_1", getAttrFuncData)),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_1", getAttrFuncData)),
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
-        Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("sm01_port_2"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Arrays.asList("group_id_1", "group_id_2"),
+        Collections.singletonList("sm01_port_2"), null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
-        Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("sm01_port_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Arrays.asList("group_id_1", "group_id_2"),
+        Collections.singletonList("sm01_port_1"), null,
         consolidationData);
     TestUtils.updatePortConsolidationData(mainST, "cm01_port_3",
-        Arrays.asList("node_in_1"), Arrays.asList("net_id_1"),
-        Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("rm01_port_1"), null,
+        Collections.singletonList("node_in_1"), Collections.singletonList("net_id_1"),
+        Arrays.asList("group_id_1", "group_id_2"),
+        Collections.singletonList("rm01_port_1"), null,
         consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1742,10 +1868,13 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_1", getAttrFuncData)),
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_1", getAttrFuncData)),
         portTypeToIdList,
         consolidationData);
 
@@ -1754,10 +1883,12 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_1", getAttrFuncData)),
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_1", getAttrFuncData)),
         portTypeToIdList,
         consolidationData);
 
@@ -1766,37 +1897,49 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("sm01_port_1", getAttrFuncData)),
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"),
+        Collections.singletonList(
+            new ImmutablePair<>("sm01_port_1", getAttrFuncData)),
         portTypeToIdList,
         consolidationData);
 
     TestUtils.initPortConsolidationData(mainST, consolidationData);
 
     List<String> portNodeTemplateIds =
-        Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1", "sm01_port_2",
+        Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1",
+            "sm01_port_2",
             "sm01_port_3");
     List<List<String>> nodesConnectedInIds =
-        Arrays.asList(Arrays.asList("node_in_1"), Arrays.asList("node_in_1"), Arrays.asList
-                ("node_in_1"), Arrays.asList("node_in_1"), Arrays.asList("node_in_1"),
-            Arrays.asList("node_in_1"));
+        Arrays.asList(Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"), Collections.singletonList
+                ("node_in_1"), Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"));
     List<List<String>> nodesConnectedOutIds =
-        Arrays.asList(Arrays.asList("node_out_1"), Arrays.asList("node_out_1"), Arrays.asList
-                ("node_out_1"), Arrays.asList("node_out_1"), Arrays.asList("node_out_1"),
-            Arrays.asList("node_out_1"));
+        Arrays.asList(Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"), Collections.singletonList
+                ("node_out_1"), Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"));
     List<List<String>> getAttrInIds =
-        Arrays.asList(Arrays.asList("get_attr_1"), Arrays.asList("get_attr_2"), Arrays.asList
-                ("get_attr_3"), Arrays.asList("get_attr_1"), Arrays.asList("get_attr_2"),
-            Arrays.asList("get_attr_3"));
+        Arrays.asList(Collections.singletonList("get_attr_1"),
+            Collections.singletonList("get_attr_2"), Collections.singletonList
+                ("get_attr_3"), Collections.singletonList("get_attr_1"),
+            Collections.singletonList("get_attr_2"),
+            Collections.singletonList("get_attr_3"));
     List<List<String>> groupIds =
-        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
-            "group_id_2"), Arrays.asList("group_id_1", "group_id_2"),
-            Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
+        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1",
+                "group_id_2"), Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1",
                 "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
-    List<List<Pair<String, GetAttrFuncData>>> getAttrOut = Arrays.asList(null, null, null, null,
-        null, null);
+    List<List<Pair<String, GetAttrFuncData>>> getAttrOut =
+        Arrays.asList(null, null, null, null,
+            null, null);
 
     TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds,
         nodesConnectedInIds, nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOut,
@@ -1804,7 +1947,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.SingleSubstitution);
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1824,9 +1967,11 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1835,9 +1980,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"), null,
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1846,9 +1992,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"), null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1856,30 +2003,43 @@ public class ConsolidationServiceTest {
 
     GetAttrFuncData getAttrFuncData = new GetAttrFuncData("name", "s1_name");
     List<String> portNodeTemplateIds =
-        Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1", "sm01_port_2",
+        Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1",
+            "sm01_port_2",
             "sm01_port_3");
     List<List<String>> nodesConnectedInIds =
-        Arrays.asList(Arrays.asList("node_in_1"), Arrays.asList("node_in_1"), Arrays.asList
-                ("node_in_1"), Arrays.asList("node_in_1"), Arrays.asList("node_in_1"),
-            Arrays.asList("node_in_1"));
+        Arrays.asList(Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"), Collections.singletonList
+                ("node_in_1"), Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"));
     List<List<String>> nodesConnectedOutIds =
-        Arrays.asList(Arrays.asList("node_out_1"), Arrays.asList("node_out_1"), Arrays.asList
-                ("node_out_1"), Arrays.asList("node_out_1"), Arrays.asList("node_out_1"),
-            Arrays.asList("node_out_1"));
+        Arrays.asList(Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"), Collections.singletonList
+                ("node_out_1"), Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"));
     List<List<String>> getAttrInIds =
         Arrays.asList(null, null, null, null, null, null);
     List<List<String>> groupIds =
-        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
-            "group_id_2"), Arrays.asList("group_id_1", "group_id_2"),
-            Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
+        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1",
+                "group_id_2"), Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1",
                 "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
     List<List<Pair<String, GetAttrFuncData>>> getAttrOut = Arrays.asList(
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("sm01_port_1", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("sm01_port_2", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("sm01_port_3", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_1", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_2", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_3", getAttrFuncData)));
+        Collections.singletonList(
+            new ImmutablePair<>("sm01_port_1", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("sm01_port_2", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("sm01_port_3", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_1", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_2", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_3", getAttrFuncData)));
 
     TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds,
         nodesConnectedInIds, nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOut,
@@ -1887,7 +2047,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.ScalingInstances);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1907,9 +2067,11 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps01", Arrays.asList("cm01_port_1"), Arrays.asList
-            ("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"), null,
+        computeNodeTypeName, "server_ps01", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList
+            ("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1918,9 +2080,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_2"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps02", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"), null,
+        computeNodeTypeName, "server_ps02", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1929,9 +2092,10 @@ public class ConsolidationServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_3"));
     TestUtils.updateComputeTemplateConsolidationData(
         mainST,
-        computeNodeTypeName, "server_ps03", Arrays.asList("cm01_port_1"),
-        Arrays.asList("cmaui_volume"), Arrays.asList("cmaui_volume"), Arrays.asList("group_id_1"),
-        Arrays.asList("cm01_port_1"), null,
+        computeNodeTypeName, "server_ps03", Collections.singletonList("cm01_port_1"),
+        Collections.singletonList("cmaui_volume"), Collections.singletonList("cmaui_volume"),
+        Collections.singletonList("group_id_1"),
+        Collections.singletonList("cm01_port_1"), null,
         portTypeToIdList,
         consolidationData);
 
@@ -1939,30 +2103,42 @@ public class ConsolidationServiceTest {
 
     GetAttrFuncData getAttrFuncData = new GetAttrFuncData("name", "s1_name");
     List<String> portNodeTemplateIds =
-        Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1", "sm01_port_2",
+        Arrays.asList("cm01_port_1", "cm01_port_2", "cm01_port_3", "sm01_port_1",
+            "sm01_port_2",
             "sm01_port_3");
     List<List<String>> nodesConnectedInIds =
-        Arrays.asList(Arrays.asList("node_in_1"), Arrays.asList("node_in_1"), Arrays.asList
-                ("node_in_1"), Arrays.asList("node_in_1"), Arrays.asList("node_in_1"),
-            Arrays.asList("node_in_1"));
+        Arrays.asList(Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"), Collections.singletonList
+                ("node_in_1"), Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"),
+            Collections.singletonList("node_in_1"));
     List<List<String>> nodesConnectedOutIds =
-        Arrays.asList(Arrays.asList("node_out_1"), Arrays.asList("node_out_1"), Arrays.asList
-                ("node_out_1"), Arrays.asList("node_out_1"), Arrays.asList("node_out_1"),
-            Arrays.asList("node_out_1"));
+        Arrays.asList(Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"), Collections.singletonList
+                ("node_out_1"), Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"),
+            Collections.singletonList("node_out_1"));
     List<List<String>> getAttrInIds =
         Arrays.asList(null, null, null, null, null, null);
     List<List<String>> groupIds =
-        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
-            "group_id_2"), Arrays.asList("group_id_1", "group_id_2"),
-            Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1",
+        Arrays.asList(Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1", "group_id_2"), Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1", "group_id_2"),
+            Arrays.asList("group_id_1",
                 "group_id_2"), Arrays.asList("group_id_1", "group_id_2"));
     List<List<Pair<String, GetAttrFuncData>>> getAttrOut = Arrays.asList(
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("server_ps01", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("server_ps01", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("sm01_port_3", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_1", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_2", getAttrFuncData)),
-        Arrays.asList(new ImmutablePair<String, GetAttrFuncData>("cm01_port_3", getAttrFuncData)));
+        Collections.singletonList(
+            new ImmutablePair<>("server_ps01", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("server_ps01", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("sm01_port_3", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_1", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_2", getAttrFuncData)),
+        Collections.singletonList(
+            new ImmutablePair<>("cm01_port_3", getAttrFuncData)));
 
     TestUtils.updateMultiplePortConsolidationDatas(mainST, portNodeTemplateIds,
         nodesConnectedInIds, nodesConnectedOutIds, groupIds, getAttrInIds, getAttrOut,
@@ -1970,7 +2146,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Arrays.asList(UnifiedCompositionMode.SingleSubstitution);
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1981,7 +2157,7 @@ public class ConsolidationServiceTest {
     String nestedServiceTemplateName = "nested-pcm_v0.1ServiceTemplate.yaml";
 
     ConsolidationData consolidationData = new ConsolidationData();
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(mainSTName, Collections.singletonList("server_pcm_001"),
         consolidationData);
     TestUtils.initComputeNodeTypeInConsolidationData(mainSTName,
         "org.openecomp.resource.vfc.nodes.heat" +
@@ -2014,7 +2190,7 @@ public class ConsolidationServiceTest {
     String nestedServiceTemplateName = "nested-pcm_v0.1ServiceTemplate.yaml";
 
     ConsolidationData consolidationData = new ConsolidationData();
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(mainSTName, Collections.singletonList("server_pcm_001"),
         consolidationData);
     TestUtils.initComputeNodeTypeInConsolidationData(mainSTName,
         "org.openecomp.resource.vfc.nodes.heat" +
@@ -2026,7 +2202,7 @@ public class ConsolidationServiceTest {
         "org.openecomp.resource.vfc.nodes.heat" +
             ".pcm_server", consolidationData);
 
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_oam_001"),
+    TestUtils.updateNestedConsolidationData(mainSTName, Collections.singletonList("server_oam_001"),
         consolidationData);
     TestUtils.initComputeNodeTypeInConsolidationData(mainSTName,
         "org.openecomp.resource.vfc.nodes.heat" +
@@ -2056,7 +2232,7 @@ public class ConsolidationServiceTest {
     String nestedServiceTemplateName = "nested-pcm_v0.1ServiceTemplate.yaml";
 
     ConsolidationData consolidationData = new ConsolidationData();
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(mainSTName, Collections.singletonList("server_pcm_001"),
         consolidationData);
     TestUtils.initComputeNodeTypeInConsolidationData(nestedServiceTemplateName,
         "org.openecomp.resource.vfc.nodes.heat" +
@@ -2069,7 +2245,8 @@ public class ConsolidationServiceTest {
             ".heat.pcm_server", "pcm_server_1", consolidationData);
 
     TestUtils
-        .updateNestedConsolidationData(nestedServiceTemplateName, Arrays.asList("server_pcm_002"),
+        .updateNestedConsolidationData(nestedServiceTemplateName,
+            Collections.singletonList("server_pcm_002"),
             consolidationData);
     TestUtils.initComputeNodeTemplateIdInConsolidationData(nestedServiceTemplateName,
         "org.openecomp.resource.vfc.nodes" +
@@ -2081,7 +2258,8 @@ public class ConsolidationServiceTest {
     addMockServiceTemplateToContext(nestedServiceTemplateName, "nested-pcm_v0.1");
 
     Mockito.doNothing().when(consolidationService).serviceTemplateConsolidation
-        (translationContext.getTranslatedServiceTemplates().get(nestedServiceTemplateName), translationContext);
+        (translationContext.getTranslatedServiceTemplates().get(nestedServiceTemplateName),
+            translationContext);
     verifySubstitutionServiceTemplateConsolidation
         (1, translationContext.getTranslatedServiceTemplates().get(mainSTName),
             translationContext.getTranslatedServiceTemplates().get(nestedServiceTemplateName),
@@ -2095,7 +2273,7 @@ public class ConsolidationServiceTest {
     String nestedServiceTemplateName = "nested-pcm_v0.1ServiceTemplate.yaml";
 
     ConsolidationData consolidationData = new ConsolidationData();
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(mainSTName, Collections.singletonList("server_pcm_001"),
         consolidationData);
     TestUtils.initComputeNodeTypeInConsolidationData(mainSTName,
         "org.openecomp.resource.vfc.nodes.heat" +
@@ -2110,7 +2288,8 @@ public class ConsolidationServiceTest {
             ".heat.pcm_server", "pcm_server", consolidationData);
 
     TestUtils
-        .updateNestedConsolidationData(nestedServiceTemplateName, Arrays.asList("nested_resource"),
+        .updateNestedConsolidationData(nestedServiceTemplateName,
+            Collections.singletonList("nested_resource"),
             consolidationData);
 
     translationContext.setConsolidationData(consolidationData);
@@ -2122,6 +2301,529 @@ public class ConsolidationServiceTest {
         (0, translationContext.getTranslatedServiceTemplates().get(mainSTName),
             translationContext.getTranslatedServiceTemplates().get(nestedServiceTemplateName),
             UnifiedCompositionMode.SingleSubstitution);
+  }
+
+  @Test
+  public void testConsolidationPreConditionFalseDiffSubportTypes() throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, null, null, null, null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested2.yaml", "role_2",
+            2, null, null, null, null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationPreConditionFalseDiffSubportNumber() throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, null, null, null, null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_2",
+            2, null, null, null, null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_3", "nested1.yaml", "role_3",
+            2, null, null, null, null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.SingleSubstitution);
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationRuleFalseDifferentCountInResourceGroup() throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, null, null, null, null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_1",
+            3, null, null, null, null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+
+    Mockito.doNothing().when(unifiedCompositionServiceMock).createUnifiedComposition(
+        any(),
+        any(),
+        any(),
+        any(),
+        any());
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationRuleFalseDifferentNodesConnectedInToResourceGroup()
+      throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, Collections.singletonList("node_1"), null, null, null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_1",
+            2, Collections.singletonList("node_2"), null, null, null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+
+    Mockito.doNothing().when(unifiedCompositionServiceMock).createUnifiedComposition(
+        any(),
+        any(),
+        any(),
+        any(),
+        any());
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationRuleFalseDifferentNodesConnectedOutFromResourceGroup()
+      throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, null, Collections.singletonList("node_1"), null, null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_1",
+            2, null, Collections.singletonList("node_2"), null, null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+
+    Mockito.doNothing().when(unifiedCompositionServiceMock).createUnifiedComposition(
+        any(),
+        any(),
+        any(),
+        any(),
+        any());
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationRuleFalseGetAttrInBetweenSubInterfacesOfSameType()
+      throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, null, null, Collections.singletonList("in_node_1"), null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_1",
+            2, null, null, Collections.singletonList("interface_1"), null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+
+    Mockito.doNothing().when(unifiedCompositionServiceMock).createUnifiedComposition(
+        any(),
+        any(),
+        any(),
+        any(),
+        any());
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationRuleFalseGetAttrOutBetweenSubInterfacesOfSameType()
+      throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    GetAttrFuncData getAttrFuncData = new GetAttrFuncData("name", "c1_name");
+    Pair<String, GetAttrFuncData> getAttrOutInvalid1 =
+        new ImmutablePair<>("interface_1", getAttrFuncData);
+    Pair<String, GetAttrFuncData> getAttrOutInvalid2 =
+        new ImmutablePair<>("interface_2", getAttrFuncData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, null, null, null, Collections.singletonList(getAttrOutInvalid1), consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_1",
+            2, null, null, null, Collections.singletonList(getAttrOutInvalid2), consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+
+    Mockito.doNothing().when(unifiedCompositionServiceMock).createUnifiedComposition(
+        any(),
+        any(),
+        any(),
+        any(),
+        any());
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationRuleFalseDifferentRoleInResourceGroup() throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, null, null, null, null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_2",
+            2, null, null, null, null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+
+    Mockito.doNothing().when(unifiedCompositionServiceMock).createUnifiedComposition(
+        any(),
+        any(),
+        any(),
+        any(),
+        any());
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testConsolidationRuleTrueForSubInterfaces() throws IOException {
+    translationContext = new TranslationContext();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/pre_condition/different_subinterface_types",
+            null, null);
+
+    ConsolidationData consolidationData = new ConsolidationData();
+    TestUtils
+        .initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_2",
+        null, null, null, null, null,
+        consolidationData);
+
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_1", "interface_1", "nested1.yaml", "role_1",
+            2, Collections.singletonList("node_1"), Collections.singletonList("node_1"), null,
+            null, consolidationData);
+    TestUtils
+        .addPortSubInterface(mainST, "cm01_port_2", "interface_2", "nested1.yaml", "role_1",
+            2, Collections.singletonList("node_1"), Collections.singletonList("node_1"), null,
+            null, consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
+
+    Mockito.doNothing().when(unifiedCompositionServiceMock).createUnifiedComposition(
+        any(),
+        any(),
+        any(),
+        any(),
+        any());
+
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
 
@@ -2176,5 +2878,4 @@ public class ConsolidationServiceTest {
         .put(serviceTemplateFileName, serviceTemplate);
   }
 
-  */
 }

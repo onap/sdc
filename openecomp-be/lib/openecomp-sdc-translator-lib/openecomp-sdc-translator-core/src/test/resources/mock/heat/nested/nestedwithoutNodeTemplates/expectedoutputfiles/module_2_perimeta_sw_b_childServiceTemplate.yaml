@@ -302,6 +302,61 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: perimeta_rtp_msc_b_server_0
           relationship: tosca.relationships.network.BindsTo
+    perimeta_rtp_msc_b_untrusted_0_vlan_ports:
+      type: org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual
+      directives:
+      - substitutable
+      properties:
+        perimeta_parent_interface: perimeta_rtp_msc_b_untrusted_parent_0_port
+        perimeta_v6_vip_0:
+          get_input:
+          - rtp_msc_untrusted_v6_vips
+          - get_input: perimeta_instance_index
+        service_template_filter:
+          substitute_service_template: vlan_subinterface_dualServiceTemplate.yaml
+          count:
+            get_input: perimeta_untrusted_num_vlans
+          mandatory: false
+        perimeta_subinterface_name_prefix:
+          str_replace:
+            template: $VNF_NAME_$VM_untrusted_port_vlan
+            params:
+              $VM:
+                get_input:
+                - rtp_msc_b_names
+                - get_input: perimeta_instance_index
+              $VNF_NAME:
+                get_input: vnf_name
+        perimeta_vlan_networks:
+          get_input: perimeta_untrusted_vlan_networks
+        perimeta_subinterface_instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        perimeta_ip_0:
+          get_input:
+          - rtp_msc_b_untrusted_ips
+          - get_input: perimeta_instance_index
+        perimeta_vip_0:
+          get_input:
+          - rtp_msc_untrusted_vips
+          - get_input: perimeta_instance_index
+        perimeta_vlan_ids:
+          get_input: perimeta_untrusted_vlan_ids
+        perimeta_mac_address:
+          get_attribute:
+          - perimeta_rtp_msc_b_untrusted_parent_0_port
+          - mac_address
+        perimeta_v6_ip_0:
+          get_input:
+          - rtp_msc_b_untrusted_v6_ips
+          - get_input: perimeta_instance_index
+      requirements:
+      - binding_contrail_vmi_subinterface:
+          capability: tosca.capabilities.network.Bindable
+          node: perimeta_rtp_msc_b_untrusted_parent_0_port
+          relationship: tosca.relationships.network.BindsTo
     perimeta_rtp_msc_b_server_0:
       type: org.openecomp.resource.vfc.nodes.heat.rtp_msc_b
       properties:
@@ -427,6 +482,7 @@ topology_template:
       members:
       - perimeta_rtp_msc_b_trusted_0_port
       - perimeta_rtp_msc_b_mgmt_0_port
+      - perimeta_rtp_msc_b_untrusted_0_vlan_ports
       - perimeta_rtp_msc_b_server_0
       - perimeta_rtp_msc_b_ha_0_port
       - perimeta_rtp_msc_b_untrusted_parent_0_port
@@ -493,6 +549,9 @@ topology_template:
       network.outgoing.bytes.rate_perimeta_rtp_msc_b_trusted_0_port:
       - perimeta_rtp_msc_b_trusted_0_port
       - network.outgoing.bytes.rate
+      feature_contrail_vmi_subinterface_perimeta_rtp_msc_b_untrusted_0_vlan_ports:
+      - perimeta_rtp_msc_b_untrusted_0_vlan_ports
+      - feature_contrail_vmi_subinterface
       attachment_perimeta_rtp_msc_b_ha_0_port:
       - perimeta_rtp_msc_b_ha_0_port
       - attachment
@@ -619,6 +678,9 @@ topology_template:
       disk.write.requests_perimeta_rtp_msc_b_server_0:
       - perimeta_rtp_msc_b_server_0
       - disk.write.requests
+      feature_perimeta_rtp_msc_b_untrusted_0_vlan_ports:
+      - perimeta_rtp_msc_b_untrusted_0_vlan_ports
+      - feature
       network.incoming.packets.rate_perimeta_rtp_msc_b_mgmt_0_port:
       - perimeta_rtp_msc_b_mgmt_0_port
       - network.incoming.packets.rate
@@ -701,17 +763,14 @@ topology_template:
       - perimeta_rtp_msc_b_server_0
       - disk.read.bytes.rate
     requirements:
-      link_perimeta_rtp_msc_b_trusted_0_port:
-      - perimeta_rtp_msc_b_trusted_0_port
-      - link
-      dependency_perimeta_rtp_msc_b_untrusted_parent_0_port:
-      - perimeta_rtp_msc_b_untrusted_parent_0_port
-      - dependency
-      link_perimeta_rtp_msc_b_ha_0_port:
-      - perimeta_rtp_msc_b_ha_0_port
-      - link
+      dependency_contrail_vmi_subinterface_perimeta_rtp_msc_b_untrusted_0_vlan_ports:
+      - perimeta_rtp_msc_b_untrusted_0_vlan_ports
+      - dependency_contrail_vmi_subinterface
       dependency_perimeta_rtp_msc_b_trusted_0_port:
       - perimeta_rtp_msc_b_trusted_0_port
+      - dependency
+      dependency_perimeta_rtp_msc_b_untrusted_0_vlan_ports:
+      - perimeta_rtp_msc_b_untrusted_0_vlan_ports
       - dependency
       dependency_perimeta_rtp_msc_b_ha_0_port:
       - perimeta_rtp_msc_b_ha_0_port
@@ -722,6 +781,18 @@ topology_template:
       dependency_perimeta_rtp_msc_b_mgmt_0_port:
       - perimeta_rtp_msc_b_mgmt_0_port
       - dependency
+      link_contrail_vmi_subinterface_perimeta_rtp_msc_b_untrusted_0_vlan_ports:
+      - perimeta_rtp_msc_b_untrusted_0_vlan_ports
+      - link_contrail_vmi_subinterface
+      link_perimeta_rtp_msc_b_trusted_0_port:
+      - perimeta_rtp_msc_b_trusted_0_port
+      - link
+      dependency_perimeta_rtp_msc_b_untrusted_parent_0_port:
+      - perimeta_rtp_msc_b_untrusted_parent_0_port
+      - dependency
+      link_perimeta_rtp_msc_b_ha_0_port:
+      - perimeta_rtp_msc_b_ha_0_port
+      - link
       local_storage_perimeta_rtp_msc_b_server_0:
       - perimeta_rtp_msc_b_server_0
       - local_storage
