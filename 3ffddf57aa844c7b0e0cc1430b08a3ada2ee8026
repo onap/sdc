@@ -1,0 +1,141 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b0d7d4be",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T07:15:23Z",
+      "side": 1,
+      "message": "If it\u0027s going to change along with the rest of the project, use ${project.version}",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b08594ae",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ToscaServiceModelHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T07:15:23Z",
+      "side": 1,
+      "message": "SDC is the right acronym. You might also use a more generic \"Product was updated\".",
+      "range": {
+        "startLine": 30,
+        "startChar": 60,
+        "endLine": 30,
+        "endChar": 63
+      },
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_908ad8bd",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ToscaServiceModelHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T07:15:23Z",
+      "side": 1,
+      "message": "Is it necessary heat, or maybe anything else? In any case, it should be either HOT (Heat Orchestration Template), or Heat (name of the software).",
+      "range": {
+        "startLine": 31,
+        "startChar": 27,
+        "endLine": 31,
+        "endChar": 31
+      },
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70f86c49",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ToscaServiceModelHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T07:15:23Z",
+      "side": 1,
+      "message": "This is invoked even if it may not be needed according to the type. Please rewrite the method so that it\u0027s only done when needed, i.e. the return type is ZIP or CSAR.",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d0a06045",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ToscaServiceModelHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T07:15:23Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s a good idea to concatenate all validation error messages in a single exception. It will be difficult to read. These messages are for a user, and are supposed to be presented in a UI.",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_509450e1",
+        "filename": "openecomp-be/lib/openecomp-sdc-model-lib/openecomp-sdc-model-api/src/main/java/org/openecomp/core/model/dao/ServiceModelDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T07:15:23Z",
+      "side": 1,
+      "message": "Did you check the implications of adding this method to the interface? Having an empty default method may not be a good idea. I believe it will do nothing in most cases, because nothing makes the authors of sub-classes implement it. Are you OK with that?\n\nAlso, what\u0027s the purpose of this method? Unlike get/store/delete, it\u0027s not clear. Moreover, it looks suspicious (especially given the previous comment). Maybe Javadoc could help.",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b0acb436",
+        "filename": "openecomp-be/lib/openecomp-sdc-model-lib/openecomp-sdc-model-impl/src/main/java/org/openecomp/sdc/model/impl/zusammen/ServiceModelDaoZusammenImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T07:15:23Z",
+      "side": 1,
+      "message": "There are way too many parameters to this method. See if you can refactor.",
+      "range": {
+        "startLine": 191,
+        "startChar": 36,
+        "endLine": 197,
+        "endChar": 100
+      },
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
