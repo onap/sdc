@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.collections4.MapUtils;
 import org.junit.AfterClass;
@@ -50,8 +52,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import static org.junit.Assert.assertEquals;
 
 
 public class BaseFullTranslationTest {
