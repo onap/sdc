@@ -2,38 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested3
 imports:
-- CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-- NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-- NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-- NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-- NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-- CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-- ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-- ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-- AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-- ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
-- ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-- ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-- ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-- ContrailV2VirtualNetworkGlobalType:
-    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
-- ContrailV2NetworkRuleGlobalType:
-    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
-- ContrailV2VLANSubInterfaceGlobalType:
-    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 topology_template:
@@ -239,28 +209,59 @@ topology_template:
       - template_Vlan_5
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested3
+    capabilities:
+      feature_test_nested4Level:
+      - test_nested4Level
+      - feature
+      feature_template_Vlan_6:
+      - template_Vlan_6
+      - feature
+      feature_template_Vlan_8_test_nested4Level:
+      - test_nested4Level
+      - feature_template_Vlan_8
+      feature_template_Vlan_5:
+      - template_Vlan_5
+      - feature
+      feature_template_Vlan_7_test_nested4Level:
+      - test_nested4Level
+      - feature_template_Vlan_7
     requirements:
       link_template_Vlan_8_test_nested4Level:
       - test_nested4Level
       - link_template_Vlan_8
-      link_template_Vlan_7_test_nested4Level:
-      - test_nested4Level
-      - link_template_Vlan_7
       binding_template_Vlan_8_test_nested4Level:
       - test_nested4Level
       - binding_template_Vlan_8
-      link_template_Vlan_5:
-      - template_Vlan_5
-      - link
-      link_template_Vlan_6:
-      - template_Vlan_6
-      - link
       binding_template_Vlan_7_test_nested4Level:
       - test_nested4Level
       - binding_template_Vlan_7
+      dependency_template_Vlan_7_test_nested4Level:
+      - test_nested4Level
+      - dependency_template_Vlan_7
+      dependency_test_nested4Level:
+      - test_nested4Level
+      - dependency
+      link_template_Vlan_7_test_nested4Level:
+      - test_nested4Level
+      - link_template_Vlan_7
+      link_template_Vlan_5:
+      - template_Vlan_5
+      - link
+      dependency_template_Vlan_8_test_nested4Level:
+      - test_nested4Level
+      - dependency_template_Vlan_8
+      link_template_Vlan_6:
+      - template_Vlan_6
+      - link
       binding_template_Vlan_6:
       - template_Vlan_6
       - binding
       binding_template_Vlan_5:
       - template_Vlan_5
       - binding
+      dependency_template_Vlan_6:
+      - template_Vlan_6
+      - dependency
+      dependency_template_Vlan_5:
+      - template_Vlan_5
+      - dependency
