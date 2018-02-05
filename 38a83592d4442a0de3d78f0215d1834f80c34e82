@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5b9b1172",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-02-05T11:36:06Z",
+      "side": 1,
+      "message": "Values is a set. You iterate on the set, get the last value and by this you returning a result.\nThe issue is that set does not promise any order, so why not take the first item in the Set? or random access the SET?",
+      "revId": "38a83592d4442a0de3d78f0215d1834f80c34e82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
