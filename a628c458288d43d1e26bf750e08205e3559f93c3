@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_bb6fb5c4",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/togglz/ToggleStatus.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2143
+      },
+      "writtenOn": "2018-02-05T10:00:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_5059b058",
+      "revId": "a628c458288d43d1e26bf750e08205e3559f93c3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_30366404",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
         "patchSetId": 1
