@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fb7a1df0",
+        "filename": "openecomp-bdd/config.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T13:58:55Z",
+      "side": 1,
+      "message": "Something more neutral please. Or a placeholder.",
+      "revId": "33143349a8c7ccb82d1c010bc785a3d1b7e38107",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db8721d6",
+        "filename": "openecomp-bdd/features/Example_HEAT.feature",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T13:58:55Z",
+      "side": 1,
+      "message": "This is commented out. Is it an example?",
+      "revId": "33143349a8c7ccb82d1c010bc785a3d1b7e38107",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9b699927",
+        "filename": "openecomp-bdd/features/Example_Rest_Calls.feature",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T13:58:55Z",
+      "side": 1,
+      "message": "Not clear. Is it needed? If not - remove it. If yes - write some more meaningful.",
+      "revId": "33143349a8c7ccb82d1c010bc785a3d1b7e38107",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fbc8dd23",
+        "filename": "openecomp-bdd/report/report.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T13:58:55Z",
+      "side": 1,
+      "message": "Was it committed by mistake? Maybe .gitignore should be updated.",
+      "revId": "33143349a8c7ccb82d1c010bc785a3d1b7e38107",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bbe9f581",
+        "filename": "openecomp-bdd/report/report.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-05T13:58:55Z",
+      "side": 1,
+      "message": "This one also looks like committed by mistake.",
+      "revId": "33143349a8c7ccb82d1c010bc785a3d1b7e38107",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
