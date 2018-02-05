@@ -645,7 +645,11 @@ public class HeatToToscaUtil {
    * @return the boolean
    */
   public static boolean isHeatFileNested(TranslateTo translateTo, String heatFileName) {
-    return translateTo.getContext().getNestedHeatsFiles().contains(heatFileName);
+    return isHeatFileNested(translateTo.getContext(), heatFileName);
+  }
+
+  public static boolean isHeatFileNested(TranslationContext context, String heatFileName) {
+    return context.getNestedHeatsFiles().contains(heatFileName);
   }
 
   /**

@@ -42,6 +42,9 @@ public class ToscaConstants {
   public static final String FEATURE_CAPABILITY_ID = "feature";
   public static final String PORT_MIRRORING_CAPABILITY_ID = "port_mirroring";
 
+  //TOSCA Annotation Ids
+  public static final String SOURCE_ANNOTATION_ID = "source";
+
   //General
   public static final String TOSCA_DEFINITIONS_VERSION = "tosca_simple_yaml_1_0_0";
   public static final String MODELABLE_ENTITY_NAME_SELF = "SELF";
@@ -69,6 +72,14 @@ public class ToscaConstants {
 
   public static final String COMPUTE_IMAGE = "image";
   public static final String COMPUTE_FLAVOR = "flavor";
+
+  public static final String SOURCE_TYPE_PROPERTY_NAME = "source_type";
+  public static final String VF_MODULE_LABEL_PROPERTY_NAME = "vf_module_label";
+  public static final String PARAM_NAME_PROPERTY_NAME = "param_name";
+
+  // propertiies valid values
+  public static final String HEAT_SOURCE_TYPE = "HEAT";
+  public static final String GENERIC_SOURCE_TYPE = "Generic";
 
 
 }

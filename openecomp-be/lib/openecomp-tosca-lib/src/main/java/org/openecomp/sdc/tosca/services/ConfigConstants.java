@@ -32,6 +32,7 @@ public class ConfigConstants {
   public static final String PREFIX_POLICY_TYPE = PREFIX + ".policyType";
   public static final String PREFIX_ARTIFACT_TYPE = PREFIX + ".artifactType";
   public static final String PREFIX_RELATIONSHIP_TYPE = PREFIX + ".relationshipType";
+  public static final String PREFIX_ANNOTATION_TYPE = PREFIX + ".annotationType";
 
   public static final String PREFIX_NODE_TYPE_VFC = PREFIX + ".nodeType.vfc";
   public static final String PREFIX_NODE_TYPE_NETWORK = PREFIX + ".nodeType.network";

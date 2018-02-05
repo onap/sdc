@@ -20,46 +20,27 @@
 
 package org.openecomp.sdc.tosca.datatypes.model.heatextend;
 
-import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import java.util.Map;
 
-public class ParameterDefinitionExt extends ParameterDefinition {
+public class AnnotationDefinition {
 
-  private String label;
-  private Boolean hidden;
-  private Boolean immutable;
-  private Map<String, AnnotationDefinition> annotations;
+  private String type;
+  private Map<String, Object> properties;
 
-  public String getLabel() {
-    return label;
+  public String getType() {
+    return type;
   }
 
-  public void setLabel(String label) {
-    this.label = label;
+  public void setType(String type) {
+    this.type = type;
   }
 
-  public Boolean getHidden() {
-    return hidden;
+  public Map<String, Object> getProperties() {
+    return properties;
   }
 
-  public void setHidden(Boolean hidden) {
-    this.hidden = hidden;
-  }
-
-  public Boolean getImmutable() {
-    return immutable;
-  }
-
-  public void setImmutable(Boolean immutable) {
-    this.immutable = immutable;
-  }
-
-  public Map<String, AnnotationDefinition> getAnnotations() {
-    return annotations;
-  }
-
-  public void setAnnotations(Map<String, AnnotationDefinition> annotations) {
-    this.annotations = annotations;
+  public void setProperties(Map<String, Object> properties) {
+    this.properties = properties;
   }
 
 }

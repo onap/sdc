@@ -39,6 +39,7 @@ import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
@@ -86,7 +87,7 @@ public class TranslationService {
     ServiceTemplate mainServiceTemplate = createMainServiceTemplate(translationContext);
     List<FileData> fileDataList = translationContext.getManifest().getContent().getData();
     FileDataCollection fileDataCollection = HeatToToscaUtil.getFileCollectionsByFilter(fileDataList,
-        TranslationService.getTypesToProcessByTranslator(), translationContext);
+            TranslationService.getTypesToProcessByTranslator(), translationContext);
 
     if (fileDataCollection.getBaseFile() != null) {
       for (FileData fileData : fileDataCollection.getBaseFile()) {
@@ -100,13 +101,13 @@ public class TranslationService {
     }
 
     ToscaServiceModel toscaServiceModel =
-        HeatToToscaUtil.createToscaServiceModel(mainServiceTemplate, translationContext);
+            HeatToToscaUtil.createToscaServiceModel(mainServiceTemplate, translationContext);
 
     TranslatorOutput translatorOutput = new TranslatorOutput();
     //Keeping a copy of tosca service model after first stage of translation for extraction of
     // composition data
     translatorOutput.setNonUnifiedToscaServiceModel(
-        ToscaServiceModel.getClonedServiceModel(toscaServiceModel));
+            ToscaServiceModel.getClonedServiceModel(toscaServiceModel));
     translatorOutput.setToscaServiceModel(toscaServiceModel);
     return translatorOutput;
   }
@@ -114,7 +115,7 @@ public class TranslationService {
   private ServiceTemplate createMainServiceTemplate(TranslationContext translationContext) {
     ServiceTemplate mainServiceTemplate = new ServiceTemplate();
     translationContext.getTranslatedServiceTemplates()
-        .put(Constants.MAIN_TEMPLATE_NAME, mainServiceTemplate);
+            .put(Constants.MAIN_TEMPLATE_NAME, mainServiceTemplate);
     Map<String, String> templateMetadata = new HashMap<>();
     templateMetadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, Constants.MAIN_TEMPLATE_NAME);
     mainServiceTemplate.setTosca_definitions_version(ToscaConstants.TOSCA_DEFINITIONS_VERSION);
@@ -135,26 +136,26 @@ public class TranslationService {
                                 TranslationContext context) {
     String heatFileName = heatFileData.getFile();
     HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
-        .yamlToObject(context.getFileContent(heatFileName), HeatOrchestrationTemplate.class);
+            .yamlToObject(context.getFileContent(heatFileName), HeatOrchestrationTemplate.class);
 
     translateInputParameters(serviceTemplate, heatOrchestrationTemplate, heatFileData, context,
-        heatFileName);
+            heatFileName);
     translateResources(heatFileName, serviceTemplate, heatOrchestrationTemplate, context);
     translateOutputParameters(serviceTemplate, heatOrchestrationTemplate, heatFileData,
-        heatFileName, context);
+            heatFileName, context);
     createHeatStackGroup(serviceTemplate, heatFileData, heatOrchestrationTemplate, context);
     handleHeatPseudoParam(heatFileName, serviceTemplate, context);
 
     if (Objects.nonNull(heatFileData.getData())) {
       heatFileData.getData().stream().filter(data -> data.getType() == FileData.Type.HEAT_VOL)
-          .forEach(data -> translateHeatFile(serviceTemplate, data, context));
+              .forEach(data -> translateHeatFile(serviceTemplate, data, context));
     }
   }
 
   private void handleHeatPseudoParam(String heatFileName, ServiceTemplate serviceTemplate,
                                      TranslationContext context) {
     Map<String, String> translatedHeatPseudoParam =
-        context.getUsedHeatPseudoParams().get(heatFileName);
+            context.getUsedHeatPseudoParams().get(heatFileName);
     if (Objects.nonNull(translatedHeatPseudoParam)) {
       for (String heatPseudoParam : translatedHeatPseudoParam.keySet()) {
         if (!serviceTemplate.getTopology_template().getInputs().containsKey(heatPseudoParam)) {
@@ -163,7 +164,7 @@ public class TranslationService {
           parameterDefinition.setRequired(false);
           String parameterDefinitionId = translatedHeatPseudoParam.get(heatPseudoParam);
           DataModelUtil.addInputParameterToTopologyTemplate(serviceTemplate, parameterDefinitionId,
-              parameterDefinition);
+                  parameterDefinition);
         }
       }
     }
@@ -180,31 +181,31 @@ public class TranslationService {
     groupDefinition.setType(ToscaGroupType.HEAT_STACK);
     groupDefinition.setProperties(new HashMap<>());
     groupDefinition.getProperties()
-        .put("heat_file", "../" + toscaFileOutputService.getArtifactsFolderName() + "/" + fileName);
+            .put("heat_file", "../" + toscaFileOutputService.getArtifactsFolderName() + "/" + fileName);
     String hotDescription = heatOrchestrationTemplate.getDescription();
     if (hotDescription != null && !hotDescription.isEmpty()) {
       groupDefinition.getProperties().put(Constants.DESCRIPTION_PROPERTY_NAME, hotDescription);
     }
     groupDefinition.setMembers(new ArrayList<>());
     Set<String> heatStackGroupMembersIds = getHeatStackGroupMembers(fileName,
-        serviceTemplate, context);
+            serviceTemplate, context);
     if (CollectionUtils.isEmpty(heatStackGroupMembersIds)) {
       return; //not creating a group when no resources are present in the heat input
     }
     groupDefinition.getMembers().addAll(heatStackGroupMembersIds);
     DataModelUtil
-        .addGroupDefinitionToTopologyTemplate(serviceTemplate, heatStackGroupId, groupDefinition);
+            .addGroupDefinitionToTopologyTemplate(serviceTemplate, heatStackGroupId, groupDefinition);
   }
 
   private Set<String> getHeatStackGroupMembers(String heatFileName,
-                                                            ServiceTemplate serviceTemplate,
-                                                            TranslationContext context){
+                                               ServiceTemplate serviceTemplate,
+                                               TranslationContext context) {
 
     Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
     Set<String> groupMembers = MapUtils.isEmpty(heatStackGroupMembers) ? new HashSet<>()
-        : heatStackGroupMembers.get(heatFileName);
+            : heatStackGroupMembers.get(heatFileName);
 
-    if(CollectionUtils.isEmpty(groupMembers)){
+    if (CollectionUtils.isEmpty(groupMembers)) {
       return new HashSet<>();
     }
 
@@ -225,7 +226,7 @@ public class TranslationService {
                                                 ServiceTemplate serviceTemplate,
                                                 Set<String> updatedMembersIds) {
     Optional<String> substitutableGroupMemberId =
-        ToscaUtil.getSubstitutableGroupMemberId(heatFileName, serviceTemplate);
+            ToscaUtil.getSubstitutableGroupMemberId(heatFileName, serviceTemplate);
 
     substitutableGroupMemberId.ifPresent(updatedMembersIds::add);
   }
@@ -239,9 +240,9 @@ public class TranslationService {
     }
 
     Map<String, ParameterDefinition> parameterDefinitionMap =
-        TranslatorHeatToToscaParameterConverter
-            .parameterConverter(serviceTemplate,heatOrchestrationTemplate.getParameters(),
-                heatOrchestrationTemplate, heatFileName, context);
+            TranslatorHeatToToscaParameterConverter
+                    .parameterConverter(serviceTemplate, heatOrchestrationTemplate.getParameters(),
+                            heatOrchestrationTemplate, heatFileName, context);
     Environment heatEnvFile = getHeatEnvFile(heatFileData, context);
     Map<String, Object> parameters = heatEnvFile.getParameters();
     Object parameterValue;
@@ -251,19 +252,50 @@ public class TranslationService {
         parameterValue = parameters.get(paramName);
         if (parameterValue != null) {
           entry.getValue().set_default(TranslatorHeatToToscaParameterConverter
-              .getToscaParameterDefaultValue(null, null, parameterValue, entry.getValue().getType(),
-                  heatFileName, heatOrchestrationTemplate, context));
+                  .getToscaParameterDefaultValue(null, null, parameterValue, entry.getValue().getType(),
+                          heatFileName, heatOrchestrationTemplate, context));
         }
       }
     }
+
 
     Map<String, ParameterDefinition> inputs = serviceTemplate.getTopology_template().getInputs();
     if (Objects.isNull(inputs)) {
       serviceTemplate.getTopology_template().setInputs(parameterDefinitionMap);
     } else {
-      inputs.putAll(parameterDefinitionMap);
+      setInputs(inputs, parameterDefinitionMap);
+
     }
   }
+
+  private void setInputs(Map<String, ParameterDefinition> inputs, Map<String, ParameterDefinition> newParameters) {
+    updateAnnotations(inputs, newParameters);
+    inputs.putAll(newParameters);
+
+  }
+
+  private void updateAnnotations(Map<String, ParameterDefinition> inputParameters, Map<String, ParameterDefinition> newParameters) {
+
+    for (Map.Entry<String, ParameterDefinition> newParameterEntry : newParameters.entrySet()) {
+      if (inputParameters.containsKey(newParameterEntry.getKey())) {
+        ParameterDefinitionExt inputParameterEntry = (ParameterDefinitionExt) inputParameters.get(newParameterEntry.getKey());
+        if (inputParameterEntry.getAnnotations() != null) {
+          List inputVFModulesList = getVFModulesList(inputParameterEntry);
+          List newVFModulesList = getVFModulesList(newParameterEntry.getValue());
+          newVFModulesList.addAll(inputVFModulesList);
+          inputParameters.remove(newParameterEntry.getKey());
+        }
+      }
+    }
+  }
+
+  private List getVFModulesList(ParameterDefinition param ) {
+
+    return (List)((ParameterDefinitionExt)param).getAnnotations().
+                                  get(ToscaConstants.SOURCE_ANNOTATION_ID).getProperties().
+                                           get(ToscaConstants.VF_MODULE_LABEL_PROPERTY_NAME);
+  }
+
 
   private void translateOutputParameters(ServiceTemplate serviceTemplate,
                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
@@ -286,6 +318,7 @@ public class TranslationService {
       updateSharedResources(serviceTemplate, heatFileName, heatOrchestrationTemplate,
           heatOrchestrationTemplate.getOutputs(), context);
     }
+
   }
 
   private void updateSharedResources(ServiceTemplate serviceTemplate, String heatFileName,

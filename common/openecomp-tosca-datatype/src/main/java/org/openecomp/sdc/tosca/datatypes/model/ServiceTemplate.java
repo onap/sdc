@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.tosca.datatypes.model;
 
+import org.openecomp.sdc.tosca.datatypes.model.heatextend.AnnotationType;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ public class ServiceTemplate implements Template {
   private Map<String, NodeType> node_types;
   private Map<String, GroupType> group_types;
   private Map<String, PolicyType> policy_types;
+  private Map<String, AnnotationType> annotation_types;
   private TopologyTemplate topology_template;
 
   public String getTosca_definitions_version() {
@@ -145,4 +147,13 @@ public class ServiceTemplate implements Template {
   public void setTopology_template(TopologyTemplate topology_template) {
     this.topology_template = topology_template;
   }
+
+  public Map<String, AnnotationType> getAnnotation_types() {
+    return annotation_types;
+  }
+
+  public void setAnnotation_types(Map<String, AnnotationType> annotation_types) {
+    this.annotation_types = annotation_types;
+  }
+
 }
