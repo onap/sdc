@@ -19,6 +19,57 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3068a4f4",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-05T07:20:31Z",
+      "side": 1,
+      "message": "donot hardcode version",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_907898c5",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-05T07:20:31Z",
+      "side": 1,
+      "message": "mark this dependency optional",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f071dce0",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-05T07:20:31Z",
+      "side": 1,
+      "message": "donot hardcode version",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b08594ae",
         "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ToscaServiceModelHealer.java",
         "patchSetId": 2
@@ -110,6 +161,23 @@
       "writtenOn": "2018-02-05T07:15:23Z",
       "side": 1,
       "message": "Did you check the implications of adding this method to the interface? Having an empty default method may not be a good idea. I believe it will do nothing in most cases, because nothing makes the authors of sub-classes implement it. Are you OK with that?\n\nAlso, what\u0027s the purpose of this method? Unlike get/store/delete, it\u0027s not clear. Moreover, it looks suspicious (especially given the previous comment). Maybe Javadoc could help.",
+      "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_104c889d",
+        "filename": "openecomp-be/lib/openecomp-sdc-model-lib/openecomp-sdc-model-impl/src/main/java/org/openecomp/sdc/model/impl/zusammen/ServiceModelDaoZusammenImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-05T07:20:31Z",
+      "side": 1,
+      "message": "wrong method overload. check if you really want to overload?",
       "revId": "3ffddf57aa844c7b0e0cc1430b08a3ada2ee8026",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
