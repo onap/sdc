@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_dcbab76d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-06T10:19:33Z",
+      "side": 1,
+      "message": "I think static imports should be the last ones according to the style-guide, right?...\ndo Ctrl + Shift + O \nand Ctrl + Shift + L",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 147
+      },
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bcb7ab85",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-06T10:19:33Z",
+      "side": 1,
+      "message": "Redundant - use SdcCommon.MANIFEST_NAME in the code instead.",
+      "range": {
+        "startLine": 96,
+        "startChar": 2,
+        "endLine": 96,
+        "endChar": 36
+      },
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fcbd3369",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-06T10:19:33Z",
+      "side": 1,
+      "message": "If it is a constant, make it one: private static final + rename to capital letters.",
+      "range": {
+        "startLine": 97,
+        "startChar": 17,
+        "endLine": 97,
+        "endChar": 35
+      },
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
