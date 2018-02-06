@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_bcffab66",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ToscaServiceModelHealer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-06T08:52:16Z",
+      "side": 1,
+      "message": "there is nothing in the method declaration that implies the developer that this function returns an Optional. Either return null/object required or change the method to return Optional",
+      "range": {
+        "startLine": 54,
+        "startChar": 13,
+        "endLine": 54,
+        "endChar": 30
+      },
+      "revId": "6cb9465ae3f840a7e759aeb4f81769a9ffa6924c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
