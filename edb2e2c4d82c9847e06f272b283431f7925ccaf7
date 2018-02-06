@@ -92,6 +92,92 @@
       "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70cf0780",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T14:07:02Z",
+      "side": 1,
+      "message": "Tali has a point here.",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 62
+      },
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f0a237ad",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T14:07:02Z",
+      "side": 1,
+      "message": "The line is still too long.",
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f090f744",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ContrailV2VlanToInterfaceResourceConnectionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T14:07:02Z",
+      "side": 1,
+      "message": "Weird. Whenever you add a constant, think about its purpose. For example: 1) a value is used multiple times and you don\u0027t want it become different values because of accidental spelling mistakes (e.g. \"false\"/\"fales\"); 2) you want to change a value in one place so that everyone sees the change (e.g. SILENT_MODE \u003d true); 3) you don\u0027t care about accurate spelling, but lazy to type the same long string every time (e.g. UNEXPECTED_ERROR \u003d \"I\u0027m sorry, but some unexpected error occurred. Please see the logs for more details\");",
+      "range": {
+        "startLine": 32,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 35
+      },
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f0deb710",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ContrailV2VlanToInterfaceResourceConnectionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T14:07:02Z",
+      "side": 1,
+      "message": "None of these constants is in use. Please make sure to run static analysis before you submit changes for review.",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 0
+      },
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
