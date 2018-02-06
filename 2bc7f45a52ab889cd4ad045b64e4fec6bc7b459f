@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_30dc1f12",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-02-06T14:29:50Z",
+      "side": 1,
+      "message": "All Map\u003cObject, List\u003cObject\u003e\u003e should ber replaced with ListMultiMap\nhttps://google.github.io/guava/releases/21.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d0029b6e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-02-06T14:29:50Z",
+      "side": 1,
+      "message": "Use \nhttps://google.github.io/guava/releases/21.0/api/docs/com/google/common/collect/SetMultimap.html",
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
