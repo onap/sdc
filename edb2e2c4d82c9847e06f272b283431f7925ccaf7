@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_50e3eb32",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-02-06T12:13:44Z",
+      "side": 1,
+      "message": "We are following onap java style guide https://wiki.onap.org/display/DW/Java+code+style which ordered the static imports on top. Do we have any other guidelines for this ?",
+      "parentUuid": "5a93c517_dcbab76d",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 147
+      },
+      "revId": "edb2e2c4d82c9847e06f272b283431f7925ccaf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_bcb7ab85",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
         "patchSetId": 1
