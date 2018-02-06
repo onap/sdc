@@ -1,0 +1,192 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d05cdbef",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/errors/Messages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "Please break the line at 120 characters.",
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70faa7be",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/errors/Messages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "Are these constants use elsewhere other than the new validator? If not, there\u0027s no reason for them do be here.",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 127,
+        "endChar": 133
+      },
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70e867e2",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "tagPropertyValue.ifPresent(o -\u003e validateHasSingleParentPort(fileName, resourceEntry, globalContext,\n          heatResourceValidationContext));",
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_90e3b304",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "This is always \"true\". The \"if\" is redundant.",
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d0137b0b",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "I don\u0027t believe anyone can follow this :( Static analysis tells you so, too - \"...reduce its Cognitive Complexity from 25...\"",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 5
+      },
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70738780",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "No need to return Optional from a private method. Since you know exactly what the \"contract\" is and what is the meaning of \"null\" here, Optional becomes just an unnecessary overhead.",
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d02a9b2b",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "Again, Optional is unnecessary overhead. Please google for what Optional is good for.",
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_301bbf1c",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidatorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "Please avoid fields in tests. A field may have a state, so you inadvertently create dependency between tests. These dependencies can manifest themselves depending on the order individual tests run in, and may be hard to troubleshoot.\nAlso, the IntelliJ static analysis tool tells you these fields can be final (if you decide to keep them, of course).",
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f0d47721",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidatorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "These are never thrown here (in the other test as well).",
+      "range": {
+        "startLine": 27,
+        "startChar": 43,
+        "endLine": 27,
+        "endChar": 63
+      },
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_50ed2bee",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidatorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-06T13:28:12Z",
+      "side": 1,
+      "message": "Please keep the lines under 120 symbols.",
+      "revId": "15401a3ffc30f5f243f979f2f64194eb4fdd83e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
