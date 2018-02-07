@@ -12,6 +12,14 @@ topology_template:
       label: PCRF CM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: pcm_flavor_name
       type: string
       description: flavor name of PCRF CM instance
       default: cps
@@ -19,6 +27,14 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: availabilityzone_name
       type: string
       description: availabilityzone name
       default: nova
@@ -26,12 +42,28 @@ topology_template:
       label: CPS network gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: oam_net_gw
       type: string
       description: CPS network gateway
     pcm_server_names:
       label: PCRF CM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: pcm_server_names
       type: list
       description: name of the PCRF CM instance
       default:
@@ -42,16 +74,40 @@ topology_template:
       label: PCRF CM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: pcm_image_name
       type: string
       description: PCRF CM image name
       default: rhel2
     net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: net_name
       type: string
     compute_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: compute_image_name
       type: string
   node_templates:
     server_pcm_002:

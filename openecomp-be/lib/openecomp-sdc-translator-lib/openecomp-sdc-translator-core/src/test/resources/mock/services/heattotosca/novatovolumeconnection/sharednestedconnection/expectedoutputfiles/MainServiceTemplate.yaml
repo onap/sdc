@@ -12,22 +12,56 @@ topology_template:
       label: CMAUI Cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - main
+            source_type: HEAT
+            param_name: cmaui_cinder_volume_size
       type: float
       description: the size of the CMAUI Cinder volume
     shared_vol1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_vol1
       type: string
       description: volume name
     shared_vol2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_vol2
       type: string
       description: volume name
     CMAUI_volume_type:
       label: CMAUI vm volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - main
+            source_type: HEAT
+            param_name: CMAUI_volume_type
       type: string
       description: the name of the target volume backend
   node_templates:

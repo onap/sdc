@@ -7,7 +7,10 @@ import org.togglz.core.context.FeatureContext;
 public enum ToggleableFeature implements Feature {
 
   @Label ("Forwarder Capability")
-  FORWARDER_CAPABILITY;
+  FORWARDER_CAPABILITY,
+  @Label ("Annotations")
+  ANNOTATIONS;
+
 
   public boolean isActive() {
     return FeatureContext.getFeatureManager().isActive(this);

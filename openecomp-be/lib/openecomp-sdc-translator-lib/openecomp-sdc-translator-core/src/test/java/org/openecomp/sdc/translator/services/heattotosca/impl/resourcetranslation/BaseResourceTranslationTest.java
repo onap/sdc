@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
@@ -100,17 +96,21 @@ public class BaseResourceTranslationTest {
   protected static TestFeatureManager manager;
 
   @BeforeClass
-  public static void enableForwarderFeature(){
+  public static void enableToggleableFeatures(){
     manager = new TestFeatureManager(ToggleableFeature.class);
     if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
       manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
+    }
+    if(!ToggleableFeature.ANNOTATIONS.isActive()) {
+      manager.enable(ToggleableFeature.ANNOTATIONS);
     }
   }
 
 
   @AfterClass
-  public static void disableForwarderFeature() {
+  public static void disableToggleableFeatures() {
     manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
+    manager.disable(ToggleableFeature.ANNOTATIONS);
     manager = null;
     TestFeatureManagerProvider.setFeatureManager(null);
   }

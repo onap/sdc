@@ -10,42 +10,98 @@ topology_template:
       label: volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: volume_type
       type: string
       description: volume type Gold
     FSB1_volume_name:
       label: FSB1_volume
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: FSB1_volume_name
       type: string
       description: FSB1_volume_1
     FSB_1_image:
       label: MME_FSB1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: FSB_1_image
       type: string
       description: MME_FSB1_15B-CP04-r5a01
     volume_size:
       label: volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: volume_size
       type: float
       description: my volume size 320GB
     stam:
       label: stam
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: stam
       type: float
       description: stam
     FSB_2_image:
       label: MME_FSB2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: FSB_2_image
       type: string
       description: MME_FSB2_15B-CP04-r5a01
     FSB2_volume_name:
       label: FSB2_volume
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: FSB2_volume_name
       type: string
       description: FSB2_volume_1
   node_templates:

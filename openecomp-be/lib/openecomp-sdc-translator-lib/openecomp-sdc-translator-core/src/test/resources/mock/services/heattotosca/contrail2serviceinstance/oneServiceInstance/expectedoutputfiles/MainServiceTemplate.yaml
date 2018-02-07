@@ -11,142 +11,342 @@ topology_template:
     protected_net:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: protected_net
       type: string
     service_policy_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: service_policy_name
       type: string
       description: Policy Name
       default: MNS-25180-L-02Shared_policy_direct_fw_protected_oam_1
     oam_direct_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: oam_direct_net_id
       type: string
       description: Name of private network to be created
     st_static_routes_list:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_static_routes_list
       type: string
       description: List of static routes enabled-disabled
       default: True,True,True,True
     st_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_type
       type: string
       description: service type
       default: firewall
     st_service_interface_type_list:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_service_interface_type_list
       type: string
       description: List of interface types
       default: management,left,right,other
     oam_protected_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: oam_protected_net_id
       type: string
       description: Name of private network to be created
     st_mode:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_mode
       type: string
       description: service mode
       default: in-network-nat
     static_prefix_3_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: static_prefix_3_1
       type: string
       description: prefix for static route
       default: 107.239.80.0/21
     oam_hsl_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: oam_hsl_net_id
       type: string
       description: Name of private network to be created
     start_dst_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: start_dst_ports
       type: float
       description: Start of dst port
       default: -1
     st_scaling:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_scaling
       type: string
       description: Indicates whether service scaling is enabled
       default: 'True'
     service_instance_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: service_instance_name
       type: string
       description: service instance name
     max_num_fw_instances:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: max_num_fw_instances
       type: float
       description: maximum number of firewall instances for scaling
       default: 8
     start_src_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: start_src_ports
       type: float
       description: Start of src port
       default: -1
     availability_zone:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: availability_zone
       type: string
       description: availability zone in form of Zone:Host
     service_policy_direction:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: service_policy_direction
       type: string
       description: Direction of Policy
       default: <>
     st_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_flavor_name
       type: string
       description: Flavor
       default: lc.medium
     st_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_name
       type: string
       description: service template name or ID
       default: MNS-25180-L-02Shared_oam_fw_template_1
     st_availability_zone_enable_flag:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_availability_zone_enable_flag
       type: string
       description: service template availablity_zone feature enable flag
       default: 'True'
     st_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_image
       type: string
       description: Name of the image
       default: NIMBUS_SRX_151X49-D303
     st_shared_ip_list:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: st_shared_ip_list
       type: string
       description: List of shared ip enabled-disabled
       default: False,True,False,False
     oam_mgmt_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: oam_mgmt_net_id
       type: string
       description: Name of private network to be created
     end_src_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: end_src_ports
       type: float
       description: End of src port
       default: -1
     end_dst_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - lcp1_mss.oam-fw_si
+            source_type: HEAT
+            param_name: end_dst_ports
       type: float
       description: End of dst port
       default: -1

@@ -42,7 +42,7 @@ public class GlobalTypesServiceTemplatesTest {
     Map<String, ServiceTemplate> globalTypesServiceTemplates =
         getGlobalTypesServiceTemplates(OnboardingTypesEnum.CSAR);
     Assert.assertNotNull(globalTypesServiceTemplates);
-    Assert.assertEquals(globalTypesServiceTemplates.size(), 24);
+    Assert.assertEquals(globalTypesServiceTemplates.size(), 25);
     Set<String> globalTypeFolders = globalTypesServiceTemplates.keySet();
     List<String> onapGlobalTypes = globalTypeFolders.stream()
         .filter(resourceKey -> resourceKey.contains("onap"))
@@ -56,7 +56,7 @@ public class GlobalTypesServiceTemplatesTest {
     Map<String, ServiceTemplate> globalTypesServiceTemplates =
         getGlobalTypesServiceTemplates(OnboardingTypesEnum.ZIP);
     Assert.assertNotNull(globalTypesServiceTemplates);
-    Assert.assertEquals(globalTypesServiceTemplates.size(), 19);
+    Assert.assertEquals(globalTypesServiceTemplates.size(), 20);
     Set<String> globalTypeFolders = globalTypesServiceTemplates.keySet();
     List<String> onapGlobalTypes = globalTypeFolders.stream()
         .filter(resourceKey -> resourceKey.contains("onap"))
@@ -69,7 +69,7 @@ public class GlobalTypesServiceTemplatesTest {
     Map<String, ServiceTemplate> globalTypesServiceTemplates =
         getGlobalTypesServiceTemplates(OnboardingTypesEnum.MANUAL);
     Assert.assertNotNull(globalTypesServiceTemplates);
-    Assert.assertEquals(globalTypesServiceTemplates.size(), 19);
+    Assert.assertEquals(globalTypesServiceTemplates.size(), 20);
     Set<String> globalTypeFolders = globalTypesServiceTemplates.keySet();
     List<String> onapGlobalTypes = globalTypeFolders.stream()
         .filter(resourceKey -> resourceKey.contains("onap"))
@@ -82,7 +82,7 @@ public class GlobalTypesServiceTemplatesTest {
     Map<String, ServiceTemplate> globalTypesServiceTemplates =
         getGlobalTypesServiceTemplates(OnboardingTypesEnum.NONE);
     Assert.assertNotNull(globalTypesServiceTemplates);
-    Assert.assertEquals(globalTypesServiceTemplates.size(), 19);
+    Assert.assertEquals(globalTypesServiceTemplates.size(), 20);
     Set<String> globalTypeFolders = globalTypesServiceTemplates.keySet();
     List<String> onapGlobalTypes = globalTypeFolders.stream()
         .filter(resourceKey -> resourceKey.contains("onap"))
@@ -90,4 +90,4 @@ public class GlobalTypesServiceTemplatesTest {
     Assert.assertEquals(onapGlobalTypes.size(), 0);
   }
 
-}
+}

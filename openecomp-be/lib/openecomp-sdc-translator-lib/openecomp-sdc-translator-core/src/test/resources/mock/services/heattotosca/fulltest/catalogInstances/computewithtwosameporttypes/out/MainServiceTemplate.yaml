@@ -11,6 +11,14 @@ topology_template:
     app_volume_size_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF_volume
+            source_type: HEAT
+            param_name: app_volume_size_0
       type: float
       description: Size of Service Data 1 Volume for app VMs
       default: 130
@@ -21,16 +29,40 @@ topology_template:
     plt_data_floating_v6_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_data_floating_v6_ip
       type: string
       description: Floating IPv6 for plt VMs on the DATA network
     iox_data_floating_v6_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_data_floating_v6_ip
       type: string
       description: Floating IPv6 for iox VMs on the DATA network
     plt_data_v6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_data_v6_ips
       type: list
       description: Fixed IPv6 assignments for plt VMs on the DATA network
       entry_schema:
@@ -38,6 +70,14 @@ topology_template:
     iox_data_v6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_data_v6_ips
       type: list
       description: Fixed IPv6 assignments for iox VMs on the DATA network
       entry_schema:
@@ -45,11 +85,27 @@ topology_template:
     plt_volume_shared_id_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_volume_shared_id_0
       type: string
       description: ServiceData2 volume for plt VMs
     plt_oam_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_oam_ips
       type: list
       description: Fixed IPv4 assignments for plt VMs on the OAM network
       entry_schema:
@@ -58,23 +114,55 @@ topology_template:
       label: OpenStack CA Certificate
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: openstack_cacert
       type: string
       description: CA Certificate to use for OpenStack client calls.
       default: ''
     siteinfo_url:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: siteinfo_url
       type: string
       description: siteinfo url
     plt_pair_uuid:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_pair_uuid
       type: string
       description: UUID for plt VM pair
       default: 573f433e25ba8
     app_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_names
       type: list
       description: VM names for app VMs
       entry_schema:
@@ -82,6 +170,14 @@ topology_template:
     iox_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_names
       type: list
       description: VM names for iox VMs
       entry_schema:
@@ -89,6 +185,14 @@ topology_template:
     plt_servicedata2_volume_size_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF_volume
+            source_type: HEAT
+            param_name: plt_servicedata2_volume_size_0
       type: float
       description: Size of Service Data 2 Volume for plt VMs
       default: 150
@@ -99,11 +203,27 @@ topology_template:
     app_volume_id_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_volume_id_0
       type: string
       description: ServiceData1 volume for first app VM
     plt_servicedata1_volume_size_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF_volume
+            source_type: HEAT
+            param_name: plt_servicedata1_volume_size_0
       type: float
       description: Size of Service Data 1 Volume for plt VMs
       default: 70
@@ -114,61 +234,149 @@ topology_template:
     internal_subnet_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: internal_subnet_cidr
       type: string
       description: IP subnet for internal network
       default: 169.30.12.0/24
     app_volume_id_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_volume_id_1
       type: string
       description: ServiceData1 volume for second app VM
     domain:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: domain
       type: string
       description: What is this domain?
     app_volume_id_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_volume_id_2
       type: string
       description: ServiceData1 volume for third app VM
     plt_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_image_name
       type: string
       description: Pilot image
       default: USP_IECF-PILOT_30.3.3-mcas4.4.6.qcow2
     app_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_image_name
       type: string
       description: App image
       default: USP_IECF-APP_30.3.3-mcas4.4.6.qcow2
     plt_oam_floating_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_oam_floating_ip
       type: string
       description: Floating IPv4 for plt VMs on the OAM network
     plt_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_flavor_name
       type: string
       description: Pilot flavor
       default: nd.c2r4d50
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF Module instance
     iox_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_flavor_name
       type: string
       description: IO flavor
       default: nd.c2r4d50
     app_security_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_security_groups
       type: list
       description: App security group
       entry_schema:
@@ -176,23 +384,56 @@ topology_template:
     vnf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF_volume
+            - base_vIECCF
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VF instance
     config_server_cacert:
       label: configure server CA Certificate
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: config_server_cacert
       type: string
       description: CA Certificate for download from siteinfo url and config url.
       default: ''
     vf_module_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: vf_module_name
       type: string
       description: Unique name for this VF Module instance
     oam_security_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: oam_security_groups
       type: list
       description: OAM security group
       entry_schema:
@@ -200,6 +441,14 @@ topology_template:
     iox_oam_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_oam_ips
       type: list
       description: Fixed IPv4 assignments for iox VMs on the OAM network
       entry_schema:
@@ -207,38 +456,94 @@ topology_template:
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance
     iox_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_image_name
       type: string
       description: IO image
       default: USP_IECF-IO_30.3.3-mcas4.4.6.qcow2
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: First availability zone ID or Name
     ignore_siteinfo_audit:
       label: Siteinfo Audit Ignore Flag
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: ignore_siteinfo_audit
       type: string
       description: Set to true if siteinfo audit failure should not prevent system installation
     availability_zone_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: Second availability zone ID or Name
     data_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: data_net_id
       type: string
       description: DATA network
     plt_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_names
       type: list
       description: VM names for plt VMs
       entry_schema:
@@ -246,6 +551,14 @@ topology_template:
     plt_security_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_security_groups
       type: list
       description: Pilot security group
       entry_schema:
@@ -253,6 +566,14 @@ topology_template:
     app_data_v6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_data_v6_ips
       type: list
       description: Fixed IPv6 assignments for app VMs on the DATA network
       entry_schema:
@@ -260,6 +581,14 @@ topology_template:
     iox_security_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_security_groups
       type: list
       description: IO security group
       entry_schema:
@@ -267,17 +596,41 @@ topology_template:
     ieccf_debug:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: ieccf_debug
       type: string
       description: IECCF debug flag
       default: false
     name_server_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: name_server_2
       type: string
       description: IP address of name server 2
     app_oam_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_oam_ips
       type: list
       description: Fixed IPv4 assignments for app VMs on the OAM network
       entry_schema:
@@ -285,48 +638,120 @@ topology_template:
     app_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: app_flavor_name
       type: string
       description: App flavor
       default: nd.c2r4d50
     name_server_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: name_server_1
       type: string
       description: IP address of name server 1
     oam_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: oam_net_id
       type: string
       description: OAM network
     iox_oam_floating_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_oam_floating_ip
       type: string
       description: Floating IPv4 for iox VMs on the OAM network
     ieccf_config_url:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: ieccf_config_url
       type: string
       description: IECCF configuration package URL
     iox_pair_uuid:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: iox_pair_uuid
       type: string
       description: UUID for iox VM pair
       default: 573f433e284b4
     plt_volume_id_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_volume_id_0
       type: string
       description: ServiceData1 volume for first plt VM
     plt_volume_id_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: plt_volume_id_1
       type: string
       description: ServiceData1 volume for second plt VM
     data_security_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vIECCF
+            source_type: HEAT
+            param_name: data_security_groups
       type: list
       description: DATA security group
       entry_schema:
