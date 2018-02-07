@@ -645,7 +645,11 @@ public class HeatToToscaUtil {
    * @return the boolean
    */
   public static boolean isHeatFileNested(TranslateTo translateTo, String heatFileName) {
-    return translateTo.getContext().getNestedHeatsFiles().contains(heatFileName);
+    return isHeatFileNested(translateTo.getContext(), heatFileName);
+  }
+
+  public static boolean isHeatFileNested(TranslationContext context, String heatFileName) {
+    return context.getNestedHeatsFiles().contains(heatFileName);
   }
 
   /**
@@ -1188,6 +1192,10 @@ public class HeatToToscaUtil {
 
   private static boolean shouldCapabilityNeedsToBeAdded(String capabilityKey) {
     return !capabilityKey.contains(FORWARDER) || ToggleableFeature.FORWARDER_CAPABILITY.isActive();
+  }
+
+  public static boolean shouldAnnotationsToBeAdded() {
+    return ToggleableFeature.ANNOTATIONS.isActive();
   }
 
   private static void addCapabilityToSubMapping(String templateName,

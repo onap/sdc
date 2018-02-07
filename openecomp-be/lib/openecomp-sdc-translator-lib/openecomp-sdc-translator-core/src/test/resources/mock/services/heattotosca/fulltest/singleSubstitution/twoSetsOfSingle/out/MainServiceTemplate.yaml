@@ -12,6 +12,14 @@ topology_template:
       label: PD flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_flavor_name
       type: string
       description: flavor name of PD instance
       default: m3.xlarge
@@ -19,6 +27,14 @@ topology_template:
       label: csb internal network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: dummy_net_name_1
       type: string
       description: csb internal network name
       default: mog_dummy_1
@@ -26,6 +42,14 @@ topology_template:
       label: csb internal network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: dummy_net_name_0
       type: string
       description: csb internal network name
       default: mog_dummy_0
@@ -33,6 +57,14 @@ topology_template:
       label: csb ineternal cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: dummy_net_cidr_0
       type: string
       description: csb internal cidr
       default: 169.254.1.0/24
@@ -40,6 +72,14 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: availabilityzone_name
       type: string
       description: availabilityzone name
       default: nova
@@ -47,6 +87,14 @@ topology_template:
       label: mog sl net virtual ip
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sl_net_floating_ip
       type: string
       description: mog sl net virtual ip
       default: 107.239.45.6
@@ -54,6 +102,14 @@ topology_template:
       label: repl network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: repl_net_ips
       type: list
       description: ips of repl network
       default:
@@ -65,6 +121,14 @@ topology_template:
       label: silver lining network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sl_net_name
       type: string
       description: id of the sl network
       default: exn_protected_net_0
@@ -72,6 +136,14 @@ topology_template:
       label: mog rx net virtual ip
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: rx_net_floating_ip
       type: string
       description: mog rx net virtual ip
       default: 107.239.34.5
@@ -79,6 +151,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_image_name
       type: string
       description: PD image name
       default: MOG_BASE_8.0
@@ -86,6 +166,14 @@ topology_template:
       label: PD server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_server_names
       type: list
       description: name of the PD instance
       default:
@@ -97,6 +185,14 @@ topology_template:
       label: SM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sm_server_names
       type: list
       description: name of the SM instance
       default:
@@ -108,12 +204,28 @@ topology_template:
       label: csb internal start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: csb_net_start
       type: string
       description: csb internal start
       default: 172.26.0.1
     dummy_net_netmask_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: dummy_net_netmask_0
       type: string
       description: CSB internal network subnet mask
       default: 255.255.255.0
@@ -121,6 +233,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: cm_image_name
       type: string
       description: CM image name
       default: MOG_BASE_8.0
@@ -128,6 +248,14 @@ topology_template:
       label: mog ran net virtual ip
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ran_net_floating_ip
       type: string
       description: mog ran net virtual ip
       default: 107.239.36.5
@@ -135,6 +263,14 @@ topology_template:
       label: SM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sm_flavor_name
       type: string
       description: flavor name of SM instance
       default: m2.xlarge4
@@ -142,6 +278,14 @@ topology_template:
       label: RAN network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ran_net_ips
       type: list
       description: RAN network ip
       default:
@@ -153,6 +297,14 @@ topology_template:
       label: PS image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ps_image_name
       type: string
       description: PS image name
       default: MOG_BASE_8.0
@@ -160,6 +312,14 @@ topology_template:
       label: csb internal end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: dummy_net_end_0
       type: string
       description: csb internal end
       default: 169.254.1.254
@@ -167,6 +327,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_image_name
       type: string
       description: OAM image name
       default: MOG_BASE_8.0
@@ -174,6 +342,14 @@ topology_template:
       label: OAM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_server_names
       type: list
       description: name of the OAM instance
       default:
@@ -185,6 +361,14 @@ topology_template:
       label: oam network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
       description: name of the oam network
       default: oam_protected_net_0
@@ -192,6 +376,14 @@ topology_template:
       label: internet network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_net_ips
       type: list
       description: ip of the OAM network
       default:
@@ -206,6 +398,14 @@ topology_template:
       label: csb ineternal cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: csb_net_cidr
       type: string
       description: csb internal cidr
       default: 172.26.0.0/24
@@ -213,6 +413,14 @@ topology_template:
       label: RAN network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ran_net_name
       type: string
       description: RAN network name
       default: gn_direct_net_0
@@ -220,6 +428,14 @@ topology_template:
       label: CM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: cm_server_names
       type: list
       description: name of the CM instance
       default:
@@ -230,6 +446,14 @@ topology_template:
       label: silver lining network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sl_net_ips
       type: list
       description: ips of the sl network
       default:
@@ -241,12 +465,28 @@ topology_template:
       label: Rx network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: rx_net_name
       type: string
       description: Rx network name
       default: cor_direct_net_1
     csb_net_netmask:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: csb_net_netmask
       type: string
       description: CSB internal network subnet mask
       default: 255.255.255.0
@@ -254,6 +494,14 @@ topology_template:
       label: OAM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_flavor_name
       type: string
       description: flavor name of OAM instance
       default: m3.xlarge
@@ -261,6 +509,14 @@ topology_template:
       label: Replication network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: repl_net_name
       type: string
       description: name of the replication network
       default: cor_direct_net_0
@@ -268,6 +524,14 @@ topology_template:
       label: csb internal end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: csb_net_end
       type: string
       description: csb internal end
       default: 172.26.0.254
@@ -275,6 +539,14 @@ topology_template:
       label: csb internal start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: dummy_net_start_0
       type: string
       description: csb internal start
       default: 169.254.1.4
@@ -282,6 +554,14 @@ topology_template:
       label: CM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: cm_flavor_name
       type: string
       description: flavor name of CM instance
       default: m3.xlarge
@@ -289,6 +569,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sm_image_name
       type: string
       description: SM image name
       default: MOG_BASE_8.0
@@ -296,6 +584,14 @@ topology_template:
       label: csb internal network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: csb_net_name
       type: string
       description: csb internal network name
       default: int_mog_csb_net
@@ -303,6 +599,14 @@ topology_template:
       label: PS server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ps_server_names
       type: list
       description: name of the PS instance
       default:
@@ -315,6 +619,14 @@ topology_template:
     csb_net_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: csb_net_ips
       type: list
       description: mog_csb_net IP addresses
       default:
@@ -335,6 +647,14 @@ topology_template:
       label: PS flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ps_flavor_name
       type: string
       description: flavor name of PS instance
       default: m3.xlarge
@@ -342,6 +662,14 @@ topology_template:
       label: Rx network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: rx_net_ips
       type: list
       description: Rx network ips
       default:

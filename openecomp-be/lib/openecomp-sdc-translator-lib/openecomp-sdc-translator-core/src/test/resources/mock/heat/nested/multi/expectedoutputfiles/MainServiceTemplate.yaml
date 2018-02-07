@@ -12,6 +12,15 @@ topology_template:
       label: OAM network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: oam_net_ips
       type: list
       description: OAM network ips
       entry_schema:
@@ -20,18 +29,45 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: availabilityzone_name
       type: string
       description: availabilityzone name
     oam_net_gw:
       label: CPS network gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: oam_net_gw
       type: string
       description: CPS network gateway
     pcm_server_names:
       label: PCRF CM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: pcm_server_names
       type: list
       description: name of the PCRF CM instance
       entry_schema:
@@ -40,12 +76,30 @@ topology_template:
       label: PCRF CM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: pcm_image_name
       type: string
       description: PCRF CM image name
     cps_net_ips:
       label: CPS network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: cps_net_ips
       type: list
       description: CPS network ips
       entry_schema:
@@ -54,12 +108,30 @@ topology_template:
       label: security group name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: security_group_name
       type: string
       description: the name of security group
     pcm_volumes:
       label: CPS Cluman Cinder Volume
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: pcm_volumes
       type: list
       description: CPS Cluman Cinder Volume
       entry_schema:
@@ -68,30 +140,75 @@ topology_template:
       label: PCRF CM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: pcm_flavor_name
       type: string
       description: flavor name of PCRF CM instance
     cps_net_name:
       label: CPS network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: cps_net_name
       type: string
       description: CPS network name
     cps_net_mask:
       label: CPS network mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: cps_net_mask
       type: string
       description: CPS network mask
     oam_net_mask:
       label: CPS network mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: oam_net_mask
       type: string
       description: CPS network mask
     oam_net_name:
       label: OAM network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4_2
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
       description: OAM network name
   node_templates:

@@ -11,34 +11,82 @@ topology_template:
     cif_internal_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_internal_ip_0
       type: string
       description: Internal IP of CIF01 instance
       default: 192.168.210.1
     vcscf_release:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_release
       type: string
       description: IMS release
       default: '17.0'
     cif_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_name_1
       type: string
       description: CIF02 instance name
     cif_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_name_0
       type: string
       description: CIF01 instance name
     cif_internal_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_internal_ip_1
       type: string
       description: Internal IP of CIF02 instance
       default: 192.168.210.2
     tdcore_zone_0_count:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_zone_0_count
       type: float
       description: |
         Number of TD Core VMs to be deployed zone 0. This parameter is used to scale the TD Core instances.
@@ -50,17 +98,41 @@ topology_template:
     lbd_internal_dpdk_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_internal_dpdk_vip_0
       type: string
       description: Internal DPDK CIP IP of LBD
       default: 192.168.211.181
     lbd_ims_core_v6_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_ims_core_v6_vip_0
       type: string
       description: IMS CORE CIPA v6 IP of LBD
     cscf_zone_1_count:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_zone_1_count
       type: float
       description: |
         Number of CSCF to be deployed on zone 1. This parameter is used to scale the cscf instances.
@@ -72,39 +144,95 @@ topology_template:
     oam_internal_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_internal_vip_0
       type: string
       description: Internal CIPA IP of OAM unit
       default: 192.168.210.3
     cscf_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_image_name
       type: string
       description: CSCF server VM image name
       default: IMS_17_0_OPENSTACK_CSCF_1701400.000
     cif_internal_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_internal_vip_0
       type: string
       description: Internal CIPA IP of CIF
       default: 192.168.210.150
     cif_ims_core_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_ims_core_v6_ip_0
       type: string
       description: IMS CORE v6 IP of CIF01 instance
     cif_ims_core_v6_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_ims_core_v6_ip_1
       type: string
       description: IMS CORE v6 IP of CIF02 instance
     oam_volume_id_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_volume_id_1
       type: string
       description: size of the cinder volume used for oam
     oam_volume_size_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf_volume
+            source_type: HEAT
+            param_name: oam_volume_size_0
       type: float
       description: Size of Volume for oam VMs
       default: 300
@@ -115,16 +243,40 @@ topology_template:
     oam_volume_id_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_volume_id_0
       type: string
       description: size of the cinder volume used for oam
     vcscf_oam_netmask:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_oam_netmask
       type: string
       description: Netmask for OAM LAN
     tdcore_zone_1_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_zone_1_names
       type: list
       description: List of instance names for TDCORE instances on zone 1
       entry_schema:
@@ -132,44 +284,108 @@ topology_template:
     cif_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_flavor_name
       type: string
       description: CSCF CIF VM flavor
       default: ND.c4r16d38
     vcscf_dns_address:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_dns_address
       type: string
       description: DNS server IP
     vcscf_internal_network_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_internal_network_cidr
       type: string
       description: CIDR for for Internal LAN
       default: 192.168.210.0/24
     cdi_ims_core_v6_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_ims_core_v6_ip_1
       type: string
       description: IMS CORE LAN v6 IP of CDI02 instance
     cdi_ims_core_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_ims_core_v6_ip_0
       type: string
       description: IMS CORE LAN v6 IP of CDI01 instance
     cdi_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_flavor_name
       type: string
       description: CDI VM flavor
       default: ND.c4r8d38
     vcscf_default_gateway:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_default_gateway
       type: string
       description: Default gateway for OAM LAN
     tdcore_zone_0_uuids:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_zone_0_uuids
       type: list
       description: List of UUIDs generated by cmrepo for TDCORE instances on zone 0
       entry_schema:
@@ -177,21 +393,53 @@ topology_template:
     oam_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_name_1
       type: string
       description: OAM02 instance name
     oam_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_name_0
       type: string
       description: OAM01 instance name
     oam_name_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_name_2
       type: string
       description: OAM03 instance name
     cscf_zone_1_uuids:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_zone_1_uuids
       type: list
       description: List of UUIDs generated by cmrepo for CSCF instances on zone 1
       entry_schema:
@@ -199,16 +447,40 @@ topology_template:
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF Module instance
     oam_oam_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_oam_ip_0
       type: string
       description: OAM IP of OAM01 instance
     cscf_internal_zone_1_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_internal_zone_1_ips
       type: list
       description: List of Internal Lan IPs for CSCF instances on zone 1
       default:
@@ -235,32 +507,81 @@ topology_template:
     cif_ims_li_v6_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_ims_li_v6_vip_0
       type: string
       description: IMS LI CIPA v6 IP of CIF
     oam_oam_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_oam_ip_1
       type: string
       description: OAM IP of OAM02 instance
     oam_oam_ip_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_oam_ip_2
       type: string
       description: OAM IP of OAM03 instance
     vnf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf_volume
+            - base_cscf
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VF instance
     lbd_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_flavor_name
       type: string
       description: CSCF LBD VM flavor
       default: ND.c4r16d38
     cscf_zone_0_uuids:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_zone_0_uuids
       type: list
       description: List of UUIDs generated by cmrepo for CSCF instances on zone 0
       entry_schema:
@@ -268,17 +589,41 @@ topology_template:
     vf_module_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vf_module_name
       type: string
       description: Unique name for this VF Module instance
     cdi_internal_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_internal_ip_0
       type: string
       description: Internal IP of CDI01 instance
       default: 192.168.210.139
     cscf_zone_0_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_zone_0_names
       type: list
       description: List of instance names for CSCF instances on zone 0
       entry_schema:
@@ -286,75 +631,189 @@ topology_template:
     oam_oam_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_oam_vip_0
       type: string
       description: OAM CIPA IP of OAM unit
     vcscf_swrepo_address:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_swrepo_address
       type: string
       description: SWRepo IP or FQDN
     cdi_internal_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_internal_ip_1
       type: string
       description: Internal IP of CDI02 instance
       default: 192.168.210.140
     cdi_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_name_1
       type: string
       description: CDI02 instance name
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf_volume
+            - base_cscf
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: Storage availability zone for volume of first vm
     availability_zone_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf_volume
+            - base_cscf
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: Storage availability zone for volume of second vm
     tdcore_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_image_name
       type: string
       description: TDCORE VM image name
       default: IMS_17_0_OPENSTACK_CSCF_1701400.000
     tdcore_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_flavor_name
       type: string
       description: TDCORE VM flavor
       default: ND.c4r16d38
     cscf_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_flavor_name
       type: string
       description: CSCF server VM flavor
       default: ND.c8r16d38
     vcscf_cmrepo_address:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_cmrepo_address
       type: string
       description: CMRepo IP or FQDN
     cdi_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_name_0
       type: string
       description: CDI01 instance name
     lbd_ims_core_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_ims_core_v6_ip_0
       type: string
       description: IMS CORE v6 IP of LBD01 instance
     lbd_ims_core_v6_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_ims_core_v6_ip_1
       type: string
       description: IMS CORE v6 IP of LBD02 instance
     tdcore_internal_zone_1_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_internal_zone_1_ips
       type: list
       description: List of Internal Lan IPs for TDCORE instances on zone 1
       default:
@@ -367,17 +826,41 @@ topology_template:
     oam_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_net_id
       type: string
       description: Name/UUID of OAM network
     cdi_internal_v6_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_internal_v6_vip_0
       type: string
       description: Internal v6 CIPA IP of CDI
       default: 2a00:9a00:a000:1190:0:1:1:2b8d
     tdcore_dpdk_zone_1_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_dpdk_zone_1_ips
       type: list
       description: List of DPDK Lan IPs for TDCORE instances on zone 1
       default:
@@ -390,18 +873,42 @@ topology_template:
     oam_internal_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_internal_ip_0
       type: string
       description: Internal IP of OAM01 instance
       default: 192.168.210.136
     oam_internal_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_internal_ip_1
       type: string
       description: Internal IP of OAM01 instance
       default: 192.168.210.137
     cscf_zone_0_count:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_zone_0_count
       type: float
       description: |
         Number of CSCF to be deployed on zone 0. This parameter is used to scale the cscf instances.
@@ -413,12 +920,28 @@ topology_template:
     oam_internal_ip_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_internal_ip_2
       type: string
       description: Internal IP of OAM01 instance
       default: 192.168.210.138
     cscf_zone_1_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_zone_1_names
       type: list
       description: List of instance names for CSCF instances on zone 1
       entry_schema:
@@ -426,6 +949,14 @@ topology_template:
     tdcore_zone_0_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_zone_0_names
       type: list
       description: List of instance names for TDCORE instances on zone 0
       entry_schema:
@@ -433,55 +964,135 @@ topology_template:
     lbd_uuid_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_uuid_0
       type: string
       description: UUID generated by cmrepo for LBD01
     lbd_uuid_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_uuid_1
       type: string
       description: UUID generated by cmrepo for LBD02
     cdi_internal_v6_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_internal_v6_ip_1
       type: string
       description: Internal v6 IP of CDI02 instance
       default: 2a00:9a00:a000:1190:0:1:1:2b8c
     cdi_internal_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_internal_v6_ip_0
       type: string
       description: Internal v6 IP of CDI01 instance
       default: 2a00:9a00:a000:1190:0:1:1:2b8b
     cdi_uuid_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_uuid_1
       type: string
       description: UUID generated by cmrepo for CDI02
     ims_core_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: ims_core_net_id
       type: string
       description: Name/UUID of Core network
     cdi_uuid_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_uuid_0
       type: string
       description: UUID generated by cmrepo for CDI01
     vcscf_internal_network_v6_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_internal_network_v6_cidr
       type: string
       description: CIDR for for Internal LAN v6
       default: 2a00:9a00:a000:1190:0:1:1:2b00/120
     oam_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_image_name
       type: string
       description: OAM VM image name
       default: IMS_17_0_OPENSTACK_OAM_1701400.000
     tdcore_zone_1_uuids:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_zone_1_uuids
       type: list
       description: List of UUIDs generated by cmrepo for TDCORE instances on zone 1
       entry_schema:
@@ -489,6 +1100,14 @@ topology_template:
     vcscf_internal_network_mtu:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_internal_network_mtu
       type: float
       description: MTU for internal network interface (eth0)
       default: 1500
@@ -499,12 +1118,28 @@ topology_template:
     vcscf_internal_dpdk_network_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_internal_dpdk_network_cidr
       type: string
       description: CIDR for for Internal LAN DPDK
       default: 192.168.211.0/24
     tdcore_zone_1_count:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_zone_1_count
       type: float
       description: |
         Number of TD Core VMs to be deployed zone 1. This parameter is used to scale the TD Core instances.
@@ -516,6 +1151,14 @@ topology_template:
     cif_volume_size_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf_volume
+            source_type: HEAT
+            param_name: cif_volume_size_0
       type: float
       description: Size of Volume for cif VMs
       default: 300
@@ -526,71 +1169,175 @@ topology_template:
     oam_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_flavor_name
       type: string
       description: OAM VM flavor
       default: ND.c4r32d30
     ims_li_v6_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: ims_li_v6_net_id
       type: string
       description: Name/UUID of V6 LI network
     lbd_internal_dpdk_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_internal_dpdk_ip_1
       type: string
       description: Internal DPDK IP of LBD02 instance
       default: 192.168.211.2
     cif_ims_core_v6_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_ims_core_v6_vip_0
       type: string
       description: IMS CORE v6 CIPA IP of CIF
     lbd_internal_dpdk_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_internal_dpdk_ip_0
       type: string
       description: Internal DPDK IP of LBD01 instance
       default: 192.168.211.1
     cdi_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_image_name
       type: string
       description: CDI VM image name
       default: IMS_17_0_OPENSTACK_CSCF_1701400.000
     oam_uuid_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_uuid_2
       type: string
       description: UUID generated by cmrepo for OAM03
     oam_uuid_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_uuid_1
       type: string
       description: UUID generated by cmrepo for OAM02
     oam_uuid_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: oam_uuid_0
       type: string
       description: UUID generated by cmrepo for OAM01
     cif_oam_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_oam_vip_0
       type: string
       description: OAM CIPA IP of CIF
     cif_internal_v6_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_internal_v6_ip_1
       type: string
       description: Internal IP v6 of CIF02 instance
       default: 2a00:9a00:a000:1190:0:1:1:2b05
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance
     cscf_internal_zone_0_v6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_internal_zone_0_v6_ips
       type: list
       description: List of Internal Lan v6 IPs for CSCF instances on zone 0
       default:
@@ -618,6 +1365,14 @@ topology_template:
     cscf_internal_zone_1_v6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_internal_zone_1_v6_ips
       type: list
       description: List of Internal Lan v6 IPs for CSCF instances on zone 1
       default:
@@ -644,55 +1399,135 @@ topology_template:
     cif_internal_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_internal_v6_ip_0
       type: string
       description: Internal IP v6 of CIF01 instance
       default: 2a00:9a00:a000:1190:0:1:1:2b04
     lbd_internal_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_internal_ip_1
       type: string
       description: Internal IP of LBD02 instance
       default: 192.168.210.5
     cif_oam_vip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_oam_vip_1
       type: string
       description: OAM (LI-X1) v4 CIPA of CIF
     lbd_internal_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_internal_ip_0
       type: string
       description: Internal IP of LBD01 instance
       default: 192.168.210.4
     cif_volume_id_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_volume_id_0
       type: string
       description: size of the cinder volume used for cif
     cif_ims_li_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_ims_li_v6_ip_0
       type: string
       description: IMS LI v6 IP of CIF01 instance
     cif_volume_id_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_volume_id_1
       type: string
       description: size of the cinder volume used for cif
     cif_ims_li_v6_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_ims_li_v6_ip_1
       type: string
       description: IMS LI v6 IP of CIF02 instance
     lbd_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_image_name
       type: string
       description: CSCF LBD VM image name
       default: IMS_17_0_OPENSTACK_CSCF_1701400.000
     tdcore_dpdk_zone_0_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_dpdk_zone_0_ips
       type: list
       description: List of DPDK Lan IPs for TDCORE instances on zone 0
       default:
@@ -705,33 +1540,82 @@ topology_template:
     cif_uuid_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_uuid_0
       type: string
       description: UUID generated by cmrepo for CIF01
     cif_uuid_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_uuid_1
       type: string
       description: UUID generated by cmrepo for CIF02
     cif_oam_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_oam_ip_0
       type: string
       description: OAM IP of CIF01 instance
     cif_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_image_name
       type: string
       description: CSCF CIF VM image name
       default: IMS_17_0_OPENSTACK_CSCF_1701400.000
     vcscf_internal_netmask:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_internal_netmask
       type: string
       description: Netmask for Internal LAN
       default: 255.255.255.0
     vcscf_name_delimeter:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf_volume
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_name_delimeter
       type: string
       description: 'delimeter used in concatenating different words while naming (ex:
         "-","_",".",...)'
@@ -745,36 +1629,92 @@ topology_template:
     cif_oam_ip_3:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_oam_ip_3
       type: string
       description: OAM (LI-X1) v4 IP of CIF02 instance
     cif_oam_ip_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_oam_ip_2
       type: string
       description: OAM (LI-X1) v4 IP of CIF01 instance
     cif_oam_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cif_oam_ip_1
       type: string
       description: OAM IP of CIF02 instance
     cdi_ims_core_v6_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cdi_ims_core_v6_vip_0
       type: string
       description: IMS CORE LAN CIPA v6 IP of CDI
     vcscf_dn:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_dn
       type: string
       description: DN name
     vcscf_du:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: vcscf_du
       type: string
       description: DU name
     cscf_internal_zone_0_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: cscf_internal_zone_0_ips
       type: list
       description: List of Internal Lan IPs for CSCF instances on zone 0
       default:
@@ -802,6 +1742,14 @@ topology_template:
     tdcore_internal_zone_0_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: tdcore_internal_zone_0_ips
       type: list
       description: List of Internal Lan IPs for TDCORE instances on zone 0
       default:
@@ -814,11 +1762,27 @@ topology_template:
     lbd_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_name_1
       type: string
       description: LBD02 instance name
     lbd_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_cscf
+            source_type: HEAT
+            param_name: lbd_name_0
       type: string
       description: LBD01 instance name
   node_templates:

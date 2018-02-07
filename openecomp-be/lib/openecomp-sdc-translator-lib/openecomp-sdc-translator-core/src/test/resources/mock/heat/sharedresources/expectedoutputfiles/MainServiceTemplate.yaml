@@ -15,24 +15,56 @@ topology_template:
       label: FSB1_flavor
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - sharedDefinitionOutParam
+            source_type: HEAT
+            param_name: fsb1-flavor
       type: string
       description: FSB1_flavor
     fsb_zone:
       label: FSB1_zone
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - sharedDefinitionOutParam
+            source_type: HEAT
+            param_name: fsb_zone
       type: string
       description: FSB1_zone
     fsb1-name:
       label: FSB1_name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - sharedDefinitionOutParam
+            source_type: HEAT
+            param_name: fsb1-name
       type: string
       description: FSB1_name
     FSB_1_image:
       label: MME_FSB1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - sharedDefinitionOutParam
+            source_type: HEAT
+            param_name: FSB_1_image
       type: string
       description: MME_FSB1_15B-CP04-r5a01
   node_templates:

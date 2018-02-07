@@ -12,18 +12,42 @@ topology_template:
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF Module instance
       default: dummy_vf_module_id
     nimbus_hsl_interface_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: nimbus_hsl_interface_type
       type: string
       description: service_interface_type for ServiceInstance
       default: other
     cgi_fw_pt_vlan_VM2_name_fqdn:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_pt_vlan_VM2_name_fqdn
       type: json
       description: fqdn of the ServiceInstance in PortTuple Resource
       default: [
@@ -31,6 +55,14 @@ topology_template:
     cgi_fw_vmi_ecmp_src_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_vmi_ecmp_src_ip
       type: boolean
       description: source_ip for the VirtualMachineInterface
       default: true
@@ -38,6 +70,14 @@ topology_template:
       label: Firewall VM Name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_names
       type: list
       description: Comma Delimited List of Names for ServiceInstance VMs
       default:
@@ -48,113 +88,265 @@ topology_template:
     cgi_fw_vmi_ecmp_dst_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_vmi_ecmp_dst_ip
       type: boolean
       description: destination_ip for the VirtualMachineInterface
       default: true
     sgi_direct_interface_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_direct_interface_type
       type: string
       description: service_interface_type for ServiceInstance
       default: right
     vnf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VF instance
       default: zrdm3firstnetfcgi02
     cgi_fw_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_flavor_name
       type: string
       description: flavor for the ServiceInstance VM
       default: m1.xlarge
     vf_module_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: vf_module_name
       type: string
       description: Unique name for this VF Module instance
       default: zsde1fcgi02
     cgi_fw_st_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_st_type
       type: string
       description: service_type for the ServiceTemplate
       default: firewall
     sgi_protected_net_dummy_fqdn:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_protected_net_dummy_fqdn
       type: string
       description: fq_name for the VirtualNetwork
       default: default-domain:ALU-L3:firstnet_dummy_net_1
     cgi_fw_vmi_ecmp_src_port:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_vmi_ecmp_src_port
       type: boolean
       description: source_port for the VirtualMachineInterface
       default: false
     sgi_protected_net_dummy1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_protected_net_dummy1
       type: string
       description: name for the VirtualNetwork
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance
       default: dummy_vnf_id
     sgi_direct_net_fqdn:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_direct_net_fqdn
       type: string
       description: fq_name for the VirtualNetwork
       default: default-domain:ALU-L3:fgi_direct
     sgi_protected_interface_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_protected_interface_type
       type: string
       description: service_interface_type for ServiceInstance
       default: left
     cgi_fw_vmi_ecmp_dst_port:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_vmi_ecmp_dst_port
       type: boolean
       description: destination_port for the VirtualMachineInterface
       default: false
     sgi_direct_family_v6:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_direct_family_v6
       type: string
       description: IP Family Address for InstanceIp
       default: v6
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: availability_zone for the ServiceInstance
       default: nova
     availability_zone_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: availability_zone for the ServiceInstance
       default: nova
     nimbus_hsl_net_fqdn:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: nimbus_hsl_net_fqdn
       type: string
       description: fq_name for the VirtualNetwork
       default: default-domain:ALU-L3:alu-firstnet-net
     sgi_protected_net_dummy:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_protected_net_dummy
       type: string
       description: name for the VirtualNetwork
       default: firstnet_dummy_net_1
     cgi_fw_pt_vlan_VM1_name_fqdn:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_pt_vlan_VM1_name_fqdn
       type: json
       description: fqdn of the ServiceInstance in PortTuple Resource
       default: [
@@ -162,56 +354,136 @@ topology_template:
     cgi_fw_vmi_ecmp_configured:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_vmi_ecmp_configured
       type: boolean
       description: hashing_configured for the VirtualMachineInterface
       default: true
     cgi_fw_vmi_ecmp_ip_protocol:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_vmi_ecmp_ip_protocol
       type: boolean
       description: ip_protocol for the VirtualMachineInterface
       default: false
     oam_protected_net_fqdn:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: oam_protected_net_fqdn
       type: string
       description: fq_name for the VirtualNetwork
       default: default-domain:ALU-L3:alu_l3_mt_net
     oam_protected_interface_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: oam_protected_interface_type
       type: string
       description: service_interface_type for ServiceInstance
       default: management
     cgi_fw_st_mode:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_st_mode
       type: string
       description: service_mode for the ServiceTemplate
       default: in-network-nat
     sgi_direct_ipv6_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_direct_ipv6_subnet_id
       type: string
       description: Subnet UUID for InstanceIp
       default: 4560666e-f306-4d7b-b0ec-a2d4330e9600
     contrail_vmi_subinterface:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: contrail_vmi_subinterface
       type: string
     port_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: port_name
       type: string
     cgi_fw_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_image_name
       type: string
       description: image_name for the ServiceInstance VM
       default: F5_LB-FW_F5_12_1_HF1_Startup
     cgi_fw_oam_protected_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_oam_protected_ips
       type: list
       description: the ips of the management network for CGI FW
       default:
@@ -222,18 +494,42 @@ topology_template:
     sgi_direct_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: sgi_direct_subnet_id
       type: string
       description: Subnet UUID for InstanceIp
       default: 63858a9d-696b-4731-b3b3-7c8dfd777b9e
     domain:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: domain
       type: string
       description: domain for the ServiceTemplate
       default: default-domain
     cgi_fw_st_version:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_st_version
       type: float
       description: version for the ServiceTemplate
       default: 2
@@ -244,12 +540,28 @@ topology_template:
     cgi_fw_st_virtualization_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: cgi_fw_st_virtualization_type
       type: string
       description: service_virtualization_type for the ServiceTemplate
       default: virtual-machine
     subinterface_name_prefix:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_firstnet_fgi_frwl
+            source_type: HEAT
+            param_name: subinterface_name_prefix
       type: string
   node_templates:
     CGI_FW_OAM_PROTECTED_RVMI_2:

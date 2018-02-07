@@ -12,6 +12,14 @@ topology_template:
       label: PD flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_flavor_name
       type: string
       description: flavor name of PD instance
       default: m3.xlarge
@@ -19,6 +27,14 @@ topology_template:
       label: internet network ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_net_ips
       type: list
       description: ip of the OAM network
       default:
@@ -33,6 +49,14 @@ topology_template:
       label: csb ineternal cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: dummy_net_name_1
       type: string
       description: csb internal cidr
       default: mog_dummy_1
@@ -40,6 +64,14 @@ topology_template:
       label: CM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: cm_server_names
       type: list
       description: name of the CM instance
       default:
@@ -50,6 +82,14 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: availabilityzone_name
       type: string
       description: availabilityzone name
       default: nova
@@ -57,6 +97,14 @@ topology_template:
       label: OAM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_flavor_name
       type: string
       description: flavor name of OAM instance
       default: m3.xlarge
@@ -64,6 +112,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_image_name
       type: string
       description: PD image name
       default: MOG_BASE_8.0
@@ -71,6 +127,14 @@ topology_template:
       label: PD server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_server_names
       type: list
       description: name of the PD instance
       default:
@@ -82,6 +146,14 @@ topology_template:
       label: SM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sm_server_names
       type: list
       description: name of the SM instance
       default:
@@ -93,6 +165,14 @@ topology_template:
       label: CM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: cm_flavor_name
       type: string
       description: flavor name of CM instance
       default: m3.xlarge
@@ -100,6 +180,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sm_image_name
       type: string
       description: SM image name
       default: MOG_BASE_8.0
@@ -107,6 +195,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: cm_image_name
       type: string
       description: CM image name
       default: MOG_BASE_8.0
@@ -114,6 +210,14 @@ topology_template:
       label: SM flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: sm_flavor_name
       type: string
       description: flavor name of SM instance
       default: m2.xlarge4
@@ -121,6 +225,14 @@ topology_template:
       label: PS server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ps_server_names
       type: list
       description: name of the PS instance
       default:
@@ -134,6 +246,14 @@ topology_template:
       label: PS image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ps_image_name
       type: string
       description: PS image name
       default: MOG_BASE_8.0
@@ -141,6 +261,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_image_name
       type: string
       description: OAM image name
       default: MOG_BASE_8.0
@@ -148,6 +276,14 @@ topology_template:
       label: OAM server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_server_names
       type: list
       description: name of the OAM instance
       default:
@@ -159,6 +295,14 @@ topology_template:
       label: PS flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ps_flavor_name
       type: string
       description: flavor name of PS instance
       default: m3.xlarge
@@ -166,6 +310,14 @@ topology_template:
       label: oam network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
       description: name of the oam network
       default: oam_protected_net_0

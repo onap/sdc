@@ -11,6 +11,14 @@ topology_template:
     jsa_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_name
       type: string
       description: network name of jsa log network
   node_templates:

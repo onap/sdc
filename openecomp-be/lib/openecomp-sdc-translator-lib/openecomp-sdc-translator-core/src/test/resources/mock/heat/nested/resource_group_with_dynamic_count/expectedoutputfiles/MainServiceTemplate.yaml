@@ -11,11 +11,27 @@ topology_template:
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF_MODULE instance
     vf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: vf_name
       type: string
       description: The VF Name; defaults to VMVM for the virtual MVM VNF.
       constraints:
@@ -25,11 +41,27 @@ topology_template:
     cloud_zone_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: cloud_zone_id
       type: string
       description: The cloud zone for this VF instance
     vf_instance_num:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: vf_instance_num
       type: string
       description: The number for this VF instance
       constraints:
@@ -39,11 +71,27 @@ topology_template:
     virtual_mgmt_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: virtual_mgmt_ip_0
       type: string
       description: Virtual management network ip address
     mvs_mgmt_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: mvs_mgmt_ip_0
       type: list
       description: List of Management network IP addresses for IPv4
       entry_schema:
@@ -51,6 +99,14 @@ topology_template:
     flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: flavor
       type: string
       description: Server flavor
       constraints: [
@@ -58,6 +114,14 @@ topology_template:
     key_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: key_name
       type: string
       description: SSH key name
       constraints: [
@@ -65,11 +129,27 @@ topology_template:
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: availability_zone_0
       type: list
       description: List of Availability Zone IDs or Names
       entry_schema:
@@ -77,6 +157,14 @@ topology_template:
     mgmt_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: mgmt_net_id
       type: string
       description: Neutron UUID for the Management network
       constraints: [
@@ -84,6 +172,14 @@ topology_template:
     vm_instance_num:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: vm_instance_num
       type: list
       description: VM instance number list must be a list of three-digit numeric value
       entry_schema:
@@ -91,11 +187,27 @@ topology_template:
     bootimage:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: bootimage
       type: string
       description: Master bootimage volume id
     sec_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: sec_groups
       type: list
       description: Security groups
       entry_schema:
@@ -103,6 +215,14 @@ topology_template:
     vf_component:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: vf_component
       type: string
       description: The component that this VF instance is running
       constraints:
@@ -112,6 +232,14 @@ topology_template:
     num_instances:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - mvs.vfmodule.heat
+            source_type: HEAT
+            param_name: num_instances
       type: float
       description: number of instance of the VF_module
   node_templates:
