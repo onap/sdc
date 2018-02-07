@@ -51,6 +51,10 @@
           "nestedResource": {
             "enable": true,
             "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.NestedResourceValidator"
+          },
+          "OS::ContrailV2::VirtualMachineInterface": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.VirtualMachineInterfaceValidator"
           }
         }
       }

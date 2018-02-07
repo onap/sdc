@@ -26,10 +26,12 @@ import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.impl.validators.HeatValidator;
+import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -105,11 +107,11 @@ public class HeatValidationService {
    * @param nestedParameters nested parameters.
    * @param nestedParametersNames nested parameter names.
    */
-  public static void checkNestedParameters(String parentFileName, String nestedFileName,
-                                           GlobalValidationContext globalContext,
-                                           Map<String, Parameter> parentParameters,
-                                           Map<String, Parameter> nestedParameters,
-                                           Set<String> nestedParametersNames) {
+  private static void checkNestedParameters(String parentFileName, String nestedFileName,
+                                            GlobalValidationContext globalContext,
+                                            Map<String, Parameter> parentParameters,
+                                            Map<String, Parameter> nestedParameters,
+                                            Set<String> nestedParametersNames) {
     HeatOrchestrationTemplate parentHeatOrchestrationTemplate;
     HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
 
@@ -276,6 +278,10 @@ public class HeatValidationService {
     }
     return false;
   }
+
+
+
+
   private static HeatOrchestrationTemplate getNestedHeatOrchestrationTemplate( String nestedFileName,
                                           GlobalValidationContext globalContext) throws Exception {
     Optional<InputStream> fileContent = globalContext.getFileContent(nestedFileName);
@@ -319,9 +325,45 @@ public class HeatValidationService {
     return envContent;
   }
 
+  /**
+   *
+   * @param fileName on which the validation is currently run
+   * @param globalContext gloabl validation context
+   * @param heatResourceValidationContext heat resource validation context
+   * @param propertyValue the value which is examined
+   * @return whether the vlan has single parent port
+   */
+  public static boolean hasSingleParentPort(String fileName, GlobalValidationContext globalContext,
+                                      HeatResourceValidationContext heatResourceValidationContext,
+                                      Object propertyValue) {
+    boolean hasSingleParentPort;
+    if (propertyValue instanceof List && ((List) propertyValue).size() == 1) {
+      final Object listValue = ((List) propertyValue).get(0);
 
-  public static String getResourceGroupResourceName(String resourceCallingToResourceGroup) {
-    return "OS::Heat::ResourceGroup in " + resourceCallingToResourceGroup;
+      final Set<String> getParamValues =
+          HeatStructureUtil.getReferencedValuesByFunctionName(fileName, "get_param",
+              listValue, globalContext);
+      hasSingleParentPort = getParamValues.isEmpty() || (getParamValues.size() == 1) &&
+          validateGetParamValueOfType(getParamValues, heatResourceValidationContext,
+              DefinedHeatParameterTypes.STRING.getType());
+    } else {
+      hasSingleParentPort = false;
+    }
+    return hasSingleParentPort;
+  }
+
+  private static boolean validateGetParamValueOfType(Set<String> values,
+                                        HeatResourceValidationContext
+                                            heatResourceValidationContext,String type) {
+    Optional<String> value = values.stream().findAny();
+    boolean isString = false;
+    if (value.isPresent()) {
+      isString =
+          Objects.equals(heatResourceValidationContext.getHeatOrchestrationTemplate
+              ().getParameters().get(value.get()).getType(), type);
+    }
+
+    return isString;
   }
 
 }
