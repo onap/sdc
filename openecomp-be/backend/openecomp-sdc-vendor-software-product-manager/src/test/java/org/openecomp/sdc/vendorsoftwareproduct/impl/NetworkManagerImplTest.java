@@ -62,6 +62,7 @@ public class NetworkManagerImplTest {
   private static final Version VERSION = new Version("version_id");
   private static final String NETWORK1_ID = "network1";
   private static final String NETWORK2_ID = "network2";
+  private static final String tenant = "dox";
 
   @Mock
   private NetworkDao networkDaoMock;
@@ -86,7 +87,7 @@ public class NetworkManagerImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    SessionContextProviderFactory.getInstance().createInterface().create(USER_ID);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER_ID, tenant);
   }
 
   @AfterMethod

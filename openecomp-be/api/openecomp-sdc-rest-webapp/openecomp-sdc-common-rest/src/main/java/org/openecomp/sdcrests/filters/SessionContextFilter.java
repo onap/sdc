@@ -1,8 +1,9 @@
-package org.openecomp.server.filters;
+package org.openecomp.sdcrests.filters;
 
 import org.openecomp.sdc.common.session.SessionContextProvider;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 
+import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -10,11 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-
-public class SessionContextFilter implements Filter {
+public abstract class SessionContextFilter implements Filter {
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -28,8 +26,8 @@ public class SessionContextFilter implements Filter {
 
     try {
       if (servletRequest instanceof HttpServletRequest) {
-        String userName = ((HttpServletRequest) servletRequest).getHeader(USER_ID_HEADER_PARAM);
-        contextProvider.create(userName);
+
+        contextProvider.create(getUser(servletRequest),getTenant(servletRequest));
       }
 
       filterChain.doFilter(servletRequest, servletResponse);
@@ -42,4 +40,8 @@ public class SessionContextFilter implements Filter {
   public void destroy() {
 
   }
+
+  public abstract String getUser(ServletRequest servletRequest);
+
+  public abstract String getTenant(ServletRequest servletRequest);
 }

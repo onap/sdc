@@ -32,6 +32,7 @@ public class ItemManagerImplTest {
   private static final String ITEM_NAME = "item 1 name";
   private static final String ITEM_TYPE_A = "A";
   private static final String ITEM_TYPE_B = "B";
+  private static final String tenant = "dox";
   @Mock
   private ItemDao itemDao;
   @Mock
@@ -81,7 +82,7 @@ public class ItemManagerImplTest {
 
   @Test
   public void testCreate() throws Exception {
-    SessionContextProviderFactory.getInstance().createInterface().create(USER);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER, tenant);
 
     Item returnedItem = createItem(ITEM_ID, ITEM_NAME, ITEM_TYPE_A);
     doReturn(returnedItem).when(itemDao).create(any(Item.class));

@@ -36,6 +36,7 @@ public class ItemZusammenDaoImplTest {
   private static final String ITEM_VERSIONS_STATUSES = "item_versions_statuses";
   private static final String APP_PROP_1 = "app_prop1";
   private static final String APP_PROP_2 = "app_prop2";
+  private static final String tenant = "dox";
 
   @Mock
   private ZusammenAdaptor zusammenAdaptorMock;
@@ -45,7 +46,7 @@ public class ItemZusammenDaoImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    SessionContextProviderFactory.getInstance().createInterface().create(USER);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER, tenant);
   }
 
   @Test

@@ -23,7 +23,10 @@ package org.openecomp.sdc.healing.impl;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.session.SessionContext;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.api.HealingManager;
@@ -98,8 +101,9 @@ public class HealingManagerImpl implements HealingManager {
             : Optional.empty();
 
     if (privateFailureMessages.isPresent() || publicFailureMessages.isPresent()) {
-      throw new RuntimeException(
-          publicFailureMessages.orElse("") + " " + privateFailureMessages.orElse(""));
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage(
+          publicFailureMessages.orElse("") + " " + privateFailureMessages.orElse(""))
+          .build());
     }
   }
 
@@ -126,8 +130,10 @@ public class HealingManagerImpl implements HealingManager {
 
   private Optional<String> healPublic(String itemId, Version version,
                                       Map<String, Map<String, String>> itemHealers, String user) {
-    SessionContextProviderFactory.getInstance().createInterface()
-        .create(user + HEALING_USER_SUFFIX);
+    SessionContext context =
+        SessionContextProviderFactory.getInstance().createInterface().get();
+    SessionContextProviderFactory.getInstance().createInterface().create(user
+        + HEALING_USER_SUFFIX,context.getTenant());
 
     versioningManager.sync(itemId, version);
 
@@ -138,7 +144,7 @@ public class HealingManagerImpl implements HealingManager {
       versioningManager.publish(itemId, version, "Healing vsp");
     }
 
-    SessionContextProviderFactory.getInstance().createInterface().create(user);
+    SessionContextProviderFactory.getInstance().createInterface().create(user, context.getTenant());
     return healingFailureMessages;
   }
 
@@ -161,7 +167,8 @@ public class HealingManagerImpl implements HealingManager {
     Object result = executeHealer(itemId, version, healerClassName, healingFailureMessages);
 
     if (!healingFailureMessages.isEmpty()) {
-      throw new RuntimeException(CommonMethods.listToSeparatedString(healingFailureMessages, '\n'));
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage(CommonMethods
+          .listToSeparatedString(healingFailureMessages, '\n')).build());
     }
     return result;
   }
@@ -223,8 +230,6 @@ public class HealingManagerImpl implements HealingManager {
   }
 
   private Map<String, Map<String, String>> getItemHealers(ItemType itemType) {
-    // TODO: 11/29/2017 create objects to hold this configuration +
-    // load once from the json file and use the relevant healers (by itemType, healerType) as needed.
     Map healingConfig = FileUtils
         .readViaInputStream(HEALERS_BY_ENTITY_TYPE_FILE,
             stream -> JsonUtil.json2Object(stream, Map.class));
