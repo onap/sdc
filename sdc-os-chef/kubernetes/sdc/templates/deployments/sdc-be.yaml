@@ -18,17 +18,14 @@ spec:
       app: sdc-be
   template:
     metadata:
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmaps/sdc-environment-configmap.yaml") . | sha256sum }}
-        checksum/config: {{ include (print $.Template.BasePath "/configmaps/sdc-check-job-completion.yaml") . | sha256sum }}
       labels:
         app: sdc-be
       name: sdc-be
     spec:
       initContainers:
       - name: sdc-be-readiness
-        image: {{ .Values.image.readiness }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         command:
         - /root/ready.py
         args:
@@ -45,8 +42,8 @@ spec:
               apiVersion: v1
               fieldPath: metadata.namespace
       - name: sdc-job-completion
-        image: {{ .Values.image.readiness }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         command:
         - python
         args:
@@ -64,8 +61,8 @@ spec:
           name: sdc-check-job-completion
       containers:
       - name: sdc-be
-        image: {{ .Values.image.sdcBackend }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.sdcBackend }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         ports:
         - containerPort: 8443
         - containerPort: 8080
@@ -85,7 +82,7 @@ spec:
           name: sdc-logback
         env:
         - name: ENVNAME
-          value: AUTO
+          value: "{{ .Values.env.name }}"
         - name: HOST_IP
           valueFrom:
             fieldRef:
@@ -97,8 +94,9 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 8443
-          initialDelaySeconds: 5
+          initialDelaySeconds: 120
           periodSeconds: 10
+          failureThreshold: 30
       volumes:
         - name: filebeat-conf
           hostPath:

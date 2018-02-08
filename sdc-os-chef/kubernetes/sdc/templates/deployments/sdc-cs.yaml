@@ -28,22 +28,23 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: {{ .Values.image.readiness }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         name: sdc-cs-readiness
       containers:
       - name: sdc-cs
-        image: {{ .Values.image.sdcCassandra }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.sdcCassandra }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        # run cs & wait forever
+        command: ["/root/startup.sh"]
+        args: [ "/bin/sh", "-c" , "while true; do sleep 30; done;" ]
         env:
         - name: ENVNAME
-          value: AUTO
+          value: "{{ .Values.env.name }}"
         - name: HOST_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        - name: ES_HEAP_SIZE
-          value: "1024M"
         - name: CS_PASSWORD
           valueFrom:
             secretKeyRef: {name: sdc-cs-secret, key: cs_password}
@@ -63,10 +64,8 @@ spec:
         readinessProbe:
           exec:
             command:
-            - /bin/sh
-            - -c
-            - /var/lib/ready/probe.sh
-          initialDelaySeconds: 30
+            - "/var/lib/ready-probe.sh"
+          initialDelaySeconds: 60
           periodSeconds: 10
       volumes:
       - name: sdc-sdc-cs-cs

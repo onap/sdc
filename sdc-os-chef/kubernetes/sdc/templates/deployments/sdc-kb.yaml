@@ -30,17 +30,17 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: {{ .Values.image.readiness }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         name: sdc-kb-readiness
       containers:
       - env:
         - name: ENVNAME
-          value: AUTO
+          value: "{{ .Values.env.name }}"
         - name: ELASTICSEARCH_URL
           value: http://sdc-es:9200
-        image: {{ .Values.image.sdcKibana }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.sdcKibana }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         name: sdc-kb
         volumeMounts:
         - mountPath: /root/chef-solo/environments/

@@ -13,8 +13,8 @@ spec:
     spec:
       initContainers:
       - name: sdc-init-es-readiness
-        image: {{ .Values.image.readiness }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         command:
         - /root/ready.py
         args:
@@ -28,16 +28,14 @@ spec:
               fieldPath: metadata.namespace
       containers:
       - name: sdc-config-es
-        image: {{ .Values.image.sdcElasticsearchInit }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
-        ports:
-        - containerPort: 8080
+        image: "{{ .Values.image.sdcElasticsearchInit }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         volumeMounts:
         - mountPath: /root/chef-solo/environments/
           name: sdc-environments
         env:
         - name: ENVNAME
-          value: "AUTO"
+          value: "{{ .Values.env.name }}"
       volumes:
         - name: sdc-environments
           configMap:
