@@ -17,12 +17,16 @@ spec:
       name: sdc-es
     spec:
       containers:
-      - image: {{ .Values.image.sdcElasticsearch }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
-        name: sdc-es
+      - name: sdc-es
+        image: "{{ .Values.image.sdcElasticsearch }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        # run & wait forever
+        command: ["/root/startup.sh"]
+        args: [ "/bin/sh", "-c" , "while true; do sleep 30; done;" ]
+        
         env:
         - name: ENVNAME
-          value: "AUTO"
+          value: "{{ .Values.env.name }}"
         - name: HOST_IP
           valueFrom:
             fieldRef:

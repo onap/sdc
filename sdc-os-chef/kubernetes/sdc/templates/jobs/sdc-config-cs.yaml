@@ -13,8 +13,8 @@ spec:
     spec:
       initContainers:
       - name: sdc-init-cs-readiness
-        image: {{ .Values.image.readiness }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         command:
         - /root/ready.py
         args:
@@ -28,22 +28,23 @@ spec:
               fieldPath: metadata.namespace
       containers:
       - name: sdc-config-cs
-        image: {{ .Values.image.sdcCassandraInit }}
-        imagePullPolicy: {{ .Values.pullPolicy }}
-        ports:
-        - containerPort: 8080
+        image: "{{ .Values.image.sdcCassandraInit }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
         volumeMounts:
         - mountPath: /root/chef-solo/environments/
           name: sdc-environments
         env:
         - name: ENVNAME
-          value: "AUTO"
+          value: "{{ .Values.env.name }}"
         - name: SDC_USER
           valueFrom:
             secretKeyRef: {name: sdc-cs-secret, key: sdc_user}
         - name: SDC_PASSWORD
           valueFrom:
             secretKeyRef: {name: sdc-cs-secret, key: sdc_password}
+        - name: CS_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: cs_password}
       volumes:
         - name: sdc-environments
           configMap:

@@ -12,6 +12,24 @@ check_status()
   fi
 }
 
+check_pods_status()
+{ 
+    num_of_pods=$1
+    status=0
+    while [ ${status} -ne ${num_of_pods} ]
+    do 
+      status=$(sudo kubectl get pods --namespace kube-system -o json \
+      | jq -r '
+        .items[]
+        | select(.status.phase == "Running" and 
+        ([ .status.conditions[] | select(.type == "Ready" and .status == "True") ]
+        | length ) == 1 )
+        | .metadata.namespace + "/" + .metadata.name
+        ' \
+      |  wc -l )
+      sleep 3
+    done
+}
 
 # Should be removed while private dockers (maven build) will be available:
 echo "[INFO] ONAP Docker login"
@@ -22,20 +40,8 @@ check_status $? "Onap docker registry login"
 # kube-addon-manager, kube-dns, kubernetes-dashboard, storage-provisioner, tiller-deploy
 echo "[INFO] Wait for Kubernetes Service ..." 
 cd ../../kubernetes
-status=0
-while [ ${status} -ne 5 ]
-do 
-  status=$(sudo kubectl get pods --namespace kube-system -o json \
-  | jq -r '
-    .items[]
-    | select(.status.phase == "Running" and 
-    ([ .status.conditions[] | select(.type == "Ready" and .status == "True") ]
-    | length ) == 1 )
-    | .metadata.namespace + "/" + .metadata.name
-    ' \
-  |  wc -l )
-  sleep 3
-done
+
+check_pods_status 4
 
 # Create namespace 
 echo "[INFO] Check Namespace existence"
@@ -49,7 +55,7 @@ echo "[INFO] Running helm init"
 sudo helm init
 check_status $? "Helm init"
 
-set -x
+check_pods_status 5
 
 printf "[INFO] Wait for helm to get ready\n"
 helm_health=1
