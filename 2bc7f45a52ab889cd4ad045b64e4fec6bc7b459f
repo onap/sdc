@@ -19,6 +19,144 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_0d4781bd",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "this can be inline in the next line. no need to intruduce a variable unless you are going to check something(like null)",
+      "range": {
+        "startLine": 276,
+        "startChar": 36,
+        "endLine": 276,
+        "endChar": 48
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4d4109a8",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "this is not readable. extract to a function with meaningful name",
+      "range": {
+        "startLine": 280,
+        "startChar": 10,
+        "endLine": 285,
+        "endChar": 62
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2d44bdb5",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "this is not readable. extract to a function with meaningful name",
+      "range": {
+        "startLine": 302,
+        "startChar": 10,
+        "endLine": 306,
+        "endChar": 52
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8d0ab177",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "this is classical for stream API",
+      "range": {
+        "startLine": 318,
+        "startChar": 4,
+        "endLine": 323,
+        "endChar": 7
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ad0f6d87",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "this is classical for stream API",
+      "range": {
+        "startLine": 332,
+        "startChar": 5,
+        "endLine": 336,
+        "endChar": 7
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4d2829e2",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "this is classical for stream API (matchAny)",
+      "range": {
+        "startLine": 350,
+        "startChar": 6,
+        "endLine": 358,
+        "endChar": 7
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_d0029b6e",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
         "patchSetId": 1
@@ -30,6 +168,98 @@
       "writtenOn": "2018-02-06T14:29:50Z",
       "side": 1,
       "message": "Use \nhttps://google.github.io/guava/releases/21.0/api/docs/com/google/common/collect/SetMultimap.html",
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0d1ea1bb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "stream API matchAny",
+      "range": {
+        "startLine": 490,
+        "startChar": 6,
+        "endLine": 494,
+        "endChar": 7
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2d1b5dcb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "extract to a function",
+      "range": {
+        "startLine": 669,
+        "startChar": 10,
+        "endLine": 672,
+        "endChar": 77
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8d8151c5",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/TestUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "this is way too much parameters. create a class with meaningful name. you can use intellij to it. select all the parameters-\u003eright click-\u003erefactor-\u003eextract-\u003eparameter object)",
+      "range": {
+        "startLine": 302,
+        "startChar": 41,
+        "endLine": 312,
+        "endChar": 75
+      },
+      "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8d58718b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationServiceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2827,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T09:24:38Z",
+      "side": 1,
+      "message": "there is a tone of code duplication.",
+      "range": {
+        "startLine": 2306,
+        "startChar": 1,
+        "endLine": 2827,
+        "endChar": 3
+      },
       "revId": "2bc7f45a52ab889cd4ad045b64e4fec6bc7b459f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
