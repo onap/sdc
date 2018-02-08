@@ -47,6 +47,7 @@ const SDC_CONFIG = {
 		"GET_lifecycle_state_CERTIFICATIONREQUEST":"lifecycleState/CERTIFICATIONREQUEST",
 		"GET_lifecycle_state_UNDOCHECKOUT":"lifecycleState/UNDOCHECKOUT",
 		"root": "/sdc1/feProxy/rest",
+        "no_proxy_root": "/sdc1/rest",
 		"PUT_service": "/v1/catalog/services/:id/metadata",
 		"GET_download_artifact": "/v1/catalog/",
         "GET_SDC_Version": "/version",
