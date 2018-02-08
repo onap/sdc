@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_9042ca66",
+        "filename": "openecomp-be/tools/build/docker/backend/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-08T14:57:32Z",
+      "side": 1,
+      "message": "we are going to make modification to the be docker as it looks today so this file will need to be cleaned up later",
+      "range": {
+        "startLine": 3,
+        "startChar": 3,
+        "endLine": 3,
+        "endChar": 26
+      },
+      "revId": "791ce1e66f8b4082eabbcf646d59861ebc263b53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f1132764",
         "filename": "openecomp-be/tools/build/docker/pom.xml",
         "patchSetId": 1
@@ -13,6 +36,52 @@
       "writtenOn": "2018-02-01T07:37:30Z",
       "side": 1,
       "message": "I think that the docker plugin should be part of the onboarding pom. If that\u0027s not possible, at least it should be at the same level as the application assembly. Here it looks like buried deep in a sub-module.",
+      "revId": "791ce1e66f8b4082eabbcf646d59861ebc263b53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5079a2c6",
+        "filename": "openecomp-be/tools/build/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-08T14:57:32Z",
+      "side": 1,
+      "message": "this is used only for the out out right? do you really need this?",
+      "range": {
+        "startLine": 32,
+        "startChar": 30,
+        "endLine": 32,
+        "endChar": 57
+      },
+      "revId": "791ce1e66f8b4082eabbcf646d59861ebc263b53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d04cd2a0",
+        "filename": "openecomp-be/tools/build/docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-08T14:57:32Z",
+      "side": 1,
+      "message": "do not copy the chef from the BE, place your own chef in the project, then remove all the un needed logic from it.\nkeep in mind that we will want to split the repos and in the future you will not be able to copy the info from us",
+      "range": {
+        "startLine": 116,
+        "startChar": 37,
+        "endLine": 116,
+        "endChar": 66
+      },
       "revId": "791ce1e66f8b4082eabbcf646d59861ebc263b53",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
