@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_90240a61",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/heatextend/AnnotationType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "remove all java docs. they are self explenatory",
+      "range": {
+        "startLine": 29,
+        "startChar": 6,
+        "endLine": 33,
+        "endChar": 9
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_90dbaa4e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "combine this 2 filters into one filter with \u0026\u0026",
+      "range": {
+        "startLine": 280,
+        "startChar": 14,
+        "endLine": 281,
+        "endChar": 122
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b0e026fb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "1. typo\n2. are you sure inputParameters.get(newParameterSet.getKey()) will not return null",
+      "range": {
+        "startLine": 288,
+        "startChar": 27,
+        "endLine": 288,
+        "endChar": 41
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f0c1ce54",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "are you sure inputParameters.get(newParameterSet.getKey()) will not return null",
+      "range": {
+        "startLine": 289,
+        "startChar": 65,
+        "endLine": 289,
+        "endChar": 92
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b0b7c6f4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "are you sure that no getter in this chain will return null?",
+      "range": {
+        "startLine": 295,
+        "startChar": 11,
+        "endLine": 296,
+        "endChar": 62
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f0a8ee8e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaParameterConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "why do you need 2 variables for the same value",
+      "range": {
+        "startLine": 75,
+        "startChar": 6,
+        "endLine": 76,
+        "endChar": 44
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b0aee696",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaParameterConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 138,
+        "startChar": 49,
+        "endLine": 138,
+        "endChar": 59
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f08f8e28",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaParameterConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "annotaions.ifPresent(ant -\u003e toscaParameter.setAnnotations(annotaions.get()));\n\nthis is more readable",
+      "range": {
+        "startLine": 139,
+        "startChar": 4,
+        "endLine": 141,
+        "endChar": 5
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_707b7e28",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaParameterConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "not in use. remove",
+      "range": {
+        "startLine": 146,
+        "startChar": 198,
+        "endLine": 146,
+        "endChar": 216
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_90972a3a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaParameterConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "useless parentheses",
+      "range": {
+        "startLine": 172,
+        "startChar": 11,
+        "endLine": 172,
+        "endChar": 12
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_50a522a0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaParameterConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:35:05Z",
+      "side": 1,
+      "message": "can be private",
+      "range": {
+        "startLine": 185,
+        "startChar": 2,
+        "endLine": 185,
+        "endChar": 8
+      },
+      "revId": "470a197a61566188b3a18e8faac86d7fcbef47ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
