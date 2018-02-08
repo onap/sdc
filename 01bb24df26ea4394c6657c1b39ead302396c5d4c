@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2df7dd5a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/OnboardingSessionContextFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:38:34Z",
+      "side": 1,
+      "message": "shouldn\u0027t it be external to the code or at least a constants?",
+      "range": {
+        "startLine": 19,
+        "startChar": 11,
+        "endLine": 19,
+        "endChar": 16
+      },
+      "revId": "01bb24df26ea4394c6657c1b39ead302396c5d4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd9759eb",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/listeners/OnboardingAppStartupListener.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:38:34Z",
+      "side": 1,
+      "message": "it must be in accordance with my comment on \u0027OnboardingSessionContextFilter.java\u0027",
+      "range": {
+        "startLine": 37,
+        "startChar": 8,
+        "endLine": 37,
+        "endChar": 13
+      },
+      "revId": "01bb24df26ea4394c6657c1b39ead302396c5d4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cdbe7965",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-api/src/main/java/org/openecomp/core/zusammen/api/ZusammenUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-08T12:38:34Z",
+      "side": 1,
+      "message": "no one can access this constructor. why to throw an exception?",
+      "range": {
+        "startLine": 16,
+        "startChar": 3,
+        "endLine": 16,
+        "endChar": 53
+      },
+      "revId": "01bb24df26ea4394c6657c1b39ead302396c5d4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
