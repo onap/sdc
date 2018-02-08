@@ -23,7 +23,7 @@ package org.openecomp.core.dao.types;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
-@Table(keyspace = "dox", name = "unique_value")
+@Table(name = "unique_value")
 public class UniqueValueEntity {
 
   @PartitionKey

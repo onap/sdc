@@ -35,6 +35,7 @@ public class ItemPermissionsManagerImplTest {
   private static final String AFFECTED_USER1 = "affected_user1";
   private static final String AFFECTED_USER2 = "affected_user2";
   private static final String AFFECTED_USER3 = "affected_user3";
+  private static final String tenant = "dox";
 
   @Mock
   private PermissionsServices permissionsServicesMock;
@@ -53,7 +54,7 @@ public class ItemPermissionsManagerImplTest {
 
   @BeforeMethod
   public void setUp() throws Exception {
-    SessionContextProviderFactory.getInstance().createInterface().create(USER);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER, tenant);
     MockitoAnnotations.initMocks(this);
   }
 

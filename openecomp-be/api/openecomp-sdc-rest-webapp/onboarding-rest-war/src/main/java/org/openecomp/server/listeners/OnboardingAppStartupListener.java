@@ -21,6 +21,7 @@
 package org.openecomp.server.listeners;
 
 
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.springframework.web.context.ContextLoaderListener;
 
 import javax.servlet.ServletContextEvent;
@@ -32,6 +33,8 @@ public class OnboardingAppStartupListener implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
+    SessionContextProviderFactory.getInstance().createInterface().create("onboarding",
+        "dox");
     springListener = new ContextLoaderListener();
     springListener.initWebApplicationContext(servletContextEvent.getServletContext());
   }

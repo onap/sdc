@@ -37,6 +37,7 @@ import static org.openecomp.sdc.versioning.dao.impl.zusammen.TestUtil.createZusa
 public class VersionZusammenDaoImplTest {
 
   private static final String USER = "user1";
+  private static final String tenant = "dox";
   @Mock
   private ZusammenAdaptor zusammenAdaptorMock;
   @InjectMocks
@@ -45,7 +46,7 @@ public class VersionZusammenDaoImplTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    SessionContextProviderFactory.getInstance().createInterface().create(USER);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER, tenant);
   }
 
   @Test

@@ -60,5 +60,10 @@
             <scope>test</scope>
             <version>${junit.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.core</groupId>
+            <artifactId>openecomp-session-lib</artifactId>
+            <version>1.2.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

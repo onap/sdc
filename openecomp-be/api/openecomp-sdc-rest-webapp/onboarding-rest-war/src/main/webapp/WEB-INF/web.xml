@@ -83,7 +83,7 @@
     </filter-mapping>
     <filter>
         <filter-name>SessionContextFilter</filter-name>
-        <filter-class>org.openecomp.server.filters.SessionContextFilter</filter-class>
+        <filter-class>org.openecomp.server.filters.OnboardingSessionContextFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SessionContextFilter</filter-name>
