@@ -14,32 +14,92 @@ topology_template:
     p2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: p2
       type: string
       description: shared_vol2
     cmaui_cinder_volume_size:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: cmaui_cinder_volume_size
       type: string
     shared_nova:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_nova
       type: string
     shared_vol1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_vol1
       type: string
     contrail_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: contrail_net_name
       type: string
       description: network name of jsa log network
     CMAUI_volume_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: CMAUI_volume_type
       type: string
     jsa_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: jsa_name
       type: string
       description: network name of jsa log network
   node_templates:

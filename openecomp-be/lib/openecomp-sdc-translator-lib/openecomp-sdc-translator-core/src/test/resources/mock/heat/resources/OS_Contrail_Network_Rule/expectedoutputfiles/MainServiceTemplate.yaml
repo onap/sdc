@@ -9,86 +9,222 @@ topology_template:
     start_src_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: start_src_ports
       type: float
       description: Start of src port
     private_net_1_gateway:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_1_gateway
       type: string
       description: Private network gateway address
     private_net_2_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_2_name
       type: string
       description: Name of private network to be created
     private_net_2_gateway:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_2_gateway
       type: string
       description: Private network gateway address
     policy_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: policy_name
       type: string
       description: Virtual network id
     private_net_1_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_1_name
       type: string
       description: Name of private network to be created
     private_net_2_pool_start:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_2_pool_start
       type: string
       description: Start of private network IP address allocation pool
     private_net_2_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_2_cidr
       type: string
       description: Private network address (CIDR notation)
     private_net_1_pool_end:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_1_pool_end
       type: string
       description: End of private network IP address allocation pool
     end_src_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: end_src_ports
       type: float
       description: End of src port
     apply_service:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: apply_service
       type: string
       description: service to apply
     start_dst_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: start_dst_ports
       type: float
       description: Start of dst port
     end_dst_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: end_dst_ports
       type: float
       description: End of dst port
     private_net_1_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_1_cidr
       type: string
       description: Private network address (CIDR notation)
     private_net_1_pool_start:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_1_pool_start
       type: string
       description: Start of private network IP address allocation pool
     private_net_2_pool_end:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: private_net_2_pool_end
       type: string
       description: End of private network IP address allocation pool
     direction:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_policy_chain
+            source_type: HEAT
+            param_name: direction
       type: string
       description: Direction of Policy
   node_templates:

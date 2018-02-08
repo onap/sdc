@@ -11,11 +11,27 @@ topology_template:
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF module instance
     dns_int_bearer_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: dns_int_bearer_ips
       type: list
       description: DNS Bearer IP list
       entry_schema:
@@ -23,16 +39,41 @@ topology_template:
     vnf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            - base_dns
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VF instance
     oam_protected_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: oam_protected_net_name
       type: string
       description: OAM network where instaces will connect
     dns_oam_protected_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: dns_oam_protected_ips
       type: list
       description: DNS OAM IP list
       entry_schema:
@@ -40,48 +81,120 @@ topology_template:
     dns_key:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: dns_key
       type: string
       description: creator's ssh public key
     int_bearer_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: int_bearer_net_name
       type: string
       description: Bearer network where instaces will connect
     route_eth0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: route_eth0
       type: string
       description: OAM network routes
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: availability zone ID or Name
     DNS_shared_sec_grp_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: DNS_shared_sec_grp_id
       type: string
       description: security group UUID
     node_count:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: node_count
       type: float
       description: the number of DNS nested instances
       default: 4
     dns_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: dns_image_name
       type: string
       description: operative system image
       default: NIMBUS_DNS_3.0.2.qcow2
     dns_int_bearer_ipv6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: dns_int_bearer_ipv6_ips
       type: list
       description: fixed IP assignment for VM's on the Bearer network
       entry_schema:
@@ -89,6 +202,14 @@ topology_template:
     dns_server_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: dns_server_names
       type: list
       description: DNS VM server name list
       entry_schema:
@@ -96,6 +217,14 @@ topology_template:
     dns_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - dns_az_01
+            source_type: HEAT
+            param_name: dns_flavor_name
       type: string
       description: resources to by appplied on instances
       default: nv.c4r4d80

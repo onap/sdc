@@ -12,6 +12,14 @@ topology_template:
       label: VF Module ID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF Module instance
       default: base
@@ -19,6 +27,14 @@ topology_template:
       label: Database Ports
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_ports
       type: list
       description: List of ports to apply to the security group for the database VMs
       default:
@@ -29,6 +45,14 @@ topology_template:
       label: Application Protocols
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_protocols
       type: list
       description: List of protocols associated with the app_ports
       default:
@@ -39,6 +63,14 @@ topology_template:
       label: Data Volume Size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn_volume
+            source_type: HEAT
+            param_name: db_volume_size_0
       type: float
       description: Size of the data volume
       default: 1
@@ -50,6 +82,14 @@ topology_template:
       label: Application Ports
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_ports
       type: list
       description: List of ports to apply to the security group for the application VMs
       default:
@@ -60,6 +100,14 @@ topology_template:
       label: VNF ID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance
       default: pronghorn
@@ -67,6 +115,14 @@ topology_template:
       label: First Availability Zone
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: Name of the first availability zone
       default: nova
@@ -74,6 +130,14 @@ topology_template:
       label: Application Public Key
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_public_key
       type: string
       description: Public ssh key for the application servers
       default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGe+nL1U3mFHrbtmsvNWR+oDdUyyOX5KejZqe/80uwDiPNyOJjHWIVuX812AEdAAH94nQnkYr2dBiSu1FPh+auMuk3FfegchKT7pYetqELY3ryLUPEh67PmKrdlT9cQ/wQZROq672AA6qlZAYIooeLZVSzUhABfsITk0RhfcWZGIcZwv0Tja3nnhNgtqCxoTXs6fzfcCaypgwy3F0S4RewUfcz/9g7f0tze1CmWRUtPkNK2nX2/T2AJzHgy+vItwpalnon1egIszJfj7uxp+VotQlQ2PN8sI0J5zgpBFe/lxqEwtIKeiTJ16JlyDXtin/RCjCCdtvIaVCff3Z031UV jspaeth@Jonathons-MBP
@@ -81,6 +145,14 @@ topology_template:
       label: Database Image
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_image_name
       type: string
       description: Image of the database server
       default: pronghorn-ubuntu14
@@ -88,6 +160,14 @@ topology_template:
       label: Data Volume IDs for disk 3
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_volume_id_3
       type: string
       description: IDs to be used for the database volumes
       default: 454a7b1c-a58f-4bac-bed2-a7afa3836dd4
@@ -95,6 +175,14 @@ topology_template:
       label: Data Volume IDs for disk 2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_volume_id_2
       type: string
       description: IDs to be used for the database volumes
       default: 6f4d6f1a-1e88-492b-8020-b5a169381434
@@ -102,6 +190,14 @@ topology_template:
       label: Database OAM Network
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
       description: Name of the OAM network for the database servers
       default: oam
@@ -109,6 +205,14 @@ topology_template:
       label: Database Flavor
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_flavor_name
       type: string
       description: Flavor of the database server
       default: s1.test
@@ -116,6 +220,14 @@ topology_template:
       label: Data Volume IDs for disk 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_volume_id_1
       type: string
       description: IDs to be used for the database volumes
       default: 5db48c7a-eb2d-4960-a90c-88a2d0052a71
@@ -123,6 +235,14 @@ topology_template:
       label: Common Protocols
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: common_protocols
       type: list
       description: List of protocols associated with the common_ports
       default:
@@ -136,6 +256,14 @@ topology_template:
       label: Data Volume IDs for disk 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_volume_id_0
       type: string
       description: IDs to be used for the database volumes
       default: e8abc8da-f477-4e5c-8266-98b43c982fe4
@@ -143,6 +271,14 @@ topology_template:
       label: Database Protocols
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_protocols
       type: list
       description: List of protocols associated with the db_ports
       default:
@@ -153,6 +289,14 @@ topology_template:
       label: App Flavor
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_flavor_name
       type: string
       description: Flavor to be used for the application server
       default: s1.test
@@ -160,6 +304,14 @@ topology_template:
       label: Application Deployment Timeout
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_deploy_timeout
       type: float
       description: Timeout in seconds before declaring the application stack as failed
       default: 300
@@ -171,6 +323,14 @@ topology_template:
       label: Common Ports
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: common_ports
       type: list
       description: List of ports to apply to the security group for all VMs
       default:
@@ -184,6 +344,14 @@ topology_template:
       label: Application Hostname
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_name
       type: string
       description: Hostname of the application server
       default: pronghorn-app01
@@ -191,6 +359,14 @@ topology_template:
       label: Database Hostname
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_name
       type: string
       description: Hostname of the database server
       default: pronghorn-db01
@@ -198,6 +374,14 @@ topology_template:
       label: Application OAM IP Address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_oam_ip_0
       type: string
       description: OAM IP Address of the application server
       default: 10.0.0.21
@@ -205,6 +389,14 @@ topology_template:
       label: App VM Role
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_vm_role
       type: string
       description: Role for the App VM
       default: app
@@ -212,6 +404,14 @@ topology_template:
       label: App Image
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: app_image_name
       type: string
       description: Image to be used for the application server
       default: pronghorn-ubuntu14
@@ -219,6 +419,14 @@ topology_template:
       label: Database Public Key
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_public_key
       type: string
       description: Public ssh key for the database servers
       default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGe+nL1U3mFHrbtmsvNWR+oDdUyyOX5KejZqe/80uwDiPNyOJjHWIVuX812AEdAAH94nQnkYr2dBiSu1FPh+auMuk3FfegchKT7pYetqELY3ryLUPEh67PmKrdlT9cQ/wQZROq672AA6qlZAYIooeLZVSzUhABfsITk0RhfcWZGIcZwv0Tja3nnhNgtqCxoTXs6fzfcCaypgwy3F0S4RewUfcz/9g7f0tze1CmWRUtPkNK2nX2/T2AJzHgy+vItwpalnon1egIszJfj7uxp+VotQlQ2PN8sI0J5zgpBFe/lxqEwtIKeiTJ16JlyDXtin/RCjCCdtvIaVCff3Z031UV jspaeth@Jonathons-MBP
@@ -226,6 +434,14 @@ topology_template:
       label: Database OAM IP Addresse
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_oam_ip_0
       type: string
       description: OAM IP Address of the database server
       default: 10.0.0.20
@@ -233,6 +449,14 @@ topology_template:
       label: DB VM Role
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_vm_role
       type: string
       description: Role for the DB VM
       default: database
@@ -240,6 +464,14 @@ topology_template:
       label: Database Deployment Timeout
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_pronghorn
+            source_type: HEAT
+            param_name: db_deploy_timeout
       type: float
       description: Timeout in seconds before declaring the database stack as failed
       default: 300

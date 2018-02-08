@@ -9,78 +9,214 @@ topology_template:
     template_PortTuple_LB1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: template_PortTuple_LB1
       type: string
       description: dummy
     lb_st_interface_type_oam:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: lb_st_interface_type_oam
       type: string
       description: dummy
     oam_sec_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: oam_sec_group_name
       type: string
       description: dummy
     virtual_ip_address:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: virtual_ip_address
       type: string
     nems_traffic_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: nems_traffic_name
       type: string
       description: dummy
     security_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: security_group_name
       description: not impotrtant
     jsa_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: jsa_net_name
       type: string
       description: dummy
     vlan_ids:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: vlan_ids
       type: string
     virtual_ipv6_address:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: virtual_ipv6_address
       type: string
     lb_st_vlan_type_oam:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: lb_st_vlan_type_oam
       type: string
       description: dummy
     mac_address:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: mac_address
       type: string
     network_ipam_refs_data_ipam_subnets_addr_from_start_true:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: network_ipam_refs_data_ipam_subnets_addr_from_start_true
       type: string
       description: dummy
     subinterface_name_prefix:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: subinterface_name_prefix
       type: string
     subinterface_instance_index:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: subinterface_instance_index
       type: float
     cmaui_oam_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: cmaui_oam_ips
       type: string
     network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
       type: string
       description: dummy
     network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
       type: string
       description: dummy
   node_templates:
