@@ -15,29 +15,10 @@ spec:
       labels:
         app: sdc-cs
       name: sdc-cs
-    spec:
-      initContainers:
-      - command:
-        - /root/ready.py
-        args:
-        - --container-name
-        - sdc-es
-        env:
-        - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        image: "{{ .Values.image.readiness }}"
-        imagePullPolicy: "{{ .Values.pullPolicy }}"
-        name: sdc-cs-readiness
       containers:
       - name: sdc-cs
         image: "{{ .Values.image.sdcCassandra }}"
         imagePullPolicy: "{{ .Values.pullPolicy }}"
-        # run cs & wait forever
-        command: ["/root/startup.sh"]
-        args: [ "/bin/sh", "-c" , "while true; do sleep 30; done;" ]
         env:
         - name: ENVNAME
           value: "{{ .Values.env.name }}"

@@ -10,7 +10,8 @@ echo "########### starting cassandra ###########"
 /docker-entrypoint.sh cassandra -f &
 
 chef-solo -c solo.rb  -E ${ENVNAME}
+rc=$?
 if [[ $rc != 0 ]]; then exit $rc; fi
+while true; do sleep 30; done
 
-exec "$@";
 
