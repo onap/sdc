@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_99daeee6",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/VendorLicenseModels.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-11T11:00:07Z",
+      "side": 1,
+      "message": "change copyright",
+      "range": {
+        "startLine": 5,
+        "startChar": 3,
+        "endLine": 5,
+        "endChar": 69
+      },
+      "revId": "c1a06cc217ff0259cf84b3f8f109ea6b5a3adc45",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_59e0e695",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-11T11:00:07Z",
+      "side": 1,
+      "message": "copyrights",
+      "range": {
+        "startLine": 5,
+        "startChar": 3,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "c1a06cc217ff0259cf84b3f8f109ea6b5a3adc45",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b99d6a0c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-11T11:00:07Z",
+      "side": 1,
+      "message": "add the original exception to the new generated exception and log it",
+      "range": {
+        "startLine": 147,
+        "startChar": 6,
+        "endLine": 147,
+        "endChar": 43
+      },
+      "revId": "c1a06cc217ff0259cf84b3f8f109ea6b5a3adc45",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d9a2b64a",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-impl/src/main/java/org/openecomp/sdc/itempermissions/impl/PermissionsRulesImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-11T11:00:07Z",
+      "side": 1,
+      "message": "1. please align this code block\n2. what about permissions null check",
+      "range": {
+        "startLine": 44,
+        "startChar": 16,
+        "endLine": 62,
+        "endChar": 16
+      },
+      "revId": "c1a06cc217ff0259cf84b3f8f109ea6b5a3adc45",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
