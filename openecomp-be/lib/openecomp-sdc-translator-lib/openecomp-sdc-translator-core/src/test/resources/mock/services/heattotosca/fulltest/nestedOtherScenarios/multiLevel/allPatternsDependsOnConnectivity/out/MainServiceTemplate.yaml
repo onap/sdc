@@ -11,16 +11,40 @@ topology_template:
     ps_server_main_1b_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ps_server_main_1b_image
       type: string
       description: Ps Image server
     security_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: security_group_name
       type: string
       description: security_group_name
     cmaui_1c1_main_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: cmaui_1c1_main_names
       type: list
       description: CMAUI1, CMAUI2 server names
       entry_schema:
@@ -28,30 +52,78 @@ topology_template:
     contrail_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: contrail_net_name
       type: string
       description: network name of contrail v2 network
     ps_server_main_1b_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ps_server_main_1b_flavor
       type: string
       description: Flavor for PS server
     ps_server_main_1b_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ps_server_main_1b_ips
       type: string
     jsa_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_net_name
       type: string
       description: network name of jsa network
     jsa_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_name
       type: string
       description: network name of jsa log network
     pd_server_main_1b_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_main_1b_names
       type: list
       description: PD server names
       entry_schema:
@@ -59,21 +131,53 @@ topology_template:
     cmaui_1c1_main_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: cmaui_1c1_main_flavor
       type: string
       description: Flavor for CMAUI server
     pd_server_main_1b_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_main_1b_flavor
       type: string
       description: Flavor for PD server
     cmaui_1c1_main_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: cmaui_1c1_main_image
       type: string
       description: Image for CMAUI server
     ps_server_main_1b_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ps_server_main_1b_names
       type: list
       description: Ps server names
       entry_schema:
@@ -82,20 +186,52 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: availabilityzone name
     cmaui_oam_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: cmaui_oam_ips
       type: string
     pd_server_main_1b_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_main_1b_image
       type: string
       description: PD Image server
     pd_server_main_1b_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_main_1b_ips
       type: string
   node_templates:
     abstract_pd_server_main_1b_1:

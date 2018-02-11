@@ -38,12 +38,6 @@ public class ResourceTranslationContrailV2VlanSubInterfaceImplTest extends
         // do not delete this function. it prevents the superclass setup from running
     }
 
-    @BeforeClass
-    public static void enableVLANTagging() {
-        manager.enable(ToggleableFeature.VLAN_TAGGING);
-        TestFeatureManagerProvider.setFeatureManager(manager);
-    }
-
     @Test
     public void testTranslateVlanSubInterfaceWithGetResource() throws Exception {
         inputFilesPath = "/mock/services/heattotosca/contrailv2Vlan/oneInterface/inputfiles";
@@ -59,12 +53,5 @@ public class ResourceTranslationContrailV2VlanSubInterfaceImplTest extends
             "/mock/services/heattotosca/contrailv2Vlan/listInterface/expectedoutputfiles";
         initTranslatorAndTranslate();
         testTranslation();
-    }
-
-    @AfterClass
-    public static void disableVLANTagging() {
-        manager.disable(ToggleableFeature.VLAN_TAGGING);
-        manager = null;
-        TestFeatureManagerProvider.setFeatureManager(null);
     }
 }

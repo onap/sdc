@@ -12,6 +12,14 @@ topology_template:
       label: PD flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_flavor_name
       type: string
       description: flavor name of PD instance
       default: m3.xlarge
@@ -19,6 +27,14 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: availabilityzone_name
       type: string
       description: availabilityzone name
       default: nova
@@ -26,12 +42,28 @@ topology_template:
       label: volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd01_cinder_volume_size
       type: string
       description: volume size
     pd_image_name:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_image_name
       type: string
       description: PD image name
       default: MOG_BASE_8.0
@@ -39,12 +71,28 @@ topology_template:
       label: packet mirror network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: packet_mirror_network_name
       type: string
       description: name of the network
     pd_server_names:
       label: PD server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_server_names
       type: list
       description: name of the PD instance
       default:
@@ -56,6 +104,14 @@ topology_template:
       label: volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd01_volume_type
       type: string
       description: volume type
   node_templates:

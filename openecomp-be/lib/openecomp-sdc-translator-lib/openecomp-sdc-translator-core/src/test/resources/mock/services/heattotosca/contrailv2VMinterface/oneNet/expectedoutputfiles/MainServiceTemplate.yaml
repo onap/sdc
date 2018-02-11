@@ -9,46 +9,118 @@ topology_template:
     interface_param:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: interface_param
       type: string
       description: dummy
     template_PortTuple_LB1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: template_PortTuple_LB1
       type: string
       description: dummy
     lb_st_interface_type_oam:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: lb_st_interface_type_oam
       type: string
       description: dummy
     oam_sec_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: oam_sec_group_name
       type: string
       description: dummy
     nems_traffic_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: nems_traffic_name
       type: string
       description: dummy
     network_ipam_refs_data_ipam_subnets_addr_from_start_true:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: network_ipam_refs_data_ipam_subnets_addr_from_start_true
       type: string
       description: dummy
     network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
       type: string
       description: dummy
     jsa_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: jsa_net_name
       type: string
       description: dummy
     network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
       type: string
       description: dummy
   node_templates:

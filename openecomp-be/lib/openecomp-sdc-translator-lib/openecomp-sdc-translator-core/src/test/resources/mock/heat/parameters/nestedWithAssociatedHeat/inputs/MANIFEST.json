@@ -1,0 +1,24 @@
+{
+  "name": "vMME_Small",
+  "description": "HOT template to create 2 cinder volume attachment",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "nested.yml",
+      "type": "HEAT",
+      "isBase": "false",
+      "data": [
+        {
+          "file": "a_vol.yml",
+          "type": "HEAT_VOL",
+          "isBase": "false"
+        }
+      ]
+    },
+    {
+      "file": "main.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    }
+  ]
+}

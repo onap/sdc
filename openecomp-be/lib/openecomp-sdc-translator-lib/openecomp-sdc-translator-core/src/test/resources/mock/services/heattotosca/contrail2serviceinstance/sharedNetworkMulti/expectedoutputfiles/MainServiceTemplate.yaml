@@ -11,161 +11,433 @@ topology_template:
     Internal1_shared:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_base
+            source_type: HEAT
+            param_name: Internal1_shared
       type: string
     service_policy_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: service_policy_name
       type: string
       description: Policy Name
     st_static_routes_list:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_static_routes_list
       type: string
       description: List of static routes enabled-disabled
     st_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_type
       type: string
       description: service type
     Internal2_forwarding_mode:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_base
+            source_type: HEAT
+            param_name: Internal2_forwarding_mode
       type: string
     st_service_interface_type_list:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_service_interface_type_list
       type: string
       description: List of interface types
     st_mode:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_mode
       type: string
       description: service mode
     Cricket_OCS_protected_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: Cricket_OCS_protected_net_id
       type: string
       description: Name of Cricket OCS network
     oam_mgmt_net_0_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: oam_mgmt_net_0_id
       type: string
       description: Name of OAM network
     start_dst_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: start_dst_ports
       type: float
       description: Start of dst port
     st_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_flavor
       type: string
       description: Flavor
     availability_zone_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: availability zone
     Internal2_shared:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_base
+            source_type: HEAT
+            param_name: Internal2_shared
       type: string
     service_instance_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: service_instance_name
       type: string
       description: Service instance name
     st_scaling:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_scaling
       type: string
       description: Indicates whether service scaling is enabled
     max_num_fw_instances:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: max_num_fw_instances
       type: float
       description: maximum number of firewall instances for scaling
     Internal1_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_base
+            source_type: HEAT
+            param_name: Internal1_net_name
       type: string
     start_src_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: start_src_ports
       type: float
       description: Start of src port
     service_policy_direction:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: service_policy_direction
       type: string
       description: Direction of Policy
     st_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_name
       type: string
       description: Name of service template
     Internal2_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_base
+            source_type: HEAT
+            param_name: Internal2_net_name
       type: string
     hsl_direct_net3:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: hsl_direct_net3
       type: string
     hsl_direct_net4:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: hsl_direct_net4
       type: string
     HSL_direct_net_gateway:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: HSL_direct_net_gateway
       type: string
       description: HSL (Logging) network gateway address
     hsl_direct_net1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: hsl_direct_net1
       type: string
     hsl_direct_net2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: hsl_direct_net2
       type: string
     st_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_image
       type: string
       description: Name of the image
     st_shared_ip_list:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: st_shared_ip_list
       type: string
       description: List of shared ip enabled-disabled
     Cricket_OCS_direct_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: Cricket_OCS_direct_net_id
       type: string
       description: Name of Cricket OCS network
     Internal1_forwarding_mode:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - network_base
+            source_type: HEAT
+            param_name: Internal1_forwarding_mode
       type: string
     end_src_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: end_src_ports
       type: float
       description: End of src port
     end_dst_ports:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: end_dst_ports
       type: float
       description: End of dst port
     HSL_direct_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: HSL_direct_net_id
       type: string
       description: Name of HSL (Logging) network
     HSL_direct_net_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - OCS-fw
+            source_type: HEAT
+            param_name: HSL_direct_net_cidr
       type: string
       description: HSL (Logging) network address (CIDR notation)
   node_templates:

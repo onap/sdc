@@ -8,7 +8,7 @@
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on a "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -96,20 +96,26 @@ public class BaseResourceTranslationTest {
   protected static TestFeatureManager manager;
 
   @BeforeClass
-  public static void enableForwarderFeature(){
+  public static void enableToggleableFeatures(){
     manager = new TestFeatureManager(ToggleableFeature.class);
     if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
       manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
     }
+    if(!ToggleableFeature.ANNOTATIONS.isActive()) {
+      manager.enable(ToggleableFeature.ANNOTATIONS);
+    }
+    if(!ToggleableFeature.VLAN_TAGGING.isActive()){
+      manager.enable(ToggleableFeature.VLAN_TAGGING);
+    }
+
   }
 
-
   @AfterClass
-  public static void disableForwarderFeature() {
-    if (manager != null) {
-      manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
-      manager = null;
-    }
+  public static void disableToggleableFeatures() {
+    manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
+    manager.disable(ToggleableFeature.ANNOTATIONS);
+    manager.disable(ToggleableFeature.VLAN_TAGGING);
+    manager = null;
     TestFeatureManagerProvider.setFeatureManager(null);
   }
 

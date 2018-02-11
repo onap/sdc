@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.tosca.services;
@@ -41,6 +37,9 @@ public class ToscaConstants {
   public static final String ATTACHMENT_CAPABILITY_ID = "attachment";
   public static final String FEATURE_CAPABILITY_ID = "feature";
   public static final String PORT_MIRRORING_CAPABILITY_ID = "port_mirroring";
+
+  //TOSCA Annotation Ids
+  public static final String SOURCE_ANNOTATION_ID = "source";
 
   //General
   public static final String TOSCA_DEFINITIONS_VERSION = "tosca_simple_yaml_1_0_0";
@@ -69,6 +68,14 @@ public class ToscaConstants {
 
   public static final String COMPUTE_IMAGE = "image";
   public static final String COMPUTE_FLAVOR = "flavor";
+
+  public static final String SOURCE_TYPE_PROPERTY_NAME = "source_type";
+  public static final String VF_MODULE_LABEL_PROPERTY_NAME = "vf_module_label";
+  public static final String PARAM_NAME_PROPERTY_NAME = "param_name";
+
+  // propertiies valid values
+  public static final String HEAT_SOURCE_TYPE = "HEAT";
+  public static final String GENERIC_SOURCE_TYPE = "Generic";
 
 
 }
