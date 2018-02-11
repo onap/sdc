@@ -406,5 +406,10 @@ public class ServiceModelDaoFactoryTest {
     public Item getItem(SessionContext context, Id itemId) {
       return null;
     }
+
+    @Override
+    public void deleteItem(SessionContext context, Id itemId) {
+
+    }
   }
 }

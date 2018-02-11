@@ -1,22 +1,19 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
+
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
@@ -68,6 +65,7 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -201,9 +199,23 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   }
 
   @Override
-  public Response deleteLicenseModel(String vlmId, String versionId, String user) {
-    vendorLicenseManager.deleteVendorLicenseModel(vlmId, new Version(versionId));
-    return Response.ok().build();
+  public Response deleteLicenseModel(String vlmId, String user) {
+    Item vlm = itemManager.get(vlmId);
+
+    Integer certifiedVersionsCounter = vlm.getVersionStatusCounters().get(VersionStatus.Certified);
+    if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
+      itemManager.delete(vlm);
+      permissionsManager.deleteItemPermissions(vlmId);
+      UniqueValueUtil
+          .deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlm.getName());
+      notifyUsers(vlmId, vlm.getName(), null, "VLM was deleted", user,
+          NotificationEventTypes.DELETE);
+
+      return Response.ok().build();
+    } else {
+      return Response.status(Response.Status.PRECONDITION_FAILED)
+          .entity(new Exception(Messages.DELETE_VLM_ERROR.getErrorMessage())).build();
+    }
   }
 
   @Override
@@ -220,7 +232,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
           request.getSubmitRequest() == null ? "Submit" : request.getSubmitRequest().getMessage();
       submit(vlmId, version, message, user);
 
-      notifyUsers(vlmId, version, message, user, NotificationEventTypes.SUBMIT);
+      notifyUsers(vlmId, null, version, message, user, NotificationEventTypes.SUBMIT);
 
     }
     return Response.ok().build();
@@ -246,15 +258,18 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     }
   }
 
-  private void notifyUsers(String itemId, Version version, String message,
+  private void notifyUsers(String itemId, String itemName, Version version, String message,
                            String userName, NotificationEventTypes eventType) {
     Map<String, Object> eventProperties = new HashMap<>();
-    eventProperties.put(ITEM_NAME, itemManager.get(itemId).getName());
+    eventProperties.put(ITEM_NAME, itemName == null ? itemManager.get(itemId).getName() : itemName);
     eventProperties.put(ITEM_ID, itemId);
 
-    Version ver = versioningManager.get(itemId, version);
-    eventProperties.put(VERSION_NAME, ver.getName());
-    eventProperties.put(VERSION_ID, ver.getId());
+    if (version != null) {
+      eventProperties.put(VERSION_NAME, version.getName() == null
+          ? versioningManager.get(itemId, version).getName()
+          : version.getName());
+      eventProperties.put(VERSION_ID, version.getId());
+    }
 
     eventProperties.put(SUBMIT_DESCRIPTION, message);
     eventProperties.put(PERMISSION_USER, userName);
@@ -274,8 +289,8 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     private Map<String, Object> attributes;
     private String entityId;
 
-    public SyncEvent(String eventType, String originatorId,
-                     Map<String, Object> attributes, String entityId) {
+    SyncEvent(String eventType, String originatorId,
+              Map<String, Object> attributes, String entityId) {
       this.eventType = eventType;
       this.originatorId = originatorId;
       this.attributes = attributes;

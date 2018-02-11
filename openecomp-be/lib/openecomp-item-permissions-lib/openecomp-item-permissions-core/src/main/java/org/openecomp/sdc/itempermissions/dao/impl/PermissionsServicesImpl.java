@@ -53,7 +53,7 @@ public class PermissionsServicesImpl implements PermissionsServices {
   @Override
   public boolean isAllowed(String itemId,String userId,String action) {
 
-    String userPermission = permissionsDao.getUserItemPermiission(itemId,userId);
+    String userPermission = permissionsDao.getUserItemPermission(itemId,userId);
     return permissionsRules.isAllowed(userPermission,action);
   }
 
@@ -64,7 +64,12 @@ public class PermissionsServicesImpl implements PermissionsServices {
 
   @Override
   public String getUserItemPermiission(String itemId, String userId) {
-    return permissionsDao.getUserItemPermiission(itemId,userId);
+    return permissionsDao.getUserItemPermission(itemId,userId);
+  }
+
+  @Override
+  public void deleteItemPermissions(String itemId) {
+    permissionsDao.deleteItemPermissions(itemId);
   }
 
 }
