@@ -20,10 +20,6 @@ spec:
       - name: sdc-es
         image: "{{ .Values.image.sdcElasticsearch }}"
         imagePullPolicy: "{{ .Values.pullPolicy }}"
-        # run & wait forever
-        command: ["/root/startup.sh"]
-        args: [ "/bin/sh", "-c" , "while true; do sleep 30; done;" ]
-        
         env:
         - name: ENVNAME
           value: "{{ .Values.env.name }}"

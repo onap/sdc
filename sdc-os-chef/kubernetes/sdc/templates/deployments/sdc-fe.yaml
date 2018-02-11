@@ -92,10 +92,10 @@ spec:
 #          name: sdc-fe-config
 #        - mountPath: /tmp/logback.xml
 #          name: sdc-logback
-#        lifecycle:
-#          postStart:
-#            exec:
-#              command: ["/bin/sh", "-c", "export LOG=wait_logback.log; touch $LOG; export SRC=/tmp/logback.xml; export DST=/var/lib/jetty/config/catalog-fe/; while [ ! -e $DST ]; do echo 'Waiting for $DST...' >> $LOG; sleep 5; done; sleep 2; /bin/cp -f $SRC $DST; echo 'Done' >> $LOG"]
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "export LOG=wait_logback.log; touch $LOG; export SRC=/tmp/logback.xml; export DST=/var/lib/jetty/config/catalog-fe/; while [ ! -e $DST ]; do echo 'Waiting for $DST...' >> $LOG; sleep 5; done; sleep 2; /bin/cp -f $SRC $DST; echo 'Done' >> $LOG"]
         ports:
         - containerPort: 9443
         - containerPort: 8181
