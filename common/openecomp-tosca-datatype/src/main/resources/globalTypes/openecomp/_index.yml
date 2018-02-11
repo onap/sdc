@@ -32,4 +32,6 @@ imports:
     file: groups.yml
 - data:
     file: data.yml
+- annotations:
+    file: annotations.yml
 

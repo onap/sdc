@@ -12,6 +12,14 @@ topology_template:
     cmaui_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: cmaui_names
       type: list
       description: CMAUI1, CMAUI2 server names
       entry_schema:
@@ -19,21 +27,53 @@ topology_template:
     p1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: p1
       type: string
       description: UID of OAM network
     cmaui_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: cmaui_image
       type: string
       description: Image for CMAUI server
     cmaui_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: cmaui_flavor
       type: string
       description: Flavor for CMAUI server
     security_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: security_group_name
       type: list
       description: CMAUI1, CMAUI2 server names
       entry_schema:
@@ -42,20 +82,52 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: availabilityzone name
     cmaui_oam_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: cmaui_oam_ips
       type: string
     shared_network_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_network_id
       type: string
       description: Flavor for CMAUI server
     jsa_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_net_name
       type: string
       description: network name of jsa log network
   node_templates:

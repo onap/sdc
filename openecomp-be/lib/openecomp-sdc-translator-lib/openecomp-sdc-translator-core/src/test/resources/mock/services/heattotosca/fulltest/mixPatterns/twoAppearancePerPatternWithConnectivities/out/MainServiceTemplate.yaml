@@ -12,52 +12,140 @@ topology_template:
       label: PD flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_flavor_name
       type: string
       description: flavor name of PD instance
     availabilityzone_name:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: availabilityzone_name
       type: string
       description: availabilityzone name
     ppds_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: ppds_net_name
       type: string
     a_single_1a_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: a_single_1a_names
       type: string
     a_single_2a_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: a_single_2a_names
       type: string
     2c2_catalog_instance_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: 2c2_catalog_instance_names
       type: string
     pcm_server_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pcm_server_names
       type: string
     pcm_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pcm_image_name
       type: string
     pd_image_name:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_image_name
       type: string
       description: PD image name
     security_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: security_group_name
       type: string
     pd_server_names:
       label: PD server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_server_names
       type: list
       description: name of the PD instance
       entry_schema:
@@ -65,38 +153,110 @@ topology_template:
     1c2_catalog_instance_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: 1c2_catalog_instance_names
       type: string
     pcm_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pcm_flavor_name
       type: string
     b_single_1b_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: b_single_1b_names
       type: string
     1c12_scalling_instance_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: 1c12_scalling_instance_names
       type: string
     b_single_2b_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: b_single_2b_names
       type: string
     myIPs:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: myIPs
       type: string
     net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: net_name
       type: string
     1c11_scalling_instance_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: 1c11_scalling_instance_names
       type: string
     oam_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
   node_templates:
     abstract_b_single_1b:

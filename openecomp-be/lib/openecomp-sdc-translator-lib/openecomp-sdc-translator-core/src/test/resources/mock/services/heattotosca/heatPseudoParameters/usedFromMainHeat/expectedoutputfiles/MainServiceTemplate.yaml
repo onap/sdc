@@ -11,47 +11,111 @@ topology_template:
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: VF Module ID
       default: '888800008888'
     cpm_mgt_gw_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_mgt_gw_ip
       type: string
       description: Default Gateway for the Management Interface, set during boot time
       default: 192.168.254.1
     mgt_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: mgt_net_id
       type: string
       description: Network used by the Management interface
       default: 1024b82c-0049-4503-8b0b-eb5ff952e101
     ctrl_fabric_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: ctrl_fabric_cidr
       type: string
       description: CIDR of Control Fabric Network
     data3_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data3_subnet_id
       type: string
       description: Subnet used by the fourth Data interface
       default: 90ad7ea9-596f-45f4-8869-226fc876b106
     ctrl_fabric_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: ctrl_fabric_net_id
       type: string
       description: Network used by the control fabric interface
       default: 1024b82c-0049-4503-8b0b-eb5ff952e102
     data0_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data0_subnet_id
       type: string
       description: Subnet used by the Data interface
       default: 90ad7ea9-596f-45f4-8869-226fc876b103
     cpmaSlot:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpmaSlot
       type: string
       description: The slot value assigned to CPMA
       default: A
@@ -61,18 +125,42 @@ topology_template:
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: VNF ID
       default: '111100001111'
     cpm_mgt_ip_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_mgt_ip_1
       type: string
       description: Fixed IP that will be used by the Management Interface on CPMB
       default: 192.168.254.12
     cpm_smbios:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_smbios
       type: string
       description: Parameters to be passed to the CPM at boot up as key-value pairs
       default: 'TiMOS: slot=$slt chassis=VSR card=cpm-v license-file=license.txt address=$adrp/24@active
@@ -80,18 +168,42 @@ topology_template:
     cpm_mgt_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_mgt_ip_0
       type: string
       description: Fixed IP that will be used by the Management Interface on CPMA
       default: 192.168.254.11
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: Availability zone where this component should be instantiated
       default: nova
     cpm_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_name_1
       type: string
       description: VM name for CPM B
       default: vbng1-cpmb
@@ -101,90 +213,210 @@ topology_template:
     cpm_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_flavor_name
       type: string
       description: Flavor of the CPM VNF to be used
       default: m1.medium
     data2_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data2_subnet_id
       type: string
       description: Subnet used by the third Data interface
       default: 90ad7ea9-596f-45f4-8869-226fc876b105
     cpm_mtu:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_mtu
       type: string
       description: MTU size in bytes
       default: '9000'
     cpm_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_name_0
       type: string
       description: VM name for CPM A
       default: vbng1-cpma
     iom_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: iom_image_name
       type: string
       description: Image to be used for the IOM instance
       default: VSR-14.0R4
     iom1Slot:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: iom1Slot
       type: string
       description: The slot value assigned to IOM1
       default: '1'
     iom_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: iom_flavor_name
       type: string
       description: Flavor of the IOM VNF to be used
       default: m1.medium
     iom_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: iom_name_0
       type: string
       description: VM name for IOM 1
       default: vbng1-iom1
     data1_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data1_net_id
       type: string
       description: Network used by the second Data interface
       default: 1024b82c-0049-4503-8b0b-eb5ff952e104
     cpm_mgt_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_mgt_cidr
       type: string
       description: Management network to be used by CPM
       default: 192.168.254.0/24
     mgt_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: mgt_subnet_id
       type: string
       description: Subnet used by the Management interface
       default: 90ad7ea9-596f-45f4-8869-226fc876b101
     ctrl_fabric_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: ctrl_fabric_subnet_id
       type: string
       description: Subnet used by the control fabric interface
       default: 90ad7ea9-596f-45f4-8869-226fc876b102
     data0_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data0_net_id
       type: string
       description: Network used by the Data interface
       default: 1024b82c-0049-4503-8b0b-eb5ff952e103
     data2_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data2_net_id
       type: string
       description: Network used by the third Data interface
       default: 1024b82c-0049-4503-8b0b-eb5ff952e105
     iom_mtu:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: iom_mtu
       type: string
       description: MTU size in bytes
       default: '9000'
@@ -194,36 +426,84 @@ topology_template:
     cpm_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpm_image_name
       type: string
       description: Image to be used for the CPM instance
       default: VSR-14.0R4
     cpmbSlot:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: cpmbSlot
       type: string
       description: The slot value assigned to CPMB
       default: B
     iom_smbios:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: iom_smbios
       type: string
       description: Parameters to be passed to the IOM at boot up as key-value pairs
       default: 'TiMOS: slot=$slt chassis=VSR card=iom-v mda/1=m20-v features=795'
     data3_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data3_net_id
       type: string
       description: Network used by the fourth Data interface
       default: 1024b82c-0049-4503-8b0b-eb5ff952e106
     data1_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: data1_subnet_id
       type: string
       description: Subnet used by the second Data interface
       default: 90ad7ea9-596f-45f4-8869-226fc876b104
     stack_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - VSR_base_hot
+            source_type: HEAT
+            param_name: stack_name
       type: string
       description: Name of the HEAT stack
       default:

@@ -12,47 +12,119 @@ topology_template:
     hostid_fe1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: hostid_fe1
       type: string
       description: FE1 Hostid (from Ulticom license)
     ip_address_stp2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ip_address_stp2
       type: string
       description: STP2 IP address
     Mobility_OAM_protected_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: Mobility_OAM_protected_net_id
       type: string
       description: Network name for OAM
     hostid_fe2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: hostid_fe2
       type: string
       description: FE2 Hostid (from Ulticom license)
     flavor_scp_fe_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: flavor_scp_fe_name
       type: string
       description: SCP FE Flavor
       default: a1.Small
     ip_address_stp1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ip_address_stp1
       type: string
       description: STP1 IP address
     int_vscp_ce_network_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: int_vscp_ce_network_net_id
       type: string
       description: Inter-CE Network
     int_vscp_ce_network_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: int_vscp_ce_network_cidr
       type: string
       description: Private Network Address (CIDR notation)
     cluster_type:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: cluster_type
       type: string
       constraints:
       - valid_values:
@@ -62,34 +134,85 @@ topology_template:
       label: be_1 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Mobility_OAM_protected_ip_1
       type: string
       description: be_1 OAM ip address
     be_Mobility_OAM_protected_ip_2:
       label: be_2 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Mobility_OAM_protected_ip_2
       type: string
       description: be_2 OAM ip address
     be_Mobility_OAM_protected_ip_0:
       label: be_0 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Mobility_OAM_protected_ip_0
       type: string
       description: be_0 OAM ip address
     ip_address_dra:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ip_address_dra
       type: string
       description: DRA VIP address
     image_smp_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn1
+            - addOn2
+            - main
+            source_type: HEAT
+            param_name: image_smp_name
       type: string
       description: SCP SMP image
       default: asc_base_image_smp
     fe_connectivity:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: fe_connectivity
       type: string
       constraints:
       - valid_values:
@@ -98,129 +221,316 @@ topology_template:
     lab_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn1
+            - addOn2
+            - main
+            source_type: HEAT
+            param_name: lab_name
       type: string
       description: Lab name
     smp_Mobility_OAM_protected_ip_1:
       label: smp_1 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: smp_Mobility_OAM_protected_ip_1
       type: string
       description: smp_1 OAM ip address
     fe_SIGNET_vrf_B1_direct_ip_0:
       label: fe1 SIGTRAN ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: fe_SIGNET_vrf_B1_direct_ip_0
       type: string
       description: fe1 SIGTRAN ip address
     smp_Mobility_OAM_protected_ip_0:
       label: smp_0 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: smp_Mobility_OAM_protected_ip_0
       type: string
       description: smp_0 OAM ip address
     int_vscp_cluster_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: int_vscp_cluster_net_id
       type: string
       description: LAN3 Cluster
     be_Mobility_OAM_protected_ip_3:
       label: be_3 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Mobility_OAM_protected_ip_3
       type: string
       description: be_3 OAM ip address
     be_Mobility_OAM_protected_ip_4:
       label: be_4 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Mobility_OAM_protected_ip_4
       type: string
       description: be_4 OAM ip address
     hostname_nee1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: hostname_nee1
       type: string
       description: NEE1 Hostname (from Ulticom license)
     int_vscp_fe_cluster_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: int_vscp_fe_cluster_net_id
       type: string
       description: LAN2 FE Cluster/KA
     SIGNET_vrf_A1_direct_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: SIGNET_vrf_A1_direct_net_id
       type: string
       description: Network name for SIGTRAN_A
     key_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: key_name
       type: string
       description: keypair to enable SSH access to the instance.
       default: vSCP-keypair
     int_vscp_fe_cluster_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: int_vscp_fe_cluster_cidr
       type: string
       description: Private Network2 Address (CIDR notation)
     fe_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: fe_name_1
       type: string
       description: name of VM
       default: vSCP_FE2
     fe_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: fe_name_0
       type: string
       description: name of VM
       default: vSCP_FE1
     be_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_name_0
       type: string
       description: name of VM
       default: vSCP_BE1
     int_vscp_cluster_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: int_vscp_cluster_cidr
       type: string
       description: Private Network3 Address (CIDR notation)
     be_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_name_1
       type: string
       description: name of VM
       default: vSCP_BE2
     be_name_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_name_2
       type: string
       description: name of VM
       default: vSCP_BE3
     point_code_stp:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: point_code_stp
       type: string
       description: STP virtual point code (in "zone-cluster-member" format)
     be_name_3:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_name_3
       type: string
       description: name of VM
       default: vSCP_BE4
     be_name_4:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_name_4
       type: string
       description: name of VM
       default: vSCP_BE5
     global_title_scp:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: global_title_scp
       type: string
       description: vSCP Global Title address
     vnf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VNF instance
       default: This_is_the_SCP_name
@@ -228,155 +538,392 @@ topology_template:
       label: be3 Cricket_OCS ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Cricket_OCS_protected_ip_2
       type: string
       description: be3 Cricket_OCS ip address
     fe_Mobility_OAM_protected_ip_0:
       label: fe_0 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: fe_Mobility_OAM_protected_ip_0
       type: string
       description: fe_0 OAM ip address
     hostname_fe1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: hostname_fe1
       type: string
       description: FE1 Hostname (from Ulticom license)
     be_Cricket_OCS_protected_ip_1:
       label: be2 Cricket_OCS ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Cricket_OCS_protected_ip_1
       type: string
       description: be2 Cricket_OCS ip address
     hostname_fe2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: hostname_fe2
       type: string
       description: FE2 Hostname (from Ulticom license)
     be_Cricket_OCS_protected_ip_4:
       label: be5 Cricket_OCS ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Cricket_OCS_protected_ip_4
       type: string
       description: be5 Cricket_OCS ip address
     be_Cricket_OCS_protected_ip_3:
       label: be4 Cricket_OCS ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Cricket_OCS_protected_ip_3
       type: string
       description: be4 Cricket_OCS ip address
     fe_Mobility_OAM_protected_ip_1:
       label: fe_1 OAM ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: fe_Mobility_OAM_protected_ip_1
       type: string
       description: fe_1 OAM ip address
     be_Cricket_OCS_protected_ip_0:
       label: be1 Cricket_OCS ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: be_Cricket_OCS_protected_ip_0
       type: string
       description: be1 Cricket_OCS ip address
     route_table_fe1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: route_table_fe1
       type: string
       description: Additional route table for FE1
     Cricket_OCS_protected_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: Cricket_OCS_protected_net_id
       type: string
       description: Network name for CRICKET_OCS
     smp_name_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn2
+            - main
+            source_type: HEAT
+            param_name: smp_name_2
       type: string
       description: name of VM
       default: vSMP2
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn1
+            - addOn2
+            - main
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VNF instance
       default: This_is_ths_SCP_id
     smp_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn1
+            - main
+            source_type: HEAT
+            param_name: smp_name_1
       type: string
       description: name of VM
       default: vSMP2
     flavor_smp_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn1
+            - addOn2
+            - main
+            source_type: HEAT
+            param_name: flavor_smp_name
       type: string
       description: SCP SMP Flavor
       default: a1.Small
     image_scp_be_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: image_scp_be_name
       type: string
       description: SCP BE image
       default: asc_base_image_be
     smp_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: smp_name_0
       type: string
       description: name of VM
       default: vSMP1
     route_table_fe2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: route_table_fe2
       type: string
       description: Additional route table for FE2
     hostid_nee1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: hostid_nee1
       type: string
       description: NEE1 Hostid (from Ulticom license)
     SIGNET_vrf_B1_direct_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: SIGNET_vrf_B1_direct_net_id
       type: string
       description: Network name for SIGTRAN_B
     fe_SIGNET_vrf_A1_direct_ip_0:
       label: fe2 SIGTRAN ip address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: fe_SIGNET_vrf_A1_direct_ip_0
       type: string
       description: fe2 SIGTRAN ip address
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn1
+            - addOn2
+            - main
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
     nee_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: nee_name_0
       type: string
       description: name of VM
       default: vNEE
     fe_smp_affinity_param:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn2
+            source_type: HEAT
+            param_name: fe_smp_affinity_param
       type: string
       description: be affinity param
     ip_port_stp1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ip_port_stp1
       type: string
       description: STP1 IP port
     ip_port_stp2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ip_port_stp2
       type: string
       description: STP2 IP port
     image_scp_fe_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: image_scp_fe_name
       type: string
       description: SCP FE image
       default: asc_base_image_fe
     flavor_scp_be_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: flavor_scp_be_name
       type: string
       description: SCP BE Flavor
       default: a1.Small
@@ -384,57 +931,148 @@ topology_template:
       label: vSCP security group name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: security_group_name
       type: string
       description: vSCP security group name
     ip_port_fe2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ip_port_fe2
       type: string
       description: FE2 IP port in SIGTRAN network
     route_table_be:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: route_table_be
       type: string
       description: Additional route table for BEs
     ip_port_fe1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: ip_port_fe1
       type: string
       description: FE1 IP port in SIGTRAN network
     port_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            - addOn1
+            - addOn2
+            - main
+            source_type: HEAT
+            param_name: port_name
       type: string
       description: port name
       default: port_name
     be_affinity_param:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn1
+            source_type: HEAT
+            param_name: be_affinity_param
       type: string
       description: be affinity param
     point_code_scp:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: point_code_scp
       type: string
       description: vSCP point code (in "zone-cluster-member" format)
     global_title_stp:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: global_title_stp
       type: string
       description: STP Global Title address
     point_code_stp1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: point_code_stp1
       type: string
       description: STP1 point code (in "zone-cluster-member" format)
     point_code_stp2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: point_code_stp2
       type: string
       description: STP2 point code (in "zone-cluster-member" format)
     multi_anti_affinity_param:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn3
+            source_type: HEAT
+            param_name: multi_anti_affinity_param
       type: string
       description: be affinity param
   node_templates:

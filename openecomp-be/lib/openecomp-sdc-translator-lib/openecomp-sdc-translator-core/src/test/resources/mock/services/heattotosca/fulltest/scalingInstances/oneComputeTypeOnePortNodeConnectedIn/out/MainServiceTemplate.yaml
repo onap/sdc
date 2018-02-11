@@ -12,6 +12,14 @@ topology_template:
       label: PD flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_flavor_name
       type: string
       description: flavor name of PD instance
       default: m3.xlarge
@@ -19,6 +27,14 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: availabilityzone_name
       type: string
       description: availabilityzone name
       default: nova
@@ -26,6 +42,14 @@ topology_template:
       label: image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_image_name
       type: string
       description: PD image name
       default: MOG_BASE_8.0
@@ -33,12 +57,28 @@ topology_template:
       label: packet mirror network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: packet_mirror_network_name
       type: string
       description: name of the oam network
     pd_server_names:
       label: PD server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: pd_server_names
       type: list
       description: name of the PD instance
       default:

@@ -12,6 +12,14 @@ topology_template:
     cmaui_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: cmaui_names
       type: list
       description: CMAUI1, CMAUI2 server names
       entry_schema:
@@ -20,58 +28,138 @@ topology_template:
       label: CMAUI Cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: cmaui_cinder_volume_size
       type: float
       description: the size of the CMAUI Cinder volume
     timezone:
       label: timezone
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: timezone
       type: string
       description: timezone
     security_group_name:
       label: security group name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: security_group_name
       type: string
       description: the name of security group
     oam_network_netmask:
       label: oam network netmask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: oam_network_netmask
       type: string
       description: oam network gateway
     cmaui_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: cmaui_image
       type: string
       description: Image for CMAUI server
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VNF instance
       default: This_is_ths_MMSC-CMAUI_id
     cmaui_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: cmaui_flavor
       type: string
       description: Flavor for CMAUI server
     oam_network_gateway:
       label: oam network gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: oam_network_gateway
       type: string
       description: oam network gateway
     availability_zone_0:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: availabilityzone name
     cmaui_oam_ips:
       label: CMAUI oam_net IP addresses
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: cmaui_oam_ips
       type: list
       description: CMAUI oam_net IP addresses
       entry_schema:
@@ -80,23 +168,55 @@ topology_template:
       label: dns server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: external_dns
       type: string
       description: dns server
     oam_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
       description: UID of OAM network
     external_ntp:
       label: ntp server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: external_ntp
       type: string
       description: ntp server
     CMAUI_volume_type:
       label: CMAUI vm volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: CMAUI_volume_type
       type: string
       description: the name of the target volume backend
   node_templates:

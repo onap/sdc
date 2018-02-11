@@ -34,13 +34,6 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
     // do not delete this function. it prevents the superclass setup from running
   }
 
-  @BeforeClass
-  public static void enableVLANTagging() {
-    manager = new TestFeatureManager(ToggleableFeature.class);
-    manager.enable(ToggleableFeature.VLAN_TAGGING);
-    TestFeatureManagerProvider.setFeatureManager(manager);
-  }
-
   @Test
   public void testTranslateVlanToInterfaceNestedConnection() throws Exception {
     inputFilesPath =
@@ -62,10 +55,4 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
     testTranslation();
   }
 
-  @AfterClass
-  public static void disableVLANTagging() {
-    manager.disable(ToggleableFeature.VLAN_TAGGING);
-    manager = null;
-    TestFeatureManagerProvider.setFeatureManager(null);
-  }
 }

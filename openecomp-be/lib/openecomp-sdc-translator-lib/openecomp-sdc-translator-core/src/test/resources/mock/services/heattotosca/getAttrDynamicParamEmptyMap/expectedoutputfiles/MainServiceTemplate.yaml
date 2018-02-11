@@ -11,6 +11,14 @@ topology_template:
     access_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: access_cidr
       type: string
       description: CIDR associated with tag "access".
       default: 37.9.0.32/27
@@ -19,12 +27,28 @@ topology_template:
     oam_default_gateway:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_default_gateway
       type: string
       description: Default gateway IP address  associated with tag "oam".
       default: 127.0.0.1
     int_vlan_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: int_vlan_id
       type: string
       description: Optional VLAN associated with the (0th) internal network.
       default: ''
@@ -33,6 +57,14 @@ topology_template:
     v4_ntp_server:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: v4_ntp_server
       type: string
       description: |
         (optional) IPV4 NTP server list.
@@ -42,24 +74,56 @@ topology_template:
     access_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: access_subnet_id
       type: string
       description: ID of the subnet associated with tag "access".
       default: 050ad34a-47a3-48a9-9761-12eff354fd4f
     vnf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VNF instance.
       default: MYvnf_name
     access_default_gateway:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: access_default_gateway
       type: string
       description: Default gateway IP address  associated with tag "access".
       default: 37.9.0.62
     ims_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: ims_flavor_name
       type: string
       description: CDL of IMS flavor values.
       default: LCP-1-4-15x2-4
@@ -68,6 +132,14 @@ topology_template:
     oam_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_cidr
       type: string
       description: CIDR associated with tag "oam".
       default: 127.0.0.1/27
@@ -76,6 +148,14 @@ topology_template:
     vm_counts:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: vm_counts
       type: json
       description: |
         Maps VM type tags to the number of pairs of that type.
@@ -85,6 +165,14 @@ topology_template:
     oam_oam_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_oam_ips
       type: list
       description: List of IP addresses for this VMtype_NETtype combination.
       default:
@@ -97,6 +185,14 @@ topology_template:
     v6_dns_server:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: v6_dns_server
       type: string
       description: |
         (optional) IPV6 DNS server list.
@@ -106,6 +202,14 @@ topology_template:
     v6_ntp_server:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: v6_ntp_server
       type: string
       description: |
         (optional) IPV6 NTP server list.
@@ -115,12 +219,28 @@ topology_template:
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VNF instance.
       default: MYvnf_id
     lcm_keypair:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: lcm_keypair
       type: string
       description: Keypair used for lifecycle management access.
       default: ''
@@ -129,24 +249,56 @@ topology_template:
     oam_management_v6_index:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_management_v6_index
       type: float
       description: Index to the V6 management IP address.
       default: 0
     oam_management_v4_index:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_management_v4_index
       type: float
       description: Index to the V4 management IP address.
       default: 1
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: Availability zone name.
       default: zone2
     availability_zone_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: Availability zone name.
       default: zone1
@@ -156,18 +308,42 @@ topology_template:
     oam_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_subnet_id
       type: string
       description: ID of the subnet associated with tag "oam".
       default: 37d36cb0-54b7-4fbf-bc45-4879da03a0db
     oam_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_image_name
       type: string
       description: Image for this VMtype.
       default: drew34.20
     net_types:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: net_types
       type: list
       description: CDL of subnet tags.
       default:
@@ -178,6 +354,14 @@ topology_template:
     ssh_access_key:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: ssh_access_key
       type: string
       description: |
         Optional SSH public key value for lifecycle management
@@ -186,6 +370,14 @@ topology_template:
     ims_access_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: ims_access_ips
       type: list
       description: List of IP addresses for this VMtype_NETtype combination.
       default:
@@ -196,6 +388,14 @@ topology_template:
     v4_enum_server:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: v4_enum_server
       type: string
       description: |
         (optional) IPV4 ENUM server list.
@@ -205,6 +405,14 @@ topology_template:
     oam_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_flavor_name
       type: string
       description: CDL of OAM flavor values.
       default: LCP-2-4-25x2-4
@@ -213,12 +421,28 @@ topology_template:
     vnf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: vnf_module_id
       type: string
       description: Unique ID for this VNF Module instance.
       default: MYvnf_module_id
     access_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: access_net_id
       type: string
       description: ID of the network associated with tag "access".
       default: 870909b5-d933-4a95-9aff-df38523c37ed
@@ -227,6 +451,14 @@ topology_template:
     backup_file:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: backup_file
       type: string
       description: |
         <cURL path>/<backup file>
@@ -237,6 +469,14 @@ topology_template:
     v6_enum_server:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: v6_enum_server
       type: string
       description: |
         (optional) IPV6 ENUM server list.
@@ -246,6 +486,14 @@ topology_template:
     ims_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: ims_names
       type: list
       description: CDL of IMS VM names.
       default:
@@ -256,6 +504,14 @@ topology_template:
     default_action:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: default_action
       type: string
       description: |
         Default action for all VMs. This may be overridden for
@@ -272,6 +528,14 @@ topology_template:
     v4_dns_server:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: v4_dns_server
       type: string
       description: |
         (optional) IPV4 DNS server list.
@@ -281,12 +545,28 @@ topology_template:
     oam_management_v6_source:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_management_v6_source
       type: string
       description: Name of the OAM IP parameter to use.
       default: ''
     oam_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_net_id
       type: string
       description: ID of the network associated with tag "oam".
       default: 7410cc1d-c421-41b3-adef-d46cf79cb8d9
@@ -295,18 +575,42 @@ topology_template:
     oam_management_v4_source:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_management_v4_source
       type: string
       description: Name of the OAM IP parameter to use.
       default: oam_oam_ips
     ims_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: ims_image_name
       type: string
       description: Image for this VMtype.
       default: drew34.20
     install_config:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: install_config
       type: string
       description: JSON formatted string of install config values.
       default: ' "application_name": "5450_isc", "license_reference": "test_license",
@@ -326,12 +630,28 @@ topology_template:
     cloud_name_delimiter:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: cloud_name_delimiter
       type: string
       description: Separator for cloud resource naming.
       default: '-'
     oam_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: oam_names
       type: list
       description: CDL of OAM VM names.
       default:
@@ -342,12 +662,28 @@ topology_template:
     vnf_module_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: vnf_module_name
       type: string
       description: Unique name for this VNF module instance.
       default: base_module
     vm_info:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_mso
+            source_type: HEAT
+            param_name: vm_info
       type: json
       description: Provides keys into type-specific parameters and vnic info.
       default: {

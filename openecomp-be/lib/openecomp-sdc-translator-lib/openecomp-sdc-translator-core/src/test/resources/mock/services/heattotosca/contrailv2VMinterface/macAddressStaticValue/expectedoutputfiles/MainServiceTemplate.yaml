@@ -9,41 +9,105 @@ topology_template:
     vlc1_Internal2_mac:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: vlc1_Internal2_mac
       type: string
       description: static mac address assigned to vlc1_Internal2
     internal_net_id_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: internal_net_id_1
       type: string
       description: UUID of Internal2_net
     internal_net_id_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: internal_net_id_0
       type: string
       description: UUID of Internal1_net
     security_group_int2_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: security_group_int2_id
       type: string
       description: Security Group UUID for output
     security_group_int1_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: security_group_int1_id
       type: string
       description: Security Group UUID for output
     vlc1_Internal1_mac:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: vlc1_Internal1_mac
       type: string
       description: static mac address assigned to vlc1_Internal1
     vlc_st_interface_type_int1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: vlc_st_interface_type_int1
       type: string
       description: service_interface_type for the ServiceTemplate
     vlc_st_interface_type_int2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vmme_vlc
+            source_type: HEAT
+            param_name: vlc_st_interface_type_int2
       type: string
       description: service_interface_type for the ServiceTemplate
   node_templates:

@@ -25,6 +25,14 @@ topology_template:
       label: Load balancer flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: lb_flavor_name
       type: string
       description: the flavor name of MMSC load balancer instance
       default: m1.xlarge
@@ -32,6 +40,14 @@ topology_template:
       label: ha net network local ip2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: ha_net_local_ip2
       type: string
       description: the local ip2 of the ha network
       default: 172.26.1.4
@@ -39,6 +55,14 @@ topology_template:
       label: mmsc dmz_protected snat ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_dmz_protected_snat_ips
       type: list
       description: mmsc dmz_protected snat ips
       default:
@@ -52,6 +76,14 @@ topology_template:
       label: ha net network local ip1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: ha_net_local_ip1
       type: string
       description: the local ip1 of the ha network
       default: 172.26.1.3
@@ -59,6 +91,14 @@ topology_template:
       label: mmsc traffic end IP
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_end
       type: string
       description: mmsc traffic end IP
       default: 172.26.2.254
@@ -66,6 +106,14 @@ topology_template:
       label: nems traffic end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_end
       type: string
       description: nems traffic end
       default: 172.26.3.254
@@ -73,6 +121,14 @@ topology_template:
       label: MMSC Cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_cinder_volume_size
       type: float
       description: the size of the MMSC Cinder volume
       default: 480
@@ -80,6 +136,14 @@ topology_template:
       label: nems ineternal cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_internal_cidr
       type: string
       description: nems internal cidr
       default: 172.26.6.0/24
@@ -87,6 +151,14 @@ topology_template:
       label: eca management cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - SG_ECA_MGMT
+            source_type: HEAT
+            param_name: eca_mgmt_cidr
       type: string
       description: eca management cidr
       default: 172.25.137.192/26
@@ -94,6 +166,14 @@ topology_template:
       label: nems traffic start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_start
       type: string
       description: nems traffic start
       default: 172.26.3.3
@@ -101,6 +181,14 @@ topology_template:
       label: ECA_TRX server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_trx_names
       type: list
       description: ECA_TRX server names
       default:
@@ -130,6 +218,14 @@ topology_template:
       label: nems internal network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_internal_name
       type: string
       description: nems internal network name
       default: int_mms_nems_internal_net_2
@@ -137,6 +233,14 @@ topology_template:
       label: nems traffic network local ip1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_net_local_ip1
       type: string
       description: the local ip1 of the nems traffic network
       default: 172.26.3.3
@@ -144,6 +248,14 @@ topology_template:
       label: nems traffic network local ip2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_net_local_ip2
       type: string
       description: the local ip2 of the nems traffic network
       default: 172.26.3.4
@@ -151,6 +263,14 @@ topology_template:
       label: NEMS_FE server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_names
       type: list
       description: NEMS_FE server names
       default:
@@ -162,6 +282,14 @@ topology_template:
       label: nems imap_net IPs for NEMS_BE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_nems_imap_net_ips
       type: string
       description: nems imap net IPs for NEMS_BE
       default: 172.26.7.13
@@ -169,6 +297,14 @@ topology_template:
       label: NEMS_BE server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_names
       type: string
       description: NEMS_BE server names
       default: ZRDM1MMSC03NBE001
@@ -176,6 +312,14 @@ topology_template:
       label: NEMS traffic network subnet mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_netmask
       type: string
       description: NEMS traffic network subnet mask
       default: 255.255.255.0
@@ -183,6 +327,14 @@ topology_template:
       label: nems_imap_net IPs for NEMS_FE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_nems_imap_net_ips
       type: list
       description: nems_imap_net IPs for NEMS_FE
       default:
@@ -194,6 +346,14 @@ topology_template:
       label: nems_web_user_net IPs for NEMS_FE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_nems_user_web_net_ips
       type: list
       description: nems_web_user_net IPs for NEMS_FE
       default:
@@ -205,6 +365,14 @@ topology_template:
       label: NEMS user web network gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_gateway
       type: string
       description: NEMS user web network gateway
       default: 172.26.4.1
@@ -212,6 +380,14 @@ topology_template:
       label: nems imap end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_imap_end
       type: string
       description: nems imap end
       default: 172.26.7.254
@@ -219,12 +395,28 @@ topology_template:
       label: eca traffic network local ip1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_net_local_ip1
       type: string
       description: the local ip1 of the eca traffic network
       default: 172.26.5.3
     cmaui_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            source_type: HEAT
+            param_name: cmaui_image
       type: string
       description: Image for CMAUI server
       default: cmaui-5.0.2.5_v25
@@ -232,6 +424,14 @@ topology_template:
       label: eca traffic network local ip2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_net_local_ip2
       type: string
       description: the local ip2 of the eca traffic network
       default: 172.26.5.4
@@ -239,6 +439,14 @@ topology_template:
       label: nems fe volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_volume_size
       type: float
       description: nems fe volume size
       default: 50
@@ -246,6 +454,14 @@ topology_template:
       label: mmsc traffic start IP
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_start
       type: string
       description: mmsc traffic start IP
       default: 172.26.2.3
@@ -253,6 +469,14 @@ topology_template:
       label: ha net start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: ha_net_start
       type: string
       description: ha net start
       default: 172.26.1.3
@@ -260,6 +484,14 @@ topology_template:
       label: nems imap gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_imap_gateway
       type: string
       description: nems imap gateway
       default: 172.26.7.1
@@ -267,6 +499,14 @@ topology_template:
       label: mmsc core virtual server ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_core_virtual_server_ips
       type: list
       description: mmsc core virtual server ips
       default:
@@ -278,6 +518,14 @@ topology_template:
       label: CMAUI oam_net IP addresses
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            source_type: HEAT
+            param_name: cmaui_oam_ips
       type: list
       description: CMAUI oam_net IP addresses
       default:
@@ -289,12 +537,28 @@ topology_template:
       label: CMAUI vm volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            source_type: HEAT
+            param_name: CMAUI_volume_type
       type: string
       description: the name of the target volume backend
       default: Platinum
     cmaui_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            source_type: HEAT
+            param_name: cmaui_names
       type: list
       description: CMAUI1, CMAUI2 server names
       default:
@@ -306,6 +570,14 @@ topology_template:
       label: eca traffic net IPs for ECA_TRX
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_trx_eca_traffic_net_ips
       type: list
       description: eca traffic net IPs for ECA_TRX
       default:
@@ -335,6 +607,14 @@ topology_template:
       label: Image for ECA TRX server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_trx_image
       type: string
       description: Image for ECA TRX server
       default: ECABASE
@@ -342,6 +622,14 @@ topology_template:
       label: MMSC load balancer instance names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: lb_names
       type: list
       description: MMSC load balancer instance names
       default:
@@ -353,6 +641,14 @@ topology_template:
       label: eca management end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - SG_ECA_MGMT
+            source_type: HEAT
+            param_name: eca_mgmt_end
       type: string
       description: eca management end
       default: 172.25.137.254
@@ -360,6 +656,14 @@ topology_template:
       label: nems user web end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_end
       type: string
       description: nems user web end
       default: 172.26.4.254
@@ -367,6 +671,14 @@ topology_template:
       label: eca traffic cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_cidr
       type: string
       description: eca traffic cidr
       default: 172.26.5.0/24
@@ -374,6 +686,14 @@ topology_template:
       label: ha net cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: ha_net_cidr
       type: string
       description: ha net cidr
       default: 172.26.1.0/24
@@ -381,6 +701,15 @@ topology_template:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: availabilityzone name
       default: nova
@@ -388,6 +717,14 @@ topology_template:
       label: nems_internal_net IPs for NEMS_FE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_nems_internal_net_ips
       type: list
       description: nems_internal_net IPs for NEMS_FE
       default:
@@ -399,6 +736,14 @@ topology_template:
       label: nems fe vm volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: NEMS_FE_volume_type
       type: string
       description: the name of the target volume backend
       default: Platinum
@@ -406,6 +751,16 @@ topology_template:
       label: security group name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - SG_ECA_MGMT
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: security_group_name
       type: string
       description: the name of security group
       default: mmsc_security_group_1
@@ -413,6 +768,14 @@ topology_template:
       label: nems_traffic_net IPs for NEMS_FE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_nems_traffic_net_ips
       type: list
       description: nems_traffic_net IPs for NEMS_FE
       default:
@@ -424,6 +787,14 @@ topology_template:
       label: nems imap start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_imap_start
       type: string
       description: nems imap start
       default: 172.26.7.3
@@ -431,12 +802,28 @@ topology_template:
       label: ha_failover network name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: ha_net_name
       type: string
       description: ha_failover network name
       default: int_mms_ha_net_2
     cmaui_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            source_type: HEAT
+            param_name: cmaui_flavor
       type: string
       description: Flavor for CMAUI server
       default: m1.large
@@ -444,6 +831,14 @@ topology_template:
       label: eca traffic start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_start
       type: string
       description: eca traffic start
       default: 172.26.5.3
@@ -451,6 +846,14 @@ topology_template:
       label: nems be vm volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: NEMS_BE_volume_type
       type: string
       description: the name of the target volume backend
       default: Platinum
@@ -458,6 +861,14 @@ topology_template:
       label: MMSC load balancer image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: lb_image_name
       type: string
       description: MMSC load balancer image name
       default: BIGIP-11.5.3.0.0.163
@@ -465,6 +876,14 @@ topology_template:
       label: nems internal start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_internal_start
       type: string
       description: nems internal start
       default: 172.26.6.3
@@ -472,6 +891,14 @@ topology_template:
       label: nems internal gw
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_internal_gateway
       type: string
       description: nems internal gw
       default: 172.26.6.1
@@ -479,6 +906,14 @@ topology_template:
       label: UID of dmz_protected network
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: dmz_protected_net_name
       type: string
       description: UID of dmz_protected network
       default: dmz_protected_net_0
@@ -486,6 +921,14 @@ topology_template:
       label: nems be volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_volume_size
       type: float
       description: nems be volume size
       default: 610
@@ -493,6 +936,14 @@ topology_template:
       label: MMS traffic network subnet mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_netmask
       type: string
       description: MMS traffic network subnet mask
       default: 255.255.255.0
@@ -500,6 +951,14 @@ topology_template:
       label: Image for NEMS BE server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_image
       type: string
       description: Image for NEMS BE server
       default: nems-2.1.2_v29
@@ -507,6 +966,14 @@ topology_template:
       label: nems user web network local ip1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_net_local_ip1
       type: string
       description: the local ip1 of the nems user web network
       default: 172.26.4.3
@@ -514,6 +981,14 @@ topology_template:
       label: eca mgmt net IP for ECA_TRX
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_trx_mgmt_ips
       type: list
       description: eca mgmt net IP for ECA_TRX
       default:
@@ -543,6 +1018,14 @@ topology_template:
       label: nems user web cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_cidr
       type: string
       description: nems user web cidr
       default: 172.26.4.0/24
@@ -550,6 +1033,14 @@ topology_template:
       label: nems user web network local ip2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_net_local_ip2
       type: string
       description: the local ip2 of the nems user web network
       default: 172.26.4.4
@@ -557,6 +1048,14 @@ topology_template:
       label: NEMS traffic network gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_gateway
       type: string
       description: NEMS traffic network gateway
       default: 172.26.3.1
@@ -564,6 +1063,14 @@ topology_template:
       label: nems imap name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_imap_name
       type: string
       description: nems imap name
       default: int_mms_nems_imap_net_2
@@ -571,6 +1078,14 @@ topology_template:
       label: mmsc traffic floating ip
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_floating_ip
       type: string
       description: mmsc traffic floating ip
       default: 172.26.2.5
@@ -578,6 +1093,14 @@ topology_template:
       label: NEMS internal network subnet mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_internal_netmask
       type: string
       description: NEMS internal network subnet mask
       default: 255.255.255.0
@@ -585,6 +1108,14 @@ topology_template:
       label: NEMS user web network subnet mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_netmask
       type: string
       description: NEMS user web network subnet mask
       default: 255.255.255.0
@@ -592,6 +1123,14 @@ topology_template:
       label: mmsc traffic network local ip1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_local_ip1
       type: string
       description: the local ip1 of the mmsc traffic network
       default: 172.26.2.3
@@ -599,12 +1138,29 @@ topology_template:
       label: mmsc traffic network local ip2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_local_ip2
       type: string
       description: the local ip2 of the mmsc traffic network
       default: 172.26.2.4
     oam_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
       description: UID of OAM network
       default: oam_protected_net_0
@@ -612,6 +1168,15 @@ topology_template:
       label: ntp server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: external_ntp
       type: string
       description: ntp server
       default: 155.165.194.100
@@ -619,6 +1184,14 @@ topology_template:
       label: MMS traffic network address (CIDR notation)
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_cidr
       type: string
       description: MMS traffic network address (CIDR notation)
       default: 172.26.2.0/24
@@ -626,6 +1199,14 @@ topology_template:
       label: dmz protected network local ips for lb VM
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: lb_dmz_protected_ips
       type: list
       description: local ips of the dmz protected network for lb VM
       default:
@@ -637,6 +1218,14 @@ topology_template:
       label: eca management start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - SG_ECA_MGMT
+            source_type: HEAT
+            param_name: eca_mgmt_start
       type: string
       description: eca management start
       default: 172.25.137.195
@@ -644,6 +1233,14 @@ topology_template:
       label: MMSC vm volume type
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: MMSC_volume_type
       type: string
       description: the name of the target volume backend
       default: Platinum
@@ -651,6 +1248,14 @@ topology_template:
       label: Flavor for NEMS FE server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_flavor
       type: string
       description: Flavor for NEMS FE server
       default: m1.large2
@@ -658,6 +1263,14 @@ topology_template:
       label: ECA mgmt network subnet mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - SG_ECA_MGMT
+            source_type: HEAT
+            param_name: eca_mgmt_netmask
       type: string
       description: ECA mgmt network subnet mask
       default: 255.255.255.192
@@ -665,6 +1278,15 @@ topology_template:
       label: oam network netmask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: oam_network_netmask
       type: string
       description: oam network gateway
       default: 255.255.255.192
@@ -672,6 +1294,14 @@ topology_template:
       label: oam network route 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: oam_network_route_1
       type: string
       description: oam network route 1
       default: 155.165.201.250/32,107.250.172.1
@@ -679,6 +1309,14 @@ topology_template:
       label: oam network route 2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: oam_network_route_2
       type: string
       description: oam network route 2
       default: 155.165.194.100/32,107.250.172.1
@@ -686,6 +1324,14 @@ topology_template:
       label: Name of MMS traffic network
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_name
       type: string
       description: Name of MMS traffic network
       default: int_mms_mms_traffic_net_2
@@ -693,6 +1339,14 @@ topology_template:
       label: nems user web name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_name
       type: string
       description: nems user web name
       default: int_mms_nems_web_net_2
@@ -700,6 +1354,14 @@ topology_template:
       label: eca traffic floating ip
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_net_floating_ip
       type: string
       description: eca traffic floating ip
       default: 172.26.5.5
@@ -707,6 +1369,14 @@ topology_template:
       label: eca traffic end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_end
       type: string
       description: eca traffic end
       default: 172.26.5.254
@@ -714,6 +1384,14 @@ topology_template:
       label: Flavor for ECA TRX server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_trx_flavor
       type: string
       description: Flavor for ECA TRX server
       default: m1.xlarge
@@ -721,6 +1399,14 @@ topology_template:
       label: management network ips for mmsc lb
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: lb_oam_ips
       type: list
       description: the ips of the management network for mmsc lb
       default:
@@ -732,6 +1418,14 @@ topology_template:
       label: OAM_net IP for NEMS_FE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_oam_ips
       type: list
       description: OAM_net IP for NEMS_FE
       default:
@@ -743,6 +1437,14 @@ topology_template:
       label: Flavor for NEMS BE server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_flavor
       type: string
       description: Flavor for NEMS BE server
       default: m1.large2
@@ -750,6 +1452,14 @@ topology_template:
       label: cor direct network local ips for lb VM
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: lb_cor_direct_ips
       type: list
       description: local ips of cor direct network for lb VM
       default:
@@ -761,6 +1471,14 @@ topology_template:
       label: nems traffic name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_name
       type: string
       description: nems traffic name
       default: int_mms_nems_traffic_net_2
@@ -768,6 +1486,15 @@ topology_template:
       label: timezone
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: timezone
       type: string
       description: timezone
       default: UTC
@@ -775,6 +1502,14 @@ topology_template:
       label: CMAUI Cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            source_type: HEAT
+            param_name: cmaui_cinder_volume_size
       type: float
       description: the size of the CMAUI Cinder volume
       default: 55
@@ -782,6 +1517,14 @@ topology_template:
       label: nems user web start
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_start
       type: string
       description: nems user web end
       default: 172.26.4.3
@@ -789,6 +1532,14 @@ topology_template:
       label: MMSC server names
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_names
       type: list
       description: MMSC server names
       default:
@@ -803,6 +1554,14 @@ topology_template:
       label: eca management network ID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_mgmt_net_name
       type: string
       description: Network ID for eca management
       default: int_eca_mgmt_net_1
@@ -810,6 +1569,14 @@ topology_template:
       label: eca traffic name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_name
       type: string
       description: eca traffic name
       default: int_mms_eca_traffic_net_2
@@ -817,6 +1584,14 @@ topology_template:
       label: nems internal end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_internal_end
       type: string
       description: nems internal end
       default: 172.26.6.254
@@ -824,6 +1599,14 @@ topology_template:
       label: nems internal net IPs for NEMS_BE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_nems_internal_net_ips
       type: string
       description: nems internal net IPs for NEMS_BE
       default: 172.26.6.13
@@ -831,6 +1614,14 @@ topology_template:
       label: mmsc dmz_protected virtual server ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_dmz_protected_virtual_server_ips
       type: list
       description: mmsc dmz_protected virtual server ips
       default:
@@ -843,12 +1634,29 @@ topology_template:
       label: cor direct net UID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: cor_direct_net_name
       type: string
       description: cor direct net
       default: cor_direct_net_0
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VNF instance
       default: This_is_ths_MMSC-CMAUI_id
@@ -856,6 +1664,15 @@ topology_template:
       label: oam network gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: oam_network_gateway
       type: string
       description: oam network gateway
       default: 10.20.30.1
@@ -863,6 +1680,14 @@ topology_template:
       label: Flavor for MMSC server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_flavor
       type: string
       description: Flavor for MMSC server
       default: lc.4xlarge4
@@ -870,6 +1695,14 @@ topology_template:
       label: ha net end
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: ha_net_end
       type: string
       description: ha net end
       default: 172.26.1.254
@@ -877,6 +1710,14 @@ topology_template:
       label: nems imap subnet mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_imap_netmask
       type: string
       description: nems imap subnet mask
       default: 255.255.255.0
@@ -884,6 +1725,15 @@ topology_template:
       label: dns server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - cmaui
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: external_dns
       type: string
       description: dns server
       default: 155.165.201.250
@@ -891,6 +1741,14 @@ topology_template:
       label: eca_traffic network gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_net_gateway
       type: string
       description: eca_traffic network gateway
       default: 172.26.5.1
@@ -898,6 +1756,14 @@ topology_template:
       label: OAM net IPs for NEMS_BE
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_oam_ips
       type: string
       description: OAM net IPs for NEMS_BE
       default: 107.250.172.66
@@ -905,6 +1771,14 @@ topology_template:
       label: OAM net IP for ECA_TRX
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_trx_oam_ips
       type: list
       description: OAM net IP for ECA_TRX
       default:
@@ -934,6 +1808,14 @@ topology_template:
       label: Image for MMSC server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_image
       type: string
       description: Image for MMSC server
       default: mmsc-6.0.2_v5
@@ -941,6 +1823,14 @@ topology_template:
       label: nems imap cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_imap_cidr
       type: string
       description: nems imap cidr
       default: 172.26.7.0/24
@@ -948,6 +1838,14 @@ topology_template:
       label: ECA traffic network subnet mask
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_netmask
       type: string
       description: ECA traffic network subnet mask
       default: 255.255.255.0
@@ -955,6 +1853,14 @@ topology_template:
       label: nems fe node roles
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_node_roles
       type: list
       description: nems fe node roles
       default:
@@ -966,6 +1872,14 @@ topology_template:
       label: MMSC mms_traffic_net IP addresses
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_mms_traffic_net_ips
       type: list
       description: MMSC mms_traffic_net IP addresses
       default:
@@ -980,6 +1894,14 @@ topology_template:
       label: nems traffic floating ip
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_net_floating_ip
       type: string
       description: nems traffic floating ip
       default: 172.26.3.5
@@ -987,6 +1909,14 @@ topology_template:
       label: MMS traffic network gateway address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_gateway
       type: string
       description: MMS traffic network gateway address
       default: 172.26.2.1
@@ -994,6 +1924,14 @@ topology_template:
       label: Image for NEMS FE server
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_fe_image
       type: string
       description: Image for NEMS FE server
       default: nems-2.1.2_v29
@@ -1001,6 +1939,14 @@ topology_template:
       label: MMSC oam_net IP addresses
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_oam_ips
       type: list
       description: MMSC oam_net IP addresses
       default:
@@ -1015,6 +1961,14 @@ topology_template:
       label: eca management name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - SG_ECA_MGMT
+            source_type: HEAT
+            param_name: eca_mgmt_name
       type: string
       description: eca management name
       default: int_eca_mgmt_net_1
@@ -1022,6 +1976,14 @@ topology_template:
       label: nems traffic cidr
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_traffic_cidr
       type: string
       description: nems traffic cidr
       default: 172.26.3.0/24
@@ -1029,6 +1991,14 @@ topology_template:
       label: nems node roles
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_be_node_roles
       type: string
       description: nems node roles
       default: BE0
@@ -1036,6 +2006,14 @@ topology_template:
       label: mmsc core snat ips
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mmsc_core_snat_ips
       type: list
       description: mmsc core snat ips
       default:
@@ -1050,6 +2028,14 @@ topology_template:
       label: nems user web floating ip
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: nems_user_web_net_floating_ip
       type: string
       description: nems user web floating ip
       default: 172.26.4.5
