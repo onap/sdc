@@ -76,4 +76,9 @@ public class ItemManagerImpl implements ItemManager {
     item.setOwner(owner);
     itemDao.update(item);
   }
+
+  @Override
+  public void delete(Item item) {
+    itemDao.delete(item);
+  }
 }

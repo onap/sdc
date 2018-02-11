@@ -19,4 +19,6 @@ public interface ItemManager {
 
   void updateOwner(String itemId, String owner);
 
+  void delete(Item item);
+
 }

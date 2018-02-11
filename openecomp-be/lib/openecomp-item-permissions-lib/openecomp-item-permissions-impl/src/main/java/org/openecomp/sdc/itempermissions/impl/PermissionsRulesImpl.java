@@ -48,6 +48,12 @@ public class PermissionsRulesImpl implements PermissionsRules {
           return true;
         }
           break;
+        case Delete_Item:
+          if (permission.equals(PermissionTypes.Contributor.name()) ||  permission.equals
+                  (PermissionTypes.Owner.name())) {
+            return true;
+          }
+            break;
 
         case Change_Item_Permissions:
           if (permission.equals(PermissionTypes.Owner.name())) {
@@ -107,7 +113,7 @@ public class PermissionsRulesImpl implements PermissionsRules {
 
     if (permission.equals(PermissionTypes.Owner.name())) {
 
-      HashSet<String> currentOwner = new HashSet<String>();
+      HashSet<String> currentOwner = new HashSet<>();
       currentOwner.add(currentUserId);
 
       PermissionsServicesFactory.getInstance().createInterface()
@@ -117,7 +123,7 @@ public class PermissionsRulesImpl implements PermissionsRules {
   }
 
   protected void caseCreateItem(String userId,String itemId) {
-    HashSet<String> ownerId = new HashSet<String>();
+    HashSet<String> ownerId = new HashSet<>();
     ownerId.add(userId);
     PermissionsServicesFactory.getInstance().createInterface()
         .updateItemPermissions(itemId, PermissionTypes.Owner.name(), ownerId,

@@ -74,6 +74,14 @@ public interface VendorLicenseModels {
                               @NotNull(message = USER_MISSING_ERROR_MSG)
                               @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
 
+  @DELETE
+  @Path("/{vlmId}")
+  @ApiOperation(value = "Delete vendor license model")
+  Response deleteLicenseModel(
+            @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+            @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
+                    String user);
+
   @PUT
   @Path("/{vlmId}/versions/{versionId}")
   @ApiOperation(value = "Update vendor license model")
@@ -96,15 +104,6 @@ public interface VendorLicenseModels {
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
           String user);
 
-  @DELETE
-  @Path("/{vlmId}/versions/{versionId}")
-  @ApiOperation(value = "Delete vendor license model")
-  Response deleteLicenseModel(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam
-          ("versionId") String versionId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
-          String user);
 
   @PUT
   @Path("/{vlmId}/versions/{versionId}/actions")

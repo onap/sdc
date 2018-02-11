@@ -27,6 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.HttpMethod;
 import java.io.IOException;
 
 /**
@@ -63,7 +64,7 @@ public class PermissionsFilter implements Filter {
 
 
     String method = servletRequest.getMethod();
-    if (method.equals("POST") || method.equals("PUT")) {
+    if (method.equals(HttpMethod.POST) || method.equals(HttpMethod.PUT) || method.equals(HttpMethod.DELETE)) {
 
       String userId = servletRequest.getHeader("USER_ID");
       String itemId = parseItemIdFromPath(servletRequest.getPathInfo());

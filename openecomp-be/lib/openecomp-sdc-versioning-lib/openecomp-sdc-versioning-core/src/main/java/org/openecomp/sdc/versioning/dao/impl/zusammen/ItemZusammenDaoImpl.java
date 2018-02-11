@@ -42,6 +42,11 @@ public class ItemZusammenDaoImpl implements ItemDao {
   }
 
   @Override
+  public void delete(Item item){
+    zusammenAdaptor.deleteItem(ZusammenUtil.createSessionContext(),new Id(item.getId()));
+  }
+
+  @Override
   public void update(Item item) {
     zusammenAdaptor
         .updateItem(ZusammenUtil.createSessionContext(), new Id(item.getId()),
