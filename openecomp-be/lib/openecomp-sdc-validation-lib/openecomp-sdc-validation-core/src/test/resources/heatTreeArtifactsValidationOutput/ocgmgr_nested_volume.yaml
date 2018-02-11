@@ -1,0 +1,45 @@
+heat_template_version: 2015-04-30
+description: Nested volume file for ocg mgrs
+parameters:
+
+  index:
+    type: number
+    label: Volume index
+    description: number of volumes to spin up
+    constraints:
+      - allowed_values: [0, 1, 2]
+  size:
+    type: number
+    label: Volume Size
+    description: size of the cinder volumes
+    constraints:
+      - range: { min: 50, max: 400 }
+  volume_type:
+    type: string
+    label: Volume Type
+    description: type of cinder volumes
+  vnf_name:
+    type: string
+    label: VNF Name
+    description: vnf name
+
+
+resources:
+  ocgmgr_volume_0:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: size}
+      volume_type: {get_param: volume_type}
+      name:
+        str_replace:
+          template: VF_NAME_STACK_NAME_INDEX
+          params:
+            VF_NAME: {get_param: vnf_name}
+            STACK_NAME: {get_param: 'OS::stack_name'}
+            INDEX: {get_param: index}
+
+
+outputs:
+  ocgmgr_volume_id_0:
+    description: the ocgmgr volume uuids
+    value: {get_resource: ocgmgr_volume_0}
