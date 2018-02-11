@@ -22,5 +22,5 @@ public interface PermissionsServices {
   String getUserItemPermiission(String itemId, String userId);
 
 
-
+    void deleteItemPermissions(String itemId);
 }

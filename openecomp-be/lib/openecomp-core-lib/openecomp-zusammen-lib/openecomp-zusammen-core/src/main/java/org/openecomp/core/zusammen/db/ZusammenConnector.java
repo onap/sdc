@@ -32,6 +32,8 @@ public interface ZusammenConnector {
 
   Id createItem(SessionContext context, Info info);
 
+  void deleteItem(SessionContext context, Id itemId);
+
   void updateItem(SessionContext context, Id itemId, Info info);
 
 

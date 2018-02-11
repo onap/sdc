@@ -134,6 +134,11 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
     return permissionsServices.getUserItemPermiission(itemId, userId);
   }
 
+  @Override
+  public void deleteItemPermissions(String itemId) {
+    permissionsServices.deleteItemPermissions(itemId);
+  }
+
   private class PermissionEvent implements Event {
 
     private String eventType;
