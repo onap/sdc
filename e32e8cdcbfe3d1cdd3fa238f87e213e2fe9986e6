@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_aca3e6fe",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-11T14:25:57Z",
+      "side": 1,
+      "message": "1. Please don\u0027t use a complex data structure. Create an interface and implementation that describe it. \n2. Don\u0027t create an instance of the default size if you only need an empty map.\n3. HashMap is not thread safe. You may get unexpected results if an instance of this class is shared among multiple threads.",
+      "revId": "e32e8cdcbfe3d1cdd3fa238f87e213e2fe9986e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ec848e5f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-11T14:25:57Z",
+      "side": 1,
+      "message": "You return a mutable object in this public API. It means the internal map can be modified externally.",
+      "range": {
+        "startLine": 39,
+        "startChar": 8,
+        "endLine": 39,
+        "endChar": 64
+      },
+      "revId": "e32e8cdcbfe3d1cdd3fa238f87e213e2fe9986e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4cb4a234",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-11T14:25:57Z",
+      "side": 1,
+      "message": "If it\u0027s the first call to this method, you will be replacing one empty map with another empty map.",
+      "range": {
+        "startLine": 52,
+        "startChar": 6,
+        "endLine": 52,
+        "endChar": 59
+      },
+      "revId": "e32e8cdcbfe3d1cdd3fa238f87e213e2fe9986e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2cb7d63b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-11T14:25:57Z",
+      "side": 1,
+      "message": "You know that in this cast there\u0027s going to be only one element, but create an ArrayList of the default size.",
+      "range": {
+        "startLine": 56,
+        "startChar": 58,
+        "endLine": 56,
+        "endChar": 75
+      },
+      "revId": "e32e8cdcbfe3d1cdd3fa238f87e213e2fe9986e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6cb15e46",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-11T14:25:57Z",
+      "side": 1,
+      "message": "You are using too many steps here. 1) Get by subPortType just to check if it\u0027s null. 2) Then get it to add a new member. You should have store a reference to the list you get from/put to the map.",
+      "revId": "e32e8cdcbfe3d1cdd3fa238f87e213e2fe9986e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
