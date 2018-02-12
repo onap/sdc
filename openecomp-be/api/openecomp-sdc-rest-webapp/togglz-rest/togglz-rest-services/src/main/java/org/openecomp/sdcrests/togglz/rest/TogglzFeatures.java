@@ -18,20 +18,23 @@ package org.openecomp.sdcrests.togglz.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.openecomp.sdcrests.common.RestConstants;
+import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
 import org.springframework.validation.annotation.Validated;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 @Path("/v1.0/togglz")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Api(value = "TOGGLZ")
 @Validated
 public interface TogglzFeatures {
 
@@ -41,4 +44,15 @@ public interface TogglzFeatures {
       responseContainer = "List")
   Response getFeatures();
 
+
+  @PUT
+  @Path("/{featureName}/status/{status}")
+  @ApiOperation(value = "Update feature toggle status")
+  Response setFeatureStatus(@PathParam("featureName") String featureName,@PathParam("status") boolean status);
+
+  @GET
+  @Path("/{featureName}")
+  @ApiOperation(value = "Get feature toggle status",
+          response = FeatureDto.class)
+  Response getFeatureStatus(@PathParam("featureName") String featureName);
 }
