@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
@@ -38,8 +34,10 @@ public class OrchestrationTemplateEntity implements VersionableEntity {
   private String packageVersion;
   private String validationData;
   private ByteBuffer contentData;
+  private String filesDataStructure;
 
   public OrchestrationTemplateEntity() {
+    //default constructor implementation is not provided for OrchestrationTemplateEntity
   }
 
   public OrchestrationTemplateEntity(String id, Version version) {
@@ -57,10 +55,12 @@ public class OrchestrationTemplateEntity implements VersionableEntity {
     return getId();
   }
 
+  @Override
   public String getId() {
     return id;
   }
 
+  @Override
   public void setId(String id) {
     this.id = id;
   }
@@ -131,5 +131,13 @@ public class OrchestrationTemplateEntity implements VersionableEntity {
 
   public void setContentData(ByteBuffer contentData) {
     this.contentData = contentData;
+  }
+
+  public String getFilesDataStructure() {
+    return filesDataStructure;
+  }
+
+  public void setFilesDataStructure(String filesDataStructure) {
+    this.filesDataStructure = filesDataStructure;
   }
 }

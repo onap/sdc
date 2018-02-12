@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   public OrchestrationTemplateCandidateManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                                                    CandidateService candidateService
-                                             ) {
+  ) {
     this.vspInfoDao = vspInfoDao;
     this.candidateService = candidateService;
   }
@@ -97,7 +97,13 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version) {
-    return candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
+    Optional<FilesDataStructure> candidateFileDataStructure =
+        candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
+    if (candidateFileDataStructure.isPresent()) {
+      return candidateFileDataStructure;
+    } else {
+      return Optional.empty();
+    }
   }
 
   @Override
@@ -129,8 +135,8 @@ public class OrchestrationTemplateCandidateManagerImpl
 
     if (!candidateDataEntity.isPresent()) {
       ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
-          getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage
-              (), ""));
+          getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(),
+              ""));
       LOGGER.error(errorMessage.getMessage());
       return Optional.empty();
     }
@@ -155,6 +161,11 @@ public class OrchestrationTemplateCandidateManagerImpl
   @Override
   public OrchestrationTemplateCandidateData getInfo(String vspId, Version version) {
     return candidateService.getOrchestrationTemplateCandidateInfo(vspId, version);
+  }
+
+  @Override
+  public void abort(String vspId, Version version) {
+    candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
   }
 
   private Optional<OrchestrationTemplateCandidateData> fetchCandidateDataEntity(

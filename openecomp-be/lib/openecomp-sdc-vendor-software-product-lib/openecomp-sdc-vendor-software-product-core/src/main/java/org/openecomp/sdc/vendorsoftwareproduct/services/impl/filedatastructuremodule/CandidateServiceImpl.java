@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule;
@@ -35,6 +31,7 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.structure.Artifact;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
+import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
@@ -136,12 +133,11 @@ public class CandidateServiceImpl implements CandidateService {
         analyzedZipHeatFiles);
     handleOtherResources(tree, usedEnvFiles, structure);
     FilesDataStructure fileDataStructureFromManifest =
-        createFileDataStructureFromManifest(zipContentMap.getFileContent
-            (SdcCommon.MANIFEST_NAME));
+        createFileDataStructureFromManifest(zipContentMap.getFileContent(SdcCommon.MANIFEST_NAME));
     List<String> structureArtifacts = structure.getArtifacts();
     structureArtifacts.addAll(fileDataStructureFromManifest.getArtifacts().stream().filter
         (artifact -> isNotStrctureArtifact(structureArtifacts, artifact))
-        .collect((Collectors.toList())));
+        .collect(Collectors.toList()));
     handleArtifactsFromTree(tree, structure);
 
     return JsonUtil.object2Json(structure);
@@ -167,9 +163,9 @@ public class CandidateServiceImpl implements CandidateService {
           zipContentMap, analyzedZipHeatFiles);
       Set<String> filesDataStructureFiles = getFlatFileNames(filesDataStructure);
       filesDataStructure.getUnassigned().addAll(zipFileList.stream()
-          .filter(fileName -> (!filesDataStructureFiles.contains(fileName) &&
-              !filesDataStructure.getNested().contains(fileName) &&
-              !fileName.equals(SdcCommon.MANIFEST_NAME)))
+          .filter(fileName -> (!filesDataStructureFiles.contains(fileName)
+              && !filesDataStructure.getNested().contains(fileName)
+              && !fileName.equals(SdcCommon.MANIFEST_NAME)))
           .collect(Collectors.toList()));
       dataStructureJson = JsonUtil.object2Json(filesDataStructure);
     } else {
@@ -290,8 +286,7 @@ public class CandidateServiceImpl implements CandidateService {
     for (FileData fileData : data) {
       if (fileData.getType().equals(FileData.Type.HEAT_ENV)) {
         module.setEnv(fileData.getFile());
-      } else if (fileData.getType().equals(FileData.Type.HEAT_VOL))// must be volume
-      {
+      } else if (fileData.getType().equals(FileData.Type.HEAT_VOL)) { // must be volume
         module.setVol(fileData.getFile());
         if (!CollectionUtils.isEmpty(fileData.getData())) {
           FileData volEnv = fileData.getData().get(0);
@@ -430,6 +425,17 @@ public class CandidateServiceImpl implements CandidateService {
   public Optional<List<ErrorMessage>> validateFileDataStructure(
       FilesDataStructure filesDataStructure) {
     return candidateServiceValidator.validateFileDataStructure(filesDataStructure);
+  }
+
+  @Override
+  public void deleteOrchestrationTemplateCandidate(String vspId, Version versionId) {
+    orchestrationTemplateCandidateDao.delete(vspId, versionId);
+  }
+
+  @Override
+  public void updateValidationData(String vspId, Version version, ValidationStructureList
+      validationData) {
+    orchestrationTemplateCandidateDao.updateValidationData(vspId, version, validationData);
   }
 
   private void writeManifest(String manifest,

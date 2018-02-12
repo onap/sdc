@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
+import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_ERROR;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
@@ -28,6 +30,7 @@ import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
+import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.messages.AuditMessages;
@@ -53,15 +56,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-
-import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_ERROR;
 
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
   private final CandidateService candidateService =
       CandidateServiceFactory.getInstance().createInterface();
-  private static final String VSP_ID = "VSP id";
 
   @Override
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
@@ -108,7 +109,12 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     }
 
     HeatStructureTree tree = createAndValidateHeatTree(response, fileContentMap);
-
+    Map<String, List<ErrorMessage>> errors = getErrors(response);
+    if (Objects.nonNull(errors) && !errors.isEmpty()) {
+      response.addStructureErrors(errors);
+      candidateService.updateValidationData(vspId, version, new ValidationStructureList(tree));
+      return response;
+    }
     Map<String, String> componentsQuestionnaire = new HashMap<>();
     Map<String, Map<String, String>> componentNicsQuestionnaire = new HashMap<>();
     Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList = new HashMap<>();
@@ -152,7 +158,16 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
 
     LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     uploadFileResponse.addStructureErrors(uploadErrors);
+    candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
     return response;
+  }
+
+  private Map<String, List<ErrorMessage>> getErrors(OrchestrationTemplateActionResponse
+                                                        orchestrationTemplateActionResponse) {
+    Map<String, List<ErrorMessage>> errors =
+        MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR,
+            orchestrationTemplateActionResponse.getErrors());
+    return MapUtils.isEmpty(errors) ? null : orchestrationTemplateActionResponse.getErrors();
   }
 
   private HeatStructureTree createAndValidateHeatTree(OrchestrationTemplateActionResponse response,

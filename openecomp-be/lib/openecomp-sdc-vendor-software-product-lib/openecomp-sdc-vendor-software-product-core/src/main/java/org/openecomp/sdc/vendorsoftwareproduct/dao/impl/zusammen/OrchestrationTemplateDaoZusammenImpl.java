@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
@@ -10,6 +26,8 @@ import com.amdocs.zusammen.utils.fileutils.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -19,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
@@ -26,6 +45,8 @@ import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTemplateDao {
 
+  private static final Logger logger = LoggerFactory.getLogger
+      (OrchestrationTemplateDaoZusammenImpl.class);
   private ZusammenAdaptor zusammenAdaptor;
 
   public OrchestrationTemplateDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
@@ -130,17 +151,69 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
         .addProperty(InfoPropertyName.FILE_SUFFIX.getVal(), orchestrationTemplate.getFileSuffix());
     validationData.getInfo()
         .addProperty(InfoPropertyName.FILE_NAME.getVal(), orchestrationTemplate.getFileName());
-
+    ZusammenElement orchestrationTemplateStructure = buildStructuralElement(ElementType
+        .OrchestrationTemplateStructure, Action.UPDATE);
+    orchestrationTemplateStructure
+        .setData(new ByteArrayInputStream(orchestrationTemplate.getFilesDataStructure()
+            .getBytes()));
     ZusammenElement orchestrationTemplateElement =
         buildStructuralElement(ElementType.OrchestrationTemplate, Action.UPDATE);
     orchestrationTemplateElement
         .setData(new ByteArrayInputStream(orchestrationTemplate.getContentData().array()));
     orchestrationTemplateElement.addSubElement(validationData);
-
+    orchestrationTemplateElement.addSubElement(orchestrationTemplateStructure);
     ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
     vspModel.addSubElement(orchestrationTemplateElement);
 
     zusammenAdaptor.saveElement(context, elementContext, vspModel, "Update Orchestration Template");
+  }
+
+  @Override
+  public Optional<String> getOrchestrationTemplateStructure(String vspId, Version version) {
+    logger.info("Getting orchestration template structure for VendorSoftwareProduct id" +
+        " " + "-> " + vspId);
+
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
+
+    Optional<ElementInfo> vspModel = zusammenAdaptor.getElementInfoByName(context, elementContext,
+        null, ElementType.VspModel.name());
+    if (!vspModel.isPresent()) {
+      return Optional.empty();
+    }
+    Optional<Element> orchestrationTemplateElement = zusammenAdaptor.getElementByName(context,
+        elementContext, vspModel.get().getId(), ElementType.OrchestrationTemplate.name());
+    if (!orchestrationTemplateElement.isPresent()) {
+      return Optional.empty();
+    }
+
+    Optional<Element> orchestrationTemplateStructureElement = zusammenAdaptor
+        .getElementByName(context, elementContext,
+            orchestrationTemplateElement.get().getElementId(),
+            ElementType.OrchestrationTemplateStructure.name());
+    if (orchestrationTemplateStructureElement.isPresent() &&
+        !isEmpty(orchestrationTemplateStructureElement.get().getData())) {
+      return Optional.of(new String(
+          FileUtils.toByteArray(orchestrationTemplateStructureElement.get().getData())));
+    }
+    logger.info("Finished getting orchestration template structure for VendorSoftwareProduct " +
+        "id -> " + vspId);
+
+    return Optional.empty();
+  }
+
+  private boolean isEmpty(InputStream elementData) {
+    byte[] byteElementData;
+    if (Objects.isNull(elementData)) {
+      return true;
+    }
+    try {
+      byteElementData = IOUtils.toByteArray(elementData);
+    } catch (IOException e) {
+      return false;
+    }
+
+    return byteElementData.length == 0 ? true : false;
   }
 
   private boolean hasEmptyData(InputStream elementData) {
@@ -149,7 +222,6 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
     try {
       byteElementData = IOUtils.toByteArray(elementData);
     } catch (IOException ex) {
-      ex.printStackTrace();
       return false;
     }
     if (Arrays.equals(emptyData.getBytes(), byteElementData)) {

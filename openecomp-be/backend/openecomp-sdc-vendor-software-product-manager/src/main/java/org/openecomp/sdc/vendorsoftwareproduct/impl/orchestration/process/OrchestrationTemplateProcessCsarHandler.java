@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
+import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.ToscaTreeManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -97,7 +98,13 @@ public class OrchestrationTemplateProcessCsarHandler
                            OrchestrationTemplateActionResponse response) throws IOException {
     response.setFileNames(new ArrayList<>(fileContentHandler.getFileList()));
     Map<String, List<ErrorMessage>> errors = validateCsar(fileContentHandler);
+    toscaTreeManager.createTree();
+
     if (!isValid(errors)) {
+      response.addStructureErrors(errors);
+      toscaTreeManager.addErrors(errors);
+      candidateService.updateValidationData(vspDetails.getId(), vspDetails.getVersion(),
+          new ValidationStructureList(toscaTreeManager.getTree()));
       return;
     }
 
@@ -126,7 +133,8 @@ public class OrchestrationTemplateProcessCsarHandler
     orchestrationUtil.saveServiceModel(vspDetails.getId(),
             vspDetails.getVersion(), toscaServiceModel,
         toscaServiceModel);
-
+    candidateService
+        .deleteOrchestrationTemplateCandidate(vspDetails.getId(), vspDetails.getVersion());
   }
 
   private void addFiles(FileContentHandler fileContentHandler) {
