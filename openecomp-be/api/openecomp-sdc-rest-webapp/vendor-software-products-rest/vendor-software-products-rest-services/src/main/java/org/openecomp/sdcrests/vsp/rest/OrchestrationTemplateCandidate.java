@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdcrests.vsp.rest;
@@ -32,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -76,6 +73,14 @@ public interface OrchestrationTemplateCandidate extends VspEntities {
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
       throws IOException;
 
+  @DELETE
+  @Path("/")
+  @ApiOperation(value = "Delete orchestration template candidate file and its files data structure")
+  Response abort(
+      @PathParam("vspId") String vspId,
+      @ApiParam(value = "Version Id") @PathParam("versionId") String versionId)
+      throws Exception;
+
   @PUT
   @Path("/process")
   @ApiOperation(value = "process Orchestration Template Candidate",
@@ -106,5 +111,4 @@ public interface OrchestrationTemplateCandidate extends VspEntities {
       @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
       throws Exception;
-
 }

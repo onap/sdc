@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,17 @@ When('I want to delete for path {string} with the value from saved property {str
 	return util.request(this.context, 'DELETE', path);
 });
 
+/**
+ * @module Rest_Calls
+ * @description makes a DELETE request to the given path and appends the saved property (path is appended after the "onboarding-api/v1.0" prefix)<br>
+ * @exampleFile Example_Rest_Calls.feature
+ * @step I want to delete for path {string} with the value from saved property {string}
+ **/
+When('I want to delete for path {string}', function (string) {
+    let path = getPath(string, this.context);
+    //path += '/' + this.context[string2];
+    return util.request(this.context, 'DELETE', path);
+});
 
 /**
  * @module Rest_Calls

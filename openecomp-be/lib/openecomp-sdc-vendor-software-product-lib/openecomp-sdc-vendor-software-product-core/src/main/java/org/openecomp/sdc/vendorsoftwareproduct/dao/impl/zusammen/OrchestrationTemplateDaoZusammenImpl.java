@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
@@ -7,18 +23,16 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.utils.fileutils.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Optional;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
@@ -26,6 +40,8 @@ import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTemplateDao {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger
+      (OrchestrationTemplateDaoZusammenImpl.class);
   private ZusammenAdaptor zusammenAdaptor;
 
   public OrchestrationTemplateDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
@@ -67,7 +83,7 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
         .setFileSuffix(element.get().getInfo().getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
     orchestrationTemplate
         .setFileName(element.get().getInfo().getProperty(InfoPropertyName.FILE_NAME.getVal()));
-    if (!hasEmptyData(element.get().getData())) {
+    if (!VspZusammenUtil.hasEmptyData(element.get().getData())) {
       orchestrationTemplate
           .setValidationData(new String(FileUtils.toByteArray(element.get().getData())));
     }
@@ -94,7 +110,7 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
       return orchestrationTemplate;
     }
 
-    if (!hasEmptyData(orchestrationTemplateElement.get().getData())) {
+    if (!VspZusammenUtil.hasEmptyData(orchestrationTemplateElement.get().getData())) {
       orchestrationTemplate.setContentData(
           ByteBuffer.wrap(FileUtils.toByteArray(orchestrationTemplateElement.get().getData())));
     }
@@ -108,7 +124,7 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
           .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
       orchestrationTemplate.setFileName(validationDataElement.get().getInfo()
           .getProperty(InfoPropertyName.FILE_NAME.getVal()));
-      if (!hasEmptyData(validationDataElement.get().getData())) {
+      if (!VspZusammenUtil.hasEmptyData(validationDataElement.get().getData())) {
         orchestrationTemplate.setValidationData(
             new String(FileUtils.toByteArray(validationDataElement.get().getData())));
       }
@@ -130,32 +146,55 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
         .addProperty(InfoPropertyName.FILE_SUFFIX.getVal(), orchestrationTemplate.getFileSuffix());
     validationData.getInfo()
         .addProperty(InfoPropertyName.FILE_NAME.getVal(), orchestrationTemplate.getFileName());
-
+    ZusammenElement orchestrationTemplateStructure = buildStructuralElement(ElementType
+        .OrchestrationTemplateStructure, Action.UPDATE);
+    orchestrationTemplateStructure
+        .setData(new ByteArrayInputStream(orchestrationTemplate.getFilesDataStructure()
+            .getBytes()));
     ZusammenElement orchestrationTemplateElement =
         buildStructuralElement(ElementType.OrchestrationTemplate, Action.UPDATE);
     orchestrationTemplateElement
         .setData(new ByteArrayInputStream(orchestrationTemplate.getContentData().array()));
     orchestrationTemplateElement.addSubElement(validationData);
-
+    orchestrationTemplateElement.addSubElement(orchestrationTemplateStructure);
     ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
     vspModel.addSubElement(orchestrationTemplateElement);
 
     zusammenAdaptor.saveElement(context, elementContext, vspModel, "Update Orchestration Template");
   }
 
-  private boolean hasEmptyData(InputStream elementData) {
-    String emptyData = "{}";
-    byte[] byteElementData;
-    try {
-      byteElementData = IOUtils.toByteArray(elementData);
-    } catch (IOException ex) {
-      ex.printStackTrace();
-      return false;
+  @Override
+  public Optional<String> getOrchestrationTemplateStructure(String vspId, Version version) {
+    LOGGER.info("Getting orchestration template structure for VendorSoftwareProduct id" +
+        " " + "-> " + vspId);
+
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
+
+    Optional<ElementInfo> vspModel = zusammenAdaptor.getElementInfoByName(context, elementContext,
+        null, ElementType.VspModel.name());
+    if (!vspModel.isPresent()) {
+      return Optional.empty();
     }
-    if (Arrays.equals(emptyData.getBytes(), byteElementData)) {
-      return true;
+    Optional<Element> orchestrationTemplateElement = zusammenAdaptor.getElementByName(context,
+        elementContext, vspModel.get().getId(), ElementType.OrchestrationTemplate.name());
+    if (!orchestrationTemplateElement.isPresent()) {
+      return Optional.empty();
     }
-    return false;
+
+    Optional<Element> orchestrationTemplateStructureElement = zusammenAdaptor
+        .getElementByName(context, elementContext,
+            orchestrationTemplateElement.get().getElementId(),
+            ElementType.OrchestrationTemplateStructure.name());
+    if (orchestrationTemplateStructureElement.isPresent() &&
+        !VspZusammenUtil.isEmpty(orchestrationTemplateStructureElement.get().getData())) {
+      return Optional.of(new String(
+          FileUtils.toByteArray(orchestrationTemplateStructureElement.get().getData())));
+    }
+    LOGGER.info("Finished getting orchestration template structure for VendorSoftwareProduct " +
+        "id -> " + vspId);
+
+    return Optional.empty();
   }
 
   private enum InfoPropertyName {
