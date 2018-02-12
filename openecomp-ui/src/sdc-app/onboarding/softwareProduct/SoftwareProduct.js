@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ const buildComponentNavigationBarGroups = ({componentId, meta}) => {
 
 const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds}) => {
 	const {softwareProductEditor: {data: currentSoftwareProduct = {}}} = softwareProduct;
-	const {id, name, onboardingMethod, candidateOnboardingOrigin} = currentSoftwareProduct;
+	const {id, name, onboardingMethod, candidateOnboardingOrigin, onboardingOrigin} = currentSoftwareProduct;
 	const groups = [{
 		id: id,
 		name: name,
@@ -126,7 +126,7 @@ const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, co
 				id: enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS,
 				name: i18n('Attachments'),
 				disabled: false,
-				hidden: candidateOnboardingOrigin === onboardingOriginTypes.NONE,
+				hidden: !candidateOnboardingOrigin && !onboardingOrigin,
 				meta
 			}, {
 				id: enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG,
@@ -159,14 +159,14 @@ const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, co
 	}];
 	let activeItemId = getActiveNavigationId(screen, componentId);
 	return {
-		activeItemId, groups
+		activeItemId, groups, disabled: !!candidateOnboardingOrigin
 	};
 };
 
 const buildVersionControllerProps = ({softwareProduct, versions, currentVersion, permissions, userInfo, usersList, itemPermission, isReadOnlyMode}) => {
 	const {softwareProductEditor = {data: {}}} = softwareProduct;
-	const {isValidityData = true, data: {name, onboardingMethod}} = softwareProductEditor;
-
+	const {isValidityData = true, data: {name, onboardingMethod, candidateOnboardingOrigin}} = softwareProductEditor;
+	
 	return {
 		version: currentVersion,
 		viewableVersions: versions,
@@ -177,7 +177,8 @@ const buildVersionControllerProps = ({softwareProduct, versions, currentVersion,
 		isReadOnlyMode,
 		userInfo,
 		usersList,
-		isManual: onboardingMethod === onboardingMethodType.MANUAL
+		isManual: onboardingMethod === onboardingMethodType.MANUAL,
+		candidateInProcess: !!candidateOnboardingOrigin
 	};
 };
 

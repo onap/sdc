@@ -1,17 +1,17 @@
-/*
- * Copyright © 2016-2017 European Support Limited
+/*!
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import showFileSaveDialog from 'nfvo-utils/ShowFileSaveDialog.js';
@@ -114,6 +114,10 @@ function validateHeatCandidate(softwareProductId, version) {
 
 function fetchOrchestrationTemplateCandidate(softwareProductId, version, ) {
 	return RestAPIUtil.fetch(`${baseUrl()}${softwareProductId}/versions/${version.id}/orchestration-template-candidate`, {dataType: 'binary'});
+}
+
+function abortValidationProcess(softwareProductId, version) {
+	return RestAPIUtil.destroy(`${baseUrl()}${softwareProductId}/versions/${version.id}/orchestration-template-candidate`);
 }
 
 function objToString(obj) {
@@ -242,6 +246,8 @@ const SoftwareProductActionHelper = {
 			if (response.status === 'Success') {
 				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
 				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version});
+			} else {
+				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version});
 			}
 		});
 	},
@@ -266,6 +272,10 @@ const SoftwareProductActionHelper = {
 							ScreensHelper.loadScreen(dispatch, {
 								screen: enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP, screenType: screenTypes.SOFTWARE_PRODUCT,
 								props: {softwareProductId, version}
+							});
+							dispatch({
+								type: actionTypes.CANDIDATE_IN_PROCESS,
+								inProcess: true
 							});
 							break;
 						case onboardingOriginTypes.CSAR:
@@ -540,6 +550,10 @@ const SoftwareProductActionHelper = {
 			screen: enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, screenType: screenTypes.SOFTWARE_PRODUCT,
 			props: {softwareProductId, version: {id: newVer, label: newVer}}
 		}));
+	},
+
+	abortCandidateValidation(dispatch, {softwareProductId, version}) {		
+		return abortValidationProcess(softwareProductId, version);
 	}
 
 };

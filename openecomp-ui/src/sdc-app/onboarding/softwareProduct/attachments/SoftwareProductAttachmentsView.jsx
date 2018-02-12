@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import {tabsMapping} from './SoftwareProductAttachmentsConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import HeatValidation from './validation/HeatValidation.js';
 import {onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import Button from 'sdc-ui/lib/react/Button.js';
 
 class HeatScreenView extends Component {
 
@@ -30,40 +31,56 @@ class HeatScreenView extends Component {
 		setActiveTab: PropTypes.func
 	};
 
+	componentDidMount() {		
+		 if (!this.props.goToOverview && this.props.candidateInProcess) {			
+			this.props.setActiveTab({activeTab: tabsMapping.VALIDATION});
+		 }
+	}
+
 	render() {
-		let {isValidationAvailable, isReadOnlyMode, heatDataExist, onDownload, softwareProductId, onProcessAndValidate,
-			heatSetup, HeatSetupComponent, onGoToOverview, version, onboardingOrigin, activeTab, setActiveTab, ...other} = this.props;
+		let {isValidationAvailable, isReadOnlyMode, heatDataExist, onDownload, softwareProductId, onProcessAndValidate, onUploadAbort,
+			candidateInProcess, heatSetup, HeatSetupComponent, onGoToOverview, version, onboardingOrigin, activeTab, setActiveTab, ...other} = this.props;
 
 		return (
 			<div className='vsp-attachments-view'>
 				<div className='attachments-view-controllers'>
-					{(activeTab === tabsMapping.SETUP) &&
-						<SVGIcon
-							disabled={heatDataExist ? false : true}
-							name='download'
-							className='icon-component'
-							label={i18n('Export Validation')}
-							labelPosition='right'
-							color='secondary'
-							onClick={heatDataExist ? () => onDownload({heatCandidate: heatSetup, isReadOnlyMode, version}) : undefined}
-							data-test-id='download-heat'/>}
-					{(activeTab === tabsMapping.VALIDATION && softwareProductId) &&
-						<SVGIcon
-							disabled={this.props.goToOverview !== true}
-							onClick={this.props.goToOverview ? () => onGoToOverview({version}) : undefined}
-							name='proceedToOverview'
-							className='icon-component'
-							label={i18n('Go to Overview')}
-							labelPosition='right'
-							color={this.props.goToOverview ? 'primary' : 'secondary'}
-							data-test-id='go-to-overview'/>}
-					<SVGIcon
-						name='upload'
-						className='icon-component'
-						label={i18n('Upload New File')}
+					{(activeTab === tabsMapping.SETUP) &&	
+						<Button btnType='outline' 
+							data-test-id='proceed-to-validation-btn'
+							disabled={!isValidationAvailable} 
+							className='proceed-to-validation-btn'
+							onClick={()=>this.handleTabPress(tabsMapping.VALIDATION)}>{i18n('PROCEED TO VALIDATION')}</Button>					
+					}		
+					{candidateInProcess && <SVGIcon							
+						onClick={onUploadAbort}
+						name='close'
+						className='icon-component abort-btn'
+						label={i18n('ABORT')}
 						labelPosition='right'
 						color='secondary'
-						disabled={isReadOnlyMode}
+						data-test-id='abort-btn'/>
+					}	
+					
+					{(activeTab === tabsMapping.VALIDATION && softwareProductId) &&
+						<Button btnType='outline' 
+							data-test-id='go-to-overview'
+							disabled={this.props.goToOverview !== true}
+							className='go-to-overview-btn'
+							onClick={this.props.goToOverview ? () => onGoToOverview({version}) : undefined}>{i18n('GO TO OVERVIEW')}</Button>}						
+					<div className='separator'></div>		
+					<SVGIcon
+						disabled={heatDataExist ? false : true}
+						name='download'
+						className='icon-component'														
+						color='dark-gray'
+						onClick={heatDataExist ? () => onDownload({heatCandidate: heatSetup, isReadOnlyMode, version}) : undefined}
+						data-test-id='download-heat'/>
+
+					<SVGIcon
+						name='upload'
+						className='icon-component'						
+						color='dark-gray'
+						disabled={isReadOnlyMode || candidateInProcess}
 						onClick={isReadOnlyMode ? undefined : evt => this.refs.hiddenImportFileInput.click(evt)}
 						data-test-id='upload-heat'/>
 					<input
@@ -73,11 +90,11 @@ class HeatScreenView extends Component {
 						accept='.zip, .csar'
 						onChange={evt => this.handleImport(evt)}/>
 				</div>
-			<Tabs
-				className='attachments-tabs'
-				type='header'
-				activeTab={activeTab}
-				onTabClick={key => this.handleTabPress(key)}>
+				<Tabs
+					className='attachments-tabs'
+					type='header'
+					activeTab={activeTab}
+					onTabClick={key => this.handleTabPress(key)}>
 					<Tab tabId={tabsMapping.SETUP} title='Setup' disabled={onboardingOrigin === onboardingOriginTypes.CSAR}>
 						<HeatSetupComponent
 							heatDataExist={heatDataExist}
