@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -88,8 +87,6 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -100,6 +97,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
@@ -111,7 +110,6 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
 
 @Named
 @Service("vendorSoftwareProducts")
@@ -591,28 +589,22 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   private void addNetworkPackageInfo(String vspId, Version version, VspDetailsDto vspDetailsDto) {
-    OrchestrationTemplateEntity orchestrationTemplateInfo =
-        vendorSoftwareProductManager.getOrchestrationTemplateInfo(vspId, version);
-
-    vspDetailsDto.setValidationData(orchestrationTemplateInfo.getValidationDataStructure());
-    vspDetailsDto.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
-    vspDetailsDto.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix() == null
-        ? OnboardingTypesEnum.NONE.toString()
-        : orchestrationTemplateInfo.getFileSuffix());
-
     OrchestrationTemplateCandidateData candidateInfo =
         OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface()
             .getInfo(vspId, version);
-
-    //todo - remove after fix missing candidate element
-    if (candidateInfo == null) {
-      candidateInfo = new OrchestrationTemplateCandidateData();
-      candidateInfo.setFileSuffix("zip");
+    if (Objects.nonNull(candidateInfo) && Objects.nonNull(candidateInfo.getFileSuffix())) {
+      vspDetailsDto.setValidationData(candidateInfo.getValidationDataStructure());
+      vspDetailsDto.setNetworkPackageName(candidateInfo.getFileName());
+      vspDetailsDto.setCandidateOnboardingOrigin(candidateInfo.getFileSuffix());
+    } else {
+      OrchestrationTemplateEntity orchestrationTemplateInfo =
+          vendorSoftwareProductManager.getOrchestrationTemplateInfo(vspId, version);
+      if (Objects.nonNull(orchestrationTemplateInfo)) {
+        vspDetailsDto.setValidationData(orchestrationTemplateInfo.getValidationDataStructure());
+        vspDetailsDto.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
+        vspDetailsDto.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix());
+      }
     }
-
-    vspDetailsDto.setCandidateOnboardingOrigin(candidateInfo.getFileSuffix() == null
-        ? OnboardingTypesEnum.NONE.toString()
-        : candidateInfo.getFileSuffix());
   }
 
   private boolean userHasPermission(String itemId, String userId) {

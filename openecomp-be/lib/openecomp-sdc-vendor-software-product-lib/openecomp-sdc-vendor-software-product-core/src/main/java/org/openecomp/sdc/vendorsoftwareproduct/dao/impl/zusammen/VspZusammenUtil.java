@@ -1,7 +1,12 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Objects;
 
 class VspZusammenUtil {
@@ -23,5 +28,32 @@ class VspZusammenUtil {
     }
 
     return head;
+  }
+
+  static boolean isEmpty(InputStream elementData) {
+    byte[] byteElementData;
+    if (Objects.isNull(elementData)) {
+      return true;
+    }
+    try {
+      byteElementData = IOUtils.toByteArray(elementData);
+    } catch (IOException e) {
+      return false;
+    }
+    return ArrayUtils.isEmpty(byteElementData);
+  }
+
+  static boolean hasEmptyData(InputStream elementData) {
+    String EMPTY_DATA = "{}";
+    byte[] byteElementData;
+    try {
+      byteElementData = IOUtils.toByteArray(elementData);
+    } catch (IOException ex) {
+      return false;
+    }
+    if (Arrays.equals(EMPTY_DATA.getBytes(), byteElementData)) {
+      return true;
+    }
+    return false;
   }
 }
