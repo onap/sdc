@@ -112,30 +112,12 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <skip>${pmd.skip}</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>jxr-generation</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jxr</goal>
-                            <goal>test-jxr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.8</version>
                 <configuration>
-                    <skip>${pmd.skip}</skip>
                     <aggregate>false</aggregate>
                     <includeTests>true</includeTests>
+                    <linkXRef>false</linkXRef>
                     <printFailingErrors>true</printFailingErrors>
                     <rulesets>
                         <ruleset>build-pmd-ruleset.xml</ruleset>
