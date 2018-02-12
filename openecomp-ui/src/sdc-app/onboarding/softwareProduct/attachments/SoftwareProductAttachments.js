@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,8 @@ export const mapStateToProps = (state) => {
 		HeatSetupComponent: HeatSetup,
 		version,
 		onboardingOrigin,
-		activeTab
+		activeTab,
+		candidateInProcess: !!currentSoftwareProduct.candidateOnboardingOrigin
 	};
 };
 
@@ -67,6 +68,8 @@ export const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 			data:{
 				msg: i18n('Upload will erase existing data. Do you want to continue?'),
 				confirmationButtonText: i18n('Continue'),
+				title: i18n('WARNING'),
+
 				onConfirmed: ()=>SoftwareProductActionHelper.uploadFile(dispatch, {
 					softwareProductId,
 					formData,
@@ -75,6 +78,15 @@ export const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 				})
 			}
 		}),
+		onUploadAbort: () => {
+			SoftwareProductActionHelper.abortCandidateValidation(dispatch, {softwareProductId, version})
+				.then(()=>{
+					ScreensHelper.loadScreen(dispatch, {
+						screen: enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, screenType: screenTypes.SOFTWARE_PRODUCT,
+						props: {softwareProductId, version}
+					});
+				});
+		},
 		onInvalidFileUpload: () => dispatch({
 			type: modalActionTypes.GLOBAL_MODAL_ERROR,
 			data: {
