@@ -42,8 +42,8 @@ public enum Messages {
   PERMISSIONS_ERROR("Permissions Error. The user does not have permission to perform this action."),
   PERMISSIONS_OWNER_ERROR("Permissions Error. Only one owner is allowed."),
 
-  DELETE_VSP_ERROR("VSP is in use and cannot be deleted."),
-  DELETE_VLM_ERROR("VLM is in use and cannot be deleted."),
+  DELETE_VSP_ERROR("VSP has been certified and cannot be deleted."),
+  DELETE_VLM_ERROR("VLM has been certified and cannot be deleted."),
 
   ZIP_SHOULD_NOT_CONTAIN_FOLDERS("Zip file should not contain folders"),
   VES_ZIP_SHOULD_CONTAIN_YML_ONLY(

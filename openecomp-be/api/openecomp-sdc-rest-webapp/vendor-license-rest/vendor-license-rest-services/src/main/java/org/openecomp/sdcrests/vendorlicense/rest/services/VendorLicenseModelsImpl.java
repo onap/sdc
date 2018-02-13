@@ -22,6 +22,8 @@ import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
@@ -202,6 +204,12 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   public Response deleteLicenseModel(String vlmId, String user) {
     Item vlm = itemManager.get(vlmId);
 
+    if (!vlm.getType().equals(ItemType.vlm.name())){
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder()
+              .withMessage(String.format("Vlm with id %s does not exist.",
+                      vlmId)).build()));
+    }
+
     Integer certifiedVersionsCounter = vlm.getVersionStatusCounters().get(VersionStatus.Certified);
     if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
       itemManager.delete(vlm);
@@ -213,7 +221,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
       return Response.ok().build();
     } else {
-      return Response.status(Response.Status.PRECONDITION_FAILED)
+      return Response.status(Response.Status.FORBIDDEN)
           .entity(new Exception(Messages.DELETE_VLM_ERROR.getErrorMessage())).build();
     }
   }

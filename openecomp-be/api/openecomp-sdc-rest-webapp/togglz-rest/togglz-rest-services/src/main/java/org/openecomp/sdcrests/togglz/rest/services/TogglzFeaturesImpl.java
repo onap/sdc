@@ -45,9 +45,9 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
     }
 
     @Override
-    public Response setFeatureState(String featureName, boolean state) {
+    public Response setFeatureState(String featureName, boolean active) {
         Feature feature = new NamedFeature(featureName);
-        FeatureState featureState = new FeatureState(feature,state);
+        FeatureState featureState = new FeatureState(feature,active);
         FeatureContext.getFeatureManager().setFeatureState(featureState);
         return Response.ok().build();
     }
