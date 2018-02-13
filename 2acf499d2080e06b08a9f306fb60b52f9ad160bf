@@ -1,0 +1,464 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9b5dfe49",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/OrchestrationTemplateCandidate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "why not call it \"delete\" ?",
+      "range": {
+        "startLine": 79,
+        "startChar": 11,
+        "endLine": 79,
+        "endChar": 16
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fb33e211",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "delete this code",
+      "range": {
+        "startLine": 609,
+        "startChar": 3,
+        "endLine": 613,
+        "endChar": 7
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fb5a0129",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/OrchestrationTemplateCandidateManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "rename to delete",
+      "range": {
+        "startLine": 46,
+        "startChar": 7,
+        "endLine": 46,
+        "endChar": 12
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9b43bd41",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/errors/VendorSoftwareProductInvalidErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "why not to make this as static members if they are not getting any parameters? please create static members so they will not have to be built everytime",
+      "range": {
+        "startLine": 68,
+        "startChar": 2,
+        "endLine": 88,
+        "endChar": 3
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bb40f934",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "candidateService.getOrchestrationTemplateCandidateFileDataStructure already return optional or empty. there is no need to recheck. \nyou could use Optional.ofNullable({YOUR_OBJECT})\nreturn to the previous version.",
+      "range": {
+        "startLine": 100,
+        "startChar": 4,
+        "endLine": 106,
+        "endChar": 5
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5b49b55e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "rename to delete",
+      "range": {
+        "startLine": 167,
+        "startChar": 14,
+        "endLine": 167,
+        "endChar": 19
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7b46f150",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "use MapUtils.isNotEmpty()",
+      "range": {
+        "startLine": 113,
+        "startChar": 4,
+        "endLine": 113,
+        "endChar": 53
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3b7ce982",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "use MapUtils.emptyIfNull(errors).\nyou already used MapUtils class, explore this utility a little bit more when you don\u0027t have a complicated logic. It will make your life easier",
+      "range": {
+        "startLine": 170,
+        "startChar": 11,
+        "endLine": 170,
+        "endChar": 92
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db6ce5d2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "delete",
+      "range": {
+        "startLine": 290,
+        "startChar": 18,
+        "endLine": 290,
+        "endChar": 23
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5b60d5ce",
+        "filename": "openecomp-be/lib/openecomp-sdc-datatypes-lib/src/main/java/org/openecomp/sdc/datatypes/model/ElementType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "break to several lines",
+      "range": {
+        "startLine": 35,
+        "startChar": 2,
+        "endLine": 35,
+        "endChar": 93
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7b5d9114",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/OrchestrationTemplateCandidateData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "getters and setters should be generally \"stopied\" and the logic (what to return or set) should be outside of the object.\nif you still think the best way to do it is how you did and this is the only option, at least change the return value in the getter to Optional. you sould not return null values on public methods",
+      "range": {
+        "startLine": 82,
+        "startChar": 2,
+        "endLine": 90,
+        "endChar": 3
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1b9ecdb9",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "extract to a local variable",
+      "range": {
+        "startLine": 88,
+        "startChar": 40,
+        "endLine": 88,
+        "endChar": 62
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dba385fe",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "replace with foreach loop",
+      "range": {
+        "startLine": 91,
+        "startChar": 6,
+        "endLine": 91,
+        "endChar": 39
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fba8c1dc",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "there is no isPresentCheck. what if Optional.empty is returned?",
+      "range": {
+        "startLine": 96,
+        "startChar": 12,
+        "endLine": 96,
+        "endChar": 28
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9bb17d49",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "see above comments",
+      "range": {
+        "startLine": 133,
+        "startChar": 4,
+        "endLine": 153,
+        "endChar": 7
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bbaeb9e4",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "delete this. if you want someone to see it, please log it",
+      "range": {
+        "startLine": 295,
+        "startChar": 6,
+        "endLine": 295,
+        "endChar": 26
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7bb4b134",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "use ArrayUtils.isEmpty()",
+      "range": {
+        "startLine": 299,
+        "startChar": 11,
+        "endLine": 299,
+        "endChar": 54
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1b856d59",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "capitalize",
+      "range": {
+        "startLine": 48,
+        "startChar": 30,
+        "endLine": 48,
+        "endChar": 36
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db7aa576",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "use ArrayUtils.isEmpty()",
+      "range": {
+        "startLine": 216,
+        "startChar": 11,
+        "endLine": 216,
+        "endChar": 53
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fb7f6164",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-13T12:00:09Z",
+      "side": 1,
+      "message": "duplicated code with OrchestrationTemplateCandidateDaoZusammenImpl",
+      "range": {
+        "startLine": 205,
+        "startChar": 2,
+        "endLine": 231,
+        "endChar": 3
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
