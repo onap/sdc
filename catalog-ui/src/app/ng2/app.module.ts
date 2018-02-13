@@ -48,6 +48,7 @@ import { TranslateModule } from "./shared/translator/translate.module";
 import { TranslationServiceConfig } from "./config/translation.service.config";
 import {PluginFrameModule} from "./components/ui/plugin/plugin-frame.module";
 import {PluginsService} from "./services/plugins.service";
+import {EventBusService} from "./services/event-bus.service";
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -99,6 +100,7 @@ export function configServiceFactory(config:ConfigService) {
         ComponentInstanceServiceNg2,
         TranslationServiceConfig,
         PluginsService,
+        EventBusService,
         {
             provide: APP_INITIALIZER,
             useFactory: configServiceFactory,
@@ -112,7 +114,6 @@ export function configServiceFactory(config:ConfigService) {
 
 export class AppModule {
 
-    constructor(public upgrade:UpgradeModule) {
-
+    constructor(public upgrade:UpgradeModule, eventBusService:EventBusService) {
     }
 }
