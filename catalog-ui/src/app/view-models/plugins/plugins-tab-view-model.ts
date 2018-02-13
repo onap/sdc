@@ -36,7 +36,8 @@ export class PluginsTabViewModel {
         this.$scope.queryParams = {
             userId: this.$scope.user.userId,
             userRole: this.$scope.user.role,
-            displayType: "tab"
+            displayType: "tab",
+            parentUrl: window.location.origin
         };
     }
 }
