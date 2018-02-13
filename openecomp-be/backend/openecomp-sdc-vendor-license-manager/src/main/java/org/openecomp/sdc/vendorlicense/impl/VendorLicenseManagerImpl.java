@@ -94,7 +94,14 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public void updateVendorLicenseModel(VendorLicenseModelEntity vendorLicenseModelEntity) {
-    String existingVendorName = vendorLicenseModelDao.get(vendorLicenseModelEntity).getVendorName();
+    VendorLicenseModelEntity retrieved = vendorLicenseModelDao.get(vendorLicenseModelEntity);
+    if (retrieved == null){
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder()
+              .withMessage(String.format("Vlm with id %s and version %s does not exist.",
+                      vendorLicenseModelEntity.getId(), vendorLicenseModelEntity.getVersion().getId()))).build());
+    }
+
+    String existingVendorName = retrieved.getVendorName();
 
     updateUniqueName(VendorLicenseConstants.UniqueValues.VENDOR_NAME, existingVendorName,
         vendorLicenseModelEntity.getVendorName());

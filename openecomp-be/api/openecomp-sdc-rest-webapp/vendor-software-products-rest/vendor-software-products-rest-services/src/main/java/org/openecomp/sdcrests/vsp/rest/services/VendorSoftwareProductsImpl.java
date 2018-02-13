@@ -287,6 +287,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   public Response deleteVsp(String vspId, String user) {
     Item vsp = itemManager.get(vspId);
 
+    if(!vsp.getType().equals(ItemType.vsp.name())){
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder()
+              .withMessage(String.format("Vsp with id %s does not exist.",
+                      vspId)).build()));
+    }
+
     Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
     if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
       itemManager.delete(vsp);
@@ -297,7 +303,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
       return Response.ok().build();
     } else {
-      return Response.status(Response.Status.PRECONDITION_FAILED)
+      return Response.status(Response.Status.FORBIDDEN)
           .entity(new Exception(Messages.DELETE_VSP_ERROR.getErrorMessage())).build();
     }
   }

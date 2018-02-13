@@ -470,10 +470,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   @Override
   public void updateVsp(VspDetails vspDetails) {
     VspDetails retrieved = vspInfoDao.get(vspDetails);
-    // TODO: 6/21/2017 remove this validation when validation will be added in the REST level
     if (retrieved == null) {
-      throw new RuntimeException(String.format("Vsp with id %s and version %s does not exist.",
-          vspDetails.getId(), vspDetails.getVersion().getId()));
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder()
+              .withMessage(String.format("Vsp with id %s and version %s does not exist.",
+                      vspDetails.getId(), vspDetails.getVersion().getId()))).build());
     }
     vspDetails.setOnboardingMethod(retrieved.getOnboardingMethod());
 
