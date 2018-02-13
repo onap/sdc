@@ -38,7 +38,9 @@ export class PluginsContextViewModel {
             contextType: this.$scope.component.getComponentSubType(),
             uuid: this.$scope.component.uuid,
             lifecycleState: this.$scope.component.lifecycleState,
-            isOwner: this.$scope.component.lastUpdaterUserId === this.$scope.user.userId
+            isOwner: this.$scope.component.lastUpdaterUserId === this.$scope.user.userId,
+            version: this.$scope.component.version ,
+            parentUrl: window.location.origin
         };
 
     }
