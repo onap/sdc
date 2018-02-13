@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -60,6 +61,12 @@ public class PluginStatusBL {
 		boolean result = false;
 
 		HttpHead head = new HttpHead(plugin.getPluginDiscoveryUrl());
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setSocketTimeout(1000)
+				.setConnectTimeout(1000)
+				.setConnectionRequestTimeout(1000).build();
+
+		head.setConfig(requestConfig);
 
 		try (CloseableHttpResponse response = this.client.execute(head)) {
 			result = response != null && response.getStatusLine().getStatusCode() == 200;
