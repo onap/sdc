@@ -33,21 +33,26 @@ Feature: Tosca Validation Flow
     When I want to load the yaml content of the entry "Definitions/MainServiceTemplate.yaml" in the zip "resources/downloads/VSPPackage.zip" to context
 
     Then I want to check property "topology_template.inputs.pcm_flavor_name.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.pcm_flavor_name.annotations.source.properties.source_type" for value "HEAT"
     Then I want to check property "topology_template.inputs.pcm_flavor_name.annotations.source.properties.vf_module_label" to have length 2
     Then I want to check property "topology_template.inputs.pcm_flavor_name.annotations.source.properties.vf_module_label[0]" for value "main-heat2"
     Then I want to check property "topology_template.inputs.pcm_flavor_name.annotations.source.properties.vf_module_label[1]" for value "main-heat1"
     Then I want to check property "topology_template.inputs.pcm_flavor_name.annotations.source.properties.param_name" for value "pcm_flavor_name"
 
-
     Then I want to check property "topology_template.inputs.sm_server_names.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.sm_server_names.annotations.source.properties.source_type" for value "HEAT"
     Then I want to check property "topology_template.inputs.sm_server_names.annotations.source.properties.vf_module_label" to have length 1
     Then I want to check property "topology_template.inputs.sm_server_names.annotations.source.properties.vf_module_label[0]" for value "main-heat1"
     Then I want to check property "topology_template.inputs.sm_server_names.annotations.source.properties.param_name" for value "sm_server_names"
 
     Then I want to check property "topology_template.inputs.dummy_net_netmask_1.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.dummy_net_netmask_1.annotations.source.properties.source_type" for value "HEAT"
     Then I want to check property "topology_template.inputs.dummy_net_netmask_1.annotations.source.properties.vf_module_label" to have length 1
     Then I want to check property "topology_template.inputs.dummy_net_netmask_1.annotations.source.properties.vf_module_label[0]" for value "main-heat2"
     Then I want to check property "topology_template.inputs.dummy_net_netmask_1.annotations.source.properties.param_name" for value "dummy_net_netmask_1"
+
+    Then I want to check property "topology_template.inputs.OS::stack_name" exists
+    Then I want to check property "topology_template.inputs.OS::stack_name.annotations" does not exist
 
     When I want to load the yaml content of the entry "Definitions/nested-pcm_v0.1ServiceTemplate.yaml" in the zip "resources/downloads/VSPPackage.zip" to context
     Then I want to check property "topology_template.inputs.port_pcm_port_0_network_role.annotations" does not exist

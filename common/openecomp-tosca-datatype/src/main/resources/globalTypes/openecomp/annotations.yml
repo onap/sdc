@@ -38,5 +38,5 @@ annotation_types:
           type: string
       param_name:
         type: string
-        required: false
+        required: true
         description: Source parameter name
