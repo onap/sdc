@@ -164,6 +164,75 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3b3f098a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "move to be right before line 233 - near its usage",
+      "range": {
+        "startLine": 217,
+        "startChar": 0,
+        "endLine": 218,
+        "endChar": 99
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_214d989a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "set it once after the if-else",
+      "range": {
+        "startLine": 254,
+        "startChar": 8,
+        "endLine": 254,
+        "endChar": 51
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4152243c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "set it once after the if-else",
+      "range": {
+        "startLine": 257,
+        "startChar": 8,
+        "endLine": 257,
+        "endChar": 51
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_7b46f150",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
         "patchSetId": 1
@@ -258,6 +327,29 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_c15dd448",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "can be remove if not used",
+      "range": {
+        "startLine": 80,
+        "startChar": 2,
+        "endLine": 80,
+        "endChar": 53
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_db6ce5d2",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImplTest.java",
         "patchSetId": 1
@@ -274,6 +366,98 @@
         "startChar": 18,
         "endLine": 290,
         "endChar": 23
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c124f4c6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "Validate",
+      "range": {
+        "startLine": 589,
+        "startChar": 18,
+        "endLine": 589,
+        "endChar": 24
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4120e4ab",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "redundant - validate method doesn\u0027t invoke submit at all. versioningManagerMock is redundant as VersioningManager is not part of this class...",
+      "range": {
+        "startLine": 611,
+        "startChar": 0,
+        "endLine": 613,
+        "endChar": 25
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e110105b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "Validate",
+      "range": {
+        "startLine": 617,
+        "startChar": 18,
+        "endLine": 617,
+        "endChar": 24
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_01165c55",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 639,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 637,
+        "startChar": 0,
+        "endLine": 639,
+        "endChar": 25
       },
       "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -413,6 +597,75 @@
         "startChar": 12,
         "endLine": 96,
         "endChar": 28
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_61040018",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "replace else with else if name \u003d  ..ValidationData. if in the future another sub element will be added, this may cause a problem.",
+      "range": {
+        "startLine": 105,
+        "startChar": 10,
+        "endLine": 105,
+        "endChar": 14
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_81010c08",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "why not simple for-each loop?",
+      "range": {
+        "startLine": 135,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 45
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2402860a",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-02-14T13:26:54Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 149,
+        "startChar": 10,
+        "endLine": 149,
+        "endChar": 16
       },
       "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
