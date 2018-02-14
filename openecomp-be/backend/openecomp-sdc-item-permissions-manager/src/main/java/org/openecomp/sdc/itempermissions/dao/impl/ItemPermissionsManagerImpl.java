@@ -1,5 +1,32 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.itempermissions.dao.impl;
 
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_ID_PROP;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_NAME_PROP;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_CHANGED;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_GRANTED;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_ITEM;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -14,20 +41,8 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.notification.services.SubscriptionService;
-import org.openecomp.sdc.versioning.ItemManager;
+import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.types.Item;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_ID_PROP;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_NAME_PROP;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_CHANGED;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_GRANTED;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_ITEM;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
 
 /**
  * Created by ayalaben on 6/18/2017.
@@ -38,16 +53,16 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
   private static final String CHANGE_PERMISSIONS = "Change_Item_Permissions";
 
   private PermissionsServices permissionsServices;
-  private ItemManager itemManager;
+  private AsdcItemManager asdcItemManager;
   private NotificationPropagationManager notifier;
   private SubscriptionService subscriptionService;
 
   public ItemPermissionsManagerImpl(PermissionsServices permissionsServices,
-                                    ItemManager itemManager,
+                                    AsdcItemManager asdcItemManager,
                                     NotificationPropagationManager notificationPropagationManager,
                                     SubscriptionService subscriptionService) {
     this.permissionsServices = permissionsServices;
-    this.itemManager = itemManager;
+    this.asdcItemManager = asdcItemManager;
     this.notifier = notificationPropagationManager;
     this.subscriptionService = subscriptionService;
   }
@@ -74,7 +89,7 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
 
     if (permission.equals(PermissionTypes.Owner.name()) ){
       if (addedUsersIds.size() == 1){
-        itemManager.updateOwner(itemId,addedUsersIds.iterator().next());
+        asdcItemManager.updateOwner(itemId,addedUsersIds.iterator().next());
     } else {
         throw new CoreException(new ErrorCode.ErrorCodeBuilder()
             .withMessage(Messages.PERMISSIONS_OWNER_ERROR.getErrorMessage())
@@ -92,7 +107,7 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
   private void sendNotifications(String itemId, String permission, Set<String> addedUsersIds,
                                    Set<String> removedUsersIds, String userName) {
 
-    Item item = itemManager.get(itemId);
+    Item item = asdcItemManager.get(itemId);
     addedUsersIds.forEach(affectedUser -> {
       notifyUser(userName, true, item.getName(), itemId, affectedUser, permission);
       subscriptionService.subscribe(affectedUser, itemId);

@@ -54,8 +54,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.OnboardingMethodErrorBuild
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
-import org.openecomp.sdc.versioning.ItemManager;
-import org.openecomp.sdc.versioning.ItemManagerFactory;
+import org.openecomp.sdc.versioning.AsdcItemManager;
+import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -126,7 +126,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   private static ItemCreationDto validationVsp;
 
-  private final ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
+  private final AsdcItemManager asdcItemManager = AsdcItemManagerFactory.getInstance()
+      .createInterface();
   private final ItemPermissionsManager permissionsManager =
       ItemPermissionsManagerFactory.getInstance().createInterface();
   private final VersioningManager versioningManager =
@@ -170,7 +171,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
 
     UniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
-    item = itemManager.create(item);
+    item = asdcItemManager.create(item);
     UniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
 
     Version version = versioningManager.create(item.getId(), new Version(), null);
@@ -216,7 +217,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
     MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
-    itemManager.list(itemPredicate).stream()
+    asdcItemManager.list(itemPredicate).stream()
         .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
         .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
 
@@ -285,11 +286,11 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response deleteVsp(String vspId, String user) {
-    Item vsp = itemManager.get(vspId);
+    Item vsp = asdcItemManager.get(vspId);
 
     Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
     if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
-      itemManager.delete(vsp);
+      asdcItemManager.delete(vsp);
       permissionsManager.deleteItemPermissions(vspId);
       UniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
       notifyUsers(vspId, vsp.getName(), null, "VSP was deleted", user,
@@ -349,7 +350,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     } catch (CoreException validationVspAlreadyExistException) {
       // find validationVsp
-      String validationVspId = itemManager.list(item ->
+      String validationVspId = asdcItemManager.list(item ->
           ItemType.vsp.name().equals(item.getType()) && VALIDATION_VSP_NAME.equals(item.getName()))
           .stream().findFirst().orElseThrow(() -> new IllegalStateException("Vsp with name %s "
               + "does not exist even though the name exists according to unique value util"))
@@ -518,7 +519,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private void notifyUsers(String itemId, String itemName, Version version, String message,
                            String userName, NotificationEventTypes eventType) {
     Map<String, Object> eventProperties = new HashMap<>();
-    eventProperties.put(ITEM_NAME, itemName == null ? itemManager.get(itemId).getName() : itemName);
+    eventProperties.put(ITEM_NAME, itemName == null ? asdcItemManager.get(itemId).getName() : itemName);
     eventProperties.put(ITEM_ID, itemId);
 
     if (version != null) {

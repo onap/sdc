@@ -20,12 +20,13 @@
 
 package org.openecomp.sdc.versioning.impl;
 
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.versioning.ActionVersioningManager;
+import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.VersionCalculator;
 import org.openecomp.sdc.versioning.dao.VersionDao;
@@ -66,7 +67,7 @@ public class VersioningManagerImplTest {
   @Mock
   private VersionCalculator versionCalculatorMock;
   @Mock
-  private ItemManager itemManagerMock;
+  private ItemManager asdcItemManager;
   @InjectMocks
   private VersioningManagerImpl versioningManager;
 
@@ -169,7 +170,7 @@ public class VersioningManagerImplTest {
     Assert.assertEquals(version.getName(), versionName);
 
     verify(versionDaoMock).create(ITEM_ID, requestedVersion);
-    verify(itemManagerMock).updateVersionStatus(ITEM_ID, Draft, null);
+    verify(asdcItemManager).updateVersionStatus(ITEM_ID, Draft, null);
     verify(versionDaoMock)
         .publish(eq(ITEM_ID), eq(requestedVersion), eq("Create version: versionName"));
   }
@@ -198,7 +199,7 @@ public class VersioningManagerImplTest {
     Assert.assertEquals(version.getName(), versionName);
 
     verify(versionDaoMock).create(ITEM_ID, requestedVersion);
-    verify(itemManagerMock).updateVersionStatus(ITEM_ID, Draft, null);
+    verify(asdcItemManager).updateVersionStatus(ITEM_ID, Draft, null);
     verify(versionDaoMock).publish(eq(ITEM_ID), eq(requestedVersion), eq("Create version: 4.0"));
   }
 
@@ -250,7 +251,7 @@ public class VersioningManagerImplTest {
     verify(versionDaoMock).update(eq(ITEM_ID), versionArgumentCaptor.capture());
     Assert.assertEquals(Certified, versionArgumentCaptor.getValue().getStatus());
     verify(versionDaoMock).publish(ITEM_ID, version, submitDescription);
-    verify(itemManagerMock).updateVersionStatus(ITEM_ID, Certified, Draft);
+    verify(asdcItemManager).updateVersionStatus(ITEM_ID, Certified, Draft);
   }
 
   @Test

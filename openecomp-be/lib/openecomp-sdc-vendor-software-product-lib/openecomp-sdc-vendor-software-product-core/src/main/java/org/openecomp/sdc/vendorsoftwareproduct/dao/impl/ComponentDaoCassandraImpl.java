@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
@@ -27,20 +23,19 @@ import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.UniqueValueMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
     implements ComponentDao {
@@ -66,7 +61,7 @@ public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
         Arrays.asList(mapper.getTableMetadata().getPartitionKey().get(0).getName(),
             mapper.getTableMetadata().getPartitionKey().get(1).getName(), "name"))));
 
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
   }
 
@@ -100,7 +95,8 @@ public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
   @Override
   public void updateQuestionnaireData(String vspId, Version version, String componentId,
                                       String questionnaireData) {
-    accessor.updateQuestionnaireData(questionnaireData, vspId, versionMapper.toUDT(version), componentId);
+    accessor.updateQuestionnaireData(questionnaireData, vspId, versionMapper.toUDT(version),
+        componentId);
   }
 
   @Override
@@ -109,7 +105,8 @@ public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
   }
 
   @Override
-  public Collection<ComponentEntity> listCompositionAndQuestionnaire(String vspId, Version version){
+  public Collection<ComponentEntity> listCompositionAndQuestionnaire(String vspId,
+                                                                     Version version) {
     return accessor.listCompositionAndQuestionnaire(vspId, versionMapper.toUDT(version)).all();
   }
 
@@ -145,13 +142,13 @@ public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
         "insert into vsp_component (vsp_id, version, component_id, composition_data)"
             + " values (?,?,?,?)")
     ResultSet updateCompositionData(String vspId, UDTValue version, String id,
-                                    String compositionData);
+        String compositionData);
 
     @Query(
         "update vsp_component set questionnaire_data=? where vsp_id=? and version=?"
             + " and component_id=?")
     ResultSet updateQuestionnaireData(String questionnaireData, String vspId, UDTValue version,
-                                      String id);
+        String id);
 
     @Query("delete from vsp_component where vsp_id=? and version=?")
     ResultSet deleteAll(String vspId, Version version);

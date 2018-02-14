@@ -1,38 +1,20 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.util;
-
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import org.openecomp.sdc.vendorlicense.HealingServiceFactory;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
-import org.openecomp.sdc.vendorlicense.healing.HealingService;
-import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.VendorLicenseArtifactsServiceImpl;
-import org.openecomp.sdc.versioning.ItemManagerFactory;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +22,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.openecomp.sdc.vendorlicense.HealingServiceFactory;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.healing.HealingService;
+import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.VendorLicenseArtifactsServiceImpl;
+import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
+import org.openecomp.sdc.versioning.VersioningManager;
+import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 /**
  * @author katyr
@@ -128,7 +123,8 @@ public class VendorLicenseArtifactsServiceUtils {
   }
 
   public static String getVendorName(String vendorLicenseModelId) {
-    return ItemManagerFactory.getInstance().createInterface().get(vendorLicenseModelId).getName();
+    return AsdcItemManagerFactory.getInstance().createInterface().get(vendorLicenseModelId)
+        .getName();
   }
 
 

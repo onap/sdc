@@ -61,6 +61,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
+import org.openecomp.sdc.versioning.ActionVersioningManager;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
@@ -111,7 +112,7 @@ public class VendorSoftwareProductManagerImplTest {
   private static String id007 = null;
 
   @Mock
-  private VersioningManager versioningManagerMock;
+  private ActionVersioningManager versioningManagerMock;
   @Mock
   private OrchestrationTemplateDao orchestrationTemplateDataDaoMock;
   @Mock
