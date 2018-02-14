@@ -234,6 +234,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_81490cb9",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-14T11:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_bb0b1929",
+      "range": {
+        "startLine": 170,
+        "startChar": 11,
+        "endLine": 170,
+        "endChar": 92
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_db6ce5d2",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImplTest.java",
         "patchSetId": 1
