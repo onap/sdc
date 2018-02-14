@@ -15,11 +15,17 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
+import java.io.ByteArrayInputStream;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -27,17 +33,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.Eleme
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToVSPQuestionnaireConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
-
-import java.io.ByteArrayInputStream;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareProductInfoDao {
   private static final String EMPTY_DATA = "{}";
@@ -54,7 +53,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         new VersionableEntityMetadata(VersionableEntityStoreType.Zusammen, "VendorSoftwareProduct",
             null, null);
 
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
   }
 

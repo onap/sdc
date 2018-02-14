@@ -17,11 +17,41 @@
 package org.openecomp.sdc.versioning;
 
 import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
+import org.openecomp.sdc.versioning.types.VersionInfo;
+import org.openecomp.sdc.versioning.types.VersionableEntityAction;
+import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 
-public interface VersioningManager {
+public interface ActionVersioningManager {
+
+  void register(String entityType, VersionableEntityMetadata entityMetadata);
+
+  Version create(String entityType, String entityId, String user);
+
+  void delete(String entityType, String entityId, String user);
+
+  void undoDelete(String entityType, String entityId, String user);
+
+  Version checkout(String entityType, String entityId, String user);
+
+  Version undoCheckout(String entityType, String entityId, String user);
+
+  Version checkin(String entityType, String entityId, String user, String checkinDescription);
+
+  Version submit(String entityType, String entityId, String user, String submitDescription);
+
+  VersionInfo getEntityVersionInfo(String entityType, String entityId, String user,
+      VersionableEntityAction action);
+
+  Map<String, VersionInfo> listEntitiesVersionInfo(String entityType, String user,
+      VersionableEntityAction action);
+
+  Map<String, VersionInfo> listDeletedEntitiesVersionInfo(String entityType, String user,
+      VersionableEntityAction action);
+
 
   List<Version> list(String itemId); // TODO: 5/24/2017 filter (by status for example)
 
@@ -42,5 +72,4 @@ public interface VersioningManager {
 
   List<Revision> listRevisions(String itemId, Version version);
 
-  void updateVersion(String itemId, Version version);
 }

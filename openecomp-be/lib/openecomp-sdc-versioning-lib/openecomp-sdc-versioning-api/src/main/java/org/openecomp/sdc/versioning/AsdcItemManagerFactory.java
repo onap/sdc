@@ -16,25 +16,12 @@
 
 package org.openecomp.sdc.versioning;
 
-import java.util.Collection;
-import java.util.function.Predicate;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.core.factory.api.AbstractComponentFactory;
+import org.openecomp.core.factory.api.AbstractFactory;
 
-public interface ItemManager {
+public abstract class AsdcItemManagerFactory extends AbstractComponentFactory<AsdcItemManager> {
 
-  Collection<Item> list(Predicate<Item> predicate);
-
-  Item get(String itemId);
-
-  Item create(Item item);
-
-  void updateVersionStatus(String itemId, VersionStatus addedVersionStatus,
-      VersionStatus removedVersionStatus);
-
-  void delete(Item item);
-
-  void updateName(String itemId, String name);
-
-  void update(Item item);
+  public static AsdcItemManagerFactory getInstance() {
+    return AbstractFactory.getInstance(AsdcItemManagerFactory.class);
+  }
 }

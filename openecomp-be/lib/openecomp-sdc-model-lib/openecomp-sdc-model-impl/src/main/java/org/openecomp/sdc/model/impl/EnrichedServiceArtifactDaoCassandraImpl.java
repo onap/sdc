@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.model.impl;
@@ -27,18 +23,17 @@ import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.openecomp.core.model.dao.EnrichedServiceArtifactDao;
 import org.openecomp.core.model.types.EnrichedServiceArtifactEntity;
 import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class EnrichedServiceArtifactDaoCassandraImpl implements EnrichedServiceArtifactDao {
 
@@ -54,7 +49,7 @@ public class EnrichedServiceArtifactDaoCassandraImpl implements EnrichedServiceA
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-    VersioningManagerFactory.getInstance().createInterface().register(versionableEntityType,
+    ActionVersioningManagerFactory.getInstance().createInterface().register(versionableEntityType,
         new VersionableEntityMetadata(mapper.getTableMetadata().getName(),
             mapper.getTableMetadata().getPartitionKey().get(0).getName(),
             mapper.getTableMetadata().getPartitionKey().get(1).getName()));
@@ -133,7 +128,7 @@ public class EnrichedServiceArtifactDaoCassandraImpl implements EnrichedServiceA
         "SELECT vsp_id,version,name,content_data FROM "
             + "vsp_enriched_service_artifact where vsp_id=? and version=? and name=?")
     Result<EnrichedServiceArtifactEntity> getArtifactInfo(String vspId, UDTValue version,
-                                                          String name);
+        String name);
 
     @Query("DELETE from vsp_enriched_service_artifact where vsp_id=? and version=?")
     ResultSet delete(String vspId, UDTValue version);

@@ -16,20 +16,24 @@
 
 package org.openecomp.sdc.versioning.impl;
 
-import org.openecomp.sdc.versioning.ItemManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManager;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
+import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.VersionCalculatorFactory;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.VersionDaoFactory;
+import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
+import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory;
 
-public class VersioningManagerFactoryImpl extends VersioningManagerFactory {
+public class ActionVersioningManagerFactoryImpl extends ActionVersioningManagerFactory {
 
 
   @Override
-  public VersioningManager createInterface() {
-    return new VersioningManagerImpl(
+  public ActionVersioningManager createInterface() {
+    return new ActionVersioningManagerImpl(
+        VersionInfoDaoFactory.getInstance().createInterface(),
+        VersionInfoDeletedDaoFactory.getInstance().createInterface(),
         VersionDaoFactory.getInstance().createInterface(),
         VersionCalculatorFactory.getInstance().createInterface(),
-        ItemManagerFactory.getInstance().createInterface());
+        AsdcItemManagerFactory.getInstance().createInterface());
   }
 }
