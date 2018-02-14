@@ -586,7 +586,7 @@ public class VendorSoftwareProductManagerImplTest {
   }
 */
   @Test
-  public void testSubmitWithCandidateDataNotProcessed() throws IOException {
+  public void testValidateWithCandidateDataNotProcessed() throws IOException {
     VspDetails vsp =
         createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
             "category", "subCategory", "licenseAgreementId",
@@ -608,13 +608,10 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertNotNull(validationResponse.getVspErrors());
     Assert.assertEquals(validationResponse.getVspErrors().size(), 1);
 
-    verify(versioningManagerMock, never())
-        .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
   }
 
   @Test
-  public void testSubmitWithCandidateProcessedIsInvalid() throws IOException {
+  public void testValidateWithCandidateProcessedIsInvalid() throws IOException {
     VspDetails vsp = createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-VSP", "vendorName",
         "vl1Id", "icond", "category", "subcategory", "licenseAgreementId", Collections
             .singletonList("featureGroupId"));
@@ -633,10 +630,6 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertFalse(validationResponse.isValid());
     Assert.assertNotNull(validationResponse.getVspErrors());
     Assert.assertEquals(validationResponse.getVspErrors().size(), 1);
-
-    verify(versioningManagerMock, never())
-        .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
   }
 
   private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {

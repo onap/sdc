@@ -77,8 +77,6 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   private static final String COMPONENT_NAME_3 = "oam_server";
   private static final String COMPONENT_NAME_4 = "ps_server";
 
-  private static final String USER1 = "vspTestUser1";
-
   @Mock
   private VendorSoftwareProductInfoDao vspInfoDaoMock;
   @Mock
