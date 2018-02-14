@@ -24,12 +24,16 @@ public class Conf {
 		try{
 			String confPath = System.getProperty("config.resource");			
 			if (confPath == null){
-				System.out.println("config.resource is empty - goint to get it from config.home");
+				System.out.println("config.resource is empty - going to get it from config.home");
 				confPath = System.getProperty("config.home") + "/webseal.conf";
 			}
 			System.out.println("confPath=" + confPath );
-			Config confFile = ConfigFactory.parseFileAnySyntax(new File(confPath));
-			Config resolve = confFile.resolve();		
+			File configFile = new File(confPath);
+			if (!configFile.exists()) {
+				configFile = new File(this.getClass().getClassLoader().getResource("webseal.conf").getFile());
+			}
+			Config configuration = ConfigFactory.parseFileAnySyntax(configFile);
+			Config resolve = configuration.resolve();
 			setFeHost(resolve.getString("webseal.fe"));
 			List<? extends Config> list = resolve.getConfigList("webseal.users");			
 			for (Config conf : list  ){
