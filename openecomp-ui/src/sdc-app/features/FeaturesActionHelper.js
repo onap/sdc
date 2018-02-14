@@ -1,5 +1,5 @@
 /*!
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes} from './FeaturesConstants.js';
- 
+
 
 function baseUrl() {
-	const restPrefix = Configuration.get('restPrefix');	
+	const restPrefix = Configuration.get('restPrefix');
 	return `${restPrefix}/v1.0/togglz`;
 }
 
@@ -34,7 +34,7 @@ export default {
 				type: actionTypes.FEATURES_LIST_LOADED,
 				features: response.features
 			});
-		});
+		}).catch(() => console.error('An exception occured while trying to fetch the toggleZ features.') );
 	}
 };
 
