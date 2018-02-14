@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e1aed080",
+        "filename": "openecomp-bdd/stepDefinitions/General_Steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-02-14T08:09:10Z",
+      "side": 1,
+      "message": "update the description and make sure the example file is correct, this appears in the documentation",
+      "range": {
+        "startLine": 178,
+        "startChar": 0,
+        "endLine": 179,
+        "endChar": 35
+      },
+      "revId": "44ed4306860e2f9305860b7f655f4982f58da496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_01b41ccf",
+        "filename": "openecomp-bdd/stepDefinitions/Toggle_Steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-02-14T08:09:10Z",
+      "side": 1,
+      "message": "add description and example file for documentation",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 30
+      },
+      "revId": "44ed4306860e2f9305860b7f655f4982f58da496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a1cc486b",
+        "filename": "openecomp-bdd/stepDefinitions/Toggle_Steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-02-14T08:09:10Z",
+      "side": 1,
+      "message": "add description and example file for documentation",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 53
+      },
+      "revId": "44ed4306860e2f9305860b7f655f4982f58da496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c1c9545a",
+        "filename": "openecomp-bdd/stepDefinitions/Utils.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-02-14T08:09:10Z",
+      "side": 1,
+      "message": "already parsed to JSON in line 56, unnecessary",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 21
+      },
+      "revId": "44ed4306860e2f9305860b7f655f4982f58da496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
