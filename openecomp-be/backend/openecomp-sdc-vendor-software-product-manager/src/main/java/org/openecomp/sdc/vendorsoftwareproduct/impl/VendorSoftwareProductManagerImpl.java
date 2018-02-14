@@ -214,8 +214,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       }
       validationResponse.setUploadDataErrors(validateOrchestrationTemplate(orchestrationTemplate));
     }
-    Collection<ComponentDependencyModelEntity> componentDependencies =
-        componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId, version, null));
 
     QuestionnaireValidationResult questionnaireValidationResult = validateQuestionnaire
         (vspDetails.getId(), vspDetails.getVersion(), vspDetails.getOnboardingMethod());
@@ -229,6 +227,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             (questionnaireValidationResult.getValidationData());
       }
     }
+
+    Collection<ComponentDependencyModelEntity> componentDependencies =
+        componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId, version, null));
 
     if (validateComponentDependencies(componentDependencies)) {
       vspErrors
@@ -251,11 +252,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       if (validationData.isEmpty()) {
         vspErrors.add(VendorSoftwareProductInvalidErrorBuilder
             .candidateDataNotProcessedOrAbortedErrorBuilder(fileName));
-        validationResponse.setVspErrors(vspErrors);
       } else {
         vspErrors.add(VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate(fileName));
-        validationResponse.setVspErrors(vspErrors);
       }
+      validationResponse.setVspErrors(vspErrors);
     }
   }
 
