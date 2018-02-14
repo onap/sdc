@@ -16,9 +16,11 @@
 import {actionTypes, tabsMapping} from './OnboardConstants.js';
 import {combineReducers} from 'redux';
 import onboardingCatalogReducer from './onboardingCatalog/OnboardingCatalogReducer.js';
+import filterReducer from './filter/FilterReduser.js';
 
 const onboardReducer = combineReducers({
 	onboardingCatalog: onboardingCatalogReducer,
+	filter: filterReducer,
 	activeTab: (state = tabsMapping.WORKSPACE, action) => action.type === actionTypes.CHANGE_ACTIVE_ONBOARD_TAB ? action.activeTab : state,
 	searchValue: (state = '', action) => action.type === actionTypes.CHANGE_SEARCH_VALUE ? action.searchValue : state
 });
