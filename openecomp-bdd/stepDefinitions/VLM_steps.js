@@ -45,3 +45,13 @@ Then('I want to submit this VLM', function()  {
 	return util.request(this.context, 'PUT', path, inputData);
 });
 
+/**
+ * @module VLM
+ * @exampleFile DeleteVLMDraft.feature
+ * @step I want to delete this VLM
+ **/
+Then('I want to delete this VLM', function()  {
+	let path = '/vendor-license-models/' + this.context.item.id ;
+	return util.request(this.context, 'DELETE', path);
+});
+
