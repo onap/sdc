@@ -1,29 +1,37 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.versioning.impl;
 
-import org.openecomp.sdc.common.session.SessionContextProviderFactory;
-import org.openecomp.sdc.itempermissions.PermissionsServices;
-import org.openecomp.sdc.notification.services.SubscriptionService;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.dao.ItemDao;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 public class ItemManagerImpl implements ItemManager {
-  private static final String CREATE_ITEM = "Create_Item";
 
   private ItemDao itemDao;
-  private PermissionsServices permissionsServices;
-  private SubscriptionService subscriptionService;
 
-  public ItemManagerImpl(ItemDao itemDao, PermissionsServices permissionsServices,
-                         SubscriptionService subscriptionService) {
+
+  public ItemManagerImpl(ItemDao itemDao) {
     this.itemDao = itemDao;
-    this.permissionsServices = permissionsServices;
-    this.subscriptionService = subscriptionService;
+
   }
 
   @Override
@@ -40,15 +48,7 @@ public class ItemManagerImpl implements ItemManager {
 
   @Override
   public Item create(Item item) {
-    Item createdItem = itemDao.create(item);
-
-    String userId = SessionContextProviderFactory.getInstance()
-        .createInterface().get().getUser().getUserId();
-    String itemId = createdItem.getId();
-    permissionsServices.execute(itemId, userId, CREATE_ITEM);
-    subscriptionService.subscribe(userId, itemId);
-
-    return createdItem;
+    return itemDao.create(item);
   }
 
   @Override
@@ -67,18 +67,23 @@ public class ItemManagerImpl implements ItemManager {
   }
 
   @Override
-  public void updateOwner(String itemId, String owner){
+  public void delete(Item item) {
+    itemDao.delete(item);
+  }
+
+  @Override
+  public void updateName(String itemId, String name) {
     Item item = get(itemId);
     if (item == null) {
       return;
     }
 
-    item.setOwner(owner);
+    item.setName(name);
     itemDao.update(item);
   }
 
   @Override
-  public void delete(Item item) {
-    itemDao.delete(item);
+  public void update(Item item) {
+    itemDao.update(item);
   }
 }

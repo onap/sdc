@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
 import com.datastax.driver.core.ResultSet;
@@ -7,20 +23,19 @@ import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.UniqueValueMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 public class ImageDaoImpl extends CassandraBaseDao<ImageEntity> implements ImageDao {
 
@@ -45,7 +60,7 @@ public class ImageDaoImpl extends CassandraBaseDao<ImageEntity> implements Image
         VendorSoftwareProductConstants.UniqueValues.IMAGE_NAME,
         Arrays.asList("vsp_id", "version", "component_id", "name"))));
 
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
   }
 
@@ -111,12 +126,12 @@ public class ImageDaoImpl extends CassandraBaseDao<ImageEntity> implements Image
         "insert into vsp_component_image (vsp_id, version, component_id, image_id, "
             + "composition_data) values (?,?,?,?,?)")
     ResultSet updateCompositionData(String vspId, UDTValue version, String componentId, String id,
-                                    String compositionData);
+        String compositionData);
 
     @Query("update vsp_component_image set questionnaire_data=? where vsp_id=? and version=?"
         + " and component_id=? and image_id=?")
     ResultSet updateQuestionnaireData(String questionnaireData, String vspId, UDTValue version,
-                                      String componentId, String computeId);
+        String componentId, String computeId);
 
     @Query("delete from vsp_component_image where vsp_id=? and version=?")
     ResultSet deleteByVspId(String vspId, UDTValue version);

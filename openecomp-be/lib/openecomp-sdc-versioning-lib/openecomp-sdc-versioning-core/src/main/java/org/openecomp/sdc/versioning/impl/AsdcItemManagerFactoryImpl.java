@@ -16,16 +16,20 @@
 
 package org.openecomp.sdc.versioning.impl;
 
-import org.openecomp.sdc.versioning.ItemManager;
-import org.openecomp.sdc.versioning.ItemManagerFactory;
+import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
+import org.openecomp.sdc.notification.factories.SubscriptionServiceFactory;
+import org.openecomp.sdc.versioning.AsdcItemManager;
+import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.dao.ItemDaoFactory;
 
-public class ItemManagerFactoryImpl extends ItemManagerFactory {
-  private static final ItemManager instance =
-      new ItemManagerImpl(ItemDaoFactory.getInstance().createInterface());
+public class AsdcItemManagerFactoryImpl extends AsdcItemManagerFactory {
+  private static final AsdcItemManager INSTANCE =
+      new AsdcItemManagerImpl(ItemDaoFactory.getInstance().createInterface(),
+          PermissionsServicesFactory.getInstance().createInterface(),
+          SubscriptionServiceFactory.getInstance().createInterface());
 
   @Override
-  public ItemManager createInterface() {
-    return instance;
+  public AsdcItemManager createInterface() {
+    return INSTANCE;
   }
 }

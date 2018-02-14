@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 
-public interface ItemManager {
+public interface AsdcItemManager {
 
   Collection<Item> list(Predicate<Item> predicate);
 
@@ -32,9 +32,9 @@ public interface ItemManager {
   void updateVersionStatus(String itemId, VersionStatus addedVersionStatus,
       VersionStatus removedVersionStatus);
 
-  void delete(Item item);
+  void updateOwner(String itemId, String owner);
 
   void updateName(String itemId, String name);
 
-  void update(Item item);
+  void delete(Item item);
 }
