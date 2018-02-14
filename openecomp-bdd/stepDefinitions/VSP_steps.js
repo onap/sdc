@@ -108,3 +108,14 @@ When('I want to get the package for this Item to path {string}', function (strin
 	let path =  '/vendor-software-products/packages/' + this.context.item.id;
 	return [util.download(this.context, path, string, callback)];
 });
+
+
+/**
+ * @module VSP
+ * @exampleFile Example_VSP.feature
+ * @step I want to delete this VSP
+ **/
+Then('I want to delete this VSP', function()  {
+	let path = '/vendor-software-products/' + this.context.item.id ;
+	return util.request(this.context, 'DELETE', path);
+});
