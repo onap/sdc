@@ -94,6 +94,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_81ed8cb9",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/errors/VendorSoftwareProductInvalidErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 553
+      },
+      "writtenOn": "2018-02-14T08:48:01Z",
+      "side": 1,
+      "message": "If we make it static wont it be not thread safe.",
+      "parentUuid": "5a93c517_9b43bd41",
+      "range": {
+        "startLine": 68,
+        "startChar": 2,
+        "endLine": 88,
+        "endChar": 3
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_bb40f934",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImpl.java",
         "patchSetId": 1
@@ -186,6 +210,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_bb0b1929",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 553
+      },
+      "writtenOn": "2018-02-14T08:48:01Z",
+      "side": 1,
+      "message": "Thanks.\nI will use it next time.\nHowever in this case I dont want to return errors argument hence I can\u0027t use MapUtils.emptyIfNull(). \nerrors contains only errors , OrchestrationTemplateActionResponse.getErrors() , returns errors and warnings. I need warnings as well.",
+      "parentUuid": "5a93c517_3b7ce982",
+      "range": {
+        "startLine": 170,
+        "startChar": 11,
+        "endLine": 170,
+        "endChar": 92
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_db6ce5d2",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImplTest.java",
         "patchSetId": 1
@@ -243,6 +291,30 @@
       "writtenOn": "2018-02-13T12:00:09Z",
       "side": 1,
       "message": "getters and setters should be generally \"stopied\" and the logic (what to return or set) should be outside of the object.\nif you still think the best way to do it is how you did and this is the only option, at least change the return value in the getter to Optional. you sould not return null values on public methods",
+      "range": {
+        "startLine": 82,
+        "startChar": 2,
+        "endLine": 90,
+        "endChar": 3
+      },
+      "revId": "2acf499d2080e06b08a9f306fb60b52f9ad160bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fe0c2f3d",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/OrchestrationTemplateCandidateData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 553
+      },
+      "writtenOn": "2018-02-14T08:48:01Z",
+      "side": 1,
+      "message": "Yes this the way to handle it.\nIf you see they are not exactly getters , setters. They are working on data member \"validationData\" and for this member I have already defined getters , setters.",
+      "parentUuid": "5a93c517_7b5d9114",
       "range": {
         "startLine": 82,
         "startChar": 2,
