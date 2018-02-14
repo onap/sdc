@@ -5,3 +5,4 @@ dist
 node_modules
 .npmrc
 .history
+yarn-error.log

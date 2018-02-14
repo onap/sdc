@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ describe('License Agreement Module Tests', () => {
 				isDirty: true
 			}
 		};
-		const featureGroupsList = licenseAgreementList.featureGroupsIds;
+		const featureGroupsList = licenseAgreementList[0].featureGroupsIds;
 		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseAgreement.licenseAgreementList', [licenseAgreementAfterAdd]);
 		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 

@@ -586,5 +586,7 @@
   "VSPQuestionnaire/general/storageDataReplication/storageReplicationSize" : "Storage Replication Size",
   "VSPQuestionnaire/general/storageDataReplication/storageReplicationSource": "Storage Replication Source",
   "VSPQuestionnaire/general/storageDataReplication/storageReplicationFrequency" : "Storage Replication Frequency",
-  "VSPQuestionnaire/general/storageDataReplication/storageReplicationDestination" : "Storage Replication Destination"
+  "VSPQuestionnaire/general/storageDataReplication/storageReplicationDestination" : "Storage Replication Destination",
+
+  "GENERIC_ERROR": "An error has occurred. Please contact your System Administrator for further assistance."
 }

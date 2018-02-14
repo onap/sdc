@@ -43,7 +43,7 @@ let webpackDevConfig = Object.assign({}, webpackCommon, {
 			colors: true,
 			exclude: ['node_modules']
 		},
-		setup: proxyServer
+		before: proxyServer
 	},
 	plugins: [
 		new webpack.DefinePlugin({

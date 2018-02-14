@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -266,8 +266,8 @@ class LicenseKeyGroupsEditorView extends React.Component {
 					</Tab>
 					<Tab tabId={tabIds.SP_LIMITS} disabled={isTabsDisabled} data-test-id='general-tab' title={i18n('SP Limits')}>
 						{selectedTab === tabIds.SP_LIMITS &&
-							<LicenseKeyGroupsLimits 
-								limitType={limitType.SERVICE_PROVIDER} 
+							<LicenseKeyGroupsLimits
+								limitType={limitType.SERVICE_PROVIDER}
 								limitsList={limitsList.filter(item => item.type === limitType.SERVICE_PROVIDER)}
 								selectedLimit={this.state.selectedLimit}
 								onCloseLimitEditor={() => this.onCloseLimitEditor()}
@@ -275,16 +275,16 @@ class LicenseKeyGroupsEditorView extends React.Component {
 								isReadOnlyMode={isReadOnlyMode} />}
 					</Tab>
 					<Tab tabId={tabIds.VENDOR_LIMITS} disabled={isTabsDisabled} data-test-id='general-tab' title={i18n('Vendor Limits')}>
-						{selectedTab === tabIds.VENDOR_LIMITS && 
-							<LicenseKeyGroupsLimits 
-								limitType={limitType.VENDOR} 
+						{selectedTab === tabIds.VENDOR_LIMITS &&
+							<LicenseKeyGroupsLimits
+								limitType={limitType.VENDOR}
 								limitsList={limitsList.filter(item => item.type === limitType.VENDOR)}
 								selectedLimit={this.state.selectedLimit}
 								onCloseLimitEditor={() => this.onCloseLimitEditor()}
 								onSelectLimit={limit => this.onSelectLimit(limit)}
 								isReadOnlyMode={isReadOnlyMode} />}
 					</Tab>
-					{selectedTab !== tabIds.GENERAL ? 
+					{selectedTab !== tabIds.GENERAL ?
 							<Button
 								className='add-limit-button'
 								tabId={tabIds.ADD_LIMIT_BUTTON}
@@ -294,7 +294,7 @@ class LicenseKeyGroupsEditorView extends React.Component {
 								{i18n('Add Limit')}
 							</Button>
 						:
-							<div></div> // Render empty div to not break tabs
+							<div key='empty_lm_tab_key'></div> // Render empty div to not break tabs
 					}
 				</Tabs>
 

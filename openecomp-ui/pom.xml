@@ -17,8 +17,26 @@
 
     <properties>
         <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
+        <jest.command />
     </properties>
 
+    <!-- ============================================= -->
+    <!-- Profile for windows to run jest one by the other due to current defect in node-graceful-js creating race condition -->
+    <!-- https://github.com/isaacs/node-graceful-fs/pull/119 -->
+    <!-- ============================================= -->
+    <profiles>
+        <profile>
+            <id>jest-windows-profile</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <jest.command>--runInBand</jest.command>
+            </properties>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
@@ -79,7 +97,7 @@
                             <nodeVersion>v9.4.0</nodeVersion>
                             <yarnVersion>v1.3.2</yarnVersion>
                         </configuration>
-                    </execution>                    
+                    </execution>
 
                     <execution>
                         <id>yarn install in dox-sequence-diagram-ui</id>
@@ -129,10 +147,10 @@
                         <id>ui test</id>
                         <goals>
                             <goal>yarn</goal>
-                        </goals>                        
+                        </goals>
                         <configuration>
                             <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                            <arguments>run test-build</arguments>
+                            <arguments>run test-build ${jest.command}</arguments>
                         </configuration>
                         <!-- for some reason does not fail on test phase -->
                         <phase>install</phase>

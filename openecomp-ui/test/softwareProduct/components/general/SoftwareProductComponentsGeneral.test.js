@@ -1,12 +1,12 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/components/general/SoftwareProductComponentsGeneral.js';
 import SoftwareProductComponentsGeneralView from 'sdc-app/onboarding/softwareProduct/components/general/SoftwareProductComponentsGeneralView.jsx';
 //import {statusEnum as versionStatusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
@@ -73,7 +73,7 @@ describe('SoftwareProductComponentsGeneral Mapper and View Classes', () => {
 			name: ''
 		};
 
-		var renderer = TestUtils.createRenderer();
+		const renderer = new ShallowRenderer();
 		renderer.render(
 			<SoftwareProductComponentsGeneralView
 				componentData={componentData}
