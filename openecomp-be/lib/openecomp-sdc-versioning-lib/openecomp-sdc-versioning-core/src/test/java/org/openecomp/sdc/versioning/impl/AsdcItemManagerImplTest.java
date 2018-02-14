@@ -25,7 +25,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-public class ItemManagerImplTest {
+public class AsdcItemManagerImplTest {
 
   private static final String USER = "user1";
   private static final String ITEM_ID = "item1";
@@ -40,7 +40,7 @@ public class ItemManagerImplTest {
   @Mock
   private SubscriptionService subscriptionService;
   @InjectMocks
-  private ItemManagerImpl itemManager;
+  private AsdcItemManagerImpl itemManager;
 
   @BeforeMethod
   public void setUp() throws Exception {

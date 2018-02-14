@@ -1,25 +1,33 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdcrests.item.rest.services;
 
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -35,8 +43,8 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
-import org.openecomp.sdc.versioning.ItemManager;
-import org.openecomp.sdc.versioning.ItemManagerFactory;
+import org.openecomp.sdc.versioning.AsdcItemManager;
+import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Revision;
@@ -44,6 +52,7 @@ import org.openecomp.sdc.versioning.dao.types.SynchronizationState;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.RevisionIdNotFoundErrorBuilder;
 import org.openecomp.sdc.versioning.types.NotificationEventTypes;
+import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 import org.openecomp.sdcrests.item.rest.Versions;
 import org.openecomp.sdcrests.item.rest.mapping.MapActivityLogEntityToDto;
 import org.openecomp.sdcrests.item.rest.mapping.MapRevisionToDto;
@@ -59,19 +68,6 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
 @Named
 @Service("versions")
 @Scope(value = "prototype")
@@ -82,8 +78,8 @@ public class VersionsImpl implements Versions {
 
   private ItemPermissionsManager permissionsManager =
       ItemPermissionsManagerFactory.getInstance().createInterface();
-  private ItemManager itemManager =
-      ItemManagerFactory.getInstance().createInterface();
+  private AsdcItemManager asdcItemManager =
+      AsdcItemManagerFactory.getInstance().createInterface();
   private VersioningManager versioningManager =
       VersioningManagerFactory.getInstance().createInterface();
   private ConflictsManager conflictsManager =
@@ -110,7 +106,8 @@ public class VersionsImpl implements Versions {
     version.setBaseId(baseVersionId);
     version.setDescription(request.getDescription());
 
-    version = versioningManager.create(itemId, version, request.getCreationMethod());
+    version = versioningManager.create(itemId, version, VersionCreationMethod.valueOf(request
+        .getCreationMethod().name()));
 
     VersionDto versionDto = new MapVersionToDto().applyMapping(version, VersionDto.class);
 
@@ -228,7 +225,7 @@ public class VersionsImpl implements Versions {
   private void notifyUsers(String itemId, Version version, String message,
                            String userName, NotificationEventTypes eventType) {
     Map<String, Object> eventProperties = new HashMap<>();
-    eventProperties.put(ITEM_NAME, itemManager.get(itemId).getName());
+    eventProperties.put(ITEM_NAME, asdcItemManager.get(itemId).getName());
     eventProperties.put(ITEM_ID, itemId);
 
     Version ver = versioningManager.get(itemId, version);

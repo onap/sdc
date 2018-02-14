@@ -39,8 +39,8 @@ import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
-import org.openecomp.sdc.versioning.ItemManager;
-import org.openecomp.sdc.versioning.ItemManagerFactory;
+import org.openecomp.sdc.versioning.AsdcItemManager;
+import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -94,7 +94,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   private NotificationPropagationManager notifier =
       NotificationPropagationManagerFactory.getInstance().createInterface();
 
-  private ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
+  private AsdcItemManager asdcItemManager = AsdcItemManagerFactory.getInstance().createInterface();
   private VersioningManager versioningManager =
       VersioningManagerFactory.getInstance().createInterface();
   private VendorLicenseManager vendorLicenseManager =
@@ -120,7 +120,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
     GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
     MapItemToDto mapper = new MapItemToDto();
-    itemManager.list(itemPredicate).stream()
+    asdcItemManager.list(itemPredicate).stream()
         .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
         .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, ItemDto.class)));
     return Response.ok(results).build();
@@ -137,7 +137,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
     UniqueValueUtil
         .validateUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
-    item = itemManager.create(item);
+    item = asdcItemManager.create(item);
     UniqueValueUtil
         .createUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
 
@@ -202,7 +202,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   @Override
   public Response deleteLicenseModel(String vlmId, String user) {
-    Item vlm = itemManager.get(vlmId);
+    Item vlm = asdcItemManager.get(vlmId);
 
     if (!vlm.getType().equals(ItemType.vlm.name())){
       throw new CoreException((new ErrorCode.ErrorCodeBuilder()
@@ -212,7 +212,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
     Integer certifiedVersionsCounter = vlm.getVersionStatusCounters().get(VersionStatus.Certified);
     if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
-      itemManager.delete(vlm);
+      asdcItemManager.delete(vlm);
       permissionsManager.deleteItemPermissions(vlmId);
       UniqueValueUtil
           .deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlm.getName());
@@ -269,7 +269,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   private void notifyUsers(String itemId, String itemName, Version version, String message,
                            String userName, NotificationEventTypes eventType) {
     Map<String, Object> eventProperties = new HashMap<>();
-    eventProperties.put(ITEM_NAME, itemName == null ? itemManager.get(itemId).getName() : itemName);
+    eventProperties.put(ITEM_NAME, itemName == null ? asdcItemManager.get(itemId).getName() : itemName);
     eventProperties.put(ITEM_ID, itemId);
 
     if (version != null) {

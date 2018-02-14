@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
@@ -27,6 +23,10 @@ import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
@@ -34,15 +34,10 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.UniqueValueMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 
 public class EntitlementPoolCassandraDaoImpl extends CassandraBaseDao<EntitlementPoolEntity>
     implements EntitlementPoolDao {
@@ -67,7 +62,7 @@ public class EntitlementPoolCassandraDaoImpl extends CassandraBaseDao<Entitlemen
             Arrays.asList(mapper.getTableMetadata().getPartitionKey().get(0).getName(),
                 mapper.getTableMetadata().getPartitionKey().get(1).getName(), "name"))));
 
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
   }
 
@@ -83,7 +78,7 @@ public class EntitlementPoolCassandraDaoImpl extends CassandraBaseDao<Entitlemen
   }
 
   @Override
-  public String getManufacturerReferenceNumber(EntitlementPoolEntity entitlementPoolEntity){
+  public String getManufacturerReferenceNumber(EntitlementPoolEntity entitlementPoolEntity) {
     return null;
   }
 
@@ -128,7 +123,7 @@ public class EntitlementPoolCassandraDaoImpl extends CassandraBaseDao<Entitlemen
 
     @Query("select * from entitlement_pool where vlm_id=? AND version=?")
     Result<EntitlementPoolEntity> listByVlmVersion(String vendorLicenseModelId,
-                                                   UDTValue vendorLicenseModelVersion);
+        UDTValue vendorLicenseModelVersion);
 
     @Query("delete from entitlement_pool where vlm_id=? AND version=?")
     ResultSet deleteByVlmVersion(String vendorLicenseModelId, UDTValue vendorLicenseModelVersion);
@@ -140,14 +135,14 @@ public class EntitlementPoolCassandraDaoImpl extends CassandraBaseDao<Entitlemen
         "UPDATE entitlement_pool SET ref_fg_ids = ref_fg_ids + ? WHERE vlm_id=? AND version=? "
             + " AND ep_id=?")
     ResultSet addReferencingFeatureGroups(Set<String> referencingFeatureGroups,
-                                          String vendorLicenseModelId,
-                                          UDTValue vendorLicenseModelVersion, String id);
+        String vendorLicenseModelId,
+        UDTValue vendorLicenseModelVersion, String id);
 
     @Query(
         "UPDATE entitlement_pool SET ref_fg_ids = ref_fg_ids - ? WHERE vlm_id=? AND version=? "
             + "AND ep_id=?")
     ResultSet removeReferencingFeatureGroups(Set<String> referencingFeatureGroups,
-                                             String vendorLicenseModelId,
-                                             UDTValue vendorLicenseModelVersion, String id);
+        String vendorLicenseModelId,
+        UDTValue vendorLicenseModelVersion, String id);
   }
 }

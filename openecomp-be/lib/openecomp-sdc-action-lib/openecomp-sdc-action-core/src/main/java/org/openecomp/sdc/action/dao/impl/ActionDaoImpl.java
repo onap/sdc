@@ -1,73 +1,20 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.action.dao.impl;
-
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.exceptions.NoHostAvailableException;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.UDTMapper;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.action.ActionConstants;
-import org.openecomp.sdc.action.dao.ActionDao;
-import org.openecomp.sdc.action.dao.types.ActionEntity;
-import org.openecomp.sdc.action.dao.types.OpenEcompComponentEntity;
-import org.openecomp.sdc.action.errors.ActionException;
-import org.openecomp.sdc.action.logging.CategoryLogLevel;
-import org.openecomp.sdc.action.logging.StatusCode;
-import org.openecomp.sdc.action.types.Action;
-import org.openecomp.sdc.action.types.ActionStatus;
-import org.openecomp.sdc.action.types.ActionSubOperation;
-import org.openecomp.sdc.action.types.OpenEcompComponent;
-import org.openecomp.sdc.action.util.ActionUtil;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
-import org.openecomp.sdc.versioning.dao.VersionInfoDao;
-import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
-import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
-import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionInfoDeletedEntity;
-import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
-import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-import org.slf4j.MDC;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
@@ -93,6 +40,54 @@ import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LO
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_CODE;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_MSG;
 
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.UDTValue;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.Result;
+import com.datastax.driver.mapping.UDTMapper;
+import com.datastax.driver.mapping.annotations.Accessor;
+import com.datastax.driver.mapping.annotations.Query;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.openecomp.core.dao.impl.CassandraBaseDao;
+import org.openecomp.core.nosqldb.api.NoSqlDb;
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.action.ActionConstants;
+import org.openecomp.sdc.action.dao.ActionDao;
+import org.openecomp.sdc.action.dao.types.ActionEntity;
+import org.openecomp.sdc.action.dao.types.OpenEcompComponentEntity;
+import org.openecomp.sdc.action.errors.ActionException;
+import org.openecomp.sdc.action.logging.CategoryLogLevel;
+import org.openecomp.sdc.action.logging.StatusCode;
+import org.openecomp.sdc.action.types.Action;
+import org.openecomp.sdc.action.types.ActionStatus;
+import org.openecomp.sdc.action.types.ActionSubOperation;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
+import org.openecomp.sdc.action.util.ActionUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
+import org.openecomp.sdc.versioning.dao.VersionInfoDao;
+import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
+import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
+import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoDeletedEntity;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
+import org.slf4j.MDC;
+
 
 public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements ActionDao {
   private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
@@ -111,7 +106,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, new VersionableEntityMetadata(
             mapper.getTableMetadata().getName(),
             mapper.getTableMetadata().getPartitionKey().get(0).getName(),
@@ -292,13 +287,15 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
     try {
       log.debug(" entering getOpenEcompComponents ");
       ActionUtil
-          .actionLogPreProcessor(ActionSubOperation.GET_OPEN_ECOMP_COMPONENTS_ENTITY, TARGET_ENTITY_DB);
+          .actionLogPreProcessor(ActionSubOperation.GET_OPEN_ECOMP_COMPONENTS_ENTITY,
+              TARGET_ENTITY_DB);
       result = accessor.getOpenEcompComponents();
       ActionUtil.actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
       log.metrics("");
       if (result != null) {
         openEcompComponents.addAll(
-            result.all().stream().map(OpenEcompComponentEntity::toDto).collect(Collectors.toList()));
+            result.all().stream().map(OpenEcompComponentEntity::toDto)
+                .collect(Collectors.toList()));
       }
     } catch (NoHostAvailableException noHostAvailableException) {
       logGenericException(noHostAvailableException);
@@ -479,7 +476,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
   private void updateStatusInActionData(String actionInvariantUuId, List<Version> versions,
                                         ActionStatus status) {
     log.debug("entering updateStatusInActionData for actionInvariantUuId = " + actionInvariantUuId
-        +  " and status = " + status + " for versions " + versions);
+        + " and status = " + status + " for versions " + versions);
     for (Version v : versions) {
       ActionEntity entity = this.get(new ActionEntity(actionInvariantUuId, v));
       String currentData = entity.getData();

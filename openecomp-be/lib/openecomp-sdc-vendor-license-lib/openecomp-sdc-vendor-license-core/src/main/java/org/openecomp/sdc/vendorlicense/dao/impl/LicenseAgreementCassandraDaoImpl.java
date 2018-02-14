@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
@@ -27,6 +23,11 @@ import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
@@ -35,16 +36,10 @@ import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.UniqueValueMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 
 public class LicenseAgreementCassandraDaoImpl extends CassandraBaseDao<LicenseAgreementEntity>
@@ -75,7 +70,7 @@ public class LicenseAgreementCassandraDaoImpl extends CassandraBaseDao<LicenseAg
             Arrays.asList(mapper.getTableMetadata().getPartitionKey().get(0).getName(),
                 mapper.getTableMetadata().getPartitionKey().get(1).getName(), "name"))));
 
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
   }
 
@@ -148,14 +143,14 @@ public class LicenseAgreementCassandraDaoImpl extends CassandraBaseDao<LicenseAg
         "UPDATE license_agreement SET name=?, description=?, lic_term=?, req_const=?, "
             + "fg_ids=fg_ids+?, fg_ids=fg_ids-? WHERE vlm_id=? AND version=? AND la_id=?")
     ResultSet updateColumnsAndDeltaFeatureGroupIds(String name, String description,
-                                                   UDTValue licenseTerm, String reqAndConst,
-                                                   Set<String> addedFeatureGroupIds,
-                                                   Set<String> removedFeatureGroupIds,
-                                                   String vendorLicenseModelId, UDTValue version,
-                                                   String id);
+        UDTValue licenseTerm, String reqAndConst,
+        Set<String> addedFeatureGroupIds,
+        Set<String> removedFeatureGroupIds,
+        String vendorLicenseModelId, UDTValue version,
+        String id);
 
     @Query("UPDATE license_agreement SET fg_ids=fg_ids-? WHERE vlm_id=? AND version=? AND la_id=?")
     ResultSet removeFeatureGroup(Set<String> featureGroupIds, String vendorLicenseModelId,
-                                 UDTValue version, String id);
+        UDTValue version, String id);
   }
 }
