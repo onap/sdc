@@ -1,0 +1,21 @@
+{
+  "name": "catalog-be",
+  "description": "Installation application - catalogBE",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-catalog-be-setup::1_create_consumer_and_user]",
+    "recipe[sdc-catalog-be-setup::2_check_Backend]",
+    "recipe[sdc-catalog-be-setup::3_import_Normatives]"
+
+  ],
+  "env_run_lists": {
+  }
+}
+
