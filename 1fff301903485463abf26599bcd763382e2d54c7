@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_642e4994",
+        "filename": "utils/webseal-simulator/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-02-15T23:51:33Z",
+      "side": 1,
+      "message": "I couldn\u0027t find any reference of how this file is copy or generated using maven, so I thought it was something missing. Can you point me to the right process?",
+      "parentUuid": "5a93c517_f0a8d8dc",
+      "range": {
+        "startLine": 181,
+        "startChar": 17,
+        "endLine": 181,
+        "endChar": 59
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_90b15449",
         "filename": "utils/webseal-simulator/pom.xml",
         "patchSetId": 3
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_a42f7187",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-02-15T23:51:33Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "5a93c517_b0aed0e4",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 78
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_50b74c3a",
         "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
         "patchSetId": 3
@@ -82,6 +130,24 @@
       "writtenOn": "2018-02-15T17:57:26Z",
       "side": 1,
       "message": "why did you remove the second option?",
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c43cfdca",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-02-15T23:51:33Z",
+      "side": 1,
+      "message": "I tried to simply it.  I\u0027ll need to check how to pass long options(e.g release, environment, etc.) with getopts",
+      "parentUuid": "5a93c517_50b74c3a",
       "revId": "1fff301903485463abf26599bcd763382e2d54c7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -111,6 +177,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_e439f9d7",
+        "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-02-15T23:51:33Z",
+      "side": 1,
+      "message": "AFAIK, this instruction takes effect when the image is running and not during the creation(https://docs.docker.com/engine/reference/builder/#user) but I can move it before line 11.",
+      "parentUuid": "5a93c517_70b4c834",
+      "range": {
+        "startLine": 2,
+        "startChar": 1,
+        "endLine": 2,
+        "endChar": 8
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_10854459",
         "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
         "patchSetId": 3
@@ -122,6 +212,30 @@
       "writtenOn": "2018-02-15T17:57:26Z",
       "side": 1,
       "message": "thsi is not needed.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 51
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_843275f0",
+        "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-02-15T23:51:33Z",
+      "side": 1,
+      "message": "I was mimicking the instructions that are defined here:\n\n    * https://git.onap.org/sdc/tree/utils/webseal-simulator/README.txt#n12\n\nOther wise I was not sure how to use and deploy this simulator.",
+      "parentUuid": "5a93c517_10854459",
       "range": {
         "startLine": 10,
         "startChar": 0,
