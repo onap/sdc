@@ -164,11 +164,13 @@ openecomp-be/tools/swagger-ui/api-docs/api.html
 openecomp-be/tools/swagger-ui/api-docs/api.json
 openecomp-ui/node/*
 sdc-os-chef/.idea/*
-sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/Artifact-Generator.properties
-sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-error-configuration.yaml
-sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
-sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
-sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default/normatives.tar.gz
+
+catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/Artifact-Generator.properties
+catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-error-configuration.yaml
+catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
+catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
+catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
+
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SDC-*.zip
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/sdctool.tar
@@ -220,3 +222,4 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 /asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default/*
 /asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
 /openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/vsp_*
+
