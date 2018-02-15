@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4a7f99ab",
+        "filename": "common/openecomp-tosca-datatype/src/main/resources/globalTypes/openecomp/nodes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-02-15T11:04:40Z",
+      "side": 1,
+      "message": "why did you remove the default value ?",
+      "range": {
+        "startLine": 364,
+        "startChar": 6,
+        "endLine": 364,
+        "endChar": 16
+      },
+      "revId": "ee300d7fb7a640a93bc380388ce9fb74bb7cf51d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
