@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f0a8d8dc",
+        "filename": "utils/webseal-simulator/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-15T17:57:26Z",
+      "side": 1,
+      "message": "we are using chef to copy the configuration why do we need this?",
+      "range": {
+        "startLine": 181,
+        "startChar": 17,
+        "endLine": 181,
+        "endChar": 59
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_90b15449",
+        "filename": "utils/webseal-simulator/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-15T17:57:26Z",
+      "side": 1,
+      "message": "we are using chef . why do we need thsi?",
+      "range": {
+        "startLine": 218,
+        "startChar": 25,
+        "endLine": 218,
+        "endChar": 48
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b0aed0e4",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-15T17:57:26Z",
+      "side": 1,
+      "message": "please remove this",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 78
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_50b74c3a",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-15T17:57:26Z",
+      "side": 1,
+      "message": "why did you remove the second option?",
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70b4c834",
+        "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-15T17:57:26Z",
+      "side": 1,
+      "message": "the location of the root user is spatially located there.\nbecause otherwise the permissions are set wrong.",
+      "range": {
+        "startLine": 2,
+        "startChar": 1,
+        "endLine": 2,
+        "endChar": 8
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_10854459",
+        "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-15T17:57:26Z",
+      "side": 1,
+      "message": "thsi is not needed.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 51
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
