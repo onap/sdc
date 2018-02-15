@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ea478575",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-02-15T11:27:39Z",
+      "side": 1,
+      "message": "I understand that you created 2 methods that we don\u0027t need just due to the toggle issue, and you did add comment that once toggle will be removed they can be removed as well, my Q is - why you didn\u0027t had one method as needed \"validate\" and add the toggle check when you call to the validate ?\nIf you will not be the one which will remove the toggle, probably these methods will not be deleted and we don\u0027t want to have them here ... probably the toggle flag will be delete and only all compilation error will be fix accordingly. \nI think that better and cleaner way is to have one method and move the toggle check when it is being call, even if it means to add it more then one place.",
+      "range": {
+        "startLine": 58,
+        "startChar": 41,
+        "endLine": 58,
+        "endChar": 64
+      },
+      "revId": "db7b62cbbbad80c7310d6d64dff75d88cd0957cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
