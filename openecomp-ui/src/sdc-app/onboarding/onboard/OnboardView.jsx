@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -24,6 +24,7 @@ import ExpandableInput from 'nfvo-components/input/ExpandableInput.jsx';
 import objectValues from 'lodash/values.js';
 import {catalogItemTypes} from './onboardingCatalog/OnboardingCatalogConstants.js';
 import NotificationsView from 'sdc-app/onboarding/userNotifications/NotificationsView.jsx';
+import Filter from 'sdc-app/onboarding/onboard/filter/Filter.jsx';
 
 const OnboardHeaderTabs = ({onTabClick, activeTab}) => (
 	<div className='onboard-header-tabs'>
@@ -88,8 +89,11 @@ class OnboardView extends React.Component {
 		let {activeTab, onTabClick, onSearch, searchValue} = this.props;
 		return (
 			<div className='catalog-view'>
-				<OnboardHeader activeTab={activeTab} onTabClick={onTabClick} searchValue={searchValue} onSearch={value => onSearch(value)}/>
-				{this.renderViewByTab(activeTab)}
+				<Filter/>
+				<div className='catalog-parts'>
+					<OnboardHeader activeTab={activeTab} onTabClick={onTabClick} searchValue={searchValue} onSearch={value => onSearch(value)}/>
+					{this.renderViewByTab(activeTab)}
+				</div>			
 			</div>
 		);
 	}
