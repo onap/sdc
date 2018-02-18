@@ -1257,6 +1257,7 @@ org.openecomp.datatypes.flavors.DeploymentFlavor:
       license_flavor:
         type: org.openecomp.datatypes.flavors.LicenseFlavor
         required: false
+
 org.openecomp.datatypes.ImageInfo:
   derived_from: tosca.datatypes.Root
   properties:
