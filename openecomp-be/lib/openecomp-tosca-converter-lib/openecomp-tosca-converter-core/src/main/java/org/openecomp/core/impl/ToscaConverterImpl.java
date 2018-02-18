@@ -436,36 +436,24 @@ public class ToscaConverterImpl implements ToscaConverter {
     return CsarFileTypes.externalFile;
   }
 
-  private Optional<Manifest> getCsarManifest(Map<String, byte[]> csarFiles) throws IOException {
-    Optional<byte[]> manifestContent = getManifestContent(csarFiles);
+    private NodeTemplate convertNodeTemplate(Object candidateNodeTemplate) {
+        NodeTemplate nodeTemplate = new NodeTemplate();
 
-    if (manifestContent.isPresent()) {
-      ByteArrayInputStream byteInputStream = new ByteArrayInputStream(manifestContent.get());
-
-      return Optional.of(new Manifest(byteInputStream));
-    }
-
-    return Optional.empty();
-  }
-
-  private NodeTemplate convertNodeTemplate(Object candidateNodeTemplate) {
-    NodeTemplate nodeTemplate = new NodeTemplate();
-
-    Map<String, Object> nodeTemplateAsMap = (Map<String, Object>) candidateNodeTemplate;
-    nodeTemplate.setArtifacts((Map<String, ArtifactDefinition>) nodeTemplateAsMap.get("artifacts"));
-    nodeTemplate.setAttributes((Map<String, Object>) nodeTemplateAsMap.get("attributes"));
-    nodeTemplate.setCopy((String) nodeTemplateAsMap.get("copy"));
-    nodeTemplate.setDescription((String) nodeTemplateAsMap.get("description"));
-    nodeTemplate.setDirectives((List<String>) nodeTemplateAsMap.get("directives"));
-    nodeTemplate.setInterfaces(
-        (Map<String, InterfaceDefinition>) nodeTemplateAsMap.get("interfaces"));
-    nodeTemplate.setNode_filter((NodeFilter) nodeTemplateAsMap.get("node_filter"));
-    nodeTemplate.setProperties((Map<String, Object>) nodeTemplateAsMap.get("properties"));
-    nodeTemplate.setRequirements(
-        (List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
-    nodeTemplate.setType((String) nodeTemplateAsMap.get("type"));
-    nodeTemplate.setCapabilities(
-        convertCapabilities((Map<String, Object>) nodeTemplateAsMap.get("capabilities")));
+        Map<String, Object> nodeTemplateAsMap = (Map<String, Object>) candidateNodeTemplate;
+        nodeTemplate.setArtifacts((Map<String, ArtifactDefinition>) nodeTemplateAsMap.get("artifacts"));
+        nodeTemplate.setAttributes((Map<String, Object>) nodeTemplateAsMap.get("attributes"));
+        nodeTemplate.setCopy((String) nodeTemplateAsMap.get("copy"));
+        nodeTemplate.setDescription((String) nodeTemplateAsMap.get("description"));
+        nodeTemplate.setDirectives((List<String>) nodeTemplateAsMap.get("directives"));
+        nodeTemplate.setInterfaces(
+            (Map<String, Object>) nodeTemplateAsMap.get("interfaces"));
+        nodeTemplate.setNode_filter((NodeFilter) nodeTemplateAsMap.get("node_filter"));
+        nodeTemplate.setProperties((Map<String, Object>) nodeTemplateAsMap.get("properties"));
+        nodeTemplate.setRequirements(
+            (List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
+        nodeTemplate.setType((String) nodeTemplateAsMap.get("type"));
+        nodeTemplate.setCapabilities(
+            convertCapabilities((Map<String, Object>) nodeTemplateAsMap.get("capabilities")));
 
     return nodeTemplate;
   }

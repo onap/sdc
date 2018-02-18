@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,20 @@
 
 package org.openecomp.sdc.tosca.datatypes.model;
 
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.AnnotationType;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 
 public class ServiceTemplate implements Template {
 
   private String tosca_definitions_version;
   private Map<String, String> metadata;
+  private Object dsl_definitions;
+  private Map<String, Repository> repositories;
   private String description;
   private List<Map<String, Import>> imports;
   private Map<String, ArtifactType> artifact_types;
@@ -53,6 +57,23 @@ public class ServiceTemplate implements Template {
 
   public void setMetadata(Map<String, String> metadata) {
     this.metadata = metadata;
+  }
+
+  public Object getDsl_definitions() {
+    return dsl_definitions;
+  }
+
+  public void setDsl_definitions(Object dsl_definitions) {
+    this.dsl_definitions = dsl_definitions;
+  }
+
+  public Map<String, Repository> getRepositories() {
+    return repositories;
+  }
+
+  public void setRepositories(
+      Map<String, Repository> repositories) {
+    this.repositories = repositories;
   }
 
   public String getDescription() {
@@ -126,6 +147,14 @@ public class ServiceTemplate implements Template {
 
   public void setInterface_types(Map<String, Object> interface_types) {
     this.interface_types = interface_types;
+  }
+
+  public void addInterfaceType(String interfaceKey, InterfaceType interfaceType) {
+    if (MapUtils.isEmpty(this.interface_types)) {
+      this.interface_types = new HashMap<>();
+    }
+
+    this.interface_types.put(interfaceKey, interfaceType);
   }
 
   public Map<String, PolicyType> getPolicy_types() {

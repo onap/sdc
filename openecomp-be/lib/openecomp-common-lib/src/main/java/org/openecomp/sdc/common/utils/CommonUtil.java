@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.common.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -39,12 +41,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class CommonUtil {
+  private static final String DEFAULT = "default";
+  private static final String _DEFAULT = "_default";
 
   private CommonUtil() {
     // prevent instantiation
@@ -53,37 +59,37 @@ public class CommonUtil {
   public static FileContentHandler validateAndUploadFileContent(OnboardingTypesEnum type,
                                                                 byte[] uploadedFileData)
       throws IOException {
-    return getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(type, uploadedFileData);
+    return getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(type,
+        uploadedFileData);
   }
 
   /**
    * Gets files out of the zip AND validates zip is flat (no folders)
    *
-   *
-   * @param type
    * @param uploadFileData zip file
    * @return FileContentHandler if input is valid and has no folders
    */
   private static FileContentHandler getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(
       OnboardingTypesEnum type, byte[] uploadFileData)
       throws IOException {
-    Pair<FileContentHandler,List<String> > pair = getFileContentMapFromOrchestrationCandidateZip(uploadFileData);
+    Pair<FileContentHandler, List<String>> pair =
+        getFileContentMapFromOrchestrationCandidateZip(uploadFileData);
 
-    if(isFileOriginFromZip(type.toString())) {
+    if (isFileOriginFromZip(type.toString())) {
       validateNoFolders(pair.getRight());
     }
 
     return pair.getLeft();
   }
 
-  public static Pair<FileContentHandler,List<String> > getFileContentMapFromOrchestrationCandidateZip(
-          byte[] uploadFileData)
-          throws IOException {
+  public static Pair<FileContentHandler, List<String>> getFileContentMapFromOrchestrationCandidateZip(
+      byte[] uploadFileData)
+      throws IOException {
     ZipEntry zipEntry;
     List<String> folderList = new ArrayList<>();
     FileContentHandler mapFileContent = new FileContentHandler();
-     try ( ByteArrayInputStream in = new ByteArrayInputStream(uploadFileData);
-          ZipInputStream inputZipStream = new ZipInputStream(in)){
+    try (ByteArrayInputStream in = new ByteArrayInputStream(uploadFileData);
+         ZipInputStream inputZipStream = new ZipInputStream(in)) {
       byte[] fileByteContent;
       String currentEntryName;
 
@@ -93,10 +99,10 @@ public class CommonUtil {
         fileByteContent = FileUtils.toByteArray(inputZipStream);
 
         int index = lastIndexFileSeparatorIndex(currentEntryName);
-        if (index != -1) { //todo ?
+        if (index != -1) {
           folderList.add(currentEntryName);
         }
-        if(isFile(currentEntryName)) {
+        if (isFile(currentEntryName)) {
           mapFileContent.addFile(currentEntryName, fileByteContent);
         }
       }
@@ -105,7 +111,7 @@ public class CommonUtil {
       throw new IOException(exception);
     }
 
-    return new ImmutablePair<>(mapFileContent,folderList);
+    return new ImmutablePair<>(mapFileContent, folderList);
   }
 
   private static boolean isFile(String currentEntryName) {
@@ -149,8 +155,41 @@ public class CommonUtil {
     return validateFilesExtensions(allowedExtensions, files);
   }
 
-  public static boolean isFileOriginFromZip(String fileOrigin){
-   return Objects.nonNull(fileOrigin)
+  public static boolean isFileOriginFromZip(String fileOrigin) {
+    return Objects.nonNull(fileOrigin)
         && fileOrigin.equalsIgnoreCase(OnboardingTypesEnum.ZIP.toString());
+  }
+
+  public static Set<String> getClassFieldNames(Class<? extends Object> classType) {
+    Set<String> fieldNames = new HashSet<>();
+    Arrays.stream(classType.getDeclaredFields()).forEach(field -> fieldNames.add(field.getName()));
+
+    return fieldNames;
+  }
+
+  public static <T> Optional<T> createObjectUsingSetters(Object objectCandidate,
+                                                         Class<T> classToCreate)
+      throws Exception {
+    if (Objects.isNull(objectCandidate)) {
+      return Optional.empty();
+    }
+
+    Map<String, Object> objectAsMap = getObjectAsMap(objectCandidate);
+    T result = classToCreate.newInstance();
+    BeanUtils.populate(result, objectAsMap);
+
+    return Optional.of(result);
+  }
+
+  public static Map<String, Object> getObjectAsMap(Object obj) {
+    Map<String, Object> objectAsMap = obj instanceof Map ? (Map<String, Object>) obj
+        : new ObjectMapper().convertValue(obj, Map.class);
+
+    if (objectAsMap.containsKey(DEFAULT)) {
+      Object defaultValue = objectAsMap.get(DEFAULT);
+      objectAsMap.remove(DEFAULT);
+      objectAsMap.put(_DEFAULT, defaultValue);
+    }
+    return objectAsMap;
   }
 }

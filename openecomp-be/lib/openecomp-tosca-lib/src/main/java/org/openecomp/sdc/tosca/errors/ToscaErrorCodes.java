@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.tosca.errors;
 
-public class ToscaErrorCodes {
+class ToscaErrorCodes {
 
   static final String INVALID_SUBSTITUTE_NODE_TEMPLATE = "INVALID_SUBSTITUTE_NODE_TEMPLATE";
   static final String INVALID_SUBSTITUTION_SERVICE_TEMPLATE =
@@ -31,6 +31,7 @@ public class ToscaErrorCodes {
   static final String TOSCA_INVALID_SUBSTITUTE_NODE_TEMPLATE =
       "TOSCA_INVALID_SUBSTITUTE_NODE_TEMPLATE";
   static final String TOSCA_INVALID_ADD_ACTION_NULL_ENTITY = "TOSCA_INVALID_ADD_ACTION_NULL_ENTITY";
+  static final String INVALID_INTERFACE_VALUE = "INVALID_INTERFACE_VALUE";
 
 
 }
