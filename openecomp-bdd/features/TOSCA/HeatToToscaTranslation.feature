@@ -2,6 +2,7 @@ Feature: Tosca Validation Flow
 
   Background: Init
     Given I want to create a VLM
+    Given I want to set all Togglz to be "true"
 
   Scenario: Full - Create and submit VSP Network Package and Create VF
     When I want to create a VSP with onboarding type "NetworkPackage"
@@ -19,7 +20,8 @@ Feature: Tosca Validation Flow
 
     Then I want to create a VF for this Item
 
-  Scenario: Full - Input parameter annotation validation.
+  Scenario: Validate Input parameter - annotation was added
+
     When I want to create a VSP with onboarding type "NetworkPackage"
 
     Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/inputsForNestedHeat.zip"
@@ -51,6 +53,22 @@ Feature: Tosca Validation Flow
     Then I want to check property "topology_template.inputs.dummy_net_netmask_1.annotations.source.properties.vf_module_label[0]" for value "main-heat2"
     Then I want to check property "topology_template.inputs.dummy_net_netmask_1.annotations.source.properties.param_name" for value "dummy_net_netmask_1"
 
+    Then I want to create a VF for this Item
+
+  Scenario: Validate Input parameter  - annotation was not added
+
+    When I want to create a VSP with onboarding type "NetworkPackage"
+
+    Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/inputsForNestedHeat.zip"
+    And I want to process the NetworkPackage file for this VSP
+
+    Then I want to commit this Item
+    And I want to submit this VSP
+    And I want to package this VSP
+
+    Then I want to get the package for this Item to path "resources/downloads/VSPPackage.zip"
+
+    When I want to load the yaml content of the entry "Definitions/MainServiceTemplate.yaml" in the zip "resources/downloads/VSPPackage.zip" to context
     Then I want to check property "topology_template.inputs.OS::stack_name" exists
     Then I want to check property "topology_template.inputs.OS::stack_name.annotations" does not exist
 
@@ -58,6 +76,7 @@ Feature: Tosca Validation Flow
     Then I want to check property "topology_template.inputs.port_pcm_port_0_network_role.annotations" does not exist
     Then I want to check property "topology_template.inputs.availabilityzone_name.annotations" does not exist
     Then I want to check property "topology_template.inputs.pcm_server_name.annotations" does not exist
+    Then I want to check property "topology_template.inputs.sm_server_names.annotations" does not exist
 
     When I want to load the yaml content of the entry "Definitions/nested-pcm_v0.2ServiceTemplate.yaml" in the zip "resources/downloads/VSPPackage.zip" to context
     Then I want to check property "topology_template.inputs.port_pcm_port_13_mac_requirements.annotations" does not exist

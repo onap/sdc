@@ -2,6 +2,7 @@ Feature: Tosca Validation Flow
 
   Background: Init
     Given I want to create a VLM
+    Given I want to set all Togglz to be "true"
 
   Scenario: Test Capability type in service template
     When I want to create a VSP with onboarding type "NetworkPackage"
