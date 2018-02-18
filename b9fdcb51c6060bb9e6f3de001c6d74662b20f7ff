@@ -1,0 +1,186 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fd242c61",
+        "filename": "common/openecomp-tosca-datatype/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "Can this be replaced with a dependency that\u0027s already been used in the project?\n\n        \u003cdependency\u003e\n            \u003cgroupId\u003eorg.apache.commons\u003c/groupId\u003e\n            \u003cartifactId\u003ecommons-collections4\u003c/artifactId\u003e\n            \u003cversion\u003e${commons.collections.version}\u003c/version\u003e\n        \u003c/dependency\u003e",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1d2a382c",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/ActivityDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "Is it populated automatically by a framework? Why this weird naming?",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bd222450",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/Credential.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "tokenType",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dd1ff006",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/Credential.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "tokenType",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7d181c1e",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "This method conflicts with setOperations(). Meaning there are two ways to modify this.operations. And setOperations() potentially overrides anything that was previously populated via addOperation(). It\u0027s very easy to mess up in the client code. You should leave only one method for consistency - either let clients populate a map outside, or let this class control how its internal map is populated.",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9d15e8e6",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "Use automatic code generation for this. First, you don\u0027t need getters as they simply return the field values. Second, using Objects.equal() could have saved you all these null checks. Compare \n\nif (!Objects.equals(this.type, that.type)) {\n    return false;\n}",
+      "range": {
+        "startLine": 67,
+        "startChar": 1,
+        "endLine": 69,
+        "endChar": 1
+      },
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3dd61429",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "Again, return Objects.hash(type, inputs, operations); is much simpler",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ddbe04f",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/ServiceTemplate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "dslDefinitions",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fddbcc4c",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/utils/CommonUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "You shouldn\u0027t write this yourself - it\u0027s very easy to get wrong. There is, for example, https://commons.apache.org/proper/commons-beanutils/apidocs/org/apache/commons/beanutils/BeanUtils.html\nor https://docs.oracle.com/javase/7/docs/api/java/beans/Introspector.html (this one is more low-level).",
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1de1d8fd",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1267,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T20:47:26Z",
+      "side": 1,
+      "message": "This must be made a constant.",
+      "range": {
+        "startLine": 1267,
+        "startChar": 28,
+        "endLine": 1267,
+        "endChar": 40
+      },
+      "revId": "b9fdcb51c6060bb9e6f3de001c6d74662b20f7ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
