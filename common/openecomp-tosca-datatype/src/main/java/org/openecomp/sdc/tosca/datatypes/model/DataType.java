@@ -27,6 +27,7 @@ public class DataType {
 
   private String derived_from;
   private String version;
+  Map<String, String> metadata;
   private String description;
   private List<Constraint> constraints;
   private Map<String, PropertyDefinition> properties;
@@ -65,6 +66,14 @@ public class DataType {
    */
   public void setVersion(String version) {
     this.version = version;
+  }
+
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
   }
 
   /**

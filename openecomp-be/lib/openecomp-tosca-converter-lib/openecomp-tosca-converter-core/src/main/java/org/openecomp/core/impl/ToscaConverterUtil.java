@@ -17,13 +17,12 @@
 package org.openecomp.core.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.openecomp.core.converter.errors.CreateToscaObjectErrorBuilder;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -34,12 +33,9 @@ import java.util.stream.Stream;
 
 public class ToscaConverterUtil {
 
-  private static final String SET = "set";
   private static final String DEFAULT = "default";
   private static final String DEFAULT_CAPITAL = "Default";
   private static final Set<String> DEFAULT_VALUE_KEYS;
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(ToscaConverterUtil.class);
 
   static {
     DEFAULT_VALUE_KEYS =
@@ -50,11 +46,11 @@ public class ToscaConverterUtil {
     // static utility methods only, prevent instantiation
   }
 
-  public static <T> Optional<T> createObjectFromClass(String objectId,
+  static <T> Optional<T> createObjectFromClass(String objectId,
                                                       Object objectCandidate,
                                                       Class<T> classToCreate) {
     try {
-      return createObjectUsingSetters(objectCandidate, classToCreate);
+      return CommonUtil.createObjectUsingSetters(objectCandidate, classToCreate);
     } catch (Exception ex) {
       throw new CoreException(
           new CreateToscaObjectErrorBuilder(classToCreate.getSimpleName(), objectId)
@@ -62,45 +58,8 @@ public class ToscaConverterUtil {
     }
   }
 
-  private static <T> Optional<T> createObjectUsingSetters(Object objectCandidate,
-                                                          Class<T> classToCreate)
-          throws ReflectiveOperationException {
-    if (Objects.isNull(objectCandidate)
-        || !(objectCandidate instanceof Map)) {
-      return Optional.empty();
-    }
 
-    Map<String, Object> objectAsMap = (Map<String, Object>) objectCandidate;
-    Field[] classFields = classToCreate.getDeclaredFields();
-    T result = classToCreate.newInstance();
-
-    for (Field field : classFields) {
-      Object fieldValueToAssign = objectAsMap.get(field.getName());
-      String methodName = SET + StringUtils.capitalize(field.getName());
-
-      if(shouldSetterMethodNeedsToGetInvoked(classToCreate, field, fieldValueToAssign, methodName)) {
-        classToCreate.getMethod(methodName, field.getType()).invoke(result, fieldValueToAssign);
-      }
-    }
-
-    return Optional.of(result);
-  }
-  private static <T> boolean shouldSetterMethodNeedsToGetInvoked(Class<T> classToCreate,
-                                                                 Field field,
-                                                                 Object fieldValueToAssign,
-                                                                 String methodName) {
-
-    try {
-      return Objects.nonNull(fieldValueToAssign)
-          && Objects.nonNull(classToCreate.getMethod(methodName, field.getType()));
-    } catch (NoSuchMethodException e) {
-      LOGGER.debug(String.format("Could not extract method '%s' from class '%s'. returning false " +
-              "with filedType '%s'.", methodName, classToCreate, field.getType()), e);
-      return false;
-    }
-  }
-
-  public static Optional<Object> getDefaultValue(Object entryValue,
+  static Optional<Object> getDefaultValue(Object entryValue,
                                        Object objectToAssignDefaultValue) {
     if (!(entryValue instanceof Map)
         || Objects.isNull(objectToAssignDefaultValue)) {
