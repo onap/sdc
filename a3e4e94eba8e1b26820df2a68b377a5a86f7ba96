@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3d6134a9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/VersionsImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T19:44:18Z",
+      "side": 1,
+      "message": "Is there a chance of IllegalArgumentException here due to an illegal value?",
+      "revId": "a3e4e94eba8e1b26820df2a68b377a5a86f7ba96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5d6680c2",
+        "filename": "openecomp-be/backend/openecomp-sdc-action-manager/src/main/java/org/openecomp/sdc/action/impl/ActionManagerImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T19:44:18Z",
+      "side": 1,
+      "message": "!currentVersionArtifacts.isEmpty()",
+      "revId": "a3e4e94eba8e1b26820df2a68b377a5a86f7ba96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fd566ccd",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/main/java/org/openecomp/sdc/versioning/ActionVersioningManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T19:44:18Z",
+      "side": 1,
+      "message": "What is this TODO comment?",
+      "revId": "a3e4e94eba8e1b26820df2a68b377a5a86f7ba96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1d5c78ec",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/main/java/org/openecomp/sdc/versioning/impl/ActionVersioningManagerImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T19:44:18Z",
+      "side": 1,
+      "message": "Is this new code? There are too many nested control statements. Should be refactored.",
+      "range": {
+        "startLine": 121,
+        "startChar": 1,
+        "endLine": 130,
+        "endChar": 14
+      },
+      "revId": "a3e4e94eba8e1b26820df2a68b377a5a86f7ba96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bd746468",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/main/java/org/openecomp/sdc/versioning/impl/ActionVersioningManagerImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-18T19:44:18Z",
+      "side": 1,
+      "message": "This method is way too long.",
+      "revId": "a3e4e94eba8e1b26820df2a68b377a5a86f7ba96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
