@@ -172,6 +172,18 @@ Then('I want the following to fail with error code {string}', function(string)  
 	this.context.errorCode = string;
 });
 
+
+/**
+ * @module ContextData
+ * @description Set this in order to check that the following Rest call will have the error message on the return data
+ * @exampleFile DeleteVLMCertified.feature
+ * @step I want the following to fail with error message {string}
+ **/
+Then('I want the following to fail with error message {string}', function(string)  {
+	this.context.shouldFail = true;
+	this.context.errorMessage = string;
+});
+
 /**
  * @module ZipData
  * @description Use this in order to extract a file from a zip file and to compare it to a local file (string comparison).

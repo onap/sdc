@@ -45,6 +45,18 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
     }
 
     @Override
+    public Response setAllFeatures(boolean active) {
+        FeatureSetDto featureSetDto = new FeatureSetDto();
+        new MapToggleableFeatureToDto().doMapping(Arrays.asList(ToggleableFeature.values()), featureSetDto);
+        featureSetDto.getFeatures().forEach(featureDto -> {
+            Feature feature = new NamedFeature(featureDto.getName());
+            FeatureState featureState = new FeatureState(feature,active);
+            FeatureContext.getFeatureManager().setFeatureState(featureState);
+        });
+        return Response.ok().build();
+    }
+
+    @Override
     public Response setFeatureState(String featureName, boolean active) {
         Feature feature = new NamedFeature(featureName);
         FeatureState featureState = new FeatureState(feature,active);

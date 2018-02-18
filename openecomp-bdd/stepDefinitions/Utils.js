@@ -53,6 +53,9 @@ function _request(context, method, path, data, isBinary=false, isVFCall=false) {
 					reject('Status Code was ' + result.statusCode);
 				}
 				if (context.shouldFail && context.errorCode) {
+                    if (typeof data === 'string' && data) {
+                        data = JSON.parse(data);
+                    }
 					let errorCode = data.errorCode;
 					let contextErrorCode = context.errorCode;
 					context.errorCode = null;
@@ -60,6 +63,17 @@ function _request(context, method, path, data, isBinary=false, isVFCall=false) {
 						reject('Error Code was ' + errorCode + ' instead of ' + contextErrorCode);
 					}
 				}
+				if (context.shouldFail && context.errorMessage) {
+				    if (typeof data === 'string' && data) {
+                        data = JSON.parse(data);
+                    }
+                    let errorMessage = data.message;
+                    let contextErrorMessage = context.errorMessage;
+                    context.errorMessage = null;
+                    if (errorMessage !== contextErrorMessage) {
+                    	reject('Error Message was ' + errorMessage + ' instead of ' + contextErrorMessage);
+                    }
+                }
 				if (context.shouldFail) {
 					context.shouldFail = false;
 					resolve({statusCode: result.statusCode, data: {}});

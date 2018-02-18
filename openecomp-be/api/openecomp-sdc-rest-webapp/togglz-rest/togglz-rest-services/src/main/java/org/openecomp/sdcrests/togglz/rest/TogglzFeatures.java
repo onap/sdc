@@ -45,6 +45,12 @@ public interface TogglzFeatures {
 
 
   @PUT
+  @Path("/state/{state}")
+  @ApiOperation(value = "Update feature toggle state for all features")
+  Response setAllFeatures(@PathParam("state") boolean state);
+
+
+  @PUT
   @Path("/{featureName}/state/{state}")
   @ApiOperation(value = "Update feature toggle state")
   Response setFeatureState(@PathParam("featureName") String featureName, @PathParam("state") boolean state);
