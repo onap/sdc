@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:                
+  org.openecomp.nodes.ForwardingPath:
+    derived_from: tosca.nodes.Root
+    properties:
+      target_range:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          description: Identifier of the reciever port of the VNF or the service
+          type: integer
+      protocol:
+        type: string
+        description: protocol type that runs on the link
+        required: true
+        status: SUPPORTED
+    requirements:
+    - forwarder:
+        capability: org.openecomp.capabilities.Forwarder
+        relationship: org.openecomp.relationships.ForwardsTo
+        occurrences:
+        - 0
+        - UNBOUNDED

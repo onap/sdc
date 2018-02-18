@@ -1,0 +1,21 @@
+{
+  "payloadName": "Generic_CR.yml",
+  "contactId": "jh0003",
+  "name": "Generic_CR",
+  "description": "Represents a generic CR.",
+  "resourceIconPath": "defaulticon",
+  "resourceType": "ABSTRACT",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "Generic_CR"
+  ]
+}

@@ -122,6 +122,8 @@ tosca.capabilities.Scalable:
       type: integer
 tosca.capabilities.network.Bindable:
   derived_from: tosca.capabilities.Node
+
+
 tosca.capabilities.Container.Docker:
   derived_from: tosca.capabilities.Container
   properties:
@@ -207,6 +209,8 @@ org.openecomp.capabilities.metric.SnmpTrap:
       description: Object Id of the metric
       required: true
       status: SUPPORTED
+org.openecomp.capabilities.Forwarder:
+  derived_from: tosca.capabilities.Root
 #ONAP types
 tosca.capabilities.nfv.VirtualStorage:
     derived_from: tosca.capabilities.Root

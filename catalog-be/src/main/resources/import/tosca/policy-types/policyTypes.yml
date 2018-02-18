@@ -92,3 +92,26 @@ org.openecomp.policies.placement.valet.Affinity:
       - valid_values:
         - host
         - rack
+org.openecomp.policies.scaling.Fixed:
+  derived_from: tosca.policies.Scaling
+  properties:
+    quantity:
+      description: the exact number of instances to keep up
+      type: integer
+      required: true
+org.openecomp.policies.External:
+  derived_from: tosca.policies.Root
+  description: externally managed policy (for example, type="network assignment", source="Policy Manager", name="route target")
+  properties:
+    source:
+      type: string
+      description: The name of the server that exposes the policy with predefined type and name.
+      required: false
+    type:
+      type: string
+      description: The type (category) of the policy same as it is defined in the source.
+      required: false
+    name:
+      type: string
+      description: The name of the policy, that related to specific type, same as it is defined in the source.
+      required: false
