@@ -64,23 +64,13 @@ public class BaseFullTranslationTest {
   @BeforeClass
   public static void enableToggleableFeatures(){
     manager = new TestFeatureManager(ToggleableFeature.class);
-    if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
-      manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
-    }
-    if (!ToggleableFeature.ANNOTATIONS.isActive()) {
-      manager.enable(ToggleableFeature.ANNOTATIONS);
-    }
-    if(!ToggleableFeature.VLAN_TAGGING.isActive()) {
-      manager.enable(ToggleableFeature.VLAN_TAGGING);
-    }
+    manager.enableAll();
   }
 
 
   @AfterClass
   public static void disableToggleableFeatures() {
-    manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
-    manager.disable(ToggleableFeature.ANNOTATIONS);
-    manager.disable(ToggleableFeature.VLAN_TAGGING);
+    manager.disableAll();
     manager = null;
     TestFeatureManagerProvider.setFeatureManager(null);
   }
