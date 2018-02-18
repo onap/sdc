@@ -37,7 +37,7 @@ Then('I want to create a VF for this Item', function () {
 		this.context.inputData.tags[0] = result.data.name;
 		this.context.inputData.vendorName = result.data.vendorName;
 		this.context.inputData.csarUUID = this.context.item.id;
-		return util.request(this.context, 'POST', '/catalog/resources', this.context.inputData, false, true);
+		return util.request(this.context, 'POST', '/catalog/resources', this.context.inputData, false, 'vf');
 	});
 });
 

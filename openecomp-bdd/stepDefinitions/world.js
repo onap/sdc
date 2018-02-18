@@ -40,8 +40,7 @@ class CustomWorld {
 		} else {
 			this.context.server = config.server;
 		}
-		this.context.onboarding_server = (config.protocol + '://' + this.context.server + ':' + config.port + '/' + config.prefix);
-		this.context.vf_server = (config.protocol + '://' + this.context.server + ':' + config.port + '/' + config.vf_prefix);
+		this.context.server = (config.protocol + '://' + this.context.server + ':' + config.port);
 
 
 		this.context.headers = {};
@@ -56,9 +55,10 @@ class CustomWorld {
 		this.context.inputData = null;
 		this.context.responseData = null;
 
+		this.context.prefix = config.prefix;
+
 		this.setServer = function(server) {
-			this.context.onboarding_server = (config.protocol + '://' +server + ':' + config.port + '/' + config.prefix);
-			this.context.vf_server = (config.protocol + '://' +server + ':' + config.port + '/' + config.vf_prefix);
+			this.context.server = (config.protocol + '://' + this.context.server + ':' + config.port);
 		}
 
 		setDefaultTimeout(60 * 1000);

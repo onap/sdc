@@ -7,3 +7,4 @@ docs
 node_modules
 .npmrc
 npm-debug.log
+config.json

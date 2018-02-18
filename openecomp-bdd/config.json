@@ -3,6 +3,11 @@
   "server": "SET_TO_YOUR_SERVER_IP",
 
   "port": 8285,
-  "prefix":"sdc1/feProxy/onboarding-api/v1.0",
-  "vf_prefix":"sdc1/feProxy/rest/v1"
+
+  "prefix" : {
+    "onboarding":"sdc1/feProxy/onboarding-api/v1.0",
+    "vf":"sdc1/feProxy/rest/v1",
+    "activity_spec":"sdc1/feProxy/activityspec-api/v1"
+
+  }
 }
