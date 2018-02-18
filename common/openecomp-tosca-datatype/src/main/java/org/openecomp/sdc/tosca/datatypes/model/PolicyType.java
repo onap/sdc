@@ -29,9 +29,11 @@ public class PolicyType {
 
   private String derived_from;
   private String version;
+  private Map<String, String> metadata;
   private String description;
   private Map<String, PropertyDefinition> properties;
   private List<String> targets;
+  private List<Trigger> triggers;
 
   public String getDerived_from() {
     return derived_from;
@@ -71,5 +73,22 @@ public class PolicyType {
 
   public void setTargets(List<String> targets) {
     this.targets = targets;
+  }
+
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
+  }
+
+  public List<Trigger> getTriggers() {
+    return triggers;
+  }
+
+  public void setTriggers(
+      List<Trigger> triggers) {
+    this.triggers = triggers;
   }
 }

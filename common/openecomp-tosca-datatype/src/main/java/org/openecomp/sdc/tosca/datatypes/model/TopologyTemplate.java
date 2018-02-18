@@ -21,6 +21,7 @@
 package org.openecomp.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,6 +35,7 @@ public class TopologyTemplate {
   private Map<String, ParameterDefinition> outputs;
   private SubstitutionMapping substitution_mappings;
   private Map<String, PolicyDefinition> policies;
+  private List<WorkflowDefinition> workflows;
 
   public String getDescription() {
     return description;
@@ -110,5 +112,13 @@ public class TopologyTemplate {
 
   public void setPolicies(Map<String, PolicyDefinition> policies) {
     this.policies = policies;
+  }
+
+  public List<WorkflowDefinition> getWorkflows() {
+    return workflows;
+  }
+
+  public void setWorkflows(List<WorkflowDefinition> workflows) {
+    this.workflows = workflows;
   }
 }

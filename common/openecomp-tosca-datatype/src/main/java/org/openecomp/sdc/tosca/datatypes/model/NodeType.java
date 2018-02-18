@@ -27,6 +27,7 @@ public class NodeType {
 
   private String derived_from;
   private String version;
+  private Map<String, String> metadata;
   private String description;
   private Map<String, PropertyDefinition> properties;
   private Map<String, AttributeDefinition> attributes;
@@ -50,6 +51,14 @@ public class NodeType {
 
   public void setVersion(String version) {
     this.version = version;
+  }
+
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
   }
 
   public String getDescription() {
