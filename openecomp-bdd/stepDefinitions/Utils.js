@@ -17,8 +17,9 @@ const request = require('request');
 const fs = require('fs');
 require('node-zip');
 
-function _request(context, method, path, data, isBinary=false, isVFCall=false) {
-	let server = (isVFCall) ? context.vf_server : context.onboarding_server;
+function _request(context, method, path, data, isBinary=false, prefix='onboarding') {
+	let server = context.server + '/' + context.prefix[prefix];
+
 	let options = {
 		method: method,
 		url: server + path,
