@@ -20,10 +20,14 @@
 
 package org.openecomp.sdc.tosca.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
@@ -36,8 +40,11 @@ import org.openecomp.sdc.tosca.datatypes.model.Constraint;
 import org.openecomp.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
+import org.openecomp.sdc.tosca.datatypes.model.OperationDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PolicyDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
@@ -51,6 +58,7 @@ import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.tosca.errors.InvalidAddActionNullEntityErrorBuilder;
 import org.openecomp.sdc.tosca.errors.InvalidRequirementAssignmentErrorBuilder;
+import org.openecomp.sdc.tosca.errors.ToscaInvalidInterfaceValueErrorBuilder;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 
 import java.io.ByteArrayInputStream;
@@ -67,6 +75,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * The type Data model util.
@@ -1160,6 +1169,125 @@ public class DataModelUtil {
       capabilityMapping.put(capabilityKey, capabilityMap);
     }
     return capabilityMapping;
+  }
+
+
+  public static void addInterfaceOperation(ServiceTemplate serviceTemplate,
+                                           String interfaceId,
+                                           String operationId,
+                                           OperationDefinition operationDefinition) {
+    Map<String, Object> interfaceTypes = serviceTemplate.getInterface_types();
+    if (MapUtils.isEmpty(interfaceTypes)
+        || Objects.isNull(interfaceTypes.get(interfaceId))) {
+      return;
+    }
+
+    Object interfaceObject = interfaceTypes.get(interfaceId);
+    Map<String, Object> interfaceAsMap = CommonUtil.getObjectAsMap(interfaceObject);
+    interfaceAsMap.put(operationId, operationDefinition);
+  }
+
+  public static Map<String, InterfaceType> getInterfaceTypes(ServiceTemplate serviceTemplate) {
+    Map<String, Object> interfaceTypes = serviceTemplate.getInterface_types();
+
+    if (MapUtils.isEmpty(interfaceTypes)) {
+      return new HashMap<>();
+    }
+
+    Map<String, InterfaceType> convertedInterfaceTypes = new HashMap<>();
+    for (Map.Entry<String, Object> interfaceEntry : interfaceTypes.entrySet()) {
+      try {
+        Optional<InterfaceType> interfaceType =
+            convertObjToInterfaceType(interfaceEntry.getValue());
+        interfaceType.ifPresent(
+            interfaceValue -> convertedInterfaceTypes.put(interfaceEntry.getKey(), interfaceValue));
+      } catch (Exception e) {
+        throw new CoreException(
+            new ToscaInvalidInterfaceValueErrorBuilder(e.getMessage()).build());
+      }
+    }
+
+    return convertedInterfaceTypes;
+  }
+
+  public static Optional<InterfaceDefinition> convertObjToInterfaceDefinition(Object interfaceObj)
+      throws ReflectiveOperationException {
+    Optional<InterfaceDefinition> interfaceDefinition =
+        CommonUtil.createObjectUsingSetters(interfaceObj, InterfaceDefinition.class);
+    if(interfaceDefinition.isPresent()) {
+      updateInterfaceDefinitionOperations(CommonUtil.getObjectAsMap(interfaceObj), interfaceDefinition.get());
+    }
+
+    return interfaceDefinition;
+  }
+
+  public static Optional<Object> convertInterfaceDefinitionToObj(
+      InterfaceDefinition interfaceDefinition) {
+    return converInetrfaceToToscaInterfaceObj(interfaceDefinition);
+  }
+
+  public static Optional<InterfaceType> convertObjToInterfaceType(Object interfaceObj)
+      throws ReflectiveOperationException {
+    Optional<InterfaceType> interfaceType =
+        CommonUtil.createObjectUsingSetters(interfaceObj, InterfaceType.class);
+    if (interfaceType.isPresent()) {
+      updateInterfaceTypeOperations(CommonUtil.getObjectAsMap(interfaceObj), interfaceType.get());
+    }
+
+    return interfaceType;
+  }
+
+  public static Optional<Object> convertInterfaceTypeToObj(InterfaceType interfaceType) {
+    return converInetrfaceToToscaInterfaceObj(interfaceType);
+  }
+
+  private static Optional<Object> converInetrfaceToToscaInterfaceObj(Object interfaceEntity) {
+    if (Objects.isNull(interfaceEntity)) {
+      return Optional.empty();
+    }
+
+    Map<String, Object> interfaceAsMap = CommonUtil.getObjectAsMap(interfaceEntity);
+    Map<String, Object> operations = (Map<String, Object>) interfaceAsMap.get("operations");
+    if (MapUtils.isNotEmpty(operations)) {
+      interfaceAsMap.remove("operations");
+      interfaceAsMap.putAll(operations);
+    }
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+    return Optional.of(objectMapper.convertValue(interfaceAsMap, Object.class));
+  }
+
+  private static void updateInterfaceTypeOperations(Map<String, Object> interfaceAsMap,
+                                                    InterfaceType interfaceType)
+      throws ReflectiveOperationException {
+
+    Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceType.class);
+
+    for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
+      if (!fieldNames.contains(entry.getKey())) {
+        Optional<OperationDefinition> operationDefinition =
+            CommonUtil.createObjectUsingSetters(entry.getValue(), OperationDefinition.class);
+        operationDefinition
+            .ifPresent(operation -> interfaceType.addOperation(entry.getKey(), operation));
+      }
+    }
+  }
+
+  private static void updateInterfaceDefinitionOperations(Map<String, Object> interfaceAsMap,
+                                                          InterfaceDefinition interfaceDefinition)
+      throws ReflectiveOperationException {
+
+    Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinition.class);
+
+    for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
+      if (!fieldNames.contains(entry.getKey())) {
+        Optional<OperationDefinition> operationDefinition =
+            CommonUtil.createObjectUsingSetters(entry.getValue(), OperationDefinition.class);
+        operationDefinition
+            .ifPresent(operation -> interfaceDefinition.addOperation(entry.getKey(), operation));
+      }
+    }
   }
 
   public static void addSubstitutionNodeTypeRequirements(NodeType substitutionNodeType,

@@ -15,6 +15,12 @@ artifact_types:
     file_ext:
     - yaml
     - xml
+interface_types:
+  inter_1:
+    description: test interface
+    start:
+      description: start operation
+      implementation: start.sh
 node_types:
   compute_node_type:
     derived_from: tosca.nodes.Root
@@ -68,7 +74,7 @@ topology_template:
       entry_schema:
         type: tosca.myType
   node_templates:
-    firstNodeTemplate:
+    firatNodeTemplate:
       type: nodeTypeRef
       directives:
       - selectable
@@ -99,7 +105,7 @@ topology_template:
           node: nodeA
           relationship: relationB
       capabilities:
-        cap1:
+      - cap1:
           properties:
             num_cpus: '{ get_input: cpus }'
           attributes:

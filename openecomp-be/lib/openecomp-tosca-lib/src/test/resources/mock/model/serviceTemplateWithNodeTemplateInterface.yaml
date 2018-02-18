@@ -73,6 +73,12 @@ topology_template:
       directives:
       - selectable
       - substitutable
+      interfaces:
+        inter_1:
+          type: test interface
+          start:
+            description: start operation
+            implementation: start.sh
       properties:
         prop2: '{ get_input: my_mysql_rootpw }'
         prop1: abcd
@@ -99,7 +105,7 @@ topology_template:
           node: nodeA
           relationship: relationB
       capabilities:
-        cap1:
+      - cap1:
           properties:
             num_cpus: '{ get_input: cpus }'
           attributes:
