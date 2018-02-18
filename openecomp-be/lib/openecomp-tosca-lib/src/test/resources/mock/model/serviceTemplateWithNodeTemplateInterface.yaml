@@ -73,6 +73,12 @@ topology_template:
       directives:
       - selectable
       - substitutable
+      interfaces:
+        inter_1:
+          type: test interface
+          start:
+            description: start operation
+            implementation: start.sh
       properties:
         prop2: '{ get_input: my_mysql_rootpw }'
         prop1: abcd

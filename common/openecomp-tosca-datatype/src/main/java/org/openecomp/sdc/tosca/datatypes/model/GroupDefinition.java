@@ -29,8 +29,10 @@ public class GroupDefinition {
 
   private String type;
   private String description;
+  private Map<String, String> metadata;
   private Map<String, Object> properties;
   private List<String> members;
+  private Map<String, Object> interfaces;
 
   public String getType() {
     return type;
@@ -62,5 +64,22 @@ public class GroupDefinition {
 
   public void setMembers(List<String> members) {
     this.members = members;
+  }
+
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
+  }
+
+  public Map<String, Object> getInterfaces() {
+    return interfaces;
+  }
+
+  public void setInterfaces(
+      Map<String, Object> interfaces) {
+    this.interfaces = interfaces;
   }
 }
