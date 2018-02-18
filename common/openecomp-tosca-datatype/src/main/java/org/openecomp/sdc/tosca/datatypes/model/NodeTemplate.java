@@ -30,12 +30,13 @@ public class NodeTemplate implements Template {
 
   private String type;
   private String description;
+  private Map<String, String> metadata;
   private List<String> directives;
   private Map<String, Object> properties;
   private Map<String, Object> attributes;
   private List<Map<String, RequirementAssignment>> requirements;
   private Map<String, CapabilityAssignment> capabilities;
-  private Map<String, InterfaceDefinition> interfaces;
+  private Map<String, Object> interfaces;
   private Map<String, ArtifactDefinition> artifacts;
   private NodeFilter node_filter;
   private String copy;
@@ -54,6 +55,14 @@ public class NodeTemplate implements Template {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
   }
 
   public List<String> getDirectives() {
@@ -96,11 +105,11 @@ public class NodeTemplate implements Template {
     this.capabilities = capabilities;
   }
 
-  public Map<String, InterfaceDefinition> getInterfaces() {
+  public Map<String, Object> getInterfaces() {
     return interfaces;
   }
 
-  public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
+  public void setInterfaces(Map<String, Object> interfaces) {
     this.interfaces = interfaces;
   }
 
@@ -131,8 +140,7 @@ public class NodeTemplate implements Template {
   @Override
   public NodeTemplate clone() {
     YamlUtil yamlUtil = new YamlUtil();
-    NodeTemplate clone = yamlUtil.yamlToObject(yamlUtil.objectToYaml(this), NodeTemplate.class);
-    return clone;
+    return yamlUtil.yamlToObject(yamlUtil.objectToYaml(this), NodeTemplate.class);
   }
 
   @Override

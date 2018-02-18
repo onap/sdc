@@ -20,10 +20,13 @@
 
 package org.openecomp.sdc.tosca.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
@@ -36,8 +39,11 @@ import org.openecomp.sdc.tosca.datatypes.model.Constraint;
 import org.openecomp.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
+import org.openecomp.sdc.tosca.datatypes.model.OperationDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PolicyDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
@@ -49,8 +55,11 @@ import org.openecomp.sdc.tosca.datatypes.model.Status;
 import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
+import org.openecomp.sdc.tosca.errors.CreateInterfaceObjectErrorBuilder;
+import org.openecomp.sdc.tosca.errors.CreateInterfaceOperationObjectErrorBuilder;
 import org.openecomp.sdc.tosca.errors.InvalidAddActionNullEntityErrorBuilder;
 import org.openecomp.sdc.tosca.errors.InvalidRequirementAssignmentErrorBuilder;
+import org.openecomp.sdc.tosca.errors.ToscaInvalidInterfaceValueErrorBuilder;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 
 import java.io.ByteArrayInputStream;
@@ -67,6 +76,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * The type Data model util.
@@ -83,6 +93,7 @@ public class DataModelUtil {
   private static final Logger logger = LoggerFactory.getLogger(DataModelUtil.class);
   private static final String SERVICE_TEMPLATE = "Service Template";
   private static final String NODE_TYPE = "Node Type";
+  private static final String OPERATIONS = "operations";
 
   /**
    * Add substitution mapping.
@@ -1160,6 +1171,150 @@ public class DataModelUtil {
       capabilityMapping.put(capabilityKey, capabilityMap);
     }
     return capabilityMapping;
+  }
+
+
+  public static void addInterfaceOperation(ServiceTemplate serviceTemplate,
+                                           String interfaceId,
+                                           String operationId,
+                                           OperationDefinition operationDefinition) {
+    Map<String, Object> interfaceTypes = serviceTemplate.getInterface_types();
+    if (MapUtils.isEmpty(interfaceTypes)
+        || Objects.isNull(interfaceTypes.get(interfaceId))) {
+      return;
+    }
+
+    Object interfaceObject = interfaceTypes.get(interfaceId);
+    Map<String, Object> interfaceAsMap = CommonUtil.getObjectAsMap(interfaceObject);
+    interfaceAsMap.put(operationId, operationDefinition);
+  }
+
+  public static Map<String, InterfaceType> getInterfaceTypes(ServiceTemplate serviceTemplate) {
+    Map<String, Object> interfaceTypes = serviceTemplate.getInterface_types();
+
+    if (MapUtils.isEmpty(interfaceTypes)) {
+      return new HashMap<>();
+    }
+
+    Map<String, InterfaceType> convertedInterfaceTypes = new HashMap<>();
+    for (Map.Entry<String, Object> interfaceEntry : interfaceTypes.entrySet()) {
+      try {
+        Optional<InterfaceType> interfaceType =
+            convertObjToInterfaceType(interfaceEntry.getKey(), interfaceEntry.getValue());
+        interfaceType.ifPresent(
+            interfaceValue -> convertedInterfaceTypes.put(interfaceEntry.getKey(), interfaceValue));
+      } catch (Exception e) {
+        throw new CoreException(
+            new ToscaInvalidInterfaceValueErrorBuilder(e.getMessage()).build());
+      }
+    }
+
+    return convertedInterfaceTypes;
+  }
+
+  public static Optional<InterfaceDefinition> convertObjToInterfaceDefinition(
+      String interfaceId, Object interfaceObj)
+      throws CoreException {
+
+    try {
+      Optional<InterfaceDefinition> interfaceDefinition =
+          CommonUtil.createObjectUsingSetters(interfaceObj, InterfaceDefinition.class);
+      interfaceDefinition.ifPresent(interfaceDefinition1 -> updateInterfaceDefinitionOperations(
+          CommonUtil.getObjectAsMap(interfaceObj),
+          interfaceDefinition1));
+      return interfaceDefinition;
+    } catch (Exception ex) {
+      throw new CoreException(
+          new CreateInterfaceObjectErrorBuilder(InterfaceDefinition.class.getName(), interfaceId,
+              ex.getMessage()).build());
+    }
+
+  }
+
+  public static Optional<Object> convertInterfaceDefinitionToObj(
+      InterfaceDefinition interfaceDefinition) {
+    return converInetrfaceToToscaInterfaceObj(interfaceDefinition);
+  }
+
+  public static Optional<InterfaceType> convertObjToInterfaceType(String interfaceId,
+                                                                  Object interfaceObj)
+      throws CoreException {
+    try {
+      Optional<InterfaceType> interfaceType =
+          CommonUtil.createObjectUsingSetters(interfaceObj, InterfaceType.class);
+      interfaceType.ifPresent(
+          interfaceType1 -> updateInterfaceTypeOperations(CommonUtil.getObjectAsMap(interfaceObj),
+              interfaceType1));
+      return interfaceType;
+    } catch (Exception ex) {
+      throw new CoreException(
+          new CreateInterfaceObjectErrorBuilder(InterfaceType.class.getName(), interfaceId,
+              ex.getMessage()).build());
+    }
+  }
+
+  public static Optional<Object> convertInterfaceTypeToObj(InterfaceType interfaceType) {
+    return converInetrfaceToToscaInterfaceObj(interfaceType);
+  }
+
+  private static Optional<Object> converInetrfaceToToscaInterfaceObj(Object interfaceEntity) {
+    if (Objects.isNull(interfaceEntity)) {
+      return Optional.empty();
+    }
+
+    Map<String, Object> interfaceAsMap = CommonUtil.getObjectAsMap(interfaceEntity);
+    Map<String, Object> operations = (Map<String, Object>) interfaceAsMap.get(OPERATIONS);
+    if (MapUtils.isNotEmpty(operations)) {
+      interfaceAsMap.remove(OPERATIONS);
+      interfaceAsMap.putAll(operations);
+    }
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+    return Optional.of(objectMapper.convertValue(interfaceAsMap, Object.class));
+  }
+
+  private static void updateInterfaceTypeOperations(Map<String, Object> interfaceAsMap,
+                                                    InterfaceType interfaceType) {
+
+    Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceType.class);
+
+    for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
+      Optional<OperationDefinition> operationDefinition =
+          createOperation(entry.getKey(), entry.getValue(), fieldNames);
+      operationDefinition
+          .ifPresent(operation -> interfaceType.addOperation(entry.getKey(), operation));
+    }
+  }
+
+  private static Optional<OperationDefinition> createOperation(String propertyName,
+                                                               Object operationCandidate,
+                                                               Set<String> fieldNames)
+      throws CoreException {
+    if (!fieldNames.contains(propertyName)) {
+      try {
+        return CommonUtil.createObjectUsingSetters(operationCandidate, OperationDefinition.class);
+      } catch (Exception ex) {
+        throw new CoreException(
+            new CreateInterfaceOperationObjectErrorBuilder(propertyName, ex.getMessage()).build());
+      }
+    }
+
+    return Optional.empty();
+  }
+
+  private static void updateInterfaceDefinitionOperations(Map<String, Object> interfaceAsMap,
+                                                          InterfaceDefinition interfaceDefinition) {
+
+    Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinition.class);
+
+    for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
+      Optional<OperationDefinition> operationDefinition =
+          createOperation(entry.getKey(), entry.getValue(), fieldNames);
+      operationDefinition
+          .ifPresent(operation -> interfaceDefinition.addOperation(entry.getKey(), operation));
+
+    }
   }
 
   public static void addSubstitutionNodeTypeRequirements(NodeType substitutionNodeType,
