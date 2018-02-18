@@ -15,6 +15,9 @@ artifact_types:
     file_ext:
     - yaml
     - xml
+interface_types:
+  inter_1:
+    description: test interface
 node_types:
   compute_node_type:
     derived_from: tosca.nodes.Root
