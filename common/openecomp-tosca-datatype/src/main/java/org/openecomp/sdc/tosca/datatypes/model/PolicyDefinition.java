@@ -26,6 +26,7 @@ import java.util.Map;
 public class PolicyDefinition implements Template {
   private String type;
   private String description;
+  private Map<String, String> metadata;
   private Map<String, Object> properties;
   private List<String> targets;
 
@@ -43,6 +44,14 @@ public class PolicyDefinition implements Template {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
   }
 
   public Map<String, Object> getProperties() {

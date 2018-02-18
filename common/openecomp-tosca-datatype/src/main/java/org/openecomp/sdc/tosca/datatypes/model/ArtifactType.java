@@ -29,6 +29,7 @@ public class ArtifactType {
 
   private String derived_from;
   private String version;
+  private Map<String, String> metadata;
   private String description;
   private String mime_type;
   private List<String> file_ext;
@@ -49,6 +50,14 @@ public class ArtifactType {
 
   public void setVersion(String version) {
     this.version = version;
+  }
+
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
   }
 
   public String getDescription() {
