@@ -40,7 +40,6 @@ class CustomWorld {
 		} else {
 			this.context.server = config.server;
 		}
-		this.context.server = (config.protocol + '://' + this.context.server + ':' + config.port);
 
 
 		this.context.headers = {};
@@ -55,11 +54,25 @@ class CustomWorld {
 		this.context.inputData = null;
 		this.context.responseData = null;
 
+		this.context.defaultServerType = 'onboarding';
+
 		this.context.prefix = config.prefix;
+		this.context.port = config.port;
+		this.context.protocol = config.protocol;
 
 		this.setServer = function(server) {
-			this.context.server = (config.protocol + '://' + this.context.server + ':' + config.port);
+			this.context.server = server;
 		}
+		let context = this.context;
+		this.context.getUrlForType = (function(type) {
+			var that = context;
+			return function(type) {
+				return (config.protocol + '://' +
+					that.server + ':' +
+					that.port[type] + '/' +
+					that.prefix[type]);
+			}
+		})();
 
 		setDefaultTimeout(60 * 1000);
 	}

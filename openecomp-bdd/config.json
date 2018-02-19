@@ -2,12 +2,14 @@
   "protocol" : "http",
   "server": "SET_TO_YOUR_SERVER_IP",
 
-  "port": 8285,
-
+  "port" : {
+    "onboarding":8285,
+    "vf":8285,
+    "activity_spec":8080
+  },
   "prefix" : {
     "onboarding":"sdc1/feProxy/onboarding-api/v1.0",
     "vf":"sdc1/feProxy/rest/v1",
     "activity_spec":"sdc1/feProxy/activityspec-api/v1"
-
   }
 }
