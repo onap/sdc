@@ -1,0 +1,163 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b3b1f548",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditRequestFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "We\u0027ll need unit tests for this class. Passing a mock ContainerRequestContext may be a good idea (see the tests for the old Servlet LoggingFilter).",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_135b092f",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditRequestFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "Let\u0027s change the name to \"LoggingRequestFilter\"",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_339e45ba",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditRequestFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "We need to document the purpose and configuration here. You may also emphasize that it can only work in a JAX-RS environment.",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_53a3d100",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditRequestFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "This method is getting too long. Let\u0027s split it into two parts - for start time and context.",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f3a3fdfd",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditRequestFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "This is injected from a configuration. You may give the example of how it\u0027s done in Spring.",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d3ae01e6",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditResponseFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "We\u0027ll need unit tests here.",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b3433541",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditResponseFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "Let\u0027s rename to LoggingResponseFilter",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_73604dcf",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditResponseFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "We need a good Javadoc here. Explain why this filter is needed, that it works only in tandem with the request filter, and how to configure it.",
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_137229ad",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/ws/rs/AuditResponseFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:28:39Z",
+      "side": 1,
+      "message": "It\u0027s not instantiation but retrieval. Anyway, let\u0027s write something useful - you know what the problem might be, don\u0027t you? For example, \"Failed to retrieve start time. Check the configuration of JAX-RS logging filters\".",
+      "range": {
+        "startLine": 57,
+        "startChar": 37,
+        "endLine": 57,
+        "endChar": 48
+      },
+      "revId": "7a294dc7396ba63197d093b67000fbb39c90b4bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
