@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@ package org.openecomp.sdc.logging.spi;
 import java.util.concurrent.Callable;
 
 /**
- * Should be used to implement a framework-specific mechanism of managing a per-thread diagnostic context
- * (for instance <a href="http://www.slf4j.org/manual.html#mdc">MDC</a>), and propagating it to child threads if needed.
- * Context propagation should be used when creating a child thread directly, or submitting tasks for potentially
- * postponed execution via an
- * <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Executor.html">Executor</a> (including any of
- * the
- * <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html">executor services</a>
- * and <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ForkJoinPool.html">ForkJoinPool</a>).
+ * Should be used to implement a framework-specific mechanism of managing a per-thread diagnostic
+ * context (for instance <a href="http://www.slf4j.org/manual.html#mdc">MDC</a>), and propagating it
+ * to child threads if needed. Context propagation should be used when creating a child thread
+ * directly, or submitting tasks for potentially postponed execution via an <a
+ * href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Executor.html">Executor</a>
+ * (including any of the <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html">executor
+ * services</a> and <a href="http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ForkJoinPool.html">ForkJoinPool</a>).
  *
  * @author evitaliy
  * @since 07/01/2018.
@@ -34,37 +33,26 @@ import java.util.concurrent.Callable;
 
 public interface LoggingContextService {
 
-    /**
-     * Allows to store a key-value pair on thread context
-     */
-    void put(String key, String value);
+  void putRequestId(String requestId);
 
-    /**
-     * Returns the value associated with a key stored on thread context
-     *
-     * @return value or <code>null</code> if the key does not exits
-     */
-    String get(String key);
+  void putServiceName(String serviceName);
 
-    /**
-     * Removes a particular key from thread context
-     */
-    void remove(String key);
+  void putPartnerName(String partnerName);
 
-    /**
-     * Clear logging thread context
-     */
-    void clear();
+  /**
+   * Clear logging thread context
+   */
+  void clear();
 
-    /**
-     * Copies logging context of current thread onto a {@link Runnable}, so that the context is available
-     * when this {@link Runnable} runs in another thread.
-     */
-    Runnable copyToRunnable(Runnable runnable);
+  /**
+   * Copies logging context of current thread onto a {@link Runnable}, so that the context is
+   * available when this {@link Runnable} runs in another thread.
+   */
+  Runnable copyToRunnable(Runnable runnable);
 
-    /**
-     * Copies logging context of current thread onto a {@link Callable}, so that the context is available
-     * when this {@link Callable} runs in another thread
-     */
-    <V> Callable<V> copyToCallable(Callable<V> callable);
+  /**
+   * Copies logging context of current thread onto a {@link Callable}, so that the context is
+   * available when this {@link Callable} runs in another thread
+   */
+  <V> Callable<V> copyToCallable(Callable<V> callable);
 }
