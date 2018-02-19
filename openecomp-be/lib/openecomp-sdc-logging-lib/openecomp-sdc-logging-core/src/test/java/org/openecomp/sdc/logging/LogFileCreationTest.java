@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.api;
+package org.openecomp.sdc.logging;
 
+import org.openecomp.sdc.logging.api.AuditData;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
 
-/**
- * This is only for manual testing - change {@link #ENABLED} to 'true'
- *
- * @author evitaliy
- * @since 13/09/2016.
- */
-public class LoggerTest {
-
+public class LogFileCreationTest {
     private static final boolean ENABLED = false; // for manual testing change to 'true'
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogFileCreationTest.class);
 
     @Test(enabled = ENABLED)
     public void testMetrics() {
@@ -36,7 +33,8 @@ public class LoggerTest {
 
     @Test(enabled = ENABLED)
     public void testAudit() {
-        LOGGER.audit("This is audit");
+        SpyAuditData auditData = new SpyAuditData();
+        LOGGER.audit(auditData);
     }
 
     @Test(enabled = ENABLED)
@@ -57,5 +55,24 @@ public class LoggerTest {
     @Test(enabled = ENABLED)
     public void testError() {
         LOGGER.error("This is error");
+    }
+    private class SpyAuditData implements AuditData {
+        @Override
+        public long getStartTime() {return 0;}
+
+        @Override
+        public long getEndTime(){return 0;}
+
+        @Override
+        public StatusCode getStatusCode(){return null;}
+
+        @Override
+        public String getResponseCode(){return null;}
+
+        @Override
+        public String getResponseDescription(){return null;}
+
+        @Override
+        public String getClientIpAddress(){return null;}
     }
 }
