@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 /**
  * @author EVITALIY
@@ -76,28 +78,25 @@ class SLF4JLoggerWrapper implements Logger {
     }
 
     @Override
-    public void audit(String msg) {
-        logger.info(Markers.AUDIT, msg);
-    }
-
-    @Override
-    public void audit(String msg, Object arg) {
-        logger.info(Markers.AUDIT, msg, arg);
-    }
-
-    @Override
-    public void audit(String msg, Object arg1, Object arg2) {
-        logger.info(Markers.AUDIT, msg, arg1, arg2);
-    }
-
-    @Override
-    public void audit(String msg, Object... arguments) {
-        logger.info(Markers.AUDIT, msg, arguments);
-    }
-
-    @Override
-    public void audit(String msg, Throwable t) {
-        logger.info(Markers.AUDIT, msg, t);
+    public void audit(AuditData data) {
+        MDC.put("audit.BeginTimestamp", Long.toString(data.getStartTime()));
+        MDC.put("audit.EndTimestamp",   Long.toString(data.getEndTime()));
+        MDC.put("audit.ElapsedTime",    Long.toString(data.getElapsedTime()));
+        MDC.put("audit.StatusCode",     data.getStatusCode().getValue());
+        MDC.put("audit.ResponseCode",   data.getResponseCode());
+        MDC.put("audit.ResponseDescription",data.getResponseDescription());
+        MDC.put("audit.ClientIpAddress",data.getClientIpAddress());
+        try {
+            logger.info(Markers.AUDIT, "");
+        } finally {
+            MDC.remove("audit.BeginTimestamp");
+            MDC.remove("audit.EndTimestamp");
+            MDC.remove("audit.ElapsedTime");
+            MDC.remove("audit.StatusCode");
+            MDC.remove("audit.ResponseCode");
+            MDC.remove("audit.ResponseDescription");
+            MDC.remove("audit.ClientIpAddress");
+        }
     }
 
     @Override
