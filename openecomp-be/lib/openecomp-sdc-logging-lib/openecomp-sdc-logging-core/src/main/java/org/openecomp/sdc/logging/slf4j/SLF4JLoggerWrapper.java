@@ -16,6 +16,14 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.BEGIN_TIMESTAMP;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.CLIENT_IP_ADDRESS;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.ELAPSED_TIME;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.END_TIMESTAMP;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_CODE;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_DESCRIPTION;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.STATUS_CODE;
+
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import org.openecomp.sdc.logging.api.AuditData;
@@ -30,22 +38,30 @@ import org.slf4j.MDC;
 class SLF4JLoggerWrapper implements Logger {
 
     //The specified format presents time in UTC formatted per ISO 8601, as required by ONAP logging guidelines
-
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+
     private static final String PREFIX = "";
 
-    static final String BEGIN_TIMESTAMP = PREFIX + "BeginTimestamp";
-    static final String END_TIMESTAMP = PREFIX + "EndTimestamp";
-    static final String ELAPSED_TIME = PREFIX + "ElapsedTime";
-    static final String STATUS_CODE = PREFIX + "StatusCode";
-    static final String RESPONSE_CODE = PREFIX + "ResponseCode";
-    static final String RESPONSE_DESCRIPTION = PREFIX + "ResponseDescription";
-    static final String CLIENT_IP_ADDRESS = PREFIX + "ClientIpAddress";
+    enum AuditField {
 
-    private static final String[] ALL_MDC_FIELDS = {
-        BEGIN_TIMESTAMP, END_TIMESTAMP, ELAPSED_TIME, STATUS_CODE,
-        RESPONSE_CODE, RESPONSE_DESCRIPTION, CLIENT_IP_ADDRESS
-    };
+        BEGIN_TIMESTAMP(PREFIX + "BeginTimestamp"),
+        END_TIMESTAMP(PREFIX + "EndTimestamp"),
+        ELAPSED_TIME(PREFIX + "ElapsedTime"),
+        STATUS_CODE(PREFIX + "StatusCode"),
+        RESPONSE_CODE(PREFIX + "ResponseCode"),
+        RESPONSE_DESCRIPTION(PREFIX + "ResponseDescription"),
+        CLIENT_IP_ADDRESS(PREFIX + "ClientIpAddress");
+
+        private final String key;
+
+        AuditField(String key) {
+            this.key = key;
+        }
+
+        public String asKey() {
+            return key;
+        }
+    }
 
     private final org.slf4j.Logger logger;
 
@@ -110,19 +126,19 @@ class SLF4JLoggerWrapper implements Logger {
         }
 
         putTimes(data);
-        putIfNotNull(RESPONSE_CODE, data.getResponseCode());
-        putIfNotNull(RESPONSE_DESCRIPTION, data.getResponseDescription());
-        putIfNotNull(CLIENT_IP_ADDRESS, data.getClientIpAddress());
+        putIfNotNull(RESPONSE_CODE.key, data.getResponseCode());
+        putIfNotNull(RESPONSE_DESCRIPTION.key, data.getResponseDescription());
+        putIfNotNull(CLIENT_IP_ADDRESS.key, data.getClientIpAddress());
 
         if (data.getStatusCode() != null) {
-            MDC.put(STATUS_CODE, data.getStatusCode().name());
+            MDC.put(STATUS_CODE.key, data.getStatusCode().name());
         }
 
         try {
             logger.info(Markers.AUDIT, "");
         } finally {
-            for (String k : ALL_MDC_FIELDS) {
-                MDC.remove(k);
+            for (AuditField f : AuditField.values()) {
+                MDC.remove(f.key);
             }
         }
     }
@@ -136,9 +152,9 @@ class SLF4JLoggerWrapper implements Logger {
     private void putTimes(AuditData data) {
         // SimpleDateFormat is not thread-safe and cannot be a constant
         Format dateTimeFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
-        MDC.put(BEGIN_TIMESTAMP, dateTimeFormat.format(data.getStartTime()));
-        MDC.put(END_TIMESTAMP, dateTimeFormat.format(data.getEndTime()));
-        MDC.put(ELAPSED_TIME, String.valueOf(data.getEndTime() - data.getStartTime()));
+        MDC.put(BEGIN_TIMESTAMP.key, dateTimeFormat.format(data.getStartTime()));
+        MDC.put(END_TIMESTAMP.key, dateTimeFormat.format(data.getEndTime()));
+        MDC.put(ELAPSED_TIME.key, String.valueOf(data.getEndTime() - data.getStartTime()));
     }
 
     @Override

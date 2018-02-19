@@ -16,13 +16,13 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.BEGIN_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.CLIENT_IP_ADDRESS;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.ELAPSED_TIME;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.END_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.RESPONSE_CODE;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.RESPONSE_DESCRIPTION;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.STATUS_CODE;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.BEGIN_TIMESTAMP;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.CLIENT_IP_ADDRESS;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.ELAPSED_TIME;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.END_TIMESTAMP;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_CODE;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_DESCRIPTION;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.STATUS_CODE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -54,7 +54,7 @@ public class SLF4JLoggerWrapperTest {
         SpyLogger spy = createSpy();
         long start = System.currentTimeMillis();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().startTime(start).build());
-        assertNotNull(spy.mdc().get(BEGIN_TIMESTAMP));
+        assertNotNull(spy.mdc().get(BEGIN_TIMESTAMP.asKey()));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SLF4JLoggerWrapperTest {
         SpyLogger spy = createSpy();
         long end = System.currentTimeMillis();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().endTime(end).build());
-        assertNotNull(spy.mdc().get(END_TIMESTAMP));
+        assertNotNull(spy.mdc().get(END_TIMESTAMP.asKey()));
     }
 
     @Test
@@ -71,21 +71,21 @@ public class SLF4JLoggerWrapperTest {
         long start = System.currentTimeMillis();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder()
             .startTime(start).endTime(start).build());
-        assertNotNull(spy.mdc().get(ELAPSED_TIME));
+        assertNotNull(spy.mdc().get(ELAPSED_TIME.asKey()));
     }
 
     @Test
     public void statusCodeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().statusCode(StatusCode.COMPLETE).build());
-        assertEquals(spy.mdc().get(STATUS_CODE), StatusCode.COMPLETE.name());
+        assertEquals(spy.mdc().get(STATUS_CODE.asKey()), StatusCode.COMPLETE.name());
     }
 
     @Test
     public void statusCodeEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(STATUS_CODE));
+        assertNull(spy.mdc().get(STATUS_CODE.asKey()));
     }
 
     @Test
@@ -93,14 +93,14 @@ public class SLF4JLoggerWrapperTest {
         final String responseCode = "SpyResponse";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseCode(responseCode).build());
-        assertEquals(spy.mdc().get(RESPONSE_CODE), responseCode);
+        assertEquals(spy.mdc().get(RESPONSE_CODE.asKey()), responseCode);
     }
 
     @Test
     public void responseCodeEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(RESPONSE_CODE));
+        assertNull(spy.mdc().get(RESPONSE_CODE.asKey()));
     }
 
     @Test
@@ -108,14 +108,14 @@ public class SLF4JLoggerWrapperTest {
         final String responseDescription = "SpyDescription";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseDescription(responseDescription).build());
-        assertEquals(spy.mdc().get(RESPONSE_DESCRIPTION), responseDescription);
+        assertEquals(spy.mdc().get(RESPONSE_DESCRIPTION.asKey()), responseDescription);
     }
 
     @Test
     public void responseDescriptionEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(RESPONSE_DESCRIPTION));
+        assertNull(spy.mdc().get(RESPONSE_DESCRIPTION.asKey()));
     }
 
     @Test
@@ -123,14 +123,14 @@ public class SLF4JLoggerWrapperTest {
         final String ipAddress = "10.56.20.20";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().clientIpAddress(ipAddress).build());
-        assertEquals(spy.mdc().get(CLIENT_IP_ADDRESS), ipAddress);
+        assertEquals(spy.mdc().get(CLIENT_IP_ADDRESS.asKey()), ipAddress);
     }
 
     @Test
     public void clientIpAddressEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(CLIENT_IP_ADDRESS));
+        assertNull(spy.mdc().get(CLIENT_IP_ADDRESS.asKey()));
     }
 
     @Test
@@ -140,7 +140,7 @@ public class SLF4JLoggerWrapperTest {
         long start = System.currentTimeMillis();
         long end = start + diff;
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().startTime(start).endTime(end).build());
-        assertEquals(spy.mdc().get(ELAPSED_TIME), Long.toString(diff));
+        assertEquals(spy.mdc().get(ELAPSED_TIME.asKey()), Long.toString(diff));
     }
 
     interface SpyLogger extends Logger {
