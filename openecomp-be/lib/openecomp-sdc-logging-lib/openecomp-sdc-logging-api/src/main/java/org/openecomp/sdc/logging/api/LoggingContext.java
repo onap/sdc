@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,10 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
- * <a>Factory to hide a concrete, framework-specific implementation of diagnostic context.</a>
- * <p>The service used by this factory must implement {@link LoggingContextService}. If no
- * implementation has been configured or could be instantiated, a <b>no-op context service</b> will be
- * used, and <b>no context</b> will be stored or propagated. No errors will be generated, so that the application can
- * still work (albeit without proper logging).</p>
+ * <a>Factory to hide a concrete, framework-specific implementation of diagnostic context.</a> <p>The service used by
+ * this factory must implement {@link LoggingContextService}. If no implementation has been configured or could be
+ * instantiated, a <b>no-op context service</b> will be used, and <b>no context</b> will be stored or propagated. No
+ * errors will be generated, so that the application can still work (albeit without proper logging).</p>
  *
  * @author evitaliy
  * @since 07/01/2018.
@@ -36,23 +35,24 @@ import java.util.concurrent.Callable;
  */
 public class LoggingContext {
 
-    private static final LoggingContextService SERVICE = ServiceBinder.getContextServiceBinding().orElse(
+    private static final LoggingContextService SERVICE =
+        ServiceBinder.getContextServiceBinding().orElse(
             new NoOpLoggingContextService());
 
     private LoggingContext() {
         // prevent instantiation
     }
 
-    public static void put(String key, String value) {
-        SERVICE.put(key, value);
+    public static void putRequestId(String requestId) {
+        SERVICE.putRequestId(requestId);
     }
 
-    public static String get(String key) {
-        return SERVICE.get(key);
+    public static void putServiceName(String serviceName) {
+        SERVICE.putServiceName(serviceName);
     }
 
-    public static void remove(String key) {
-        SERVICE.remove(key);
+    public static void putPartnerName(String partnerName) {
+        SERVICE.putPartnerName(partnerName);
     }
 
     public static void clear() {
@@ -69,23 +69,18 @@ public class LoggingContext {
 
     private static class NoOpLoggingContextService implements LoggingContextService {
 
-        private static final String KEY_CANNOT_BE_NULL = "Key cannot be null";
-
         @Override
-        public void put(String key, String value) {
-            Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
+        public void putRequestId(String value) {
             // no-op
         }
 
         @Override
-        public String get(String key) {
-            Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
-            return null;
+        public void putServiceName(String value) {
+            // no-op
         }
 
         @Override
-        public void remove(String key) {
-            Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
+        public void putPartnerName(String value) {
             // no-op
         }
 

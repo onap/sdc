@@ -66,6 +66,31 @@ public abstract class BaseContextPropagationTest {
         }
 
         @Override
+        public void putRequestId(String value) {
+
+        }
+
+        @Override
+        public void putServiceName(String value) {
+
+        }
+
+        @Override
+        public void putPartnerName(String value) {
+
+        }
+
+        @Override
+        public void putTargetEntity(String value) {
+
+        }
+
+        @Override
+        public void putTargetServiceName(String value) {
+
+        }
+
+        @Override
         public String get(String key) {
             return LoggingContext.get(key);
         }
