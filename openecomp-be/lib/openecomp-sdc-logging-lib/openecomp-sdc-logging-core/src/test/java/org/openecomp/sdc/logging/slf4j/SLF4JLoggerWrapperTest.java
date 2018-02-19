@@ -39,9 +39,12 @@ import org.slf4j.MDC;
 import org.testng.annotations.Test;
 
 /**
+ * Unit-test of SLF4J implementation of Logger.
+ *
  * @author evitaliy
  * @since 05 Mar 18
  */
+@SuppressWarnings("CheckStyle")
 public class SLF4JLoggerWrapperTest {
 
     @Test
@@ -170,21 +173,29 @@ public class SLF4JLoggerWrapperTest {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
 
-            // return the remembered MDC for spying
-            if (method.getName().equals("mdc")) {
+            if (isReturnMdcMethod(method)) {
                 return mdc;
             }
 
-            // filter out everything that's not related to audit
-            if (!method.getName().equals("info") || args.length == 0 || !args[0].equals(Markers.AUDIT)) {
-                throw new UnsupportedOperationException("Method " + method.getName() + " with arguments " +
-                    Arrays.toString(args) + " wasn't supposed to be called");
+            if (!isAuditMethod(method, args)) {
+                throw new UnsupportedOperationException("Method " + method.getName() + " with arguments "
+                        + Arrays.toString(args) + " wasn't supposed to be called");
             }
 
-            // remember the MDC that was active during the invocation
-            mdc = MDC.getCopyOfContextMap();
-
+            storeEffectiveMdc();
             return null;
+        }
+
+        private boolean isAuditMethod(Method method, Object[] args) {
+            return (method.getName().equals("info") && args.length > 0 && args[0].equals(Markers.AUDIT));
+        }
+
+        private void storeEffectiveMdc() {
+            mdc = MDC.getCopyOfContextMap();
+        }
+
+        private boolean isReturnMdcMethod(Method method) {
+            return method.equals(SpyLogger.class.getDeclaredMethods()[0]);
         }
     }
 }
