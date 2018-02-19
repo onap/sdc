@@ -18,6 +18,7 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
@@ -136,6 +137,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       ActivityLogManagerFactory.getInstance().createInterface();
   private final NotificationPropagationManager notifier =
       NotificationPropagationManagerFactory.getInstance().createInterface();
+  private final UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory
+      .getInstance().createInterface());
 
   @Override
   public Response createVsp(VspRequestDto vspRequestDto, String user) {
@@ -168,9 +171,9 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     item.setOwner(user);
     item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
 
-    UniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+    uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
     item = asdcItemManager.create(item);
-    UniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+    uniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
 
     Version version = versioningManager.create(item.getId(), new Version(), null);
 
@@ -296,7 +299,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
       asdcItemManager.delete(vsp);
       permissionsManager.deleteItemPermissions(vspId);
-      UniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
+      uniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
       notifyUsers(vspId, vsp.getName(), null, "VSP was deleted", user,
           NotificationEventTypes.DELETE);
 

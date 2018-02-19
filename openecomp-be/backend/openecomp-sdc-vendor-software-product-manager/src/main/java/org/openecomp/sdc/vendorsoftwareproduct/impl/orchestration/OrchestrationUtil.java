@@ -20,6 +20,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConst
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -282,7 +283,9 @@ public class OrchestrationUtil {
       Collection<ProcessEntity> processList = processes.get(componentName);
       processList.forEach(process -> {
         process.setComponentId(componentId);
-        UniqueValueUtil.createUniqueValue(PROCESS_NAME, vspId, version.getId(), componentId,
+        UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance()
+            .createInterface());
+        uniqueValueUtil.createUniqueValue(PROCESS_NAME, vspId, version.getId(), componentId,
             process.getName());
         processDao.create(process);
         if (processArtifact.containsKey(process.getId())) {

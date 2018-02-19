@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory;
 import org.openecomp.core.model.dao.ServiceModelDaoFactory;
 import org.openecomp.sdc.vendorlicense.VendorLicenseArtifactServiceFactory;
@@ -52,7 +53,8 @@ public class VspManagerFactoryImpl extends VspManagerFactory {
           NicDaoFactory.getInstance().createInterface(),
           ComputeDaoFactory.getInstance().createInterface(),
           ImageDaoFactory.getInstance().createInterface(),
-          new ManualVspToscaManagerImpl());
+          new ManualVspToscaManagerImpl(),
+          UniqueValueDaoFactory.getInstance().createInterface());
 
   @Override
   public VendorSoftwareProductManager createInterface() {

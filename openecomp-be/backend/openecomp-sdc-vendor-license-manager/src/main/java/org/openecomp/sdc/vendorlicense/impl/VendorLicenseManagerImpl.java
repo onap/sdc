@@ -17,6 +17,7 @@
 package org.openecomp.sdc.vendorlicense.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -52,13 +53,15 @@ import java.util.Optional;
 import java.util.Set;
 
 public class VendorLicenseManagerImpl implements VendorLicenseManager {
-  private VendorLicenseFacade vendorLicenseFacade;
-  private VendorLicenseModelDao vendorLicenseModelDao;
-  private LicenseAgreementDao licenseAgreementDao;
-  private FeatureGroupDao featureGroupDao;
-  private EntitlementPoolDao entitlementPoolDao;
-  private LicenseKeyGroupDao licenseKeyGroupDao;
-  private LimitDao limitDao;
+  private final UniqueValueUtil uniqueValueUtil;
+  private final VendorLicenseFacade vendorLicenseFacade;
+  private final VendorLicenseModelDao vendorLicenseModelDao;
+  private final LicenseAgreementDao licenseAgreementDao;
+  private final FeatureGroupDao featureGroupDao;
+  private final EntitlementPoolDao entitlementPoolDao;
+  private final LicenseKeyGroupDao licenseKeyGroupDao;
+  private final LimitDao limitDao;
+
   private static final String EP_POOL_START_TIME = "T00:00:00Z";
   private static final String EP_POOL_EXPIRY_TIME = "T23:59:59Z";
   private static final  DateTimeFormatter FORMATTER
@@ -69,7 +72,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
                                   FeatureGroupDao featureGroupDao,
                                   EntitlementPoolDao entitlementPoolDao,
                                   LicenseKeyGroupDao licenseKeyGroupDao,
-                                  LimitDao limitDao) {
+                                  LimitDao limitDao,
+                                  UniqueValueDao uniqueValueDao) {
     this.vendorLicenseFacade = vendorLicenseFacade;
     this.vendorLicenseModelDao = vendorLicenseModelDao;
     this.licenseAgreementDao = licenseAgreementDao;
@@ -77,6 +81,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     this.entitlementPoolDao = entitlementPoolDao;
     this.licenseKeyGroupDao = licenseKeyGroupDao;
     this.limitDao = limitDao;
+    this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
   }
 
 
@@ -690,11 +695,11 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   protected void updateUniqueName(String uniqueValueType, String oldName, String newName, String...
       context) {
-    UniqueValueUtil
+    uniqueValueUtil
         .updateUniqueValue(uniqueValueType, oldName, newName, context);
   }
 
   protected void deleteUniqueName(String uniqueValueType, String... uniqueCombination) {
-    UniqueValueUtil.deleteUniqueValue(uniqueValueType, uniqueCombination);
+    uniqueValueUtil.deleteUniqueValue(uniqueValueType, uniqueCombination);
   }
 }
