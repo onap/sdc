@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,15 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.PREFIX;
 
 /**
  * @author EVITALIY
@@ -25,6 +32,14 @@ import org.slf4j.LoggerFactory;
  */
 class SLF4JLoggerWrapper implements Logger {
 
+    private static final String BEGIN_TIMESTAMP = PREFIX + "BeginTimestamp";
+    private static final String END_TIMESTAMP = PREFIX + "EndTimestamp";
+    private static final String ELAPSED_TIME = PREFIX + "ElapsedTime";
+    private static final String STATUS_CODE = PREFIX + "StatusCode";
+    private static final String RESPONSE_CODE = PREFIX + "ResponseCode";
+    private static final String RESPONSE_DESCRIPTION = PREFIX + "ResponsDescription";
+    private static final String CLIENT_IP_ADDRESS = PREFIX + "ClientIpAddress";
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private final org.slf4j.Logger logger;
 
     SLF4JLoggerWrapper(Class<?> clazz) {
@@ -76,28 +91,41 @@ class SLF4JLoggerWrapper implements Logger {
     }
 
     @Override
-    public void audit(String msg) {
-        logger.info(Markers.AUDIT, msg);
-    }
+    public void audit(AuditData data) {
+        if (data == null) {
+            return;
+        }
 
-    @Override
-    public void audit(String msg, Object arg) {
-        logger.info(Markers.AUDIT, msg, arg);
-    }
+        MDC.put(BEGIN_TIMESTAMP, DATE_FORMAT.format(new Date(data.getStartTime())));
+        MDC.put(END_TIMESTAMP,   DATE_FORMAT.format(new Date(data.getEndTime())));
 
-    @Override
-    public void audit(String msg, Object arg1, Object arg2) {
-        logger.info(Markers.AUDIT, msg, arg1, arg2);
-    }
+        if ((data.getEndTime() > data.getStartTime()) && (data.getStartTime() > 0)) {
+            MDC.put(ELAPSED_TIME, String.valueOf(data.getEndTime() - data.getStartTime()));
+        }
+        if (data.getStatusCode() != null) {
+            MDC.put(STATUS_CODE, data.getStatusCode().getValue());
+        }
+        if (data.getResponseCode() != null) {
+            MDC.put(RESPONSE_CODE, data.getResponseCode());
+        }
+        if (data.getResponseDescription() != null) {
+            MDC.put(RESPONSE_DESCRIPTION, data.getResponseDescription());
+        }
+        if (data.getClientIpAddress() != null) {
+            MDC.put(CLIENT_IP_ADDRESS, data.getClientIpAddress());
+        }
 
-    @Override
-    public void audit(String msg, Object... arguments) {
-        logger.info(Markers.AUDIT, msg, arguments);
-    }
-
-    @Override
-    public void audit(String msg, Throwable t) {
-        logger.info(Markers.AUDIT, msg, t);
+        try {
+            logger.info(Markers.AUDIT, "");
+        } finally {
+            MDC.remove(BEGIN_TIMESTAMP);
+            MDC.remove(END_TIMESTAMP);
+            MDC.remove(ELAPSED_TIME);
+            MDC.remove(STATUS_CODE);
+            MDC.remove(RESPONSE_CODE);
+            MDC.remove(RESPONSE_DESCRIPTION);
+            MDC.remove(CLIENT_IP_ADDRESS);
+        }
     }
 
     @Override
