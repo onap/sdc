@@ -1,12 +1,12 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,12 @@
 
 package org.openecomp.sdc.logging.aspects;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.SourceLocation;
@@ -30,399 +36,394 @@ import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-
 /**
- * @author EVITALIY
- * @since 17/08/2016.
+ * Unit-tests metrics aspect (AOP) behavior.
+ *
+ * @author evitaliy
+ * @since 17 Aug 2016
  */
 @PrepareForTest(LoggerFactory.class)
 public class MetricsAspectTest extends PowerMockTestCase {
 
-  private static final Object OBJ_TO_RETURN = new Object();
-  private static final String EXPECTED_MESSAGE = "'{}' took {} milliseconds";
+    private static final Object OBJ_TO_RETURN = new Object();
+    private static final String EXPECTED_MESSAGE = "'{}' took {} milliseconds";
 
-  @Test
-  public void testLogExecutionTime() throws Throwable {
+    @Test
+    public void testLogExecutionTime() throws Throwable {
 
-    String className = UUID.randomUUID().toString();
-    String methodName = UUID.randomUUID().toString();
+        String className = UUID.randomUUID().toString();
+        String methodName = UUID.randomUUID().toString();
 
-    TestLogger logger = initLogging(className, true);
+        TestLogger logger = initLogging(className, true);
 
-    MetricsAspect aspect = new MetricsAspect();
-    MockProceedingJoinPoint pjp = new MockProceedingJoinPoint(className, methodName);
-    Object returned = aspect.logExecutionTime(pjp);
+        MetricsAspect aspect = new MetricsAspect();
+        MockProceedingJoinPoint pjp = new MockProceedingJoinPoint(className, methodName);
+        Object returned = aspect.logExecutionTime(pjp);
 
-    Assert.assertEquals(OBJ_TO_RETURN, returned);
-    assertExecution(methodName, pjp, logger);
-  }
-
-  @Test
-  public void testMetricsDisabled() throws Throwable {
-
-    String className = UUID.randomUUID().toString();
-    String methodName = UUID.randomUUID().toString();
-
-    TestLogger logger = initLogging(className, false);
-
-    MetricsAspect aspect = new MetricsAspect();
-    MockProceedingJoinPoint pjp = new MockProceedingJoinPoint(className, methodName);
-    Object returned = aspect.logExecutionTime(pjp);
-
-    Assert.assertEquals(OBJ_TO_RETURN, returned);
-    Assert.assertEquals(1, pjp.getCount());
-    // return any event - must be empty
-    Assert.assertFalse(logger.contains((event) -> true));
-  }
-
-  @Test(expectedExceptions = IllegalArgumentException.class)
-  public void testThrowingError() throws Throwable {
-
-    String className = UUID.randomUUID().toString();
-    String methodName = UUID.randomUUID().toString();
-
-    final TestLogger logger = initLogging(className, true);
-
-    MetricsAspect aspect = new MetricsAspect();
-    MockProceedingJoinPoint pjp = new MockProceedingJoinPointWithException(className, methodName);
-
-    try {
-      aspect.logExecutionTime(pjp);
-    } finally {
-      assertExecution(methodName, pjp, logger);
-    }
-  }
-
-  private TestLogger initLogging(String className, boolean enabled) {
-    TestLogger logger = new TestLogger(enabled);
-    PowerMock.mockStatic(LoggerFactory.class);
-    EasyMock.expect(LoggerFactory.getLogger(className)).andReturn(logger);
-    PowerMock.replay(LoggerFactory.class);
-    return logger;
-  }
-
-  private void assertExecution(String methodName, MockProceedingJoinPoint pjp, TestLogger logger) {
-
-    Assert.assertEquals(1, pjp.getCount());
-    Assert.assertTrue(logger.contains((event) ->
-        (event != null) && (event.length == 3) && EXPECTED_MESSAGE.equals(event[0])
-            && methodName.equals(event[1]) && (event[2] instanceof Long)));
-  }
-
-  private static class MockSignature implements Signature {
-
-    private final String className;
-    private final String methodName;
-
-    private MockSignature(String className, String methodName) {
-      this.className = className;
-      this.methodName = methodName;
+        Assert.assertEquals(OBJ_TO_RETURN, returned);
+        assertExecution(methodName, pjp, logger);
     }
 
-    @Override
-    public String toShortString() {
-      return null;
+    private TestLogger initLogging(String className, boolean enabled) {
+        TestLogger logger = new TestLogger(enabled);
+        PowerMock.mockStatic(LoggerFactory.class);
+        EasyMock.expect(LoggerFactory.getLogger(className)).andReturn(logger);
+        PowerMock.replay(LoggerFactory.class);
+        return logger;
     }
 
-    @Override
-    public String toLongString() {
-      return null;
+    private void assertExecution(String methodName, MockProceedingJoinPoint pjp, TestLogger logger) {
+
+        Assert.assertEquals(1, pjp.getCount());
+        Assert.assertTrue(logger.contains(
+                (event) -> (event != null) && (event.length == 3) && EXPECTED_MESSAGE.equals(event[0]) && methodName
+                        .equals(event[1]) && (event[2] instanceof Long)));
     }
 
-    @Override
-    public String getName() {
-      return methodName;
+    @Test
+    public void testMetricsDisabled() throws Throwable {
+
+        String className = UUID.randomUUID().toString();
+        String methodName = UUID.randomUUID().toString();
+
+        TestLogger logger = initLogging(className, false);
+
+        MetricsAspect aspect = new MetricsAspect();
+        MockProceedingJoinPoint pjp = new MockProceedingJoinPoint(className, methodName);
+        Object returned = aspect.logExecutionTime(pjp);
+
+        Assert.assertEquals(OBJ_TO_RETURN, returned);
+        Assert.assertEquals(1, pjp.getCount());
+        // return any event - must be empty
+        Assert.assertFalse(logger.contains((event) -> true));
     }
 
-    @Override
-    public int getModifiers() {
-      return 0;
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testThrowingError() throws Throwable {
+
+        String className = UUID.randomUUID().toString();
+        String methodName = UUID.randomUUID().toString();
+
+        final TestLogger logger = initLogging(className, true);
+
+        MetricsAspect aspect = new MetricsAspect();
+        MockProceedingJoinPoint pjp = new MockProceedingJoinPointWithException(className, methodName);
+
+        try {
+            aspect.logExecutionTime(pjp);
+        } finally {
+            assertExecution(methodName, pjp, logger);
+        }
     }
 
-    @Override
-    public Class getDeclaringType() {
-      return null;
+    private static class MockSignature implements Signature {
+
+        private final String className;
+        private final String methodName;
+
+        private MockSignature(String className, String methodName) {
+            this.className = className;
+            this.methodName = methodName;
+        }
+
+        @Override
+        public String toShortString() {
+            return null;
+        }
+
+        @Override
+        public String toLongString() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return methodName;
+        }
+
+        @Override
+        public int getModifiers() {
+            return 0;
+        }
+
+        @Override
+        public Class getDeclaringType() {
+            return null;
+        }
+
+        @Override
+        public String getDeclaringTypeName() {
+            return className;
+        }
     }
 
-    @Override
-    public String getDeclaringTypeName() {
-      return className;
-    }
-  }
+    private static class MockProceedingJoinPoint implements ProceedingJoinPoint {
 
-  private static class MockProceedingJoinPoint implements ProceedingJoinPoint {
+        private final AtomicInteger count = new AtomicInteger(0);
+        private final Signature signature;
 
-    private AtomicInteger count = new AtomicInteger(0);
-    private Signature signature;
+        MockProceedingJoinPoint(String className, String methodName) {
+            this.signature = new MockSignature(className, methodName);
+        }
 
-    MockProceedingJoinPoint(String className, String methodName) {
-      this.signature = new MockSignature(className, methodName);
-    }
+        int getCount() {
+            return count.get();
+        }
 
-    int getCount() {
-      return count.get();
-    }
+        @Override
+        public void set$AroundClosure(AroundClosure aroundClosure) {
 
-    @Override
-    public Object proceed() throws Throwable {
-      count.incrementAndGet();
-      return OBJ_TO_RETURN;
-    }
+        }
 
-    @Override
-    public void set$AroundClosure(AroundClosure aroundClosure) {
+        @Override
+        public Object proceed() throws Throwable {
+            count.incrementAndGet();
+            return OBJ_TO_RETURN;
+        }
 
-    }
+        @Override
+        public Object proceed(Object[] objects) {
+            return null;
+        }
 
-    @Override
-    public Object proceed(Object[] objects) throws Throwable {
-      return null;
-    }
+        @Override
+        public String toShortString() {
+            return null;
+        }
 
-    @Override
-    public String toShortString() {
-      return null;
-    }
+        @Override
+        public String toLongString() {
+            return null;
+        }
 
-    @Override
-    public String toLongString() {
-      return null;
-    }
+        @Override
+        public Object getThis() {
+            return null;
+        }
 
-    @Override
-    public Object getThis() {
-      return null;
-    }
+        @Override
+        public Object getTarget() {
+            return null;
+        }
 
-    @Override
-    public Object getTarget() {
-      return null;
-    }
+        @Override
+        public Object[] getArgs() {
+            return new Object[0];
+        }
 
-    @Override
-    public Object[] getArgs() {
-      return new Object[0];
-    }
+        @Override
+        public Signature getSignature() {
+            return this.signature;
+        }
 
-    @Override
-    public Signature getSignature() {
-      return this.signature;
-    }
+        @Override
+        public SourceLocation getSourceLocation() {
+            return null;
+        }
 
-    @Override
-    public SourceLocation getSourceLocation() {
-      return null;
-    }
+        @Override
+        public String getKind() {
+            return null;
+        }
 
-    @Override
-    public String getKind() {
-      return null;
-    }
-
-    @Override
-    public StaticPart getStaticPart() {
-      return null;
-    }
-  }
-
-  private static class MockProceedingJoinPointWithException extends MockProceedingJoinPoint {
-
-    MockProceedingJoinPointWithException(String className, String methodName) {
-      super(className, methodName);
+        @Override
+        public StaticPart getStaticPart() {
+            return null;
+        }
     }
 
-    @Override
-    public Object proceed() throws Throwable {
-      super.proceed();
-      throw new IllegalArgumentException();
-    }
-  }
+    private static class MockProceedingJoinPointWithException extends MockProceedingJoinPoint {
 
-  private class TestLogger implements Logger {
+        MockProceedingJoinPointWithException(String className, String methodName) {
+            super(className, methodName);
+        }
 
-    private final boolean enabled;
-    private List<Object[]> events = Collections.synchronizedList(new ArrayList<>(10));
-
-    TestLogger(boolean enabled) {
-      this.enabled = enabled;
+        @Override
+        public Object proceed() throws Throwable {
+            super.proceed();
+            throw new IllegalArgumentException();
+        }
     }
 
-    @Override
-    public String getName() {
-      throw new RuntimeException("Not implemented");
-    }
+    private class TestLogger implements Logger {
 
-    @Override
-    public boolean isMetricsEnabled() {
-      return this.enabled;
-    }
+        private final boolean enabled;
+        private final List<Object[]> events = Collections.synchronizedList(new ArrayList<>(10));
 
-    @Override
-    public void metrics(String var1) {
-      throw new RuntimeException("Not implemented");
-    }
+        TestLogger(boolean enabled) {
+            this.enabled = enabled;
+        }
 
-    @Override
-    public void metrics(String var1, Object var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public String getName() {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void metrics(String var1, Object var2, Object var3) {
+        @Override
+        public boolean isMetricsEnabled() {
+            return this.enabled;
+        }
 
-      if (this.enabled) {
-        events.add(new Object[]{var1, var2, var3});
-      }
-    }
+        @Override
+        public void metrics(String var1) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void metrics(String var1, Object... var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void metrics(String var1, Object var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void metrics(String var1, Throwable throwable) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void metrics(String var1, Object var2, Object var3) {
 
-    @Override
-    public boolean isAuditEnabled() {
-      throw new RuntimeException("Not implemented");
-    }
+            if (this.enabled) {
+                events.add(new Object[] {var1, var2, var3});
+            }
+        }
 
-    @Override
-    public void audit(AuditData var1) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void metrics(String var1, Object... var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public boolean isDebugEnabled() {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void metrics(String var1, Throwable throwable) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void debug(String var1) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public boolean isAuditEnabled() {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void debug(String var1, Object var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void audit(AuditData var1) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void debug(String var1, Object var2, Object var3) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public boolean isDebugEnabled() {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void debug(String var1, Object... var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void debug(String var1) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void debug(String var1, Throwable throwable) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void debug(String var1, Object var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public boolean isInfoEnabled() {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void debug(String var1, Object var2, Object var3) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void info(String var1) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void debug(String var1, Object... var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void info(String var1, Object var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void debug(String var1, Throwable throwable) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void info(String var1, Object var2, Object var3) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public boolean isInfoEnabled() {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void info(String var1, Object... var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void info(String var1) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void info(String var1, Throwable throwable) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void info(String var1, Object var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public boolean isWarnEnabled() {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void info(String var1, Object var2, Object var3) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void warn(String var1) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void info(String var1, Object... var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void warn(String var1, Object var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void info(String var1, Throwable throwable) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void warn(String var1, Object... var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public boolean isWarnEnabled() {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void warn(String var1, Object var2, Object var3) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void warn(String var1) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void warn(String var1, Throwable throwable) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void warn(String var1, Object var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public boolean isErrorEnabled() {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void warn(String var1, Object... var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void error(String var1) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void warn(String var1, Object var2, Object var3) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void error(String var1, Object var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void warn(String var1, Throwable throwable) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void error(String var1, Object var2, Object var3) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public boolean isErrorEnabled() {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void error(String var1, Object... var2) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void error(String var1) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    @Override
-    public void error(String var1, Throwable throwable) {
-      throw new RuntimeException("Not implemented");
-    }
+        @Override
+        public void error(String var1, Object var2) {
+            throw new RuntimeException("Not implemented");
+        }
 
-    public boolean contains(Predicate<Object[]> predicate) {
-      return events.stream().anyMatch(predicate);
+        @Override
+        public void error(String var1, Object var2, Object var3) {
+            throw new RuntimeException("Not implemented");
+        }
+
+        @Override
+        public void error(String var1, Object... var2) {
+            throw new RuntimeException("Not implemented");
+        }
+
+        @Override
+        public void error(String var1, Throwable throwable) {
+            throw new RuntimeException("Not implemented");
+        }
+
+        boolean contains(Predicate<Object[]> predicate) {
+            return events.stream().anyMatch(predicate);
+        }
     }
-  }
 }
