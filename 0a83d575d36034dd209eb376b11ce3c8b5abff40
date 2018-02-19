@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_187246ad",
+        "filename": "openecomp-bdd/config.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-02-19T11:35:26Z",
+      "side": 1,
+      "message": "I\u0027m wondering if it is better like that then adding an entry per type instead: { vf: { port: , prefix: }, onboarding: {port:, prefix:} }\nWhat do you think Ilana?",
+      "revId": "0a83d575d36034dd209eb376b11ce3c8b5abff40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_985df617",
+        "filename": "openecomp-bdd/stepDefinitions/world.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-02-19T11:35:26Z",
+      "side": 1,
+      "message": "can u pls get rid of the cs0008",
+      "revId": "0a83d575d36034dd209eb376b11ce3c8b5abff40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
