@@ -17,6 +17,7 @@
 package org.openecomp.sdc.logging.slf4j;
 
 import java.util.Map;
+import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
 
 /**
  * @author EVITALIY
@@ -34,7 +35,7 @@ class MDCRunnableWrapper extends BaseMDCCopyingWrapper implements Runnable {
     @Override
     public void run() {
 
-        Map<String, String> oldContext = replace();
+        Map<ContextField, String> oldContext = replace();
 
         try {
             task.run();

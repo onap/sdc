@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,17 @@ import org.testng.annotations.DataProvider;
 import java.util.concurrent.Callable;
 
 /**
- * @author EVITALIY
+ * @author evitaliy
  * @since 08 Jan 18
  */
 public abstract class BaseContextPropagationTest {
 
-    // Disable if an old version of ctx implementation is being used.
-    // ctxPropagationFactory should be used when ctx is not propagated to child threads.
+    // Disable if an old version of logback implementation is being used.
+    // Context propagation should be used when ctx is not propagated to child threads.
     // See https://jira.qos.ch/browse/LOGBACK-422 and https://jira.qos.ch/browse/LOGBACK-624
     static final boolean ENABLED = false;
 
     static final String PROVIDER = "context";
-    static final String KEY = "test-data";
 
     static final String EXPECT_PROPAGATED_TO_CHILD = "Expected the data to be propagated to the child thread's context";
     static final String EXPECT_RETAINED_IN_CURRENT = "Expected the data to be retained in this thread";
@@ -52,27 +51,27 @@ public abstract class BaseContextPropagationTest {
     @DataProvider(name = PROVIDER)
     public static Object[][] contextServices() {
         // try both directly call the implementation and get it via the binding
-        return new Object[][] {
-                { new SLF4JLoggingServiceProvider() },
-                { new LoggingContextAdaptor() }
+        return new Object[][]{
+            {new SLF4JLoggingServiceProvider()},
+            {new LoggingContextAdaptor()}
         };
     }
 
     private static class LoggingContextAdaptor implements LoggingContextService {
 
         @Override
-        public void put(String key, String value) {
-            LoggingContext.put(key, value);
+        public void putRequestId(String requestId) {
+            LoggingContext.putRequestId(requestId);
         }
 
         @Override
-        public String get(String key) {
-            return LoggingContext.get(key);
+        public void putServiceName(String serviceName) {
+            LoggingContext.putServiceName(serviceName);
         }
 
         @Override
-        public void remove(String key) {
-            LoggingContext.remove(key);
+        public void putPartnerName(String partnerName) {
+            LoggingContext.putPartnerName(partnerName);
         }
 
         @Override
