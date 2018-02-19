@@ -17,6 +17,7 @@
 package org.openecomp.sdc.logging.slf4j;
 
 import org.openecomp.sdc.logging.api.LoggingContext;
+import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
 import org.slf4j.MDC;
 import org.testng.annotations.Test;
 
@@ -52,61 +53,93 @@ public class LoggingContextTest {
     }
 
     @Test
-    public void clearContextWhenClearCalled() {
+    public void keysClearedWhenContextCleared() {
 
-        String random = UUID.randomUUID().toString();
+        String value = UUID.randomUUID().toString();
 
         try {
-            LoggingContext.put(random, random);
+            LoggingContext.putPartnerName(value);
+            LoggingContext.putServiceName(value);
+            LoggingContext.putRequestId(value);
             LoggingContext.clear();
-            assertNull(MDC.get(random));
-            assertNull(LoggingContext.get(random));
+
+            for (ContextField field : ContextField.values()) {
+                assertNull(MDC.get(field.asKey()));
+            }
+
         } finally {
-            MDC.remove(random);
+            MDC.clear();
         }
     }
 
     @Test
-    public void returnContextWhenGetCalled() {
+    public void unrelatedKeysRemainWhenContextCleared() {
 
-        String random = UUID.randomUUID().toString();
+        String randomValue = UUID.randomUUID().toString();
+        String randomKey = "Key-" + randomValue;
 
         try {
-            LoggingContext.put(random, random);
-            assertEquals(random, MDC.get(random));
-            assertEquals(random, LoggingContext.get(random));
+
+            MDC.put(randomKey, randomValue);
+            LoggingContext.clear();
+            assertEquals(MDC.get(randomKey), randomValue);
+
         } finally {
-            MDC.remove(random);
+            MDC.clear();
         }
     }
 
     @Test
-    public void removeContextWhenRemoveCalled() {
+    public void contextHasServiceNameWhenPut() {
 
         String random = UUID.randomUUID().toString();
 
         try {
-            LoggingContext.put(random, random);
-            LoggingContext.remove(random);
-            assertNull(MDC.get(random));
-            assertNull(LoggingContext.get(random));
+            LoggingContext.putServiceName(random);
+            assertEquals(random, MDC.get(ContextField.SERVICE_NAME.asKey()));
         } finally {
-            MDC.remove(random);
+            MDC.clear();
         }
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenPutWithKeyNull() {
-        LoggingContext.put(null, "---");
+    public void throwNpeWhenServiceNameNull() {
+        LoggingContext.putServiceName(null);
+    }
+
+    @Test
+    public void contextHasRequestIdWhenPut() {
+
+        String random = UUID.randomUUID().toString();
+
+        try {
+            LoggingContext.putRequestId(random);
+            assertEquals(random, MDC.get(ContextField.REQUEST_ID.asKey()));
+        } finally {
+            MDC.clear();
+        }
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenGetWithKeyNull() {
-        LoggingContext.get(null);
+    public void throwNpeWhenRequestIdNull() {
+        LoggingContext.putRequestId(null);
+    }
+
+    @Test
+    public void contextHasPartnerNameWhenPut() {
+
+        String random = UUID.randomUUID().toString();
+
+        try {
+            LoggingContext.putPartnerName(random);
+            assertEquals(random, MDC.get(ContextField.PARTNER_NAME.asKey()));
+        } finally {
+            MDC.clear();
+        }
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenRemoveWithKeyNull() {
-        LoggingContext.remove(null);
+    public void throwNpeWhenPartnerNameNull() {
+        LoggingContext.putPartnerName(null);
     }
 }
