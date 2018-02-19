@@ -99,10 +99,12 @@ function _request(context, method, path, data, isBinary=false, prefix='onboardin
 	});
 }
 
-function download(context, path, filePath,  callback){
+function download(context, path, filePath,  callback, prefix='onboarding') {
+		let server = context.server + '/' + context.prefix[prefix];
+
 		let options = {
 			method: 'GET',
-			url: context.onboarding_server + path,
+			url: server + path,
 			headers: context.headers
 		};
 		var file = fs.createWriteStream(filePath);
