@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,15 +43,7 @@ public interface Logger {
 
     boolean isAuditEnabled();
 
-    void audit(String msg);
-
-    void audit(String msg, Object arg);
-
-    void audit(String msg, Object arg1, Object arg2);
-
-    void audit(String msg, Object... arguments);
-
-    void audit(String msg, Throwable t);
+    void audit(AuditData data);
 
     boolean isDebugEnabled();
 
@@ -101,3 +93,5 @@ public interface Logger {
 
     void error(String msg, Throwable t);
 }
+
+
