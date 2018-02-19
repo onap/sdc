@@ -18,6 +18,7 @@ package org.openecomp.sdc.logging.slf4j;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
 
 /**
  * @author EVITALIY
@@ -35,7 +36,7 @@ class MDCCallableWrapper<V> extends BaseMDCCopyingWrapper implements Callable<V>
     @Override
     public V call() throws Exception {
 
-        Map<String, String> oldContext = replace();
+        Map<ContextField, String> oldContext = replace();
 
         try {
             return task.call();

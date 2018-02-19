@@ -16,6 +16,10 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField.PARTNER_NAME;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField.REQUEST_ID;
+import static org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField.SERVICE_NAME;
+
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import org.openecomp.sdc.logging.api.Logger;
@@ -24,11 +28,26 @@ import org.slf4j.MDC;
 
 /**
  * @author evitaliy
- * @since 13/09/2016.
+ * @since 13 Sep 2016
  */
 public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
 
-    private static final String KEY_CANNOT_BE_NULL = "Key cannot be null";
+    enum ContextField {
+
+        REQUEST_ID("RequestId"),
+        SERVICE_NAME("ServiceName"),
+        PARTNER_NAME("PartnerName");
+
+        private final String key;
+
+        ContextField(String key) {
+            this.key = key;
+        }
+
+        String asKey() {
+            return key;
+        }
+    }
 
     @Override
     public Logger getLogger(String className) {
@@ -43,26 +62,29 @@ public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
     }
 
     @Override
-    public void put(String key, String value) {
-        Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
-        MDC.put(key, value);
+    public void putRequestId(String requestId) {
+        put(REQUEST_ID.key, requestId);
     }
 
     @Override
-    public String get(String key) {
-        Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
-        return MDC.get(key);
+    public void putServiceName(String serviceName) {
+        put(SERVICE_NAME.key, serviceName);
     }
 
     @Override
-    public void remove(String key) {
-        Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
-        MDC.remove(key);
+    public void putPartnerName(String partnerName) {
+        put(PARTNER_NAME.key, partnerName);
     }
 
     @Override
     public void clear() {
-        MDC.clear();
+        for (ContextField s : ContextField.values()) {
+            MDC.remove(s.key);
+        }
+    }
+
+    private void put(String key, String value) {
+        MDC.put(key, Objects.requireNonNull(value, key));
     }
 
     @Override
