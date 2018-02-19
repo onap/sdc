@@ -70,7 +70,7 @@ public class LoggerFactoryTest {
         logger.warn("");
         logger.info("");
         logger.debug("");
-        logger.audit("");
+        logger.audit(new SpyAuditData());
         logger.metrics("");
     }
 }
