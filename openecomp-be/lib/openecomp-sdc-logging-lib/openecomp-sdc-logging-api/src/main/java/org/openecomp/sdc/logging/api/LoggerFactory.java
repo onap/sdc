@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,27 +99,7 @@ public class LoggerFactory {
             }
 
             @Override
-            public void audit(String msg) {
-                // no-op
-            }
-
-            @Override
-            public void audit(String msg, Object arg) {
-                // no-op
-            }
-
-            @Override
-            public void audit(String msg, Object arg1, Object arg2) {
-                // no-op
-            }
-
-            @Override
-            public void audit(String msg, Object... arguments) {
-                // no-op
-            }
-
-            @Override
-            public void audit(String msg, Throwable t) {
+            public void audit(AuditData data) {
                 // no-op
             }
 
@@ -257,3 +237,4 @@ public class LoggerFactory {
         }
     }
 }
+
