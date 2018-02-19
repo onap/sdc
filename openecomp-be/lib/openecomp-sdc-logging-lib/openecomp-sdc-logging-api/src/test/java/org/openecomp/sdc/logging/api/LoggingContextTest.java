@@ -16,14 +16,12 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import org.testng.annotations.Test;
 
 /**
  * @author EVITALIY
@@ -40,36 +38,19 @@ public class LoggingContextTest {
                 "org.openecomp.sdc.logging.api.LoggingContext$NoOpLoggingContextService");
     }
 
-    @Test
-    public void putDoesNotHaveEffectWhenNoBinding() {
-        final String key = "Key";
-        LoggingContext.put(key, "Dummy");
-        assertNull(LoggingContext.get(key));
+    @Test(expectedExceptions = NullPointerException.class)
+    public void throwNpeWhenPartnerNameIsNull() {
+        LoggingContext.putPartnerName(null);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenPutWithKeyNull() {
-        LoggingContext.put(null, "value");
-    }
-
-    @Test
-    public void getAlwaysReturnsNull() {
-        assertNull(LoggingContext.get("GetKey"));
+    public void throwNpeWhenServiceNameIsNull() {
+        LoggingContext.putServiceName(null);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenGetWithKeyNull() {
-        LoggingContext.get(null);
-    }
-
-    @Test
-    public void removeDoesNotFail() {
-        LoggingContext.remove("RemoveKey");
-    }
-
-    @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpWhenRemoveWithKeyNull() {
-        LoggingContext.remove(null);
+    public void throwNpeWhenRequestIdIsNull() {
+        LoggingContext.putRequestId(null);
     }
 
     @Test

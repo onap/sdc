@@ -16,38 +16,58 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import java.util.EnumMap;
+import java.util.Map;
+import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
 import org.slf4j.MDC;
 
-import java.util.Map;
-
 /**
- * @author EVITALIY
- * @since 08 Jan 18
+ * Because we don't know which information should be carried over from MDC, and which shouldn't, copy just the keys that
+ * the logging service uses.
+ *
+ * @author evitaliy
+ * @since 08 Jan 2018
  */
 abstract class BaseMDCCopyingWrapper {
 
-    private final Map<String, String> context;
+    private final Map<ContextField, String> context;
 
     BaseMDCCopyingWrapper() {
-        this.context = MDC.getCopyOfContextMap();
+        this.context = fromMdc();
     }
 
-    final Map<String, String> replace() {
-        Map<String, String> old = MDC.getCopyOfContextMap();
-        replaceMDC(this.context);
+    final Map<ContextField, String> replace() {
+        Map<ContextField, String> old = fromMdc();
+        toMdc(this.context);
         return old;
     }
 
-    final void revert(Map<String, String> old) {
-        replaceMDC(old);
+    final void revert(Map<ContextField, String> old) {
+        toMdc(old);
     }
 
-    private static void replaceMDC(Map<String, String> context) {
+    private Map<ContextField, String> fromMdc() {
 
-        if (context == null) {
-            MDC.clear();
-        } else {
-            MDC.setContextMap(context);
+        Map<ContextField, String> copy = new EnumMap<>(ContextField.class);
+        for (ContextField k : ContextField.values()) {
+            String v = MDC.get(k.asKey());
+            if (v != null) {
+                copy.put(k, v);
+            }
+        }
+
+        return copy;
+    }
+
+    private static void toMdc(Map<ContextField, String> context) {
+
+        for (ContextField k : ContextField.values()) {
+            String v = context.get(k);
+            if (v != null) {
+                MDC.put(k.asKey(), v);
+            } else {
+                MDC.remove(k.asKey());
+            }
         }
     }
 }
