@@ -4,8 +4,12 @@ This is the documentation for using the BDD testing framework for SDC.<br>
 The Modules on the left contains all steps for particalar aress and/or explanations of what they do.<br>
 <br><br>
 <h3>How to set the server</h3>
-<li> Either update the config.json file and set the server
-<li> Or set the SERVER environment variable and it will override the configuration file
+<li> Create a "devConfig.json" file under the openecomp-bdd directory with the following content and replace the placeholders:
+{
+  "server": "[YOUR_SERVER]",
+  "user": "[USER_ID_FOR_APPLICATION]"
+}
+<li> Or set the SERVER and USER environment variables and it will override the configuration file
 <h3>How to run with Maven</h3>
 <li>"mvn install" will install npm if needed, download all modules and create the documentation under the "docs" folder
 <li>"mvn test-and-report" will run all  tests in the features folder and create an HTML report under the "reports" folder

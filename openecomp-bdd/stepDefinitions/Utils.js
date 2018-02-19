@@ -17,8 +17,8 @@ const request = require('request');
 const fs = require('fs');
 require('node-zip');
 
-function _request(context, method, path, data, isBinary=false, prefix='onboarding') {
-	let server = context.server + '/' + context.prefix[prefix];
+function _request(context, method, path, data, isBinary=false, type='onboarding') {
+	let server = context.getUrlForType(type);
 
 	let options = {
 		method: method,
@@ -99,13 +99,14 @@ function _request(context, method, path, data, isBinary=false, prefix='onboardin
 	});
 }
 
-function download(context, path, filePath,  callback){
-		let options = {
+function download(context, path, filePath,  callback, type='onboarding') {
+	let server = context.getUrlForType(type);
+	let options = {
 			method: 'GET',
-			url: context.onboarding_server + path,
+			url: server + path,
 			headers: context.headers
 		};
-		var file = fs.createWriteStream(filePath);
+	var file = fs.createWriteStream(filePath);
 		var r = request(options).pipe(file);
 		r.on('error', function (err) {
 			console.log(err);

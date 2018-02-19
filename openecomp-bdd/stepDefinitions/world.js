@@ -15,6 +15,10 @@
  */
 const { setWorldConstructor } = require('cucumber');
 const config = require('../config.json');
+let localDevConfig = {};
+try {
+	localDevConfig = require('../devConfig.json');
+} catch (e) {}
 var {setDefaultTimeout} = require('cucumber');
 
 /**
@@ -32,19 +36,18 @@ var {setDefaultTimeout} = require('cucumber');
  **/
 class CustomWorld {
 	constructor(options) {
-		this.context = {}
-		if (options.parameters && options.parameters.server) {
-			this.context.server =  options.parameters.server;
-		} else if (process.env.SERVER) {
-			this.context.server = process.env.SERVER;
-		} else {
-			this.context.server = config.server;
-		}
-		this.context.server = (config.protocol + '://' + this.context.server + ':' + config.port);
-
-
+		this.context = {};
 		this.context.headers = {};
-		this.context.headers['USER_ID']  = 'cs0008';
+		if (localDevConfig.user) {
+			this.context.headers['USER_ID'] = localDevConfig.user;
+		} else {
+			this.context.headers['USER_ID'] = process.env.USER;
+		}
+		if (localDevConfig.server) {
+			this.context.server = localDevConfig.server;
+		} else {
+			this.context.server = process.env.SERVER;
+		}
 
 		this.context.vlm = {id: null, versionId: null};
 		this.context.vsp = {id: null, versionId: null};
@@ -55,15 +58,31 @@ class CustomWorld {
 		this.context.inputData = null;
 		this.context.responseData = null;
 
+		this.context.defaultServerType = 'onboarding';
+
 		this.context.prefix = config.prefix;
+		this.context.port = config.port;
+		this.context.protocol = config.protocol;
 
 		this.setServer = function(server) {
-			this.context.server = (config.protocol + '://' + this.context.server + ':' + config.port);
-		}
+			this.context.server = server;
+		};
+
+		let context = this.context;
+		this.context.getUrlForType = (function(type) {
+			var that = context;
+			return function(type) {
+				let typeData = that[type];
+				return (config.protocol + '://' +
+					that.server + ':' +
+					typeData.port + '/' +
+					typeData.prefix);
+			}
+		})();
 
 		setDefaultTimeout(60 * 1000);
 	}
 }
 
 
-setWorldConstructor(CustomWorld)
+setWorldConstructor(CustomWorld);
