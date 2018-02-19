@@ -9,7 +9,7 @@
 	<!-- value used by pattern field list (| - is inter-field separator, || - unavailable or not applicable field value) (m - mandatory, o- optional)-->
 	<!--timestamp(m)| requestID(m)| serviceInstanceID(o)| threadID(m)| physicalServerName(o)| serviceName(m)| userID(m)| logLevel(m)| severity(o)| serverIpAddress(m)| serverName(m)| clientIpAddress(o)| className(m)| timer(o)| detailedMessage(o)-->
 	<property name="default-log-pattern"
-			  value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{BeginTimestamp}|%X{EndTimestamp}|%X{uuid}|%X{serviceInstanceID}|%thread|%X{ServerName}|%X{ServiceName}|${ECOMP-subcomponent-name}|%X{userId}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%level|%X{alarmSeverity}|%X{localAddr}|%X{ElapsedTime}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+			  value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{onap.log.BeginTimestamp}|%X{onap.log.EndTimestamp}|%X{uuid}|%X{serviceInstanceID}|%thread|%X{ServerName}|%X{onap.log.ServiceName}|${ECOMP-subcomponent-name}|%X{userId}|%X{TargetEntity}|%X{TargetServiceName}|%X{onap.log.StatusCode}|%X{onap.log.ResponseCode}|%X{onap.log.ResponseDescription}|%X{InstanceUUID}|%level|%X{alarmSeverity}|%X{localAddr}|%X{onap.log.ElapsedTime}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
 
 	<property name="asdc-debug-log-pattern" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%msg %n"/>
 
