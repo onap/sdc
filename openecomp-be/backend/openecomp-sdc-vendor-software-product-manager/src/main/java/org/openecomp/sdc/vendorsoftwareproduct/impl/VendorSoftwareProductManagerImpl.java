@@ -18,6 +18,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
@@ -140,6 +141,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private final ComputeDao computeDao;
   private final ImageDao imageDao;
   private final ManualVspToscaManager manualVspToscaManager;
+  private final UniqueValueUtil uniqueValueUtil;
 
   public VendorSoftwareProductManagerImpl(
       OrchestrationTemplateDao orchestrationTemplateDataDao,
@@ -157,7 +159,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       NicDao nicDao,
       ComputeDao computeDao,
       ImageDao imageDao,
-      ManualVspToscaManager manualVspToscaManager) {
+      ManualVspToscaManager manualVspToscaManager,
+      UniqueValueDao uniqueValueDao) {
     this.orchestrationTemplateDao = orchestrationTemplateDataDao;
     this.orchestrationTemplateCandidateManager = orchestrationTemplateCandidateManager;
     this.vspInfoDao = vspInfoDao;
@@ -174,6 +177,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     this.computeDao = computeDao;
     this.imageDao = imageDao;
     this.manualVspToscaManager = manualVspToscaManager;
+    this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
 
     registerToVersioning();
   }
@@ -812,7 +816,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   void updateUniqueName(String oldVspName, String newVspName) {
-    UniqueValueUtil.updateUniqueValue(
+    uniqueValueUtil.updateUniqueValue(
         VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME,
         oldVspName, newVspName);
   }

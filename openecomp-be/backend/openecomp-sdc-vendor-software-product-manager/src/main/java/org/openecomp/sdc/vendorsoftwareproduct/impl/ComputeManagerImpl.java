@@ -18,6 +18,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -300,30 +301,38 @@ public class ComputeManagerImpl implements ComputeManager {
 
   protected void validateUniqueName(String vspId, Version version, String componentId,
                                     String name) {
-    UniqueValueUtil.validateUniqueValue(VendorSoftwareProductConstants.UniqueValues.COMPUTE_NAME,
+    UniqueValueUtil uniqueValueUtil =
+        new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+    uniqueValueUtil.validateUniqueValue(VendorSoftwareProductConstants.UniqueValues.COMPUTE_NAME,
         vspId, version.getId(), componentId, name);
   }
 
   protected void createUniqueName(String vspId, Version version, String componentId, String name) {
-    UniqueValueUtil
+    UniqueValueUtil uniqueValueUtil =
+        new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+    uniqueValueUtil
         .createUniqueValue(VendorSoftwareProductConstants.UniqueValues.COMPUTE_NAME, vspId,
             version.getId(), componentId, name);
   }
 
   protected void updateUniqueName(String vspId, Version version, String componentId,
                                   String oldName, String newName) {
-    UniqueValueUtil
+    UniqueValueUtil uniqueValueUtil =
+        new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+    uniqueValueUtil
         .updateUniqueValue(VendorSoftwareProductConstants.UniqueValues.COMPUTE_NAME, oldName,
             newName, vspId, version.getId(), componentId);
   }
 
   protected void deleteUniqueValue(String vspId, Version version, String componentId, String name) {
+    UniqueValueUtil uniqueValueUtil =
+        new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
     if (componentId == null) {
-      UniqueValueUtil
+      uniqueValueUtil
           .deleteUniqueValue(VendorSoftwareProductConstants.UniqueValues.COMPUTE_NAME, vspId,
               version.getId(), name);
     }
-    UniqueValueUtil
+    uniqueValueUtil
         .deleteUniqueValue(VendorSoftwareProductConstants.UniqueValues.COMPUTE_NAME, vspId,
             version.getId(), componentId, name);
   }

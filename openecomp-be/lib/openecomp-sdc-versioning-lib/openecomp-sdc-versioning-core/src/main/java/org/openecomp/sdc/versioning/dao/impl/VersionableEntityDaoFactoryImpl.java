@@ -20,13 +20,15 @@
 
 package org.openecomp.sdc.versioning.dao.impl;
 
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.versioning.dao.VersionableEntityDao;
 import org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory;
 import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
 
 public class VersionableEntityDaoFactoryImpl extends VersionableEntityDaoFactory {
-  private static VersionableEntityDao CASSANDRA_INSTANCE = new VersionableEntityDaoCassandraImpl();
+  private static VersionableEntityDao CASSANDRA_INSTANCE = new VersionableEntityDaoCassandraImpl(
+      UniqueValueDaoFactory.getInstance().createInterface());
   private static VersionableEntityDao ZUSAMMEN_INSTANCE =
       new VersionableEntityDaoZusammenImpl(ZusammenAdaptorFactory.getInstance().createInterface());
 

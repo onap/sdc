@@ -17,6 +17,7 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
@@ -101,6 +102,8 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
       VendorLicenseManagerFactory.getInstance().createInterface();
   private ActivityLogManager activityLogManager =
       ActivityLogManagerFactory.getInstance().createInterface();
+  private UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance()
+      .createInterface());
 
   @Override
   public Response listLicenseModels(String versionStatus, String user) {
@@ -135,10 +138,10 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     item.setName(request.getVendorName());
     item.setDescription(request.getDescription());
 
-    UniqueValueUtil
+    uniqueValueUtil
         .validateUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
     item = asdcItemManager.create(item);
-    UniqueValueUtil
+    uniqueValueUtil
         .createUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, item.getName());
 
     Version version = versioningManager.create(item.getId(), new Version(), null);
@@ -214,7 +217,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
       asdcItemManager.delete(vlm);
       permissionsManager.deleteItemPermissions(vlmId);
-      UniqueValueUtil
+      uniqueValueUtil
           .deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlm.getName());
       notifyUsers(vlmId, vlm.getName(), null, "VLM was deleted", user,
           NotificationEventTypes.DELETE);

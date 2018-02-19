@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -42,9 +43,11 @@ public class ProcessManagerImpl implements ProcessManager {
   private static final String PROCESS_ARTIFACT_NOT_EXIST_MSG =
       "Process artifact for process with Id %s does not exist for %s with Id %s and version %s";
   private final ProcessDao processDao;
+  private final UniqueValueUtil uniqueValueUtil;
 
-  public ProcessManagerImpl(ProcessDao processDao) {
+  public ProcessManagerImpl(ProcessDao processDao, UniqueValueDao uniqueValueDao) {
     this.processDao = processDao;
+    this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
   }
 
   @Override
@@ -186,20 +189,20 @@ public class ProcessManagerImpl implements ProcessManager {
 
   protected void validateUniqueName(String vspId, Version version, String componentId,
                                     String processName) {
-    UniqueValueUtil.validateUniqueValue(VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME,
+    uniqueValueUtil.validateUniqueValue(VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME,
         vspId, version.getId(), componentId, processName);
   }
 
   protected void createUniqueName(String vspId, Version version, String componentId,
                                   String processName) {
-    UniqueValueUtil
+    uniqueValueUtil
         .createUniqueValue(VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME, vspId,
             version.getId(), componentId, processName);
   }
 
   protected void updateUniqueName(String vspId, Version version, String componentId,
                                   String oldProcessName, String newProcessName) {
-    UniqueValueUtil
+    uniqueValueUtil
         .updateUniqueValue(VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME, oldProcessName,
             newProcessName, vspId, version.getId(), componentId);
   }
@@ -207,11 +210,11 @@ public class ProcessManagerImpl implements ProcessManager {
   protected void deleteUniqueValue(String vspId, Version version, String componentId,
                                    String processName) {
     if (componentId == null) {
-      UniqueValueUtil
+      uniqueValueUtil
           .deleteUniqueValue(VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME, vspId,
               version.getId(), processName);
     }
-    UniqueValueUtil
+    uniqueValueUtil
         .deleteUniqueValue(VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME, vspId,
             version.getId(), componentId, processName);
   }

@@ -74,6 +74,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -282,9 +283,11 @@ public class ActionManagerImpl implements ActionManager {
    */
   @Override
   public Action createAction(Action action, String user) throws ActionException {
+    UniqueValueUtil uniqueValueUtil =
+        new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
     try {
       actionLogPreProcessor(ActionSubOperation.VALIDATE_ACTION_UNIQUE_NAME, TARGET_ENTITY_API);
-      UniqueValueUtil
+      uniqueValueUtil
           .validateUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
       actionLogPostProcessor(StatusCode.COMPLETE);
     } catch (CoreException exception) {
@@ -314,7 +317,7 @@ public class ActionManagerImpl implements ActionManager {
     action = actionDao.createAction(action);
 
     actionLogPreProcessor(ActionSubOperation.CREATE_ACTION_UNIQUE_VALUE, TARGET_ENTITY_API);
-    UniqueValueUtil.createUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
+    uniqueValueUtil.createUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
     actionLogPostProcessor(StatusCode.COMPLETE);
     log.metrics("");
 
@@ -456,7 +459,9 @@ public class ActionManagerImpl implements ActionManager {
 
       if (version.equals(new Version(0, 0))) {
         actionLogPreProcessor(ActionSubOperation.DELETE_UNIQUEVALUE, TARGET_ENTITY_API);
-        UniqueValueUtil
+        UniqueValueUtil uniqueValueUtil =
+            new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+        uniqueValueUtil
             .deleteUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
         actionLogPostProcessor(StatusCode.COMPLETE);
         log.metrics("");
