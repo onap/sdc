@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d3128156",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/errors/Messages.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:10:43Z",
+      "side": 1,
+      "message": "These are not in use.",
+      "range": {
+        "startLine": 124,
+        "startChar": 1,
+        "endLine": 127,
+        "endChar": 133
+      },
+      "revId": "6a4ca05f88fb347fba83d5a296dc55998f0eb179",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_18480686",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:10:43Z",
+      "side": 1,
+      "message": "It could be a bit simpler without the hasSinglePartentPort value. For example,\n\nif (!propertyValue instanceof List || ((List) propertyValue).size() !\u003d 1) {\n    return false;\n}\n\n// all the logic\nreturn getParamValues.isEmpty() || (getParamValues.size() \u003d\u003d 1) \u0026\u0026 validateGetParamValueOfType(getParamValues, heatResourceValidationContext,\n              DefinedHeatParameterTypes.STRING.getType());",
+      "revId": "6a4ca05f88fb347fba83d5a296dc55998f0eb179",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_982ad68e",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:10:43Z",
+      "side": 1,
+      "message": "Please don\u0027t forget a spaces after the comma.",
+      "range": {
+        "startLine": 357,
+        "startChar": 73,
+        "endLine": 357,
+        "endChar": 74
+      },
+      "revId": "6a4ca05f88fb347fba83d5a296dc55998f0eb179",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d824dec6",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:10:43Z",
+      "side": 1,
+      "message": "If you\u0027re using functional Java, try to be consistent. \n\n    return values.stream().anyMatch(e -\u003e Objects.equals(\n         heatResourceValidationContext.getHeatOrchestrationTemplate().getParameters().get(e).getType(), type));",
+      "revId": "6a4ca05f88fb347fba83d5a296dc55998f0eb179",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_731b6d73",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidatorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-19T17:10:43Z",
+      "side": 1,
+      "message": "Copyright header is missing.",
+      "revId": "6a4ca05f88fb347fba83d5a296dc55998f0eb179",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
