@@ -21,6 +21,7 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.SourceLocation;
 import org.aspectj.runtime.internal.AroundClosure;
 import org.easymock.EasyMock;
+import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.powermock.api.easymock.PowerMock;
@@ -296,27 +297,7 @@ public class MetricsAspectTest extends PowerMockTestCase {
     }
 
     @Override
-    public void audit(String var1) {
-      throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void audit(String var1, Object var2) {
-      throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void audit(String var1, Object var2, Object var3) {
-      throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void audit(String var1, Object... var2) {
-      throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void audit(String var1, Throwable throwable) {
+    public void audit(AuditData var1) {
       throw new RuntimeException("Not implemented");
     }
 
