@@ -18,6 +18,11 @@ package org.openecomp.sdc.logging.api;
 
 import org.testng.annotations.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.testng.Assert.assertTrue;
+
 /**
  * This is only for manual testing - change {@link #ENABLED} to 'true'
  *
@@ -36,7 +41,9 @@ public class LoggerTest {
 
     @Test(enabled = ENABLED)
     public void testAudit() {
-        LOGGER.audit("This is audit");
+        SpyingAuditData auditData = new SpyingAuditData();
+        LOGGER.audit(auditData);
+        assertTrue(auditData.wasCalled("getStartTime"));
     }
 
     @Test(enabled = ENABLED)
@@ -57,5 +64,50 @@ public class LoggerTest {
     @Test(enabled = ENABLED)
     public void testError() {
         LOGGER.error("This is error");
+    }
+
+    private static class SpyingAuditData implements AuditData {
+
+        private final Set<String> calledMethods = new HashSet<>();
+
+        @Override
+        public long getStartTime() {
+            calledMethods.add("getStartTime");
+            return 0;
+        }
+
+        @Override
+        public long getEndTime() {
+            return 0;
+        }
+
+        @Override
+        public long getElapsedTime() {
+            return 0;
+        }
+
+        @Override
+        public AuditData.StatusCode getStatusCode() {
+            return null;
+        }
+
+        @Override
+        public String getResponseCode() {
+            return null;
+        }
+
+        @Override
+        public String getResponseDescription() {
+            return null;
+        }
+
+        @Override
+        public String getClientIpAddress() {
+            return null;
+        }
+
+        public boolean wasCalled(String method) {
+            return calledMethods.contains(method);
+        }
     }
 }
