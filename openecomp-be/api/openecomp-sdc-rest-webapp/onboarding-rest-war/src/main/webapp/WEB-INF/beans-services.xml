@@ -66,7 +66,7 @@
             <ref bean="applicationConfiguration"/>
             <ref bean="componentMonitoringUploads"/>
             <ref bean="deploymentFlavors"/>
-	        <ref bean="images"/>
+	          <ref bean="images"/>
             <ref bean="orchestrationTemplateCandidate"/>
             <ref bean="componentDependencies"/>
             <ref bean="healthCheck"/>
@@ -79,6 +79,11 @@
             <ref bean="jsonProvider"/>
             <bean class="org.openecomp.sdc.action.errors.ActionExceptionMapper"/>
             <bean class="org.openecomp.sdcrests.errors.DefaultExceptionMapper"/>
+            <bean class="org.openecomp.sdc.logging.ws.rs.AuditRequestFilter">
+                <property name="requestIdHeader" value="X-ECOMP-RequestID"/>
+                <property name="partnerNameHeader" value="USER_ID"/>
+            </bean>
+            <bean class="org.openecomp.sdc.logging.ws.rs.AuditResponseFilter"/>
         </jaxrs:providers>
 
         <jaxrs:outInterceptors>
