@@ -28,7 +28,11 @@ import org.slf4j.MDC;
  */
 public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
 
-    private static final String KEY_CANNOT_BE_NULL = "Key cannot be null";
+    private static final String REQUEST_ID = "RequestId";
+    private static final String SERVICE_NAME = "ServiceName";
+    private static final String PARTNER_NAME = "PartnerName";
+
+    static final String[] ALL_KEYS = {REQUEST_ID, SERVICE_NAME, PARTNER_NAME};
 
     @Override
     public Logger getLogger(String className) {
@@ -43,26 +47,29 @@ public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
     }
 
     @Override
-    public void put(String key, String value) {
-        Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
-        MDC.put(key, value);
+    public void putRequestId(String requestId) {
+        put(REQUEST_ID, requestId);
     }
 
     @Override
-    public String get(String key) {
-        Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
-        return MDC.get(key);
+    public void putServiceName(String serviceName) {
+        put(SERVICE_NAME, serviceName);
     }
 
     @Override
-    public void remove(String key) {
-        Objects.requireNonNull(key, KEY_CANNOT_BE_NULL);
-        MDC.remove(key);
+    public void putPartnerName(String partnerName) {
+        put(PARTNER_NAME, partnerName);
     }
 
     @Override
     public void clear() {
-        MDC.clear();
+        for (String s : ALL_KEYS) {
+            MDC.remove(s);
+        }
+    }
+
+    private void put(String key, String value) {
+        MDC.put(key, Objects.requireNonNull(value, key));
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,27 +52,27 @@ public abstract class BaseContextPropagationTest {
     @DataProvider(name = PROVIDER)
     public static Object[][] contextServices() {
         // try both directly call the implementation and get it via the binding
-        return new Object[][] {
-                { new SLF4JLoggingServiceProvider() },
-                { new LoggingContextAdaptor() }
+        return new Object[][]{
+            {new SLF4JLoggingServiceProvider()},
+            {new LoggingContextAdaptor()}
         };
     }
 
     private static class LoggingContextAdaptor implements LoggingContextService {
 
         @Override
-        public void put(String key, String value) {
-            LoggingContext.put(key, value);
+        public void putRequestId(String requestId) {
+            LoggingContext.putRequestId(requestId);
         }
 
         @Override
-        public String get(String key) {
-            return LoggingContext.get(key);
+        public void putServiceName(String serviceName) {
+            LoggingContext.putServiceName(serviceName);
         }
 
         @Override
-        public void remove(String key) {
-            LoggingContext.remove(key);
+        public void putPartnerName(String partnerName) {
+            LoggingContext.putPartnerName(partnerName);
         }
 
         @Override
