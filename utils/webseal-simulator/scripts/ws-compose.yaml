@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+    WS:
+        container_name: sdc-sim
+        image: onap/sdc-simulator:latest
+        volumes:
+            - "/etc/localtime:/etc/localtime:ro"
+            - "/data/logs/WS/:/var/lib/jetty/logs"
+            - "/data/environments:/root/chef-solo/environments"
+        ports:
+            - "8286:8443"
+            - "8285:8080"
+        restart: always
+        environment:
+            HOST_IP: "10.0.2.15"
+            ENVNAME: "AUTO"
+            http_proxy: http://one.proxy.att.com:8080
+            https_proxy: http://one.proxy.att.com:8080
+            no_proxy: "localhost,127.0.0.1"
+            JAVA_OPTIONS: "-Xmx128m -Xms128m -Xss1m"
