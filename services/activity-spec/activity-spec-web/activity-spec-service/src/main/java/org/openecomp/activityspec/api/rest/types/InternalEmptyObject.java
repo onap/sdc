@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.versioning.dao.types;
+package org.openecomp.activityspec.api.rest.types;
 
-public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+
+/**
+ * Object of this class can be used to create empty Response body like "{}"
+ */
+@JsonAutoDetect
+public class InternalEmptyObject  {
+
 }
