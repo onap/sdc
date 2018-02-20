@@ -1,0 +1,12 @@
+{
+  "create": {
+    "unique_value" : "CREATE TABLE IF NOT EXISTS unique_value (type text, value text, PRIMARY KEY ((type, value)))"
+  },
+  "drop": {
+    "unique_value": "DROP TABLE IF EXISTS unique_value"
+  },
+  "alter": {
+  },
+  "actions": {
+  }
+}
