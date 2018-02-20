@@ -161,7 +161,7 @@ public enum JsonPresentationFields {
 	GROUP_INSTANCE_ARTIFACTS_UUID	("groupInstanceArtifactsUuid",	null),
 	GROUP_INSTANCE_PROPERTIES		("groupInstancesProperties",	null),
 	
-	//Component insatnce
+	//Component instance
 
 	CI_COMPONENT_UID 				("componentUid", null),
 	CI_POS_X 						("posX", null),
@@ -181,6 +181,12 @@ public enum JsonPresentationFields {
 	CI_SOURCE_MODEL_NAME			("sourceModelName", null),
 	CI_IS_PROXY						("isProxy", null),
 
+	//Workflow Operation
+	WO_TYPE ("operationType",null),
+	WO_INPUT_PARAMETERS ("inputParams",null),
+	WO_OUTPUT_PARAMETERS ("outputParams",null),
+	WO_PARAM_NAME("paramName", null),
+	WO_PARAM_ID("paramId", null)
 	;
 	
 
