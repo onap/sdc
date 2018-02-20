@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.versioning.dao.types;
+package org.openecomp.activityspec.be.datatypes;
 
-public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+@lombok.Data
+public class ActivitySpecParameter {
+  private String name;
+  private String type;
+  private String value;
+
+  @SuppressWarnings("unused")
+  public ActivitySpecParameter() {
+    // default constructor for automatic tools that use reflection
+  }
+
+  public ActivitySpecParameter(String name, String type) {
+    this.name = name;
+    this.type = type;
+  }
 }

@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.versioning.dao.types;
+package org.openecomp.activityspec.api.rest.types;
 
-public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+import java.util.List;
+
+@lombok.Data
+public class ActivitySpecListResponseDto {
+  private String id;
+  private String version;
+  String name;
+  List<String> categoryList;
+  private String status;
 }
