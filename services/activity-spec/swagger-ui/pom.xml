@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>activity-spec-api-docs</artifactId>
+    <parent>
+        <groupId>org.openecomp.activityspec</groupId>
+        <artifactId>activity-spec</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <plugin.name>activity-spec-api-docs</plugin.name>
+        <package.dir>${basedir}/api-docs</package.dir>
+        <rest.api.dir>${basedir}/../activity-spec-web/activity-spec-war</rest.api.dir>
+        <api.json.file>api.json</api.json.file>
+        <api.html.file>api.html</api.html.file>
+    </properties>
+    <build>
+        <plugins>
+            <!-- ============================================= -->
+            <!-- Clean api-docs folder -->
+            <!-- ============================================= -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.6.1</version>
+                <executions>
+                    <execution>
+                        <id>clean.dist.folder</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/target/api-docs</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${mvn.deploy.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${mvn.jar.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Copy api json files"/>
+                                <echo message= "${rest.api.dir}" />
+                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${basedir}/target/${api.json.file}"/>
+                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${package.dir}/${api.json.file}"/>
+                                <copy file="${rest.api.dir}/target/generated/${api.html.file}" tofile="${package.dir}/${api.html.file}"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${mvn.assembly.version}</version>
+                <configuration>
+                    <descriptor>assembly/swagger.xml</descriptor>
+                    <finalName>${plugin.name}</finalName>
+                    <outputDirectory>${package.dir}</outputDirectory>
+					<appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
