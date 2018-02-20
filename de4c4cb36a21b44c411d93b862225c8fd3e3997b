@@ -1,0 +1,227 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b11a4c6d",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "This is supposed to be the project\u0027s URL.",
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_311e3c60",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "What are you trying to inherit from the parent pom? Keep in mind that every change in the parent will affect its children and must be coordinated. You don\u0027t need it if you only want the services pom to trigger build of the aggregated sub-modules.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 13
+      },
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1139c0d6",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "Why /?",
+      "range": {
+        "startLine": 19,
+        "startChar": 16,
+        "endLine": 19,
+        "endChar": 18
+      },
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f13bf4ce",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "Is this dependency needed for every child pom?",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 19
+      },
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_515ae82a",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "It looks like you\u0027re relying on the root SDC pom. You have to see the activity spec as a separate repository/product.",
+      "range": {
+        "startLine": 72,
+        "startChar": 25,
+        "endLine": 72,
+        "endChar": 48
+      },
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d12ef88b",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "Why?",
+      "range": {
+        "startLine": 73,
+        "startChar": 15,
+        "endLine": 73,
+        "endChar": 43
+      },
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b131ecee",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "Please move this to pluginManagement",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 12
+      },
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_11122057",
+        "filename": "services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s a good groupId. First, it\u0027s too general and may be already used somewhere else. Second, it says openecomp. Who\u0027s decided on it?",
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_31071c1a",
+        "filename": "services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "According to https://maven.apache.org/pom.html, this should be the URL of the project. \"The URL, like the name, is not required. This is a nice gesture for projects users, however, so that they know where the project lives.\" If not sure, remove it.",
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c93e4e28",
+        "filename": "services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "Why does it inherit sdc-main? What do you want to bring from there? If we want services to have a development/release cycle of their own, we should not bring just the bare minimum. For example, onap-parent might be a good candidate.",
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f1145445",
+        "filename": "services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T15:44:22Z",
+      "side": 1,
+      "message": "Why does it begin with \"/\"? Did you see any documentation about it? Please send me the link.",
+      "revId": "de4c4cb36a21b44c411d93b862225c8fd3e3997b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
