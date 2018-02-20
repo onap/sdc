@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.versioning.dao.types;
+package org.openecomp.activityspec.api.rest.mapping;
 
-public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+import org.openecomp.activityspec.be.datatypes.ActivitySpecParameter;
+import org.openecomp.activityspec.api.rest.types.ActivitySpecParameterDto;
+import org.openecomp.sdcrests.mapping.MappingBase;
+
+public class MapDtoToActivityParameter  extends MappingBase<ActivitySpecParameterDto,
+    ActivitySpecParameter> {
+  @Override
+  public void doMapping(ActivitySpecParameterDto source, ActivitySpecParameter target) {
+    target.setName(source.getName());
+    target.setType(source.getType());
+    target.setValue(source.getValue());
+  }
 }

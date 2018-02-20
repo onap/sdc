@@ -1,0 +1,2 @@
+CREATE KEYSPACE IF NOT EXISTS activity_spec WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };
+CREATE KEYSPACE IF NOT EXISTS zusammen_activity_spec WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };

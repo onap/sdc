@@ -375,6 +375,17 @@
 				</dependency>
 			</dependencies>
 		</profile>
+
+		<profile>
+			<id>services</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>services</module>
+			</modules>
+		</profile>
+
 	</profiles>
 
 	<repositories>

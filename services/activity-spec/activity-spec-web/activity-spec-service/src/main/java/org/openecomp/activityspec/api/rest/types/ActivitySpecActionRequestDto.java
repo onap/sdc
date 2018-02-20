@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.versioning.dao.types;
+package org.openecomp.activityspec.api.rest.types;
 
-public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+@lombok.Data
+public class ActivitySpecActionRequestDto {
+  private ActivitySpecAction action;
 }
