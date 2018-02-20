@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_74f03267",
+        "filename": "utils/webseal-simulator/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-20T21:29:45Z",
+      "side": 1,
+      "message": "we are using chef for configuration of our dockers. under this project we have templates that are populeted during docker startup and move the file to the correct location",
+      "parentUuid": "5a93c517_642e4994",
+      "range": {
+        "startLine": 181,
+        "startChar": 17,
+        "endLine": 181,
+        "endChar": 59
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_90b15449",
         "filename": "utils/webseal-simulator/pom.xml",
         "patchSetId": 3
@@ -236,6 +260,30 @@
       "side": 1,
       "message": "I was mimicking the instructions that are defined here:\n\n    * https://git.onap.org/sdc/tree/utils/webseal-simulator/README.txt#n12\n\nOther wise I was not sure how to use and deploy this simulator.",
       "parentUuid": "5a93c517_10854459",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 51
+      },
+      "revId": "1fff301903485463abf26599bcd763382e2d54c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_54ebb677",
+        "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-02-20T21:29:45Z",
+      "side": 1,
+      "message": "as i said before in another comment we are using chef for configuration so we do not need this.",
+      "parentUuid": "5a93c517_843275f0",
       "range": {
         "startLine": 10,
         "startChar": 0,
