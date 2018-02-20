@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0e719cdf",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggerWrapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T08:32:52Z",
+      "side": 1,
+      "message": "You have to check every single property for null before pushing it into MDC. We don\u0027t want the logging to fail because of a non-populated property.",
+      "revId": "efad76fdd156c0bcb56b3ce8606d06ea6f6c9b04",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ce7654d7",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggerWrapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-20T08:32:52Z",
+      "side": 1,
+      "message": "All these must be constants. Even here in this code you\u0027re using them twice. In general this long row of put()\u0027s and remove()\u0027s looks ugly. Let\u0027s think how to make this code cleaner. \n\nAlso, try not to invent the name but re-use the ones that are being already used in logback.xml - it will make changing the configuration later easier (or won\u0027t be even required).",
+      "range": {
+        "startLine": 92,
+        "startChar": 1,
+        "endLine": 98,
+        "endChar": 48
+      },
+      "revId": "efad76fdd156c0bcb56b3ce8606d06ea6f6c9b04",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
