@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.versioning.dao.types;
+package org.openecomp.activityspec.api.server.interceptors;
 
-public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+import java.io.Serializable;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+
+/**
+ * This class is for Internal use only. Please don't use this class.
+ */
+@JsonAutoDetect
+public class InternalEmptyObject implements Serializable {
+
 }

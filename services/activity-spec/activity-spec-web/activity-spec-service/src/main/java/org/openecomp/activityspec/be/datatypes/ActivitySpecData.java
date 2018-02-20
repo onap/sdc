@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.versioning.dao.types;
+package org.openecomp.activityspec.be.datatypes;
 
-public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+import java.util.Collections;
+import java.util.List;
+
+@lombok.Data
+public class ActivitySpecData {
+  private List<ActivitySpecParameter> inputParameters = Collections.emptyList();
+  private List<ActivitySpecParameter> outputParameters = Collections.emptyList();
 }
+
