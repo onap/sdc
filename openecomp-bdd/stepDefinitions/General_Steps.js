@@ -47,15 +47,6 @@ Given('Response Data:', function (docString) {
 
 /**
  * @module ContextData
- * @description Sets the server for the test. overrides configuration.
- * @step Server with IP
- **/
-Given('Server host {string}', function (string) {
-	this.setServer(string);
-});
-
-/**
- * @module ContextData
  * @description Copy a property from the response data to context Item/VLM/VSP data, example: vsp.componentId
  * @step I want to save on the context for {string} property {string} with value {string}
  **/

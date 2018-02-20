@@ -60,23 +60,19 @@ class CustomWorld {
 
 		this.context.defaultServerType = 'onboarding';
 
-		this.context.prefix = config.prefix;
-		this.context.port = config.port;
-		this.context.protocol = config.protocol;
-
-		this.setServer = function(server) {
-			this.context.server = server;
-		};
+		this.config = config;
 
 		let context = this.context;
 		this.context.getUrlForType = (function(type) {
-			var that = context;
+			var _server = context.server;
+			var _config = config;
 			return function(type) {
-				let typeData = that[type];
-				return (config.protocol + '://' +
-					that.server + ':' +
+				let typeData = _config[type];
+				let _url = _config.protocol + '://' +
+					_server + ':' +
 					typeData.port + '/' +
-					typeData.prefix);
+					typeData.prefix;
+				return _url;
 			}
 		})();
 

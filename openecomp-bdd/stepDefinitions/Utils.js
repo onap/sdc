@@ -25,6 +25,8 @@ function _request(context, method, path, data, isBinary=false, type='onboarding'
 		url: server + path,
 		headers: context.headers
 	};
+	console.log('--> Calling REST ' + options.method +' url: ' + options.url);
+
 	return new Promise(function (resolve, reject) {
 		if (method === 'POST' || method === 'PUT') {
 			if (isBinary) {
@@ -106,6 +108,8 @@ function download(context, path, filePath,  callback, type='onboarding') {
 			url: server + path,
 			headers: context.headers
 		};
+	console.log('--> Calling REST download url: ' + options.url);
+
 	var file = fs.createWriteStream(filePath);
 		var r = request(options).pipe(file);
 		r.on('error', function (err) {
