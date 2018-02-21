@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -326,44 +326,40 @@ public class HeatValidationService {
   }
 
   /**
-   *
+   *  This method verifies whether the propertyValue contains a single parent port
    * @param fileName on which the validation is currently run
-   * @param globalContext gloabl validation context
+   * @param globalContext global validation context
    * @param heatResourceValidationContext heat resource validation context
    * @param propertyValue the value which is examined
    * @return whether the vlan has single parent port
    */
   public static boolean hasSingleParentPort(String fileName, GlobalValidationContext globalContext,
-                                      HeatResourceValidationContext heatResourceValidationContext,
-                                      Object propertyValue) {
-    boolean hasSingleParentPort;
-    if (propertyValue instanceof List && ((List) propertyValue).size() == 1) {
-      final Object listValue = ((List) propertyValue).get(0);
-
-      final Set<String> getParamValues =
-          HeatStructureUtil.getReferencedValuesByFunctionName(fileName, "get_param",
-              listValue, globalContext);
-      hasSingleParentPort = getParamValues.isEmpty() || (getParamValues.size() == 1) &&
-          validateGetParamValueOfType(getParamValues, heatResourceValidationContext,
-              DefinedHeatParameterTypes.STRING.getType());
-    } else {
-      hasSingleParentPort = false;
+                                            HeatResourceValidationContext heatResourceValidationContext,
+                                            Object propertyValue) {
+    final boolean isList = propertyValue instanceof List;
+    if (!isList || ((List) propertyValue).size() != 1) {
+      return false;
     }
-    return hasSingleParentPort;
+
+    final Object listValue = ((List) propertyValue).get(0);
+
+    final Set<String> getParamValues =
+        HeatStructureUtil.getReferencedValuesByFunctionName(fileName, "get_param",
+            listValue, globalContext);
+
+    return getParamValues.isEmpty() || (getParamValues.size() == 1) &&
+        validateGetParamValueOfType(getParamValues, heatResourceValidationContext,
+            DefinedHeatParameterTypes.STRING.getType());
+
   }
+
 
   private static boolean validateGetParamValueOfType(Set<String> values,
                                         HeatResourceValidationContext
-                                            heatResourceValidationContext,String type) {
-    Optional<String> value = values.stream().findAny();
-    boolean isString = false;
-    if (value.isPresent()) {
-      isString =
-          Objects.equals(heatResourceValidationContext.getHeatOrchestrationTemplate
-              ().getParameters().get(value.get()).getType(), type);
-    }
+                                            heatResourceValidationContext, String type) {
 
-    return isString;
+    return values.stream().anyMatch(e -> Objects.equals(
+        heatResourceValidationContext.getHeatOrchestrationTemplate().getParameters().get(e).getType(), type));
   }
 
 }

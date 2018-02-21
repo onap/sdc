@@ -69,5 +69,4 @@ resources:
             }
           ]
         }
-      virtual_network_refs: [{ get_param: net2 }]
 
