@@ -1,0 +1,49 @@
+# jTosca validation issues 
+#by error code, type the validation issue to be CRITICAL/WARNING 
+# since Conformance level considered to this type. for example:
+#JE001: 
+#      - issueType: WARNING
+#        sinceCsarConformanceLevel: 3.0     
+#      - issueType: WARNING
+#        sinceCsarConformanceLevel: 5.0
+validationIssues:
+    # TypeMismatchError
+    JE001: 
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    # MissingType
+    JE002:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #MissingRequiredFieldError
+    JE003:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #MissingRequiredFieldError2
+    JE004:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #InvalidGroupTargetException
+    JE005:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #Schema definition of \"%s\" has \"status\" attribute with an invalid value
+    JE006:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #The unit \"%s\" is not valid
+    JE007:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #ValidationError
+    JE008:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #ValueError: Expected max 2 arguments for function \"get_input\" but received \"%s\"",args.size())
+    JE009:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0
+    #MissingRequiredFieldError3
+    JE010:
+        - issueType: WARNING
+          sinceCsarConformanceLevel: 3.0

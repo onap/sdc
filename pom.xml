@@ -88,7 +88,7 @@
 		<extentreports.version>3.0.3</extentreports.version>
 		
 		<!-- parser-->
-		<sdc-tosca-parser.version>1.1.56-SNAPSHOT</sdc-tosca-parser.version>
+		<sdc-tosca-parser.version>1.2.3-SNAPSHOT</sdc-tosca-parser.version>
 		
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
