@@ -21,20 +21,16 @@ import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
-import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.impl.util.HeatValidationService;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 public class VirtualMachineInterfaceValidator implements ResourceValidator {
   private static final ErrorMessageCode ERROR_CODE_VLAN1 = new ErrorMessageCode("VLAN1");
@@ -47,14 +43,57 @@ public class VirtualMachineInterfaceValidator implements ResourceValidator {
     if (ToggleableFeature.VLAN_TAGGING.isActive()) {
       HeatResourceValidationContext heatResourceValidationContext =
           (HeatResourceValidationContext) validationContext;
-      Optional<Object> tagPropertyValue = getVlanTagPropertyValue(resourceEntry.getValue());
+      final ValidityStatus status = calculateValidityStatus(resourceEntry.getValue());
 
-      tagPropertyValue
-          .ifPresent(o -> validateHasSingleParentPort(fileName, resourceEntry, globalContext,
-              heatResourceValidationContext));
-      validateHasTwoProperties(fileName, resourceEntry, globalContext);
-
+      switch (status) {
+        case BOTH_PROPERTIES_PRESENT:
+          validateHasSingleParentPort(fileName, resourceEntry, globalContext,
+              heatResourceValidationContext);
+          break;
+        case REFS_PROPERTY_MISSING:
+          globalContext
+              .addMessage(fileName, ErrorLevel.WARNING,
+                  ErrorMessagesFormatBuilder
+                      .getErrorWithParameters(
+                          ERROR_CODE_VLAN2,
+                          Messages.VLAN_SUBINTERFACE_MISSING_REFS_PROPERTY.getErrorMessage(),
+                          resourceEntry.getKey()));
+          break;
+        case VLAN_TAG_PROPERTY_MISSING:
+          globalContext
+              .addMessage(fileName, ErrorLevel.WARNING,
+                  ErrorMessagesFormatBuilder
+                      .getErrorWithParameters(
+                          ERROR_CODE_VLAN2,
+                          Messages.VLAN_SUBINTERFACE_MISSING_TAG_PROPERTY.getErrorMessage(),
+                          resourceEntry.getKey()));
+          validateHasSingleParentPort(fileName, resourceEntry, globalContext,
+              heatResourceValidationContext);
+          break;
+        case BOTH_PROPERTIES_MISSING:
+          // this is a port and not a VLAN, no further validation required
+          break;
+        default :
+          throw new IllegalArgumentException("Illegal status achieved, was expecting a value to be " +
+              "one of the " +
+              "following only :BOTH_PROPERTIES_PRESENT,BOTH_PROPERTIES_MISSING," +
+              "VLAN_TAG_PROPERTY_MISSING,REFS_PROPERTY_MISSING");
+      }
     }
+  }
+
+  private ValidityStatus calculateValidityStatus(Resource resource) {
+    Optional<Object> refsPropertyValue = getRefsPropertyValue(resource);
+    Optional<Object> tagPropertyValue = getVlanTagPropertyValue(resource);
+
+    if (refsPropertyValue.isPresent() && tagPropertyValue.isPresent()) {
+      return ValidityStatus.BOTH_PROPERTIES_PRESENT;
+    }
+    if (!refsPropertyValue.isPresent() && !tagPropertyValue.isPresent()) {
+      return ValidityStatus.BOTH_PROPERTIES_MISSING;
+    }
+    return refsPropertyValue.map(o -> ValidityStatus.VLAN_TAG_PROPERTY_MISSING)
+        .orElse(ValidityStatus.REFS_PROPERTY_MISSING);
   }
 
 
@@ -67,9 +106,9 @@ public class VirtualMachineInterfaceValidator implements ResourceValidator {
     if (Objects.isNull(refsPropertyValue)) {
       return;
     }
-    boolean hasSingleParentPort= HeatValidationService.hasSingleParentPort(fileName, globalContext,
+    boolean hasSingleParentPort = HeatValidationService.hasSingleParentPort(fileName, globalContext,
         heatResourceValidationContext,
-            refsPropertyValue);
+        refsPropertyValue);
     if (!hasSingleParentPort) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
           .getErrorWithParameters(ERROR_CODE_VLAN1,
@@ -77,37 +116,6 @@ public class VirtualMachineInterfaceValidator implements ResourceValidator {
               resourceEntry.getKey()));
     }
 
-
-  }
-
-
-  private void validateHasTwoProperties(String fileName, Map.Entry<String, Resource> resourceEntry,
-                                        GlobalValidationContext globalContext) {
-
-    Optional<Object> refsPropertyValue = getRefsPropertyValue(resourceEntry.getValue());
-    Optional<Object> tagPropertyValue = getVlanTagPropertyValue(resourceEntry.getValue());
-
-
-    if (refsPropertyValue.isPresent() && !tagPropertyValue.isPresent()) {
-      globalContext
-          .addMessage(fileName, ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      ERROR_CODE_VLAN2,
-                      Messages.VLAN_SUBINTERFACE_MISSING_TAG_PROPERTY.getErrorMessage(),
-                      resourceEntry.getKey())
-          );
-
-    } else if (!refsPropertyValue.isPresent() && tagPropertyValue.isPresent()) {
-      globalContext
-          .addMessage(fileName, ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      ERROR_CODE_VLAN2,
-                      Messages.VLAN_SUBINTERFACE_MISSING_REFS_PROPERTY.getErrorMessage(),
-                      resourceEntry.getKey()));
-
-    }
 
   }
 
@@ -129,6 +137,14 @@ public class VirtualMachineInterfaceValidator implements ResourceValidator {
 
   }
 
+
+  private enum ValidityStatus {
+    BOTH_PROPERTIES_MISSING,
+    BOTH_PROPERTIES_PRESENT,
+    REFS_PROPERTY_MISSING,
+    VLAN_TAG_PROPERTY_MISSING
+
+  }
 
   private enum Messages {
     VLAN_SUBINTERFACE_MORE_THAN_ONE_PORT(
