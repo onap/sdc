@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_655aba2b",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/heatresource/VirtualMachineInterfaceValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T13:18:59Z",
+      "side": 1,
+      "message": "Will break if a new value is added to the enumeration :( \nI think something along the lines of \n\nthrow new IllegalArgumentException(\"Illegal status. Can only be one of \" + Arrays.toString(ValidityStatus.values())); \n\nmay work.",
+      "revId": "6374c7280f47a3ce4ff2f7060db4aa82d64a0763",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
