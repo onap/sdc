@@ -79,6 +79,10 @@
           "OS::Contrail::ServiceInstance": {
             "enable": true,
             "implementationClass": "org.openecomp.sdc.validation.impl.validators.namingconvention.ContrailServiceInstanceNamingConventionValidator"
+          },
+          "OS::ContrailV2::VirtualMachineInterface": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.namingconvention.VirtualMachineInterfaceGuidelineValidator"
           }
         }
       }
