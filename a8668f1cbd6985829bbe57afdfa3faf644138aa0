@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3a3931f2",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/main/java/org/openecomp/sdc/versioning/dao/types/VersionStatus.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T12:56:06Z",
+      "side": 1,
+      "message": "Please check if the license if correct.",
+      "revId": "a8668f1cbd6985829bbe57afdfa3faf644138aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9a3885f0",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/main/java/org/openecomp/sdc/versioning/dao/types/VersionStatus.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T12:56:06Z",
+      "side": 1,
+      "message": "Why are these changes needed for activity spec? If the versioning lib has to change - then do it. But here you\u0027re introducing a new component. This shouldn\u0027t affect code in some other project (potentially in another repository).",
+      "revId": "a8668f1cbd6985829bbe57afdfa3faf644138aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fa2669cd",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T12:56:06Z",
+      "side": 1,
+      "message": "A version for this must be defined somewhere (usually pluginManagement of a parent pom). Please check, I believe you\u0027re getting a warning from Maven about it.",
+      "revId": "a8668f1cbd6985829bbe57afdfa3faf644138aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
