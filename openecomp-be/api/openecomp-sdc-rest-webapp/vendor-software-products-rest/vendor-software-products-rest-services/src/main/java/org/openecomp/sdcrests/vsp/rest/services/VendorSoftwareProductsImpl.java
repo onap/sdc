@@ -14,9 +14,30 @@
  * limitations under the License.
  */
 
-
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -27,7 +48,6 @@ import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
@@ -36,7 +56,6 @@ import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
@@ -87,30 +106,6 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
 
 @Named
 @Service("vendorSoftwareProducts")
@@ -342,7 +337,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   @Override
-  public Response getValidationVsp(String user) throws Exception {
+  public Response getValidationVsp(String user) {
     if (validationVsp != null) {
       return Response.ok(validationVsp).build();
     }
@@ -424,12 +419,10 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     Response.ResponseBuilder response = Response.ok(zipFile);
     if (zipFile == null) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_FAIL + vspId);
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + zipFile.getName());
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_SUCCESS + vspId);
     return response.build();
   }
 
@@ -500,15 +493,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     Map<String, List<ErrorMessage>> compilationErrors =
         vendorSoftwareProductManager.compile(vspId, version);
     if (!validationResponse.isValid() || MapUtils.isNotEmpty(compilationErrors)) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP_FAIL + vspId);
-      if (validationResponse.getVspErrors() != null) {
-        validationResponse.getVspErrors().forEach(errorCode -> LOGGER.audit(AuditMessages
-            .AUDIT_MSG + String.format(SUBMIT_VSP_ERROR, errorCode.message(), vspId)));
-      }
-      if (validationResponse.getUploadDataErrors() != null) {
-        validationResponse.getUploadDataErrors().values().forEach(errorMessages
-            -> printAuditForErrors(errorMessages, vspId, SUBMIT_VSP_ERROR));
-      }
+
       activityLogManager.logActivity(
           new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false,
               "Failed on validation before submit", ""));
@@ -517,7 +502,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     versioningManager.submit(vspId, version, message);
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
     activityLogManager.logActivity(
         new ActivityLogEntity(vspId, version, ActivityType.Submit, user, true, "", message));
     return Optional.empty();
@@ -621,14 +605,5 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     String permission = permissionsManager.getUserItemPermiission(itemId, userId);
     return permission != null && permission
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name());
-  }
-
-  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(
-            AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(), vspId));
-      }
-    });
   }
 }
