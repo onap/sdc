@@ -1,0 +1,197 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fa03c93f",
+        "filename": "catalog-be/src/main/resources/config/logback.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "Unfortunately, you can\u0027t just update the pattern because the file is shared with Catalog. Let\u0027s think how to get around it.",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1a01d537",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/AuditData.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "We need a good javadoc here",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_baf9c14f",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/AuditData.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "Meaningful Javadoc on all the getters.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 32
+      },
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3a9db10a",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/AuditData.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "I think according to the Java coding style enums must be defined at the top of the enclosing class.",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9a9c0511",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/AuditData.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "It should be just an enam. I don\u0027t think there\u0027s place for any additional info here - it\u0027s just an indication. Don\u0027t decide here what string will be associated with each value. Besides, it\u0027s redundant because name() does the same. Run System.out.println(StatusCode.COMPLETE.name()) or System.out.println(StatusCode.ERROR.name())",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5aa2fd4b",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/Logger.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "Why these new empty lines?",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fa8ae9bd",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/test/java/org/openecomp/sdc/logging/api/SpyAuditData.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "Please add a license header",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ba90e1ed",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggerWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "A comment explaining what this format is can be helpful (because it\u0027s not so obvious). I think I sent you a link.",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7abed966",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggerWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "I prefer a blank line before it, as the method is more than one line and it kind of \"sticks\" to the signature.",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9ac3a5ec",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggingServiceProvider.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "Blank lines could help visually separate different sections of the code, making it easier to read.",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3ab4d180",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/test/java/org/openecomp/sdc/logging/api/LoggerTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:22:59Z",
+      "side": 1,
+      "message": "You should have just renamed this class, instead of delete/create - git knows how to handle it.",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
