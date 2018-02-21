@@ -161,6 +161,46 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_daa4cd4c",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggerWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:38:27Z",
+      "side": 1,
+      "message": "This could be DATE_FORMAT.format(data.getStartTime()). \n\nFor example,\n\nSystem.out.println(DATE_FORMAT.format(System.currentTimeMillis()));\n\nprints 2018-02-21T13:33:57.506+02:00 (based on the local machine\u0027s clock - exactly what we need)\n\n\nPlease research a bit what would be a good way to pass a date. Although \"long\" should work, I\u0027m not sure it\u0027s the best solution.",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 82
+      },
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7a65791c",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggerWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-21T11:38:27Z",
+      "side": 1,
+      "message": "Well, I wouldn\u0027t do it. Too much brains for a logger :) I\u0027d let invalid values slip in - it will make clear the application has a problem. It doesn\u0027t matter if the field will be blank, or negative, or garbled - it\u0027s clear something is wrong.",
+      "revId": "399b7c9e7d862e882e0dfeecdc675df93e09007d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9ac3a5ec",
         "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/slf4j/SLF4JLoggingServiceProvider.java",
         "patchSetId": 7
