@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4b246d5f",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why do we need to mention httpclient dependency here?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6b292936",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why do we need to specify httpcore dependency here? is it cxf specific?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2bf801c2",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "who needs spring-web artifact and why?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0bfbc5c1",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "who needs springmvc dependency?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_eb6699ba",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why do we need to specify this compiler plugin in this pom?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ab0c11ee",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "what this surefire plugin configuration doing here? any purpose does it serve?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4b0d4de7",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "what purpose does this configuration serve?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0b742566",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/src/main/webapp/WEB-INF/jetty-web.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why do we need jetty specific deployment descriptor? we should keep our impl container agnostic unless there is a need which cannot be addressed using J2EE specs.",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0b22e551",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/src/main/webapp/WEB-INF/spring-mapper-servlet.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why do we need this file?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ab65f1b5",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why we need this servlet? we are using cxf as jax-ws provide.",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6b12890a",
+        "filename": "services/activity-spec/swagger-ui/WEB-INF/jetty-web.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why do we need deployment descriptor specific to jetty? what purpose does it serve?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2b1fa109",
+        "filename": "services/activity-spec/swagger-ui/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T06:40:33Z",
+      "side": 1,
+      "message": "why do we need maven-deploy-plugin?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
