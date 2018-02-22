@@ -25,7 +25,7 @@ function cleanup {
 	else
 	    echo "performing $1 docker cleanup"
 	    tmp=`docker ps -a -q --filter="name=$1"`
-	    if [[ ! -z "$tmp" ]]; then
+	    if [[ ! -z "$tmp" ]]; then 
 		docker rm -f ${tmp}
             fi
 	fi
@@ -76,7 +76,7 @@ fi
 function probe_es {
 
 es_stat=false
-health_Check_http_code=$(curl -o /dev/null -w '%{http_code}' http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
+health_Check_http_code=$(curl -o /dev/null -w '%{http_code}' http://${IP}:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
 if [[ "$health_Check_http_code" -eq 200 ]]
  then
    echo DOCKER start finished in $2 seconds
@@ -132,20 +132,20 @@ function monitor_docker {
 }
 
 function healthCheck {
-	curl localhost:9200/_cluster/health?pretty=true
+	curl ${IP}:9200/_cluster/health?pretty=true
 
 	echo "BE health-Check:"
-	curl http://localhost:8080/sdc2/rest/healthCheck
+	curl http://${IP}:8080/sdc2/rest/healthCheck
 
 	echo ""
 	echo ""
 	echo "FE health-Check:"
-	curl http://localhost:8181/sdc1/rest/healthCheck
+	curl http://${IP}:8181/sdc1/rest/healthCheck
 
 
 	echo ""
 	echo ""
-	healthCheck_http_code=$(curl -o /dev/null -w '%{http_code}' -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://localhost:8080/sdc2/rest/v1/user/demo;)
+	healthCheck_http_code=$(curl -o /dev/null -w '%{http_code}' -H "Accept: application/json" -H "Content-Type: application/json" -H "USER_ID: jh0003" http://${IP}:8080/sdc2/rest/v1/user/demo;)
 	if [[ ${healthCheck_http_code} != 200 ]]
 	then
 		echo "Error [${healthCheck_http_code}] while user existance check"
@@ -177,7 +177,7 @@ function elasticHealthCheck {
 		exit ${healthCheck_http_code}
 	fi
 	echo "ES started correctly"
-	curl localhost:9200/_cluster/health?pretty=true
+	curl ${IP}:9200/_cluster/health?pretty=true
 	return ${healthCheck_http_code}
 }
 
