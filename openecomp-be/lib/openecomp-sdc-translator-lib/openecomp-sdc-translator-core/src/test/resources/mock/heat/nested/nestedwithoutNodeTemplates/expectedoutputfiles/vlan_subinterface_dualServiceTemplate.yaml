@@ -120,7 +120,7 @@ topology_template:
       members:
       - contrail_vmi_subinterface
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual
+    node_type: org.openecomp.resource.abstract.nodes.heat.subinterface.vlan_subinterface_dual
     capabilities:
       feature_contrail_vmi_subinterface:
       - contrail_vmi_subinterface
@@ -134,4 +134,4 @@ topology_template:
       - link
       dependency_contrail_vmi_subinterface:
       - contrail_vmi_subinterface
-      - dependency
+      - dependency

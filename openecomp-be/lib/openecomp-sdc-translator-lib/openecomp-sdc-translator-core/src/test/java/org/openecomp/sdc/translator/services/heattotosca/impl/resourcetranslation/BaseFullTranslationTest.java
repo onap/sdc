@@ -65,6 +65,7 @@ public class BaseFullTranslationTest {
   public static void enableToggleableFeatures(){
     manager = new TestFeatureManager(ToggleableFeature.class);
     manager.enableAll();
+    TestFeatureManagerProvider.setFeatureManager(manager);
   }
 
 
