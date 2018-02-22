@@ -30,7 +30,9 @@ import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
@@ -46,6 +48,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.RequirementAssignmentData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.TypeComputeConsolidationData;
+import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -691,5 +694,15 @@ public class TestUtils {
     return Optional.empty();
   }
 
+  public static ServiceTemplate createInitServiceTemplate() {
+    ServiceTemplate initServiceTemplate = new ServiceTemplate();
+    Map<String, String> templateMetadata = new HashMap<>();
+    templateMetadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, "Test");
+    initServiceTemplate.setTosca_definitions_version(ToscaConstants.TOSCA_DEFINITIONS_VERSION);
+    initServiceTemplate.setMetadata(templateMetadata);
+    initServiceTemplate.setTopology_template(new TopologyTemplate());
+    initServiceTemplate.setImports(GlobalTypesGenerator.getGlobalTypesImportList());
+    return initServiceTemplate;
+  }
 
 }

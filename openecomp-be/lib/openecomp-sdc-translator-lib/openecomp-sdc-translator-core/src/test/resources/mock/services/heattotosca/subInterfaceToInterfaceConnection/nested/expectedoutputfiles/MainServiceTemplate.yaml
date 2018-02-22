@@ -235,7 +235,7 @@ topology_template:
           node: server_cmaui_nova
           relationship: tosca.relationships.network.BindsTo
     test_nested_invalidConnection:
-      type: org.openecomp.resource.abstract.nodes.heat.nested
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
       directives:
       - substitutable
       properties:
@@ -243,6 +243,11 @@ topology_template:
         service_template_filter:
           substitute_service_template: nestedServiceTemplate.yaml
         p2: server_cmaui_nova
+      requirements:
+      - binding_template_Vlan_1:
+          capability: tosca.capabilities.network.Bindable
+          node: test_Vlan1
+          relationship: tosca.relationships.network.BindsTo
     test_net2:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
@@ -271,7 +276,7 @@ topology_template:
           node: server_cmaui_nova
           relationship: tosca.relationships.network.BindsTo
     test_resourceGroup:
-      type: org.openecomp.resource.abstract.nodes.heat.nested
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
       directives:
       - substitutable
       properties:
@@ -307,16 +312,11 @@ topology_template:
         network_name:
           get_input: jsa_net_name
     test_Vlan2:
-      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
-        virtual_machine_interface_refs:
-        - template_VMInt_OAM_lb_1
         name: vlan
         virtual_network_refs:
         - test_net1
-        virtual_machine_interface_properties:
-          sub_interface_vlan_tag:
-            get_input: lb_st_vlan_type_oam
         virtual_machine_interface_allowed_address_pairs:
           allowed_address_pair:
           - address_mode: active-standby
@@ -334,28 +334,18 @@ topology_template:
             mac:
               get_input: mac_address
         virtual_machine_interface_mac_addresses:
-          mac_address:
-          - get_input: mac_address
+        - get_input: mac_address
       requirements:
       - link:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: template_VMInt_OAM_lb_1
-          relationship: tosca.relationships.network.BindsTo
     test_Vlan1:
-      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
-        virtual_machine_interface_refs:
-        - test_Vlan2
         name: vlan
         virtual_network_refs:
         - test_net1
-        virtual_machine_interface_properties:
-          sub_interface_vlan_tag:
-            get_input: lb_st_vlan_type_oam
         virtual_machine_interface_allowed_address_pairs:
           allowed_address_pair:
           - address_mode: active-standby
@@ -373,8 +363,7 @@ topology_template:
             mac:
               get_input: mac_address
         virtual_machine_interface_mac_addresses:
-          mac_address:
-          - get_input: mac_address
+        - get_input: mac_address
       requirements:
       - link:
           capability: tosca.capabilities.network.Linkable
@@ -395,7 +384,7 @@ topology_template:
           - cmaui_names
           - 0
     test_nested:
-      type: org.openecomp.resource.abstract.nodes.heat.nested
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
       directives:
       - substitutable
       properties:
@@ -439,4 +428,4 @@ topology_template:
       - test_Vlan2
       - test_Vlan1
       - server_cmaui_nova
-      - test_nested
+      - test_nested

@@ -171,11 +171,16 @@ topology_template:
       - substitutable
       properties:
         port_cmaui_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
         port_cmaui_port_network:
+        - packet_external_network_1
         - packet_external_network_1
         compute_cmaui_1c1_availability_zone:
         - get_input: availability_zone_0
@@ -187,14 +192,20 @@ topology_template:
             is_required: false
         port_cmaui_port_replacement_policy:
         - AUTO
+        - AUTO
         vm_image_name:
           get_input: cmaui_1c1_image
         port_cmaui_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
         compute_cmaui_1c1_name:
         - get_input:
           - cmaui_1c1_names
@@ -1690,4 +1701,4 @@ topology_template:
       - dependency
       dependency_server_1b_pd_2:
       - abstract_pd_server_1b
-      - dependency_pd_server_1b
+      - dependency_pd_server_1b

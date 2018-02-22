@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.config.api.Configuration;
 import org.openecomp.config.api.ConfigurationManager;
@@ -91,6 +93,9 @@ public class TranslationContext {
   private Set<String> serviceTemplatesWithoutNodeTemplateSection = new HashSet<>();
 
   private Set<String> nodeTemplateIdsPointingToStWithoutNodeTemplates = new HashSet<>();
+
+  //Key - service template name, value - Map of key: node template id, value: proerties with %index%
+  private Map<String, ListMultimap<String, String>> indexVarProperties = new HashMap<>();
 
   static {
     Configuration config = ConfigurationManager.lookup();
@@ -169,6 +174,25 @@ public class TranslationContext {
     this.unifiedSubstitutionData
         .get(serviceTemplateName)
         .addCleanedNodeTemplate(nodeTemplateId, unifiedCompositionEntity, nodeTemplate);
+  }
+
+  public Optional<List<String>> getIndexVarProperties(String serviceTemplateName,
+                                    String nodeTemplateId) {
+    ListMultimap<String, String> serviceTemplateIndexVarProperties = this.indexVarProperties
+        .get(serviceTemplateName);
+    if (Objects.nonNull(serviceTemplateIndexVarProperties)) {
+      return Optional.of(this.indexVarProperties.get(serviceTemplateName).get(nodeTemplateId));
+    }
+    return Optional.empty();
+  }
+
+  public void addIndexVarProperties(String serviceTemplateName,
+                                     String nodeTemplateId,
+                                     List<String> indexVarProperties) {
+    this.indexVarProperties.putIfAbsent(serviceTemplateName, ArrayListMultimap.create());
+    this.indexVarProperties
+        .get(serviceTemplateName)
+        .putAll(nodeTemplateId, indexVarProperties);
   }
 
   public NodeTemplate getCleanedNodeTemplate(String serviceTemplateName,
