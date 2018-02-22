@@ -1,0 +1,119 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.subinterface.nested:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      aap_untrusted_ip_prefix:
+        type: string
+        description: ip prefix for primary vDBE VM on the VAN untrusted network
+        required: true
+        status: SUPPORTED
+      aap_sec_untrusted_ip_prefix:
+        type: string
+        description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
+        required: true
+        status: SUPPORTED
+      vdbe_subport_network:
+        type: string
+        description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
+        required: true
+        status: SUPPORTED
+      ip_v6_address:
+        type: string
+        description: IPv6 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      counter:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      subinterfaces_name_prefix:
+        type: string
+        description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
+        required: true
+        status: SUPPORTED
+      ip_address:
+        type: string
+        description: IPv4 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      aap_address_mode:
+        type: string
+        description: Address mode for the vDBE cluster IP
+        required: true
+        status: SUPPORTED
+      aap_untrusted_v6_ip_prefix:
+        type: string
+        description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
+        required: true
+        status: SUPPORTED
+      parent_interface:
+        type: string
+        description: Parent Contrail interface
+        required: true
+        status: SUPPORTED
+      mac_address:
+        type: string
+        description: HW MAC address to use for subinterface
+        required: true
+        status: SUPPORTED
+      vlan_tag_list:
+        type: list
+        description: List of VLAN IDs to use for subinterfaces
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      aap_sec_untrusted_ip_prefix_len:
+        type: string
+        description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
+        required: true
+        status: SUPPORTED
+      vmac_address:
+        type: string
+        description: virtual MAC address to use for subinterface
+        required: true
+        status: SUPPORTED
+      aap_untrusted_v6_ip_prefix_len:
+        type: string
+        description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
+        required: true
+        status: SUPPORTED
+      aap_untrusted_ip_prefix_len:
+        type: string
+        description: ip prefix length for the primary vDBE VM on the VAN untrusted network
+        required: true
+        status: SUPPORTED
+    requirements:
+    - dependency_vdbe_untr_vmi_subport:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_vdbe_untr_vmi_subport:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_vdbe_untr_vmi_subport:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      feature_vdbe_untr_vmi_subport:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED

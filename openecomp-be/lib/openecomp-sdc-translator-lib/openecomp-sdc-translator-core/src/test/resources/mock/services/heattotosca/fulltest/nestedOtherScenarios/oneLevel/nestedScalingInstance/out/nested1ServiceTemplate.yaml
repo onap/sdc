@@ -63,11 +63,16 @@ topology_template:
       - substitutable
       properties:
         port_cmaui_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
         port_cmaui_port_network:
+        - get_input: net
         - get_input: net
         vm_flavor_name:
           get_input: cmaui_flavor
@@ -86,14 +91,20 @@ topology_template:
         - get_input: availability_zone_0
         port_cmaui_port_replacement_policy:
         - AUTO
+        - AUTO
         vm_image_name:
           get_input: cmaui_image
         port_cmaui_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
         service_template_filter:
           substitute_service_template: Nested_cmauiServiceTemplate.yaml
           count: 2
@@ -455,4 +466,4 @@ topology_template:
       - dependency_cmaui_cmaui_port
       local_storage_server_cmaui_1:
       - abstract_cmaui
-      - local_storage_cmaui
+      - local_storage_cmaui

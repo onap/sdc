@@ -269,7 +269,7 @@ topology_template:
           node: perimeta_ssc_b_server_0
           relationship: tosca.relationships.network.BindsTo
     perimeta_ssc_b_untrusted_0_vlan_ports:
-      type: org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.vlan_subinterface_dual
       directives:
       - substitutable
       properties:
@@ -893,4 +893,4 @@ topology_template:
       - dependency
       link_perimeta_ssc_b_ha_0_port:
       - perimeta_ssc_b_ha_0_port
-      - link
+      - link
