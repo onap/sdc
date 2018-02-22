@@ -924,10 +924,14 @@ topology_template:
       - substitutable
       properties:
         port_1c1_t1_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - myIPs
-            - 1
+        - - ip_address:
+              get_input:
+              - myIPs
+              - 1
+        - - ip_address:
+              get_input:
+              - myIPs
+              - 1
         port_1c1_t1_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -947,11 +951,16 @@ topology_template:
         - RAW1
         - RAW1
         port_1c1_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c1_t1_port_name:
@@ -961,6 +970,7 @@ topology_template:
         - group: BE_Affinity_group
         - group: BE_Affinity_group
         port_1c1_t1_port_network:
+        - 1c1_scalling_instance_network
         - 1c1_scalling_instance_network
         service_template_filter:
           substitute_service_template: Nested_1c11_scalling_instanceServiceTemplate.yaml
@@ -1111,10 +1121,14 @@ topology_template:
         - group: BE_Affinity_group
         - group: BE_Affinity_group
         port_1c1_t1_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - myIPs
-            - 1
+        - - ip_address:
+              get_input:
+              - myIPs
+              - 1
+        - - ip_address:
+              get_input:
+              - myIPs
+              - 1
         compute_1c12_scalling_instance_name:
         - get_input:
           - 1c12_scalling_instance_names
@@ -1131,11 +1145,16 @@ topology_template:
         - RAW1
         - RAW1
         port_1c1_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c1_t1_port_name:
@@ -1145,6 +1164,7 @@ topology_template:
         - get_input: availabilityzone_name
         - get_input: availabilityzone_name
         port_1c1_t1_port_network:
+        - 1c1_scalling_instance_network
         - 1c1_scalling_instance_network
         service_template_filter:
           substitute_service_template: Nested_1c12_scalling_instanceServiceTemplate.yaml
@@ -2110,4 +2130,4 @@ topology_template:
         name: def
         affinity: host
       targets:
-      - BE_Affinity_group
+      - BE_Affinity_group

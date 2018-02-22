@@ -920,6 +920,8 @@ public class ConsolidationService {
           }
         }
       }
+      unifiedCompositionData.setSubInterfaceTemplateConsolidationDataList(
+          subInterfaceTemplateConsolidationDataList);
       unifiedCompositionDataList.add(unifiedCompositionData);
     }
 
@@ -1034,13 +1036,13 @@ public class ConsolidationService {
 
   List<String> getPropertiesWithIdenticalVal(UnifiedCompositionEntity entity) {
     switch (entity) {
-      case Compute:
+      case COMPUTE:
         return getComputePropertiesWithIdenticalVal();
 
-      case Other:
+      case OTHER:
         return getComputePropertiesWithIdenticalVal();
 
-      case Port:
+      case PORT:
         return getPortPropertiesWithIdenticalVal();
 
       default:

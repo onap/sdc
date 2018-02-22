@@ -19,7 +19,9 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
+
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -29,8 +31,27 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
 
   // key - subport type - for ResourceGroup it is the nested file name
   // value - List of subports of that type in the port
-    private final ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
-        Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
+  private final ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
+      Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
+
+  private String networkRole;
+
+  public String getNetworkRole() {
+    return networkRole;
+  }
+
+  public void setNetworkRole(String networkRole) {
+    this.networkRole = networkRole;
+  }
+
+  public List<SubInterfaceTemplateConsolidationData> getSubInterfaceConsolidationData(
+      String subInterfaceType) {
+    return this.subInterfaceConsolidationData.get(subInterfaceType);
+  }
+
+  public Set<String> getAllSubInterfaceNodeTypes() {
+    return this.subInterfaceConsolidationData.keySet();
+  }
 
   public void addSubInterfaceConsolidationData(String subPortType,
                                                SubInterfaceTemplateConsolidationData
@@ -43,29 +64,31 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
         other.subInterfaceConsolidationData.keySet());
   }
 
-    public void copyMappedInto(ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceTypeToEntity) {
+  public void copyMappedInto(ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceTypeToEntity) {
     subInterfaceTypeToEntity.putAll(this.subInterfaceConsolidationData);
   }
 
-    public void copyFlatInto(List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList) {
-        subInterfaceTemplateConsolidationDataList.addAll(subInterfaceConsolidationData.values());
-    }
+  public void copyFlatInto(List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList) {
+    subInterfaceTemplateConsolidationDataList.addAll(subInterfaceConsolidationData.values());
+  }
 
   public boolean isNumberOfSubInterfacesPerTypeSimilar(PortTemplateConsolidationData other) {
 
-    if (this.subInterfaceConsolidationData.isEmpty() &&
-        other.subInterfaceConsolidationData.isEmpty()) {
+    if (this.subInterfaceConsolidationData.isEmpty()
+        && other.subInterfaceConsolidationData.isEmpty()) {
       return true;
     }
 
     return !this.subInterfaceConsolidationData.isEmpty()
         && !other.subInterfaceConsolidationData.isEmpty()
         && this.subInterfaceConsolidationData.keySet().stream().allMatch(subInterfaceType ->
-        calculateSize(other.subInterfaceConsolidationData.get(subInterfaceType)) ==
-            calculateSize(this.subInterfaceConsolidationData.get(subInterfaceType)));
+        calculateSize(other.subInterfaceConsolidationData.get(subInterfaceType))
+            == calculateSize(this.subInterfaceConsolidationData.get(subInterfaceType)));
   }
 
   private int calculateSize(List<SubInterfaceTemplateConsolidationData> subInterfaces) {
     return subInterfaces == null ? 0 : subInterfaces.size();
   }
+
+
 }

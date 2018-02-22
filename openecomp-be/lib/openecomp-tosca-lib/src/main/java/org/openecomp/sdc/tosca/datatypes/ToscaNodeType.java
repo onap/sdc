@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,9 @@ public class ToscaNodeType {
   public static final String NETWORK_SUB_INTERFACE = CP_NODE_TYPE_PREFIX + "network.SubInterface";
   public static final String CONTRAILV2_VLAN_SUB_INTERFACE = CP_NODE_TYPE_PREFIX
       + "heat.network.contrailV2.VLANSubInterface";
+  public static final String NESTED_HEAT_RESOURCE_TYPE_PREFIX = ABSTRACT_NODE_TYPE_PREFIX + "heat.";
+  public static final String VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX =
+      NESTED_HEAT_RESOURCE_TYPE_PREFIX + "subinterface.";
   //Port Mirroring external node types
   public static final String EXTERNAL_CP = EXTERNAL_CP_NODE_TYPE_PREFIX + "extCP";
   public static final String EXTERNAL_CONTRAIL_PORT = EXTERNAL_CP_NODE_TYPE_PREFIX

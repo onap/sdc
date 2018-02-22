@@ -696,20 +696,23 @@ topology_template:
         type: string
   node_templates:
     VMI1:
-      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         name:
           str_replace:
             template: VM_NAME_PORT_3
             params:
               VM_NAME:
                 get_input: vipr_atm_name_0
-        virtual_network_refs:
-        - get_input: network_name
-        virtual_machine_interface_properties:
-          service_interface_type: left
-        port_tuple_refs:
-        - get_input: port_name
     FSB1:
       type: org.openecomp.resource.vfc.nodes.heat.FSB1
       properties:
@@ -720,23 +723,21 @@ topology_template:
         name:
           get_attribute:
           - VMI1
-          - fq_name
-          - ip
+          - tenant_id
+          - port_security_enabled
+          - device_id
+          - qos_policy
+          - allowed_address_pairs
           - show
-          - sub_interface_vlan_tag
-          - mac
-          - port_tuple_refs
-          - ip_prefix
-          - address_mode
+          - device_owner
+          - network
+          - security_groups
+          - fixed_ips
           - mac_address
-          - ip_prefix_len
+          - admin_state_up
           - name
-          - virtual_machine_interface_properties_service_interface_type
-          - allowed_address_pair
-          - virtual_network_refs
-          - virtual_machine_interface_properties
-          - virtual_machine_interface_allowed_address_pairs
-          - virtual_machine_interface_mac_addresses
+          - subnets
+          - status
   groups:
     ep-jsa_net_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -746,4 +747,4 @@ topology_template:
           Version 2.0 02-09-2016 (Authors: Paul Phillips, pp2854 PROD)
       members:
       - VMI1
-      - FSB1
+      - FSB1

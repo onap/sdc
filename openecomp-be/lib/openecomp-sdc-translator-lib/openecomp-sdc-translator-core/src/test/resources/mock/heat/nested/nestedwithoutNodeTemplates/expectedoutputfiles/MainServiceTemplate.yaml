@@ -2120,4 +2120,4 @@ topology_template:
                 get_input: vnf_name
         container_type: host
       targets:
-      - shared_perimeta_ssc_server_gp_group
+      - shared_perimeta_ssc_server_gp_group

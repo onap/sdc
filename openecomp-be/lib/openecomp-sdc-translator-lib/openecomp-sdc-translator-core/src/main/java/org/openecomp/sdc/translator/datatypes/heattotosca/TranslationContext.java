@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,6 +92,9 @@ public class TranslationContext {
 
   private Set<String> nodeTemplateIdsPointingToStWithoutNodeTemplates = new HashSet<>();
 
+  //Key - service template name, value - Map of key: node template id, value: proerties with %index%
+  private Map<String, Map<String, List<String>>> indexVarProperties = new HashMap<>();
+
   static {
     Configuration config = ConfigurationManager.lookup();
     translationMapping =
@@ -169,6 +172,26 @@ public class TranslationContext {
     this.unifiedSubstitutionData
         .get(serviceTemplateName)
         .addCleanedNodeTemplate(nodeTemplateId, unifiedCompositionEntity, nodeTemplate);
+  }
+
+  public List<String> getIndexVarProperties(String serviceTemplateName,
+                                    String nodeTemplateId) {
+    Map<String, List<String>> serviceTemplateIndexVarProperties = this.indexVarProperties
+        .get(serviceTemplateName);
+    if (Objects.nonNull(serviceTemplateIndexVarProperties)) {
+      return this.indexVarProperties.get(serviceTemplateName).computeIfPresent(nodeTemplateId,
+          (nodeTemplateIdKey, properties) -> properties);
+    }
+    return null;
+  }
+
+  public void addIndexVarProperties(String serviceTemplateName,
+                                     String nodeTemplateId,
+                                     List<String> indexVarProperties) {
+    this.indexVarProperties.putIfAbsent(serviceTemplateName, new HashMap<>());
+    this.indexVarProperties
+        .get(serviceTemplateName)
+        .putIfAbsent(nodeTemplateId, indexVarProperties);
   }
 
   public NodeTemplate getCleanedNodeTemplate(String serviceTemplateName,

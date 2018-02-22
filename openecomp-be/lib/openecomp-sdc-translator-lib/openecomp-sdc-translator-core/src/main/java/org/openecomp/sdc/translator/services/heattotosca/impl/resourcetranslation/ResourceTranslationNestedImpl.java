@@ -1,47 +1,54 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
 
+import java.util.Map;
+import java.util.Objects;
+
 public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
 
-  protected static Logger logger =
-      (Logger) LoggerFactory.getLogger(ResourceTranslationNestedImpl.class);
+  private static final String SUB_INTERFACE_COUNT = "count";
+  protected static Logger log = LoggerFactory.getLogger(ResourceTranslationNestedImpl.class);
 
   @Override
   public void translate(TranslateTo translateTo) {
@@ -49,13 +56,13 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
     FileData nestedFileData =
         HeatToToscaUtil.getFileData(translateTo.getResource().getType(), context);
     if (nestedFileData == null) {
-      logger.warn("Nested File '" + translateTo.getResource().getType()
+      log.warn("Nested File '" + translateTo.getResource().getType()
           + "' is not exist, therefore, the nested resource with the ID '"
           + translateTo.getResourceId() + "' will be ignored in TOSCA translation");
       return;
     }
     String templateName = FileUtils.getFileWithoutExtention(translateTo.getResource().getType());
-    String substitutionNodeTypeKey = ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + "heat."
+    String substitutionNodeTypeKey = HeatToToscaUtil.getNestedResourceTypePrefix(translateTo)
         + templateName;
 
     if (!context.getTranslatedServiceTemplates()
@@ -66,7 +73,7 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
           createSubstitutionServiceTemplate(translateTo, nestedFileData, templateName);
 
       //global substitution service template
-      ServiceTemplate globalSubstitutionServiceTemplate = new HeatToToscaUtil()
+      ServiceTemplate globalSubstitutionServiceTemplate = HeatToToscaUtil
           .fetchGlobalSubstitutionServiceTemplate(translateTo.getServiceTemplate(),
               context);
 
@@ -89,7 +96,7 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
     ServiceTemplate substitutionServiceTemplate = context.getTranslatedServiceTemplates()
         .get(translateTo.getResource().getType());
 
-    if(DataModelUtil.isNodeTemplateSectionMissingFromServiceTemplate(substitutionServiceTemplate)){
+    if (DataModelUtil.isNodeTemplateSectionMissingFromServiceTemplate(substitutionServiceTemplate)) {
       handleSubstitutionServiceTemplateWithoutNodeTemplates(
           templateName, translateTo);
       return;
@@ -104,6 +111,58 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
 
     //Add nested node template id to consolidation data
     ConsolidationDataUtil.updateNestedNodeTemplateId(translateTo);
+
+    //Gather consolidation data if the resource group represents a sub interface
+    if (StringUtils.isNotBlank(substitutionNodeTypeKey)
+          && substitutionNodeTypeKey.contains(ToscaNodeType
+        .VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX)) {
+      populateSubInterfaceTemplateConsolidationData(translateTo, substitutionNodeTemplate);
+    }
+  }
+
+  private void populateSubInterfaceTemplateConsolidationData(TranslateTo translateTo,
+                                                            NodeTemplate nodeTemplate) {
+
+    SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData =
+        ConsolidationDataUtil.getSubInterfaceTemplateConsolidationData(translateTo.getResource(),
+            translateTo.getContext(), translateTo.getServiceTemplate(), translateTo
+                .getHeatFileName(), translateTo.getHeatOrchestrationTemplate(), translateTo
+                .getTranslatedId());
+    if (Objects.isNull(subInterfaceTemplateConsolidationData)) {
+      return;
+    }
+    subInterfaceTemplateConsolidationData.setNetworkRole(HeatToToscaUtil
+        .getNetworkRoleFromResource(translateTo.getResource(), translateTo.getContext()));
+    Object count = getSubInterfaceCountFromResourceProperties(translateTo);
+    subInterfaceTemplateConsolidationData.setResourceGroupCount(count);
+
+    if (CollectionUtils.isNotEmpty(nodeTemplate.getRequirements())) {
+      //Add connectivity to network in consolidation data based on resource group link requirements
+      nodeTemplate.getRequirements().forEach((Map<String, RequirementAssignment> requirementMap) ->
+          requirementMap.entrySet().stream()
+              .filter(requirementAssignmentEntry -> ToscaCapabilityType.NATIVE_NETWORK_LINKABLE
+                  .equals(requirementAssignmentEntry.getValue().getCapability()))
+              .forEach(requirementAssignmentEntry -> subInterfaceTemplateConsolidationData
+                  .addNodesConnectedOut(requirementAssignmentEntry.getValue().getNode(),
+                      requirementAssignmentEntry.getKey(),
+                      requirementAssignmentEntry.getValue())
+              )
+      );
+    }
+  }
+
+  private Object getSubInterfaceCountFromResourceProperties(TranslateTo translateTo) {
+    if (Objects.nonNull(translateTo.getHeatOrchestrationTemplate().getResources().get(translateTo
+        .getResourceId()))) {
+      Resource resource = translateTo.getHeatOrchestrationTemplate().getResources().get(translateTo
+          .getResourceId());
+      if(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource().equals(resource.getType())) {
+        return resource.getProperties().get(SUB_INTERFACE_COUNT);
+      } else if (HeatToToscaUtil.isYamlFile(resource.getType())) {
+        return HeatConstants.DEFAULT_NESTED_HEAT_RESOURCE_COUNT;
+      }
+    }
+    return null;
   }
 
   private void handleSubstitutionServiceTemplateWithoutNodeTemplates(String templateName,

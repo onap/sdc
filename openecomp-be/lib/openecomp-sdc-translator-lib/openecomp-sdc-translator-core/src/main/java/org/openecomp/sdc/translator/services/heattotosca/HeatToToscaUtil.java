@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.HeatConstants;
@@ -45,6 +46,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -76,12 +78,15 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.FileDataCollection;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.errors.ResourceNotFoundInHeatFileErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
+import org.openecomp.sdc.translator.services.heattotosca.helper.ContrailV2VirtualMachineInterfaceHelper;
 import org.openecomp.sdc.translator.services.heattotosca.helper.FunctionTranslationHelper;
+import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -100,9 +105,11 @@ public class HeatToToscaUtil {
   private static final Logger LOGGER = LoggerFactory.getLogger(HeatToToscaUtil.class);
   public static final String FQ_NAME = "fq_name";
   public static final String GET_PARAM = "get_param";
-  private static final String FORWARDER = "forwarder";
   private static final String GET_ATTR = "get_attr";
   private static final String GET_RESOURCE = "get_resource";
+  private static final String VMI = "vmi";
+  private static final String NEUTRON_PORT_IDENTIFIER = "port";
+  private static final String UNDERSCORE = "_";
 
   /**
    * Load and translate template data translator output.
@@ -285,7 +292,7 @@ public class HeatToToscaUtil {
                                                   List<String> filenames,
                                                   Set<String> referenced) {
     Object resourceDef = resource.getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
-    Object innerTypeDef = ((Map) resourceDef).get("type");
+    Object innerTypeDef = ((Map) resourceDef).get(HeatConstants.RESOURCE_DEF_TYPE_PROPERTY_NAME);
     if (innerTypeDef instanceof String) {
       String internalResourceType = (String) innerTypeDef;
       if (filenames.contains(internalResourceType)) {
@@ -519,12 +526,14 @@ public class HeatToToscaUtil {
 
     if (resourceType.equals(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource())) {
       Object resourceDef = resource.getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
-      if (!(((Map) resourceDef).get("type") instanceof String)) {
+      if (!(((Map) resourceDef).get(HeatConstants.RESOURCE_DEF_TYPE_PROPERTY_NAME) instanceof
+          String)) {
         //currently only resource group which is poinitng to nested heat file is supported
         //dynamic type is currently not supported
         return false;
       }
-      String internalResourceType = (String) ((Map) resourceDef).get("type");
+      String internalResourceType = (String) ((Map) resourceDef).get(HeatConstants
+          .RESOURCE_DEF_TYPE_PROPERTY_NAME);
       if (isYamlFile(internalResourceType)) {
         return true;
       }
@@ -532,6 +541,131 @@ public class HeatToToscaUtil {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Checks if the current HEAT resource if of type sub interface.
+   *
+   * @param resource the resource
+   * @return true if the resource is of sub interface type and false otherwise
+   */
+  public static boolean isSubInterfaceResource(Resource resource, TranslationContext context) {
+    if (!ToggleableFeature.VLAN_TAGGING.isActive()) {
+      //Remove this once feature is stable and moved to production
+      return false;
+    }
+    //Check if resource group is a nested resource
+    if (!isNestedResource(resource)) {
+      return false;
+    }
+    Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
+    return nestedHeatFileName.filter(fileName ->
+        isNestedVlanResource(fileName, context)).isPresent();
+  }
+
+  /**
+   * Checks if if nested file contains any sub interface.
+   *
+   * @param nestedHeatFileName the heat file name
+   * @param translationContext contain translation context
+   * @return true if nested file contains sub interface
+   */
+  private static boolean isNestedVlanResource(String nestedHeatFileName,
+                                      TranslationContext translationContext) {
+    HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
+        .yamlToObject(translationContext.getFileContent(nestedHeatFileName),
+            HeatOrchestrationTemplate.class);
+    return Objects.nonNull(nestedHeatOrchestrationTemplate.getResources())
+        && nestedHeatOrchestrationTemplate.getResources().values().stream()
+        .anyMatch(new ContrailV2VirtualMachineInterfaceHelper()::isVlanSubInterfaceResource);
+  }
+
+  /**
+   * Gets sub interface parent port node template id.
+   *
+   * @param subInterfaceResource      the sub interface resource
+   * @param serviceTemplate           the service template
+   * @param heatFileName              the heat file name
+   * @param heatOrchestrationTemplate the heat orchestration template
+   * @param translationContext        the translation context
+   * @return the sub interface parent port node template id
+   */
+  public static Optional<String> getSubInterfaceParentPortNodeTemplateId(Resource
+                                                                           subInterfaceResource,
+                                                   ServiceTemplate serviceTemplate,
+                                                   String heatFileName,
+                                                   HeatOrchestrationTemplate
+                                                       heatOrchestrationTemplate,
+                                                   TranslationContext translationContext) {
+    String subInterfaceResourceType = getSubInterfaceResourceType(subInterfaceResource);
+    HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
+        .yamlToObject(translationContext.getFileContent(subInterfaceResourceType),
+            HeatOrchestrationTemplate.class);
+    if (Objects.nonNull(nestedHeatOrchestrationTemplate.getResources())) {
+      for (Map.Entry<String, Resource> resourceEntry : nestedHeatOrchestrationTemplate
+          .getResources().entrySet()) {
+        String resourceId = resourceEntry.getKey();
+        Resource resource = resourceEntry.getValue();
+        if (HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE
+            .getHeatResource().equals(resource.getType())
+            && MapUtils.isNotEmpty(resource.getProperties())
+            && resource.getProperties().containsKey(HeatConstants.VMI_REFS_PROPERTY_NAME)) {
+          Object toscaPropertyValue =
+              TranslatorHeatToToscaPropertyConverter.getToscaPropertyValue(serviceTemplate,
+                  resourceId, HeatConstants.VMI_REFS_PROPERTY_NAME,
+                  resource.getProperties().get(HeatConstants.VMI_REFS_PROPERTY_NAME),
+                  resource.getType(), subInterfaceResourceType, nestedHeatOrchestrationTemplate,
+                  null, translationContext);
+          return getParentNodeTemplateIdFromPropertyValue(toscaPropertyValue, subInterfaceResource,
+              heatFileName, heatOrchestrationTemplate, translationContext);
+        }
+      }
+    }
+    return Optional.empty();
+  }
+
+  public static String getSubInterfaceResourceType(Resource resource) {
+    if (!HeatToToscaUtil.isYamlFile(resource.getType())) {
+     return ((Map) resource.getProperties()
+          .get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME))
+          .get(HeatConstants.RESOURCE_DEF_TYPE_PROPERTY_NAME)
+          .toString();
+    }
+    return resource.getType();
+  }
+
+  private static Optional<String> getParentNodeTemplateIdFromPropertyValue(Object
+                                                                               toscaPropertyValue,
+                                         Resource subInterfaceResource,
+                                         String heatFileName,
+                                         HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                         TranslationContext translationContext) {
+    if (toscaPropertyValue instanceof List
+        && ((List) toscaPropertyValue).get(0) instanceof Map) {
+      Map<String, String> toscaPropertyValueMap = (Map) ((List) toscaPropertyValue).get(0);
+      String parentPortPropertyInput = toscaPropertyValueMap.get(ToscaFunctions.GET_INPUT
+          .getDisplayName());
+      Map<String, Object> resourceDefPropertiesMap;
+      if (!isYamlFile(subInterfaceResource.getType())) {
+        resourceDefPropertiesMap = (Map)((Map) subInterfaceResource
+            .getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME))
+            .get(HeatConstants.RESOURCE_DEF_PROPERTIES);
+      } else {
+        resourceDefPropertiesMap = subInterfaceResource.getProperties();
+      }
+      Object parentPortObj = resourceDefPropertiesMap.get(parentPortPropertyInput);
+      if (parentPortObj instanceof  Map) {
+        Map<String, String> parentPortPropertyValue = (Map) parentPortObj;
+        if (parentPortPropertyValue.keySet().contains(ResourceReferenceFunctions
+            .GET_RESOURCE.getFunction())) {
+         return ResourceTranslationBase.getResourceTranslatedId(heatFileName,
+             heatOrchestrationTemplate,
+             parentPortPropertyValue.get(ResourceReferenceFunctions.GET_RESOURCE.getFunction()),
+             translationContext);
+        }
+      }
+    }
+    return Optional.empty();
   }
 
   /**
@@ -573,7 +707,8 @@ public class HeatToToscaUtil {
 
     if (resourceType.equals(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource())) {
       Object resourceDef = resource.getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
-      String internalResourceType = (String) ((Map) resourceDef).get("type");
+      String internalResourceType = (String) ((Map) resourceDef).get(HeatConstants
+          .RESOURCE_DEF_TYPE_PROPERTY_NAME);
       return Optional.of(internalResourceType);
     }
     return Optional.of(resourceType);
@@ -592,14 +727,15 @@ public class HeatToToscaUtil {
     String resourceType = resource.getType();
     if (resourceType.equals(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource())) {
       Object resourceDef = resource.getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
-      String internalResourceType = (String) ((Map) resourceDef).get("type");
+      String internalResourceType = (String) ((Map) resourceDef).get(HeatConstants
+          .RESOURCE_DEF_TYPE_PROPERTY_NAME);
       return Optional.of(internalResourceType);
     } else {
       return Optional.of(resourceType);
     }
   }
 
-  private static boolean isYamlFile(String fileName) {
+  public static boolean isYamlFile(String fileName) {
     return fileName.endsWith(".yaml") || fileName.endsWith(".yml");
   }
 
@@ -800,7 +936,10 @@ public class HeatToToscaUtil {
       return Optional.empty();
     }
     Optional<AttachedPropertyVal> extractedProperty = extractProperty(property);
-    return extractedProperty.flatMap(HeatToToscaUtil::getParameterName);
+    if (extractedProperty.isPresent()) {
+      return getParameterName(extractedProperty.get());
+    }
+    return Optional.empty();
   }
 
   private static Optional<String> getParameterName(AttachedPropertyVal extractedProperty) {
@@ -1063,25 +1202,22 @@ public class HeatToToscaUtil {
    * Checks if the source and target resource is a valid candidate for adding tosca dependency
    * relationship.
    *
-   * @param heatOrchestrationTemplate the heat orchestration template
    * @param sourceResource          the source resource
    * @param targetResource          the target resource
    * @param dependencyEntity        the dependency entity
    * @return true if the candidate resources are a valid combination for the dependency relationship
-   * and false otherwise
+   *              and false otherwise
    */
-  public static boolean isValidDependsOnCandidate(HeatOrchestrationTemplate
-                                                      heatOrchestrationTemplate,
-                                                  Resource sourceResource,
+  public static boolean isValidDependsOnCandidate(Resource sourceResource,
                                                   Resource targetResource,
                                                   ConsolidationEntityType dependencyEntity,
                                                   TranslationContext context) {
-    dependencyEntity
-        .setEntityType(heatOrchestrationTemplate, sourceResource, targetResource, context);
+    dependencyEntity.setEntityType(sourceResource, targetResource, context);
     ConsolidationEntityType sourceEntityType = dependencyEntity.getSourceEntityType();
     ConsolidationEntityType targetEntityType = dependencyEntity.getTargetEntityType();
 
-    return ConsolidationTypesConnectivity.isDependsOnRelationshipValid(sourceEntityType, targetEntityType);
+    return ConsolidationTypesConnectivity
+        .isDependsOnRelationshipValid(sourceEntityType, targetEntityType);
   }
 
   private static Map<String, Object> managerSubstitutionNodeTemplateProperties(
@@ -1183,15 +1319,10 @@ public class HeatToToscaUtil {
       flatNodeType.getCapabilities()
           .entrySet()
           .stream()
-          .filter(capabilityNodeEntry -> shouldCapabilityNeedsToBeAdded(capabilityNodeEntry.getKey()))
           .forEach(capabilityNodeEntry ->
               addCapabilityToSubMapping(
               templateName, capabilityNodeEntry, nodeTypeCapabilitiesDefinition, capabilitySubstitutionMapping));
     }
-  }
-
-  private static boolean shouldCapabilityNeedsToBeAdded(String capabilityKey) {
-    return !capabilityKey.contains(FORWARDER) || ToggleableFeature.FORWARDER_CAPABILITY.isActive();
   }
 
   public static boolean shouldAnnotationsToBeAdded() {
@@ -1204,7 +1335,7 @@ public class HeatToToscaUtil {
                                                 Map<String, List<String>> capabilitySubstitutionMapping) {
     String capabilityKey;
     List<String> capabilityMapping;
-    capabilityKey = capabilityNodeEntry.getKey() + "_" + templateName;
+    capabilityKey = capabilityNodeEntry.getKey() + UNDERSCORE + templateName;
     nodeTypeCapabilitiesDefinition.put(capabilityKey, capabilityNodeEntry.getValue().clone());
     capabilityMapping = new ArrayList<>();
     capabilityMapping.add(templateName);
@@ -1243,7 +1374,7 @@ public class HeatToToscaUtil {
         requirementMapping.add(templateName);
         requirementMapping.add(requirementNodeEntry.getKey());
         requirementSubstitutionMapping
-            .put(requirementNodeEntry.getKey() + "_" + templateName, requirementMapping);
+            .put(requirementNodeEntry.getKey() + UNDERSCORE + templateName, requirementMapping);
         if (Objects.isNull(requirementNodeEntryValue.getNode())) {
           requirementNodeEntryValue.setOccurrences(new Object[]{1, 1});
         }
@@ -1354,4 +1485,65 @@ public class HeatToToscaUtil {
     return serviceTemplatesMap;
   }
 
+  public static String getNestedResourceTypePrefix(TranslateTo translateTo) {
+    String nestedFileName = translateTo.getResource().getType();
+    if (isSubInterfaceResource(translateTo.getResource(), translateTo.getContext())
+        && isSubInterfaceBoundToPort(translateTo)) {
+      return ToscaNodeType.VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX;
+    }
+    return ToscaNodeType.NESTED_HEAT_RESOURCE_TYPE_PREFIX;
+  }
+
+  private static boolean isSubInterfaceBoundToPort(TranslateTo translateTo) {
+    return HeatToToscaUtil.getSubInterfaceParentPortNodeTemplateId(translateTo.getResource(),
+        translateTo.getServiceTemplate(), translateTo.getResource().getType(), translateTo
+            .getHeatOrchestrationTemplate(), translateTo.getContext()).isPresent();
+  }
+
+  //Method evaluate the  network role from sub interface node template id, designed considering
+  // only single sub interface present in nested file else it will return null
+  public static String getNetworkRoleFromResource(Resource resource,
+                                                  TranslationContext translationContext) {
+    String networkRole = null;
+    Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
+    if (nestedHeatFileName.isPresent()) {
+      HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
+          .yamlToObject(translationContext.getFileContent(nestedHeatFileName.get()),
+              HeatOrchestrationTemplate.class);
+
+      if (MapUtils.isNotEmpty(nestedHeatOrchestrationTemplate.getResources())) {
+        ContrailV2VirtualMachineInterfaceHelper contrailV2VirtualMachineInterfaceHelper =
+            new ContrailV2VirtualMachineInterfaceHelper();
+        Optional<Map.Entry<String, Resource>> vlanSubinterfaceResource = nestedHeatOrchestrationTemplate
+            .getResources().entrySet().stream()
+            .filter(resourceEntry -> contrailV2VirtualMachineInterfaceHelper
+                .isVlanSubInterfaceResource(resourceEntry.getValue()))
+            .findFirst();
+        if (vlanSubinterfaceResource.isPresent()) {
+          Map.Entry<String, Resource> vlanSubinterfaceResourceEntry = vlanSubinterfaceResource.get();
+          networkRole = evaluateNetworkRoleFromResourceId(vlanSubinterfaceResourceEntry.getKey(),
+              vlanSubinterfaceResourceEntry.getValue().getType());
+        }
+      }
+    }
+    return networkRole;
+  }
+
+  public static String evaluateNetworkRoleFromResourceId(String resourceId, String resourceType) {
+    String[] splitStr = resourceId.toLowerCase().split(UNDERSCORE);
+    List<String> splitList = Arrays.asList(splitStr);
+
+    if (resourceType.equals(HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
+      if (splitList.contains(VMI)) {
+        return splitList.get(splitList.indexOf(VMI) - 1);
+      }
+    }
+
+    if (resourceType.equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
+      if (splitList.contains(NEUTRON_PORT_IDENTIFIER)) {
+        return splitList.get(splitList.indexOf(NEUTRON_PORT_IDENTIFIER) - 1);
+      }
+    }
+    return null;
+  }
 }
