@@ -188,7 +188,7 @@ topology_template:
       - template_Vlan_2
       - template_Vlan_1
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.heat.nested
+    node_type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
     capabilities:
       feature_template_Vlan_2:
       - template_Vlan_2

@@ -88,10 +88,6 @@ resources:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name: vlan
-      virtual_machine_interface_properties:
-        {
-          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: lb_st_vlan_type_oam }
-        }
       virtual_machine_interface_mac_addresses:
         {
         virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address }],
@@ -126,10 +122,6 @@ resources:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name: vlan
-      virtual_machine_interface_properties:
-        {
-          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: lb_st_vlan_type_oam }
-        }
       virtual_machine_interface_mac_addresses:
         {
         virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address }],

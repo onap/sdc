@@ -118,104 +118,35 @@ parameters:
     type: string
     description: oam gw
 resources:
-
-
-
   lb_0_int_oam_int_0_port:
-    type: OS::ContrailV2::VirtualMachineInterface
+    type: OS::Neutron::Port
     properties:
-      virtual_machine_interface_properties:
-        {
-          virtual_machine_interface_properties_service_interface_type: { get_param: int_oam_int_net_id },
-        }
-      virtual_network_refs: [{ get_param: int_oam_int_net_id }]
-      security_group_refs: [{ get_param: int_oam_int_sec_group_id}]
+      network: {get_param: int_oam_int_net_id}
 
   lb_0_lb1_gwaf_int_1_port:
-    type: OS::ContrailV2::VirtualMachineInterface
+    type: OS::Neutron::Port
     properties:
-      virtual_machine_interface_properties:
-        {
-          virtual_machine_interface_properties_service_interface_type: { get_param: lb1_gwaf_int_net_id },
-        }
-      virtual_network_refs: [{ get_param: lb1_gwaf_int_net_id }]
-      security_group_refs: [{ get_param: lb1_gwaf_int_sec_group_id }]
+      network: {get_param: int_oam_int_net_id}
 
   lb_0_oam_protected_2_port:
-    type: OS::ContrailV2::VirtualMachineInterface
+    type: OS::Neutron::Port
     properties:
-      virtual_network_refs: [{ get_param: oam_protected_net }]
-      service_health_check_refs: 
-        - get_resource: lb_oam_protected_hc
-      ecmp_hashing_include_fields:
-        ecmp_hashing_include_fields_hashing_configured: { get_param: ecmp_hashing_include_fields_hashing_configured }
-        ecmp_hashing_include_fields_source_ip: { get_param: ecmp_hashing_include_fields_source_ip }
-        ecmp_hashing_include_fields_destination_port: { get_param: ecmp_hashing_include_fields_destination_port }
-        ecmp_hashing_include_fields_destination_ip: { get_param: ecmp_hashing_include_fields_destination_ip }
-        ecmp_hashing_include_fields_source_port: { get_param: ecmp_hashing_include_fields_source_port }
-        ecmp_hashing_include_fields_ip_protocol: { get_param: ecmp_hashing_include_fields_ip_protocol }
-      virtual_machine_interface_allowed_address_pairs:
-        {
-          virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
-            [{
-              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
-                {
-                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: aap_core_ip_prefix },
-                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: aap_core_ip_prefix_len },
-                },
-              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: aap_core_mac },
-              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: aap_core_ha_mode },
-            }],
-        }
-      security_group_refs: [{ get_param: oam_protected_sec_group_id }]
+      network: {get_param: int_oam_int_net_id}
 
   lb_1_int_oam_int_0_port:
-    type: OS::ContrailV2::VirtualMachineInterface
+    type: OS::Neutron::Port
     properties:
-      virtual_machine_interface_properties:
-        {
-          virtual_machine_interface_properties_service_interface_type: { get_param: int_oam_int_net_id },
-        }
-      virtual_network_refs: [{ get_param: int_oam_int_net_id }]
-      security_group_refs: [{ get_param: int_oam_int_sec_group_id}]
+      network: {get_param: int_oam_int_net_id}
 
   lb_1_lb1_gwaf_int_1_port:
-    type: OS::ContrailV2::VirtualMachineInterface
+    type: OS::Neutron::Port
     properties:
-      virtual_machine_interface_properties:
-        {
-          virtual_machine_interface_properties_service_interface_type: { get_param: lb1_gwaf_int_net_id },
-        }
-      virtual_network_refs: [{ get_param: lb1_gwaf_int_net_id }]
-      security_group_refs: [{ get_param: lb1_gwaf_int_sec_group_id }]
+      network: {get_param: int_oam_int_net_id}
 
   lb_1_oam_protected_2_port:
-    type: OS::ContrailV2::VirtualMachineInterface
+    type: OS::Neutron::Port
     properties:
-      virtual_network_refs: [{ get_param: oam_protected_net }]
-      service_health_check_refs: 
-        - get_resource: lb_oam_protected_hc
-      ecmp_hashing_include_fields:
-        ecmp_hashing_include_fields_hashing_configured: { get_param: ecmp_hashing_include_fields_hashing_configured }
-        ecmp_hashing_include_fields_source_ip: { get_param: ecmp_hashing_include_fields_source_ip }
-        ecmp_hashing_include_fields_destination_port: { get_param: ecmp_hashing_include_fields_destination_port }
-        ecmp_hashing_include_fields_destination_ip: { get_param: ecmp_hashing_include_fields_destination_ip }
-        ecmp_hashing_include_fields_source_port: { get_param: ecmp_hashing_include_fields_source_port }
-        ecmp_hashing_include_fields_ip_protocol: { get_param: ecmp_hashing_include_fields_ip_protocol }
-      virtual_machine_interface_allowed_address_pairs:
-        {
-          virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
-            [{
-              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
-                {
-                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: aap_core_ip_prefix },
-                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: aap_core_ip_prefix_len },
-                },
-              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: aap_core_mac },
-              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: aap_core_ha_mode },
-            }],
-        }
-      security_group_refs: [{ get_param: oam_protected_sec_group_id }]
+      network: {get_param: int_oam_int_net_id}
 
   lb_0_int_oam_int_0_ip:
     type: OS::ContrailV2::InstanceIp

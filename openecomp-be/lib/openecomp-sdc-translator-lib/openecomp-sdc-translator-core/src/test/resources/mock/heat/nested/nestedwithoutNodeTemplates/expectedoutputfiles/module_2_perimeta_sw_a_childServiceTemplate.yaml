@@ -224,7 +224,7 @@ topology_template:
         type: string
   node_templates:
     perimeta_rtp_msc_a_untrusted_0_vlan_ports:
-      type: org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.vlan_subinterface_dual
       directives:
       - substitutable
       properties:
@@ -815,4 +815,4 @@ topology_template:
       - link
       link_perimeta_rtp_msc_a_ha_0_port:
       - perimeta_rtp_msc_a_ha_0_port
-      - link
+      - link

@@ -4,6 +4,11 @@
   "version": "2013-05-23",
   "data": [
     {
+      "file": "base_ep-jsa_net.yaml",
+      "type": "HEAT",
+      "isBase": "true"
+    },
+    {
       "file": "ep-jsa_net.yaml",
       "type": "HEAT"
     },

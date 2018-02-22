@@ -21,6 +21,15 @@ resources:
       name: {get_param: jsa_net_name}
       shared: True
 
+  test_vmi:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 2
+      resource_def:
+        type: addOn.yml
+        properties:
+          indx: "%index%"
+
 outputs:
     shared_network_id:
       value: {get_resource: test_net}

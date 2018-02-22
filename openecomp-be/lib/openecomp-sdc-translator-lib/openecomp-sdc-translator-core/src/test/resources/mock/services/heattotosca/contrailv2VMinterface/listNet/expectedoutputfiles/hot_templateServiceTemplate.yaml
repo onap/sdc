@@ -1,0 +1,149 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: hot_template
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    nems_traffic_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    network_ipam_refs_data_ipam_subnets_addr_from_start_true:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+  node_templates:
+    template_VMInt_OAM_lb_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - jsa_net1
+        - jsa_net1
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    jsa_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+            network_ipam_refs_data_ipam_subnets_addr_from_start:
+              get_input: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+        network_name: aaa
+  groups:
+    hot_template_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot_template.yml
+        description: cmaui server template for vMMSC
+      members:
+      - template_VMInt_OAM_lb_1
+      - jsa_net1
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.hot_template
+    capabilities:
+      network.outpoing.packets_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outpoing.packets
+      network.incoming.bytes.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.bytes.rate
+      binding_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - binding
+      network.incoming.packets.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.packets.rate
+      network.incoming.packets_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.packets
+      feature_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - feature
+      network.outgoing.packets.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outgoing.packets.rate
+      network.outgoing.bytes_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outgoing.bytes
+      forwarder_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - forwarder
+      feature_jsa_net1:
+      - jsa_net1
+      - feature
+      end_point_jsa_net1:
+      - jsa_net1
+      - end_point
+      network.outgoing.bytes.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outgoing.bytes.rate
+      link_jsa_net1:
+      - jsa_net1
+      - link
+      attachment_jsa_net1:
+      - jsa_net1
+      - attachment
+      network.incoming.bytes_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.bytes
+    requirements:
+      binding_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - binding
+      dependency_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - dependency
+      dependency_jsa_net1:
+      - jsa_net1
+      - dependency
