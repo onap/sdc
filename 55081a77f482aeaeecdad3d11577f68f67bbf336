@@ -36,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_cb463dc0",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T10:20:26Z",
+      "side": 1,
+      "message": "do we use dependency injection JSR-330? if not then why do we need this dependency?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_2bf801c2",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
         "patchSetId": 4
@@ -64,6 +81,40 @@
       "writtenOn": "2018-02-22T06:40:33Z",
       "side": 1,
       "message": "who needs springmvc dependency?",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6bd4c9bc",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/api/rest/ActivitySpecs.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T10:20:26Z",
+      "side": 1,
+      "message": "why are we passing user as parameter in all the methods of this interface? is it a business parameter? we should evaluate to pass such information vertically rather horizontally if it qualifies as cross cutting concerns.",
+      "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6b0fe988",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/api/rest/services/ActivitySpecsImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-02-22T10:20:26Z",
+      "side": 1,
+      "message": "any reason for keeping scope as prototype. see if you can keep it singleton.",
       "revId": "55081a77f482aeaeecdad3d11577f68f67bbf336",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
