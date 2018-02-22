@@ -1,0 +1,826 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0b7985c7",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/PropertyType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "remove \".\" .",
+      "range": {
+        "startLine": 63,
+        "startChar": 23,
+        "endLine": 63,
+        "endChar": 24
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2bafa12b",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/PropertyType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "1. why is the initialization of the array list is without size? you know i\u0027ts gonna be size 4\n2. why you are using arrayList with complexity of O(n) if all you need from that collection is to check contains(x). you can use Set which is O(1). please replace",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 77,
+        "endChar": 57
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6b7049dc",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/PropertyType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "why do you need this? the simplePropertyTypes is static initialized",
+      "range": {
+        "startLine": 86,
+        "startChar": 3,
+        "endLine": 88,
+        "endChar": 5
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cb7e3daf",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "why you are not using ListMultiMap? you\u0027ve got this comment is your last review by Oren",
+      "range": {
+        "startLine": 96,
+        "startChar": 21,
+        "endLine": 96,
+        "endChar": 47
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8b4cb59f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "do not return null from public function. use Optional so the user will have an idea that a null is a valid return value from this function",
+      "range": {
+        "startLine": 185,
+        "startChar": 11,
+        "endLine": 185,
+        "endChar": 15
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4b422d69",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "this could be merged and be simplified. see intellij comment",
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6b47e977",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "could be used inline in the next line. no need to introduce a new variable if you are not going to use it",
+      "range": {
+        "startLine": 157,
+        "startChar": 31,
+        "endLine": 157,
+        "endChar": 115
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0b60a5ff",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "this could be extracted to a function that return new portTemplateConsolidationData and use the retun value inline on the next line",
+      "range": {
+        "startLine": 155,
+        "startChar": 6,
+        "endLine": 157,
+        "endChar": 115
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2b5d6147",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "this number of arguments are not acceptable. minimize them or use an object",
+      "range": {
+        "startLine": 167,
+        "startChar": 6,
+        "endLine": 172,
+        "endChar": 39
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cb55dd1e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "use Optional",
+      "range": {
+        "startLine": 180,
+        "startChar": 11,
+        "endLine": 180,
+        "endChar": 15
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_eb521934",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "why do you need a java doc for private method?",
+      "range": {
+        "startLine": 183,
+        "startChar": 2,
+        "endLine": 191,
+        "endChar": 5
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ab3891ef",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "refactor this function. it is not readable. extract to functions",
+      "range": {
+        "startLine": 192,
+        "startChar": 17,
+        "endLine": 192,
+        "endChar": 54
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8b335513",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "don\u0027t introduce if you\u0027re using once. use inline",
+      "range": {
+        "startLine": 222,
+        "startChar": 11,
+        "endLine": 222,
+        "endChar": 35
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0b2745cb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "see my comment in class ConsolidationEntityType",
+      "range": {
+        "startLine": 416,
+        "startChar": 35,
+        "endLine": 416,
+        "endChar": 66
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6b3e09dc",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationEntityType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "you are filtering a list( complexity O(n) ) and using it only in one place to check if a value in contained in that list (another iteration over the list with complexity of O(n) ). why not make this function get a parameter of the value you want to check and iterate it once?",
+      "range": {
+        "startLine": 55,
+        "startChar": 39,
+        "endLine": 55,
+        "endChar": 70
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ab1f316b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 566,
+        "startChar": 1,
+        "endLine": 572,
+        "endChar": 5
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6b15a947",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract an object",
+      "range": {
+        "startLine": 593,
+        "startChar": 73,
+        "endLine": 599,
+        "endChar": 88
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0b0e653b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "you can decrease complexity if you check for null and return Optional.empty() and do the rest of the function if not",
+      "range": {
+        "startLine": 604,
+        "startChar": 4,
+        "endLine": 604,
+        "endChar": 74
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cb039d0e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "move to the right scope (inside if and close to it\u0027s use",
+      "range": {
+        "startLine": 607,
+        "startChar": 15,
+        "endLine": 607,
+        "endChar": 25
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_eb00d903",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract function",
+      "range": {
+        "startLine": 609,
+        "startChar": 12,
+        "endLine": 612,
+        "endChar": 89
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a606881b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1505,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "return optional",
+      "range": {
+        "startLine": 1505,
+        "startChar": 16,
+        "endLine": 1505,
+        "endChar": 22
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_46078418",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1509,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "reduce complexity by checking not present",
+      "range": {
+        "startLine": 1509,
+        "startChar": 4,
+        "endLine": 1509,
+        "endChar": 41
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_660c003c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "return optional",
+      "range": {
+        "startLine": 1532,
+        "startChar": 16,
+        "endLine": 1532,
+        "endChar": 22
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0615fc3e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract function",
+      "range": {
+        "startLine": 666,
+        "startChar": 6,
+        "endLine": 678,
+        "endChar": 7
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_26127857",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 747,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract function",
+      "range": {
+        "startLine": 739,
+        "startChar": 6,
+        "endLine": 747,
+        "endChar": 9
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c61ab46e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 920,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract",
+      "range": {
+        "startLine": 911,
+        "startChar": 6,
+        "endLine": 920,
+        "endChar": 7
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e617b043",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 967,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract",
+      "range": {
+        "startLine": 957,
+        "startChar": 5,
+        "endLine": 967,
+        "endChar": 7
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_86282c87",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1381,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "align",
+      "range": {
+        "startLine": 1381,
+        "startChar": 6,
+        "endLine": 1381,
+        "endChar": 32
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a62d2897",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "use inline",
+      "range": {
+        "startLine": 1427,
+        "startChar": 11,
+        "endLine": 1427,
+        "endChar": 29
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6623a0a7",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1428,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "use inline",
+      "range": {
+        "startLine": 1428,
+        "startChar": 11,
+        "endLine": 1428,
+        "endChar": 30
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_063c1cc7",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1878,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract object",
+      "range": {
+        "startLine": 1871,
+        "startChar": 58,
+        "endLine": 1878,
+        "endChar": 84
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_665ac02b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1893,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "could this be simplified? it looks like all this ifs are to get a value to check in the last if",
+      "range": {
+        "startLine": 1883,
+        "startChar": 4,
+        "endLine": 1893,
+        "endChar": 65
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0643bc42",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1913,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "extract to function?",
+      "range": {
+        "startLine": 1894,
+        "startChar": 10,
+        "endLine": 1913,
+        "endChar": 43
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c648745e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1988,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "I can\u0027t read this. refactor",
+      "range": {
+        "startLine": 1934,
+        "startChar": 2,
+        "endLine": 1988,
+        "endChar": 3
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_466c64d0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2632,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "this is got out of hand. extract all input parameters to an object and use command design pattern instead of this switch",
+      "range": {
+        "startLine": 2592,
+        "startChar": 2,
+        "endLine": 2632,
+        "endChar": 3
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_066adcb2",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2727,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-22T13:02:57Z",
+      "side": 1,
+      "message": "see my comment above",
+      "range": {
+        "startLine": 2690,
+        "startChar": 3,
+        "endLine": 2727,
+        "endChar": 3
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
