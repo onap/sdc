@@ -1,4 +1,34 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata;
+
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.MAIN_SERVICE_TEMPLATE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_INVALID_DEPENDENCY_CANDIDATE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_MULTIPLE_COMPUTE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN_AND_OUT;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_OUT;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NO_DEPENDENCY;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_MULTI_LEVEL_NESTED_RESOURCE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_NESTED_RESOURCE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_NESTED_CONNECTION;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SINGLE_NESTED_RESOURCE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,20 +66,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.MAIN_SERVICE_TEMPLATE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_INVALID_DEPENDENCY_CANDIDATE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_MULTIPLE_COMPUTE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN_AND_OUT;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_OUT;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NO_DEPENDENCY;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_MULTI_LEVEL_NESTED_RESOURCE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_NESTED_RESOURCE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_NESTED_CONNECTION;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SINGLE_NESTED_RESOURCE;
 
 public class ConsolidationDataTestUtil {
 
@@ -617,7 +633,7 @@ public class ConsolidationDataTestUtil {
     Assert.assertNotNull(consolidationData);
     if(TestConstants.TEST_GET_ATTR_FOR_MORE_THAN_ONE_ATTR_IN_ATTR_LIST.equals(testName)){
       PortTemplateConsolidationData portTemplateConsolidationData = consolidationData
-          .getPortConsolidationData().getFilePortConsolidationData("MainServiceTemplate.yaml")
+          .getPortConsolidationData().getFilePortConsolidationData("ep-jsa_netServiceTemplate.yaml")
           .getPortTemplateConsolidationData("VMI1");
       Assert.assertNotNull(portTemplateConsolidationData);
       Assert.assertEquals(2, portTemplateConsolidationData.getNodesGetAttrIn().size());
@@ -635,7 +651,7 @@ public class ConsolidationDataTestUtil {
 
       ComputeTemplateConsolidationData computeTemplateConsolidationDataFSB2 = consolidationData
           .getComputeConsolidationData()
-          .getFileComputeConsolidationData("MainServiceTemplate.yaml")
+          .getFileComputeConsolidationData("ep-jsa_netServiceTemplate.yaml")
           .getTypeComputeConsolidationData("org.openecomp.resource.vfc.nodes.heat.FSB2")
           .getComputeTemplateConsolidationData("FSB2");
       Assert.assertEquals(1,computeTemplateConsolidationDataFSB2.getNodesGetAttrOut().size());
@@ -647,7 +663,7 @@ public class ConsolidationDataTestUtil {
           .get(0).getAttributeName());
       ComputeTemplateConsolidationData computeTemplateConsolidationDataFSB1 = consolidationData
           .getComputeConsolidationData()
-          .getFileComputeConsolidationData("MainServiceTemplate.yaml")
+          .getFileComputeConsolidationData("ep-jsa_netServiceTemplate.yaml")
           .getTypeComputeConsolidationData("org.openecomp.resource.vfc.nodes.heat.FSB1")
           .getComputeTemplateConsolidationData("FSB1");
       Assert.assertEquals(1,computeTemplateConsolidationDataFSB1.getNodesGetAttrOut().size());
@@ -682,7 +698,7 @@ public class ConsolidationDataTestUtil {
       Assert.assertNotNull(portTemplateConsolidationData);
       Assert.assertEquals("name",portTemplateConsolidationData.getNodesGetAttrIn().get("FSB1").
           get(0).getFieldName());
-      Assert.assertEquals("fq_name",portTemplateConsolidationData.getNodesGetAttrIn().get("FSB1").
+      Assert.assertEquals("tenant_id",portTemplateConsolidationData.getNodesGetAttrIn().get("FSB1").
           get(0).getAttributeName());
     } else if(TestConstants.TEST_GET_ATTR_FOR_NONE_TO_PORT_OR_COMPUTE.equals(testName)){
       ComputeTemplateConsolidationData computeTemplateConsolidationData = consolidationData
@@ -697,7 +713,7 @@ public class ConsolidationDataTestUtil {
     } else if(TestConstants.TEST_OUTPUT_GET_ATTR.equals(testName)){
       ComputeTemplateConsolidationData computeTemplateConsolidationData1 = consolidationData
           .getComputeConsolidationData()
-          .getFileComputeConsolidationData("MainServiceTemplate.yaml")
+          .getFileComputeConsolidationData("firstnet_fgi_frwlServiceTemplate.yaml")
           .getTypeComputeConsolidationData("org.openecomp.resource.vfc.nodes.heat.cgi_fw")
           .getComputeTemplateConsolidationData("CGI_FW_SERVER_1");
       Assert.assertEquals("cgi_fw_01_left_mac_1",computeTemplateConsolidationData1
@@ -707,7 +723,7 @@ public class ConsolidationDataTestUtil {
           .get(0).getAttributeName());
       ComputeTemplateConsolidationData computeTemplateConsolidationData2 = consolidationData
           .getComputeConsolidationData()
-          .getFileComputeConsolidationData("MainServiceTemplate.yaml")
+          .getFileComputeConsolidationData("firstnet_fgi_frwlServiceTemplate.yaml")
           .getTypeComputeConsolidationData("org.openecomp.resource.vfc.nodes.heat.cgi_fw")
           .getComputeTemplateConsolidationData("CGI_FW_SERVER_2");
       Assert.assertEquals(1,computeTemplateConsolidationData2
@@ -755,7 +771,7 @@ public class ConsolidationDataTestUtil {
       Assert.assertEquals("addresses",computeTemplateConsolidationData2
           .getOutputParametersGetAttrIn().get(7).getAttributeName());
       PortTemplateConsolidationData portTemplateConsolidationData = consolidationData
-          .getPortConsolidationData().getFilePortConsolidationData("MainServiceTemplate.yaml")
+          .getPortConsolidationData().getFilePortConsolidationData("firstnet_fgi_frwlServiceTemplate.yaml")
           .getPortTemplateConsolidationData("contrail_vmi_subinterface");
       Assert.assertEquals("cgi_fw_01_left_mac_7",portTemplateConsolidationData
           .getOutputParametersGetAttrIn().get(0).getFieldName());

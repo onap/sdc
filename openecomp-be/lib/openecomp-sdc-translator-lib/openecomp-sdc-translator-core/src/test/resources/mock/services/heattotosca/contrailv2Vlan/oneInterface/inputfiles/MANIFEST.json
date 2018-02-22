@@ -4,6 +4,11 @@
   "version": "2013-05-23",
   "data": [
     {
+      "isBase": true,
+      "file": "base_hot_template.yml",
+      "type": "HEAT"
+    },
+    {
       "file": "hot_template.yml",
       "type": "HEAT"
     }

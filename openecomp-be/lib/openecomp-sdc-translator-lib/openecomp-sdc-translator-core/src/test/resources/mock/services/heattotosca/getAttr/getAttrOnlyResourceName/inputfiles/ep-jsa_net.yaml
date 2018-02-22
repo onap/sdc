@@ -220,19 +220,13 @@ parameters:
 
 resources:
   VMI1:
-      type: OS::ContrailV2::VirtualMachineInterface
+      type: OS::Neutron::Port
       properties:
         name:
           str_replace:
             template: VM_NAME_PORT_3
             params:
               VM_NAME: { get_param: vipr_atm_name_0 }
-        virtual_machine_interface_properties:
-          {
-          virtual_machine_interface_properties_service_interface_type: 'left'
-          }
-        port_tuple_refs: [{ get_param: port_name }]
-        virtual_network_refs: [{ get_param: network_name }]
 
   FSB1:
       type: OS::Nova::Server

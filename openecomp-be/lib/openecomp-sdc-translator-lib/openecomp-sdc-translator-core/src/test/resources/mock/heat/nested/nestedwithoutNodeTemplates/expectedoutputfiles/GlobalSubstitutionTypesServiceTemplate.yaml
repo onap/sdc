@@ -983,6 +983,94 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.subinterface.vlan_subinterface_dual:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      perimeta_parent_interface:
+        type: string
+        description: Parent Contrail interface
+        required: true
+        status: SUPPORTED
+      perimeta_v6_vip_0:
+        type: string
+        description: virtual IPv6 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      perimeta_subinterface_name_prefix:
+        type: string
+        description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
+        required: true
+        status: SUPPORTED
+      perimeta_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_subinterface_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 1
+          - 1001
+      perimeta_ip_0:
+        type: string
+        description: IPv4 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      perimeta_vip_0:
+        type: string
+        description: virtual IPv4 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      perimeta_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use for subinterfaces
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_mac_address:
+        type: string
+        description: MAC address to use for subinterface
+        required: true
+        status: SUPPORTED
+      perimeta_v6_ip_0:
+        type: string
+        description: IPv6 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+    requirements:
+    - dependency_contrail_vmi_subinterface:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_contrail_vmi_subinterface:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_contrail_vmi_subinterface:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      feature_contrail_vmi_subinterface:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
   org.openecomp.resource.abstract.nodes.heat.module_1_perimeta_swmu_b_child:
     derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
     properties:
@@ -2790,94 +2878,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-  org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual:
-    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
-    properties:
-      perimeta_parent_interface:
-        type: string
-        description: Parent Contrail interface
-        required: true
-        status: SUPPORTED
-      perimeta_v6_vip_0:
-        type: string
-        description: virtual IPv6 address associated with subinterfaces
-        required: true
-        status: SUPPORTED
-      perimeta_subinterface_name_prefix:
-        type: string
-        description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
-        required: true
-        status: SUPPORTED
-      perimeta_vlan_networks:
-        type: list
-        description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      perimeta_subinterface_instance_index:
-        type: float
-        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
-        required: true
-        status: SUPPORTED
-        constraints:
-        - in_range:
-          - 1
-          - 1001
-      perimeta_ip_0:
-        type: string
-        description: IPv4 address associated with subinterfaces
-        required: true
-        status: SUPPORTED
-      perimeta_vip_0:
-        type: string
-        description: virtual IPv4 address associated with subinterfaces
-        required: true
-        status: SUPPORTED
-      perimeta_vlan_ids:
-        type: list
-        description: List of VLAN IDs to use for subinterfaces
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      perimeta_mac_address:
-        type: string
-        description: MAC address to use for subinterface
-        required: true
-        status: SUPPORTED
-      perimeta_v6_ip_0:
-        type: string
-        description: IPv6 address associated with subinterfaces
-        required: true
-        status: SUPPORTED
-    requirements:
-    - dependency_contrail_vmi_subinterface:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_contrail_vmi_subinterface:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - binding_contrail_vmi_subinterface:
-        capability: tosca.capabilities.network.Bindable
-        node: org.openecomp.resource.cp.nodes.network.Port
-        relationship: tosca.relationships.network.BindsTo
-        occurrences:
-        - 1
-        - 1
-    capabilities:
-      feature_contrail_vmi_subinterface:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
   org.openecomp.resource.abstract.nodes.heat.module_2_perimeta_sw_b_child:
     derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
     properties:
@@ -3706,4 +3706,4 @@ node_types:
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
-        - UNBOUNDED
+        - UNBOUNDED

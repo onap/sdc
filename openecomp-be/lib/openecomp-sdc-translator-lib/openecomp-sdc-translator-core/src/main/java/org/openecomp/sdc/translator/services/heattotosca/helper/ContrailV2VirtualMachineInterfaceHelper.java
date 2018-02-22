@@ -1,27 +1,27 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
+
 
 package org.openecomp.sdc.translator.services.heattotosca.helper;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -30,6 +30,7 @@ import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
@@ -37,11 +38,14 @@ import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public class ContrailV2VirtualMachineInterfaceHelper {
   static Logger logger =
@@ -138,7 +142,7 @@ public class ContrailV2VirtualMachineInterfaceHelper {
   }
 
   /**
-   * Check if the input heat resource is Vlan sub interface resource
+   * Check if the input heat resource is Vlan sub interface resource.
    *
    * @param resource heat resource to be checked
    * @return true - if input resource is valn sub interface resource flase - otherwise.
@@ -152,6 +156,32 @@ public class ContrailV2VirtualMachineInterfaceHelper {
     }
 
     return false;
+  }
+
+  public boolean isVlanSubInterfaceConnectedToPortIndirectly(TranslateTo translateTo) {
+    Resource resource = translateTo.getResource();
+    TranslationContext context = translateTo.getContext();
+    Set<String> nestedHeatsFiles = context.getNestedHeatsFiles();
+    Map<String, Object> properties = resource.getProperties();
+
+    if (MapUtils.isNotEmpty(properties)
+        && properties.containsKey(HeatConstants.VMI_REFS_PROPERTY_NAME)) {
+      Map<String, Object> portReference = getPortReference(properties);
+
+      return CollectionUtils.isNotEmpty(nestedHeatsFiles)
+          && nestedHeatsFiles.contains(translateTo.getHeatFileName())
+          && portReference.containsKey(ResourceReferenceFunctions.GET_PARAM.getFunction());
+    }
+
+    return false;
+  }
+
+  private Map<String, Object> getPortReference(Map<String, Object> properties) {
+    Object portReferenceObj = properties.get(HeatConstants.VMI_REFS_PROPERTY_NAME);
+    List<Object> portReference =
+        portReferenceObj instanceof List ? (List<Object>) portReferenceObj : new ArrayList<>();
+    return CollectionUtils.isEmpty(portReference) ? new HashMap<>()
+        : (Map<String, Object>) portReference.get(0);
   }
 
   private Optional<Object> getVlanTagPropertyValue(Resource resource) {
