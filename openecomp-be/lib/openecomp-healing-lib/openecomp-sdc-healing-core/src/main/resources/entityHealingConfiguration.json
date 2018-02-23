@@ -1,7 +1,8 @@
 {
   "vsp": {
     "structure": {
-      "ownerHealer": "org.openecomp.sdc.healing.healers.OwnerHealer"
+      "ownerHealer": "org.openecomp.sdc.healing.healers.OwnerHealer",
+      "networkPackageHealer": "org.openecomp.sdc.healing.healers.NetworkPackageHealer"
     },
     "data": {
       "toscaServiceModelHealer": "org.openecomp.sdc.healing.healers.ToscaServiceModelHealer"

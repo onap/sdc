@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -34,11 +35,11 @@ public class OwnerHealer implements Healer {
       .createInterface();
 
   public Object heal(String itemId, Version version) {
-    Stream<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId)
-        .stream();
+    Supplier<Stream<ItemPermissionsEntity>> itemPermissions = () -> permissionsDao
+        .listItemPermissions(itemId).stream();
 
 
-    if (itemPermissions.noneMatch(this::isOwnerPermission)) {
+    if (itemPermissions.get().noneMatch(this::isOwnerPermission)) {
       String currentUserId =
           SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId()
               .replace(HEALING_USER_SUFFIX, "");
@@ -52,7 +53,7 @@ public class OwnerHealer implements Healer {
 
       return currentUserId;
     } else if (!itemHasOwnerProperty(itemId)){
-    Optional<ItemPermissionsEntity> ownerOpt = itemPermissions.filter
+      Optional<ItemPermissionsEntity> ownerOpt = itemPermissions.get().filter
         (this::isOwnerPermission).findFirst();
       if(ownerOpt.isPresent()) {
         updateItemOwner(itemId, ownerOpt.get().getUserId());
@@ -60,7 +61,7 @@ public class OwnerHealer implements Healer {
         throw new SdcRuntimeException("Unexpected error in Owner Healer. Item id: " + itemId);
       }
   }
-    return itemPermissions.filter(this::isOwnerPermission).findFirst().get().getUserId();
+    return itemPermissions.get().filter(this::isOwnerPermission).findFirst().get().getUserId();
   }
 
   private void updateItemOwner(String itemId,String userId) {
