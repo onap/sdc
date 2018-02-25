@@ -365,6 +365,7 @@ if [ -z "${DOCKER}" ]; then
 	sdc-BE
 	sdc-BE-init
 	sdc-FE
+	sdc-sanity
 else
 	cleanup ${DOCKER}
 	${DOCKER}
