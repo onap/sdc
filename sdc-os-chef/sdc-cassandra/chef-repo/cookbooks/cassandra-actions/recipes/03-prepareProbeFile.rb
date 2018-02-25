@@ -15,3 +15,10 @@ template "/var/lib/ready-probe.sh" do
      :cassandra_pwd => ENV['CS_PASSWORD']
   })
 end
+
+
+bash "run_probe_script" do
+   code <<-EOH
+     /var/lib/ready-probe.sh
+   EOH
+end
