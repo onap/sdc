@@ -50,6 +50,10 @@
                 "workflow_source_url": "yyy"
             }
         },
+           "VnfRepo": {
+             "vnfRepoPort": "8702",
+             "vnfRepoHost": "192.168.50.5"
+           }
     },
     "override_attributes": {
         "FE": {
