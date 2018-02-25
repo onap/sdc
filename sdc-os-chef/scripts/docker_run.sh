@@ -37,6 +37,7 @@ function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
     chmod -R 777 ${WORKSPACE}/data/logs
 }
+
 function probe_cs {
 
 cs_stat=false
@@ -125,6 +126,8 @@ function monitor_docker {
         TIME=$(($TIME+$INTERVAL))
     done
 
+    docker logs $1 > ${WORKSPACE}/data/logs/$1_docker.log
+
     if [ "$TIME" -ge "$TIME_OUT" ]; then
         echo -e "\e[1;31mTIME OUT: DOCKER was NOT fully started in $TIME_OUT seconds... Could cause problems ...\e[0m"
     fi
@@ -140,7 +143,7 @@ function healthCheck {
 	echo ""
 	echo ""
 	echo "FE health-Check:"
-	curl http://${IP}:8181/sdc1/rest/healthCheck
+	curl http://127.0.0.1:8181/sdc1/rest/healthCheck
 
 
 	echo ""

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-health_Check_http_code=$(curl --max-time 5 -o /dev/null -w '%{http_code}' http://localhost:8080/sdc2/rest/healthCheck)
+set -x
+
+health_Check_http_code=$(curl --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/sdc2/rest/healthCheck)
 if [[ "$health_Check_http_code" -eq 500 ]]; then
    exit 200
 else
