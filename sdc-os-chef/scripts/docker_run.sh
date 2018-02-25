@@ -35,7 +35,15 @@ function cleanup {
 function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/BE/SDC/SDC-BE
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
+    mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/ExtentReport
+	mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/target
     chmod -R 777 ${WORKSPACE}/data/logs
+}
+
+function docker_logs {
+
+docker logs $1 > ${WORKSPACE}/data/logs/$1_docker.log
+
 }
 
 function probe_cs {
@@ -126,7 +134,7 @@ function monitor_docker {
         TIME=$(($TIME+$INTERVAL))
     done
 
-    docker logs $1 > ${WORKSPACE}/data/logs/$1_docker.log
+    docker_logs $1
 
     if [ "$TIME" -ge "$TIME_OUT" ]; then
         echo -e "\e[1;31mTIME OUT: DOCKER was NOT fully started in $TIME_OUT seconds... Could cause problems ...\e[0m"
@@ -143,7 +151,7 @@ function healthCheck {
 	echo ""
 	echo ""
 	echo "FE health-Check:"
-	curl http://127.0.0.1:8181/sdc1/rest/healthCheck
+	curl http://${IP}:8181/sdc1/rest/healthCheck
 
 
 	echo ""
@@ -155,32 +163,6 @@ function healthCheck {
 		return ${healthCheck_http_code}
 	fi
 	echo "check user existance: OK"
-	return ${healthCheck_http_code}
-}
-
-function elasticHealthCheck {
-	echo "Elastic Health-Check:"
-
-	COUNTER=0
-    while [  $COUNTER -lt 20 ]; do
-    	echo "Waiting ES docker to start"
-  		health_Check_http_code=$(curl -o /dev/null -w '%{http_code}' http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
-  		if [[ "$health_Check_http_code" -eq 200 ]]
-		then
-			break
-		fi
-		let COUNTER=COUNTER+1
-		sleep 4
-	done
-
-	healthCheck_http_code=$(curl -o /dev/null -w '%{http_code}' http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
-	if [[ "$health_Check_http_code" != 200 ]]
-	then
-		echo "Error [${healthCheck_http_code}] ES NOT started correctly"
-		exit ${healthCheck_http_code}
-	fi
-	echo "ES started correctly"
-	curl ${IP}:9200/_cluster/health?pretty=true
 	return ${healthCheck_http_code}
 }
 
@@ -270,6 +252,7 @@ if [ ${LOCAL} = false ]; then
 fi
 docker run --name sdc-init-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE} > /dev/null 2>&1
 rc=$?
+docker_logs sdc-init-es
 if [[ $rc != 0 ]]; then exit $rc; fi
 
 }
@@ -295,6 +278,7 @@ if [ ${LOCAL} = false ]; then
 fi
 docker run --name sdc-cs-init --env RELEASE="${RELEASE}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE} > /dev/null 2>&1
 rc=$?
+docker_logs sdc-cs-init
 if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
@@ -319,7 +303,7 @@ if [ ${LOCAL} = false ]; then
 else
 	ADDITIONAL_ARGUMENTS=${DEBUG_PORT}
 fi
-docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
+docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
 
 echo "please wait while BE is starting..."
 monitor_docker sdc-BE
@@ -335,6 +319,7 @@ if [ ${LOCAL} = false ]; then
 fi
 docker run --name sdc-BE-init --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
 rc=$?
+docker_logs sdc-BE-init
 if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
@@ -345,7 +330,7 @@ echo "docker run sdc-frontend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-frontend:${RELEASE}
 fi
-docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume ${WORKSPACE}/data/logs/FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${PREFIX}/sdc-frontend:${RELEASE}
+docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume ${WORKSPACE}/data/logs/FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${PREFIX}/sdc-frontend:${RELEASE}
 
 echo "please wait while FE is starting....."
 monitor_docker sdc-FE
@@ -363,7 +348,7 @@ if [[ (${RUNTESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
         docker pull ${PREFIX}/sdc-sanity:${RELEASE}
     fi
 
-docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/sdc-sanity/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-sanity/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
+docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/sdc-sanity/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-sanity/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
 echo "please wait while SANITY is starting....."
 monitor_docker sdc-sanity
 
