@@ -49,7 +49,7 @@ docker logs $1 > ${WORKSPACE}/data/logs/$1_docker.log
 function probe_cs {
 
 cs_stat=false
-docker exec -it $1 /var/lib/ready-probe.sh > /dev/null 2>&1
+docker exec $1 /var/lib/ready-probe.sh > /dev/null 2>&1
 rc=$?
 if [[ $rc == 0 ]]; then
   echo DOCKER start finished in $2 seconds
@@ -61,7 +61,7 @@ fi
 function probe_be {
 
 be_stat=false
-docker exec -it $1 /var/lib/ready-probe.sh > /dev/null 2>&1
+docker exec $1 /var/lib/ready-probe.sh > /dev/null 2>&1
 rc=$?
 if [[ $rc == 200 ]]; then
   echo DOCKER start finished in $2 seconds
@@ -73,7 +73,7 @@ fi
 function probe_fe {
 
 fe_stat=false
-docker exec -it $1 /var/lib/ready-probe.sh > /dev/null 2>&1
+docker exec $1 /var/lib/ready-probe.sh > /dev/null 2>&1
 rc=$?
 if [[ $rc == 200 ]]; then
   echo DOCKER start finished in $2 seconds
