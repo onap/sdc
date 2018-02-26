@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7fc31eed",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-26T14:48:11Z",
+      "side": 1,
+      "message": "write the full word (update ?)",
+      "range": {
+        "startLine": 818,
+        "startChar": 15,
+        "endLine": 818,
+        "endChar": 46
+      },
+      "revId": "32842cd343270e8ab5d7cc83484706cd26b0aa33",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1fb45a80",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 962,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-26T14:48:11Z",
+      "side": 1,
+      "message": "write the full word (update ?)",
+      "range": {
+        "startLine": 962,
+        "startChar": 15,
+        "endLine": 962,
+        "endChar": 50
+      },
+      "revId": "32842cd343270e8ab5d7cc83484706cd26b0aa33",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3fb91679",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1017,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-26T14:48:11Z",
+      "side": 1,
+      "message": "write the full word (update ?)",
+      "range": {
+        "startLine": 1017,
+        "startChar": 15,
+        "endLine": 1017,
+        "endChar": 44
+      },
+      "revId": "32842cd343270e8ab5d7cc83484706cd26b0aa33",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ffae4e2d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VmInterfaceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-26T14:48:11Z",
+      "side": 1,
+      "message": "capital letters",
+      "range": {
+        "startLine": 36,
+        "startChar": 26,
+        "endLine": 36,
+        "endChar": 32
+      },
+      "revId": "32842cd343270e8ab5d7cc83484706cd26b0aa33",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
