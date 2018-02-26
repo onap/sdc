@@ -53,7 +53,7 @@ public class NicDaoZusammenImpl implements NicDao {
         .stream()
         .map(new ElementToNicConvertor()::convert)
         .map(nicEntity -> {
-          nicEntity.setComponentId(nicEntity.getComponentId());
+          nicEntity.setComponentId(nic.getComponentId());
           nicEntity.setVspId(nic.getVspId());
           nicEntity.setVersion(nic.getVersion());
           return nicEntity;
@@ -171,7 +171,10 @@ public class NicDaoZusammenImpl implements NicDao {
         .map(component ->
             listNics(context, elementContext,
                 new NicEntity(vspId, version, component.getId(), null)).stream()
-                .map(nic -> getQuestionnaire(context, elementContext, nic))
+                .map(nic -> {
+                  nic.setQuestionnaireData(getQuestionnaire(context, elementContext, nic).getQuestionnaireData());
+                  return nic;
+                })
                 .collect(Collectors.toList()))
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
