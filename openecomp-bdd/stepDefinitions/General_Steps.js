@@ -86,6 +86,17 @@ Then('I want to check property {string} for value {string}', function(string, st
 });
 /**
  * @module ResponseData
+ * @description Will check the output data for a property and a value. property can be a path
+ * (example: results[0].id). Supports comparison to a long String by allowing a line break
+ * @exampleFile VirtualMachineInterfaceValidationHeatResourceMissingProperties.feature
+ * @step I want to check property {string} for value {string}
+ **/
+
+Then('I want to check property {string} for value:', function(string, docString)  {
+	assert.equal(_.get(this.context.responseData, string), docString.trim());
+});
+/**
+ * @module ResponseData
  * @description Will check the output data for a property and a integer. property can be a path (example: results[0].id)
  * @exampleFile Example_ResponseData_CheckAndManipulation.feature
  * @step I want to check property {string} for value {int}
