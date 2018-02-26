@@ -365,11 +365,11 @@ if [ -z "${DOCKER}" ]; then
 	sdc-BE
 	sdc-BE-init
 	sdc-FE
+    healthCheck
 	sdc-sanity
 else
 	cleanup ${DOCKER}
 	${DOCKER}
+    healthCheck
 fi
 
-# healthCheck
-healthCheck
