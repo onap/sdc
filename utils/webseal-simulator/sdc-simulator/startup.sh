@@ -11,6 +11,7 @@ if [[ $rc != 0 ]]; then
 fi
 
 JAVA_OPTIONS=" ${JAVA_OPTIONS} \
+		-Xdebug -agentlib:jdwp=transport=dt_socket,address=5000,server=y,suspend=n -Xmx128m -Xms128m -Xss1m \
                 -Dconfig.home=${JETTY_BASE}/config/sdc-simulator \
                 -Dlog.home=${JETTY_BASE}/logs \
                 -Dlogback.configurationFile=${JETTY_BASE}/config/sdc-simulator/logback.xml \
