@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e86531b5",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-27T08:54:16Z",
+      "side": 1,
+      "message": "Usually constants go before members.",
+      "revId": "36117b2cdde7572e0a8c5dfc40715f277357ffa8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_086add80",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-27T08:54:16Z",
+      "side": 1,
+      "message": "This method is too long.",
+      "revId": "36117b2cdde7572e0a8c5dfc40715f277357ffa8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c82e3543",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-02-27T08:54:16Z",
+      "side": 1,
+      "message": "There\u0027s no input validation. Does it mean this work even if any of the argument is null?",
+      "range": {
+        "startLine": 74,
+        "startChar": 58,
+        "endLine": 74,
+        "endChar": 73
+      },
+      "revId": "36117b2cdde7572e0a8c5dfc40715f277357ffa8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
