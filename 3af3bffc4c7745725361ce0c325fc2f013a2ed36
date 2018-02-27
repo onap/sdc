@@ -719,6 +719,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_051e48bb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationEntityType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-02-27T13:08:43Z",
+      "side": 1,
+      "message": "Replaced with Set and used contains.",
+      "parentUuid": "5a93c517_df8a72be",
+      "range": {
+        "startLine": 55,
+        "startChar": 39,
+        "endLine": 55,
+        "endChar": 70
+      },
+      "revId": "3af3bffc4c7745725361ce0c325fc2f013a2ed36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ab1f316b",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
         "patchSetId": 1
