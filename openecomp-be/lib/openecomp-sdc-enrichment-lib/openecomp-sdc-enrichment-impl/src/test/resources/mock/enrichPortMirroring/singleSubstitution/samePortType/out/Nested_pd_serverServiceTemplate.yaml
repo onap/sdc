@@ -241,26 +241,26 @@ topology_template:
     pd_server_pd01_port_2:
       type: org.openecomp.resource.cp.v2.extNeutronCP
       properties:
+        exCP_naming:
+          get_input: port_pd01_port_2_exCP_naming
         replacement_policy:
           get_input:
           - port_pd01_port_2_replacement_policy
           - index_value
+        vlan_requirements:
+          get_input: port_pd01_port_2_vlan_requirements
         ip_requirements:
           get_input: port_pd01_port_2_ip_requirements
+        network_role_tag:
+          get_input: port_pd01_port_2_network_role_tag
+        mac_requirements:
+          get_input: port_pd01_port_2_mac_requirements
+        order:
+          get_input: port_pd01_port_2_order
         network_role:
           get_input: port_pd01_port_2_network_role
         subnetpoolid:
           get_input: port_pd01_port_2_subnetpoolid
-        mac_requirements:
-          get_input: port_pd01_port_2_mac_requirements
-        exCP_naming:
-          get_input: port_pd01_port_2_exCP_naming
-        vlan_requirements:
-          get_input: port_pd01_port_2_vlan_requirements
-        network_role_tag:
-          get_input: port_pd01_port_2_network_role_tag
-        order:
-          get_input: port_pd01_port_2_order
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

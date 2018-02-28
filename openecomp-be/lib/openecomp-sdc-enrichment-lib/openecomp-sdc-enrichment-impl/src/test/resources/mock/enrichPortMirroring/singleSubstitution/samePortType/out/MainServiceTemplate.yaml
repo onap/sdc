@@ -264,7 +264,34 @@ topology_template:
           node: pd01_volume
           relationship: pd01_volume_attachment
     template_VMInt_OAM_lb_external_VMI:
-      type: org.openecomp.resource.cp.v2.extContrailCP
+      type: org.openecomp.resource.cp.v2.extVirtualMachineInterfaceCP
+      properties:
+        name: template_VMInt_OAM_lb_NAME
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+        - get_input: mac_address
       capabilities:
         port_mirroring:
           properties:
