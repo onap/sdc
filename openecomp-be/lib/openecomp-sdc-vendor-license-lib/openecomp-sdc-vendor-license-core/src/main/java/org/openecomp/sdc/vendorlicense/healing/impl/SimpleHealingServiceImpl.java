@@ -23,6 +23,8 @@ import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.healing.HealingService;
+import org.openecomp.sdc.versioning.VersioningManager;
+import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 import java.util.UUID;
@@ -32,6 +34,9 @@ public class SimpleHealingServiceImpl implements HealingService {
       EntitlementPoolDaoFactory.getInstance().createInterface();
   private static final LicenseKeyGroupDao licenseKeyGroupDao =
       LicenseKeyGroupDaoFactory.getInstance().createInterface();
+  private static final VersioningManager VERSIONING_MANAGER =
+      VersioningManagerFactory.getInstance().createInterface();
+
   @Override
   public VersionableEntity heal(VersionableEntity toHeal) {
     return handleMissingVersionId(toHeal);
@@ -61,6 +66,9 @@ public class SimpleHealingServiceImpl implements HealingService {
       throw new UnsupportedOperationException(
           "Unsupported operation for 1610 release/1607->1610 migration.");
     }
+
+    VERSIONING_MANAGER.publish(toHeal.getFirstClassCitizenId(), toHeal.getVersion(), "Add missing version_uuid on ep/lkg");
+
     return toHeal;
   }
 }
