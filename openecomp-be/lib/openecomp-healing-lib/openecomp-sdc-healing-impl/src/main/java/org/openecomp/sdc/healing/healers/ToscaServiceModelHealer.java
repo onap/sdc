@@ -43,25 +43,28 @@ public class ToscaServiceModelHealer implements Healer {
   }
 
   @Override
-  public Object heal(String itemId, Version version) throws Exception {
+  public boolean isHealingNeeded(String itemId, Version version) {
+    OrchestrationTemplateEntity orchestrationTemplate =
+        orchestrationTemplateDao.get(itemId, version);
+    OnboardingTypesEnum onboardingTypes =
+        OnboardingTypesEnum.getOnboardingTypesEnum(orchestrationTemplate.getFileSuffix());
+
+    return Objects.nonNull(onboardingTypes) &&
+        Objects.nonNull(orchestrationTemplate.getContentData());
+  }
+
+  @Override
+  public void heal(String itemId, Version version) throws Exception {
     OrchestrationTemplateEntity orchestrationTemplateEntity =
         orchestrationTemplateDao.get(itemId, version);
     OnboardingTypesEnum type =
         OnboardingTypesEnum.getOnboardingTypesEnum(orchestrationTemplateEntity.getFileSuffix());
-
-    if (Objects.isNull(type)
-        || Objects.isNull(orchestrationTemplateEntity.getContentData())) {
-      return null;
-    }
 
     Optional<ToscaServiceModel> healedServiceModel =
         healServiceModel(orchestrationTemplateEntity, type);
 
     healedServiceModel.ifPresent(serviceModel -> serviceModelDao
         .overrideServiceModel(itemId, version, serviceModel));
-
-    return healedServiceModel;
-
   }
 
   private Optional<ToscaServiceModel> healServiceModel(
@@ -79,7 +82,6 @@ public class ToscaServiceModelHealer implements Healer {
       default:
         return Optional.empty();
     }
-
   }
 
   private FileContentHandler getFileContentHandlerForHealing(

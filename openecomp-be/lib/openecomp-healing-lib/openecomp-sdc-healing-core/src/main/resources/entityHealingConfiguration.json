@@ -1,15 +1,15 @@
 {
   "vsp": {
-    "structure": {
-      "ownerHealer": "org.openecomp.sdc.healing.healers.OwnerHealer"
-    },
-    "data": {
-      "toscaServiceModelHealer": "org.openecomp.sdc.healing.healers.ToscaServiceModelHealer"
-    }
+    "structure": [
+      "org.openecomp.sdc.healing.healers.OwnerHealer"
+    ],
+    "data": [
+      "org.openecomp.sdc.healing.healers.ToscaServiceModelHealer"
+    ]
   },
   "vlm": {
-    "structure": {
-      "ownerHealer": "org.openecomp.sdc.healing.healers.OwnerHealer"
-    }
+    "structure": [
+      "org.openecomp.sdc.healing.healers.OwnerHealer"
+    ]
   }
 }
