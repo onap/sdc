@@ -26,12 +26,10 @@ public class RequestsClient extends HttpServlet {
 	@Override
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
 
-		String hostname = request.getParameter("hostname") != null ? request.getParameter("hostname") : "127.0.0.1";
-		String port = request.getParameter("port") != null ? request.getParameter("port") : "8080";
 		String adminId = request.getParameter("adminId") != null ? request.getParameter("adminId") : "jh0003";
-
 		String createAll = request.getParameter("all");
-		
+		String url = Conf.getInstance().getFeHost() + "/sdc1/feProxy/rest/v1/user";
+
 		PrintWriter writer = response.getWriter();
 		
 		int resultCode;
@@ -39,7 +37,7 @@ public class RequestsClient extends HttpServlet {
 		if ("true".equals(createAll)) {
 			Map<String, User> users = Conf.getInstance().getUsers();
 			for (User user : users.values()) {
-				resultCode = createUser(response, user.getUserId(), user.getRole().toUpperCase(), user.getFirstName(), user.getLastName(), user.getEmail(), hostname, port, adminId);
+				resultCode = createUser(response, user.getUserId(), user.getRole().toUpperCase(), user.getFirstName(), user.getLastName(), user.getEmail(), url, adminId);
 				writer.println("User "+ user.getFirstName() + " " + user.getLastName() + getResultMessage(resultCode) + "<br>");
 			}
 		} else {
@@ -48,7 +46,9 @@ public class RequestsClient extends HttpServlet {
 			String firstName = request.getParameter("firstName");
 			String lastName = request.getParameter("lastName");
 			String email = request.getParameter("email");
-			resultCode = createUser(response, userId, role, firstName, lastName, email, hostname, port, adminId);
+						
+			resultCode = createUser(response, userId, role, firstName, lastName, email, url, adminId);
+			
 			writer.println("User "+ firstName + " " + lastName +getResultMessage(resultCode));	
 		}
 
@@ -60,12 +60,11 @@ public class RequestsClient extends HttpServlet {
 		return 201 == resultCode? " created successfuly":" not created ("+ resultCode +")";
 	}
 
-	private int createUser(final HttpServletResponse response, String userId, String role, String firstName, String lastName, String email, String hostname, String port, String adminId) throws IOException {
+	private int createUser(final HttpServletResponse response, String userId, String role, String firstName, String lastName, String email, String url, String adminId) throws IOException {
 		response.setContentType("text/html");
 
-		// Fill the data of the request
-		String url = "http://" + hostname + ":" + port + "/sdc2/rest/v1/user";
-		String body = "{'firstName':'" + firstName + "', 'lastName':'" + lastName + "', 'userId':'" + userId + "', 'email':'" + email + "','role':'" + role + "'}";
+		String body = "{\"firstName\":\"" + firstName + "\", \"lastName\":\"" + lastName + "\", \"userId\":\"" + userId + "\", \"email\":\"" + email + "\",\"role\":\"" + role + "\"}";
+
 		HashMap<String, String> headers = new HashMap<String, String>();
 		headers.put("Content-Type", "application/json");
 		headers.put("USER_ID", adminId);

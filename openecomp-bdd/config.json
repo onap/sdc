@@ -1,0 +1,16 @@
+{
+  "protocol" : "http",
+
+  "onboarding" : {
+    "port" : 8285,
+    "prefix" : "sdc1/feProxy/onboarding-api/v1.0"
+  },
+  "vf" : {
+    "port" : 8285,
+    "prefix" : "sdc1/feProxy/rest/v1"
+  },
+  "activity_spec" : {
+    "port" : 8080,
+    "prefix" : "sdc1/feProxy/activityspec-api/v1"
+  }
+}

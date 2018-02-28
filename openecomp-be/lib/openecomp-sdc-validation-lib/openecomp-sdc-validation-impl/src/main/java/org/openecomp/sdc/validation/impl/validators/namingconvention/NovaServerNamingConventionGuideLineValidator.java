@@ -31,8 +31,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.NamingConventionValidationContext;
@@ -128,9 +126,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                 ErrorMessagesFormatBuilder
                         .getErrorWithParameters(
                                 ERROR_CODE_NNS1, Messages.MISSING_NOVA_SERVER_METADATA.getErrorMessage(),
-                                resourceId),
-                LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
-                LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
+                                resourceId));
       } else if (novaServerPropMetadata instanceof Map) {
         TreeMap<String, Object> propertyMap = new TreeMap((Comparator<String>) String::compareToIgnoreCase);
         propertyMap.putAll((Map) novaServerPropMetadata);
@@ -140,9 +136,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                   ErrorLevel.WARNING,
                   ErrorMessagesFormatBuilder.getErrorWithParameters(
                           ERROR_CODE_NNS2, Messages.MISSING_NOVA_SERVER_VF_MODULE_ID.getErrorMessage(),
-                          resourceId),
-                  LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
-                  LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
+                          resourceId));
         }
         if (!propertyMap.containsKey("vnf_id")) {
           globalValidationContext.addMessage(
@@ -150,9 +144,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                   ErrorMessagesFormatBuilder
                           .getErrorWithParameters(
                                   ERROR_CODE_NNS3, Messages.MISSING_NOVA_SERVER_VNF_ID.getErrorMessage(),
-                                  resourceId),
-                  LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
-                  LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
+                                  resourceId));
         }
       }
     }
@@ -203,9 +195,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                   ErrorLevel.WARNING,
                   ErrorMessagesFormatBuilder.getErrorWithParameters(
                           ERROR_CODE_NNS12, Messages.RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE
-                                  .getErrorMessage(), resourceId, role),
-                  LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
-                  LoggerErrorDescription.RESOURCE_UNIQUE_NETWORK_ROLE);
+                                  .getErrorMessage(), resourceId, role));
         } else {
           uniqueResourcePortNetworkRole.put(role, portResourceId);
         }
@@ -257,9 +247,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               ErrorMessagesFormatBuilder
                       .getErrorWithParameters(
                               ERROR_CODE_NNS4, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                              "network or network_id", resourceId),
-              LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
-              LoggerErrorDescription.MISSING_GET_PARAM);
+                              "network or network_id", resourceId));
       return null;
     }
     return (Map) portNetwork;
@@ -289,9 +277,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                     ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
                             ERROR_CODE_NNS5, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                             ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
-                            "Availability Zone", availabilityZoneName, resourceEntry.getKey()),
-                    LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
-                    LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                            "Availability Zone", availabilityZoneName, resourceEntry.getKey()));
           }
       } else {
         globalContext.addMessage(
@@ -299,9 +285,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(
                                 ERROR_CODE_NNS6, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                                AVAILABILITY_ZONE, resourceEntry.getKey()),
-                LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
-                LoggerErrorDescription.MISSING_GET_PARAM);
+                                AVAILABILITY_ZONE, resourceEntry.getKey()));
       }
     }
   }
@@ -379,9 +363,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(
                               ERROR_CODE_NNS7, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                              "nova server name", resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
-              LoggerErrorDescription.MISSING_GET_PARAM);
+                              "nova server name", resourceEntry.getKey()));
     }
 
     return novaName;
@@ -411,9 +393,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(
                                 ERROR_CODE_NNS8, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                                propertyName, resourceEntry.getKey()),
-                LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
-                LoggerErrorDescription.MISSING_GET_PARAM);
+                                propertyName, resourceEntry.getKey()));
         return true;
       }
 
@@ -469,9 +449,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                     ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
                             ERROR_CODE_NNS9, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                             SERVER, "Name",
-                            novaServerNameEnvValue.toString(), resourceEntry.getKey()),
-                    LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
-                    LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                            novaServerNameEnvValue.toString(), resourceEntry.getKey()));
           }
       }
     }
@@ -491,9 +469,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               ErrorMessagesFormatBuilder.getErrorWithParameters(
                       ERROR_CODE_NNS10, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                       SERVER,
-                      "name", getParamNameList.toString(), resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
-              LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                      "name", getParamNameList.toString(), resourceEntry.getKey()));
       return null;
     }
 
@@ -512,9 +488,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               ErrorMessagesFormatBuilder.getErrorWithParameters(
                       ERROR_CODE_NNS10, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                       SERVER,
-                      "name", novaName, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
-              LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                      "name", novaName, resourceEntry.getKey()));
       return null;
     }
     return novaName;
@@ -538,9 +512,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder.getErrorWithParameters(
                       ERROR_CODE_NNS11, Messages.NOVA_NAME_IMAGE_FLAVOR_NOT_CONSISTENT.getErrorMessage(),
-                      resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
-              LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                      resourceEntry.getKey()));
     }
   }
 

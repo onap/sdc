@@ -1,22 +1,19 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
+
 
 package org.openecomp.sdcrests.vendorlicense.rest;
 
@@ -74,6 +71,14 @@ public interface VendorLicenseModels {
                               @NotNull(message = USER_MISSING_ERROR_MSG)
                               @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
 
+  @DELETE
+  @Path("/{vlmId}")
+  @ApiOperation(value = "Delete vendor license model")
+  Response deleteLicenseModel(
+            @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+            @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
+                    String user);
+
   @PUT
   @Path("/{vlmId}/versions/{versionId}")
   @ApiOperation(value = "Update vendor license model")
@@ -96,15 +101,6 @@ public interface VendorLicenseModels {
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
           String user);
 
-  @DELETE
-  @Path("/{vlmId}/versions/{versionId}")
-  @ApiOperation(value = "Delete vendor license model")
-  Response deleteLicenseModel(
-      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @ApiParam(value = "Vendor license model version Id") @PathParam
-          ("versionId") String versionId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM)
-          String user);
 
   @PUT
   @Path("/{vlmId}/versions/{versionId}/actions")

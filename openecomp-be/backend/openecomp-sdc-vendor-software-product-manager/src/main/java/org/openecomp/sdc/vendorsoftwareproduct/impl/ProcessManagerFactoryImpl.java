@@ -20,13 +20,15 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
 
 public class ProcessManagerFactoryImpl extends ProcessManagerFactory {
   private static final ProcessManager INSTANCE =
-      new ProcessManagerImpl(ProcessDaoFactory.getInstance().createInterface());
+      new ProcessManagerImpl(ProcessDaoFactory.getInstance().createInterface(),
+          UniqueValueDaoFactory.getInstance().createInterface());
 
   @Override
   public ProcessManager createInterface() {

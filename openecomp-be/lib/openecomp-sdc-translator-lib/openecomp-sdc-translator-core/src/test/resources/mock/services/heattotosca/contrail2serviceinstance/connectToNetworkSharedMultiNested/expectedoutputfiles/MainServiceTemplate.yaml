@@ -11,26 +11,80 @@ topology_template:
     Internal1_shared:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: Internal1_shared
       type: string
     Internal1_forwarding_mode:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: Internal1_forwarding_mode
       type: string
     Internal2_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: Internal2_net_name
       type: string
     Internal2_forwarding_mode:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: Internal2_forwarding_mode
       type: string
     Internal2_shared:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: Internal2_shared
       type: string
     Internal1_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: Internal1_net_name
       type: string
   node_templates:
     Internal2-net:

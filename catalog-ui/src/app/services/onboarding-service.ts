@@ -75,7 +75,7 @@ export class OnboardingService implements IOnboardingService {
     };
 
     downloadOnboardingCsar = (packageId:string):ng.IPromise<IFileDownload> => {
-        let defer = this.$q.defer();
+        let defer = this.$q.defer<IFileDownload>();
         this.$http({
             url: this.api.GET_onboarding + "/" + packageId,
             method: "get",

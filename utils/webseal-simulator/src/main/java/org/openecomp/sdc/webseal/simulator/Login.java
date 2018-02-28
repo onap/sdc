@@ -111,7 +111,7 @@ public class Login extends HttpServlet {
 		System.out.println("Login -> doPOst userId=" + userId);
 		User user = getUser(userId, password);
 		if (user == null) {
-			response.sendError(500, "ERROR: userId or password incorect");
+			response.sendError(500, "ERROR: userId or password incorrect");
 //			doGet(request, response);
 		} else {
 			System.out.println("Login -> doPOst redirext to /sdc1 (to proxy)");

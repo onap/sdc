@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {Distribution, DistributionComponent, ExportExcel} from "app/models";
 
 interface IDistributionStatusModalViewModelScope {

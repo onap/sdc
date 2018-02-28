@@ -176,6 +176,17 @@ export class ComponentInstanceNodesStyle {
                 }
             },
             {
+                selector: '.vl-link-1',
+                css: {
+                    'width': 3,
+                    'line-color': GraphColors.ACTIVE_LINK,
+                    'curve-style': 'unbundled-bezier',
+                    'target-arrow-color': '#3b7b9b',
+                    'target-arrow-shape': 'triangle',
+                    'control-point-step-size': 30
+                }
+            },
+            {
                 selector: '.ucpe-host-link',
                 css: {
                     'width': 0
@@ -195,6 +206,17 @@ export class ComponentInstanceNodesStyle {
                 }
             },
 
+            {
+                selector: '.service-path-link',
+                css: {
+                    'width': 2,
+                    'line-color': GraphColors.SERVICE_PATH_LINK,
+                    'target-arrow-color': GraphColors.SERVICE_PATH_LINK,
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                    'control-point-step-size': 30
+                }
+            },
             {
                 selector: '.not-certified',
                 css: {

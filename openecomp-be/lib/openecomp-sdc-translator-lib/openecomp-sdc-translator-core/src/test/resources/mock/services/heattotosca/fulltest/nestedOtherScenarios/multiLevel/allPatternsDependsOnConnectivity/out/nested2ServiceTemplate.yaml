@@ -270,11 +270,16 @@ topology_template:
       - substitutable
       properties:
         port_cmaui_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - cmaui_oam_ips
+              - 0
         port_cmaui_port_network:
+        - get_input: contrail_net_name
         - get_input: contrail_net_name
         port_cmaui_port_network_role_tag: contrail
         vm_flavor_name:
@@ -284,14 +289,20 @@ topology_template:
             is_required: false
         port_cmaui_port_replacement_policy:
         - AUTO
+        - AUTO
         vm_image_name:
           get_input: cmaui_1c1_nested2_image
         port_cmaui_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
         compute_cmaui_1c1_nested2_name:
         - get_input:
           - cmaui_1c1_nested2_names
@@ -1498,4 +1509,4 @@ topology_template:
       - local_storage_cmaui_1c1_nested2
       dependency_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
-      - dependency
+      - dependency

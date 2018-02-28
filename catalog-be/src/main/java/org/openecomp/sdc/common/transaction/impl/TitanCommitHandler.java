@@ -28,25 +28,25 @@ import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
 
 public class TitanCommitHandler implements ICommitHandler {
 
-	private TitanGenericDao titanGenericDao;
+    private TitanGenericDao titanGenericDao;
 
-	public TitanCommitHandler(TitanGenericDao titanGenericDao) {
-		this.titanGenericDao = titanGenericDao;
-	}
+    public TitanCommitHandler(TitanGenericDao titanGenericDao) {
+        this.titanGenericDao = titanGenericDao;
+    }
 
-	@Override
-	public DBActionCodeEnum doCommit() {
-		DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
-		TitanOperationStatus titanStatus = titanGenericDao.commit();
-		if (titanStatus != TitanOperationStatus.OK) {
-			result = DBActionCodeEnum.FAIL_GENERAL;
-		}
-		return result;
-	}
+    @Override
+    public DBActionCodeEnum doCommit() {
+        DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
+        TitanOperationStatus titanStatus = titanGenericDao.commit();
+        if (titanStatus != TitanOperationStatus.OK) {
+            result = DBActionCodeEnum.FAIL_GENERAL;
+        }
+        return result;
+    }
 
-	@Override
-	public DBTypeEnum getDBType() {
-		return DBTypeEnum.TITAN;
-	}
+    @Override
+    public DBTypeEnum getDBType() {
+        return DBTypeEnum.TITAN;
+    }
 
 }

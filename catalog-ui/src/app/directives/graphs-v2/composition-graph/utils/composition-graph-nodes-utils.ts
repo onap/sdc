@@ -18,11 +18,15 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, NodesFactory, ComponentInstance, CompositionCiNodeVl,IAppMenu,AssetPopoverObj} from "app/models";
+import * as _ from "lodash";
+import {Component, NodesFactory, ComponentInstance, CompositionCiNodeVl,IAppMenu,AssetPopoverObj, Service} from "app/models";
 import {EventListenerService, LoaderService} from "app/services";
 import {GRAPH_EVENTS,ModalsHandler,GraphUIObjects} from "app/utils";
 import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
 import {CommonGraphUtils} from "../../common/common-graph-utils";
+import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
+import {ServiceGenericResponse} from "app/ng2/services/responses/service-generic-response";
+import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
 /**
  * Created by obarda on 11/9/2016.
  */
@@ -31,9 +35,10 @@ export class CompositionGraphNodesUtils {
                 private GeneralGraphUtils:CompositionGraphGeneralUtils,
                 private commonGraphUtils:CommonGraphUtils,
                 private eventListenerService:EventListenerService,
-                    private loaderService:LoaderService /*,
-                    private sdcMenu: IAppMenu,
-                    private ModalsHandler: ModalsHandler*/) {
+                private loaderService:LoaderService,
+                private serviceService:ServiceServiceNg2,
+                /*private sdcMenu: IAppMenu,
+                private ModalsHandler: ModalsHandler*/) {
 
     }
 
@@ -88,9 +93,20 @@ export class CompositionGraphNodesUtils {
                 this.handleConnectedVlsToDelete(connectedVls);
             }
 
+            // check whether there is a service path going through this node, and if so clean it from the graph.
+            let nodeId = nodeToDelete.data().id;
+            let connectedPathLinks = cy.collection(`[type="${CompositionCiServicePathLink.LINK_TYPE}"][source="${nodeId}"], [type="${CompositionCiServicePathLink.LINK_TYPE}"][target="${nodeId}"]`);
+            _.forEach(connectedPathLinks, (link, key) => {
+                cy.remove(`[pathId="${link.data().pathId}"]`);
+            });
+
+            // update service path list
+            this.serviceService.getComponentCompositionData(component).subscribe((response:ServiceGenericResponse) => {
+                (<Service>component).forwardingPaths = response.forwardingPaths;
+            });
+
             //update UI
             cy.remove(nodeToDelete);
-
         };
 
         let onFailed:(response:any) => void = (response:any) => {
@@ -297,5 +313,5 @@ export class CompositionGraphNodesUtils {
     }
 
 
-    CompositionGraphNodesUtils.$inject = ['NodesFactory', '$log', 'CompositionGraphGeneralUtils', 'CommonGraphUtils', 'EventListenerService', 'LoaderService' /*, 'sdcMenu', 'ModalsHandler'*/]
+    CompositionGraphNodesUtils.$inject = ['NodesFactory', '$log', 'CompositionGraphGeneralUtils', 'CommonGraphUtils', 'EventListenerService', 'LoaderService', 'ServiceServiceNg2' /*, 'sdcMenu', 'ModalsHandler'*/]
 

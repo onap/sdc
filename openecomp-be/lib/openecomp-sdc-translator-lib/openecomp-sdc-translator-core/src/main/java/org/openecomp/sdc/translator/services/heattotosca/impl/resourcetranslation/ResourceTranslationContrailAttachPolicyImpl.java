@@ -21,14 +21,9 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
@@ -45,8 +40,8 @@ import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatory
 import java.util.Optional;
 
 public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTranslationBase {
-  protected static Logger logger =
-      (Logger) LoggerFactory.getLogger(ResourceTranslationContrailAttachPolicyImpl.class);
+
+  protected static Logger logger = LoggerFactory.getLogger(ResourceTranslationContrailAttachPolicyImpl.class);
 
   @Override
   protected void translate(TranslateTo translateTo) {
@@ -86,10 +81,9 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
     if (policyResourceId.isPresent()) {
       policyNodeTemplate = getPolicyNodeTemplate(translateTo, heatFileName, policyResourceId.get());
     } else {
-      logger.warn("Heat resource: '" + translateTo.getResourceId() + "' with type: '"
-          + translateTo.getResource().getType()
-          + "' include 'policy' property without 'get_attr' of 'fq_name'/'get_resource' function,"
-          + " therefore this resource will be ignored in TOSCA translation.");
+      logger.warn("Heat resource: '{}' with type: '{}' include 'policy' property without 'get_attr' of " +
+              "'fq_name'/'get_resource' function,  therefore this resource will be ignored in TOSCA translation.",
+              translateTo.getResourceId(), translateTo.getResource().getType());
     }
     return policyNodeTemplate;
   }
@@ -104,10 +98,9 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
                 translateTo.getHeatOrchestrationTemplate(), policyResource, policyResourceId,
                 translateTo.getContext());
     if (!translatedPolicyResourceId.isPresent()) {
-      logger.warn("Heat resource: '" + translateTo.getResourceId() + "' with type: '"
-          + translateTo.getResource().getType()
-          + "' include unsupported policy resource, therefore this resource will be ignored in "
-          + "TOSCA translation. ");
+      logger.warn("Heat resource: '{}' with type: '{}' include unsupported policy resource, " +
+              "therefore this resource will be ignored in TOSCA translation.",
+              translateTo.getResourceId(), translateTo.getResource().getType());
       return null;
     }
     return DataModelUtil
@@ -122,10 +115,9 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
     if (attachedNetworkResourceId.isGetResource()) {
       translatedNetworkResourceId = (String) attachedNetworkResourceId.getTranslatedId();
     } else {
-      logger.warn("Heat resource: '" + translateTo.getResourceId() + "' with type: '"
-          + translateTo.getResource().getType()
-          + "' include 'network' property without 'get_resource' function, therefore this "
-          + "resource will be ignored in TOSCA translation.");
+      logger.warn("Heat resource: '{}' with type: '{}' include 'network' property without 'get_resource' " +
+              "function, therefore this resource will be ignored in TOSCA translation.",
+              translateTo.getResourceId(), translateTo.getResource().getType());
     }
     return translatedNetworkResourceId;
   }

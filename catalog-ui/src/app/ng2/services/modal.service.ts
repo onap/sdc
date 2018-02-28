@@ -1,11 +1,12 @@
 import {
     Injectable, Type, ViewContainerRef, ApplicationRef, ComponentFactory, ComponentFactoryResolver, ComponentRef,
-
+    TemplateRef
 } from '@angular/core';
 import { ModalModel, ButtonModel, StepModel } from 'app/models';
 import {MultiStepsWizardComponent} from "../components/ui/multi-steps-wizard/multi-steps-wizard.component";
 import {ModalComponent} from "../components/ui/modal/modal.component";
 import {WizardHeaderBaseComponent} from "app/ng2/components/ui/multi-steps-wizard/multi-steps-wizard-header-base.component";
+import { DynamicComponentService } from 'app/ng2/services/dynamic-component.service';
 
 
 @Injectable()
@@ -13,7 +14,7 @@ export class ModalService {
     currentModal: ComponentRef<any>;
 
 
-    constructor(private componentFactoryResolver: ComponentFactoryResolver, private applicationRef: ApplicationRef) { }
+    constructor(private dynamicComponentService: DynamicComponentService) { }
 
     
     /* Shortcut method to open an alert modal with title, message, and close button that simply closes the modal. */
@@ -52,7 +53,7 @@ export class ModalService {
 
     /* Use this method to create a modal with title, message, and completely custom buttons. Use response.instance.open() to open */
     public createCustomModal = (customModalData: ModalModel): ComponentRef<ModalComponent> => {
-        let customModal: ComponentRef<ModalComponent> = this.createDynamicComponent(ModalComponent);
+        let customModal: ComponentRef<ModalComponent> = this.dynamicComponentService.createDynamicComponent(ModalComponent);
         customModal.instance.input = customModalData;
         this.currentModal = customModal;
 
@@ -62,12 +63,12 @@ export class ModalService {
     public createMultiStepsWizard = (title: string, steps:Array<StepModel>, callback: Function, dynamicHeaderType?: Type<WizardHeaderBaseComponent>): ComponentRef<MultiStepsWizardComponent> => {
         let cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline blue', this.closeCurrentModal);
         let modalModel: ModalModel = new ModalModel('xl', title, '', [cancelButton]);
-        let wizardInstance: ComponentRef<MultiStepsWizardComponent> = this.createDynamicComponent(MultiStepsWizardComponent);
+        let wizardInstance: ComponentRef<MultiStepsWizardComponent> = this.dynamicComponentService.createDynamicComponent(MultiStepsWizardComponent);
         wizardInstance.instance.input = modalModel;
         wizardInstance.instance.steps = steps;
         wizardInstance.instance.callback = callback;
         if(dynamicHeaderType){
-            let dynamicHeader = this.createDynamicComponent(dynamicHeaderType, wizardInstance.instance.dynamicHeaderContainer);
+            let dynamicHeader = this.dynamicComponentService.createDynamicComponent(dynamicHeaderType, wizardInstance.instance.dynamicHeaderContainer);
             wizardInstance.instance.dynamicHeader = dynamicHeader;
             wizardInstance.instance.dynamicHeader.instance.currentStepIndex = 0;
         }
@@ -76,38 +77,28 @@ export class ModalService {
         return wizardInstance;
     }
 
-    
+
     public closeCurrentModal = () => {
         if (!this.currentModal) return;
         this.currentModal.instance.close();
         this.currentModal.destroy();
+        delete this.currentModal;
     }
 
 
     public addDynamicContentToModal = (modalInstance: ComponentRef<ModalComponent>, dynamicComponentType: Type<any>, dynamicComponentInput?: any) => {
 
-        let dynamicContent = this.createDynamicComponent(dynamicComponentType, modalInstance.instance.dynamicContentContainer);
+        let dynamicContent = this.dynamicComponentService.createDynamicComponent(dynamicComponentType, modalInstance.instance.dynamicContentContainer);
         dynamicContent.instance.input = dynamicComponentInput;
         modalInstance.instance.dynamicContent = dynamicContent;
         return modalInstance;
     }
 
-    //Creates a component dynamically (aka during runtime). If a view container is not specified, it will append the new component to the app root. 
-    //To subscribe to an event from invoking component: componentRef.instance.clicked.subscribe((m) => console.log(m.name));
-    private createDynamicComponent<T>(componentType: Type<T>, viewContainerRef?:ViewContainerRef): ComponentRef<T> {
+    public addDynamicTemplateToModal = (modalInstance: ComponentRef<ModalComponent>, templateRef: TemplateRef<void>) => {
+        modalInstance.instance.dynamicContentContainer.clear();
+        modalInstance.instance.dynamicContentContainer.createEmbeddedView(templateRef);
+        return modalInstance;
+    };
 
-        viewContainerRef = viewContainerRef || this.getRootViewContainerRef();
-        viewContainerRef.clear();
 
-        let factory: ComponentFactory<T> = this.componentFactoryResolver.resolveComponentFactory(componentType); //Ref: https://angular.io/guide/dynamic-component-loader
-        let componentRef: ComponentRef<T> = viewContainerRef.createComponent(factory);
-        return componentRef; 
-    }
-
-    
-    private getRootViewContainerRef(): ViewContainerRef {
-        return this.applicationRef.components[0].instance.viewContainerRef;
-    }
 }
-
-

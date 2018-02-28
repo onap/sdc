@@ -1,0 +1,22 @@
+pluginsList:
+   - pluginId: DCAE
+     pluginDiscoveryUrl: <%= @dcae_discovery_url %>
+     pluginSourceUrl: <%= @dcae_source_url %>
+     pluginStateUrl: "dcae"
+     pluginDisplayOptions:
+        context:
+            displayName: "Monitoring"
+            displayContext: ["SERVICE"]
+            displayRoles: ["DESIGNER"]
+   - pluginId: WORKFLOW
+     pluginDiscoveryUrl: <%= @workflow_discovery_url %>
+     pluginSourceUrl: <%= @workflow_source_url %>
+     pluginStateUrl: "workflowDesigner"
+     pluginDisplayOptions:
+        tab:
+            displayName: "WORKFLOW"
+            displayRoles: ["DESIGNER", "TESTER"]
+        context:
+            displayName: "Workflow Designer"
+            displayContext: ["VF"]
+            displayRoles: ["DESIGNER", "TESTER"]

@@ -38,6 +38,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -502,7 +503,7 @@ public final class ArtifactUIUtils {
 		Map<String, Object> mapExpectedFile = FileHandling.parseYamlFileToMapByPattern(expectedFile, pattern);
 		Map<String, Object> mapActualFile = FileHandling.parseYamlFileToMapByPattern(actualFile, pattern);
 		SetupCDTest.getExtendTest().log(Status.INFO, "Going to compare file " + expectedFile.getName());
-		assertTrue("File" + actualFile.getName() + " contains different parameters number from expected file", mapActualFile.size() == mapExpectedFile.size());
+		assertTrue("File " + actualFile.getName() + " contains different parameters number from expected file", mapActualFile.size() == mapExpectedFile.size());
 		assertTrue("File " + actualFile.getName() + " does not contains all expected parameters", mapActualFile.entrySet().containsAll(mapExpectedFile.entrySet()));
 	}
 	

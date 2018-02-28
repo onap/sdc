@@ -21,104 +21,104 @@
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
 public class ArtifactMetadata {
-	private String artifactName;
-	private String artifactType;
-	private String artifactURL;
-	private String artifactDescription;
-	private Integer artifactTimeout;
-	private String artifactChecksum;
-	private String artifactUUID;
-	private String artifactVersion;
-	private String generatedFromUUID;
-	private String artifactLabel;
-	private String artifactGroupType;
-	
-	public String getArtifactName() {
-		return artifactName;
-	}
+    private String artifactName;
+    private String artifactType;
+    private String artifactURL;
+    private String artifactDescription;
+    private Integer artifactTimeout;
+    private String artifactChecksum;
+    private String artifactUUID;
+    private String artifactVersion;
+    private String generatedFromUUID;
+    private String artifactLabel;
+    private String artifactGroupType;
 
-	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
-	}
+    public String getArtifactName() {
+        return artifactName;
+    }
 
-	public String getArtifactType() {
-		return artifactType;
-	}
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
 
-	public void setArtifactType(String artifactType) {
-		this.artifactType = artifactType;
-	}
+    public String getArtifactType() {
+        return artifactType;
+    }
 
-	public String getArtifactURL() {
-		return artifactURL;
-	}
+    public void setArtifactType(String artifactType) {
+        this.artifactType = artifactType;
+    }
 
-	public void setArtifactURL(String artifactURL) {
-		this.artifactURL = artifactURL;
-	}
+    public String getArtifactURL() {
+        return artifactURL;
+    }
 
-	public String getArtifactDescription() {
-		return artifactDescription;
-	}
+    public void setArtifactURL(String artifactURL) {
+        this.artifactURL = artifactURL;
+    }
 
-	public void setArtifactDescription(String artifactDescription) {
-		this.artifactDescription = artifactDescription;
-	}
+    public String getArtifactDescription() {
+        return artifactDescription;
+    }
 
-	public Integer getArtifactTimeout() {
-		return artifactTimeout;
-	}
+    public void setArtifactDescription(String artifactDescription) {
+        this.artifactDescription = artifactDescription;
+    }
 
-	public void setArtifactTimeout(Integer artifactTimeout) {
-		this.artifactTimeout = artifactTimeout;
-	}
+    public Integer getArtifactTimeout() {
+        return artifactTimeout;
+    }
 
-	public String getArtifactChecksum() {
-		return artifactChecksum;
-	}
+    public void setArtifactTimeout(Integer artifactTimeout) {
+        this.artifactTimeout = artifactTimeout;
+    }
 
-	public void setArtifactChecksum(String artifactChecksum) {
-		this.artifactChecksum = artifactChecksum;
-	}
+    public String getArtifactChecksum() {
+        return artifactChecksum;
+    }
 
-	public String getArtifactUUID() {
-		return artifactUUID;
-	}
+    public void setArtifactChecksum(String artifactChecksum) {
+        this.artifactChecksum = artifactChecksum;
+    }
 
-	public void setArtifactUUID(String artifactUUID) {
-		this.artifactUUID = artifactUUID;
-	}
+    public String getArtifactUUID() {
+        return artifactUUID;
+    }
 
-	public String getArtifactVersion() {
-		return artifactVersion;
-	}
+    public void setArtifactUUID(String artifactUUID) {
+        this.artifactUUID = artifactUUID;
+    }
 
-	public void setArtifactVersion(String artifactVersion) {
-		this.artifactVersion = artifactVersion;
-	}
+    public String getArtifactVersion() {
+        return artifactVersion;
+    }
 
-	public String getGeneratedFromUUID() {
-		return generatedFromUUID;
-	}
+    public void setArtifactVersion(String artifactVersion) {
+        this.artifactVersion = artifactVersion;
+    }
 
-	public void setGeneratedFromUUID(String generatedFromUUID) {
-		this.generatedFromUUID = generatedFromUUID;
-	}
+    public String getGeneratedFromUUID() {
+        return generatedFromUUID;
+    }
 
-	public String getArtifactLabel() {
-		return artifactLabel;
-	}
+    public void setGeneratedFromUUID(String generatedFromUUID) {
+        this.generatedFromUUID = generatedFromUUID;
+    }
 
-	public void setArtifactLabel(String artifactLabel) {
-		this.artifactLabel = artifactLabel;
-	}
+    public String getArtifactLabel() {
+        return artifactLabel;
+    }
 
-	public String getArtifactGroupType() {
-		return artifactGroupType;
-	}
+    public void setArtifactLabel(String artifactLabel) {
+        this.artifactLabel = artifactLabel;
+    }
 
-	public void setArtifactGroupType(String artifactGroupType) {
-		this.artifactGroupType = artifactGroupType;
-	}
+    public String getArtifactGroupType() {
+        return artifactGroupType;
+    }
+
+    public void setArtifactGroupType(String artifactGroupType) {
+        this.artifactGroupType = artifactGroupType;
+    }
 
 }

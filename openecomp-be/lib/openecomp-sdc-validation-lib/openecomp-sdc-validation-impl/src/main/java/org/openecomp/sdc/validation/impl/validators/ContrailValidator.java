@@ -30,8 +30,6 @@ import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.tos.ContrailResourcesMappingTo;
@@ -97,9 +95,7 @@ public class ContrailValidator implements Validator {
           ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
                   ERROR_CODE_CTL_2, Messages.MERGE_OF_CONTRAIL2_AND_CONTRAIL3_RESOURCES.getErrorMessage(),
               contrailResourcesMappingTo.fetchContrailV1Resources(),
-              contrailResourcesMappingTo.fetchContrailV2Resources()),
-          LoggerTragetServiceName.MERGE_OF_CONTRAIL_2_AND_3,
-          LoggerErrorDescription.MERGE_CONTRAIL_2_AND_3);
+              contrailResourcesMappingTo.fetchContrailV2Resources()));
     }
   }
 
@@ -110,8 +106,7 @@ public class ContrailValidator implements Validator {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
           .getErrorWithParameters(ERROR_CODE_CTL_1, Messages.INVALID_HEAT_FORMAT_REASON
                   .getErrorMessage(),
-          "The file '" + fileName + "' has no content"),
-          LoggerTragetServiceName.VALIDATE_HEAT_FORMAT, LoggerErrorDescription.INVALID_HEAT_FORMAT);
+          "The file '" + fileName + "' has no content"));
       return Optional.empty();
     }
     return fetchContrailResourcesMapping(fileName, fileContent.get());
@@ -165,8 +160,7 @@ public class ContrailValidator implements Validator {
         if (Objects.nonNull(type) && type.startsWith(HeatConstants.CONTRAIL_RESOURCE_PREFIX)) {
           globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_CTL_3, Messages.CONTRAIL_2_IN_USE.getErrorMessage(),
-              resourceEntry.getKey()), LoggerTragetServiceName.CONTRAIL_2_IN_USE,
-              LoggerErrorDescription.CONTRAIL_2_IN_USE);
+              resourceEntry.getKey()));
         }
       }
     }

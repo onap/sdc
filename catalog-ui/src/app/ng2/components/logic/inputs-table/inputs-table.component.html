@@ -30,11 +30,11 @@
                     <dynamic-element class="value-input"
                                      *ngIf="input.isSimpleType"
                                      pattern="validationUtils.getValidationPattern(input.type)"
-                                     [(value)]="input.defaultValue"
+                                     [value]="input.defaultValueObj"
                                      [type]="input.type"
                                      [name]="input.name"
-                                 (change)="onInputValueChanged(input);"
-                                 [readonly]="readonly">
+                                     (elementChanged)="onInputChanged(input, $event)"
+                                     [readonly]="readonly">
                     </dynamic-element>
                     <div class="delete-button-container">
                         <span *ngIf="input.instanceUniqueId && !readonly" class="sprite-new delete-btn" (click)="openDeleteModal(input)" data-tests-id="delete-input-button"></span>

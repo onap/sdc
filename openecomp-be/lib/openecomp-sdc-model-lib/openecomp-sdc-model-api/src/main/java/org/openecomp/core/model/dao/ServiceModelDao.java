@@ -32,4 +32,10 @@ public interface ServiceModelDao<M, E> extends VersionableDao {
   E getServiceModelInfo(String vspId, Version version, String name);
 
   void deleteAll(String vspId, Version version);
+
+  /**
+   * This method gets used in healing, in order to replace the healed service model with the
+   * existing one without creating any conflicts
+   **/
+  void overrideServiceModel(String vspId, Version version, M serviceModel);
 }

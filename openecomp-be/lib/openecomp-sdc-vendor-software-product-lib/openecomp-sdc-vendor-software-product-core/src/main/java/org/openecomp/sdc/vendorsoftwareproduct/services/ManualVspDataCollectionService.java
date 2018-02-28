@@ -3,7 +3,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.services;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.generator.datatypes.tosca.ComputeFlavor;
 import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
 import org.openecomp.sdc.generator.datatypes.tosca.LicenseFlavor;
@@ -11,9 +10,6 @@ import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VendorInfo;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
@@ -72,7 +68,7 @@ public class ManualVspDataCollectionService {
   private static final VendorLicenseFacade vendorLicenseFacade =
       VendorLicenseFacadeFactory.getInstance().createInterface();
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
   /**
    * Gets vendor name for the vsp.
@@ -299,7 +295,7 @@ public class ManualVspDataCollectionService {
   private Optional<ComputeFlavor> getComputeFlavor(String vspId, Version version,
                                                    String componentId, String computeFlavorId) {
     ComputeFlavor computeFlavor = null;
-    ComputeEntity computeQuestionnaire = null;
+    ComputeEntity computeQuestionnaire;
     try {
       computeQuestionnaire = computeDao.getQuestionnaireData(vspId, version, componentId,
           computeFlavorId);

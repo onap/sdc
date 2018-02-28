@@ -22,17 +22,12 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
@@ -56,10 +51,12 @@ import java.util.Optional;
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil.getResource;
 
 public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTranslationBase {
-  protected static Logger logger =
-      (Logger) LoggerFactory.getLogger(ResourceTranslationCinderVolumeAttachmentImpl.class);
-  private String volumeIdPropertyName = "volume_id";
-  private String toscaCapabilityAttachment = "tosca.capabilities.Attachment";
+
+  private static final String UNSUPPORTED_VOLUME_ATTACHMENT_MSG =
+          "Volume attachment with id '{}' is pointing to unsupported resource type({}) through the property " +
+                  "'volume_id'. The connection to the volume is ignored. Supported types are: {}";
+
+  protected static Logger logger = LoggerFactory.getLogger(ResourceTranslationCinderVolumeAttachmentImpl.class);
 
   @Override
   protected void translate(TranslateTo translateTo) {
@@ -74,6 +71,7 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
             translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
             relationTemplate, translateTo.getContext()));
 
+    String volumeIdPropertyName = "volume_id";
     AttachedResourceId attachedVolumeId = getAttachedResourceId(translateTo, volumeIdPropertyName);
     String instanceUuid = HeatConstants.INSTANCE_UUID_PROPERTY_NAME;
     AttachedResourceId attachedNovaServerId = getAttachedResourceId(translateTo, instanceUuid);
@@ -112,18 +110,15 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
                                      String relationshipTemplateId, String heatFileName,
                                      AttachedResourceId volResourceId, String novaResourceId) {
     RequirementAssignment requirement = new RequirementAssignment();
+    String toscaCapabilityAttachment = "tosca.capabilities.Attachment";
     requirement.setCapability(toscaCapabilityAttachment);
     if (volResourceId.isGetResource()) {
       Resource volServerResource = getResource(translateTo.getHeatOrchestrationTemplate(),
           (String) volResourceId.getTranslatedId(), heatFileName);
       if (!StringUtils.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource(),
           volServerResource.getType())) {
-        logger.warn("Volume attachment with id '" + translateTo.getResourceId()
-            + "' is pointing to unsupported resource type(" + volServerResource.getType()
-            + ") through the property 'volume_id'."
-            + " The connection to the volume is ignored. "
-            + "Supported types are: "
-            + HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
+        logger.warn(UNSUPPORTED_VOLUME_ATTACHMENT_MSG, translateTo.getResourceId(), volServerResource.getType(),
+                HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
         return;
       }
       requirement.setNode((String) volResourceId.getTranslatedId());
@@ -140,12 +135,8 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
                 .getHeatResource();
         if (!StringUtils.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource(),
             volServerResource.getType())) {
-          logger.warn("Volume attachment with id '" + translateTo.getResourceId()
-              + "' is pointing to unsupported resource type(" + volServerResource.getType()
-              + ") through the property 'volume_id'."
-              + " The connection to the volume is ignored. "
-              + "Supported types are: "
-              + HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
+          logger.warn(UNSUPPORTED_VOLUME_ATTACHMENT_MSG, translateTo.getResourceId(), volServerResource.getType(),
+                  HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
           return;
         }
         requirement.setNode(
@@ -164,12 +155,8 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
         getResource(translateTo.getHeatOrchestrationTemplate(), novaResourceId, heatFileName);
     if (!StringUtils.equals(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
         novaServerResource.getType())) {
-      logger.warn("Volume attachment with id '" + translateTo.getResourceId()
-          + "' is pointing to unsupported resource type(" + novaServerResource.getType()
-          + ") through the property 'instance_uuid'."
-          + " The connection to the nova server is ignored. "
-          + "Supported types are: "
-          + HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
+      logger.warn(UNSUPPORTED_VOLUME_ATTACHMENT_MSG,translateTo.getResourceId(),
+              novaServerResource.getType(), HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
       return;
     }
     Optional<String> translatedNovaServerId =

@@ -20,61 +20,34 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 import com.datastax.driver.core.DataType;
 
-public class DistribEngineEventTableDesc implements ITableDescription {
-	@Override
-	public List<ImmutablePair<String, DataType>> primaryKeys() {
-		List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-		keys.add(new ImmutablePair<String, DataType>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
-		return keys;
-	}
+public class DistribEngineEventTableDesc extends DistribBaseEventTableDesc {
 
-	@Override
-	public List<ImmutablePair<String, DataType>> clusteringKeys() {
-		List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-		keys.add(new ImmutablePair<String, DataType>(TIMESTAMP_FIELD, DataType.timestamp()));
-		return keys;
-	}
+    @Override
+    protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
+        for (DEEFieldsDescription field : DEEFieldsDescription.values()) {
+            columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
+        }
+        //replace the base indexed flag value with the correct one for a given table:
+        columns.put(DistFieldsDescription.REQUEST_ID.getName(),
+                new ImmutablePair<DataType, Boolean>(DistFieldsDescription.REQUEST_ID.getType(), true));
+    }
 
-	@Override
-	public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
-		Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
 
-		for (DEEFieldsDescription field : DEEFieldsDescription.values()) {
-			columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
-		}
-
-		return columns;
-	}
-
-	@Override
-	public String getKeyspace() {
-		return AuditingTypesConstants.AUDIT_KEYSPACE;
-	}
-
-	@Override
+    @Override
 	public String getTableName() {
 		return AuditingTypesConstants.DISTRIBUTION_ENGINE_EVENT_TYPE;
 	}
 
 	enum DEEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), 
-		STATUS("status", DataType.varchar(), false), 
-		DESCRIPTION("description", DataType.varchar(), false), 
 		CONSUMER_ID("consumer_id", DataType.varchar(), false),
-		REQUEST_ID("request_id", DataType.varchar(), true), 
-		SERVICE_INST_ID("service_instance_id", DataType.varchar(), false), 
-		ROLE("role", DataType.varchar(), false), 
+		ROLE("role", DataType.varchar(), false),
 		D_ENV("d_env", DataType.varchar(), false), 
 		API_KEY("api_key", DataType.varchar(), false),
 		DSTATUS_TOPIC("dstatus_topic", DataType.varchar(), false), 

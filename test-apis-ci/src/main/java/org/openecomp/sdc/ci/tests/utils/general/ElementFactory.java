@@ -20,49 +20,18 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceExternalReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedExternalAudit;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
@@ -71,6 +40,12 @@ import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ElementFactory {
 
@@ -131,6 +106,10 @@ public class ElementFactory {
 	}
 
 	// New
+	public static ResourceReqDetails getDefaultResourceByType(ResourceTypeEnum ResourceType, String resourceName, ResourceCategoryEnum resourceCategory, String vendorName, String vendorModelNumber) {
+		return getDefaultResourceByType(resourceName, NormativeTypesEnum.ROOT, resourceCategory, "jh0003", ResourceType.toString(), vendorName, vendorModelNumber);
+	}
+
 	public static ResourceReqDetails getDefaultResourceByType(ResourceTypeEnum ResourceType, String resourceName) {
 		return getDefaultResourceByType(resourceName, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, "jh0003", ResourceType.toString());
 	}
@@ -154,10 +133,10 @@ public class ElementFactory {
 	public static ResourceReqDetails getDefaultResource(String resourceName, NormativeTypesEnum derived, ResourceCategoryEnum category, String contactId) {
 		resourceName = (resourceName + generateUUIDforSufix());
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
-		ArrayList<String> resourceTags = new ArrayList<String>();
+		ArrayList<String> resourceTags = new ArrayList<>();
 		resourceTags.add(resourceName);
 
-		ArrayList<String> derivedFrom = new ArrayList<String>();
+		ArrayList<String> derivedFrom = new ArrayList<>();
 		derivedFrom.add(derived.normativeName);
 		String vendorName = "ATT Tosca";
 		String vendorRelease = "1.0.0.wd03";
@@ -177,10 +156,10 @@ public class ElementFactory {
 	public static ResourceReqDetails getDefaultResource(String resourceName, Resource derived, ResourceCategoryEnum category, String contactId) {
 		resourceName = (resourceName + generateUUIDforSufix());
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
-		ArrayList<String> resourceTags = new ArrayList<String>();
+		ArrayList<String> resourceTags = new ArrayList<>();
 		resourceTags.add(resourceName);
 
-		ArrayList<String> derivedFrom = new ArrayList<String>();
+		ArrayList<String> derivedFrom = new ArrayList<>();
 		derivedFrom.add(derived.getToscaResourceName());
 		String vendorName = "ATT Tosca";
 		String vendorRelease = "1.0.0.wd03";
@@ -200,7 +179,7 @@ public class ElementFactory {
 	public static ResourceReqDetails getDefaultResourceByType(String resourceName, NormativeTypesEnum derived, ResourceCategoryEnum category, String contactId, String resourceType) {
 		resourceName = (resourceName + resourceType + generateUUIDforSufix());
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
-		ArrayList<String> resourceTags = new ArrayList<String>();
+		ArrayList<String> resourceTags = new ArrayList<>();
 		resourceTags.add(resourceName);
 		ArrayList<String> derivedFrom = null;
 		if (derived != null) {
@@ -216,6 +195,25 @@ public class ElementFactory {
 		return resourceDetails;
 	}
 
+	public static ResourceReqDetails getDefaultResourceByType(String resourceName, NormativeTypesEnum derived, ResourceCategoryEnum category, String contactId, String resourceType, String vendorName, String vendorModelNumber) {
+		resourceName = (resourceName + resourceType + generateUUIDforSufix());
+
+		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
+		ArrayList<String> resourceTags = new ArrayList<>();
+		resourceTags.add(resourceName);
+		ArrayList<String> derivedFrom = null;
+		if (derived != null) {
+			derivedFrom = new ArrayList<>();
+			derivedFrom.add(derived.normativeName);
+		}
+		String vendorRelease = "1.0.0.wd03";
+		String icon = "defaulticon";
+		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon, resourceType.toString());
+		resourceDetails.addCategoryChain(category.getCategory(), category.getSubCategory());
+		resourceDetails.setResourceVendorModelNumber(vendorModelNumber);
+		return resourceDetails;
+	}
+
 	public static ResourceReqDetails getRandomCategoryResource() {
 		ResourceReqDetails resourceDetails = getDefaultResource(ResourceCategoryEnum.getRandomElement());
 		return resourceDetails;
@@ -224,7 +222,7 @@ public class ElementFactory {
 	public static ResourceExternalReqDetails getDefaultResourceByType(String resourceName, ResourceCategoryEnum category, String contactId, String resourceType) {
 		resourceName = (resourceName + resourceType + generateUUIDforSufix());
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
-		ArrayList<String> resourceTags = new ArrayList<String>();
+		ArrayList<String> resourceTags = new ArrayList<>();
 		resourceTags.add(resourceName);
 		String vendorName = "ATT Tosca";
 		String vendorRelease = "1.0.0.wd03";
@@ -239,11 +237,11 @@ public class ElementFactory {
 	public static ImportReqDetails getDefaultImportResourceByType(String resourceName, NormativeTypesEnum derived, ResourceCategoryEnum category, String contactId, String resourceType) {
 		resourceName = (resourceName + resourceType + generateUUIDforSufix());
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
-		ArrayList<String> resourceTags = new ArrayList<String>();
+		ArrayList<String> resourceTags = new ArrayList<>();
 		resourceTags.add(resourceName);
 		ArrayList<String> derivedFrom = null;
 		if (derived != null) {
-			derivedFrom = new ArrayList<String>();
+			derivedFrom = new ArrayList<>();
 			derivedFrom.add(derived.normativeName);
 		}
 		String vendorName = "ATT Tosca";
@@ -310,7 +308,7 @@ public class ElementFactory {
 
 	public static ServiceReqDetails getDefaultService(String serviceName, ServiceCategoriesEnum category, String contactId) {
 		serviceName = (serviceName + generateUUIDforSufix());
-		ArrayList<String> tags = new ArrayList<String>();
+		ArrayList<String> tags = new ArrayList<>();
 		tags.add("serviceTag");
 		tags.add("serviceTag1");
 		tags.add(serviceName);
@@ -965,12 +963,12 @@ public class ElementFactory {
 		ProductReqDetails product = new ProductReqDetails(productName);
 		productName = (productName + generateUUIDforSufix());
 		product.setName(productName);
-		ArrayList<String> tags = new ArrayList<String>();
+		ArrayList<String> tags = new ArrayList<>();
 		tags.add(productName);
 		product.setTags(tags);
 		product.setProjectCode("12345");
 		product.setIcon("myIcon");
-		ArrayList<String> contacts = new ArrayList<String>();
+		ArrayList<String> contacts = new ArrayList<>();
 		// contacts.add(ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1).getUserId());
 		// contacts.add(ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST2).getUserId());
 		contacts.add(ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1).getUserId());

@@ -19,5 +19,7 @@ public interface ItemPermissionsManager {
 
   String getUserItemPermiission(String itemId, String userId);
 
+  void deleteItemPermissions(String itemId);
+
 
 }

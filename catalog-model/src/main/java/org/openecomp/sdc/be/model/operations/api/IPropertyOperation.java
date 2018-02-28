@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
-import fj.data.Either;
+import java.util.Map;
 
 public interface IPropertyOperation {
 
@@ -40,6 +39,14 @@ public interface IPropertyOperation {
 	 * @return
 	 */
 	public Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllPropertiesAssociatedToNode(NodeTypeEnum nodeType, String uniqueId);
+
+	/**
+	 * same as deleteAllPropertiesAssociatedToNode but returns empty map if node has no properties
+	 * @param nodeType
+	 * @param uniqueId
+	 * @return
+	 */
+	Either<Map<String, PropertyDefinition>, StorageOperationStatus> deletePropertiesAssociatedToNode(NodeTypeEnum nodeType, String uniqueId);
 
 	public boolean isPropertyDefaultValueValid(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes);
 

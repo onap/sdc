@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.ToscaConverterImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -27,10 +35,10 @@ import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
+import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.ToscaTreeManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
@@ -41,15 +49,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationU
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class OrchestrationTemplateProcessCsarHandler
     implements OrchestrationTemplateProcessHandler {
@@ -62,8 +61,6 @@ public class OrchestrationTemplateProcessCsarHandler
   @Override
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
                                   OrchestrationTemplateCandidateData candidateData) {
-    LOGGER.audit(
-        AuditMessages.AUDIT_MSG + AuditMessages.CSAR_VALIDATION_STARTED + vspDetails.getId());
 
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent = OrchestrationUtil
@@ -97,7 +94,13 @@ public class OrchestrationTemplateProcessCsarHandler
                            OrchestrationTemplateActionResponse response) throws IOException {
     response.setFileNames(new ArrayList<>(fileContentHandler.getFileList()));
     Map<String, List<ErrorMessage>> errors = validateCsar(fileContentHandler);
+    toscaTreeManager.createTree();
+
     if (!isValid(errors)) {
+      response.addStructureErrors(errors);
+      toscaTreeManager.addErrors(errors);
+      candidateService.updateValidationData(vspDetails.getId(), vspDetails.getVersion(),
+          new ValidationStructureList(toscaTreeManager.getTree()));
       return;
     }
 
@@ -126,7 +129,8 @@ public class OrchestrationTemplateProcessCsarHandler
     orchestrationUtil.saveServiceModel(vspDetails.getId(),
             vspDetails.getVersion(), toscaServiceModel,
         toscaServiceModel);
-
+    candidateService
+        .deleteOrchestrationTemplateCandidate(vspDetails.getId(), vspDetails.getVersion());
   }
 
   private void addFiles(FileContentHandler fileContentHandler) {

@@ -22,63 +22,67 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 public class DistributionStatusNotification {
 
-	String distributionID;
-	String consumerID;
-	long timestamp;
-	String artifactURL;
-	DistributionStatusNotificationEnum status;
-	String errorReason;
+    String distributionID;
+    String consumerID;
+    long timestamp;
+    String artifactURL;
+    DistributionStatusNotificationEnum status;
+    String errorReason;
 
-	public String getDistributionID() {
-		return distributionID;
-	}
+    public String getDistributionID() {
+        return distributionID;
+    }
 
-	public void setDistributionID(String distributionId) {
-		this.distributionID = distributionId;
-	}
+    public void setDistributionID(String distributionId) {
+        this.distributionID = distributionId;
+    }
 
-	public String getConsumerID() {
-		return consumerID;
-	}
+    public String getConsumerID() {
+        return consumerID;
+    }
 
-	public void setConsumerID(String consumerId) {
-		this.consumerID = consumerId;
-	}
+    public void setConsumerID(String consumerId) {
+        this.consumerID = consumerId;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public String getArtifactURL() {
-		return artifactURL;
-	}
+    public String getArtifactURL() {
+        return artifactURL;
+    }
 
-	public void setArtifactURL(String artifactURL) {
-		this.artifactURL = artifactURL;
-	}
+    public void setArtifactURL(String artifactURL) {
+        this.artifactURL = artifactURL;
+    }
 
-	public DistributionStatusNotificationEnum getStatus() {
-		return status;
-	}
+    public DistributionStatusNotificationEnum getStatus() {
+        return status;
+    }
 
-	public void setStatus(DistributionStatusNotificationEnum status) {
-		this.status = status;
-	}
+    public void setStatus(DistributionStatusNotificationEnum status) {
+        this.status = status;
+    }
 
-	public String getErrorReason() {
-		return errorReason;
-	}
+    public String getErrorReason() {
+        return errorReason;
+    }
 
-	public void setErrorReason(String errorReason) {
-		this.errorReason = errorReason;
-	}
+    public void setErrorReason(String errorReason) {
+        this.errorReason = errorReason;
+    }
 
-	@Override
-	public String toString() {
-		return "DistributionStatusNotification [distributionId=" + distributionID + ", consumerId=" + consumerID + ", timestamp=" + timestamp + ", artifactURL=" + artifactURL + ", status=" + status + ", errorReason=" + errorReason + "]";
-	}
+    public boolean isDistributionCompleteNotification() {
+        return DistributionStatusNotificationEnum.DISTRIBUTION_COMPLETE_OK.equals(status) || DistributionStatusNotificationEnum.DISTRIBUTION_COMPLETE_ERROR.equals(status);
+    }
+
+    @Override
+    public String toString() {
+        return "DistributionStatusNotification [distributionId=" + distributionID + ", consumerId=" + consumerID + ", timestamp=" + timestamp + ", artifactURL=" + artifactURL + ", status=" + status + ", errorReason=" + errorReason + "]";
+    }
 }

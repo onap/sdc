@@ -22,7 +22,12 @@ package org.openecomp.sdc.common.config;
 
 public enum EcompErrorEnum {
 
+
 	BeUebAuthenticationError(EcompErrorCode.E_100, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.MAJOR,
+			EcompClassification.ERROR),
+
+
+	DmaapHealthCheckError(EcompErrorCode.E_214, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.MAJOR,
 			EcompClassification.ERROR),
 
 	InternalAuthenticationInfo(EcompErrorCode.E_199, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.INFORMATIONAL,
@@ -43,7 +48,9 @@ public enum EcompErrorEnum {
 									AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
 									null), FeHealthCheckRecovery(EcompErrorCode.E_209, ErrorType.RECOVERY,
 											AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
-											null), BeHealthCheckError(EcompErrorCode.E_200, ErrorType.SYSTEM_ERROR,
+											null),DmaapHealthCheckRecovery( EcompErrorCode.E_210, ErrorType.RECOVERY,
+													AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
+													null), BeHealthCheckError(EcompErrorCode.E_200, ErrorType.SYSTEM_ERROR,
 													AlarmSeverity.CRITICAL, EcompClassification.ERROR,
 													BeHealthCheckRecovery),
 

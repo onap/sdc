@@ -2,7 +2,6 @@ package org.openecomp;
 
 import com.google.common.collect.Sets;
 import org.junit.Test;
-import org.openecomp.sdc.common.togglz.ToggleStatus;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.togglz.rest.TogglzFeatures;
 import org.openecomp.sdcrests.togglz.rest.mapping.MapToggleableFeatureToDto;
@@ -27,14 +26,14 @@ public class TogglzFeatureRestTest {
 
     @Test
     public void shouldConvertDataProperly() {
-        ToggleStatus tf = mock(ToggleStatus.class);
+        ToggleableFeature tf = mock(ToggleableFeature.class);
         final String TF_NAME = "tf";
         final boolean ACTIVE = true;
         when(tf.name()).thenReturn(TF_NAME);
         when(tf.isActive()).thenReturn(ACTIVE);
         MapToggleableFeatureToDto mapToggleableFeatureToDto = new MapToggleableFeatureToDto();
         FeatureSetDto target = new FeatureSetDto();
-        Collection<ToggleStatus> source = Collections.singletonList(tf);
+        Collection<ToggleableFeature> source = Collections.singletonList(tf);
         mapToggleableFeatureToDto.doMapping(source, target);
         assertEquals(source.size(), target.getFeatures().size());
         FeatureDto result = target.getFeatures().iterator().next();

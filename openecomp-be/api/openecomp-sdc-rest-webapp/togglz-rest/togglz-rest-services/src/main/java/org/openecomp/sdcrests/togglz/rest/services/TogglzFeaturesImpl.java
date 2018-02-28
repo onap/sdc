@@ -19,9 +19,14 @@ package org.openecomp.sdcrests.togglz.rest.services;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.togglz.rest.TogglzFeatures;
 import org.openecomp.sdcrests.togglz.rest.mapping.MapToggleableFeatureToDto;
+import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.togglz.core.Feature;
+import org.togglz.core.context.FeatureContext;
+import org.togglz.core.repository.FeatureState;
+import org.togglz.core.util.NamedFeature;
 
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
@@ -38,5 +43,34 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
         new MapToggleableFeatureToDto().doMapping(Arrays.asList(ToggleableFeature.values()), featureSetDto);
         return Response.ok(featureSetDto).build();
     }
+
+    @Override
+    public Response setAllFeatures(boolean active) {
+        FeatureSetDto featureSetDto = new FeatureSetDto();
+        new MapToggleableFeatureToDto().doMapping(Arrays.asList(ToggleableFeature.values()), featureSetDto);
+        featureSetDto.getFeatures().forEach(featureDto -> {
+            Feature feature = new NamedFeature(featureDto.getName());
+            FeatureState featureState = new FeatureState(feature,active);
+            FeatureContext.getFeatureManager().setFeatureState(featureState);
+        });
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response setFeatureState(String featureName, boolean active) {
+        Feature feature = new NamedFeature(featureName);
+        FeatureState featureState = new FeatureState(feature,active);
+        FeatureContext.getFeatureManager().setFeatureState(featureState);
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response getFeatureState(String featureName) {
+        boolean active = ToggleableFeature.valueOf(featureName).isActive();
+        FeatureDto featureDto = new FeatureDto(featureName,active);
+
+        return Response.ok(featureDto).build();
+    }
+
 }
 

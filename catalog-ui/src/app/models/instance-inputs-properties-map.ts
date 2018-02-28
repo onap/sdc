@@ -22,6 +22,7 @@
  * Created by obarda on 9/12/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {InputPropertyBase} from "./input-property-base";
 import {PropertyModel} from "./properties";
 import {InputModel} from "./inputs";

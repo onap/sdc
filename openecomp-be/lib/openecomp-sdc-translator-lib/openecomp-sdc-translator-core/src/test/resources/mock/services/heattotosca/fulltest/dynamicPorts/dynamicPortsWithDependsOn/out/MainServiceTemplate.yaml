@@ -11,6 +11,14 @@ topology_template:
     avpn_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: avpn_subnet_id
       type: list
       description: comma delimited list of the UUIDs of the operator created IPv4 AVPN subnets
       entry_schema:
@@ -18,6 +26,14 @@ topology_template:
     sbg_internal_allocation_pool_start_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_internal_allocation_pool_start_ip
       type: string
       description: The start IP of the Internal network's allocation pool. Don't deviate from default!
       constraints:
@@ -25,6 +41,14 @@ topology_template:
     sbg_core_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_core_ips
       type: list
       description: comma delimited list of IPv4 IPs to be used on Core network
       entry_schema:
@@ -32,6 +56,14 @@ topology_template:
     access_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: access_subnet_id
       type: string
       description: the UUID of the operator-created Access subnet, IPv4
       constraints:
@@ -39,6 +71,14 @@ topology_template:
     sbg_management_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_management_cidr
       type: string
       description: Network address (CIDR notation) for SBG Management Network, IPv4
       constraints:
@@ -46,6 +86,14 @@ topology_template:
     sbg_core_vlan_tag:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_core_vlan_tag
       type: float
       description: The internal VLAN TAG for Core network
       constraints:
@@ -55,6 +103,14 @@ topology_template:
     management_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: management_net_id
       type: string
       description: the UUID of the operator-created Management network
       constraints:
@@ -62,6 +118,14 @@ topology_template:
     sbg_management_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_management_ips
       type: list
       description: comma delimited list of IPv4 addresses of SBG VMs on the Management network.
       entry_schema:
@@ -69,6 +133,14 @@ topology_template:
     sbg_nfs_floating_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_nfs_floating_ip
       type: string
       description: Moveable IP (VIP) for NFS server on the Internal network, IPv4. Don't deviate from default!
       constraints:
@@ -76,6 +148,14 @@ topology_template:
     sbg_charging_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_charging_ips
       type: list
       description: comma delimited list of IPv4 IPs to be used on Charging network
       entry_schema:
@@ -83,6 +163,14 @@ topology_template:
     sbg_internal_mac_addresses:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_internal_mac_addresses
       type: list
       description: comma delimited list of MAC addresses for the VMs on the Internal network
       entry_schema:
@@ -90,6 +178,14 @@ topology_template:
     core_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: core_net_id
       type: string
       description: the UUID of the operator-created Core network
       constraints:
@@ -97,6 +193,14 @@ topology_template:
     sbg_access_vlan_tag:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_access_vlan_tag
       type: float
       description: The internal VLAN TAG for Access network
       constraints:
@@ -106,6 +210,14 @@ topology_template:
     management_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: management_subnet_id
       type: string
       description: the UUID of the operator-created Management subnet, IPv4
       constraints:
@@ -113,6 +225,14 @@ topology_template:
     access_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: access_net_id
       type: string
       description: the UUID of the operator-created Access network
       constraints:
@@ -120,6 +240,14 @@ topology_template:
     sbg_dummy_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_dummy_ips
       type: list
       description: comma delimited list of IPv4 IPs to be used on Dummy network
       entry_schema:
@@ -127,6 +255,14 @@ topology_template:
     sgi_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sgi_net_id
       type: string
       description: the UUID of the operator-created SGI network
       constraints:
@@ -134,6 +270,14 @@ topology_template:
     sbg_sgi_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_sgi_ips
       type: list
       description: comma delimited list of IPv4 IPs to be used on SGI network
       entry_schema:
@@ -141,6 +285,14 @@ topology_template:
     sbg_internal_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_internal_ips
       type: list
       description: comma delimited list of IPv4 addresses of SBG VMs on the Internal network. Don't deviate from the default values.
       entry_schema:
@@ -148,6 +300,14 @@ topology_template:
     core_v6_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: core_v6_subnet_id
       type: string
       description: the UUID of the operator-created Core subnet, IPv6
       constraints:
@@ -155,6 +315,14 @@ topology_template:
     sbg_internal_allocation_pool_end_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_internal_allocation_pool_end_ip
       type: string
       description: The end IP of the Internal network's allocation pool. Don't deviate from default!
       constraints:
@@ -162,6 +330,14 @@ topology_template:
     UCOM_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: UCOM_subnet_id
       type: string
       description: the UUID of the operator-created UC One Mobile subnet, IPv4
       constraints:
@@ -169,6 +345,14 @@ topology_template:
     sbg_internal_cidr:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_internal_cidr
       type: string
       description: Network address (CIDR notation) for SBG intra-VM communication, IPv4. Don't deviate from default!
       constraints:
@@ -176,6 +360,14 @@ topology_template:
     sgi_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sgi_subnet_id
       type: string
       description: the UUID of the operator-created SGI subnet, IPv4
       constraints:
@@ -183,6 +375,14 @@ topology_template:
     trunk_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: trunk_net_id
       type: string
       description: the UUID of the operator-created Traffic network
       constraints:
@@ -190,11 +390,27 @@ topology_template:
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VNF Module instance
     internal_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: internal_net_id
       type: string
       description: the UUID of the operator-created Internal network
       constraints:
@@ -202,6 +418,14 @@ topology_template:
     sbg_SGI_vlan_tag:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_SGI_vlan_tag
       type: float
       description: The internal VLAN TAG for SGI network
       constraints:
@@ -211,11 +435,27 @@ topology_template:
     sbg_sc_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_sc_flavor_name
       type: string
       description: Flavor to use for SC VM. Minimum 4 non-HT vCPU and 16GB RAM required
     sbg_comte_floating_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_comte_floating_ip
       type: string
       description: Moveable IP (VIP) for COM on the Internal network, IPv4. Don't deviate from default!
       constraints:
@@ -223,6 +463,14 @@ topology_template:
     charging_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: charging_net_id
       type: string
       description: the UUID of the operator-created Charging network
       constraints:
@@ -230,6 +478,14 @@ topology_template:
     sbg_UCOM_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_UCOM_ips
       type: list
       description: comma delimited list of IPv4 IPs to be used on UC One Mobile network
       entry_schema:
@@ -237,6 +493,14 @@ topology_template:
     sbg_avpn_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_avpn_ips
       type: list
       description: |
         comma delimited list of IPv4 IPs to be used on AVPN networks. n*2 IP address expected where n is the number of PL VM pairs. The first two addresses are assigned to the first PL VM pair, second two IPs to the second PL VM pair, and so on. Note: this is true regardless of the number of AVPN networks and sbg_AVPN_count.
@@ -245,6 +509,14 @@ topology_template:
     sbg_sc_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_sc_names
       type: list
       description: comma delimited list of VM names assigned to System Controller VMs
       entry_schema:
@@ -252,11 +524,27 @@ topology_template:
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance
     avpn_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: avpn_net_id
       type: list
       description: comma delimited list of the UUIDs of the operator-created AVPN networks
       entry_schema:
@@ -264,21 +552,53 @@ topology_template:
     sbg_pl_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_pl_image_name
       type: string
       description: the name of the Glance PXE boot image for PL VMs
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: First availability zone ID or Name.
     availability_zone_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: Second availability zone ID or Name.
     UCOM_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: UCOM_net_id
       type: string
       description: the UUID of the operator-created UC One Mobile network
       constraints:
@@ -286,6 +606,14 @@ topology_template:
     sbg_UCOM_vlan_tag:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_UCOM_vlan_tag
       type: float
       description: The internal VLAN TAG for UC One Mobile network
       constraints:
@@ -295,6 +623,14 @@ topology_template:
     sbg_management_floating_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_management_floating_ip
       type: string
       description: Moveable Management IP (VIP), IPv4
       constraints:
@@ -302,6 +638,14 @@ topology_template:
     dummy_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: dummy_net_id
       type: string
       description: the UUID of the operator-created Dummy network
       constraints:
@@ -309,6 +653,14 @@ topology_template:
     sbg_core_v6_IPs:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_core_v6_IPs
       type: list
       description: comma delimited list of IPv6 IPs to be used on Core network
       entry_schema:
@@ -316,6 +668,14 @@ topology_template:
     sbg_AVPN_vlan_tag_list:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_AVPN_vlan_tag_list
       type: list
       description: comma delimited list of internal VLAN TAG(s) used by AVPN networks
       entry_schema:
@@ -323,6 +683,14 @@ topology_template:
     sbg_pl_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_pl_names
       type: list
       description: comma delimited list of VM names assigned to Payload VMs
       entry_schema:
@@ -330,6 +698,14 @@ topology_template:
     sbg_management_gateway_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_management_gateway_ip_0
       type: string
       description: IPv4 IP address of the default gateway on Management network
       constraints:
@@ -337,6 +713,14 @@ topology_template:
     sbg_AVPN_count:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_AVPN_count
       type: float
       description: The number of AVPN networks
       constraints:
@@ -346,6 +730,14 @@ topology_template:
     sbg_charging_vlan_tag:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_charging_vlan_tag
       type: float
       description: The internal VLAN TAG for Charging network
       constraints:
@@ -355,11 +747,27 @@ topology_template:
     sbg_timezone:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_timezone
       type: string
       description: Timezone.
     ntp_servers:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: ntp_servers
       type: list
       description: comma delimited list of NTP servers required by System Controller VMs. Exactly 2 IPv4 values are required
       entry_schema:
@@ -367,6 +775,14 @@ topology_template:
     sbg_management_mac_addresses:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_management_mac_addresses
       type: list
       description: comma delimited list of MAC addresses for the VMs on the Management network
       entry_schema:
@@ -374,6 +790,14 @@ topology_template:
     core_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: core_subnet_id
       type: string
       description: the UUID of the operator-created Core subnet, IPv4
       constraints:
@@ -381,6 +805,14 @@ topology_template:
     sbg_access_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_access_ips
       type: list
       description: comma delimited list of IPv4 IPs to be used on Access network
       entry_schema:
@@ -388,6 +820,14 @@ topology_template:
     sbg_sc_volume_id_3:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_sc_volume_id_3
       type: string
       description: the UUID of the pre-created Cinder volume attached to SC-2 as tools volume
       constraints:
@@ -395,6 +835,14 @@ topology_template:
     sbg_boot_floating_ip:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_boot_floating_ip
       type: string
       description: Moveable IP (VIP) for TFTP server on the Internal network, IPv4. Don't deviate from default!
       constraints:
@@ -402,6 +850,14 @@ topology_template:
     sbg_sc_volume_id_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_sc_volume_id_0
       type: string
       description: the UUID of the pre-created Cinder volume attached to SC-1 as root volume
       constraints:
@@ -409,11 +865,27 @@ topology_template:
     sbg_pl_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_pl_flavor_name
       type: string
       description: Flavor to use for PL VM. Minimum 8 non-HT vCPU and 64GB RAM required
     sbg_sc_volume_id_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_sc_volume_id_2
       type: string
       description: the UUID of the pre-created Cinder volume attached to SC-2 as root volume
       constraints:
@@ -421,6 +893,14 @@ topology_template:
     sbg_sc_volume_id_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: sbg_sc_volume_id_1
       type: string
       description: the UUID of the pre-created Cinder volume attached to SC-1 as tools volume
       constraints:
@@ -428,6 +908,14 @@ topology_template:
     dummy_subnet_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - DPA3_New_VNF_TSBGv_base
+            source_type: HEAT
+            param_name: dummy_subnet_id
       type: string
       description: the UUID of the operator-created dummy subnet, IPv4
       constraints:

@@ -48,7 +48,7 @@ topology_template:
       - local_storage:
           node: tosca.nodes.Root
       capabilities:
-      - virtual_compute:
+        virtual_compute:
           properties:
             virtual_memory:
               virtual_mem_size: 24G
@@ -116,7 +116,7 @@ topology_template:
       - local_storage:
           node: tosca.nodes.Root
       capabilities:
-      - virtual_compute:
+        virtual_compute:
           properties:
             virtual_memory:
               virtual_mem_size: 24G
@@ -177,7 +177,7 @@ topology_template:
       - local_storage:
           node: tosca.nodes.Root
       capabilities:
-      - virtual_compute:
+        virtual_compute:
           properties:
             virtual_memory:
               virtual_mem_size: 24G
@@ -410,7 +410,7 @@ topology_template:
       - local_storage:
           node: tosca.nodes.Root
       capabilities:
-      - virtual_compute:
+        virtual_compute:
           properties:
             virtual_memory:
               virtual_mem_size: 24G
@@ -450,7 +450,7 @@ topology_template:
       - local_storage:
           node: tosca.nodes.Root
       capabilities:
-      - virtual_compute:
+        virtual_compute:
           properties:
             virtual_memory:
               virtual_mem_size: 16G

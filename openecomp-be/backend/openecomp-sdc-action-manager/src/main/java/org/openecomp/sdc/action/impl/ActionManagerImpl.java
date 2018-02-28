@@ -1,71 +1,20 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.action.impl;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.action.ActionConstants;
-import org.openecomp.sdc.action.ActionManager;
-import org.openecomp.sdc.action.dao.ActionArtifactDao;
-import org.openecomp.sdc.action.dao.ActionArtifactDaoFactory;
-import org.openecomp.sdc.action.dao.ActionDao;
-import org.openecomp.sdc.action.dao.ActionDaoFactory;
-import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
-import org.openecomp.sdc.action.dao.types.ActionEntity;
-import org.openecomp.sdc.action.errors.ActionErrorConstants;
-import org.openecomp.sdc.action.errors.ActionException;
-import org.openecomp.sdc.action.logging.StatusCode;
-import org.openecomp.sdc.action.types.Action;
-import org.openecomp.sdc.action.types.ActionArtifact;
-import org.openecomp.sdc.action.types.ActionArtifactProtection;
-import org.openecomp.sdc.action.types.ActionStatus;
-import org.openecomp.sdc.action.types.ActionSubOperation;
-import org.openecomp.sdc.action.types.OpenEcompComponent;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
-import org.openecomp.sdc.versioning.dao.VersionInfoDao;
-import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
-import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
-import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
-import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.openecomp.sdc.versioning.types.VersionInfo;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.slf4j.MDC;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import static org.openecomp.sdc.action.ActionConstants.ACTION_VERSIONABLE_TYPE;
 import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_METADATA_ATTR_NAME;
@@ -115,6 +64,53 @@ import static org.openecomp.sdc.action.util.ActionUtil.actionLogPreProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.getCurrentTimeStampUtc;
 import static org.openecomp.sdc.versioning.dao.types.Version.VERSION_STRING_VIOLATION_MSG;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
+import org.openecomp.core.util.UniqueValueUtil;
+import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.action.ActionConstants;
+import org.openecomp.sdc.action.ActionManager;
+import org.openecomp.sdc.action.dao.ActionArtifactDao;
+import org.openecomp.sdc.action.dao.ActionArtifactDaoFactory;
+import org.openecomp.sdc.action.dao.ActionDao;
+import org.openecomp.sdc.action.dao.ActionDaoFactory;
+import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
+import org.openecomp.sdc.action.dao.types.ActionEntity;
+import org.openecomp.sdc.action.errors.ActionErrorConstants;
+import org.openecomp.sdc.action.errors.ActionException;
+import org.openecomp.sdc.action.logging.StatusCode;
+import org.openecomp.sdc.action.types.Action;
+import org.openecomp.sdc.action.types.ActionArtifact;
+import org.openecomp.sdc.action.types.ActionArtifactProtection;
+import org.openecomp.sdc.action.types.ActionStatus;
+import org.openecomp.sdc.action.types.ActionSubOperation;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManager;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
+import org.openecomp.sdc.versioning.dao.VersionInfoDao;
+import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
+import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
+import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
+import org.openecomp.sdc.versioning.types.VersionInfo;
+import org.openecomp.sdc.versioning.types.VersionableEntityAction;
+import org.slf4j.MDC;
+
 /**
  * Manager Implementation for {@link ActionManager Action Library Operations} <br> Handles Business
  * layer validations and acts as an interface between the REST and DAO layers.
@@ -122,8 +118,8 @@ import static org.openecomp.sdc.versioning.dao.types.Version.VERSION_STRING_VIOL
 public class ActionManagerImpl implements ActionManager {
 
   private static final ActionDao actionDao = ActionDaoFactory.getInstance().createInterface();
-  private static final VersioningManager versioningManager =
-      VersioningManagerFactory.getInstance().createInterface();
+  private static final ActionVersioningManager versioningManager =
+      ActionVersioningManagerFactory.getInstance().createInterface();
   private static final ActionArtifactDao actionArtifactDao =
       ActionArtifactDaoFactory.getInstance().createInterface();
   private static VersionInfoDao versionInfoDao =
@@ -140,7 +136,7 @@ public class ActionManagerImpl implements ActionManager {
    *
    * @param invariantId Invariant UUID of the action for which the information is required
    * @return List of All Major, Last Minor and Candidate version if any Of {@link Action} with given
-     actionInvariantUuId.
+   * actionInvariantUuId.
    * @throws ActionException Exception with an action library specific code, short description and
    *                         detailed message for the error occurred during the operation
    */
@@ -168,7 +164,7 @@ public class ActionManagerImpl implements ActionManager {
    * @param filterType  Filter by Vendor/Category/Model/Component/None
    * @param filterValue Filter Parameter Value (Vendor ID/Category ID/Model ID/Component ID)
    * @return List of {@link Action} objects based on a filter criteria <br> Empty List if no records
-     match the provided filter criteria
+   * match the provided filter criteria
    * @throws ActionException Exception with an action library specific code, short description and
    *                         detailed message for the error occurred for the error occurred during
    *                         the operation
@@ -243,7 +239,7 @@ public class ActionManagerImpl implements ActionManager {
    * List OPENECOMP Components supported by Action Library.
    *
    * @return List of {@link OpenEcompComponent} objects supported by Action Library <br> Empty List if
-     no components are found
+   * no components are found
    * @throws ActionException Exception with an action library specific code, short description and
    *                         detailed message for the error occurred for the error occurred during
    *                         the operation
@@ -287,9 +283,11 @@ public class ActionManagerImpl implements ActionManager {
    */
   @Override
   public Action createAction(Action action, String user) throws ActionException {
+    UniqueValueUtil uniqueValueUtil =
+        new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
     try {
       actionLogPreProcessor(ActionSubOperation.VALIDATE_ACTION_UNIQUE_NAME, TARGET_ENTITY_API);
-      UniqueValueUtil
+      uniqueValueUtil
           .validateUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
       actionLogPostProcessor(StatusCode.COMPLETE);
     } catch (CoreException exception) {
@@ -319,7 +317,7 @@ public class ActionManagerImpl implements ActionManager {
     action = actionDao.createAction(action);
 
     actionLogPreProcessor(ActionSubOperation.CREATE_ACTION_UNIQUE_VALUE, TARGET_ENTITY_API);
-    UniqueValueUtil.createUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
+    uniqueValueUtil.createUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
     actionLogPostProcessor(StatusCode.COMPLETE);
     log.metrics("");
 
@@ -461,7 +459,9 @@ public class ActionManagerImpl implements ActionManager {
 
       if (version.equals(new Version(0, 0))) {
         actionLogPreProcessor(ActionSubOperation.DELETE_UNIQUEVALUE, TARGET_ENTITY_API);
-        UniqueValueUtil
+        UniqueValueUtil uniqueValueUtil =
+            new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+        uniqueValueUtil
             .deleteUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
         actionLogPostProcessor(StatusCode.COMPLETE);
         log.metrics("");
@@ -476,7 +476,8 @@ public class ActionManagerImpl implements ActionManager {
       List<ActionArtifact> currentVersionArtifacts = action.getArtifacts();
 
       //Delete the artifacts from action_artifact table (if any)
-      if (CollectionUtils.isNotEmpty(currentVersionArtifacts) && currentVersionArtifacts.size() > 0) {
+      if (CollectionUtils.isNotEmpty(currentVersionArtifacts) &&
+          currentVersionArtifacts.size() > 0) {
         for (ActionArtifact artifact : currentVersionArtifacts) {
           ActionArtifactEntity artifactDeleteEntity =
               new ActionArtifactEntity(artifact.getArtifactUuId(),
@@ -902,7 +903,7 @@ public class ActionManagerImpl implements ActionManager {
    *
    * @param actions Exhaustive list of the action versions
    * @return List {@link Action} of last major and last minor version (no candidate) of action from
-     a list of actions
+   * a list of actions
    */
   private List<Action> getMajorMinorVersionActions(List<Action> actions) {
     log.debug(" entering getMajorMinorVersionActions for actions ");
@@ -1047,10 +1048,9 @@ public class ActionManagerImpl implements ActionManager {
       action.setActionUuId(existingAction.getActionUuId());
     } catch (IllegalArgumentException iae) {
       String message = iae.getMessage();
-      if(message == VERSION_STRING_VIOLATION_MSG) {
+      if (message == VERSION_STRING_VIOLATION_MSG) {
         throw new ActionException(ACTION_UPDATE_NOT_ALLOWED_CODE, message);
-      }
-      else {
+      } else {
         throw iae;
       }
     }

@@ -21,40 +21,40 @@
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
 public class ServiceAssetMetadata extends AssetMetadata {
-	private String category;
-	private String lifecycleState;
-	private String lastUpdaterUserId;
-	private String distributionStatus;
+    private String category;
+    private String lifecycleState;
+    private String lastUpdaterUserId;
+    private String distributionStatus;
 
-	public String getCategory() {
-		return category;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public String getLifecycleState() {
-		return lifecycleState;
-	}
+    public String getLifecycleState() {
+        return lifecycleState;
+    }
 
-	public void setLifecycleState(String lifecycleState) {
-		this.lifecycleState = lifecycleState;
-	}
+    public void setLifecycleState(String lifecycleState) {
+        this.lifecycleState = lifecycleState;
+    }
 
-	public String getLastUpdaterUserId() {
-		return lastUpdaterUserId;
-	}
+    public String getLastUpdaterUserId() {
+        return lastUpdaterUserId;
+    }
 
-	public void setLastUpdaterUserId(String lastUpdaterUserId) {
-		this.lastUpdaterUserId = lastUpdaterUserId;
-	}
+    public void setLastUpdaterUserId(String lastUpdaterUserId) {
+        this.lastUpdaterUserId = lastUpdaterUserId;
+    }
 
-	public String getDistributionStatus() {
-		return distributionStatus;
-	}
+    public String getDistributionStatus() {
+        return distributionStatus;
+    }
 
-	public void setDistributionStatus(String distributionStatus) {
-		this.distributionStatus = distributionStatus;
-	}
+    public void setDistributionStatus(String distributionStatus) {
+        this.distributionStatus = distributionStatus;
+    }
 }

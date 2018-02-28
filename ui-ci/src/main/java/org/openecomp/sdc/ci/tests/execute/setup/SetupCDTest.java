@@ -26,14 +26,21 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
+import org.littleshoot.proxy.impl.ClientToProxyConnection;
+import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestManager;
 import org.openecomp.sdc.ci.tests.api.SomeInterface;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.UserCredentials;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.execute.sanity.Onboard;
+import org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentManager.suiteNameXml;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.run.StartTest;
@@ -59,11 +66,14 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import groovyjarjarantlr.Utils;
+import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.core.har.Har;
 
 public abstract class SetupCDTest extends DriverFactory {
@@ -195,9 +205,9 @@ public abstract class SetupCDTest extends DriverFactory {
 					addTrafficFileToReport(result);				
 				}
 				
-				if (result.getInstanceName().equals(Onboard.class.getName())  && result.getStatus() == ITestResult.FAILURE){
+				if (result.getInstanceName().equals(OnboardingFlowsUI.class.getName())  && result.getStatus() == ITestResult.FAILURE){
 					System.out.println("Onboarding test failed, closign browser....");
-					getExtendTest().log(Status.INFO, "Onboarding test failed, closign browser....");
+					getExtendTest().log(Status.INFO, "Onboarding test failed, closing browser....");
 					quitDriver();
 				}
 				else if (!getUser().getRole().toLowerCase().equals(UserRoleEnum.ADMIN.name().toLowerCase())){
@@ -217,21 +227,28 @@ public abstract class SetupCDTest extends DriverFactory {
 			
 			
 	    	ExtentTestManager.endTest();
-	    	addResultToCSV(result, context);
+			String suiteName = ExtentManager.getSuiteName(context);
+//			write result to csv file
+			if((!suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) && (result.getStatus() == ITestResult.SKIP)) {
+				addResultToCSV(result, context);
+			}
+			if(suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue()) && !(result.getStatus() == ITestResult.SUCCESS)) {
+				addResultToCSV(result, context);
+			}
 //	    	ExtentManager.closeReporter();
 	    	FileHandling.cleanCurrentDownloadDir();
     	}
 
 	}
 	public void addResultToCSV(ITestResult result, ITestContext context) {
-		String suiteName = ExtentManager.getSuiteName(context);	    	
+//		String suiteName = ExtentManager.getSuiteName(context);
 		ExtentTest test = getExtendTest();
 		com.aventstack.extentreports.model.Test model = test.getModel();
 		String name = model.getName();
 		String status = model.getStatus().toString();
-		if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue()) && !(result.getStatus() == ITestResult.SUCCESS)) {
+//		if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue()) && !(result.getStatus() == ITestResult.SUCCESS)) {
 			getCsvReport().writeRow(result.getInstanceName(), name.replace(RE_RUN,""), status);
-		}
+//		}
 	}
 	
 	public void generateReport4Jenkins(ITestContext context) {
@@ -288,7 +305,7 @@ public abstract class SetupCDTest extends DriverFactory {
 			String message = "no URL found";
 			System.out.println(message);
 			Assert.fail(message);
-		} else if (!url.contains("localhost") && !url.contains("127.0.0.1")) {
+		} else if (!url.contains("localhost") && !url.contains("192.168.33.10") && !url.contains("127.0.0.1")) {
 			localEnv = false;
 		}
 		return url;

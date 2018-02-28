@@ -257,10 +257,6 @@ public class PortMirroringEnricher {
   }
 
   private void addPortMirroringCapability(NodeTemplate portNodeTemplate) {
-    List<Map<String, CapabilityAssignment>> capabilities = portNodeTemplate.getCapabilities();
-    if (Objects.isNull(capabilities)) {
-      capabilities = new ArrayList<>();
-    }
     Map<String, Object> portMirroringCapabilityProperties = new HashMap<>();
     PortMirroringConnectionPointDescription connectionPoint = new
         PortMirroringConnectionPointDescription();

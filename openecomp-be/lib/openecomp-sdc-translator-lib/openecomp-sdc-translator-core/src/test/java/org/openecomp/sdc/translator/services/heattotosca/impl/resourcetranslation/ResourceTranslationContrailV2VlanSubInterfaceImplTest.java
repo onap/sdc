@@ -20,16 +20,16 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
+import org.togglz.testing.TestFeatureManagerProvider;
 
 import java.io.IOException;
 
-/**
- * @author SHIRIA
- * @since December 04, 2016.
- */
 public class ResourceTranslationContrailV2VlanSubInterfaceImplTest extends
     BaseResourceTranslationTest {
     @Override
@@ -38,8 +38,6 @@ public class ResourceTranslationContrailV2VlanSubInterfaceImplTest extends
         // do not delete this function. it prevents the superclass setup from running
     }
 
-    //todo - remove the ignore once we will support VMI as sub port
-    @Ignore
     @Test
     public void testTranslateVlanSubInterfaceWithGetResource() throws Exception {
         inputFilesPath = "/mock/services/heattotosca/contrailv2Vlan/oneInterface/inputfiles";
@@ -48,15 +46,12 @@ public class ResourceTranslationContrailV2VlanSubInterfaceImplTest extends
         testTranslation();
     }
 
-    //todo - remove the ignore once we will support VMI as sub port
-    @Ignore
     @Test
     public void testTranslateVlanSubInterfaceWithListOfInterfaceAndNetworks() throws Exception {
         inputFilesPath = "/mock/services/heattotosca/contrailv2Vlan/listInterface/inputfiles";
         outputFilesPath =
-                "/mock/services/heattotosca/contrailv2Vlan/listInterface/expectedoutputfiles";
+            "/mock/services/heattotosca/contrailv2Vlan/listInterface/expectedoutputfiles";
         initTranslatorAndTranslate();
         testTranslation();
     }
-
 }

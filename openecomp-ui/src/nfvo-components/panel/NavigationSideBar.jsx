@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ class NavigationSideBar extends React.Component {
 		activeItemId: PropTypes.string.isRequired,
 		onSelect: PropTypes.func,
 		onToggle: PropTypes.func,
-		groups: PropTypes.array
+		groups: PropTypes.array,
+		disabled: PropTypes.bool
 	};
 
 	constructor(props) {
@@ -35,10 +36,10 @@ class NavigationSideBar extends React.Component {
 	}
 
 	render() {
-		let {groups, activeItemId} = this.props;
+		let {groups, activeItemId, disabled = false} = this.props;
 
 		return (
-			<div className='navigation-side-content'>
+			<div className={`navigation-side-content ${disabled ? 'disabled' : ''}`}>
 				{groups.map(group => (
 					<NavigationMenu menu={group} activeItemId={activeItemId} onNavigationItemClick={this.handleItemClicked} key={'menu_' + group.id} />
 				))}

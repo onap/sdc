@@ -383,7 +383,7 @@ topology_template:
           node: pd_server
           relationship: tosca.relationships.network.BindsTo
       capabilities:
-      - port_mirroring:
+        port_mirroring:
           properties:
             connection_point:
               nf_type: ''

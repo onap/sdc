@@ -1,0 +1,72 @@
+{
+  "name": "vOCG-1802-VSP",
+  "description": "vOCG HEAT January 16 2018",
+  "version": "0.0",
+  "data": [
+    {
+      "isBase": false,
+      "file": "ocgmgr.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "ocgmgr.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "ocgmgr_volume.yaml",
+          "type": "HEAT_VOL",
+          "data": [
+            {
+              "file": "ocgmgr_volume.env",
+              "type": "HEAT_ENV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "isBase": false,
+      "file": "ocgapp.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "ocgapp.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "ocgapp_volume.yaml",
+          "type": "HEAT_VOL",
+          "data": [
+            {
+              "file": "ocgapp_volume.env",
+              "type": "HEAT_ENV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "isBase": true,
+      "file": "base_ocg.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "base_ocg.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "ocgmgr_nested_volume.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "ocgapp_nested_volume.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "ocgmgr_nested.txt",
+      "type": "OTHER"
+    }
+  ]
+}

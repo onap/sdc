@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.heat.services;
@@ -27,8 +23,9 @@ public class HeatConstants {
   public static final String INDEX_PROPERTY_NAME = "index_var";
   public static final String SERVICE_SCALING_PROPERTY_NAME = "service_scaling";
   public static final String INSTANCE_UUID_PROPERTY_NAME = "instance_uuid";
-  public static final String VOLUME_ID_PROPERTY_NAME = "volume_id";
   public static final String RESOURCE_DEF_PROPERTY_NAME = "resource_def";
+  public static final String RESOURCE_DEF_PROPERTIES = "properties";
+  public static final String RESOURCE_DEF_TYPE_PROPERTY_NAME = "type";
   public static final String SCALE_OUT_PROPERTY_NAME = "scale_out";
   public static final String INTERFACE_LIST_PROPERTY_NAME = "interface_list";
   public static final String VIRTUAL_NETWORK_PROPERTY_NAME = "virtual_network";
@@ -52,8 +49,12 @@ public class HeatConstants {
   public static final String PORT_SECURITY_ENABLED_PROPERTY_NAME = "port_security_enabled";
   public static final String SHARED_PROPERTY_NAME = "shared";
   public static final String ADMIN_STATE_UP_PROPERTY_NAME = "admin_state_up";
-
   public static final String CONTRAIL_RESOURCE_PREFIX = "OS::Contrail::";
   public static final String CONTRAIL_V2_RESOURCE_PREFIX = "OS::ContrailV2::";
+  public static final int DEFAULT_NESTED_HEAT_RESOURCE_COUNT = 1;
+
+  private HeatConstants() {
+    //Hide the implicit constructor
+  }
 
 }

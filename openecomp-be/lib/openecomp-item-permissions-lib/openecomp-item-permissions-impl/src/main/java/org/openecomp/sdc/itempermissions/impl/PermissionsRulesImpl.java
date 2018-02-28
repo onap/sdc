@@ -19,109 +19,115 @@ import static org.openecomp.sdc.itempermissions.errors.PermissionsErrorMessages.
 public class PermissionsRulesImpl implements PermissionsRules {
 
 
-  @Override
-  public boolean isAllowed(String permission, String action) {
+    @Override
+    public boolean isAllowed(String permission, String action) {
 
-    if (permission == null) {
-      return false;
-    }
-    try {
-      PermissionTypes.valueOf(permission);
-    } catch (IllegalArgumentException ex) {
-      throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_PERMISSION_TYPE).build());
-    }
-
-    try {
-      switch (PermissionActionTypes.valueOf(action)) {
-        case Create_Item:
-          return true;
-
-        case Edit_Item:
-          if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
-              (PermissionTypes.Owner.name())) {
-            return true;
-          }
-          break;
-        case Commit_Item:
-          if (permission.equals(PermissionTypes.Contributor.name()) ||  permission.equals
-              (PermissionTypes.Owner.name())) {
-          return true;
+        if (permission == null) {
+            return false;
         }
-          break;
+        try {
+            PermissionTypes.valueOf(permission);
+        } catch (IllegalArgumentException ex) {
+            throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_PERMISSION_TYPE).build());
+        }
 
-        case Change_Item_Permissions:
-          if (permission.equals(PermissionTypes.Owner.name())) {
-            return true;
-          }
-          break;
+        try {
+            switch (PermissionActionTypes.valueOf(action)) {
+                case Create_Item:
+                    return true;
 
-        case Submit_Item:
-          if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
-              (PermissionTypes.Owner.name())) {
-            return true;
-          }
-          break;
+                case Edit_Item:
+                    if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
+                            (PermissionTypes.Owner.name())) {
+                        return true;
+                    }
+                    break;
+                case Commit_Item:
+                    if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
+                            (PermissionTypes.Owner.name())) {
+                        return true;
+                    }
+                    break;
+                case Delete_Item:
+                    if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
+                            (PermissionTypes.Owner.name())) {
+                        return true;
+                    }
+                    break;
 
-        default:
-          return false;
-      }
-    } catch (IllegalArgumentException ex) {
-      throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_ACTION_TYPE).build());
+                case Change_Item_Permissions:
+                    if (permission.equals(PermissionTypes.Owner.name())) {
+                        return true;
+                    }
+                    break;
+
+                case Submit_Item:
+                    if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
+                            (PermissionTypes.Owner.name())) {
+                        return true;
+                    }
+                    break;
+
+                default:
+                    return false;
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_ACTION_TYPE).build());
+        }
+
+        return false;
     }
 
-    return false;
-  }
+    @Override
+    public void executeAction(String itemId, String userId, String action) {
+        try {
+            switch (PermissionActionTypes.valueOf(action)) {
+                case Create_Item:
+                    caseCreateItem(userId, itemId);
+                    break;
 
-  @Override
-  public void executeAction(String itemId, String userId, String action) {
-    try {
-      switch (PermissionActionTypes.valueOf(action)) {
-        case Create_Item:
-          caseCreateItem(userId,itemId);
-          break;
+                case Change_Item_Permissions:
+                    break;
 
-        case Change_Item_Permissions:
-          break;
+                case Edit_Item:
+                    break;
 
-        case Edit_Item:
-          break;
+                case Submit_Item:
+                    break;
 
-        case Submit_Item:
-          break;
-
-        default:
-      }
-    } catch (IllegalArgumentException ex) {
-      throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_ACTION_TYPE).build());
-    }
-  }
-
-  @Override
-  public void updatePermission(String itemId,String currentUserId, String permission, Set<String>
-      addedUsersIds,Set<String> removedUsersIds) {
-    try {
-      PermissionTypes.valueOf(permission);
-    } catch (IllegalArgumentException ex) {
-      throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_PERMISSION_TYPE).build());
+                default:
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_ACTION_TYPE).build());
+        }
     }
 
-    if (permission.equals(PermissionTypes.Owner.name())) {
+    @Override
+    public void updatePermission(String itemId, String currentUserId, String permission, Set<String>
+            addedUsersIds, Set<String> removedUsersIds) {
+        try {
+            PermissionTypes.valueOf(permission);
+        } catch (IllegalArgumentException ex) {
+            throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_PERMISSION_TYPE).build());
+        }
 
-      HashSet<String> currentOwner = new HashSet<String>();
-      currentOwner.add(currentUserId);
+        if (permission.equals(PermissionTypes.Owner.name())) {
 
-      PermissionsServicesFactory.getInstance().createInterface()
-          .updateItemPermissions(itemId,PermissionTypes.Contributor.name(),
-          currentOwner,new HashSet<String>());
+            HashSet<String> currentOwner = new HashSet<>();
+            currentOwner.add(currentUserId);
+
+            PermissionsServicesFactory.getInstance().createInterface()
+                    .updateItemPermissions(itemId, PermissionTypes.Contributor.name(),
+                            currentOwner, new HashSet<String>());
+        }
     }
-  }
 
-  protected void caseCreateItem(String userId,String itemId) {
-    HashSet<String> ownerId = new HashSet<String>();
-    ownerId.add(userId);
-    PermissionsServicesFactory.getInstance().createInterface()
-        .updateItemPermissions(itemId, PermissionTypes.Owner.name(), ownerId,
-            new HashSet<String>());
-  }
+    protected void caseCreateItem(String userId, String itemId) {
+        HashSet<String> ownerId = new HashSet<>();
+        ownerId.add(userId);
+        PermissionsServicesFactory.getInstance().createInterface()
+                .updateItemPermissions(itemId, PermissionTypes.Owner.name(), ownerId,
+                        new HashSet<String>());
+    }
 
 }

@@ -37,9 +37,12 @@ import org.openecomp.sdc.be.model.Service;
 public class ArtifactResolverTest {
 
     private ArtifactResolverImpl testInstance = new ArtifactResolverImpl();
-    private Service service, noArtifactsService;
-    private Resource resource, noArtifactsResource;
-    private ComponentInstance componentInstance, noArtifactsInstance;
+    private Service service;
+    private Service noArtifactsService;
+    private Resource resource;
+    private Resource noArtifactsResource;
+    private ComponentInstance componentInstance;
+    private ComponentInstance noArtifactsInstance;
 
     @Before
     public void setUp() throws Exception {

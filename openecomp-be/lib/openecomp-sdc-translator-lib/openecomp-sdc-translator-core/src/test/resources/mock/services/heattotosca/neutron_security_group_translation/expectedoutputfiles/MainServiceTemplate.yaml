@@ -12,26 +12,66 @@ topology_template:
     MASTER_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: MASTER_image_name
       type: string
       description: JSA MASTER instance image name
     MASTER_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: MASTER_names
       type: string
       description: JSA MASTER instance name
     security_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: security_group_name
       type: string
       description: security group name of JSA
     MASTER_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: MASTER_flavor_name
       type: string
       description: the flavor name of JSA MASTER instance
     oam_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot_template
+            source_type: HEAT
+            param_name: oam_net_name
       type: string
       description: network name of OAM network
   node_templates:

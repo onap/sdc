@@ -21,11 +21,9 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -69,7 +67,7 @@ public class UserAccessEvent extends AuditingGenericEvent {
 		timebaseduuid = UUIDs.timeBased();
 	}
 
-	public UserAccessEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public UserAccessEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
@@ -98,6 +96,17 @@ public class UserAccessEvent extends AuditingGenericEvent {
 		}
 
 	}
+
+	public UserAccessEvent(String action, CommonAuditData commonAuditData, String user) {
+		this();
+		this.action = action;
+		this.requestId = commonAuditData.getRequestId();
+		this.userUid = user;
+		this.status = commonAuditData.getStatus();
+		this.desc = commonAuditData.getDescription();
+		this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+	}
+
 
 	@Override
 	public void fillFields() {
@@ -135,6 +144,14 @@ public class UserAccessEvent extends AuditingGenericEvent {
 
 	public void setRequestId(String requestId) {
 		this.requestId = requestId;
+	}
+
+	@Override
+	public String getServiceInstanceId() { return serviceInstanceId; }
+
+	@Override
+	public void setServiceInstanceId(String serviceInstanceId) {
+		this.serviceInstanceId = serviceInstanceId;
 	}
 
 	public String getStatus() {

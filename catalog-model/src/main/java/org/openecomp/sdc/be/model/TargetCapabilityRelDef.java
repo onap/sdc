@@ -65,8 +65,7 @@ public class TargetCapabilityRelDef implements Serializable {
 		return relationships;
 	}
 
-
-	public CapabilityRequirementRelationship getSingleRelationship() {//currently only single relationship is supported
+	public CapabilityRequirementRelationship resolveSingleRelationship() {//currently only single relationship is supported
 		return relationships == null || relationships.isEmpty() ? null : relationships.get(0);
 	}
 

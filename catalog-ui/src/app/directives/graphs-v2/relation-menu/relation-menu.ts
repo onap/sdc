@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 'use strict'
+import * as _ from "lodash";
 import {Match, ConnectRelationModel} from "app/models";
 import {Component} from "../../../models/components/component";
 

@@ -46,6 +46,7 @@ export class ResourceType {
     static PNF = 'PNF';
     static CVFC = 'CVFC';
     static CONFIGURATION = 'Configuration';
+    static CR = 'CR';
 }
 
 export class ComponentState {
@@ -189,6 +190,7 @@ export class GraphColors {
     public static NODE_UCPE_CP = '#9063cd';
     public static NODE_UCPE = '#fbfbfb';
     public static NODE_SELECTED_BORDER_COLOR = '#30bdf2';
+    public static SERVICE_PATH_LINK = '#70208a';
 }
 export class GraphTransactionLogText {
     public static REMOVE_TEMP_LINK = "remove tempLink";
@@ -239,15 +241,16 @@ export class States {
     public static WORKSPACE_DISTRIBUTION = 'workspace.distribution';
     public static WORKSPACE_PROPERTIES_ASSIGNMENT = 'workspace.properties_assignment';
     public static WORKSPACE_REQUIREMENTS_AND_CAPABILITIES = 'workspace.reqAndCap';
-    public static WORKSPACE_DESIGNERS = 'workspace.designers';
+    public static WORKSPACE_PLUGINS = 'workspace.plugins';
     public static WORKSPACE_NG2 = 'workspace.ng2';
 }
 
 export class EVENTS {
-    static RESOURCE_LEFT_PALETTE_UPDATE_EVENT = "resourceLeftPanelUpdateEvent";
-    static RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT = "resourcePNFLeftPanelUpdateEvent";
-    static SERVICE_LEFT_PALETTE_UPDATE_EVENT = "serviceLeftPanelUpdateEvent";
-    static VL_LEFT_PALETTE_UPDATE_EVENT = "vlLeftPanelUdateEvent";
+    // static RESOURCE_LEFT_PALETTE_UPDATE_EVENT = "resourceLeftPanelUpdateEvent";
+    // static RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT = "resourcePNFLeftPanelUpdateEvent";
+    // static SERVICE_LEFT_PALETTE_UPDATE_EVENT = "serviceLeftPanelUpdateEvent";
+    //static VL_LEFT_PALETTE_UPDATE_EVENT = "vlLeftPanelUdateEvent";
+    static LEFT_PALETTE_UPDATE_EVENT = "leftPanelUpdateEvent";
     static ON_CSAR_LOADING = "onCsarLoading";
     static DOWNLOAD_ARTIFACT_FINISH_EVENT = "downloadArtifactFinishEvent";
     static ON_WORKSPACE_SAVE_BUTTON_CLICK = "onWorkspaceSaveButtonClick";
@@ -283,6 +286,8 @@ export class GRAPH_EVENTS {
     static ON_PALETTE_COMPONENT_HOVER_OUT = 'onPaletteComponentHoverOut';
     static ON_PALETTE_COMPONENT_DRAG_START = 'onPaletteComponentDragStart';
     static ON_PALETTE_COMPONENT_DRAG_ACTION = 'onPaletteComponentDragAction';
+    static ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL = 'onPaletteComponentShowPopupPanel';
+    static ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL = 'onPaletteComponentHidePopupPanel';
     static ON_COMPONENT_INSTANCE_NAME_CHANGED = 'onComponentInstanceNameChanged';
     static ON_DELETE_COMPONENT_INSTANCE = 'onDeleteComponentInstance';
     static ON_DELETE_MULTIPLE_COMPONENTS = 'onDeleteMultipleComponents';
@@ -291,6 +296,9 @@ export class GRAPH_EVENTS {
     static ON_REMOVE_NODE_FROM_UCPE = 'onRemoveNodeFromUCPE';
     static ON_VERSION_CHANGED = 'onVersionChanged';
     static ON_CREATE_COMPONENT_INSTANCE = 'onCreateComponentInstance';
+    static ON_ADD_COMPONENT_INSTANCE_ZONE_START = 'onCreateComponentInstanceZone';
+    static ON_FINISH_ANIMATION_ZONE = 'onFinishAnimationZone';
+    static ON_ZONE_SIZE_CHANGE = 'onZoneSizeChange';
 }
 
 
@@ -308,9 +316,15 @@ export class COMPONENT_FIELDS {
     static COMPONENT_CAPABILITIES = "capabilities";
     static COMPONENT_REQUIREMENTS = "requirements";
     static COMPONENT_TOSCA_ARTIFACTS = "toscaArtifacts";
+    static COMPONENT_POLICIES = "policies";
     static COMPONENT_GROUPS = "groups";
 
 }
+
+export class SERVICE_FIELDS {
+    static FORWARDING_PATHS = "forwardingPaths";
+}
+
 export class API_QUERY_PARAMS {
     static INCLUDE = "include";
 }

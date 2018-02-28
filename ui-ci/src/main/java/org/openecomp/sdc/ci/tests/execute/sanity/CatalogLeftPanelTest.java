@@ -20,28 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.CheckBoxStatusEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.CatalogPageLeftPanelSubCategoryCheckbox;
-import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
-import org.openecomp.sdc.ci.tests.datatypes.TypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.utilities.CatalogUIUtilitis;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.verificator.CatalogVerificator;
 import org.openqa.selenium.WebElement;
@@ -49,7 +35,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 @Test(singleThreaded = true)
 public class CatalogLeftPanelTest extends  SetupCDTest{

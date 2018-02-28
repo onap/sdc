@@ -27,8 +27,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.PropertiesMapKeyTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
@@ -69,9 +67,7 @@ public class NovaServerResourceValidator implements ResourceValidator {
             && propertiesMap.get(PropertiesMapKeyTypes.FLAVOR.getKeyMap()) == null) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(ERROR_CODE_HNS1, Messages.MISSING_IMAGE_AND_FLAVOR.getErrorMessage(),
-                              resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_ASSIGNED_VALUES_FOR_NOVA_IMAGE_FLAVOR,
-              LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
+                              resourceEntry.getKey()));
     }
   }
 
@@ -111,10 +107,9 @@ public class NovaServerResourceValidator implements ResourceValidator {
         if (serverResource != null && !serverResource.getType()
                 .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())) {
           globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                          .getErrorWithParameters(ERROR_CODE_HNS2, Messages.SERVER_NOT_DEFINED_FROM_NOVA.getErrorMessage(),
-                                  serverResourceName, resourceEntry.getKey()),
-                  LoggerTragetServiceName.VALIDATE_SERVER_GROUP_EXISTENCE,
-                  LoggerErrorDescription.SERVER_NOT_DEFINED_NOVA);
+                          .getErrorWithParameters(ERROR_CODE_HNS2,
+                                  Messages.SERVER_NOT_DEFINED_FROM_NOVA.getErrorMessage(),
+                                  serverResourceName, resourceEntry.getKey()));
         }
       }
     }

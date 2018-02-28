@@ -22,21 +22,21 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 public class LifecycleChangeInfoBase {
 
-	public LifecycleChangeInfoBase() {
-	}
+    public LifecycleChangeInfoBase() {
+    }
 
-	public LifecycleChangeInfoBase(String userRemarks) {
-		super();
-		this.userRemarks = userRemarks;
-	}
+    public LifecycleChangeInfoBase(String userRemarks) {
+        super();
+        this.userRemarks = userRemarks;
+    }
 
-	private String userRemarks;
+    private String userRemarks;
 
-	public String getUserRemarks() {
-		return userRemarks;
-	}
+    public String getUserRemarks() {
+        return userRemarks;
+    }
 
-	public void setUserRemarks(String userRemarks) {
-		this.userRemarks = userRemarks;
-	}
+    public void setUserRemarks(String userRemarks) {
+        this.userRemarks = userRemarks;
+    }
 }

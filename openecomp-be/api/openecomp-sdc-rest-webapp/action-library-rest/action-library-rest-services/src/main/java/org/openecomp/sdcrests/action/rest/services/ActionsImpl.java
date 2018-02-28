@@ -20,49 +20,6 @@
 
 package org.openecomp.sdcrests.action.rest.services;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.action.ActionConstants;
-import org.openecomp.sdc.action.ActionManager;
-import org.openecomp.sdc.action.errors.ActionErrorConstants;
-import org.openecomp.sdc.action.errors.ActionException;
-import org.openecomp.sdc.action.logging.CategoryLogLevel;
-import org.openecomp.sdc.action.logging.StatusCode;
-import org.openecomp.sdc.action.types.Action;
-import org.openecomp.sdc.action.types.ActionArtifact;
-import org.openecomp.sdc.action.types.ActionArtifactProtection;
-import org.openecomp.sdc.action.types.ActionRequest;
-import org.openecomp.sdc.action.types.OpenEcompComponent;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdcrests.action.rest.Actions;
-import org.openecomp.sdcrests.action.rest.mapping.MapActionToActionResponseDto;
-import org.openecomp.sdcrests.action.types.ActionResponseDto;
-import org.openecomp.sdcrests.action.types.ActionVersionDto;
-import org.openecomp.sdcrests.action.types.ListResponseWrapper;
-import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_NAME;
 import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_SUPPORTED_MODELS;
 import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_FILE;
@@ -95,9 +52,6 @@ import static org.openecomp.sdc.action.ActionConstants.STATUS;
 import static org.openecomp.sdc.action.ActionConstants.STATUS_CODE;
 import static org.openecomp.sdc.action.ActionConstants.SUPPORTED_COMPONENTS_ID;
 import static org.openecomp.sdc.action.ActionConstants.SUPPORTED_MODELS_VERSION_ID;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY_API;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_SERVICE_NAME;
 import static org.openecomp.sdc.action.ActionConstants.TIMESTAMP;
 import static org.openecomp.sdc.action.ActionConstants.UPDATED_BY;
 import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM;
@@ -137,6 +91,48 @@ import static org.openecomp.sdc.action.util.ActionUtil.actionErrorLogProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.actionLogPostProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.getUtcDateStringFromTimestamp;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.action.ActionConstants;
+import org.openecomp.sdc.action.ActionManager;
+import org.openecomp.sdc.action.errors.ActionErrorConstants;
+import org.openecomp.sdc.action.errors.ActionException;
+import org.openecomp.sdc.action.logging.CategoryLogLevel;
+import org.openecomp.sdc.action.logging.StatusCode;
+import org.openecomp.sdc.action.types.Action;
+import org.openecomp.sdc.action.types.ActionArtifact;
+import org.openecomp.sdc.action.types.ActionArtifactProtection;
+import org.openecomp.sdc.action.types.ActionRequest;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdcrests.action.rest.Actions;
+import org.openecomp.sdcrests.action.rest.mapping.MapActionToActionResponseDto;
+import org.openecomp.sdcrests.action.types.ActionResponseDto;
+import org.openecomp.sdcrests.action.types.ActionVersionDto;
+import org.openecomp.sdcrests.action.types.ListResponseWrapper;
+import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
 /**
  * Implements various CRUD API that can be performed on Action
  */
@@ -147,7 +143,7 @@ import static org.openecomp.sdc.action.util.ActionUtil.getUtcDateStringFromTimes
 @Validated
 public class ActionsImpl implements Actions {
 
-  private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(ActionsImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ActionsImpl.class);
   @Autowired
   private ActionManager actionManager;
   private String whitespaceCharacters = "\\s"       /* dummy empty string for homogeneity */
@@ -224,8 +220,6 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error("");
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.GET_ACTIONS_INVARIANT_ID.name());
     }
 
     LOGGER.debug(" exit getActionsByActionInvariantUuId ");
@@ -305,8 +299,6 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error("");
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.GET_OPEN_ECOMP_COMPONENTS.name());
     }
   }
 
@@ -353,8 +345,6 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error("");
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.GET_FILTERED_ACTIONS.name());
     }
   }
 
@@ -423,8 +413,6 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.CREATE_ACTION.name());
     }
 
   }
@@ -462,8 +450,6 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.UPDATE_ACTION.name());
     }
 
     return Response.ok(actionResponseDTO).build();
@@ -494,8 +480,6 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.DELETE_ACTION.name());
     }
   }
 
@@ -558,7 +542,6 @@ public class ActionsImpl implements Actions {
       LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.ACTION_VERSIONING.name());
       LOGGER.debug("exit actOnAction with invariantUUID= " + invariantUUID + " and requestJSON= " +
           requestJSON);
     }
@@ -597,9 +580,8 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.UPLOAD_ARTIFACT.name());
     }
+
     LOGGER.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
         "artifactName= " + artifactName);
     return response;
@@ -610,7 +592,6 @@ public class ActionsImpl implements Actions {
                                           String artifactDescription, String artifactProtection,
                                           String checksum, Attachment artifactToUpload,
                                           HttpServletRequest servletRequest) {
-    ListResponseWrapper responseList = null;
     byte[] payload = null;
     Map<String, String> errorMap = validateRequestHeaders(servletRequest);
     //Artifact name empty validation
@@ -702,9 +683,8 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.DOWNLOAD_ARTIFACT.name());
     }
+
     LOGGER.debug(" exit downloadArtifact with actionUUID= " + actionUUID + " and artifactUUID= " +
         artifactUUID);
     return response;
@@ -751,9 +731,8 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.DELETE_ARTIFACT.name());
     }
+
     return response;
   }
 
@@ -803,22 +782,14 @@ public class ActionsImpl implements Actions {
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
       throw exception;
-    } finally {
-      finalAuditMetricsLogProcessor(ActionRequest.UPDATE_ARTIFACT.name());
     }
+
     LOGGER.debug(" exit updateArtifact with actionInvariantUuId= " + actionInvariantUUID +
         " and artifactUUID= " + artifactUUID + " and artifactName= " + artifactName +
         " and artifactLabel= " + artifactLabel + " and artifactCategory= " + artifactCategory +
         " and artifactDescription= " + artifactDescription + " and artifactProtection= " +
         artifactProtection + " and checksum= " + checksum);
     return response;
-  }
-
-  private void finalAuditMetricsLogProcessor(String targetServiceName) {
-    MDC.put(TARGET_SERVICE_NAME, targetServiceName);
-    MDC.put(TARGET_ENTITY, TARGET_ENTITY_API);
-    LOGGER.metrics("");
-    LOGGER.audit("");
   }
 
   private Response updateArtifactInternal(String actionInvariantUUID, String artifactUUID,
@@ -1178,7 +1149,6 @@ public class ActionsImpl implements Actions {
       File artifactFile = new File(actionartifact.getArtifactName());
       try (FileOutputStream fos = new FileOutputStream(artifactFile)) {
         fos.write(artifactsBytes);
-        fos.close();
       } catch (IOException exception) {
         LOGGER.error(ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG, exception);
         throw new ActionException(ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE,

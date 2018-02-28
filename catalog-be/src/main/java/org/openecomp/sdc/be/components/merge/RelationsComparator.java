@@ -1,14 +1,14 @@
 package org.openecomp.sdc.be.components.merge;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class RelationsComparator {
@@ -45,8 +45,8 @@ public class RelationsComparator {
 
     private boolean findRelation(Resource oldResource, List<RequirementCapabilityRelDef> oldRelations, Resource newResource, RequirementCapabilityRelDef newRelation) {
         for (RequirementCapabilityRelDef oldRelation : oldRelations) {
-            RelationshipInfo oldRelationship = oldRelation.getSingleRelationship().getRelation();
-            RelationshipInfo newRelationship = newRelation.getSingleRelationship().getRelation();
+            RelationshipInfo oldRelationship = oldRelation.resolveSingleRelationship().getRelation();
+            RelationshipInfo newRelationship = newRelation.resolveSingleRelationship().getRelation();
             if (oldRelationship != null && newRelationship != null && isRelationEqual(oldRelationship, newRelationship) && isRelationToNodeEquals(oldResource, oldRelation, newResource, newRelation)) {
                 return true;
             }
@@ -70,12 +70,12 @@ public class RelationsComparator {
 
     private boolean isRelationshipCapabilityEquals(RelationshipInfo oldRelationship, RelationshipInfo newRelationship) {
         if(oldRelationship.getCapabilityUid() !=null && newRelationship.getCapabilityUid() != null){
-        	return oldRelationship.getCapabilityUid().equals(newRelationship.getCapabilityUid());
+            return oldRelationship.getCapabilityUid().equals(newRelationship.getCapabilityUid());
         }
         else if(oldRelationship.getCapabilityUid() == null && newRelationship.getCapabilityUid() == null){
-        	return true;
+            return true;
         }
-    	return false;
+        return false;
     }
 
     private boolean isRelationshipTypeEquals(RelationshipInfo oldRelationship, RelationshipInfo newRelationship) {
@@ -84,12 +84,12 @@ public class RelationsComparator {
 
     private boolean isRelationshipReqNameEquals(RelationshipInfo oldRelationship, RelationshipInfo newRelationship) {
         if(oldRelationship.getRequirement() != null && newRelationship.getRequirement() != null){
-        	return oldRelationship.getRequirement().equals(newRelationship.getRequirement());
+            return oldRelationship.getRequirement().equals(newRelationship.getRequirement());
         }
         else if(oldRelationship.getRequirement() == null && newRelationship.getRequirement() == null){
-        	return true;
+            return true;
         }
-    	return false;
+        return false;
     }
 
 }

@@ -21,6 +21,7 @@
 package org.openecomp.sdcrests.health.rest.services;
 
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
+import org.openecomp.sdc.common.session.SessionContext;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.health.HealthCheckManager;
 import org.openecomp.sdc.health.HealthCheckManagerFactory;
@@ -32,10 +33,10 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collection;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 
 @Named
 @Service("healthCheck")
@@ -56,7 +57,12 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
   @Override
   public Response checkHealth() {
     HealthCheckResult healthCheckResult = new HealthCheckResult();
-    SessionContextProviderFactory.getInstance().createInterface().create("public");
+
+    SessionContext context =
+        SessionContextProviderFactory.getInstance().createInterface().get();
+
+    SessionContextProviderFactory.getInstance().createInterface().create("public",
+        context.getTenant());
 
     try {
       Collection<HealthInfo> healthInfos = healthCheckManager.checkHealth();

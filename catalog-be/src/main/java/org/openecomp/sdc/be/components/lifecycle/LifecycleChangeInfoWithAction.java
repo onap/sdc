@@ -22,29 +22,29 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 public class LifecycleChangeInfoWithAction extends LifecycleChangeInfoBase {
 
-	public enum LifecycleChanceActionEnum {
-		CREATE_FROM_CSAR, UPDATE_FROM_EXTERNAL_API, UPGRADE_MIGRATION
-	};
+    public enum LifecycleChanceActionEnum {
+        CREATE_FROM_CSAR, UPDATE_FROM_EXTERNAL_API, UPGRADE_MIGRATION
+    };
 
-	private LifecycleChanceActionEnum action;
+    private LifecycleChanceActionEnum action;
 
-	public LifecycleChangeInfoWithAction() {
-	}
+    public LifecycleChangeInfoWithAction() {
+    }
 
-	public LifecycleChangeInfoWithAction(String userRemarks) {
-		super(userRemarks);
-	}
+    public LifecycleChangeInfoWithAction(String userRemarks) {
+        super(userRemarks);
+    }
 
-	public LifecycleChangeInfoWithAction(String userRemarks, LifecycleChanceActionEnum action) {
-		super(userRemarks);
-		this.action = action;
-	}
+    public LifecycleChangeInfoWithAction(String userRemarks, LifecycleChanceActionEnum action) {
+        super(userRemarks);
+        this.action = action;
+    }
 
-	public LifecycleChanceActionEnum getAction() {
-		return action;
-	}
+    public LifecycleChanceActionEnum getAction() {
+        return action;
+    }
 
-	public void setAction(LifecycleChanceActionEnum action) {
-		this.action = action;
-	}
+    public void setAction(LifecycleChanceActionEnum action) {
+        this.action = action;
+    }
 }

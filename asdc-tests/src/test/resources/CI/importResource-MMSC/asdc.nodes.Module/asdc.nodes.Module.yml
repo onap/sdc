@@ -1,2 +1,0 @@
-asdc.nodes.Module:
-  derived_from: tosca.nodes.Root

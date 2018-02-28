@@ -20,29 +20,29 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.model.ArtifactType;
+
+import java.util.List;
 
 public class ArtifactTypesInfo {
 
-	Integer heatDefaultTimeout = 60;
-	List<ArtifactType> artifactTypes;
+    Integer heatDefaultTimeout = 60;
+    List<ArtifactType> artifactTypes;
 
-	public List<ArtifactType> getArtifactTypes() {
-		return artifactTypes;
-	}
+    public List<ArtifactType> getArtifactTypes() {
+        return artifactTypes;
+    }
 
-	public void setArtifactTypes(List<ArtifactType> artifactTypes) {
-		this.artifactTypes = artifactTypes;
-	}
+    public void setArtifactTypes(List<ArtifactType> artifactTypes) {
+        this.artifactTypes = artifactTypes;
+    }
 
-	public Integer getHeatDefaultTimeout() {
-		return heatDefaultTimeout;
-	}
+    public Integer getHeatDefaultTimeout() {
+        return heatDefaultTimeout;
+    }
 
-	public void setHeatDefaultTimeout(Integer heatDefaultTimeout) {
-		this.heatDefaultTimeout = heatDefaultTimeout;
-	}
+    public void setHeatDefaultTimeout(Integer heatDefaultTimeout) {
+        this.heatDefaultTimeout = heatDefaultTimeout;
+    }
 
 }

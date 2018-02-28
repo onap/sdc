@@ -15,6 +15,7 @@
  */
 package org.openecomp.sdcrests.togglz.rest.mapping;
 
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
@@ -23,12 +24,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
-import  org.openecomp.sdc.common.togglz.ToggleStatus;
 
-public class MapToggleableFeatureToDto extends MappingBase<Collection<ToggleStatus>, FeatureSetDto> {
+public class MapToggleableFeatureToDto extends MappingBase<Collection<ToggleableFeature>, FeatureSetDto> {
 
     @Override
-    public void doMapping(Collection<ToggleStatus> source, FeatureSetDto target) {
+    public void doMapping(Collection<ToggleableFeature> source, FeatureSetDto target) {
         if (source != null && !source.isEmpty()){
             Set<FeatureDto> fDtos = source.stream().map(f -> new FeatureDto(f.name(), f.isActive()))
                 .collect(Collectors.toSet());

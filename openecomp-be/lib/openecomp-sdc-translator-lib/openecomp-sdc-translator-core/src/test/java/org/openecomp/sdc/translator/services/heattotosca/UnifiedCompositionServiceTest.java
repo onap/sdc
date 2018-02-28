@@ -1,4 +1,24 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.translator.services.heattotosca;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,10 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 
 public class UnifiedCompositionServiceTest {
   private static final String BASE_DIRECTORY = "/mock/services/heattotosca/unifiedComposition/";
@@ -879,11 +895,11 @@ public class UnifiedCompositionServiceTest {
     context.setConsolidationData(
         createConsolidationData(Collections.singletonList(FSB1_template), portTypeToIdList));
     context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_template,
-        UnifiedCompositionEntity.Compute, cleanedComputeNodeTemplate);
+        UnifiedCompositionEntity.COMPUTE, cleanedComputeNodeTemplate);
     context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_INTERNAL1,
-        UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
+        UnifiedCompositionEntity.PORT, cleanedComputeNodeTemplate);
     context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_INTERNAL2,
-        UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
+        UnifiedCompositionEntity.PORT, cleanedComputeNodeTemplate);
 
     setUnifiedCompositionData(Arrays.asList(FSB1_template, FSB1_INTERNAL1, FSB1_INTERNAL2));
 
@@ -910,13 +926,13 @@ public class UnifiedCompositionServiceTest {
         createConsolidationData(Arrays.asList("FSB1_template_1", "FSB1_template_2"),
             portTypeToIdList));
     context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, "FSB1_template_1",
-        UnifiedCompositionEntity.Compute, cleanedComputeNodeTemplate);
+        UnifiedCompositionEntity.COMPUTE, cleanedComputeNodeTemplate);
     context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, "FSB1_template_2",
-        UnifiedCompositionEntity.Compute, cleanedComputeNodeTemplate);
+        UnifiedCompositionEntity.COMPUTE, cleanedComputeNodeTemplate);
     context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_INTERNAL1,
-        UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
+        UnifiedCompositionEntity.PORT, cleanedComputeNodeTemplate);
     context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB2_INTERNAL1,
-        UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
+        UnifiedCompositionEntity.PORT, cleanedComputeNodeTemplate);
 
     setUnifiedCompositionData(
         Arrays.asList("FSB1_template_1", "FSB1_template_2", FSB1_INTERNAL1, FSB2_INTERNAL1));

@@ -1,5 +1,6 @@
 package org.openecomp.sdc.vendorlicense.impl;
 
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
@@ -22,7 +23,8 @@ public class VendorLicenseManagerFactoryImpl extends VendorLicenseManagerFactory
           FeatureGroupDaoFactory.getInstance().createInterface(),
           EntitlementPoolDaoFactory.getInstance().createInterface(),
           LicenseKeyGroupDaoFactory.getInstance().createInterface(),
-          LimitDaoFactory.getInstance().createInterface());
+          LimitDaoFactory.getInstance().createInterface(),
+          UniqueValueDaoFactory.getInstance().createInterface());
 
   @Override
   public VendorLicenseManager createInterface() {

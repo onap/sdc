@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,26 +20,35 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import fj.data.Either;
+import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
 public interface IDistributionEngine {
 
-	public boolean isActive();
+    boolean isActive();
 
-	public StorageOperationStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, String userId, String modifierName);
+    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, String userId, String modifierName);
 
-	public StorageOperationStatus isEnvironmentAvailable(String envName);
+    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName, String userId, String modifierName);
 
-	/**
-	 * Currently, it used for tests. For real implementation we need cancel the initialization task and the polling task.
-	 * 
-	 * @param envName
-	 */
-	public void disableEnvironment(String envName);
+    StorageOperationStatus isEnvironmentAvailable(String envName);
 
-	public Either<INotificationData, StorageOperationStatus> isReadyForDistribution(Service service, String distributionId, String envName);
+    StorageOperationStatus isEnvironmentAvailable();
 
+    /**
+     * Currently, it used for tests. For real implementation we need cancel the initialization task and the polling task.
+     *
+     * @param envName
+     */
+    void disableEnvironment(String envName);
+
+    StorageOperationStatus isReadyForDistribution(Service service, String envName);
+
+    INotificationData buildServiceForDistribution(Service service, String distributionId, String workloadContext);
+
+    StorageOperationStatus verifyServiceHasDeploymentArtifacts(Service service);
+
+    OperationalEnvironmentEntry getEnvironmentById(String opEnvId);
 }

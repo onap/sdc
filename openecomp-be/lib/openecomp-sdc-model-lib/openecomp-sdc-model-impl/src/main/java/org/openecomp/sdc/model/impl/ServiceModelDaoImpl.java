@@ -39,4 +39,10 @@ public class ServiceModelDaoImpl extends AbstractServiceModelDao
   public void deleteAll(String vspId, Version version) {
 
   }
+
+  @Override
+  public void overrideServiceModel(String vspId, Version version,
+                                   ToscaServiceModel serviceModel) {
+    storeServiceModel(vspId, version, serviceModel);
+  }
 }

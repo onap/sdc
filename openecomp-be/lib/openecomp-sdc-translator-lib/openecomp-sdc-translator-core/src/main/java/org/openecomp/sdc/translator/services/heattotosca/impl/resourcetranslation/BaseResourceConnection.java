@@ -24,16 +24,11 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
@@ -57,7 +52,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 abstract class BaseResourceConnection<T> {
-  protected static Logger logger = (Logger) LoggerFactory.getLogger(BaseResourceConnection.class);
+  protected static Logger logger = LoggerFactory.getLogger(BaseResourceConnection.class);
   protected TranslateTo translateTo;
   FileData nestedFileData;
   NodeTemplate substitutionNodeTemplate;

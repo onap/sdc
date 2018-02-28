@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorlicense.facade.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -75,6 +76,8 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   private static final LicenseKeyGroupDao
       licenseKeyGroupDao = LicenseKeyGroupDaoFactory.getInstance().createInterface();
   private static final LimitDao limitDao = LimitDaoFactory.getInstance().createInterface();
+  private static final UniqueValueUtil uniqueValueUtil = new UniqueValueUtil
+      (UniqueValueDaoFactory.getInstance().createInterface());
   /**
    * Instantiates a new Vendor license facade.
    */
@@ -139,7 +142,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   @Override
   public EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool) {
     entitlementPool.setVersionUuId(CommonMethods.nextUuId());
-    UniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME,
+    uniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME,
         entitlementPool.getVendorLicenseModelId(), entitlementPool.getVersion().getId(),
         entitlementPool.getName());
     entitlementPoolDao.create(entitlementPool);
@@ -154,7 +157,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     if (retrieved.equals(entitlementPool)) {
       return;
     }
-    UniqueValueUtil.updateUniqueValue(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME,
+    uniqueValueUtil.updateUniqueValue(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME,
         retrieved.getName(), entitlementPool.getName(), entitlementPool.getVendorLicenseModelId(),
         entitlementPool.getVersion().getId());
     entitlementPool.setVersionUuId(CommonMethods.nextUuId());
@@ -180,7 +183,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     licenseKeyGroup.setVersionUuId((CommonMethods.nextUuId()));
     VersioningUtil
         .validateEntityExistence(retrieved, licenseKeyGroup, VendorLicenseModelEntity.ENTITY_TYPE);
-    UniqueValueUtil.updateUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME,
+    uniqueValueUtil.updateUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME,
         retrieved.getName(), licenseKeyGroup.getName(), licenseKeyGroup.getVendorLicenseModelId(),
         licenseKeyGroup.getVersion().getId());
     licenseKeyGroupDao.update(licenseKeyGroup);
@@ -189,7 +192,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   @Override
   public LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup) {
     licenseKeyGroup.setVersionUuId(CommonMethods.nextUuId());
-    UniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME,
+    uniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME,
         licenseKeyGroup.getVendorLicenseModelId(), licenseKeyGroup.getVersion().getId(),
         licenseKeyGroup.getName());
     licenseKeyGroupDao.create(licenseKeyGroup);
@@ -214,12 +217,12 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
             null),
         featureGroupDao, VendorLicenseModelEntity.ENTITY_TYPE);
 
-    UniqueValueUtil.validateUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
+    uniqueValueUtil.validateUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
         licenseAgreement.getVendorLicenseModelId(), licenseAgreement.getVersion().getId(),
         licenseAgreement.getName());
 
     licenseAgreementDao.create(licenseAgreement);
-    UniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
+    uniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
         licenseAgreement.getVendorLicenseModelId(), licenseAgreement.getVersion().getId(),
         licenseAgreement.getName());
     if (licenseAgreement.getFeatureGroupIds() != null) {
@@ -243,12 +246,12 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
         new EntitlementPoolEntity(featureGroup.getVendorLicenseModelId(), featureGroup.getVersion(),
             null),
         entitlementPoolDao, VendorLicenseModelEntity.ENTITY_TYPE);
-    UniqueValueUtil.validateUniqueValue(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
+    uniqueValueUtil.validateUniqueValue(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
         featureGroup.getVendorLicenseModelId(), featureGroup.getVersion().getId(),
         featureGroup.getName());
 
     featureGroupDao.create(featureGroup);
-    UniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
+    uniqueValueUtil.createUniqueValue(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
         featureGroup.getVendorLicenseModelId(), featureGroup.getVersion().getId(),
         featureGroup.getName());
 

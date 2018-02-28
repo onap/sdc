@@ -29,8 +29,6 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
@@ -115,8 +113,7 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
         globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                 .getErrorWithParameters(ERROR_CODE_FRG_1,
                         Messages.INVALID_RESOURCE_TYPE.getErrorMessage(),"null",
-                    resourceEntry.getKey()), LoggerTragetServiceName.VALIDATE_RESOURCE_TYPE,
-            LoggerErrorDescription.INVALID_RESOURCE_TYPE);
+                    resourceEntry.getKey()));
       } else {
         if (isResourceForbidden(resourceType)) {
            globalContext.addMessage(
@@ -125,9 +122,7 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(ERROR_CODE_FRG_2, Messages.FORBIDDEN_RESOURCE_IN_USE
                           .getErrorMessage(),
-                      resourceType, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_FORBIDDEN_RESOURCE,
-              LoggerErrorDescription.FLOATING_IP_IN_USE);
+                      resourceType, resourceEntry.getKey()));
         }
       }
     }

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ export const mapStateToProps = ({
 	softwareProduct,
 	licenseModel: {licenseAgreement},
 }) => {
-	let {softwareProductEditor: {data:currentSoftwareProduct = {}}, softwareProductComponents, softwareProductCategories = []} = softwareProduct;
+	let {softwareProductEditor: {data:currentSoftwareProduct = {}}, softwareProductComponents, softwareProductCategories = [], } = softwareProduct;
 	let {licensingData = {}} = currentSoftwareProduct;
 	let {licenseAgreementList} = licenseAgreement;
 	let {componentsList} = softwareProductComponents;
@@ -53,8 +53,8 @@ export const mapStateToProps = ({
 		currentSoftwareProduct: {
 			...currentSoftwareProduct,
 			licenseAgreementName,
-			fullCategoryDisplayName
-		},
+			fullCategoryDisplayName						
+		},		
 		componentsList,
 		isManual: currentSoftwareProduct.onboardingMethod === onboardingMethod.MANUAL
 	};
@@ -67,7 +67,10 @@ const mapActionsToProps = (dispatch, {version}) => {
 				screen: enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, screenType: screenTypes.SOFTWARE_PRODUCT,
 				props: {softwareProductId, version}
 			}),
-
+		onCandidateInProcess: (softwareProductId) => ScreensHelper.loadScreen(dispatch, {
+			screen: enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP, screenType: screenTypes.SOFTWARE_PRODUCT,
+			props: {softwareProductId, version}
+		}),	
 		onUpload: (softwareProductId, formData) =>
 			SoftwareProductActionHelper.uploadFile(dispatch, {
 				softwareProductId,

@@ -3,8 +3,9 @@
 cd /root/chef-solo/
 chef-solo -c solo.rb -E ${ENVNAME}
 
-chef_status=$?
+rc=$?
+if [[ $rc != 0 ]]; then exit $rc; fi
 
 /docker-entrypoint.sh elasticsearch &
 
-exec "$@";
+while true; do sleep 30; done

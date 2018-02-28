@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {
     PROPERTY_TYPES, ModalsHandler, ValidationUtils, PROPERTY_VALUE_CONSTRAINTS, FormState, PROPERTY_DATA} from "app/utils";
 import {DataTypesService} from "app/services";
@@ -257,7 +258,7 @@ export class PropertyFormViewModel {
                     let myValueString:string = JSON.stringify(this.$scope.myValue);
                     property.value = myValueString;
                 }
-                this.component.updateInstanceProperty(property).then(onPropertySuccess, onPropertyFaild);
+                this.component.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).then((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]), onPropertyFaild);
             } else {
                 if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
                     let myValueString:string = JSON.stringify(this.$scope.myValue);

@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {FileUtils} from "app/utils";
 
 export interface IJsonExportExcelScope extends ng.IScope {

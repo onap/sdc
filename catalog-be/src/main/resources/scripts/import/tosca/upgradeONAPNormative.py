@@ -52,6 +52,7 @@ def main(argv):
 	debugf = None
 	updateversion = 'true'
 	importCommon.debugFlag = False
+	scheme = 'http'
 
 	try:
 		opts, args = getopt.getopt(argv,"i:p:u:d:h",["ip=","port=","user=","debug="])
@@ -70,11 +71,13 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-u", "--user"):
 			adminUser = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 		elif opt in ("-d", "--debug"):
 			print arg
 			debugf = bool(arg.lower() == "true" or arg.lower() == "yes")
 
-	print 'be host =',beHost,', be port =', bePort,', user =', adminUser, ', debug =', debugf
+	print 'scheme =',scheme,',be host =',beHost,', be port =', bePort,', user =', adminUser, ', debug =', debugf
 
 	if (debugf != None):
 		print 'set debug mode to ' + str(debugf)
@@ -91,31 +94,31 @@ def main(argv):
 	baseFileLocation = pathdir + "/../../../import/tosca/"
 
 	fileLocation = baseFileLocation + "categories/"
-	importCategories(beHost, bePort, adminUser, False, fileLocation)
+	importCategories(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "data-types/"
-	importDataTypes(beHost, bePort, adminUser, False, fileLocation)
+	importDataTypes(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "policy-types/"
-	importPolicyTypes(beHost, bePort, adminUser, False, fileLocation)
+	importPolicyTypes(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "group-types/"
-	importGroupTypes(beHost, bePort, adminUser, False, fileLocation)
+	importGroupTypes(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "capability-types/"
-	importNormativeCapabilities(beHost, bePort, adminUser, False, fileLocation)
+	importNormativeCapabilities(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "interface-lifecycle-types/"
-	importNormativeInterfaceLifecycleType(beHost, bePort, adminUser, False, fileLocation)
+	importNormativeInterfaceLifecycleType(scheme, beHost, bePort, adminUser, False, fileLocation)
 
 	print 'sleep until data type cache is updated'
 	time.sleep( 70 )
 
-	resultsHeat = upgradeTypesPerConfigFile(beHost, bePort, adminUser, baseFileLocation, updateversion)
+	resultsHeat = upgradeTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateversion)
 	handleResults(resultsHeat, 'false')
 	
 	fileLocation = baseFileLocation + "onap-types/"
-	resultsHeat = importOnapTypes(beHost, bePort, adminUser, fileLocation, updateversion)
+	resultsHeat = importOnapTypes(scheme, beHost, bePort, adminUser, fileLocation, updateversion)
 	handleResults(resultsHeat, updateversion)
 	
 	errorAndExit(0, None)

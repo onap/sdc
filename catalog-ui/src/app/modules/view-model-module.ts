@@ -73,8 +73,8 @@ import {InputFormViewModel} from "../view-models/forms/input-form/input-form-vie
 import {HierarchyViewModel} from "../view-models/tabs/hierarchy/hierarchy-view-model";
 import {downgradeComponent} from "@angular/upgrade/static";
 import {ConformanceLevelModalViewModel} from "../view-models/modals/conformance-level-modal/conformance-level-modal-view-model";
-import {DesignersViewModel} from "../view-models/designers/designers-view-model";
-import {DesignersTabViewModel} from "../view-models/workspace/tabs/designers/designers-tab-view-model";
+import {PluginsTabViewModel} from "../view-models/plugins/plugins-tab-view-model";
+import {PluginsContextViewModel} from "../view-models/workspace/tabs/plugins/plugins-context-view-model";
 // import {NG2ExampleComponent} from "../ng2/view-ng2/ng2.example.component/ng2.example.component";
 // import {upgradeAdapter} from "../ng2/app.module";
 // import { UpgradeAdapter } from '@angular/upgrade';
@@ -137,8 +137,8 @@ viewModelModule
   .controller(moduleName + '.ServiceInputsViewModel', ServiceInputsViewModel)
   .controller(moduleName + '.ReqAndCapabilitiesViewModel', ReqAndCapabilitiesViewModel)
   .controller(moduleName + '.InputFormViewModel', InputFormViewModel)
-  .controller(moduleName + '.DesignersViewModel', DesignersViewModel)
-  .controller(moduleName + '.DesignersTabViewModel', DesignersTabViewModel)
+  .controller(moduleName + '.PluginsTabViewModel', PluginsTabViewModel)
+  .controller(moduleName + '.PluginsContextViewModel', PluginsContextViewModel)
   //
   // //TABS
   .controller(moduleName + '.HierarchyViewModel', HierarchyViewModel);

@@ -19,12 +19,8 @@
  */
 
 package org.openecomp.sdc.be.datatypes.enums;
-
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
-
-
-//@JsonDeserialize(using = MyDeserializer.class)
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum JsonPresentationFields {
 	UNIQUE_ID						("uniqueId", 				GraphPropertyEnum.UNIQUE_ID), 
@@ -75,6 +71,7 @@ public enum JsonPresentationFields {
 	USER_ID_LAST_UPDATER 			("userIdLastUpdater", 		null),
 	CREATOR_FULL_NAME				("creatorFullName",			null),
 	UPDATER_FULL_NAME				("updaterFullName", 		null),
+	IS_FROM_CSAR                    ("isFromCsar",             null),
 	
 	ES_ID 							("esId", 					null),
 	ARTIFACT_LABEL					("artifactLabel", 			null),
@@ -136,6 +133,7 @@ public enum JsonPresentationFields {
 	VALID_SOURCE_TYPES				("validSourceTypes", 			null),
 	REQUIREMENT_ID					("requirementId", 				null),
 	PARENT_NAME						("parentName", 					null),
+
 	//Relation
 	CAPABILTY_OWNER_ID				("capabilityOwnerId", 			null),
 	REQUIREMENT_OWNER_ID			("requirementOwnerId", 			null),
@@ -144,7 +142,6 @@ public enum JsonPresentationFields {
 	REQUIREMENT						("requirement",					null),
 		
 	//Groups
-
 	GROUP_INVARIANT_UUID			("invariantUUID",				null), 
 	GROUP_UUID						("groupUUID",					null), 	
 	GROUP_MEMBER					("members",						null), 
@@ -161,8 +158,7 @@ public enum JsonPresentationFields {
 	GROUP_INSTANCE_ARTIFACTS_UUID	("groupInstanceArtifactsUuid",	null),
 	GROUP_INSTANCE_PROPERTIES		("groupInstancesProperties",	null),
 	
-	//Component insatnce
-
+	//Component instance
 	CI_COMPONENT_UID 				("componentUid", null),
 	CI_POS_X 						("posX", null),
 	CI_POS_Y 						("posY", null),	
@@ -180,7 +176,33 @@ public enum JsonPresentationFields {
 	CI_SOURCE_MODEL_INVARIANT		("sourceModelInvariant", null),
 	CI_SOURCE_MODEL_NAME			("sourceModelName", null),
 	CI_IS_PROXY						("isProxy", null),
+	
+	//path
+	FORWARDING_PATH					("forwardingPath", null),
+	FROM_NODE 						("fromNode", null),
+	TO_NODE 						("toNode", null),
+	PATH_FROM_CP                    ("fromCP", null),
+	PATH_TO_CP       				("toCP", null),
+	PATH_TO_CP_ORIGIN			    ("toCPOrigin", null),
+	PATH_FROM_CP_ORIGIN			    ("fromCPOrigin", null),
+	PATH_NAME				    	("pathName", null),
+	PATH_PROTOCOL    		    	("pathProtocol", null),
+	PATH_DESTINATION_PORT_NUMBER   	("destinationPortNumber", null),
+	PATH_ELEMENT_LIST  	  		  	("pathElementList", null),
+	
+	TYPE_UNIQUE_ID					("typeUniqueId", null),
+	METADATA						("metadata", null),
+	TARGETS							("targets", null),
 
+	//External Refs
+	EXTERNAL_REF					("externalRef", null),
+	
+	//Workflow Operation
+	WO_TYPE ("operationType",null),
+	WO_INPUT_PARAMETERS ("inputParams",null),
+	WO_OUTPUT_PARAMETERS ("outputParams",null),
+	WO_PARAM_NAME("paramName", null),
+	WO_PARAM_ID("paramId", null)
 	;
 	
 

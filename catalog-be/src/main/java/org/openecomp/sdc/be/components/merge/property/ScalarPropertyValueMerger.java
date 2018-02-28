@@ -1,8 +1,8 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component("scalar-prop-value-merger")
 public class ScalarPropertyValueMerger extends PropertyValueMerger {

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorlicense.dao.impl.zusammen;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
@@ -5,18 +21,17 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
 import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.convertor.ElementToVLMGeneralConvertor;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao {
 
@@ -32,7 +47,7 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
         new VersionableEntityMetadata(VersionableEntityStoreType.Zusammen, "VendorLicenseModel",
             null, null);
 
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
   }
 
@@ -66,25 +81,25 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
         "Create VLM General Info Element");
 
     ZusammenElement licenseAgreementsElement =
-        ZusammenUtil.buildStructuralElement(ElementType.LicenseAgreements,  Action.CREATE);
+        ZusammenUtil.buildStructuralElement(ElementType.LicenseAgreements, Action.CREATE);
 
     zusammenAdaptor.saveElement(context, elementContext, licenseAgreementsElement,
         "Create VLM licenseAgreementsElement");
 
     ZusammenElement featureGroupsElement =
-        ZusammenUtil.buildStructuralElement(ElementType.FeatureGroups,  Action.CREATE);
+        ZusammenUtil.buildStructuralElement(ElementType.FeatureGroups, Action.CREATE);
 
     zusammenAdaptor.saveElement(context, elementContext, featureGroupsElement,
         "Create VLM featureGroupsElement");
 
     ZusammenElement lkgsElement =
-        ZusammenUtil.buildStructuralElement(ElementType.LicenseKeyGroups,  Action.CREATE);
+        ZusammenUtil.buildStructuralElement(ElementType.LicenseKeyGroups, Action.CREATE);
 
     zusammenAdaptor.saveElement(context, elementContext, lkgsElement,
         "Create VLM lkgsElement");
 
     ZusammenElement entitlementPoolsElement =
-        ZusammenUtil.buildStructuralElement(ElementType.EntitlementPools,  Action.CREATE);
+        ZusammenUtil.buildStructuralElement(ElementType.EntitlementPools, Action.CREATE);
 
     zusammenAdaptor.saveElement(context, elementContext, entitlementPoolsElement,
         "Create VLM entitlementPoolsElement");
@@ -122,14 +137,6 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
 
   }
 
- /* private Info mapVlmToZusammenItemInfo(VendorLicenseModelEntity vendorLicenseModel) {
-    Info info = new Info();
-    info.setName(vendorLicenseModel.getVendorName());
-    info.setDescription(vendorLicenseModel.getDescription());
-    info.addProperty("type", "VendorLicenseModel");
-    addVlmToInfo(info, vendorLicenseModel);
-    return info;
-  }*/
 
   private ZusammenElement mapVlmToZusammenElement(VendorLicenseModelEntity vendorLicenseModel,
                                                   Action action) {
@@ -146,13 +153,6 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
     info.addProperty(InfoPropertyName.oldVersion.name(), vendorLicenseModel.getOldVersion());
   }
 
-  /*private VendorLicenseModelEntity mapInfoToVlm(String vlmId, Version version, Info info) {
-    VendorLicenseModelEntity vendorLicenseModel = new VendorLicenseModelEntity(vlmId, version);
-    vendorLicenseModel.setVendorName(info.getProperty(InfoPropertyName.name.name()));
-    vendorLicenseModel.setDescription(info.getProperty(InfoPropertyName.description.name()));
-    vendorLicenseModel.setIconRef(info.getProperty(InfoPropertyName.iconRef.name()));
-    return vendorLicenseModel;
-  }*/
 
   public enum InfoPropertyName {
     name,

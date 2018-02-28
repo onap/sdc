@@ -27,8 +27,6 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
@@ -70,8 +68,7 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                       ErrorMessagesFormatBuilder
                               .getErrorWithParameters(
                                       ERROR_HPRODE_HPR1, Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
-                                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
-                      LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
+                                      portResourceId));
 
       return;
     }
@@ -105,10 +102,9 @@ public class NeutronPortResourceValidator implements ResourceValidator {
               .addMessage(fileName, ErrorLevel.ERROR,
                       ErrorMessagesFormatBuilder
                               .getErrorWithParameters(
-                                      ERROR_HPRODE_HPR2, Messages.MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT.getErrorMessage(),
-                                      portResourceId),
-                      LoggerTragetServiceName.VALIDATE_NOVA_SERVER_PORT_BINDING,
-                      LoggerErrorDescription.PORT_BINDS_MORE_THAN_ONE_NOVA);
+                                      ERROR_HPRODE_HPR2,
+                                      Messages.MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT.getErrorMessage(),
+                                      portResourceId));
     }
 
     if (isNoNovaPointingToPort(pointingNovaServers)) {
@@ -117,8 +113,7 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                       ErrorMessagesFormatBuilder
                               .getErrorWithParameters(
                                       ERROR_HPRODE_HPR3, Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
-                                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
-                      LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
+                                      portResourceId));
     }
   }
 

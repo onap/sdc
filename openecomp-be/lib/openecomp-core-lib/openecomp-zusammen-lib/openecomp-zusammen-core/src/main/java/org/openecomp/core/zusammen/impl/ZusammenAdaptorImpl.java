@@ -191,6 +191,11 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
   }
 
   @Override
+  public void deleteItem(SessionContext context, Id itemId){
+    connector.deleteItem(context,itemId);
+  }
+
+  @Override
   public void updateItem(SessionContext context, Id itemId, Info info) {
     connector.updateItem(context, itemId, info);
   }

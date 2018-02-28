@@ -21,32 +21,32 @@
 package org.openecomp.sdc.be.distribution.api.client;
 
 public class TopicUnregistrationResponse {
-	String distrNotificationTopicName;
-	String distrStatusTopicName;
-	CambriaOperationStatus notificationUnregisterResult;
-	CambriaOperationStatus statusUnregisterResult;
+    String distrNotificationTopicName;
+    String distrStatusTopicName;
+    CambriaOperationStatus notificationUnregisterResult;
+    CambriaOperationStatus statusUnregisterResult;
 
-	public TopicUnregistrationResponse(String distrNotificationTopicName, String distrStatusTopicName, CambriaOperationStatus notificationUnregisterResult, CambriaOperationStatus statusUnregisterResult) {
-		super();
-		this.distrNotificationTopicName = distrNotificationTopicName;
-		this.distrStatusTopicName = distrStatusTopicName;
-		this.notificationUnregisterResult = notificationUnregisterResult;
-		this.statusUnregisterResult = statusUnregisterResult;
-	}
+    public TopicUnregistrationResponse(String distrNotificationTopicName, String distrStatusTopicName, CambriaOperationStatus notificationUnregisterResult, CambriaOperationStatus statusUnregisterResult) {
+        super();
+        this.distrNotificationTopicName = distrNotificationTopicName;
+        this.distrStatusTopicName = distrStatusTopicName;
+        this.notificationUnregisterResult = notificationUnregisterResult;
+        this.statusUnregisterResult = statusUnregisterResult;
+    }
 
-	public String getDistrNotificationTopicName() {
-		return distrNotificationTopicName;
-	}
+    public String getDistrNotificationTopicName() {
+        return distrNotificationTopicName;
+    }
 
-	public String getDistrStatusTopicName() {
-		return distrStatusTopicName;
-	}
+    public String getDistrStatusTopicName() {
+        return distrStatusTopicName;
+    }
 
-	public CambriaOperationStatus getNotificationUnregisterResult() {
-		return notificationUnregisterResult;
-	}
+    public CambriaOperationStatus getNotificationUnregisterResult() {
+        return notificationUnregisterResult;
+    }
 
-	public CambriaOperationStatus getStatusUnregisterResult() {
-		return statusUnregisterResult;
-	}
+    public CambriaOperationStatus getStatusUnregisterResult() {
+        return statusUnregisterResult;
+    }
 }

@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -40,32 +44,32 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.VendorLicenseArtifactsService;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
+import org.openecomp.sdc.versioning.ActionVersioningManager;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.errors.EditOnEntityLockedByOtherErrorBuilder;
-import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.testng.Assert;
@@ -84,17 +88,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 
 public class VendorSoftwareProductManagerImplTest {
@@ -111,7 +106,7 @@ public class VendorSoftwareProductManagerImplTest {
   private static String id007 = null;
 
   @Mock
-  private VersioningManager versioningManagerMock;
+  private ActionVersioningManager versioningManagerMock;
   @Mock
   private OrchestrationTemplateDao orchestrationTemplateDataDaoMock;
   @Mock
@@ -142,6 +137,10 @@ public class VendorSoftwareProductManagerImplTest {
   @InjectMocks
   private VendorSoftwareProductManagerImpl vendorSoftwareProductManager;
 
+  @Mock
+  private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManagerMock;
+  @Mock
+  private ComponentDependencyModelDao componentDependencyModelDao;
   private OrchestrationTemplateCandidateManager candidateManager;
   private MonitoringUploadsManager monitoringUploadsManager;
 
@@ -587,6 +586,52 @@ public class VendorSoftwareProductManagerImplTest {
     assertVSPInWantedLocationInVSPList(id007, 0, USER3);
   }
 */
+  @Test
+  public void testValidateWithCandidateDataNotProcessed() throws IOException {
+    VspDetails vsp =
+        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+            "category", "subCategory", "licenseAgreementId",
+            Collections.singletonList("featureGroupId"));
+    vsp.setOnboardingMethod("NetworkPackage");
+    doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
+
+    OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
+        OrchestrationTemplateCandidateData();
+    orchestrationTemplateCandidateData.setFileSuffix("zip");
+    orchestrationTemplateCandidateData.setFilesDataStructure("testdata");
+    orchestrationTemplateCandidateData.setValidationData("");
+    doReturn(orchestrationTemplateCandidateData).when(orchestrationTemplateCandidateManagerMock)
+        .getInfo(VSP_ID, VERSION01);
+    ValidationResponse validationResponse =
+        vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
+    Assert.assertNotNull(validationResponse);
+    Assert.assertFalse(validationResponse.isValid());
+    Assert.assertNotNull(validationResponse.getVspErrors());
+    Assert.assertEquals(validationResponse.getVspErrors().size(), 1);
+
+  }
+
+  @Test
+  public void testValidateWithCandidateProcessedIsInvalid() throws IOException {
+    VspDetails vsp = createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-VSP", "vendorName",
+        "vl1Id", "icond", "category", "subcategory", "licenseAgreementId", Collections
+            .singletonList("featureGroupId"));
+    vsp.setOnboardingMethod("NetworkPackage");
+    doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
+
+    OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
+        OrchestrationTemplateCandidateData();
+    orchestrationTemplateCandidateData.setFileSuffix("zip");
+    orchestrationTemplateCandidateData.setValidationData("Invalid processed data");
+    doReturn(orchestrationTemplateCandidateData).when(orchestrationTemplateCandidateManagerMock)
+        .getInfo(VSP_ID, VERSION01);
+    ValidationResponse validationResponse =
+        vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
+    Assert.assertNotNull(validationResponse);
+    Assert.assertFalse(validationResponse.isValid());
+    Assert.assertNotNull(validationResponse.getVspErrors());
+    Assert.assertEquals(validationResponse.getVspErrors().size(), 1);
+  }
 
   private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
     candidateManager.upload(vspId, VERSION01, upload, "zip", "file");

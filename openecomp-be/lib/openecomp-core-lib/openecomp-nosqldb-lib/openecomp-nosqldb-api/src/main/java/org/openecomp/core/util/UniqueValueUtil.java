@@ -1,27 +1,22 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.core.util;
 
 import org.openecomp.core.dao.UniqueValueDao;
-import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.dao.types.UniqueValueEntity;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -34,15 +29,20 @@ public class UniqueValueUtil {
   private static final String UNIQUE_VALUE_VIOLATION = "UNIQUE_VALUE_VIOLATION";
   private static final String UNIQUE_VALUE_VIOLATION_MSG = "%s with the value '%s' already exists.";
 
-  private static final UniqueValueDao uniqueValueDao =
-      UniqueValueDaoFactory.getInstance().createInterface();
+  private final UniqueValueDao uniqueValueDao;
+
+
+  public UniqueValueUtil(UniqueValueDao uniqueValueDao) {
+    this.uniqueValueDao = uniqueValueDao;
+  }
+
   /**
    * Create unique value.
    *
    * @param type              the type
    * @param uniqueCombination the unique combination
    */
-  public static void createUniqueValue(String type, String... uniqueCombination) {
+  public void createUniqueValue(String type, String... uniqueCombination) {
     Optional<String> value = formatValue(uniqueCombination);
     if (!value.isPresent()) {
       return;
@@ -57,7 +57,7 @@ public class UniqueValueUtil {
    * @param type              the type
    * @param uniqueCombination the unique combination
    */
-  public static void deleteUniqueValue(String type, String... uniqueCombination) {
+  public void deleteUniqueValue(String type, String... uniqueCombination) {
     Optional<String> value = formatValue(uniqueCombination);
     if (!value.isPresent()) {
       return;
@@ -73,8 +73,8 @@ public class UniqueValueUtil {
    * @param newValue      the new value
    * @param uniqueContext the unique context
    */
-  public static void updateUniqueValue(String type, String oldValue, String newValue,
-                                       String... uniqueContext) {
+  public void updateUniqueValue(String type, String oldValue, String newValue,
+      String... uniqueContext) {
     if (newValue == null || oldValue == null || !newValue.equalsIgnoreCase(oldValue)) {
       createUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{newValue}));
       deleteUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{oldValue}));
@@ -87,7 +87,7 @@ public class UniqueValueUtil {
    * @param type              the type
    * @param uniqueCombination the unique combination
    */
-  public static void validateUniqueValue(String type, String... uniqueCombination) {
+  public void validateUniqueValue(String type, String... uniqueCombination) {
     Optional<String> value = formatValue(uniqueCombination);
     if (!value.isPresent()) {
       return;
@@ -95,7 +95,7 @@ public class UniqueValueUtil {
     validateUniqueValue(type, value.get(), uniqueCombination);
   }
 
-  private static void validateUniqueValue(String type, String value, String... uniqueCombination) {
+  private void validateUniqueValue(String type, String value, String... uniqueCombination) {
     if (uniqueValueDao.get(new UniqueValueEntity(type, value)) != null) {
       throw new CoreException(new ErrorCode.ErrorCodeBuilder()
           .withCategory(ErrorCategory.APPLICATION)

@@ -5,20 +5,14 @@
 
     <artifactId>sdc-os-chef</artifactId>
     <packaging>pom</packaging>
-    
+
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-main</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
 
-
-    <properties>
-        <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-latest</docker.latest.tag>    
-		<sonar.skip>true</sonar.skip>
-    </properties>
 
     <build>
         <plugins>
@@ -34,40 +28,6 @@
                         </goals>
                         <configuration>
                             <filesets>
-                                <!-- static configuration files -->
-                               	<fileset>	
-                               		<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
-                               		<followSymlinks>false</followSymlinks>
-                                   	<includes>
-                                        <include>Artifact-Generator.properties</include>
-                                        <include>error-configuration.yaml</include>
-                                        <include>ecomp-error-configuration.yaml</include>
-                                        <include>logback.xml</include>
-                                    </includes>
-                                </fileset>
-                                <!-- BE WAR's -->
-                                <fileset>	
-	                                <directory>${project.parent.basedir}/sdc-os-chef/sdc-backend</directory>
-	                                <followSymlinks>false</followSymlinks>
-                                    <includes>
-    	                               	<include>*.war</include>
-                                   	</includes>
-                               	</fileset>
-                               	<!-- FE WAR's -->
-                                <fileset>	
-	                                <directory>${project.parent.basedir}/sdc-os-chef/sdc-frontend/</directory>
-	                                <followSymlinks>false</followSymlinks>
-                                    <includes>
-    	                               	<include>*.war</include>
-                                   	</includes>
-                               	</fileset>
-                                	<fileset>
-                                    <directory>${project.basedir}/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default</directory>
-									<followSymlinks>false</followSymlinks>
-                                    <includes>
-    	                               	<include>normatives.tar.gz</include>
-                                   	</includes>
-                                </fileset>
                                 <fileset>
                                     <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/</directory>
                                     <followSymlinks>false</followSymlinks>
@@ -75,17 +35,13 @@
                                         <include>**/default.rb</include>
                                     </includes>
                                 </fileset>
-                                <fileset>
-                                    <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools</directory>
-                                    <followSymlinks>false</followSymlinks>
-                                </fileset>
                                 <!-- Sanity jar -->
                                 <fileset>
                                     <directory>${project.basedir}/sdc-sanity</directory>
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
-    	                               	<include>*.jar</include>
-                                   	</includes>
+                                        <include>*.jar</include>
+                                    </includes>
                                 </fileset>
                                 <!-- Sanity test suites -->
                                 <fileset>
@@ -148,101 +104,6 @@
                         <version>3.0.2</version>
                         <executions>
                             <execution>
-                                <id>copy-resources-apidocs</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/sdc-backend</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>
-                                                ${project.parent.basedir}/openecomp-be/tools/swagger-ui/api-docs
-                                            </directory>
-                                            <includes>
-                                                <include>api-docs.war</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-							
-							<execution>
-								<id>copy-static-configuration-files</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-								<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
-								<resources>
-									<resource>
-										<directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
-										<includes>
-											<include>Artifact-Generator.properties</include>
-											<include>error-configuration.yaml</include>
-											<include>ecomp-error-configuration.yaml</include>
-											<include>logback.xml</include>
-										</includes>
-									</resource>
-								</resources>
-								</configuration>
-							</execution>
-							
-                            <execution>
-                                <id>copy-resources-be</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/sdc-backend</outputDirectory>
-                                    <resources>
-                                    	<resource>
-                                            <directory>${project.parent.basedir}/catalog-be/target</directory>
-                                            <includes>
-                                                <include>catalog-be-${project.version}.war</include>
-                                            </includes>
-                                        </resource>
-                                        <resource>
-                                            <directory>
-                                                ${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target
-                                            </directory>
-                                            <includes>
-                                                <include>onboarding-be-${project.version}.war</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            
-                            <execution>
-                                <id>copy-resources-fe</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/sdc-frontend</outputDirectory>
-                                    <resources>
-                                    	<resource>
-                                        	<directory>${project.parent.basedir}/catalog-fe/target</directory>
-                                            <includes>
-                                               	<include>catalog-fe-${project.version}.war</include>
-                                            </includes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/openecomp-ui/target</directory>
-                                            <includes>
-                                                <include>onboarding-fe-${project.version}.war</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            
-                            <execution>
                                 <id>copy-tests-suites</id>
                                 <phase>validate</phase>
                                 <goals>
@@ -260,7 +121,7 @@
                                     </resources>
                                 </configuration>
                             </execution>
-                            
+
                             <execution>
                                 <id>copy-resources-test-apis-ci</id>
                                 <phase>validate</phase>
@@ -279,77 +140,13 @@
                                     </resources>
                                 </configuration>
                             </execution>
-                            
-                            
-                            <execution>
-                                <id>copy-dox-files</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/openecomp-be</directory>
-                                            <includes>
-                                                <include>tools/build/**</include>
-                                            </includes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/openecomp-be</directory>
-                                            <includes>
-                                                <include>tools/install/**</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            
-                            <execution>
-								<id>copy-normatives</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.parent.basedir}/catalog-be/target</directory>
-											<includes>
-												<include>normatives.tar.gz</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							
-	                        <execution>
-	                        	<id>copy-sdctool</id>
-	                        	<phase>validate</phase>
-	                        	<goals>
-	                            	<goal>copy-resources</goal>
-	                        	</goals>
-	                        	<configuration>
-	                            	<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
-	                            	<resources>
-	                                	<resource>
-	                                    	<directory>${project.parent.basedir}/asdctool/target</directory>
-	                                    	<includes>
-	                                        	<include>sdctool.tar</include>
-	                                    	</includes>
-	                                	</resource>
-	                            	</resources>
-	                        	</configuration>
-	                    	</execution>
                         </executions>
                     </plugin>
-                        
+
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.23.0</version>
+                        <version>${fabric8.version}</version>
 
                         <configuration>
                             <verbose>true</verbose>
@@ -357,44 +154,14 @@
                             <registry>nexus3.onap.org:10001</registry>
                             <authConfig>
                                 <pull>
-      					            <username>docker</username>
-      					            <password>docker</password>
-      				            </pull>
-    			            </authConfig>
+                                    <username>docker</username>
+                                    <password>docker</password>
+                                </pull>
+                            </authConfig>
                             <images>
 
-                                <!-- Build backend image -->
-                                <image>
-                                    <name>onap/sdc-backend</name>
-                                    <alias>sdc-backend</alias>
-                                    <build>
-                                        <cleanup>try</cleanup>
-                                        <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
-                                        <tags>
-                                            <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
-                                        </tags>
-                                    </build>
-                                </image>
-
-                                <!-- Build frontend image -->
-                                <image>
-                                    <name>onap/sdc-frontend</name>
-                                    <alias>sdc-frontend</alias>
-                                    <build>
-                                        <cleanup>try</cleanup>
-                                        <dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
-                                        <tags>
-                                            <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
-                                        </tags>
-                                    </build>
-                                </image>
-                                
                                 <!-- Build init-elastic search image -->
-								<image>
+                                <image>
                                     <name>onap/sdc-init-elasticsearch</name>
                                     <alias>sdc-init-elasticsearch</alias>
                                     <build>
@@ -407,7 +174,7 @@
                                         </tags>
                                     </build>
                                 </image>
-                                
+
                                 <!-- Build elastic search image -->
                                 <image>
                                     <name>onap/sdc-elasticsearch</name>
@@ -479,7 +246,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/sdc-backend,onap/sdc-frontend,onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
+                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
                                 </configuration>
                             </execution>
 
@@ -498,7 +265,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>onap/sdc-backend,onap/sdc-frontend,onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
+                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
                                 </configuration>
                             </execution>
                         </executions>

@@ -22,6 +22,6 @@ package org.openecomp.sdc.be.user;
 
 public enum UserAdminAction {
 
-	ADD_USER, UPDATE_USER, DELET_USER
+    ADD_USER, UPDATE_USER, DELET_USER
 
 }

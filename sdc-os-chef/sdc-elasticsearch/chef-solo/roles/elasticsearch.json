@@ -11,7 +11,8 @@
   "chef_type": "role",
   "run_list": [
     "recipe[sdc-elasticsearch::ES_1_setup_elasticsearch]",
-    "recipe[sdc-elasticsearch::ES_2_setup_logging]"
+    "recipe[sdc-elasticsearch::ES_2_setup_logging]",
+    "recipe[sdc-elasticsearch::ES_3_prepareProbeFile]"
   ],
   "env_run_lists": {
   }

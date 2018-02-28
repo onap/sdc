@@ -26,8 +26,6 @@ import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 
 public class DataTypeDefinition extends DataTypeDataDefinition {
 
-	// @JsonIgnore
-	// @org.codehaus.jackson.annotate.JsonIgnore
 	private DataTypeDefinition derivedFrom;
 
 	private List<PropertyConstraint> constraints;

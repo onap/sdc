@@ -82,12 +82,12 @@
 
                 </div>
                 <expand-collapse-list-header title="Properties" expand-collapse-list-data="expandCollapsePropertiesList"></expand-collapse-list-header>
-                <div ng-repeat="property in selectedModule.properties | filter: expandCollapsePropertiesList.filter | orderBy:expandCollapsePropertiesList.orderByField  track by $index" data-ng-if="expandCollapsePropertiesList.expandCollapse">
+                <div ng-repeat="property in filteredProperties=(selectedModule.properties | filter: expandCollapsePropertiesList.filter | orderBy:expandCollapsePropertiesList.orderByField) track by $index" data-ng-if="expandCollapsePropertiesList.expandCollapse">
                     <div class="list-item property-data" data-ng-class="{'last':$last}">
                         <div class="property-name  module-text-overflow" data-tests-id="selected-module-property-name">
                             <span tooltips tooltip-content="{{property.name}}"
                                   data-ng-class="{'hand': !isViewOnly}"
-                                  data-ng-click="!isViewOnly && openEditPropertyModal(property)">{{property.name}}</span>
+                                  data-ng-click="!isViewOnly && openEditPropertyModal(property, filteredProperties)">{{property.name}}</span>
                         </div>
                         <div class="module-text-overflow property-info" data-tests-id="selected-module-property-type"> Type: {{property.type}}</div>
                         <div class="module-text-overflow property-info" data-tests-id="selected-module-property-schema-type">Value: {{property.value}}</div>
