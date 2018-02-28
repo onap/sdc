@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_6b56f6cf",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationEntityType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-02-28T09:23:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_48f7808b",
+      "range": {
+        "startLine": 71,
+        "startChar": 1,
+        "endLine": 78,
+        "endChar": 3
+      },
+      "revId": "82e7225500412032e385b6f6788cb7c4c41d38d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_68335c62",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VmInterfaceImpl.java",
         "patchSetId": 4
@@ -36,6 +60,24 @@
       "writtenOn": "2018-02-28T07:18:47Z",
       "side": 1,
       "message": "what about final?",
+      "revId": "82e7225500412032e385b6f6788cb7c4c41d38d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8b5b42f5",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VmInterfaceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-02-28T09:23:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_68335c62",
       "revId": "82e7225500412032e385b6f6788cb7c4c41d38d5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
