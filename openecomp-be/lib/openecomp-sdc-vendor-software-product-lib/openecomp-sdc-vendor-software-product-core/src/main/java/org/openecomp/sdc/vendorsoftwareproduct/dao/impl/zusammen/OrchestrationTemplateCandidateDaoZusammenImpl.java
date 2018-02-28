@@ -271,7 +271,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     Optional<Element> element = zusammenAdaptor.getElementByName(context, elementContext, null,
         ElementType.OrchestrationTemplateCandidate.name());
 
-    if (element.isPresent() && !VspZusammenUtil.isEmpty(element.get().getData())) {
+    if (element.isPresent() && !VspZusammenUtil.hasEmptyData(element.get().getData())) {
       return Optional.of(new String(FileUtils.toByteArray(element.get().getData())));
     }
 

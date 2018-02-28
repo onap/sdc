@@ -187,7 +187,7 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
             orchestrationTemplateElement.get().getElementId(),
             ElementType.OrchestrationTemplateStructure.name());
     if (orchestrationTemplateStructureElement.isPresent() &&
-        !VspZusammenUtil.isEmpty(orchestrationTemplateStructureElement.get().getData())) {
+        !VspZusammenUtil.hasEmptyData(orchestrationTemplateStructureElement.get().getData())) {
       return Optional.of(new String(
           FileUtils.toByteArray(orchestrationTemplateStructureElement.get().getData())));
     }
