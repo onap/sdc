@@ -37,12 +37,13 @@ function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
     mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/ExtentReport
 	mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/target
+	mkdir -p ${WORKSPACE}/data/logs/docker_logs
     chmod -R 777 ${WORKSPACE}/data/logs
 }
 
 function docker_logs {
 
-docker logs $1 > ${WORKSPACE}/data/logs/$1_docker.log
+docker logs $1 > ${WORKSPACE}/data/logs/docker_logs/$1_docker.log
 
 }
 
