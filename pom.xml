@@ -24,11 +24,12 @@
 		<guava.version>18.0</guava.version>
 		<titan.version>1.0.0</titan.version>
 		<spring-boot.version>1.1.6.RELEASE</spring-boot.version>
-		<spring.version>4.3.4.RELEASE</spring.version>
+		<spring.version>4.3.13.RELEASE</spring.version>
 		<spring.security.version>3.2.3.RELEASE</spring.security.version>
 		<spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
-        <jersey-bom.version>2.24</jersey-bom.version>
+        <jersey-bom.version>2.26</jersey-bom.version>
         <servlet-api.version>2.5</servlet-api.version>
+		<wire-mock.version>2.11.0</wire-mock.version>
 
 		<artifact-generator-api.version>${project.version}</artifact-generator-api.version>
 		<artifact-generator-core.version>${project.version}</artifact-generator-core.version>
@@ -36,13 +37,15 @@
 		<dox-common-lib.version>${project.version}</dox-common-lib.version>
 
 		<!-- Elastic Search mapper (reference the elastic search version actually). -->
-		<elastic-search.version>2.1.0</elastic-search.version>
+		<elastic-search.version>2.4.0</elastic-search.version>
+		<catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
+		<catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
 		<jetty.version>9.2.10.v20150310</jetty.version>
 
 		<!-- JSON and YAML Parsing -->
-		<jackson.version>2.6.2</jackson.version>
+		<jackson.version>2.8.4</jackson.version>
 		<jackson.yaml.version>2.8.1</jackson.yaml.version>
-		<jackson.annotations.version>2.6.0</jackson.annotations.version>
+		<jackson.annotations.version>2.8.4</jackson.annotations.version>
 
 		<!-- Yaml for properties -->
 		<snakeyaml.version>1.14</snakeyaml.version>
@@ -73,8 +76,6 @@
 
 		<regex.version>3.0.3</regex.version>
 
-		<codehaus.jackson.core>1.9.2</codehaus.jackson.core>
-
 		<!--GSON-->
 		<gson.version>2.3.1</gson.version>
 
@@ -84,35 +85,23 @@
 		<!--TESTING-->
 		<mockito.version>2.12.0</mockito.version>
 		<junit.version>4.12</junit.version>
+		<assertj.version>3.8.0</assertj.version>
 		<testng.version>6.9.10</testng.version>
 		<extentreports.version>3.0.3</extentreports.version>
-		
+		<cucumber.version>2.3.1</cucumber.version>
+
 		<!-- parser-->
 		<sdc-tosca-parser.version>1.1.56-SNAPSHOT</sdc-tosca-parser.version>
-		
+
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.jacoco.itReportPath>${project.basedir}/target/it-jacoco.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${project.basedir}/../target/it-jacoco.exec</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
 		<!-- Sonar properties -->
 		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
 		<sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
-		<sonar.sources>.</sonar.sources>
-		<sonar.exclusions>**/scripts/**/*</sonar.exclusions>
-		<sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
-		<sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
 		<sonar.branch>${project.version}</sonar.branch>
-
-		<assertj.version>3.8.0</assertj.version>
-
-		<!--cassandra -->
-		<cassandra.driver.version>3.0.0</cassandra.driver.version>
-		<!-- maven central (Nexus) -->
-		<nexus.id.release>nexus</nexus.id.release>
-		<nexus.id.snapshot>nexus</nexus.id.snapshot>
-
-		<assertj.version>3.8.0</assertj.version>
 
 		<!--cassandra -->
 		<cassandra.driver.version>3.0.0</cassandra.driver.version>
@@ -126,7 +115,59 @@
 		<staging.profile.id>176c31dfe190a</staging.profile.id>
 		<!--maven-->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
+		<!--io.fabric8-->
+		<fabric8.version>0.23.0</fabric8.version>
+		<!--docker tags-->
+		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+		<docker.latest.tag>${project.version}-latest</docker.latest.tag>
+
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.glassfish.jersey.ext</groupId>
+				<artifactId>jersey-bean-validation</artifactId>
+				<version>${jersey-bom.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.glassfish.hk2.external</groupId>
+				<artifactId>asm-all-repackaged</artifactId>
+				<version>2.4.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>${assertj.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.tomakehurst</groupId>
+				<artifactId>wiremock</artifactId>
+				<version>${wire-mock.version}</version>
+			</dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java</artifactId>
+                <version>${cucumber.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-junit</artifactId>
+                <version>${cucumber.version}</version>
+            </dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<reporting>
 		<plugins>
@@ -289,6 +330,54 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- license plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.10</version>
+				<configuration>
+					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+					<processStartTag>============LICENSE_START=======================================================</processStartTag>
+					<processEndTag>============LICENSE_END=========================================================</processEndTag>
+					<sectionDelimiter>================================================================================</sectionDelimiter>
+					<licenseName>apache_v2</licenseName>
+					<inceptionYear>2017</inceptionYear>
+					<organizationName>AT&amp;T Intellectual Property. All rights
+						reserved.</organizationName>
+					<projectName>SDC</projectName>
+					<canUpdateCopyright>true</canUpdateCopyright>
+					<canUpdateDescription>true</canUpdateDescription>
+					<canUpdateLicense>true</canUpdateLicense>
+					<emptyLineAfterHeader>true</emptyLineAfterHeader>
+					<verbose>false</verbose>
+					<includes>
+						<include>**/*.java</include>
+						<include>**/*.ts</include>
+					</includes>
+					<excludes>
+						<exclude>**/*.d.ts</exclude>
+					</excludes>
+					<roots>
+						<root>src</root>
+						<root>app</root>
+						<root>server-mock</root>
+						<root>typings</root>
+					</roots>
+					<extraExtensions>
+						<ts>java</ts>
+					</extraExtensions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>first</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<!--phase>process-sources</phase -->
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -310,7 +399,6 @@
 				<module>asdctool</module>
 				<module>catalog-ui</module>
 				<module>catalog-fe</module>
-				<module>asdc-tests</module>
 				<module>test-apis-ci</module>
 				<module>ui-ci</module>
 				<module>sdc-os-chef</module>
@@ -333,18 +421,17 @@
 				<module>asdctool</module>
 				<module>catalog-ui</module>
 				<module>catalog-fe</module>
-				<module>asdc-tests</module>
 				<module>test-apis-ci</module>
 				<module>ui-ci</module>
 			</modules>			
 			
 			<properties>
 				<ecomp.version>1.2.7</ecomp.version>
-				<artifact-generator-api.version>1710.0.0</artifact-generator-api.version>
-				<artifact-generator-core.version>1710.0.0</artifact-generator-core.version>
-				<dox-common-lib.version>1710.0.0</dox-common-lib.version>
+				<artifact-generator-api.version>1802.0.1.167</artifact-generator-api.version>
+				<artifact-generator-core.version>1802.0.1.167</artifact-generator-core.version>
+				<dox-common-lib.version>1802.0.1.167</dox-common-lib.version>
 				<sdc-tosca-parser.version>1.1.32</sdc-tosca-parser.version>
-			</properties>
+			</properties>	
 		</profile>
 
 		<profile>
@@ -353,23 +440,8 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
-				<module>build-tools</module>
 				<module>onboarding</module>
 			</modules>
-		</profile>
-
-		<profile>
-			<id>dev-integ</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.togglz</groupId>
-					<artifactId>togglz-console</artifactId>
-					<version>${togglz.version}</version>
-				</dependency>
-			</dependencies>
 		</profile>
 	</profiles>
 
@@ -399,7 +471,6 @@
 	</repositories>
 
 	<distributionManagement>
-
 		<repository>
 			<id>ecomp-releases</id>
 			<name>Release Repository</name>
@@ -416,4 +487,3 @@
 		</site>
 	</distributionManagement>
 </project>
-

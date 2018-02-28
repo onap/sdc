@@ -27,13 +27,13 @@ import org.springframework.stereotype.Component;
 
 @Component("requirementsBusinessLogic")
 public class RequirementsBusinessLogic {
-	private static Logger log = LoggerFactory.getLogger(RequirementsBusinessLogic.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(RequirementsBusinessLogic.class);
 
-	@javax.annotation.Resource
-	private ComponentsUtils componentsUtils;
+    @javax.annotation.Resource
+    private ComponentsUtils componentsUtils;
 
-	@javax.annotation.Resource
-	private ResourceBusinessLogic resourceBusinessLogic;
+    @javax.annotation.Resource
+    private ResourceBusinessLogic resourceBusinessLogic;
 
 
 }

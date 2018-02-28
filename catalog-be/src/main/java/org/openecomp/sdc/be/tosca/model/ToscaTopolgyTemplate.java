@@ -24,44 +24,44 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ToscaTopolgyTemplate {
-	private Map<String, ToscaProperty> inputs;
-	private Map<String, ToscaNodeTemplate> node_templates;
-	private Map<String, ToscaGroupTemplate> groups;
-	private SubstitutionMapping substitution_mappings;
+    private Map<String, ToscaProperty> inputs;
+    private Map<String, ToscaNodeTemplate> node_templates;
+    private Map<String, ToscaGroupTemplate> groups;
+    private SubstitutionMapping substitution_mappings;
 
-	public Map<String, ToscaNodeTemplate> getNode_templates() {
-		return node_templates;
-	}
+    public Map<String, ToscaNodeTemplate> getNode_templates() {
+        return node_templates;
+    }
 
-	public void setNode_templates(Map<String, ToscaNodeTemplate> node_templates) {
-		this.node_templates = node_templates;
-	}
+    public void setNode_templates(Map<String, ToscaNodeTemplate> node_templates) {
+        this.node_templates = node_templates;
+    }
 
-	public Map<String, ToscaGroupTemplate> getGroups() {
-		return groups;
-	}
+    public Map<String, ToscaGroupTemplate> getGroups() {
+        return groups;
+    }
 
-	public void addGroups(Map<String, ToscaGroupTemplate> groups) {
-		if ( this.groups == null ){
-			this.groups = new HashMap<>();
-		}
-		this.groups.putAll(groups);
-	}
+    public void addGroups(Map<String, ToscaGroupTemplate> groups) {
+        if ( this.groups == null ){
+            this.groups = new HashMap<>();
+        }
+        this.groups.putAll(groups);
+    }
 
-	public SubstitutionMapping getSubstitution_mappings() {
-		return substitution_mappings;
-	}
+    public SubstitutionMapping getSubstitution_mappings() {
+        return substitution_mappings;
+    }
 
-	public void setSubstitution_mappings(SubstitutionMapping substitution_mapping) {
-		this.substitution_mappings = substitution_mapping;
-	}
+    public void setSubstitution_mappings(SubstitutionMapping substitution_mapping) {
+        this.substitution_mappings = substitution_mapping;
+    }
 
-	public Map<String, ToscaProperty> getInputs() {
-		return inputs;
-	}
+    public Map<String, ToscaProperty> getInputs() {
+        return inputs;
+    }
 
-	public void setInputs(Map<String, ToscaProperty> inputs) {
-		this.inputs = inputs;
-	}
+    public void setInputs(Map<String, ToscaProperty> inputs) {
+        this.inputs = inputs;
+    }
 
 }

@@ -1,13 +1,12 @@
 <div class="sdc-workspace-container">
     <loader data-display="isLoading"></loader>
     <div class="w-sdc-main-container">
-
         <div class="w-sdc-left-sidebar" data-ng-if="!isComposition">
             <div class="menu-header" tooltips tooltip-content="{{menuComponentTitle}}">
                 {{menuComponentTitle}}
             </div>
-            <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': isSelected(menuItem)}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
-                <div class="expand-collapse-menu-box-item-text" ng-click="menuItem.callback()" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu">{{menuItem.text}}</div>
+            <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': menuItem.state == $state.current.name}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
+                <div class="expand-collapse-menu-box-item-text" ng-click="onMenuItemPressed(menuItem.state)" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu">{{menuItem.text}}</div>
             </div>
         </div>
 
@@ -18,7 +17,7 @@
                 <div class="version-container">
 
                 <span data-ng-if="!isCreateMode() && !component.isLatestVersion()" class="not-latest"></span>
-                <select class="version-selector" data-ng-if="!isCreateMode()" data-tests-id="versionHeader" data-ng-model="changeVersion.selectedVersion"
+                <select class="version-selector" data-ng-if="!isCreateMode()" data-tests-id="versionHeader" data-ng-model="changeVersion.selectedVersion" data-ng-class="{'disabled': !isActiveTopBar}"
                         ng-options="'V'+version.versionNumber for version in versionsList" data-ng-change="onVersionChanged(changeVersion.selectedVersion.versionId)">
                 </select>
                 </div>
@@ -35,10 +34,10 @@
 
                 <div class="sdc-workspace-top-bar-buttons">
 
-                    <span ng-if="!isCreateMode() && !component.isLatestVersion() && !showChangeStateButton()">Switch to the&nbsp;<a ng-click="getLatestVersion()">latest version</a></span>
+                    <span ng-if="!isCreateMode() && !component.isLatestVersion() && !showChangeStateButton()" [disabled]="!isActiveTopBar">Switch to the&nbsp;<a ng-click="getLatestVersion()">latest version</a></span>
 
                     <button ng-if="isDesigner() && !isCreateMode()"
-                            data-ng-class="{'disabled' :!isValidForm || isDisableMode() || isViewMode()}"
+                            data-ng-class="{'disabled' :!isValidForm || isDisableMode() || isViewMode() || !isActiveTopBar}"
                             ng-click="save()"
                             class="tlv-btn blue"
                             data-tests-id="create/save"
@@ -48,29 +47,29 @@
                     <button ng-repeat="(key,button) in changeLifecycleStateButtons"
                             ng-click="changeLifecycleState(key)"
                             ng-if="showChangeStateButton() && key != 'deleteVersion'"
-                            data-ng-disabled="isCreateMode() || button.disabled || disabledButtons || !isValidForm"
+                            data-ng-disabled="isCreateMode() || button.disabled || disabledButtons || !isValidForm || !isActiveTopBar"
                             class="change-lifecycle-state-btn tlv-btn"
                             ng-class="$first ? 'outline green' : 'grey'"
                             data-tests-id="{{button.text  | testsId}}">
                             {{button.text}}
                         </button>
 
-                    <button ng-if="!isViewMode() && isCreateMode()" data-ng-disabled="!isValidForm || isDisableMode() || isLoading" ng-click="save()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
+                    <button ng-if="!isViewMode() && isCreateMode()" data-ng-disabled="!isValidForm || isDisableMode() || isLoading || !isActiveTopBar" ng-click="save()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
 
                     <span data-ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'NOT_CERTIFIED_CHECKOUT'" sdc-smart-tooltip=""
-                        data-ng-class="{'disabled' : !isValidForm || isDisableMode() || isViewMode()}" ng-click="changeLifecycleState('deleteVersion')"
+                        data-ng-class="{'disabled' : !isValidForm || isDisableMode() || isViewMode() || !isActiveTopBar}" ng-click="changeLifecycleState('deleteVersion')"
                         class="sprite-new delete-btn" data-tests-id="delete_version" sdc-smart-tooltip="">Delete</span>
 
-                    <span data-ng-if="isDesigner()" data-ng-class="{'disabled' :isDisableMode() || isViewMode()}"  ng-click="revert()" class="sprite-new revert-btn" data-tests-id="revert"
+                    <span data-ng-if="isDesigner()" data-ng-class="{'disabled' :isDisableMode() || isViewMode() || !isActiveTopBar}"  ng-click="revert()" class="sprite-new revert-btn" data-tests-id="revert"
                           data-ng-show="showFullIcons()" sdc-smart-tooltip="">Revert</span>
-
+                    
                     <span class="delimiter"></span>
                     <span class="sprite-new x-btn" data-ng-click="goToBreadcrumbHome()" sdc-smart-tooltip="">Close</span>
 
                 </div>
             </div>
             <div class="w-sdc-main-container-body-content-wrapper">
-                <div class="tab-title" data-ng-if="!isComposition && !isDeployment && !isDesigners">
+                <div class="tab-title" data-ng-if="!isComposition && !isDeployment && !isPlugins">
                     {{getTabTitle()}}
                 </div>
                 <div class="w-sdc-main-container-body-content" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>

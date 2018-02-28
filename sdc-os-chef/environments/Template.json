@@ -40,18 +40,20 @@
             "ES": "yyy",
             "KB": "yyy"
         },
-        "Designers": {
+        "Plugins": {
             "DCAE": {
-                "dcae_protocol": "yyy",
-                "dcae_host": "yyy",
-                "dcae_port": "yyy"
+                "dcae_discovery_url": "yyy",
+                "dcae_source_url": "yyy"
             },
             "WORKFLOW": {
-                "workflow_protocol": "yyy",
-                "workflow_host": "yyy",
-                "workflow_port": "yyy"
+                "workflow_discovery_url": "yyy",
+                "workflow_source_url": "yyy"
             }
-        }
+        },
+           "VnfRepo": {
+             "vnfRepoPort": "8702",
+             "vnfRepoHost": "192.168.50.5"
+           }
     },
     "override_attributes": {
         "FE": {

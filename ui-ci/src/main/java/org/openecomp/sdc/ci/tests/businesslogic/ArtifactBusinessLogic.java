@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ch.qos.logback.classic.util.ContextInitializer;
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.HeatAndHeatEnvNamesPair;
@@ -65,14 +67,14 @@ public class ArtifactBusinessLogic {
 		String artifactsFilePath = filePath + "Artifacts" + File.separator;
 		List<File> fileListFromArtifactsDirectory = FileHandling.getHeatAndHeatEnvArtifactsFromZip(new File(artifactsFilePath), okFileExtensions);
 		Map<String, Object> combinedMap = ArtifactFromCsar.combineHeatArtifacstWithFolderArtifacsToMap(pathToDirectory.toString());
-		LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts = ((LinkedList<HeatMetaFirstLevelDefinition>) combinedMap.get(DEPLOYMENT));
+		LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts = (LinkedList<HeatMetaFirstLevelDefinition>) combinedMap.get(DEPLOYMENT);
 		for(HeatMetaFirstLevelDefinition deploymentArtifact : deploymentArtifacts){
 			String type = deploymentArtifact.getType();
 			if(type.equals(ArtifactTypeEnum.HEAT.getType()) || 
 			   type.equals(ArtifactTypeEnum.HEAT_ENV.getType()) || 
 			   type.equals(ArtifactTypeEnum.HEAT_VOL.getType()) || 
 			   type.equals(ArtifactTypeEnum.HEAT_NET.getType())){
-				File file = (new File(artifactsFilePath + deploymentArtifact.getFileName()));
+				File file = new File(artifactsFilePath + deploymentArtifact.getFileName());
 				if(fileListFromArtifactsDirectory.contains(file)){
 					fileList.add(file);
 				}else{
@@ -184,7 +186,6 @@ public class ArtifactBusinessLogic {
 						if(parameter.getValue() instanceof java.util.LinkedHashMap){
 							pairValue = gson.toJson(parameter.getValue());
 						}
-//						pair = Pair.create(envParametersMap.get(key).left, "\"" + pairValue + "\"");
 						pair = Pair.create(envParametersMap.get(key).left, pairValue );
 
 					}else if(envParametersMap.get(key).left.equals("json") && parameter.getValue() == null){

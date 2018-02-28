@@ -21,11 +21,9 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -76,7 +74,7 @@ public class CategoryEvent extends AuditingGenericEvent {
 		timebaseduuid = UUIDs.timeBased();
 	}
 
-	public CategoryEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public CategoryEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION);
@@ -120,6 +118,21 @@ public class CategoryEvent extends AuditingGenericEvent {
 			setServiceInstanceId((String) value);
 		}
 
+	}
+
+	public CategoryEvent(String action, CommonAuditData commonAuditData, String modifier, String categoryName, String subCategoryName,
+                         String groupingName, String resourceType) {
+		this();
+		this.action = action;
+		this.requestId = commonAuditData.getRequestId();
+		this.status = commonAuditData.getStatus();
+		this.desc = commonAuditData.getDescription();
+		this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+		this.resourceType = resourceType;
+		this.modifier = modifier;
+		this.categoryName = categoryName;
+		this.subCategoryName = subCategoryName;
+		this.groupingName = groupingName;
 	}
 
 	@Override

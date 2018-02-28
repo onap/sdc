@@ -39,7 +39,7 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.fe.config.Configuration;
-import org.openecomp.sdc.fe.impl.DesignerStatusBL;
+import org.openecomp.sdc.fe.impl.PluginStatusBL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,16 +115,16 @@ public class ConfigServlet extends BasicServlet {
 	}
 
 	@GET
-	@Path("/ui/designers")
+	@Path("/ui/plugins")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDesignersConfiguration(@Context final HttpServletRequest request) {
+	public Response getPluginsConfiguration(@Context final HttpServletRequest request) {
 		String result = null;
 
 		ServletContext context = request.getSession().getServletContext();
 
-		DesignerStatusBL designerStatusBL = (DesignerStatusBL) context.getAttribute(Constants.DESIGNER_BL_COMPONENT);		
+		PluginStatusBL pluginStatusBL = (PluginStatusBL) context.getAttribute(Constants.PLUGIN_BL_COMPONENT);
 
-		result = designerStatusBL.checkDesignerListAvailability();
+		result = pluginStatusBL.checkPluginsListAvailability();
 
 		return Response.status(Status.OK).entity(result).build();
 

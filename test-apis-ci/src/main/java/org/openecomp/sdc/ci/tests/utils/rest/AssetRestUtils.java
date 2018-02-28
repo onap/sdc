@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,7 +38,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -78,8 +77,6 @@ public class AssetRestUtils extends BaseRestUtils {
 	static ObjectMapper objectMapper = new ObjectMapper();
 
 	static Logger logger = LoggerFactory.getLogger(AssetRestUtils.class.getName());
-	static final String contentTypeHeaderData = "application/json";
-	static final String acceptHeaderDate = "application/json";
 	static final String basicAuthentication = "Basic Y2k6MTIzNDU2";
 	// /sdc/v1/catalog/{services/resources}/{componentUUID}/artifacts/{artifactUUID}
 	static final String COMPONENT_ARTIFACT_URL = "/sdc/v1/catalog/%s/%s/artifacts/%s";
@@ -93,7 +90,7 @@ public class AssetRestUtils extends BaseRestUtils {
 				assetType.getValue(), uuid);
 		HttpGet httpGet = new HttpGet(url);
 
-		httpGet.addHeader(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		httpGet.addHeader(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 		httpGet.addHeader(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
 
 		logger.debug("Send GET request to get Tosca model: {}", url);
@@ -101,18 +98,27 @@ public class AssetRestUtils extends BaseRestUtils {
 		return httpclient.execute(httpGet);
 	}
 	
+	public static File getToscaModelCsarFile(AssetTypeEnum assetType, String uuid) throws IOException {
+		return getToscaModelCsarFile(assetType, uuid, "");
+	}
+	
 	public static File getToscaModelCsarFile(AssetTypeEnum assetType, String uuid, String fileName) throws IOException {
+		File myFile;
 		Config config = Utils.getConfig();
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		String url = String.format(Urls.GET_TOSCA_MODEL, config.getCatalogBeHost(), config.getCatalogBePort(),
 				assetType.getValue(), uuid);
 		HttpGet httpGet = new HttpGet(url);
-
-		String csarDir = FileHandling.getCreateDirByName("outputCsar");
-		File myFile = new File(csarDir+ File.separator + "tmpCSAR_" + fileName + ".csar");
+		
+		if(fileName.isEmpty()) {
+			myFile = new File("tmpCSAR");			
+		} else {
+			String csarDir = FileHandling.getCreateDirByName("outputCsar");
+			myFile = new File(csarDir+ File.separator + "tmpCSAR_" + fileName + ".csar");
+		}
 
 		
-		httpGet.addHeader(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		httpGet.addHeader(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 		httpGet.addHeader(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
 
 		logger.debug("Send GET request to get Tosca model: {}", url);
@@ -127,19 +133,17 @@ public class AssetRestUtils extends BaseRestUtils {
 	    }
 		return myFile;
 	}
-
-
-
+	
 	public static RestResponse getRestResponseComponentToscaModel(AssetTypeEnum assetType, String uuid) throws IOException {
 		Config config = Utils.getConfig();
 		
 		String url = String.format(Urls.GET_TOSCA_MODEL, config.getCatalogBeHost(), config.getCatalogBePort(),
 				assetType.getValue(), uuid);
 		
-		Map<String, String> headersMap = new HashMap<String,String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 		
 		HttpRequest http = new HttpRequest();
 
@@ -158,16 +162,16 @@ public class AssetRestUtils extends BaseRestUtils {
 	public static RestResponse getComponentListByAssetType(boolean isBasicAuthentication, AssetTypeEnum assetType,
 			String... filterArrayString) throws IOException {
 		Config config = Utils.getConfig();
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		if (isBasicAuthentication) {
 			headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
 		}
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		HttpRequest http = new HttpRequest();
-		String url = String.format(Urls.GET_ASSET_LIST, config.getCatalogBeHost(), config.getCatalogBePort(),
+			String url = String.format(Urls.GET_ASSET_LIST, config.getCatalogBeHost(), config.getCatalogBePort(),
 				assetType.getValue());
 		if (filterArrayString != null && filterArrayString.length > 0) {
 			url = buildUrlWithFilter(url, filterArrayString);
@@ -180,11 +184,11 @@ public class AssetRestUtils extends BaseRestUtils {
 
 	public static RestResponse getFilteredComponentList(AssetTypeEnum assetType, String query) throws IOException {
 		Config config = Utils.getConfig();
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		HttpRequest http = new HttpRequest();
 
@@ -217,13 +221,13 @@ public class AssetRestUtils extends BaseRestUtils {
 			AssetTypeEnum assetType, String uuid) throws IOException {
 
 		Config config = Utils.getConfig();
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		if (isBasicAuthentication) {
 			headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
 		}
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.GET_ASSET_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(),
@@ -627,9 +631,6 @@ public class AssetRestUtils extends BaseRestUtils {
 			return ComponentTypeEnum.RESOURCE;
 		}
 		return null;
-	}
-	private static String getShortUUID() {
-		return UUID.randomUUID().toString().split("-")[0];
 	}
 	
 }

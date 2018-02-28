@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {Distribution, DistributionComponent, Service} from "app/models";
 import {ModalsHandler, Dictionary} from "app/utils";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";

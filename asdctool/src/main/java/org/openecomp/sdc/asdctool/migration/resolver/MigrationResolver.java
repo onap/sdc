@@ -1,6 +1,7 @@
 package org.openecomp.sdc.asdctool.migration.resolver;
 
 
+import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
 import java.util.List;
 
 import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;

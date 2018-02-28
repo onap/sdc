@@ -557,4 +557,9 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 		return true;
 	}
 
+	/**
+	 * Return the type of the actual component - e.g. for a Resource, return the actual VF/CR
+	 * @return
+	 */
+	public abstract String getActualComponentType();
 }

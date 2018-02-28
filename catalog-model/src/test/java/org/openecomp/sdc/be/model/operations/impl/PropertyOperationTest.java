@@ -20,19 +20,6 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -48,11 +35,21 @@ import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+
 public class PropertyOperationTest extends ModelTestBase {
 
 	TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
 	
-	PropertyOperation propertyOperation = new PropertyOperation(titanGenericDao);
+	PropertyOperation propertyOperation = new PropertyOperation(titanGenericDao, null);
 
 	@Before
 	public void setup() {

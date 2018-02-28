@@ -20,14 +20,13 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import com.google.common.collect.Lists;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * Represents the requirement of the component or component instance
  */

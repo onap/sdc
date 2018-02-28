@@ -1,0 +1,43 @@
+<div class="service-path-creator">
+	<form class="w-sdc-form">
+		<div class="i-sdc-form-item" >
+			<label class="i-sdc-form-label required">Path Name</label>
+			<!-- <ui-element-input type="text" name="pathName" [value]="pathName"  ></ui-element-input> -->
+			<input type="text" data-tests-id="pathName" name="pathName" [(ngModel)]="forwardingPath.name" [attr.maxLength]="100" /> <!-- TODO - make unique -->
+		</div>
+
+		<div class="side-by-side">
+			<div class="i-sdc-form-item" >
+				<label class="i-sdc-form-label">Protocol</label>
+				<!-- <ui-element-input type="text" name="protocol" [value]="protocol" ></ui-element-input> -->
+				<input type="text" data-tests-id="pathProtocol" name="protocol" [(ngModel)]="forwardingPath.protocol" [attr.maxLength]="100" />
+			</div>
+			<div class="i-sdc-form-item" >
+				<label class="i-sdc-form-label">Destination Port Numbers</label>
+				<!-- <ui-element-input type="text" name="portNumbers" [value]="portNumbers" ></ui-element-input> -->
+				<input type="text" data-tests-id="pathPortNumbers" name="portNumbers" [(ngModel)]="forwardingPath.destinationPortNumber" pattern="[0-9,]*" /> <!-- TODO - validate delimiter -->
+			</div>
+		</div>
+
+		<div class="separator-buttons">
+			<span class="based-on-title">Based On</span>
+			<a (click)="addRow()" [ngClass]="{'disabled':!isExtendAllowed()}" data-tests-id="extendPathlnk">Extend Path</a>
+		</div>
+
+		<div class="generic-table">
+			<div class="header-row">
+				<div class="cell header-cell" *ngFor="let header of headers">
+					{{header}}
+				</div>
+			</div>
+			<div *ngIf="links && links.length === 0" class="no-row-text" >
+				There is no data to display
+			</div>
+			<div>
+				<link-row *ngFor="let link of links" [data]="linksMap" [link]="link" [removeRow]="removeRow" class="data-row" ></link-row>
+			</div>
+		</div>
+
+
+	</form>
+</div>

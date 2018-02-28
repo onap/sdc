@@ -1,5 +1,13 @@
 jetty_base="/var/lib/jetty"
 
+if !ENV['FE_URL'].nil?
+    fe_url="#{ENV['FE_URL']}"
+elsif  node['disableHttp']
+    fe_url="https://#{node['Nodes']['FE']}:#{node['FE'][:https_port]}"
+else
+    fe_url="http://#{node['Nodes']['FE']}:#{node['FE'][:http_port]}"
+end
+
 
 template "webseal.conf" do
    path "#{jetty_base}/config/sdc-simulator/webseal.conf"
@@ -8,7 +16,6 @@ template "webseal.conf" do
    group "jetty"
    mode "0755"
    variables({
-      :fe_host_ip   => node['HOST_IP'],
-      :fe_http_port => "#{node['FE'][:http_port]}"
+      :fe_url  =>"#{fe_url}"
    })
 end

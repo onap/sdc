@@ -55,7 +55,7 @@ public class EsToCassandraDataMigrationMenu {
 			case "es-to-cassndra-migration":
 				dataMigration = (DataMigration) context.getBean("DataMigrationBean");
 				log.debug("Start migration from ES to C* ");
-				if (dataMigration.migrateDataESToCassndra(appConfigDir, true, true)) {
+				if (dataMigration.migrateDataEsToCassandra(appConfigDir, true, true)) {
 					log.debug("migration from ES to C* was finished successfull");
 					System.exit(0);
 				} else {
@@ -66,7 +66,7 @@ public class EsToCassandraDataMigrationMenu {
 			case "es-to-cassndra-migration-export-only":
 				dataMigration = (DataMigration) context.getBean("DataMigrationBean");
 				log.debug("Start migration export only from ES to C* ");
-				if (dataMigration.migrateDataESToCassndra(appConfigDir, true, false)) {
+				if (dataMigration.migrateDataEsToCassandra(appConfigDir, true, false)) {
 					log.debug("migration export only from ES to C* was finished successfull");
 					System.exit(0);
 				} else {
@@ -77,7 +77,7 @@ public class EsToCassandraDataMigrationMenu {
 			case "es-to-cassndra-migration-import-only":
 				dataMigration = (DataMigration) context.getBean("DataMigrationBean");
 				log.debug("Start migration import only from ES to C* ");
-				if (dataMigration.migrateDataESToCassndra(appConfigDir, false, true)) {
+				if (dataMigration.migrateDataEsToCassandra(appConfigDir, false, true)) {
 					log.debug("migration import only from ES to C* was finished successfull");
 					System.exit(0);
 				} else {

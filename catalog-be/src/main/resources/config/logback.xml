@@ -11,6 +11,8 @@
 	<property name="default-log-pattern"
 			  value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{BeginTimestamp}|%X{EndTimestamp}|%X{uuid}|%X{serviceInstanceID}|%thread|%X{ServerName}|%X{ServiceName}|${ECOMP-subcomponent-name}|%X{userId}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%level|%X{alarmSeverity}|%X{localAddr}|%X{ElapsedTime}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
 
+	<property name="auditLoggerPattern" value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%X{CustomField1}|%X{CustomField2}|%X{CustomField3}|%X{CustomField4}| ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+
 	<property name="asdc-debug-log-pattern" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%msg %n"/>
 
 	<!-- All log -->
@@ -18,13 +20,11 @@
 		<then>
 			<appender name="ALL_ROLLING"
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
-				<file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log
-				</file>
+				<file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log</file>
 
 				<rollingPolicy
 					class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-					<fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i
-					</fileNamePattern>
+					<fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i</fileNamePattern>
 					<minIndex>1</minIndex>
 					<maxIndex>10</maxIndex>
 				</rollingPolicy>
@@ -210,7 +210,7 @@
 			<maxFileSize>20MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${default-log-pattern}</pattern>
+			<pattern>${auditLoggerPattern}</pattern>
 		</encoder>
 	</appender>
 	

@@ -18,15 +18,22 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import { SchemaPropertyGroupModel, SchemaProperty } from "../aschema-property";
-import { PropertyBEModel } from "../../models";
+import {PropertyFEModel} from "../../models";
 import {PROPERTY_DATA} from "../../utils/constants";
 import {InputBEModel} from "./input-be-model";
+import {DerivedPropertyType} from "./property-be-model";
 
 export class InputFEModel extends InputBEModel {
     isSimpleType: boolean;
     relatedPropertyValue: any;
     relatedPropertyName: string;
+    defaultValueObj:any;
+    defaultValueObjIsValid:boolean;
+    defaultValueObjOrig:any;
+    defaultValueObjIsChanged:boolean;
+    derivedDataType: DerivedPropertyType;
 
     constructor(input?: InputBEModel) {
         super(input);
@@ -37,7 +44,37 @@ export class InputFEModel extends InputBEModel {
                 this.relatedPropertyValue = relatedProperty.value;
                 this.relatedPropertyName = relatedProperty.name;
             }
+            this.derivedDataType = this.getDerivedPropertyType();
+            this.resetDefaultValueObjValidation();
+            this.updateDefaultValueObjOrig();
         }
+    }
+
+    public updateDefaultValueObj(defaultValueObj:any, isValid:boolean) {
+        this.defaultValueObj = PropertyFEModel.cleanValueObj(defaultValueObj);
+        this.defaultValueObjIsValid = isValid;
+        this.defaultValueObjIsChanged = this.hasDefaultValueChanged();
+    }
+
+    public updateDefaultValueObjOrig() {
+        this.defaultValueObjOrig = _.cloneDeep(this.defaultValueObj);
+        this.defaultValueObjIsChanged = false;
+    }
+
+    public getJSONDefaultValue(): string {
+        return PropertyFEModel.stringifyValueObj(this.defaultValueObj, this.schema.property.type, this.derivedDataType);
+    }
+
+    public getDefaultValueObj(): any {
+        return PropertyFEModel.parseValueObj(this.defaultValue, this.type, this.derivedDataType);
+    }
+
+    public resetDefaultValueObjValidation() {
+        this.defaultValueObjIsValid = true;
+    }
+
+    hasDefaultValueChanged(): boolean {
+        return !_.isEqual(this.defaultValueObj, this.defaultValueObjOrig);
     }
 
 }

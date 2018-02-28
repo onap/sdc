@@ -53,7 +53,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 		loadConfigurationClass(Configuration.class);
 		loadConfigurationClass(RestConfigurationInfo.class);
 		loadConfigurationClass(EcompErrorConfiguration.class);
-		loadConfigurationClass(DesignersConfiguration.class);
+		loadConfigurationClass(PluginsConfiguration.class);
 
 	}
 
@@ -92,11 +92,11 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
 	}
 	
-	public DesignersConfiguration getDesignersConfiguration() {
+	public PluginsConfiguration getPluginsConfiguration() {
 		
-		log.info("requested designers configuration and got this:{}", configurations.get(getKey(DesignersConfiguration.class)));
+		log.info("requested plugins configuration and got this:{}", configurations.get(getKey(PluginsConfiguration.class)));
 		
-		return (DesignersConfiguration) configurations.get(getKey(DesignersConfiguration.class));
+		return (PluginsConfiguration) configurations.get(getKey(PluginsConfiguration.class));
 	}
 
 	public Configuration getConfigurationAndWatch(ConfigurationListener configurationListener) {

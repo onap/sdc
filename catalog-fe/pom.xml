@@ -35,23 +35,9 @@
 
 		<!-- File changes listener -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-api.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
+			<version>${logback.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -93,7 +79,7 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
-            <version>${jersey-bom.version}</version>
+			<version>${jersey-bom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -126,6 +112,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>${jersey-bom.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>${jackson.version}</version>
@@ -150,21 +142,21 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+			<version>${httpclient.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
-            <version>${httpcore.version}</version>
+			<version>${httpcore.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
-            <version>${httpclient.version}</version>
+			<version>${httpclient.version}</version>
 			<!--<version>4.3.2</version>-->
 			<scope>compile</scope>
 		</dependency>
@@ -179,7 +171,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
+			<version>${commons-codec}</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- http client END -->
@@ -187,7 +179,7 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
+			<version>${servlet-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -218,7 +210,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-            <version>${guava.version}</version>
+			<version>${guava.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -239,7 +231,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-            <version>${lang3.version}</version>
+			<version>${lang3.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -280,21 +272,20 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
+			<version>${jetty.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-            <version>${jetty.version}</version>
+			<version>${jetty.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -323,11 +314,11 @@
 					</webResources>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
+				<version>${jetty.version}</version>
 				<!--<version>9.0.6.v20130930</version>-->
 				<configuration>
 					<contextPath>/</contextPath>
@@ -360,11 +351,37 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>clean.catalog.fe.folder</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<!-- FE WAR's -->
+								<fileset>
+									<directory>${project.parent.basedir}/catalog-fe/sdc-frontend/</directory>
+									<followSymlinks>false</followSymlinks>
+									<includes>
+										<include>*.war</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -401,15 +418,131 @@
 	</build>
 
 	<profiles>
-        <profile>
-            <id>catalog</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
+		<profile>
+			<id>catalog</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 
-            <build>
-            	<finalName>${project.artifactId}-${project.version}</finalName>          
-            </build>
-        </profile>
+			<build>
+				<finalName>${project.artifactId}-${project.version}</finalName>
+			</build>
+		</profile>
+		<profile>
+			<id>docker-staging</id>
+			<properties>
+				<docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
+				<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>docker</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-resources-fe</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/sdc-frontend</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/catalog-fe/target</directory>
+											<includes>
+												<include>catalog-fe-${project.version}.war</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${project.parent.basedir}/openecomp-ui/target</directory>
+											<includes>
+												<include>onboarding-fe-${project.version}.war</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${fabric8.version}</version>
+
+						<configuration>
+							<verbose>true</verbose>
+							<apiVersion>1.23</apiVersion>
+							<registry>nexus3.onap.org:10001</registry>
+							<authConfig>
+								<pull>
+									<username>docker</username>
+									<password>docker</password>
+								</pull>
+							</authConfig>
+							<images>
+
+
+								<!-- Build frontend image -->
+								<image>
+									<name>onap/sdc-frontend</name>
+									<alias>sdc-frontend</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
+										<tags>
+											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+										</tags>
+									</build>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>clean-images</id>
+								<phase>pre-clean</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+								<configuration>
+									<removeAll>true</removeAll>
+									<image>onap/sdc-frontend</image>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>generate-images</id>
+								<phase>install</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+
+							<execution>
+								<id>push-images</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>push</goal>
+								</goals>
+								<configuration>
+									<image>onap/sdc-frontend</image>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 	</profiles>
 </project>

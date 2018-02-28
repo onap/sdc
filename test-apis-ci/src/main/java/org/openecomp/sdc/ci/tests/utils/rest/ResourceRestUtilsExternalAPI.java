@@ -50,7 +50,7 @@ public class ResourceRestUtilsExternalAPI extends BaseRestUtils {
 		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
 		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());
 		
 		HttpRequest http = new HttpRequest();

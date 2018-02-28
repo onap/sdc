@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.yaml.snakeyaml.Yaml;
 
@@ -209,6 +210,9 @@ public class FileHandling {
 				for (File file : dir.listFiles(extensionFilter)) {
 					filenames.add(file.getName());
 				}
+
+				filenames.removeAll(OnboardingUtils.exludeVnfList);
+
 				return filenames;
 			}
 
@@ -222,21 +226,21 @@ public class FileHandling {
 		try{
 			ZipFile zipFile = new ZipFile(filepath + File.separator + zipFilename);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			
-			String[] artifactNames = new String[zipFile.size() - 1];
 
-			int i = 0;
+			List<String> artifactNames = new ArrayList<String>();
+			
 			while(entries.hasMoreElements()){
 				ZipEntry nextElement = entries.nextElement();
 				if (!nextElement.isDirectory()){ 
 					if (!nextElement.getName().equals("MANIFEST.json")){
 						String name = nextElement.getName();
-						artifactNames[i++] = name;
+						artifactNames.add(name);
 					}
 				}
 			}
 			zipFile.close();
-			return artifactNames;
+			// convert list to array 
+			return artifactNames.toArray(new String[0]);
 		}
 		catch(ZipException zipEx){
 			System.err.println("Error in zip file named : " +  zipFilename);	

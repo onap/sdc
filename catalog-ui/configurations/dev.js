@@ -26,7 +26,7 @@ const SDC_CONFIG = {
 		"GET_resource_interface_artifact": "/v1/catalog/:type/:entityId/standard/:operation/artifacts/:id",
 		"GET_resource_api_artifact": "/v1/catalog/:type/:entityId/artifacts/api/:id",
 		"GET_configuration_ui": "/v1/configuration/ui",
-        "GET_designers_configuration": "/config/ui/designers",
+        "GET_plugins_configuration": "/config/ui/plugins",
 		"GET_resource_validate_name": "/v1/catalog/resources/validate-name/:name",
 		"GET_activity_log": "/v1/catalog/audit-records/:type/:id",
 		"GET_service": "/v1/catalog/services/:id",
@@ -47,7 +47,6 @@ const SDC_CONFIG = {
 		"GET_lifecycle_state_CERTIFICATIONREQUEST":"lifecycleState/CERTIFICATIONREQUEST",
 		"GET_lifecycle_state_UNDOCHECKOUT":"lifecycleState/UNDOCHECKOUT",
 		"root": "/sdc1/feProxy/rest",
-        "no_proxy_root": "/sdc1/rest",
 		"PUT_service": "/v1/catalog/services/:id/metadata",
 		"GET_download_artifact": "/v1/catalog/",
         "GET_SDC_Version": "/version",
@@ -59,11 +58,14 @@ const SDC_CONFIG = {
 		"GET_resource_artifact_types": "/v1/artifactTypes",
 		"GET_onboarding": "/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/packages",
 		"GET_component_from_csar_uuid": "/v1/catalog/resources/csar/:csar_uuid",
-		"kibana": "/sdc1/kibanaProxy/"
+		"kibana": "/sdc1/kibanaProxy/",
+		"services_api_root": "/v1/catalog/services/",
+		"create_policy_instance":"/v1/catalog/:entityType/:entityId/policies/:policyId",
+		"CRUD_policy":"/v1/catalog/:entityType/policies/:policyId",
 	},
 	"resourceTypesFilter":{
-        "resource":["CP","VFC","VL"],
-        "service":["CP","VF","VL", "PNF","CVFC","SERVICE", "Configuration"]
+        "resource":["CP","VFC","VL","CVFC","GROUP","POLICY"],
+        "service":["CP","VF","VL", "PNF","CR","CVFC","SERVICE","Configuration","GROUP","POLICY"]
 	},
 	"logConfig": {
 		"minLogLevel": "debug",

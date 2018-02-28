@@ -20,16 +20,15 @@
 
 package org.openecomp.sdc.be.config;
 
-import static java.lang.String.format;
+import org.openecomp.sdc.common.api.BasicConfiguration;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import static java.lang.String.format;
 
-import org.openecomp.sdc.common.api.BasicConfiguration;
-
+import static java.util.Collections.emptyMap;
 public class Configuration extends BasicConfiguration {
 
 	private List<String> identificationHeaderFields;
@@ -74,15 +73,19 @@ public class Configuration extends BasicConfiguration {
 	private int startMigrationFrom;
 	private Long titanLockTimeout;
 	private Long titanReconnectIntervalInSeconds;
+	private List<String> healthStatusExclude;
 	private Long titanHealthCheckReadTimeout;
 	private Long esReconnectIntervalInSeconds;
 	private Long uebHealthCheckReconnectIntervalInSeconds;
 	private Long uebHealthCheckReadTimeout;
-	private LinkedList<Map<String, Map<String, String>>> defaultImports;
+	private List<Map<String, Map<String, String>>> defaultImports;
 	
 	private List<String> resourceTypes;
 	private List<String> excludeResourceCategory;
 	private List<String> excludeResourceType;
+	private Map<String, Set<String>> excludedPolicyTypesMapping;
+
+	private Map<String, Set<String>> excludedGroupTypesMapping;
 	private Map<String, Object> deploymentResourceArtifacts;
 	private Map<String, Object> deploymentResourceInstanceArtifacts;
 	private Map<String, Object> toscaArtifacts;
@@ -147,16 +150,28 @@ public class Configuration extends BasicConfiguration {
 	}
 
 	private String autoHealingOwner;
-	
+
 	private Map<String, List<String>> resourcesForUpgrade;
-	private boolean skipUpgradeFailedVfs;
+	private DmaapConsumerConfiguration dmaapConsumerConfiguration;
+    private boolean skipUpgradeFailedVfs;
+    private boolean skipUpgradeVSPs;
+	private DmeConfiguration dmeConfiguration;
 
-	private boolean skipUpgradeVSPs;
+	public DmaapConsumerConfiguration getDmaapConsumerConfiguration() {
+		return dmaapConsumerConfiguration;
+	}
 
+	public void setDmaapConsumerConfiguration(DmaapConsumerConfiguration dmaapConsumerConfiguration) {
+		this.dmaapConsumerConfiguration = dmaapConsumerConfiguration;
+	}
 
+	public DmeConfiguration getDmeConfiguration() {
+		return dmeConfiguration;
+	}
 
-
-
+	public void setDmeConfiguration(DmeConfiguration dmeConfiguration) {
+		this.dmeConfiguration = dmeConfiguration;
+	}
 	public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) { this.skipUpgradeVSPs = skipUpgradeVSPs; }
 
 	public boolean getSkipUpgradeVSPsFlag() { return skipUpgradeVSPs; }
@@ -427,6 +442,21 @@ public class Configuration extends BasicConfiguration {
 		this.excludeResourceType = excludeResourceType;
 	}
 
+	public Map<String, Set<String>> getExcludedPolicyTypesMapping() {
+		return safeGetMap(excludedPolicyTypesMapping);
+	}
+
+	public void setExcludedPolicyTypesMapping(Map<String, Set<String>> excludedPolicyTypesMapping) {
+		this.excludedPolicyTypesMapping = excludedPolicyTypesMapping;
+	}
+
+	public Map<String, Set<String>> getExcludedGroupTypesMapping() {
+		return safeGetMap(excludedGroupTypesMapping);
+	}
+
+	public void setExcludedGroupTypesMapping(Map<String, Set<String>> excludedGroupTypesMapping) {
+		this.excludedGroupTypesMapping = excludedGroupTypesMapping;
+	}
 
 	public Map<String, Object> getToscaArtifacts() {
 		return toscaArtifacts;
@@ -1282,31 +1312,31 @@ public class Configuration extends BasicConfiguration {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(format("backend host: %s\n", beFqdn))
-				.append(format("backend http port: %s\n", beHttpPort))
-				.append(format("backend ssl port: %s\n", beSslPort)).append(format("backend context: %s\n", beContext))
-				.append(format("backend protocol: %s\n", beProtocol)).append(format("Version: %s\n", version))
-				.append(format("Released: %s\n", released)).append(format("Supported protocols: %s\n", protocols))
-				.append(format("Users: %s\n", users)).append(format("Neo4j: %s\n", neo4j))
-				.append(format("ElasticSearch: %s\n", elasticSearch))
-				.append(format("Titan Cfg File: %s\n", titanCfgFile))
-				.append(format("Titan In memory: %s\n", titanInMemoryGraph))
-				.append(format("Titan lock timeout: %s\n", titanLockTimeout))
-				.append(format("Titan reconnect interval seconds: %s\n", titanReconnectIntervalInSeconds))
-				.append(format("excludeResourceCategory: %s\n", excludeResourceCategory))
-				.append(format("informationalResourceArtifacts: %s\n", informationalResourceArtifacts))
-				.append(format("deploymentResourceArtifacts: %s\n", deploymentResourceArtifacts))
-				.append(format("informationalServiceArtifacts: %s\n", informationalServiceArtifacts))
-				.append(format("Supported artifacts types: %s\n", artifactTypes))
-				.append(format("Supported license types: %s\n", licenseTypes))
-				.append(format("Additional information Maximum number of preoperties: %s\n",
+		return new StringBuilder().append(format("backend host: %s%n", beFqdn))
+				.append(format("backend http port: %s%n", beHttpPort))
+				.append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
+				.append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version))
+				.append(format("Released: %s%n", released)).append(format("Supported protocols: %s%n", protocols))
+				.append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
+				.append(format("ElasticSearch: %s%n", elasticSearch))
+				.append(format("Titan Cfg File: %s%n", titanCfgFile))
+				.append(format("Titan In memory: %s%n", titanInMemoryGraph))
+				.append(format("Titan lock timeout: %s%n", titanLockTimeout))
+				.append(format("Titan reconnect interval seconds: %s%n", titanReconnectIntervalInSeconds))
+				.append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
+				.append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
+				.append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
+				.append(format("informationalServiceArtifacts: %s%n", informationalServiceArtifacts))
+				.append(format("Supported artifacts types: %s%n", artifactTypes))
+				.append(format("Supported license types: %s%n", licenseTypes))
+				.append(format("Additional information Maximum number of preoperties: %s%n",
 						additionalInformationMaxNumberOfKeys))
-				.append(format("Default Heat Artifact Timeout in Minutes: %s\n", defaultHeatArtifactTimeoutMinutes))
-				.append(format("URLs For HTTP Requests that will not be automatically logged : %s\n", unLoggedUrls))
-				.append(format("Service Api Artifacts: %s\n", serviceApiArtifacts))
-				.append(format("heat env artifact header: %s\n", heatEnvArtifactHeader))
-				.append(format("heat env artifact footer: %s\n", heatEnvArtifactFooter))
-				.append(format("onboarding: %s\n", onboarding)).toString();
+				.append(format("Default Heat Artifact Timeout in Minutes: %s%n", defaultHeatArtifactTimeoutMinutes))
+				.append(format("URLs For HTTP Requests that will not be automatically logged : %s%n", unLoggedUrls))
+				.append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
+				.append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
+				.append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter))
+				.append(format("onboarding: %s%n", onboarding)).toString();
 	}
 
 	public List<String> getUnLoggedUrls() {
@@ -1487,11 +1517,11 @@ public class Configuration extends BasicConfiguration {
 		}
 	}
 
-	public LinkedList<Map<String, Map<String, String>>> getDefaultImports() {
+	public List<Map<String, Map<String, String>>> getDefaultImports() {
 		return defaultImports;
 	}
 
-	public void setDefaultImports(LinkedList<Map<String, Map<String, String>>> defaultImports) {
+	public void setDefaultImports(List<Map<String, Map<String, String>>> defaultImports) {
 		this.defaultImports = defaultImports;
 	}
 
@@ -1502,5 +1532,18 @@ public class Configuration extends BasicConfiguration {
 	public void setResourcesForUpgrade(Map<String, List<String>> resourcesForUpgrade) {
 		this.resourcesForUpgrade = resourcesForUpgrade;
 	}
-	
+
+	private <K,V> Map<K,V> safeGetMap(Map<K,V> map) {
+		return map == null ? emptyMap() : map;
+	}
+
+
+	public List<String> getHealthStatusExclude() {
+		return healthStatusExclude;
+	}
+
+	public void setHealthStatusExclude(List<String> healthStatusExclude) {
+		this.healthStatusExclude = healthStatusExclude;
+	}
+
 }
