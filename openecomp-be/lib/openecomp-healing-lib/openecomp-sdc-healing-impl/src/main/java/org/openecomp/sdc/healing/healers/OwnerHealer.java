@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Created by ayalaben on 8/28/2017
@@ -33,12 +32,16 @@ public class OwnerHealer implements Healer {
   private static final SubscribersDao subscribersDao = SubscribersDaoFactory.getInstance()
       .createInterface();
 
-  public Object heal(String itemId, Version version) {
-    Stream<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId)
-        .stream();
+  @Override
+  public boolean isHealingNeeded(String itemId, Version version) {
+    return permissionsDao.listItemPermissions(itemId).stream().noneMatch(this::isOwnerPermission) ||
+        isOwnerMissingOnItem(itemId);
+  }
 
+  public void heal(String itemId, Version version) {
+    Collection<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId);
 
-    if (itemPermissions.noneMatch(this::isOwnerPermission)) {
+    if (itemPermissions.stream().noneMatch(this::isOwnerPermission)) {
       String currentUserId =
           SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId()
               .replace(HEALING_USER_SUFFIX, "");
@@ -46,24 +49,22 @@ public class OwnerHealer implements Healer {
       permissionsDao.updateItemPermissions(itemId, PermissionTypes.Owner.name(),
           Collections.singleton(currentUserId), new HashSet<>());
 
-      updateItemOwner(itemId,currentUserId);
+      updateItemOwner(itemId, currentUserId);
 
-      subscribersDao.subscribe(currentUserId,itemId);
+      subscribersDao.subscribe(currentUserId, itemId);
 
-      return currentUserId;
-    } else if (!itemHasOwnerProperty(itemId)){
-    Optional<ItemPermissionsEntity> ownerOpt = itemPermissions.filter
-        (this::isOwnerPermission).findFirst();
-      if(ownerOpt.isPresent()) {
+    } else if (isOwnerMissingOnItem(itemId)) {
+      Optional<ItemPermissionsEntity> ownerOpt =
+          itemPermissions.stream().filter(this::isOwnerPermission).findFirst();
+      if (ownerOpt.isPresent()) {
         updateItemOwner(itemId, ownerOpt.get().getUserId());
       } else {
         throw new SdcRuntimeException("Unexpected error in Owner Healer. Item id: " + itemId);
       }
-  }
-    return itemPermissions.filter(this::isOwnerPermission).findFirst().get().getUserId();
+    }
   }
 
-  private void updateItemOwner(String itemId,String userId) {
+  private void updateItemOwner(String itemId, String userId) {
     Item item = new Item();
     item.setId(itemId);
     Item retrievedItem = itemDao.get(item);
@@ -73,11 +74,11 @@ public class OwnerHealer implements Healer {
     }
   }
 
-  private boolean itemHasOwnerProperty(String itemId){
+  private boolean isOwnerMissingOnItem(String itemId) {
     Item item = new Item();
     item.setId(itemId);
     Item retrievedItem = itemDao.get(item);
-    return Objects.nonNull(retrievedItem) && Objects.nonNull(retrievedItem.getOwner());
+    return Objects.nonNull(retrievedItem) && Objects.isNull(retrievedItem.getOwner());
   }
 
   private boolean isOwnerPermission(ItemPermissionsEntity permissionsEntity) {

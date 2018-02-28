@@ -18,7 +18,9 @@ package org.openecomp.sdc.healing.interfaces;
 
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-@FunctionalInterface
 public interface Healer {
-    Object heal(String itemId, Version version) throws Exception;
+
+  boolean isHealingNeeded(String itemId, Version version);
+
+  void heal(String itemId, Version version) throws Exception;
 }
