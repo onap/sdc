@@ -25,6 +25,8 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   private static final String PATTERN_1A_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1a/";
+  private static final String PATTERN_1B_BASE_DIRECTORY =
+      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1b/";
   private static final String PATTERN_1C1_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1c1/";
 
@@ -121,6 +123,60 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 3. Resource group parent port as get_param
      */
     testTranslationWithInit(PATTERN_1A_BASE_DIRECTORY + "notBoundToParentPort");
+  }
+
+  //Pattern 1B test
+  @Test
+  public void testDiffComputeSubInterface() throws IOException {
+    /**
+     * Heat file with one compute, one port and one subinterface resource group with
+     * 1. There are two compute both of different type
+     */
+    testTranslationWithInit(PATTERN_1B_BASE_DIRECTORY + "diffComputeSubInterface");
+  }
+
+  @Test
+  public void testOnePortIsConnectedWithSubInf() throws IOException {
+    /**
+     * Heat file with one compute, one port and one subinterface resource group with
+     * 1. Two compute of same type
+     * 2. Two port of same type but only one of them is having sub interface binding
+     */
+    testTranslationWithInit(PATTERN_1B_BASE_DIRECTORY + "onePortIsConnectedWithSubInf");
+  }
+
+  @Test
+  public void testRegularNestedSubInterface() throws IOException {
+    /**
+     * Heat file with one compute, one port and one sub interface without resource group
+     * 1. Two compute of same type
+     * 2. Two port are of different type
+     * 3. Sub interface properties are same in both port
+     */
+    testTranslationWithInit(PATTERN_1B_BASE_DIRECTORY + "regularNestedSubInterface");
+  }
+
+  @Test
+  public void testSameComputeDiffPortSubInterface() throws IOException {
+    /**
+     * Heat file with one compute, one port and one subinterface resource group with
+     * 1. Two compute of same type
+     * 2. Two port are of different type
+     * 3. Sub interface properties are same in both port
+     */
+    testTranslationWithInit(PATTERN_1B_BASE_DIRECTORY + "sameComputeDiffPortSubInterface");
+  }
+
+  @Test
+  public void testSameComputeSamePortDiffSubInterfaceFile() throws IOException {
+    /**
+     * Heat file with one compute, one port and one subinterface resource group with
+     * 1. Two compute of same type
+     * 2. Two port are of same type connected with different sub interface nested file
+     * 3. Sub interface property are same for both port
+     */
+    testTranslationWithInit(PATTERN_1B_BASE_DIRECTORY
+        + "sameComputeSamePortDiffSubInterfaceFile");
   }
 
   //****************** PATTERN 1C1 Tests ***************************
