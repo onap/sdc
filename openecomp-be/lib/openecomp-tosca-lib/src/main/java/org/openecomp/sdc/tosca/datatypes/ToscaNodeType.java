@@ -82,6 +82,8 @@ public class ToscaNodeType {
   public static final String EXTERNAL_CP = EXTERNAL_CP_NODE_TYPE_PREFIX + "extCP";
   public static final String EXTERNAL_CONTRAIL_PORT = EXTERNAL_CP_NODE_TYPE_PREFIX
       + "extContrailCP";
+  public static final String EXTERNAL_VMI_PORT = EXTERNAL_CP_NODE_TYPE_PREFIX
+      + "extVirtualMachineInterfaceCP";
   public static final String EXTERNAL_NEUTRON_PORT = EXTERNAL_CP_NODE_TYPE_PREFIX + "extNeutronCP";
 
   public static final String ABSTRACT_SUBSTITUTE = ABSTRACT_NODE_TYPE_PREFIX + "AbstractSubstitute";
