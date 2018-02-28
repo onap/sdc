@@ -1,14 +1,8 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import lombok.Data;
 
+@Data
 public class NicCreationResponseDto {
   private String nicId;
-
-  public String getNicId() {
-    return nicId;
-  }
-
-  public void setNicId(String nicId) {
-    this.nicId = nicId;
-  }
 }

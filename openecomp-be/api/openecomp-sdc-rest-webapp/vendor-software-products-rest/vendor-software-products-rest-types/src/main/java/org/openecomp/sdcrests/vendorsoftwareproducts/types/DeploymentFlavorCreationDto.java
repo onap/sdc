@@ -1,14 +1,8 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import lombok.Data;
 
+@Data
 public class DeploymentFlavorCreationDto {
   private String deploymentFlavorId;
-
-  public String getDeploymentFlavorId() {
-    return deploymentFlavorId;
-  }
-
-  public void setDeploymentFlavorId(String deploymentFlavorId) {
-    this.deploymentFlavorId = deploymentFlavorId;
-  }
 }

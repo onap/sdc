@@ -1,13 +1,8 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import lombok.Data;
+
+@Data
 public class ComponentCreationDto {
   private String vfcId;
-
-  public String getVfcId() {
-    return vfcId;
-  }
-
-  public void setVfcId(String vfcId) {
-    this.vfcId = vfcId;
-  }
 }

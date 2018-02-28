@@ -5,6 +5,9 @@ import java.util.HashMap;
 /**
  * Created by ayalaben on 9/26/2017
  */
+import lombok.Data;
+
+@Data
 public class QuestionnaireDto {
 
   private String id;
@@ -13,18 +16,7 @@ public class QuestionnaireDto {
     return questionareData;
   }
 
-  public void setQuestionareData(HashMap<String, String> questionareData) {
-    this.questionareData = questionareData;
-  }
-
   private HashMap<String,String> questionareData;
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
 }

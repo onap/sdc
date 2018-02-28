@@ -19,33 +19,11 @@
  */
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
+import lombok.Data;
 
+@Data
 public class CompositionEntityResponseDto<T extends CompositionDataEntityDto> {
   private String id;
   private String schema;
   private T data;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getSchema() {
-    return schema;
-  }
-
-  public void setSchema(String schema) {
-    this.schema = schema;
-  }
-
-  public T getData() {
-    return data;
-  }
-
-  public void setData(T data) {
-    this.data = data;
-  }
 }

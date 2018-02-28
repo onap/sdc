@@ -29,41 +29,12 @@ import java.util.List;
  * @author Avrahamg
  * @since November 07, 2016
  */
+import lombok.Data;
+
+@Data
 public class FileDataStructureDto {
     private List<Module> modules = new ArrayList<>();
     private List<String> unassigned = new ArrayList<>();
     private List<String> artifacts = new ArrayList<>();
     private List<String> nested = new ArrayList<>();
-
-    public List<Module> getModules() {
-        return modules;
-    }
-
-    public void setModules(List<Module> modules) {
-        this.modules = modules;
-    }
-
-    public List<String> getUnassigned() {
-        return unassigned;
-    }
-
-    public void setUnassigned(List<String> unassigned) {
-        this.unassigned = unassigned;
-    }
-
-    public List<String> getArtifacts() {
-        return artifacts;
-    }
-
-    public void setArtifacts(List<String> artifacts) {
-        this.artifacts = artifacts;
-    }
-
-    public List<String> getNested() {
-        return nested;
-    }
-
-    public void setNested(List<String> nested) {
-        this.nested = nested;
-    }
 }

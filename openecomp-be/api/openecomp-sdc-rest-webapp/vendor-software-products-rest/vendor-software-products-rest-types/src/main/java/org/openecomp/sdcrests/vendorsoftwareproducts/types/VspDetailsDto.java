@@ -26,6 +26,9 @@ import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 /**
  * Created by TALIO on 4/25/2016.
  */
+import lombok.Data;
+
+@Data
 @ApiModel(value = "VspDetails")
 public class VspDetailsDto extends VspRequestDto {
 
@@ -37,59 +40,4 @@ public class VspDetailsDto extends VspRequestDto {
   private String networkPackageName;
   private String owner;
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
-  }
-
-  public ValidationStructureList getValidationData() {
-    return validationData;
-  }
-
-  public void setValidationData(ValidationStructureList validationData) {
-    this.validationData = validationData;
-  }
-
-  public String getCandidateOnboardingOrigin() {
-    return candidateOnboardingOrigin;
-  }
-
-  public void setCandidateOnboardingOrigin(String candidateOnboardingOrigin) {
-    this.candidateOnboardingOrigin = candidateOnboardingOrigin;
-  }
-
-  public String getOnboardingOrigin() {
-    return onboardingOrigin;
-  }
-
-  public void setOnboardingOrigin(String onboardingOrigin) {
-    this.onboardingOrigin = onboardingOrigin;
-  }
-
-  public String getNetworkPackageName() {
-    return networkPackageName;
-  }
-
-  public void setNetworkPackageName(String networkPackageName) {
-    this.networkPackageName = networkPackageName;
-  }
-
-  public String getOwner() {
-    return owner;
-  }
-
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
 }

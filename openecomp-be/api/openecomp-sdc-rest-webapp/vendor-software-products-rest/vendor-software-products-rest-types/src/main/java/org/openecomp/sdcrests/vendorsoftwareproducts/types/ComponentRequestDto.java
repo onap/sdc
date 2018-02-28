@@ -22,7 +22,9 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class ComponentRequestDto {
 
   private String name;
@@ -35,51 +37,4 @@ public class ComponentRequestDto {
   private String nfcFunction;
   private String description;
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getVfcCode() {
-    return vfcCode;
-  }
-
-  public void setVfcCode(String vfcCode) {
-    this.vfcCode = vfcCode;
-  }
-
-  public String getNfcCode() {
-    return nfcCode;
-  }
-
-  public void setNfcCode(String nfcCode) {
-    this.nfcCode = nfcCode;
-  }
-
-  public String getNfcFunction() {
-    return nfcFunction;
-  }
-
-  public void setNfcFunction(String nfcFunction) {
-    this.nfcFunction = nfcFunction;
-  }
 }

@@ -19,24 +19,10 @@
  */
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
+import lombok.Data;
 
+@Data
 public class ProcessEntityDto extends ProcessRequestDto {
   private String id;
   private String artifactName;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getArtifactName() {
-    return artifactName;
-  }
-
-  public void setArtifactName(String artifactName) {
-    this.artifactName = artifactName;
-  }
 }

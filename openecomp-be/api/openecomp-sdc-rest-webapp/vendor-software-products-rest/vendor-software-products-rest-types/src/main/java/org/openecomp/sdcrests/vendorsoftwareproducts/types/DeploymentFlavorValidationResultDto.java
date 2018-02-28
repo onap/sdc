@@ -2,24 +2,10 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 
 import java.util.Set;
+import lombok.Data;
 
+@Data
 public class DeploymentFlavorValidationResultDto {
   private boolean valid;
   private Set<CompositionEntityValidationDataDto> validationData;
-
-  public boolean isValid() {
-    return valid;
-  }
-
-  public void setValid(boolean valid) {
-    this.valid = valid;
-  }
-
-  public Set<CompositionEntityValidationDataDto> getValidationData() {
-    return validationData;
-  }
-
-  public void setValidationData(Set<CompositionEntityValidationDataDto> validationData) {
-    this.validationData = validationData;
-  }
 }

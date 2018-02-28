@@ -29,37 +29,11 @@ import java.util.Map;
 /**
  * Created by TALIO on 4/27/2016.
  */
+import lombok.Data;
+
+@Data
 public class OrchestrationTemplateActionResponseDto {
   private List<String> fileNames;
   private Map<String, List<ErrorMessage>> errors;
   private UploadFileStatus status;
-
-  public Map<String, List<ErrorMessage>> getErrors() {
-    return errors;
-  }
-
-  public void setErrors(Map<String, List<ErrorMessage>> errors) {
-    this.errors = errors;
-  }
-
-  public UploadFileStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(UploadFileStatus status) {
-    this.status = status;
-  }
-
-  public List<String> getFileNames() {
-    return fileNames;
-  }
-
-  public void setFileNames(List<String> fileNames) {
-    this.fileNames = fileNames;
-  }
-
-  public void addNewFileToList(String filename) {
-    this.fileNames.add(filename);
-  }
-
 }

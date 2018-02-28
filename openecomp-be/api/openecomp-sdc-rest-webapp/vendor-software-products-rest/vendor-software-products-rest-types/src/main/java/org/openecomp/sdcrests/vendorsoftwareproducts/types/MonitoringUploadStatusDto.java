@@ -19,7 +19,9 @@
  */
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
+import lombok.Data;
 
+@Data
 public class MonitoringUploadStatusDto {
   private String snmpTrap;
   private String snmpPoll;
@@ -29,28 +31,4 @@ public class MonitoringUploadStatusDto {
   public MonitoringUploadStatusDto() {
   }
 
-  public String getSnmpTrap() {
-    return snmpTrap;
-  }
-
-  public void setSnmpTrap(String snmpTrap) {
-    this.snmpTrap = snmpTrap;
-  }
-
-  public String getSnmpPoll() {
-    return snmpPoll;
-  }
-
-  public String getVesEvent() {
-    return vesEvent;
-  }
-
-  public void setVesEvent(String vesEvent) {
-    this.vesEvent = vesEvent;
-  }
-
-  public void setSnmpPoll(String snmpPoll) {
-    this.snmpPoll = snmpPoll;
-
-  }
 }

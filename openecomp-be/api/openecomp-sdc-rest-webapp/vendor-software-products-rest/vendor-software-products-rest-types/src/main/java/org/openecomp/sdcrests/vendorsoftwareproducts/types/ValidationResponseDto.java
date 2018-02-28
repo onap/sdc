@@ -26,7 +26,9 @@ import org.openecomp.sdcrests.common.types.ErrorMessageDto;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
 
+@Data
 public class ValidationResponseDto {
   private boolean valid;
   private Collection<ErrorCodeDto> vspErrors;
@@ -35,64 +37,5 @@ public class ValidationResponseDto {
   private QuestionnaireValidationResultDto questionnaireValidationResult;
   private ComponentValidationResultDto componentValidationResult;
   private DeploymentFlavorValidationResultDto deploymentFlavorValidationResult;
-
-  public boolean isValid() {
-    return valid;
-  }
-
-  public void setValid(boolean valid) {
-    this.valid = valid;
-  }
-
-  public Collection<ErrorCodeDto> getVspErrors() {
-    return vspErrors;
-  }
-
-  public void setVspErrors(Collection<ErrorCodeDto> vspErrors) {
-    this.vspErrors = vspErrors;
-  }
-
-  public Collection<ErrorCodeDto> getLicensingDataErrors() {
-    return licensingDataErrors;
-  }
-
-  public void setLicensingDataErrors(Collection<ErrorCodeDto> licensingDataErrors) {
-    this.licensingDataErrors = licensingDataErrors;
-  }
-
-  public Map<String, List<ErrorMessageDto>> getUploadDataErrors() {
-    return uploadDataErrors;
-  }
-
-  public void setUploadDataErrors(Map<String, List<ErrorMessageDto>> uploadDataErrors) {
-    this.uploadDataErrors = uploadDataErrors;
-  }
-
-  public QuestionnaireValidationResultDto getQuestionnaireValidationResult() {
-    return questionnaireValidationResult;
-  }
-
-  public void setQuestionnaireValidationResult(
-      QuestionnaireValidationResultDto questionnaireValidationResult) {
-    this.questionnaireValidationResult = questionnaireValidationResult;
-  }
-
-  public ComponentValidationResultDto getComponentValidationResult() {
-    return componentValidationResult;
-  }
-
-  public void setComponentValidationResult(
-      ComponentValidationResultDto componentValidationResult) {
-    this.componentValidationResult = componentValidationResult;
-  }
-
-  public DeploymentFlavorValidationResultDto getDeploymentFlavorValidationResult() {
-    return deploymentFlavorValidationResult;
-  }
-
-  public void setDeploymentFlavorValidationResult(
-      DeploymentFlavorValidationResultDto deploymentFlavorValidationResult) {
-    this.deploymentFlavorValidationResult = deploymentFlavorValidationResult;
-  }
 
 }

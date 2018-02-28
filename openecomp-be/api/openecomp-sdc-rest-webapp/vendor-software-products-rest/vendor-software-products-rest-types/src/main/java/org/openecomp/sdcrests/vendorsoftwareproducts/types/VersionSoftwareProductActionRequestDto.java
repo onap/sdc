@@ -25,23 +25,11 @@ import org.openecomp.sdcrests.item.types.SubmitRequestDto;
 /**
  * Created by TALIO on 4/20/2016.
  */
+import lombok.Data;
+
+@Data
 public class VersionSoftwareProductActionRequestDto {
   private VendorSoftwareProductAction action;
   private SubmitRequestDto submitRequest;
 
-  public VendorSoftwareProductAction getAction() {
-    return action;
-  }
-
-  public void setAction(VendorSoftwareProductAction action) {
-    this.action = action;
-  }
-
-  public SubmitRequestDto getSubmitRequest() {
-    return submitRequest;
-  }
-
-  public void setSubmitRequest(SubmitRequestDto submitRequest) {
-    this.submitRequest = submitRequest;
-  }
 }

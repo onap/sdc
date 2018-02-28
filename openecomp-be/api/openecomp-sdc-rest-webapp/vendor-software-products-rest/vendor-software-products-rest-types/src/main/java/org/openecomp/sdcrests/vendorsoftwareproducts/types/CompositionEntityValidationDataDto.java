@@ -23,52 +23,13 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 
 import java.util.Collection;
+import lombok.Data;
 
+@Data
 public class CompositionEntityValidationDataDto {
   private CompositionEntityType entityType;
   private String entityId;
   private String entityName;
   private Collection<String> errors;
   private Collection<CompositionEntityValidationDataDto> subEntitiesValidationData;
-
-  public CompositionEntityType getEntityType() {
-    return entityType;
-  }
-
-  public void setEntityType(CompositionEntityType entityType) {
-    this.entityType = entityType;
-  }
-
-  public String getEntityId() {
-    return entityId;
-  }
-
-  public void setEntityId(String entityId) {
-    this.entityId = entityId;
-  }
-
-  public String getEntityName() {
-    return entityName;
-  }
-
-  public void setEntityName(String entityName) {
-    this.entityName = entityName;
-  }
-
-  public Collection<String> getErrors() {
-    return errors;
-  }
-
-  public void setErrors(Collection<String> errors) {
-    this.errors = errors;
-  }
-
-  public Collection<CompositionEntityValidationDataDto> getSubEntitiesValidationData() {
-    return subEntitiesValidationData;
-  }
-
-  public void setSubEntitiesValidationData(
-      Collection<CompositionEntityValidationDataDto> subEntitiesValidationData) {
-    this.subEntitiesValidationData = subEntitiesValidationData;
-  }
 }

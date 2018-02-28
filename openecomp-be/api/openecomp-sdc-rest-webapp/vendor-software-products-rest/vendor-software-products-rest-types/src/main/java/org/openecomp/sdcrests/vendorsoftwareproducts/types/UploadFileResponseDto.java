@@ -29,41 +29,13 @@ import java.util.Map;
 /**
  * Created by TALIO on 4/27/2016.
  */
+import lombok.Data;
+
+@Data
 public class UploadFileResponseDto {
   private Map<String, List<ErrorMessage>> errors;
   private UploadFileStatus status;
   private String onboardingOrigin;
   private String networkPackageName;
 
-  public Map<String, List<ErrorMessage>> getErrors() {
-    return errors;
-  }
-
-  public void setErrors(Map<String, List<ErrorMessage>> errors) {
-    this.errors = errors;
-  }
-
-  public UploadFileStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(UploadFileStatus status) {
-    this.status = status;
-  }
-
-  public String getOnboardingOrigin() {
-    return onboardingOrigin;
-  }
-
-  public void setOnboardingOrigin(String onboardingOrigin) {
-    this.onboardingOrigin = onboardingOrigin;
-  }
-
-  public String getNetworkPackageName() {
-    return networkPackageName;
-  }
-
-  public void setNetworkPackageName(String networkPackageName) {
-    this.networkPackageName = networkPackageName;
-  }
 }

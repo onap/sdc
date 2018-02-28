@@ -21,33 +21,12 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import lombok.Data;
 
+@Data
 public class QuestionnaireResponseDto {
   private String schema;
   private String data;
   private ErrorMessage errorMessage;
 
-  public String getSchema() {
-    return schema;
-  }
-
-  public void setSchema(String schema) {
-    this.schema = schema;
-  }
-
-  public String getData() {
-    return data;
-  }
-
-  public void setData(String data) {
-    this.data = data;
-  }
-
-  public ErrorMessage getErrorMessage() {
-    return errorMessage;
-  }
-
-  public void setErrorMessage(ErrorMessage errorMessage) {
-    this.errorMessage = errorMessage;
-  }
 }

@@ -23,33 +23,14 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
 
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class ProcessRequestDto {
 
   @NotNull
   private String name;
-
   private String description;
-
   private ProcessType type;
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public ProcessType getType() { return type; }
-
-  public void setType(ProcessType type) { this.type = type; }
 }

@@ -23,7 +23,9 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class VspDescriptionDto {
   @NotNull
   private String name;
@@ -40,76 +42,4 @@ public class VspDescriptionDto {
   private String vendorId;            // this will be populated with vlm id
   private String licensingVersion;    // this will be populated with vlm version
   private LicensingData licensingData;
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getIcon() {
-    return this.icon;
-  }
-
-  public void setIcon(String icon) {
-    this.icon = icon;
-  }
-
-  public String getCategory() {
-    return category;
-  }
-
-  public void setCategory(String category) {
-    this.category = category;
-  }
-
-  public String getSubCategory() {
-    return subCategory;
-  }
-
-  public void setSubCategory(String subCategory) {
-    this.subCategory = subCategory;
-  }
-
-  public String getVendorName() {
-    return vendorName;
-  }
-
-  public void setVendorName(String vendorName) {
-    this.vendorName = vendorName;
-  }
-
-  public String getVendorId() {
-    return vendorId;
-  }
-
-  public void setVendorId(String vendorId) {
-    this.vendorId = vendorId;
-  }
-
-  public String getLicensingVersion() {
-    return licensingVersion;
-  }
-
-  public void setLicensingVersion(String licensingVersion) {
-    this.licensingVersion = licensingVersion;
-  }
-
-  public LicensingData getLicensingData() {
-    return licensingData;
-  }
-
-  public void setLicensingData(LicensingData licensingData) {
-    this.licensingData = licensingData;
-  }
 }

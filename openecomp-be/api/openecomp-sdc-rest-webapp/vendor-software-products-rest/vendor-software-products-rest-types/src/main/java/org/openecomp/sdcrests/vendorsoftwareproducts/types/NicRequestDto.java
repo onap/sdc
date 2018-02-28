@@ -24,7 +24,9 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.ValidateString;
 
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class NicRequestDto {
 
   @NotBlank(message = "is mandatory and should not be empty")
@@ -37,44 +39,4 @@ public class NicRequestDto {
   private String networkType;
 
   private String networkDescription;
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getNetworkId() {
-    return networkId;
-  }
-
-  public void setNetworkId(String networkId) {
-    this.networkId = networkId;
-  }
-
-  public String getNetworkType(){
-    return networkType;
-  }
-
-  public void setNetworkType(String networkType){
-    this.networkType = networkType;
-  }
-
-  public String getNetworkDescription(){
-    return networkDescription;
-  }
-
-  public void setNetworkDescription(String networkDescription){
-    this.networkDescription = networkDescription;
-  }
 }

@@ -21,7 +21,9 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class NetworkRequestDto {
 
   @NotNull
@@ -29,19 +31,4 @@ public class NetworkRequestDto {
   @NotNull
   private boolean dhcp;
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public boolean isDhcp() {
-    return dhcp;
-  }
-
-  public void setDhcp(boolean dhcp) {
-    this.dhcp = dhcp;
-  }
 }

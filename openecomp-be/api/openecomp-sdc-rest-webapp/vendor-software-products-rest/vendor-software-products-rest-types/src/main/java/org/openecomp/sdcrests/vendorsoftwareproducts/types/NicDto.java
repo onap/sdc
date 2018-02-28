@@ -19,25 +19,10 @@
  */
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
+import lombok.Data;
 
+@Data
 public class NicDto extends NicRequestDto implements CompositionDataEntityDto {
-
   private String id;
   private String networkName;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getNetworkName() {
-    return networkName;
-  }
-
-  public void setNetworkName(String networkName) {
-    this.networkName = networkName;
-  }
 }

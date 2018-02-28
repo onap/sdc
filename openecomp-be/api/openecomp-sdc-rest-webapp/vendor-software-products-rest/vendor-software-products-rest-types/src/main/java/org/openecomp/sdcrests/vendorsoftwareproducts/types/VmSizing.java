@@ -4,7 +4,9 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.ValidateSt
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import lombok.Data;
 
+@Data
 public class VmSizing {
   @Min(value = 1, message = "should be integer and > 0")
   @Max(value = 16, message = "should be integer and <= 16")
@@ -22,51 +24,4 @@ public class VmSizing {
       + "attribute value.")
   private String memoryRAM;
 
-  public int getNumOfCPUs() {
-    return numOfCPUs;
-  }
-
-  public void setNumOfCPUs(int numOfCPUs) {
-    this.numOfCPUs = numOfCPUs;
-  }
-
-  public int getFileSystemSizeGB() {
-    return fileSystemSizeGB;
-  }
-
-  public void setFileSystemSizeGB(int fileSystemSizeGB) {
-    this.fileSystemSizeGB = fileSystemSizeGB;
-  }
-
-  public int getPersistentStorageVolumeSize() {
-    return persistentStorageVolumeSize;
-  }
-
-  public void setPersistentStorageVolumeSize(int persistentStorageVolumeSize) {
-    this.persistentStorageVolumeSize = persistentStorageVolumeSize;
-  }
-
-  public int getIoOperationsPerSec() {
-    return ioOperationsPerSec;
-  }
-
-  public void setIoOperationsPerSec(int ioOperationsPerSec) {
-    this.ioOperationsPerSec = ioOperationsPerSec;
-  }
-
-  public String getCpuOverSubscriptionRatio() {
-    return cpuOverSubscriptionRatio;
-  }
-
-  public void setCpuOverSubscriptionRatio(String cpuOverSubscriptionRatio) {
-    this.cpuOverSubscriptionRatio = cpuOverSubscriptionRatio;
-  }
-
-  public String getMemoryRAM() {
-    return memoryRAM;
-  }
-
-  public void setMemoryRAM(String memoryRAM) {
-    this.memoryRAM = memoryRAM;
-  }
 }
