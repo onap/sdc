@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_feb88612",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T13:38:22Z",
+      "side": 1,
+      "message": "you\u0027re acceding the 100 chars limit. break to 2 lines",
+      "range": {
+        "startLine": 68,
+        "startChar": 6,
+        "endLine": 68,
+        "endChar": 136
+      },
+      "revId": "37eb9985cc1e86a16099409525411953d5b6bf46",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_be3e7e8a",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T13:38:22Z",
+      "side": 1,
+      "message": "you\u0027re acceding the 100 chars limit. break to 2 lines",
+      "range": {
+        "startLine": 73,
+        "startChar": 5,
+        "endLine": 73,
+        "endChar": 106
+      },
+      "revId": "37eb9985cc1e86a16099409525411953d5b6bf46",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5e3f3a87",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T13:38:22Z",
+      "side": 1,
+      "message": "you\u0027re acceding the 100 chars limit. break to 2 lines",
+      "range": {
+        "startLine": 75,
+        "startChar": 6,
+        "endLine": 75,
+        "endChar": 133
+      },
+      "revId": "37eb9985cc1e86a16099409525411953d5b6bf46",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ec89aa7",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T13:38:22Z",
+      "side": 1,
+      "message": "this should be calculated close to it\u0027s first use and in the write scope. move to line 124",
+      "range": {
+        "startLine": 99,
+        "startChar": 4,
+        "endLine": 104,
+        "endChar": 98
+      },
+      "revId": "37eb9985cc1e86a16099409525411953d5b6bf46",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3ec34e8a",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T13:38:22Z",
+      "side": 1,
+      "message": "rename to createIfAbsentXXX",
+      "range": {
+        "startLine": 245,
+        "startChar": 13,
+        "endLine": 245,
+        "endChar": 34
+      },
+      "revId": "37eb9985cc1e86a16099409525411953d5b6bf46",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_debb4a0d",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/NetworkPackageHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T13:38:22Z",
+      "side": 1,
+      "message": "rename to createIfAbsentXXX",
+      "range": {
+        "startLine": 257,
+        "startChar": 13,
+        "endLine": 257,
+        "endChar": 44
+      },
+      "revId": "37eb9985cc1e86a16099409525411953d5b6bf46",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
