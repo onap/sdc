@@ -65,39 +65,39 @@ public class HealingManagerImpl implements HealingManager {
   public Optional<Version> healItemVersion(final String itemId, final Version version,
                                            final ItemType itemType, final boolean force) {
     String user = getUser();
-    if (force || isPrivateHealingNeededByFlag(itemId, version.getId(), user)) {
-
-      Map<String, Collection<String>> healersByType = getItemHealers(itemType);
-      List<String> failureMessages = new LinkedList<>();
-      List<Healer> structureHealersToRun =
-          getHealersToRun(healersByType.get(HealerType.structure.name()), itemId, version,
-              failureMessages);
-      List<Healer> dataHealersToRun =
-          getHealersToRun(healersByType.get(HealerType.data.name()), itemId, version,
-              failureMessages);
-
-      if (structureHealersToRun.isEmpty() && dataHealersToRun.isEmpty()) {
-        markAsHealed(itemId, version.getId(), user);
-        markAsHealed(itemId, version.getId(), PUBLIC_USER);
-        return Optional.empty();
-      }
-
-      Optional<Version> healVersion = getHealVersion(itemId, version);
-      if (!healVersion.isPresent()) {
-        // do NOT turn off flag here (in thought of saving version calculate performance next
-        // time) because maybe next time the next version will be available (due to deletion of
-        // the taken one)
-        return Optional.empty();
-      }
-
-      failureMessages.addAll(
-          doHeal(itemId, healVersion.get(), version, structureHealersToRun, dataHealersToRun, user,
-              force));
-
-      handleFailures(failureMessages);
-      return healVersion;
+    if (!force && !isPrivateHealingNeededByFlags(itemId, version.getId(), user)) {
+      return Optional.empty();
     }
-    return Optional.empty();
+
+    Map<String, Collection<String>> healersByType = getItemHealers(itemType);
+    List<String> failureMessages = new LinkedList<>();
+    List<Healer> structureHealersToRun =
+        getHealersToRun(healersByType.get(HealerType.structure.name()), itemId, version,
+            failureMessages);
+    List<Healer> dataHealersToRun =
+        getHealersToRun(healersByType.get(HealerType.data.name()), itemId, version,
+            failureMessages);
+
+    if (structureHealersToRun.isEmpty() && dataHealersToRun.isEmpty()) {
+      markAsHealed(itemId, version.getId(), user);
+      markAsHealed(itemId, version.getId(), PUBLIC_USER);
+      return Optional.empty();
+    }
+
+    Optional<Version> healVersion = getHealVersion(itemId, version);
+    if (!healVersion.isPresent()) {
+      // do NOT turn off flag here (in thought of saving version calculate performance next
+      // time) because maybe next time the next version will be available (due to deletion of
+      // the taken one)
+      return Optional.empty();
+    }
+
+    failureMessages.addAll(
+        doHeal(itemId, healVersion.get(), version, structureHealersToRun, dataHealersToRun, user,
+            force));
+    handleFailures(failureMessages);
+
+    return healVersion;
   }
 
   private Optional<Version> getHealVersion(String itemId, Version version) {
@@ -200,7 +200,7 @@ public class HealingManagerImpl implements HealingManager {
     return failureMessages;
   }
 
-  private boolean isPrivateHealingNeededByFlag(String itemId, String version, String user) {
+  private boolean isPrivateHealingNeededByFlags(String itemId, String version, String user) {
     Optional<Boolean> userHealingFlag = getHealingFlag(itemId, version, user);
     return userHealingFlag.orElseGet(() -> isPublicHealingNeededByFlag(itemId, version));
   }
