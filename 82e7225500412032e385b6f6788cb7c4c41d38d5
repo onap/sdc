@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_48f7808b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationEntityType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T07:18:47Z",
+      "side": 1,
+      "message": "this list is not going to change. why not making it public, static, and unmodifiableSet and then just to get it instead of regenerate it every time (think performance)",
+      "range": {
+        "startLine": 71,
+        "startChar": 1,
+        "endLine": 78,
+        "endChar": 3
+      },
+      "revId": "82e7225500412032e385b6f6788cb7c4c41d38d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_68335c62",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VmInterfaceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-02-28T07:18:47Z",
+      "side": 1,
+      "message": "what about final?",
+      "revId": "82e7225500412032e385b6f6788cb7c4c41d38d5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
