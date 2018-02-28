@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+import * as _ from "lodash";
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
 import {CompositionCiNodeBase} from "./composition-ci-node-base";

@@ -34,14 +34,12 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
@@ -56,9 +54,9 @@ import fj.data.Either;
 @org.springframework.stereotype.Component("groups-operation")
 public class GroupsOperation extends BaseOperation {
 
-	private static Logger logger = LoggerFactory.getLogger(GroupsOperation.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(GroupsOperation.class);
 
-	public Either<List<GroupDefinition>, StorageOperationStatus> createGroups(Component component, User user, ComponentTypeEnum componentType, Map<String, GroupDataDefinition> groups) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> createGroups(Component component, Map<String, GroupDataDefinition> groups) {
 
 		Either<List<GroupDefinition>, StorageOperationStatus> result = null;
 		Either<GraphVertex, TitanOperationStatus> getComponentVertex = null;
@@ -76,20 +74,13 @@ public class GroupsOperation extends BaseOperation {
 				result = Either.right(status);
 			}
 		}
-	/*	if (result == null) {
-			status = topologyTemplateOperation.associateGroupsPropertiesToComponent(getComponentVertex.left().value(), groupsProperties);
-			if (status != StorageOperationStatus.OK) {
-				result = Either.right(status);
-			}
-		}*/
 		if (result == null) {
 			result = Either.left(ModelConverter.convertToGroupDefinitions(groups));
 		}
 		return result;
 	}
 	
-	public Either<List<GroupDefinition>, StorageOperationStatus> addGroups(Component component, User user, ComponentTypeEnum componentType, List<GroupDataDefinition> groups) {
-		// TODO Auto-generated method stub
+	public Either<List<GroupDefinition>, StorageOperationStatus> addGroups(Component component, List<GroupDataDefinition> groups) {
 		Either<List<GroupDefinition>, StorageOperationStatus> result = null;
 		Either<GraphVertex, TitanOperationStatus> getComponentVertex = null;
 		StorageOperationStatus status = null;
@@ -115,8 +106,7 @@ public class GroupsOperation extends BaseOperation {
 		return result;
 	}
 	
-	public Either<List<GroupDefinition>, StorageOperationStatus> deleteGroups(Component component, User user, ComponentTypeEnum componentType, List<GroupDataDefinition> groups) {
-		// TODO Auto-generated method stub
+	public Either<List<GroupDefinition>, StorageOperationStatus> deleteGroups(Component component, List<GroupDataDefinition> groups) {
 		Either<List<GroupDefinition>, StorageOperationStatus> result = null;
 		Either<GraphVertex, TitanOperationStatus> getComponentVertex = null;
 		StorageOperationStatus status = null;
@@ -143,8 +133,7 @@ public class GroupsOperation extends BaseOperation {
 		return result;
 	}
 	
-	public Either<List<GroupDefinition>, StorageOperationStatus> updateGroups(Component component, ComponentTypeEnum componentType, List<GroupDataDefinition> groups) {
-		// TODO Auto-generated method stub
+	public <T extends GroupDataDefinition> Either<List<GroupDefinition>, StorageOperationStatus> updateGroups(Component component, List<T> groups) {
 		Either<List<GroupDefinition>, StorageOperationStatus> result = null;
 		Either<GraphVertex, TitanOperationStatus> getComponentVertex = null;
 		StorageOperationStatus status = null;
@@ -184,12 +173,11 @@ public class GroupsOperation extends BaseOperation {
 		Either<List<GroupProperty>,StorageOperationStatus> result = null;
 		Either<GraphVertex, TitanOperationStatus> getComponentVertex = null;
 		GraphVertex componentVertex = null;
-		StorageOperationStatus status = null;
 
 		if (result == null) {
 			getComponentVertex = titanDao.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata);
 			if (getComponentVertex.isRight()) {
-				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch component {}. Status is {} ", componentId);
+				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch component {}. Status is {} ", componentId);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getComponentVertex.right().value()));
 			}
 		} 
@@ -206,7 +194,7 @@ public class GroupsOperation extends BaseOperation {
 			
 			StorageOperationStatus updateDataRes = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, group, JsonPresentationFields.NAME);
 			if ( updateDataRes != StorageOperationStatus.OK ){
-				logger.debug("Failed to update properties for group {} error {}", group.getName(), updateDataRes);
+				log.debug("Failed to update properties for group {} error {}", group.getName(), updateDataRes);
 				result = Either.right(updateDataRes);
 			}
 		}
@@ -214,7 +202,7 @@ public class GroupsOperation extends BaseOperation {
 			componentVertex.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
 			Either<GraphVertex, TitanOperationStatus> updateRes = titanDao.updateVertex(componentVertex);
 			if (updateRes.isRight()) {
-				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to update the component {}. Status is {} ",  componentId, updateRes.right().value());
+				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the component {}. Status is {} ",  componentId, updateRes.right().value());
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateRes.right().value()));
 			}
 		}
@@ -241,7 +229,7 @@ public class GroupsOperation extends BaseOperation {
 
 	}
 
-	public Either<List<GroupInstance>, StorageOperationStatus> updateGroupInstances(Component component, ComponentTypeEnum componentType, String instanceId, List<GroupInstance> updatedGroupInstances) {
+	public Either<List<GroupInstance>, StorageOperationStatus> updateGroupInstances(Component component, String instanceId, List<GroupInstance> updatedGroupInstances) {
 
 		Either<List<GroupInstance>, StorageOperationStatus> result = null;
 		StorageOperationStatus status = null;
@@ -267,7 +255,7 @@ public class GroupsOperation extends BaseOperation {
 	public Either<GroupDefinition, StorageOperationStatus> updateGroup(Component component, GroupDefinition currentGroup) {
 		StorageOperationStatus status = updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroup, JsonPresentationFields.NAME);
 		if(status != StorageOperationStatus.OK){
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to update group {} of component {}. The status is}. ", currentGroup.getName(), component.getName(), status);
+			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update group {} of component {}. The status is}. ", currentGroup.getName(), component.getName(), status);
 			return Either.right(status);
 		}
 		return Either.left(currentGroup);
@@ -276,7 +264,7 @@ public class GroupsOperation extends BaseOperation {
 	public StorageOperationStatus deleteGroup(Component component, String currentGroupName) {
 		StorageOperationStatus status = deleteToscaDataElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroupName, JsonPresentationFields.NAME);
 		if(status != StorageOperationStatus.OK){
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to delete group {} of component {}. The status is}. ", currentGroupName, component.getName(), status);
+			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete group {} of component {}. The status is}. ", currentGroupName, component.getName(), status);
 		}
 		return status;
 	}
@@ -284,7 +272,7 @@ public class GroupsOperation extends BaseOperation {
 	public Either<GroupDefinition, StorageOperationStatus> addGroup(Component component, GroupDefinition currentGroup) {
 		StorageOperationStatus status = addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroup, JsonPresentationFields.NAME);
 		if(status != StorageOperationStatus.OK){
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to update group {} of component {}. The status is}. ", currentGroup.getName(), component.getName(), status);
+			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update group {} of component {}. The status is}. ", currentGroup.getName(), component.getName(), status);
 			return Either.right(status);
 		}
 		return Either.left(currentGroup);
@@ -294,7 +282,7 @@ public class GroupsOperation extends BaseOperation {
 
 		Either<GraphVertex, TitanOperationStatus> getComponentVertex = titanDao.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata);
 		if (getComponentVertex.isRight()) {
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch component {}. Status is {} ", componentId);
+			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch component {}. Status is {} ", componentId);
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getComponentVertex.right().value()));
 		}
 
@@ -310,7 +298,7 @@ public class GroupsOperation extends BaseOperation {
 		pathKeys.add(instanceId);
 		StorageOperationStatus updateDataRes = updateToscaDataDeepElementOfToscaElement(componentId, EdgeLabelEnum.INST_GROUPS, VertexTypeEnum.INST_GROUPS, groupInstanceDataDefinition, pathKeys, JsonPresentationFields.NAME);
 		if (updateDataRes != StorageOperationStatus.OK) {
-			logger.debug("Failed to update properties for group instance {} error {}", oldGroupInstance.getName(), updateDataRes);
+			log.debug("Failed to update properties for group instance {} error {}", oldGroupInstance.getName(), updateDataRes);
 			return Either.right(updateDataRes);
 		}
 		return Either.left(oldGroupInstance);

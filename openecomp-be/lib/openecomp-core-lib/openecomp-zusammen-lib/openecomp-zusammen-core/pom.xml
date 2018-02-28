@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-collaboration-cassandra-plugin</artifactId>
-            <version>${zusammen.version}</version>
+            <version>${zusammen-collaboration-store.version}</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>

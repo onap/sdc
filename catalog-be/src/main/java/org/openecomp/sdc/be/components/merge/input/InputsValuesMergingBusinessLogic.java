@@ -1,18 +1,14 @@
 package org.openecomp.sdc.be.components.merge.input;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 public class InputsValuesMergingBusinessLogic {

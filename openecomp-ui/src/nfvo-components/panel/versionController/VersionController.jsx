@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,11 @@ class VersionController extends React.Component {
 
 	render() {
 		let {version = {},  viewableVersions = [], onVersionSwitching, onMoreVersionsClick, callVCAction, onSave, isReadOnlyMode, itemPermission,
-				isFormDataValid, onClose, onManagePermissions, permissions = {},  userInfo, usersList, itemName, onOpenCommentCommitModal, onOpenRevisionsModal, isManual} = this.props;
+				isFormDataValid, onClose, onManagePermissions, permissions = {},  userInfo, usersList, itemName,
+				 onOpenCommentCommitModal, onOpenRevisionsModal, isManual, candidateInProcess} = this.props;
 		return (
 			<div className='version-controller-bar'>
-				<div className='vc-container'>
+				<div className={`vc-container ${candidateInProcess ? 'disabled' : ''}`}>
 					<div className='version-status-container'>
 						<VersionSelector
 							viewableVersions={viewableVersions}
@@ -58,7 +59,7 @@ class VersionController extends React.Component {
 						<ActionButtons onSubmit={callVCAction ? () => this.submit(callVCAction, version) : undefined}
 							onRevert={callVCAction ? () => this.revert(callVCAction, version) : undefined}
 							onOpenRevisionsModal={onOpenRevisionsModal}
-							onSave={onSave ? () => onSave() : undefined}
+							onSave={onSave ? () => onSave() : undefined}							
 							permissions={permissions}
 							userInfo={userInfo}
 							onManagePermissions={onManagePermissions}
@@ -70,7 +71,7 @@ class VersionController extends React.Component {
 							onCommit={callVCAction ? (comment) => this.commit(callVCAction, version, comment) : undefined}
 							isFormDataValid={isFormDataValid}
 							itemPermissions={itemPermission}
-							isReadOnlyMode={isReadOnlyMode}
+							isReadOnlyMode={isReadOnlyMode || candidateInProcess}
 							isManual={isManual} />
 						<div className='vc-separator'></div>
 						<NotificationsView />

@@ -27,6 +27,8 @@ public interface ZusammenAdaptor {
 
   Item getItem(SessionContext context, Id itemId);
 
+  void deleteItem(SessionContext context, Id itemId);
+
   Id createItem(SessionContext context, Info info);
 
   void updateItem(SessionContext context, Id itemId, Info info);

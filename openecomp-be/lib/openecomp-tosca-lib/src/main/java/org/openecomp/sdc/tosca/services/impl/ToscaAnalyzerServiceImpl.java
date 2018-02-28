@@ -21,11 +21,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -226,13 +221,10 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
   public Optional<NodeType> fetchNodeType(String nodeTypeKey, Collection<ServiceTemplate>
       serviceTemplates) {
     Optional<Map<String, NodeType>> nodeTypeMap = serviceTemplates.stream()
-        .map(st -> st.getNode_types())
+        .map(ServiceTemplate::getNode_types)
         .filter(nodeTypes -> Objects.nonNull(nodeTypes) && nodeTypes.containsKey(nodeTypeKey))
         .findFirst();
-    if (nodeTypeMap.isPresent()) {
-      return Optional.ofNullable(nodeTypeMap.get().get(nodeTypeKey));
-    }
-    return Optional.empty();
+    return nodeTypeMap.map(stringNodeTypeMap -> stringNodeTypeMap.get(nodeTypeKey));
   }
 
   @Override

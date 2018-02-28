@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,13 +62,13 @@ var errorResponseHandler = (error) => {
 	else {
 		errorData = {
 			title: error.statusText,
-			msg: error.responseText,
+			msg: error.responseText ? error.responseText : i18n('GENERIC_ERROR'),
 		};
 	}
 	store.dispatch({
 		type: modalActionTypes.GLOBAL_MODAL_ERROR,
 		data: {
-			...errorData			
+			...errorData
 		}
 	});
 };

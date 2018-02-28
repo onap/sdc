@@ -8,7 +8,7 @@ function usage {
 
 function cleanup {
 	echo "performing old dockers cleanup"
-	docker_ids=`docker ps -a | egrep "openecomp/sdc-simulator|Exit" | awk '{print $1}'`
+	docker_ids=`docker ps -a | egrep "onap/sdc-simulator|Exit" | awk '{print $1}'`
 	for X in ${docker_ids}
 	do
 	   docker rm -f ${X}
@@ -61,17 +61,19 @@ cleanup
 
 
 export IP=`ifconfig eth0 | awk -F: '/inet addr/ {gsub(/ .*/,"",$2); print $2}'`
-export PREFIX=${NEXUS_DOCKER_REPO}'/openecomp'
+export PREFIX=${NEXUS_DOCKER_REPO}'/onap'
 
-PREFIX='openecomp'
+PREFIX='onap'
 
 echo ""
 echo "${PREFIX}"
 
 dir_perms
 
+JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m"
+
 # SDC-Simulator
-docker run --detach --name sdc-sim --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 256m --memory-swap=256m --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/WS/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 8285:8080 ${PREFIX}/sdc-simulator:${RELEASE}
+docker run --detach --name sdc-sim  --env JAVA_OPTIONS="${JAVA_OPTIONS}" --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy}  --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/WS/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 8285:8080 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
 
 
 if [ $? -ne 0 ]; then

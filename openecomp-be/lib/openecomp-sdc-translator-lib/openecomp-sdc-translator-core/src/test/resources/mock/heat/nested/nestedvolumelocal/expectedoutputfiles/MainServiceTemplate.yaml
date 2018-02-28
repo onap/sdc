@@ -11,6 +11,14 @@ topology_template:
     not_null:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-nimbus-pcm_v0.4
+            source_type: HEAT
+            param_name: not_null
       type: string
   node_templates:
     server_pcm_001:

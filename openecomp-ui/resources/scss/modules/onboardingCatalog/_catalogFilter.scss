@@ -1,0 +1,11 @@
+.catalog-filter {
+    width: 242px;
+    overflow-y: auto;    
+    height: 100%;
+    box-shadow: 1px 0px 4px 0px rgba(24, 24, 25, 0.17);
+    background-color: $white;
+    padding: 12px 18px;    
+    .form-group {
+        margin-bottom: 10px;
+    }
+}

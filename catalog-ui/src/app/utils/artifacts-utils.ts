@@ -18,10 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {ArtifactModel} from "../models/artifacts";
 import {IArtifactResourceFormViewModelScope} from "../view-models/forms/artifact-form/artifact-form-view-model";
 import {Component} from "../models/components/component";
 import {ArtifactGroupType, ArtifactType} from "./constants";
+
 export class ArtifactsUtils {
 
     static '$inject' = [

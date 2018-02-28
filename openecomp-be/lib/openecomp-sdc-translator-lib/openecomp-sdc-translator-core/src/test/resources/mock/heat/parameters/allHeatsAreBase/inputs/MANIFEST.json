@@ -1,0 +1,38 @@
+{
+  "name": "heat",
+  "description": "HOT template to create hot mog server",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "heat1.yml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "heat1.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "heat2.yml",
+      "type": "HEAT",
+      "isBase": "true",
+      "data": [
+        {
+          "file": "heat2.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "heat3.yml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "heat3.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    }
+  ]
+}

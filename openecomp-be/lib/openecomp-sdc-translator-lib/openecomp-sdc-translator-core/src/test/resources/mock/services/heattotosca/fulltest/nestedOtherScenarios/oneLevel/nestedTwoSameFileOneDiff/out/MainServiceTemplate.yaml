@@ -11,26 +11,66 @@ topology_template:
     same_file_param_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: same_file_param_1
       type: string
       description: network name of jsa log network
     same_file_param_2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: same_file_param_2
       type: string
       description: network name of jsa log network
     same_file_param_3:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: same_file_param_3
       type: string
       description: network name of jsa log network
     diff_file_param_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: diff_file_param_1
       type: string
       description: network name of jsa log network
     jsa_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_name
       type: string
       description: network name of jsa log network
   node_templates:

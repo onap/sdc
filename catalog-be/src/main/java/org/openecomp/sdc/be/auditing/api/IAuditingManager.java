@@ -20,10 +20,12 @@
 
 package org.openecomp.sdc.be.auditing.api;
 
-import java.util.EnumMap;
-
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
+import java.util.Map;
+
 public interface IAuditingManager {
-	void auditEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields);
+    // TODO remove after completing refactoring
+    String auditEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields);
+    String auditEvent(AuditEventFactory factory);
 }

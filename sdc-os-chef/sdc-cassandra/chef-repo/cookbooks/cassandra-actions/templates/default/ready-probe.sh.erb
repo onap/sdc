@@ -1,0 +1,16 @@
+#!/bin/bash
+
+CASSANDRA_PASS=<%= @cassandra_pwd %>
+CASSANDRA_IP=<%= @cassandra_ip %>
+
+if [[ $(nodetool status |tail -n2 | grep -Ev "^$"a) == *"UN"* ]]; then
+    echo "exit" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP  > /dev/null 2>&1
+    rc=$?
+     if [[ $rc != 0 ]]; then exit $rc; fi
+  fi
+  exit 0;
+else
+  echo "Not Up";
+  exit 1;
+fi
+

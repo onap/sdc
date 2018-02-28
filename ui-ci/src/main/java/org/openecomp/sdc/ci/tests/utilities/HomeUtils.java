@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.CheckBoxStatusEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CreateAndImportButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -29,7 +30,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
 
 public final class HomeUtils {
 
@@ -110,7 +111,28 @@ public final class HomeUtils {
 			Assert.fail(msg);
 		}
 	}
-	
-	
 
+	public static void findComponentAndClickByVersion(String componentName, String version) throws Exception {
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("finding component %s v%s", componentName, version));
+		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue()).sendKeys(componentName);
+		List<WebElement> foundComp = null;
+		try {
+			foundComp = GeneralUIUtils.getWebElementsListByTestID(componentName + "Version");
+
+			for (WebElement webElement : foundComp)
+			{
+				if(webElement.getText().contains(version))
+				{
+					webElement.click();
+					GeneralUIUtils.ultimateWait();
+					break;
+				}
+			}
+		} catch (Exception e) {
+			String msg = String.format("DID NOT FIND A COMPONENT NAMED %s", componentName);
+			SetupCDTest.getExtendTest().log(Status.FAIL, msg);
+			System.out.println(msg);
+			Assert.fail(msg);
+		}
+	}
 }

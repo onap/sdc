@@ -64,7 +64,7 @@ public class CsarParserUtils {
 			Object parse = parser.parse(csarPayload);
 			JSONObject jsonObject = (JSONObject) parse;
 			JSONObject jsonObjectImportStructure = (JSONObject) jsonObject.get(ToscaParameterConstants.IMPORT_STRUCTURE);
-			List<TypeHeatMetaDefinition> listHeatMetaDefenition = new ArrayList<TypeHeatMetaDefinition>();
+			List<TypeHeatMetaDefinition> listHeatMetaDefenition = new ArrayList<>();
 			listHeatMetaDefenition = getArtifactsByGroup(jsonObjectImportStructure, listHeatMetaDefenition);
 			return listHeatMetaDefenition;
 		}
@@ -82,7 +82,7 @@ public class CsarParserUtils {
 			log.debug("{}", jsonObjectImportStructure.get(type));
 			JSONArray array = (JSONArray) jsonObjectImportStructure.get(type);
 			heatMetaDefenition.setTypeName((String) type);
-			List<GroupHeatMetaDefinition> groupHeatMetaDefinitions = new ArrayList<GroupHeatMetaDefinition>();
+			List<GroupHeatMetaDefinition> groupHeatMetaDefinitions = new ArrayList<>();
 			heatMetaDefenition.setGroupHeatMetaDefinition(fetchArtifactByGroupFromJsonArray(array, groupHeatMetaDefinitions, true, false));
 			listHeatMetaDefenition.add(heatMetaDefenition);
 		}
@@ -108,6 +108,16 @@ public class CsarParserUtils {
 				}
 				groupHeatMetaDefinition = listGroupHeatMetaDefinition.get(listGroupHeatMetaDefinition.size() - 1);
 				JSONObject jsonObject = (JSONObject) array.get(i);
+				if (openNewGroup) {
+					String groupName;
+					int lastIndexOfDot = jsonObject.get("fileName").toString().lastIndexOf(".");
+					if(lastIndexOfDot == -1){
+						groupName = jsonObject.get("fileName").toString();
+					}else {
+						groupName = jsonObject.get("fileName").toString().substring(0, lastIndexOfDot);
+					}
+					groupHeatMetaDefinition.setGroupName(groupName);
+				}
 				fetchArtifactByGroupFromJsonObject(listGroupHeatMetaDefinition, groupHeatMetaDefinition, jsonObject, isNested);
 			}
 		}

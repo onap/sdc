@@ -45,6 +45,16 @@
             <version>${swagger.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.core</groupId>
+            <artifactId>openecomp-session-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${javax.servlet.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

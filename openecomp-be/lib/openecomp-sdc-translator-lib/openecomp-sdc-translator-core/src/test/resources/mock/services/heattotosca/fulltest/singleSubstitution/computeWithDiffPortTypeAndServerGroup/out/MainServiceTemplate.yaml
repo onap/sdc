@@ -11,41 +11,97 @@ topology_template:
     port_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: port_name
       type: string
       description: port name
       default: port_name
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VNF instance
       default: This_is_ths_SCP_id
     smp_name_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: smp_name_1
       type: string
       description: name of VM
       default: vSMP2
     flavor_smp_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: flavor_smp_name
       type: string
       description: SCP SMP Flavor
       default: m3.xlarge
     image_smp_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: image_smp_name
       type: string
       description: SCP SMP image
       default: asc_base_image_smp
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       default: zone_1
     lab_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - hot-mog-0108-bs1271
+            source_type: HEAT
+            param_name: lab_name
       type: string
       description: Lab name
       default: Lab-1

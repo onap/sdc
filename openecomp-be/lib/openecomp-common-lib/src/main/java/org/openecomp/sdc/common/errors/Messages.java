@@ -1,22 +1,19 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
+
 
 package org.openecomp.sdc.common.errors;
 
@@ -41,6 +38,9 @@ public enum Messages {
 
   PERMISSIONS_ERROR("Permissions Error. The user does not have permission to perform this action."),
   PERMISSIONS_OWNER_ERROR("Permissions Error. Only one owner is allowed."),
+
+  DELETE_VSP_ERROR("VSP has been certified and cannot be deleted."),
+  DELETE_VLM_ERROR("VLM has been certified and cannot be deleted."),
 
   ZIP_SHOULD_NOT_CONTAIN_FOLDERS("Zip file should not contain folders"),
   VES_ZIP_SHOULD_CONTAIN_YML_ONLY(

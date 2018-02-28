@@ -1,38 +1,33 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import static org.openecomp.sdc.heat.services.HeatConstants.RESOURCE_DEF_TYPE_PROPERTY_NAME;
+import static org.openecomp.sdc.heat.services.HeatConstants.RESOURCE_GROUP_INDEX_VAR_DEFAULT_VALUE;
+
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
@@ -54,7 +49,7 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
     Object resourceDef =
         translateTo.getResource().getProperties().get(HeatConstants.RESOURCE_DEF_PROPERTY_NAME);
     Resource nestedResource = new Resource();
-    Object typeDefinition = ((Map) resourceDef).get("type");
+    Object typeDefinition = ((Map) resourceDef).get(RESOURCE_DEF_TYPE_PROPERTY_NAME);
     if (!(typeDefinition instanceof String)) {
       logger.warn("Resource '" + translateTo.getResourceId() + "' of type'"
           + HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource()
@@ -80,10 +75,12 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
             .translateResource(heatFileName, translateTo.getServiceTemplate(),
                 translateTo.getHeatOrchestrationTemplate(), nestedResource,
                 translateTo.getResourceId(), translateTo.getContext());
+
     if (substitutionNodeTemplateId.isPresent()) {
       NodeTemplate substitutionNodeTemplate =
-          DataModelUtil.getNodeTemplate(translateTo.getServiceTemplate(), substitutionNodeTemplateId.get());
-      if(!Objects.isNull(substitutionNodeTemplate)) {
+          DataModelUtil.getNodeTemplate(translateTo.getServiceTemplate(),
+              substitutionNodeTemplateId.get());
+      if (!Objects.isNull(substitutionNodeTemplate)) {
         Map serviceTemplateFilter = (Map<String, Object>) substitutionNodeTemplate.getProperties()
             .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
 
@@ -98,8 +95,13 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
   }
 
   private void handlingIndexVar(TranslateTo translateTo, NodeTemplate substitutionNodeTemplate) {
+    List<String> indexVarProperties = new ArrayList<>();
     String indexVarValue = getIndexVarValue(translateTo);
-    replacePropertiesIndexVarValue(indexVarValue, substitutionNodeTemplate.getProperties());
+    replacePropertiesIndexVarValue(indexVarValue, substitutionNodeTemplate.getProperties(),
+        indexVarProperties, translateTo);
+    //Add index var properties to context for unified model later
+    translateTo.getContext().addIndexVarProperties(ToscaUtil.getServiceTemplateFileName(translateTo
+            .getServiceTemplate()), translateTo.getTranslatedId(), indexVarProperties);
   }
 
   private Map<String, List> getNewIndexVarValue() {
@@ -113,21 +115,29 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
   }
 
   private void replacePropertiesIndexVarValue(String indexVarValue,
-                                              Map<String, Object> properties) {
+                                              Map<String, Object> properties,
+                                              List<String> indexVarProperties,
+                                              TranslateTo translateTo) {
     if (properties == null || properties.isEmpty()) {
       return;
     }
 
     for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
       Object propertyValue = propertyEntry.getValue();
-      Object newPropertyValue = getUpdatedPropertyValueWithIndex(indexVarValue, propertyValue);
+      if (propertyValue != null && propertyValue.equals(RESOURCE_GROUP_INDEX_VAR_DEFAULT_VALUE)) {
+        indexVarProperties.add(propertyEntry.getKey());
+      }
+      Object newPropertyValue = getUpdatedPropertyValueWithIndex(indexVarValue, propertyValue,
+          indexVarProperties, translateTo);
       if (newPropertyValue != null) {
         properties.put(propertyEntry.getKey(), newPropertyValue);
       }
     }
   }
 
-  private Object getUpdatedPropertyValueWithIndex(String indexVarValue, Object propertyValue) {
+  private Object getUpdatedPropertyValueWithIndex(String indexVarValue, Object propertyValue,
+                                                  List<String> indexVarProperties,
+                                                  TranslateTo translateTo) {
     if (propertyValue != null && propertyValue instanceof String) {
       if (propertyValue.equals(indexVarValue)) {
         return getNewIndexVarValue();
@@ -156,12 +166,14 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
       }
       return propertyValue; //no update is needed
     } else if (propertyValue instanceof Map && !((Map) propertyValue).isEmpty()) {
-      replacePropertiesIndexVarValue(indexVarValue, (Map<String, Object>) propertyValue);
+      replacePropertiesIndexVarValue(indexVarValue, (Map<String, Object>) propertyValue,
+          indexVarProperties, translateTo);
       return propertyValue;
     } else if (propertyValue instanceof List && !((List) propertyValue).isEmpty()) {
       List newPropertyValueList = new ArrayList<>();
-      for (Object entry : ((List) propertyValue)) {
-        newPropertyValueList.add(getUpdatedPropertyValueWithIndex(indexVarValue, entry));
+      for (Object entry : (List) propertyValue) {
+        newPropertyValueList.add(getUpdatedPropertyValueWithIndex(indexVarValue, entry,
+            indexVarProperties, translateTo));
       }
       return newPropertyValueList;
     }
@@ -188,7 +200,7 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
                                                        Map serviceTemplateFilter) {
     boolean mandatory = false;
     Object countValue = TranslatorHeatToToscaPropertyConverter
-        .getToscaPropertyValue(translateTo.getServiceTemplate(),translateTo.getResourceId(),
+        .getToscaPropertyValue(translateTo.getServiceTemplate(), translateTo.getResourceId(),
             ToscaConstants.COUNT_PROPERTY_NAME, translateTo.getResource().getProperties().get
                 (ToscaConstants.COUNT_PROPERTY_NAME), null,
             translateTo.getHeatFileName(), translateTo.getHeatOrchestrationTemplate(),

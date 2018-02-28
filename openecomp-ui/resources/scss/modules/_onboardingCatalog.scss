@@ -4,8 +4,13 @@ $transitionLength: 0.6s;
 	background-color: $background-gray;
 	overflow: hidden;
 	height: 100%;
-	@import "onboardingCatalog/onboardHeader";
-	@import "onboardingCatalog/catalogHeader";
+	display: flex;
+	@import "onboardingCatalog/catalogFilter.scss";
+	.catalog-parts {
+		width: 100%;
+		@import "onboardingCatalog/onboardHeader";
+		@import "onboardingCatalog/catalogHeader";
+	}	
 	@import "onboardingCatalog/vendorPageHeader";
 	@import "onboardingCatalog/catalogList";
 	@import "onboardingCatalog/vspOverlay";

@@ -12,6 +12,14 @@ topology_template:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: vson_app_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
       default: vson-app-flavor
@@ -19,12 +27,28 @@ topology_template:
       label: vSON DBG Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg
+            source_type: HEAT
+            param_name: vson_dbg_volume_id_0
       type: string
       description: Volume ID of the vSON DBG server.
     vson_dbs_server_group_id:
       label: vSON DBS server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_server_group_id
       type: string
       description: "Tells what policy should be applied to the ServerGroup. Affinity\
         \ policy will force instances to share the same hypervisor. Anti-affinity\
@@ -34,6 +58,14 @@ topology_template:
       label: vSON MON volume name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon_volume
+            source_type: HEAT
+            param_name: vson_mon_volume_name_0
       type: string
       description: Volume name.
       default: vson_mon_volume_0
@@ -41,12 +73,28 @@ topology_template:
       label: vSON DBS volume name 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs_volume
+            source_type: HEAT
+            param_name: vson_dbs_volume_name_0
       type: string
       description: First volume name.
     vson_dbs_volume_size_1:
       label: vSON DBS volume ID 1 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs_volume
+            source_type: HEAT
+            param_name: vson_dbs_volume_size_1
       type: float
       description: Size of the second Cinder volume. Measured in gigabytes.
       default: 500
@@ -54,12 +102,28 @@ topology_template:
       label: vSON Mediator Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr
+            source_type: HEAT
+            param_name: vson_mdr_volume_id_0
       type: string
       description: Volume ID of the vSON Mediator server.
     vson_mgt_volume_name_0:
       label: vSON MGT volume name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt_volume
+            source_type: HEAT
+            param_name: vson_mgt_volume_name_0
       type: string
       description: Volume name.
       default: vson_mgt_volume_0
@@ -67,12 +131,28 @@ topology_template:
       label: vSON DBS volume name 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs_volume
+            source_type: HEAT
+            param_name: vson_dbs_volume_name_1
       type: string
       description: Second volume name.
     vson_dbs_volume_size_0:
       label: vSON DBS volume ID 0 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs_volume
+            source_type: HEAT
+            param_name: vson_dbs_volume_size_0
       type: float
       description: Size of the first Cinder volume. Measured in gigabytes.
       default: 500
@@ -80,12 +160,28 @@ topology_template:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon
+            source_type: HEAT
+            param_name: vson_mon_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
     vson_mon_volume_size_0:
       label: vSON MON cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon_volume
+            source_type: HEAT
+            param_name: vson_mon_volume_size_0
       type: float
       description: Size of the Cinder volume. Measured in gigabytes.
       default: 100
@@ -93,6 +189,14 @@ topology_template:
       label: vSON MON VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon_volume
+            source_type: HEAT
+            param_name: vson_mon_image_name
       type: string
       description: Image name the volume will be created from.
       default: VSON-BASE-1.0
@@ -100,12 +204,38 @@ topology_template:
       label: OAM net subnet prefix length
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: oam_net_subnet_prefix_length
       type: string
       description: OAM network subnet prefix length.
     swift_storage_url:
       label: swift storage URL
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: swift_storage_url
       type: string
       description: |
         Swift storage URL. Example: http://172.16.209.246:8080/v1/AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 http://172.16.209.246:8080 - protocol, IP and port, v1 - API version AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 - account ID
@@ -113,18 +243,52 @@ topology_template:
       label: vSON base VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_image_name
       type: string
       description: VM Image name the vSON DC leader instance will be created from.
     vson_app_oam_net_v6_ip_0:
       label: vSON APP OAM network IPv6 address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: vson_app_oam_net_v6_ip_0
       type: string
       description: Fixed IPv6 assignment for the vSON APP instance on the OAM network.
     dns_servers:
       label: DNS servers
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: dns_servers
       type: list
       description: List of DNS servers.
       entry_schema:
@@ -133,6 +297,14 @@ topology_template:
       label: vSON APP cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app_volume
+            source_type: HEAT
+            param_name: vson_app_volume_size_0
       type: float
       description: |
         Size of the Cinder volume. Measured in gigabytes.
@@ -141,6 +313,23 @@ topology_template:
       label: OAM network security group ID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: oam_net_security_group_id
       type: string
       description: |
         The ID of Security group applied on the port bound to the vSON OAM network.
@@ -148,6 +337,14 @@ topology_template:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            source_type: HEAT
+            param_name: vson_mgt_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
       default: vson-mgt-flavor
@@ -155,6 +352,14 @@ topology_template:
       label: vSON MGT cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt_volume
+            source_type: HEAT
+            param_name: vson_mgt_volume_size_0
       type: float
       description: Size of the Cinder volume. Measured in gigabytes.
       default: 100
@@ -162,24 +367,56 @@ topology_template:
       label: vSON DBS Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_volume_id_0
       type: string
       description: Volume ID of the first vSON DBS server.
     vson_dbc_volume_id_0:
       label: vSON DBC Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc
+            source_type: HEAT
+            param_name: vson_dbc_volume_id_0
       type: string
       description: Volume ID of the vSON DBC server.
     vson_dbs_volume_id_1:
       label: vSON DBS Volume ID 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_volume_id_1
       type: string
       description: Volume ID of the second vSON DBS server.
     vson_dbc_image_name:
       label: vSON base VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc
+            source_type: HEAT
+            param_name: vson_dbc_image_name
       type: string
       description: VM Image name the vSON DBC instance will be created from.
       default: VSON-BASE-1.0
@@ -187,6 +424,14 @@ topology_template:
       label: vSON Management VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt_volume
+            source_type: HEAT
+            param_name: vson_mgt_image_name
       type: string
       description: Image name the volume will be created from.
       default: VSON-BASE-1.0
@@ -194,12 +439,28 @@ topology_template:
       label: Default IPv6 gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: default_gateway_v6
       type: string
       description: Default IPv6 gateway.
     vson_mgt_server_group_id:
       label: vSON Management server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            source_type: HEAT
+            param_name: vson_mgt_server_group_id
       type: string
       description: "Tells what policy should be applied to the ServerGroup. Affinity\
         \ policy will force instances to share the same hypervisor. Anti-affinity\
@@ -209,12 +470,29 @@ topology_template:
       label: vSON Cluster Manager instance name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_9_vson_clm
+            - base_vson
+            source_type: HEAT
+            param_name: vson_clm_name_0
       type: string
       description: Unique name to be issued to the vSON Cluster Manager instance.
     vson_dbc_server_group_policy:
       label: vSON Database server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_dbc_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON Database instances.
@@ -223,6 +501,14 @@ topology_template:
       label: vSON Cluster Management server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_clm_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON Cluster Management instances.
@@ -231,6 +517,14 @@ topology_template:
       label: vSON MON server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_mon_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON MON instances.
@@ -239,6 +533,14 @@ topology_template:
       label: vSON DBS server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg
+            source_type: HEAT
+            param_name: vson_dbg_server_group_id
       type: string
       description: "Tells what policy should be applied to the ServerGroup. Affinity\
         \ policy will force instances to share the same hypervisor. Anti-affinity\
@@ -248,6 +550,14 @@ topology_template:
       label: vSON Cluster/DC leader server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_leader_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON Cluster/DC leader instances.
@@ -256,18 +566,42 @@ topology_template:
       label: vSON DC leader OAM network IP address 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the first vSON DC leader instance on the OAM network.
     vson_cll_flavor_name:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
     vson_app_server_group_policy:
       label: vSON Application server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_app_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON Application instances.
@@ -276,18 +610,42 @@ topology_template:
       label: vSON DC leader OAM network IP address 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_oam_net_ip_1
       type: string
       description: Fixed IP assignment for the second vSON DC leader instance on the OAM network.
     vson_dcl_oam_net_ip_2:
       label: vSON DC leader OAM network IP address 2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_oam_net_ip_2
       type: string
       description: Fixed IP assignment for the third vSON DC leader instance on the OAM network.
     vson_dbg_volume_size_0:
       label: vSON DBG cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg_volume
+            source_type: HEAT
+            param_name: vson_dbg_volume_size_0
       type: float
       description: |
         Size of the Cinder volume. Measured in gigabytes.
@@ -296,30 +654,71 @@ topology_template:
       label: vSON Cluster leader OAM network IP address 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the first vSON Cluster leader instance on the OAM network.
     vson_app_oam_net_ip_0:
       label: vSON APP OAM network IPv4 address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: vson_app_oam_net_ip_0
       type: string
       description: Fixed IPv4 assignment for the vSON APP instance on the OAM network.
     vson_cll_oam_net_ip_2:
       label: vSON Cluster leader OAM network IP address 2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_oam_net_ip_2
       type: string
       description: Fixed IP assignment for the third vSON Cluster leader instance on the OAM network.
     vson_cll_oam_net_ip_1:
       label: vSON Cluster leader OAM network IP address 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_oam_net_ip_1
       type: string
       description: Fixed IP assignment for the second vSON Cluster leader instance on the OAM network.
     vson_clm_oam_net_ip_0:
       label: vSON CLM OAM network IP address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_9_vson_clm
+            - base_vson
+            source_type: HEAT
+            param_name: vson_clm_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the vSON CLM instance on the OAM network.
       default: 172.20.50.3
@@ -327,30 +726,108 @@ topology_template:
       label: VF module ID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF Module instance.
     vson_dbc_oam_net_ip_0:
       label: vSON DBC OAM network IP address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc
+            source_type: HEAT
+            param_name: vson_dbc_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the vSON DBC instance on the OAM network.
     vson_dbg_oam_net_ip_0:
       label: vSON DBG OAM network IP address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg
+            source_type: HEAT
+            param_name: vson_dbg_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the vSON DBG instance on the OAM network.
     vnf_name:
       label: VF name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt_volume
+            - module_0_vson_mgt
+            - module_1_vson_mon_volume
+            - module_1_vson_mon
+            - module_4_vson_dbc_volume
+            - module_4_vson_dbc
+            - module_7_vson_app_volume
+            - module_7_vson_app
+            - module_3_vson_cll_volume
+            - module_3_vson_cll
+            - module_2_vson_mdr_volume
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg_volume
+            - module_5_vson_dbg
+            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
+            - module_8_vson_dcl_volume
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VF instance.
     number_of_servers:
       label: Number of Servers
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: number_of_servers
       type: float
       description: Number of vSON Management servers.
       constraints:
@@ -361,6 +838,14 @@ topology_template:
       label: vSON Management instance name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            source_type: HEAT
+            param_name: vson_mgt_name_0
       type: string
       description: Unique name to be issued to the vSON Management instance.
       default: vson-03.cisco.com
@@ -368,6 +853,33 @@ topology_template:
       label: VF module name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt_volume
+            - module_0_vson_mgt
+            - module_1_vson_mon_volume
+            - module_1_vson_mon
+            - module_4_vson_dbc_volume
+            - module_4_vson_dbc
+            - module_7_vson_app_volume
+            - module_7_vson_app
+            - module_3_vson_cll_volume
+            - module_3_vson_cll
+            - module_2_vson_mdr_volume
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg_volume
+            - module_5_vson_dbg
+            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
+            - module_8_vson_dcl_volume
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: vf_module_name
       type: string
       description: Unique name for this VF module instance.
       default: module_0_vson_mgt_volume
@@ -375,6 +887,15 @@ topology_template:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_9_vson_clm
+            - base_vson
+            source_type: HEAT
+            param_name: vson_clm_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
       default: vson-clm-flavor
@@ -382,6 +903,14 @@ topology_template:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr
+            source_type: HEAT
+            param_name: vson_mdr_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
       default: vson-mdr-flavor
@@ -389,24 +918,80 @@ topology_template:
       label: vSON MON Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon
+            source_type: HEAT
+            param_name: vson_mon_volume_id_0
       type: string
       description: Volume ID of the vSON MON server.
     availability_zone_0:
       label: Availability zone 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt_volume
+            - module_0_vson_mgt
+            - module_1_vson_mon_volume
+            - module_1_vson_mon
+            - module_4_vson_dbc_volume
+            - module_4_vson_dbc
+            - module_7_vson_app_volume
+            - module_7_vson_app
+            - module_3_vson_cll_volume
+            - module_3_vson_cll
+            - module_2_vson_mdr_volume
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg_volume
+            - module_5_vson_dbg
+            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
+            - module_8_vson_dcl_volume
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: Availability zone.
     availability_zone_1:
       label: Availability zone 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll_volume
+            - module_3_vson_cll
+            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
+            - module_8_vson_dcl_volume
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: Second availability zone.
     vson_dbc_flavor_name:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc
+            source_type: HEAT
+            param_name: vson_dbc_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
       default: vson-dbc-flavor
@@ -414,48 +999,112 @@ topology_template:
       label: vSON DBC volume name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc_volume
+            source_type: HEAT
+            param_name: vson_dbc_volume_name_0
       type: string
       description: Volume name.
     vson_mdr_image_name:
       label: vSON Mediator VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr_volume
+            source_type: HEAT
+            param_name: vson_mdr_image_name
       type: string
       description: Image name the volume will be created from.
     vson_cll_name_0:
       label: First vSON Cluster leader name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_name_0
       type: string
       description: Unique name to be issued to the first vSON Cluster leader.
     vson_cll_image_name:
       label: vSON base VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_image_name
       type: string
       description: VM Image name the vSON Cluster leader instance will be created from.
     vson_cll_name_2:
       label: Third vSON Cluster leader name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_name_2
       type: string
       description: Unique name to be issued to the third vSON Cluster leader.
     vson_dbg_name_0:
       label: vSON DBG name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg
+            source_type: HEAT
+            param_name: vson_dbg_name_0
       type: string
       description: Unique name to be issued to the vSON DBG server.
     vson_cll_name_1:
       label: Second vSON Cluster leader name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_name_1
       type: string
       description: Unique name to be issued to the second vSON Cluster leader.
     vson_dbs_server_group_policy:
       label: vSON Database server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_dbs_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON DB Shard instances.
@@ -464,6 +1113,18 @@ topology_template:
       label: vSON join cluster auth token
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_join_cluster_auth_token
       type: string
       description: "Authentication Token generated for the user permitted to add \
         \ a new vSON Datacenter. \n"
@@ -471,42 +1132,117 @@ topology_template:
       label: First vSON DC leader name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_name_0
       type: string
       description: Unique name to be issued to the first vSON DC leader.
     vson_dcl_name_1:
       label: Second vSON DC leader name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_name_1
       type: string
       description: Unique name to be issued to the second vSON DC leader.
     vson_clm_0_oam_net_ip_0:
       label: vSON Cluster Manager 0 OAM net IP
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_clm_0_oam_net_ip_0
       type: string
       description: IP of the first vSON Cluster Management server.
     vson_dcl_name_2:
       label: Third vSON DC leader name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_name_2
       type: string
       description: Unique name to be issued to the third vSON DC leader.
     oam_net_id:
       label: OAM network ID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: oam_net_id
       type: string
       description: The ID of the OAM network.
     vson_mon_oam_net_ip_0:
       label: vSON MON OAM network IP address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon
+            source_type: HEAT
+            param_name: vson_mon_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the vSON MON instance on the OAM network.
     vson_dbg_flavor_name:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg
+            source_type: HEAT
+            param_name: vson_dbg_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
       default: vson-dbg-flavor
@@ -514,6 +1250,15 @@ topology_template:
       label: vSON Cluster Manager VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_9_vson_clm
+            - base_vson
+            source_type: HEAT
+            param_name: vson_clm_image_name
       type: string
       description: Image name the volume will be created from.
       default: VSON-BASE-1.0
@@ -521,18 +1266,42 @@ topology_template:
       label: vSON DBC name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc
+            source_type: HEAT
+            param_name: vson_dbc_name_0
       type: string
       description: Unique name to be issued to the vSON DBC server.
     vson_dbs_oam_net_ip_1:
       label: vSON DBS OAM network IP address 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_oam_net_ip_1
       type: string
       description: Fixed IP assignment for the second vSON DBS instance on the OAM network.
     vson_dbg_image_name:
       label: vSON base VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg
+            source_type: HEAT
+            param_name: vson_dbg_image_name
       type: string
       description: VM Image name the vSON DBG instance will be created from.
       default: VSON-BASE-1.0
@@ -540,18 +1309,42 @@ topology_template:
       label: vSON MGT OAM network IP address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            source_type: HEAT
+            param_name: vson_mgt_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the vSON MGT instance on the OAM network.
     vson_dbs_oam_net_ip_0:
       label: vSON DBS OAM network IP address 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the first vSON DBS instance on the OAM network.
     vson_cluster_name:
       label: vSON Cluster name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_cluster_name
       type: string
       description: Name of the vSON Cluster.
       constraints:
@@ -561,6 +1354,14 @@ topology_template:
       label: Cinder volume ID 1 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl_volume
+            source_type: HEAT
+            param_name: vson_dcl_volume_size_1
       type: float
       description: |
         Size of the second Cinder volume. Measured in gigabytes.
@@ -569,6 +1370,14 @@ topology_template:
       label: Cinder volume ID 0 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl_volume
+            source_type: HEAT
+            param_name: vson_dcl_volume_size_0
       type: float
       description: |
         Size of the first Cinder volume. Measured in gigabytes.
@@ -577,6 +1386,14 @@ topology_template:
       label: Cinder volume ID 2 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl_volume
+            source_type: HEAT
+            param_name: vson_dcl_volume_size_2
       type: float
       description: |
         Size of the third Cinder volume. Measured in gigabytes.
@@ -585,18 +1402,42 @@ topology_template:
       label: First vSON DBS name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_name_0
       type: string
       description: Unique name to be issued to the first vSON DBS server.
     vson_dbs_name_1:
       label: Second vSON DBS name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_name_1
       type: string
       description: Unique name to be issued to the second vSON DBS server.
     vson_mdr_server_group_id:
       label: vSON Mediator server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr
+            source_type: HEAT
+            param_name: vson_mdr_server_group_id
       type: string
       description: "Tells what policy should be applied to the ServerGroup. Affinity\
         \ policy will force instances to share the same hypervisor. Anti-affinity\
@@ -606,6 +1447,14 @@ topology_template:
       label: vSON DBS server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc
+            source_type: HEAT
+            param_name: vson_dbc_server_group_id
       type: string
       description: "Tells what policy should be applied to the ServerGroup. Affinity\
         \ policy will force instances to share the same hypervisor. Anti-affinity\
@@ -615,6 +1464,14 @@ topology_template:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
       default: vson-dbs-flavor
@@ -622,6 +1479,14 @@ topology_template:
       label: vSON Mediator server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_mdr_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON Mediator instances.
@@ -630,6 +1495,14 @@ topology_template:
       label: vSON DBC cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_4_vson_dbc_volume
+            source_type: HEAT
+            param_name: vson_dbc_volume_size_0
       type: float
       description: Size of the Cinder volume. Measured in gigabytes.
       default: 50
@@ -637,6 +1510,14 @@ topology_template:
       label: vSON APP instance name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: vson_app_name_0
       type: string
       description: Unique name to be issued to the vSON APP instance.
       default: vson-13.cisco.com
@@ -644,6 +1525,24 @@ topology_template:
       label: Swift account auth token
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: swift_account_auth_token
       type: string
       description: |
         Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
@@ -651,12 +1550,29 @@ topology_template:
       label: vSON MDR OAM network IP address
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr
+            source_type: HEAT
+            param_name: vson_mdr_oam_net_ip_0
       type: string
       description: Fixed IP assignment for the vSON MDR instance on the OAM network.
     vson_leader_server_group_id:
       label: vSON Cluster leader server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_leader_server_group_id
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON Cluster leaders.
@@ -664,6 +1580,14 @@ topology_template:
       label: vSON Cluster Manager server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_9_vson_clm
+            source_type: HEAT
+            param_name: vson_clm_server_group_id
       type: string
       description: "Tells what policy should be applied to the ServerGroup. Affinity\
         \ policy will force instances to share the same hypervisor. Anti-affinity\
@@ -673,6 +1597,14 @@ topology_template:
       label: vSON APP server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: vson_app_server_group_id
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON APP instances.
@@ -680,6 +1612,14 @@ topology_template:
       label: vSON master CLM IP
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_master_clm_ip
       type: string
       description: "Master CLM IP. If the vSON Cluster belongs to a single OpenStack\
         \ tenant, the value SHOULD BE EMPTY.  In case the vSON Cluster is distributed\
@@ -691,12 +1631,28 @@ topology_template:
       label: vSON DC Leader Volume ID 2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_volume_id_2
       type: string
       description: Volume ID of the third vSON DC leader.
     vson_mgt_server_group_policy:
       label: vSON Management server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_mgt_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON Management instances.
@@ -705,18 +1661,42 @@ topology_template:
       label: vSON DC Leader Volume ID 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_volume_id_1
       type: string
       description: Volume ID of the second vSON DC leader.
     vson_dcl_volume_id_0:
       label: vSON DC Leader Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_volume_id_0
       type: string
       description: Volume ID of the first vSON DC leader.
     vson_dbs_image_name:
       label: vSON base VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_6_vson_dbs
+            source_type: HEAT
+            param_name: vson_dbs_image_name
       type: string
       description: VM Image name the vSON DBS instance will be created from.
       default: VSON-BASE-1.0
@@ -724,6 +1704,14 @@ topology_template:
       label: vSON MON server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon
+            source_type: HEAT
+            param_name: vson_mon_server_group_id
       type: string
       description: "Tells what policy should be applied to the ServerGroup. Affinity\
         \ policy will force instances to share the same hypervisor. Anti-affinity\
@@ -733,6 +1721,14 @@ topology_template:
       label: vSON MDR cinder volume size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr_volume
+            source_type: HEAT
+            param_name: vson_mdr_volume_size_0
       type: float
       description: Size of the Cinder volume. Measured in gigabytes.
       default: 50
@@ -740,18 +1736,52 @@ topology_template:
       label: Default gateway
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: default_gateway
       type: string
       description: Default gateway.
     vson_mgt_volume_id_0:
       label: vSON Management Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            source_type: HEAT
+            param_name: vson_mgt_volume_id_0
       type: string
       description: Volume ID of the vSON Management server.
     vson_dbg_server_group_policy:
       label: vSON Database server group policy
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: vson_dbg_server_group_policy
       type: string
       description: |
         Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors. The group intended for vSON DB Global instances.
@@ -760,6 +1790,14 @@ topology_template:
       label: vSON MGT volume name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr_volume
+            source_type: HEAT
+            param_name: vson_mdr_volume_name_0
       type: string
       description: Volume name.
       default: vson_mdr_volume_0
@@ -767,12 +1805,28 @@ topology_template:
       label: vSON DBG volume name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_5_vson_dbg_volume
+            source_type: HEAT
+            param_name: vson_dbg_volume_name_0
       type: string
       description: Volume name.
     vson_app_image_name:
       label: vSON base VM image name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: vson_app_image_name
       type: string
       description: VM Image name the vSON APP instance will be created from.
       default: VSON-BASE-1.0
@@ -780,24 +1834,74 @@ topology_template:
       label: vSON APP Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: vson_app_volume_id_0
       type: string
       description: Volume ID of the vSON APP server.
     vnf_id:
       label: VF ID
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: Unique ID for this VF instance.
     vson_dc_unit:
       label: vSON Datacenter name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dc_unit
       type: string
       description: vSON Datacenter name.
     swift_son_container_name:
       label: SON Swift
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vson
+            source_type: HEAT
+            param_name: swift_son_container_name
       type: string
       description: Swift container storing vSON artifacts.
       default: vson
@@ -805,18 +1909,52 @@ topology_template:
       label: OAM net IPv6 subnet prefix length
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app
+            source_type: HEAT
+            param_name: oam_net_subnet_v6_prefix_length
       type: string
       description: OAM network IPv6 subnet prefix length.
     vson_cll_volume_id_0:
       label: vSON Cluster Leader Volume ID 0
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_volume_id_0
       type: string
       description: Volume ID of the first vSON Cluster leader.
     ntp_servers:
       label: NTP servers
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_0_vson_mgt
+            - module_1_vson_mon
+            - module_4_vson_dbc
+            - module_7_vson_app
+            - module_3_vson_cll
+            - module_2_vson_mdr
+            - module_9_vson_clm
+            - module_5_vson_dbg
+            - module_6_vson_dbs
+            - module_8_vson_dcl
+            - base_vson
+            source_type: HEAT
+            param_name: ntp_servers
       type: list
       description: List of NTP servers.
       entry_schema:
@@ -825,18 +1963,42 @@ topology_template:
       label: vSON Cluster Leader Volume ID 1
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_volume_id_1
       type: string
       description: Volume ID of the second vSON Cluster leader.
     vson_cll_volume_id_2:
       label: vSON Cluster Leader Volume ID 2
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll
+            source_type: HEAT
+            param_name: vson_cll_volume_id_2
       type: string
       description: Volume ID of the third vSON Cluster leader.
     vson_cll_volume_size_2:
       label: Cinder volume ID 2 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll_volume
+            source_type: HEAT
+            param_name: vson_cll_volume_size_2
       type: float
       description: |
         Size of the third Cinder volume. Measured in gigabytes.
@@ -844,6 +2006,14 @@ topology_template:
       label: Cinder volume ID 1 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll_volume
+            source_type: HEAT
+            param_name: vson_cll_volume_size_1
       type: float
       description: |
         Size of the second Cinder volume. Measured in gigabytes.
@@ -851,6 +2021,14 @@ topology_template:
       label: Cinder volume ID 0 size
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_3_vson_cll_volume
+            source_type: HEAT
+            param_name: vson_cll_volume_size_0
       type: float
       description: |
         Size of the first Cinder volume. Measured in gigabytes.
@@ -858,24 +2036,56 @@ topology_template:
       label: Flavor name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_8_vson_dcl
+            source_type: HEAT
+            param_name: vson_dcl_flavor_name
       type: string
       description: The ID or name of the flavor to boot onto.
     vson_app_volume_name_0:
       label: vSON APP volume name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_7_vson_app_volume
+            source_type: HEAT
+            param_name: vson_app_volume_name_0
       type: string
       description: Volume name.
     vson_mon_name_0:
       label: vSON MON instance name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_vson_mon
+            source_type: HEAT
+            param_name: vson_mon_name_0
       type: string
       description: Unique name to be issued to the vSON MON instance.
     vson_mdr_name_0:
       label: vSON Mediator instance name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_vson_mdr
+            source_type: HEAT
+            param_name: vson_mdr_name_0
       type: string
       description: Unique name to be issued to the vSON Mediator instance.
   node_templates:

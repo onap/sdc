@@ -2,5 +2,5 @@
 
 cd /root/chef-solo/
 chef-solo -c solo.rb -E ${ENVNAME}
-
-exit $?
+rc=$?
+if [[ $rc != 0 ]]; then exit $rc; fi

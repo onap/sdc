@@ -1,9 +1,5 @@
 package org.openecomp.sdc.generator.core.utils;
 
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
@@ -20,6 +16,7 @@ import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,14 +29,13 @@ import static org.openecomp.sdc.tosca.services.DataModelUtil.addSubstitutionNode
  */
 public class GeneratorUtils {
 
-  private static List<String> supportedCapabilities = new ArrayList<>();
-  private static List<String> supportedRequirements = new ArrayList<>();
-  static {
-    //TODO : Read from configuration
-    supportedCapabilities.addAll(Arrays.asList("host", "os", "endpoint", "scalable"));
-    supportedRequirements.addAll(Arrays.asList("link"));
+  private GeneratorUtils() {
+    // prevent instantiation
   }
 
+  //TODO : Read from configuration
+  private static final List<String> SUPPORTED_CAPABILITIES = Arrays.asList("host", "os", "endpoint", "scalable");
+  private static final List<String> SUPPORTED_REQUIREMENTS = Collections.singletonList("link");
 
   /**
    * Add service template to tosca service model.
@@ -123,7 +119,7 @@ public class GeneratorUtils {
           for (Map.Entry<String, RequirementDefinition> requirementDefinitionEntry :
               requirementDefinitionMap.entrySet()) {
             String requirementKey = requirementDefinitionEntry.getKey();
-            if (!supportedRequirements.contains(requirementKey)) {
+            if (!SUPPORTED_REQUIREMENTS.contains(requirementKey)) {
               iterator.remove();
             }
           }
@@ -147,7 +143,7 @@ public class GeneratorUtils {
         Map.Entry<String, CapabilityDefinition> capabilityDefinitionEntry = iterator.next();
         //Expected Capability is of the format <capabilityId>_<componentName>
         String capabilityKey = capabilityDefinitionEntry.getKey().split("_")[0];
-        if (!supportedCapabilities.contains(capabilityKey)) {
+        if (!SUPPORTED_CAPABILITIES.contains(capabilityKey)) {
           iterator.remove();
         }
       }

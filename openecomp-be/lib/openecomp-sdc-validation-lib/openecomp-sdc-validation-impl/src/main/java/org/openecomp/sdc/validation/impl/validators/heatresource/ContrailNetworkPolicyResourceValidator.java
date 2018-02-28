@@ -8,8 +8,6 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
@@ -49,9 +47,7 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
                       ErrorMessagesFormatBuilder
                               .getErrorWithParameters(ERROR_CODE_HNP1,
                                       Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                                      ValidatorConstants.Network_Policy, resourceEntry.getKey()),
-                      LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
-                      LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);
+                                      ValidatorConstants.Network_Policy, resourceEntry.getKey()));
       return;
     }
 
@@ -74,9 +70,7 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
                       ErrorMessagesFormatBuilder
                               .getErrorWithParameters(ERROR_CODE_HNP2,
                                       Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                                      ValidatorConstants.Network_Policy, resourceEntry.getKey()),
-                      LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
-                      LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);
+                                      ValidatorConstants.Network_Policy, resourceEntry.getKey()));
     }
   }
 

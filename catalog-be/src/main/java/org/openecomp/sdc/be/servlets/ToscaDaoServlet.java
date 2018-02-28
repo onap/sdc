@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Response;
-
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -33,60 +30,45 @@ import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Response;
+
 public abstract class ToscaDaoServlet extends BeGenericServlet {
-	public abstract Logger getLogger();
+    public abstract Logger getLogger();
 
-	protected IResourceUploader getResourceUploader(ServletContext context) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+    protected IResourceUploader getResourceUploader(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
 
-		if (webApplicationContextWrapper == null) {
-			getLogger().error("Failed to get web application context from context.");
-			return null;
-		}
+        if (webApplicationContextWrapper == null) {
+            getLogger().error("Failed to get web application context from context.");
+            return null;
+        }
 
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
 
-		return webApplicationContext.getBean(IResourceUploader.class);
+        return webApplicationContext.getBean(IResourceUploader.class);
 
-	}
+    }
 
-	// protected IToscaYamlBuilder getToscaYamlBuilder(ServletContext context){
-	// WebAppContextWrapper webApplicationContextWrapper =
-	// (WebAppContextWrapper) context
-	// .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-	//
-	// if (webApplicationContextWrapper == null) {
-	// getLogger().error("Failed to get web application context from context.");
-	// return null;
-	// }
-	//
-	// WebApplicationContext webApplicationContext =
-	// webApplicationContextWrapper
-	// .getWebAppContext(context);
-	//
-	// return webApplicationContext.getBean(IToscaYamlBuilder.class);
-	//
-	// }
 
-	protected DownloadArtifactLogic getLogic(ServletContext context) {
-		DownloadArtifactLogic downloadLogic = (DownloadArtifactLogic) context.getAttribute(Constants.DOWNLOAD_ARTIFACT_LOGIC_ATTR);
+    protected DownloadArtifactLogic getLogic(ServletContext context) {
+        DownloadArtifactLogic downloadLogic = (DownloadArtifactLogic) context.getAttribute(Constants.DOWNLOAD_ARTIFACT_LOGIC_ATTR);
 
-		if (downloadLogic == null) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInitializationError, "DownloadArtifactLogic from context");
-			BeEcompErrorManager.getInstance().logBeInitializationError("DownloadArtifactLogic from context");
-			return null;
-		}
-		return downloadLogic;
-	}
+        if (downloadLogic == null) {
+            BeEcompErrorManager.getInstance().logBeInitializationError("DownloadArtifactLogic from context");
+            return null;
+        }
+        return downloadLogic;
+    }
 
-	protected Response buildResponse(int status, String errorMessage) {
+    protected Response buildResponse(int status, String errorMessage) {
 
-		ServletJsonResponse jsonResponse = new ServletJsonResponse();
-		jsonResponse.setDescription(errorMessage);
-		jsonResponse.setSource(Constants.CATALOG_BE);
+        ServletJsonResponse jsonResponse = new ServletJsonResponse();
+        jsonResponse.setDescription(errorMessage);
+        jsonResponse.setSource(Constants.CATALOG_BE);
 
-		Response response = Response.status(status).entity(jsonResponse).build();
+        Response response = Response.status(status).entity(jsonResponse).build();
 
-		return response;
-	}
+        return response;
+    }
 }

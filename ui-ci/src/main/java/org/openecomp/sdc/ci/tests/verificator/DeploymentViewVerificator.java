@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.enums.GroupPropertyEnum;
 import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.DeploymentPage;
@@ -51,24 +52,26 @@ import org.openqa.selenium.WebElement;
 import com.aventstack.extentreports.Status;
 
 public class DeploymentViewVerificator {
-	
-	private static List<String> currentPropertiesForUI = Arrays.asList("isBase", 
+
+	//GroupPropertyEnum.getGroupPropertyNames();
+	private static List<String> currentPropertiesForUI = Arrays.asList("isBase",
             "vf_module_label", 
             "vf_module_description", 
             "min_vf_module_instances", 
             "max_vf_module_instances", 
             "initial_count", 
-            "vf_module_type", 
+            "vf_module_type", //works as isBase property, value can be Base/Expantion
             "volume_group",
             "vfc_list",
             "availability_zone_count");
 
-	private static List<String> currentPropertiesWithoutIsBaseForFile = Arrays.asList("vf_module_label", 
-            "vf_module_description", 
-            "min_vf_module_instances", 
-            "max_vf_module_instances", 
-            "initial_count", 
-            "vf_module_type", 
+	//GroupPropertyEnum.getGroupPropertyNamesWithoutIsbase();
+	private static List<String> currentPropertiesWithoutIsBaseForFile = Arrays.asList("vf_module_label",
+            "vf_module_description",
+            "min_vf_module_instances",
+            "max_vf_module_instances",
+            "initial_count",
+            "vf_module_type", //works as isBase property, value can be Base/Expantion
             "volume_group",
             "vfc_list",
             "availability_zone_count");

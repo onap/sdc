@@ -31,9 +31,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.slf4j.MDC;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -48,6 +45,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class CommonUtil {
+
+  private CommonUtil() {
+    // prevent instantiation
+  }
 
   public static FileContentHandler validateAndUploadFileContent(OnboardingTypesEnum type,
                                                                 byte[] uploadedFileData)
@@ -113,7 +114,6 @@ public class CommonUtil {
 
   private static void validateNoFolders(List<String> folderList) {
     if (CollectionUtils.isNotEmpty(folderList)) {
-      MDC.put(LoggerConstants.ERROR_DESCRIPTION, LoggerErrorDescription.INVALID_ZIP);
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
           .withMessage(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
           .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
@@ -151,6 +151,6 @@ public class CommonUtil {
 
   public static boolean isFileOriginFromZip(String fileOrigin){
    return Objects.nonNull(fileOrigin)
-        && fileOrigin.toLowerCase().equals(OnboardingTypesEnum.ZIP.toString());
+        && fileOrigin.equalsIgnoreCase(OnboardingTypesEnum.ZIP.toString());
   }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -11,6 +27,8 @@ import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
@@ -44,6 +62,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
 
   private OrchestrationTemplateCandidateManager candidateManager =
       OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
+  private VendorSoftwareProductManager vendorSoftwareProductManager = VspManagerFactory
+      .getInstance().createInterface();
   private ActivityLogManager activityLogManager =
       ActivityLogManagerFactory.getInstance().createInterface();
 
@@ -72,6 +92,12 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     String filename = "Candidate." + zipFile.get().getLeft();
     response.header("Content-Disposition", "attachment; filename=" + filename);
     return response.build();
+  }
+
+  @Override
+  public Response abort(String vspId, String versionId) throws Exception {
+    candidateManager.abort(vspId, new Version(versionId));
+    return Response.ok().build();
   }
 
   @Override
@@ -121,6 +147,10 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
       throws Exception {
     Optional<FilesDataStructure> filesDataStructure =
         candidateManager.getFilesDataStructure(vspId, new Version(versionId));
+    if (!filesDataStructure.isPresent()) {
+      filesDataStructure = vendorSoftwareProductManager.getOrchestrationTemplateStructure(vspId,
+          new Version(versionId));
+    }
 
     FileDataStructureDto fileDataStructureDto =
         filesDataStructure.map(dataStructure -> new MapFilesDataStructureToDto()
@@ -128,4 +158,5 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             .orElse(new FileDataStructureDto());
     return Response.ok(fileDataStructureDto).build();
   }
+
 }

@@ -44,7 +44,6 @@ import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
@@ -55,10 +54,6 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	// TC1407822 - 	Import VFC Artifacts - Deployment Artifacts - Multiple Artifacts, Multiple Types
 	@Test
 	public void importVfvArtifactsDeploymentArtifactsMultipleArtifactsMultipleTypes() throws Exception {
-		
-		if(true){
-			throw new SkipException("Due to the new design the test should be updated accordingly");			
-		}
 		
 		String filePath = FileHandling.getFilePath(folder);
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
@@ -80,6 +75,8 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 		List<ArtifactDefinition> filteredArtifactNames = 
 				//Stream of component Instances
 				resource.getComponentInstances().stream()
+					//filter out all nulls
+					.filter( e -> e.getDeploymentArtifacts() != null )
 					//Stream of all the artifacts on all the component instances
 					.flatMap( e -> e.getDeploymentArtifacts().values().stream())
 					//filter relevant artifact types
@@ -87,7 +84,6 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 					//collect to list
 					.collect(Collectors.toList());
 
-		
 		assertTrue("Not contain all SNMP TRAP artifacts.", filteredArtifactNames.stream()
 				.filter(e -> e.getArtifactType().equals(ArtifactTypeEnum.SNMP_TRAP.getType()))
 				.map(e -> e.getArtifactName())
@@ -109,51 +105,12 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 			});
 		
 	}
-	
-	
-	
-	// US747946 - Import artifacts to component instances
-	// TC1408044 - Import VFC Artifacts - Informational Artifacts on Single VFC
-	@Test
-	public void importVfcArtifactsInformationalArtifactsOnSingleVfc() throws Exception {
-		
-		if(true){
-			throw new SkipException("Due to the new design the test should be updated accordingly");			
-		}
-		
-		String filePath = FileHandling.getFilePath(folder);
-		String fileName = "TC1408044.csar";
-		
-		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		
-		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
-		
-		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
-		
-		resource.getComponentInstances().forEach(e -> {
-			
-			if(e.getToscaComponentName().endsWith("heat.ltm")) {
-				Map<String, List<String>> artifactsMap = new HashMap<String, List<String>>() {
-					{
-						put(ArtifactTypeEnum.GUIDE.getType(), Arrays.asList("module_1_ldsa.yaml", "vendor-license-model.xml"));
-						put(ArtifactTypeEnum.OTHER.getType(), Arrays.asList("module_2_ldsa.yaml", "vf-license-model.xml"));
-					}
-				};
-					
-				validateInformationalArtifactOnComponetInstance(e, artifactsMap, "heat.ltm");
-			}
-		});
-	}
-	
+
 	// TODO: Note there is performance issue with this CSAR
 	// US747946 - Import artifacts to component instances
 	// TC1407998 - Import VFC Artifacts - Deployment & Informational Artifacts - Multiple VFCs
 	@Test
 	public void importVfcArtifactsDeploymentAndInformationalArtifactsMultipleVfcs() throws Exception {
-		
-		if(true){
-			throw new SkipException("Due to the new design the test should be updated accordingly");			
-		}
 		
 		String filePath = FileHandling.getFilePath(folder);
 		String fileName = "TC1407998.csar";
@@ -161,29 +118,18 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 			
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
-		
-//		resourceMetaData.setName("TC1407998");
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 			
 		resource.getComponentInstances().forEach(e -> {
 				
-			if(e.getToscaComponentName().endsWith("heat.ps")) {
+			if(e.getToscaComponentName().endsWith("heat.cm")) {
 				Map<String, List<String>> deployArtifactsMap = new HashMap<String, List<String>>() {
 					{
 						put(ArtifactTypeEnum.SNMP_POLL.getType(), Arrays.asList("PS_DEPL_Poll1.mib", "PS_DEPL_Poll2.xml", "PS_DEPL_Poll3.yaml"));
 						put(ArtifactTypeEnum.SNMP_TRAP.getType(), Arrays.asList("PS_DEPL_Trap1.mib", "PS_DEPL_Trap2.xml", "PS_DEPL_Trap3.sh", "PS_DEPL_Trap4.yml"));
 					}
 				};
-				validateDeploymentArtifactOnComponetInstance(e, deployArtifactsMap, "heat.ps");
-				
-				Map<String, List<String>> infoArtifactsMap = new HashMap<String, List<String>>() {
-					{
-						put(ArtifactTypeEnum.GUIDE.getType(), Arrays.asList("PS_INFO_GUIDE1.yaml", "PS_INFO_GUIDE2.xml"));
-						put(ArtifactTypeEnum.OTHER.getType(), Arrays.asList("PS_INFO_OTHER1.yaml", "PS_INFO_OTHER2.xml"));
-					}
-				};
-				validateInformationalArtifactOnComponetInstance(e, infoArtifactsMap, "heat.ps");
-				
+				validateDeploymentArtifactOnComponetInstance(e, deployArtifactsMap, "heat.cm");
 				
 			} else if (e.getToscaComponentName().endsWith("heat.sm")) {
 				Map<String, List<String>> deployArtifactsMap = new HashMap<String, List<String>>() {
@@ -193,14 +139,6 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 					}
 				};
 				validateDeploymentArtifactOnComponetInstance(e, deployArtifactsMap, "heat.sm");
-				
-				Map<String, List<String>> infoArtifactsMap = new HashMap<String, List<String>>() {
-					{
-						put(ArtifactTypeEnum.GUIDE.getType(), Arrays.asList("SM_INFO_GUIDE1.yaml", "SM_INFO_GUIDE2.xml"));
-						put(ArtifactTypeEnum.OTHER.getType(), Arrays.asList("SM_INFO_OTHER1.yaml", "SM_INFO_OTHER2.xml"));
-					}
-				};
-				validateInformationalArtifactOnComponetInstance(e, infoArtifactsMap, "heat.sm");
 			}
 		});
 			
@@ -211,18 +149,12 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	@Test
 	public void importVfcArtifactsDeploymentArtifactsExtraFolderUnderVfcIdentification() throws Exception {
 		
-		if(true){
-			throw new SkipException("Due to the new design the test should be updated accordingly");			
-		}
-		
 		String filePath = FileHandling.getFilePath(folder);
 		String fileName = "TC1410352.csar";
 			
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 			
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
-		
-//		resourceMetaData.setName("TC1410352");
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 			
 		resource.getComponentInstances().forEach(e -> {
@@ -235,14 +167,6 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 					}
 				};
 				validateDeploymentArtifactOnComponetInstance(e, deployArtifactsMap, "heat.ltm");
-				
-				Map<String, List<String>> infoArtifactsMap = new HashMap<String, List<String>>() {
-					{
-						put(ArtifactTypeEnum.GUIDE.getType(), Arrays.asList("GUIDE1.yaml", "GUIDE2.xml"));
-						put(ArtifactTypeEnum.OTHER.getType(), Arrays.asList("OTHER1.yaml", "OTHER2.xml"));
-					}
-				};
-				validateInformationalArtifactOnComponetInstance(e, infoArtifactsMap, "heat.ltm");
 			}
 		});
 	}
@@ -253,18 +177,12 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	@Test
 	public void importVfcArtifactsDeploymentArtifactsInvalidArtifactType() throws Exception {
 		
-		if(true){
-			throw new SkipException("Due to the new design the test should be updated accordingly");			
-		}
-		
 		String filePath = FileHandling.getFilePath(folder);
 		String fileName = "TC1425032.csar";
 				
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 				
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
-			
-//		resourceMetaData.setName("TC1425032");
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 				
 		resource.getComponentInstances().forEach(e -> {
@@ -277,44 +195,15 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 					}
 				};
 				validateDeploymentArtifactOnComponetInstance(e, deployArtifactsMap, "heat.ltm");
-					
-				Map<String, List<String>> infoArtifactsMap = new HashMap<String, List<String>>() {
-					{
-						put(ArtifactTypeEnum.GUIDE.getType(), Arrays.asList("InfoGuide1.yaml", "InfoGuide2.xml"));
-						put(ArtifactTypeEnum.OTHER.getType(), Arrays.asList("InfoOther1.yaml", "InfoOther2.xml", "InfoInvalid1.yaml"));
-					}
-				};
-				validateInformationalArtifactOnComponetInstance(e, infoArtifactsMap, "heat.ltm");
 			}
 		});
 	}
-	
-	
-	private void validateInformationalArtifactOnComponetInstance(ComponentInstance instacne, Map<String, List<String>> artifactsMap, String endswith){
-		if(instacne.getToscaComponentName().endsWith(endswith) ){
+
+	private void validateDeploymentArtifactOnComponetInstance(ComponentInstance instance, Map<String, List<String>> artifactsMap, String endswith){
+		if(instance.getToscaComponentName().endsWith(endswith) ){
 			Set<String> types = artifactsMap.keySet();
 
-			Map<String, List<ArtifactDefinition>> collect = instacne.getArtifacts().values().stream()
-					.filter( a -> types.contains(a.getArtifactType()))
-					.collect(Collectors.groupingBy( e -> e.getArtifactType()));
-				
-			types.forEach(m -> {
-				if(collect.containsKey(m)){
-					List<String> found = collect.get(m).stream().map(e -> e.getArtifactName()).collect(Collectors.toList());
-					boolean isValid = found.containsAll(artifactsMap.get(m)) && artifactsMap.get(m).containsAll(found);
-					assertTrue("Not contain all artifact of type: " + m, isValid);
-				} else{
-					assertTrue("Contains informational artifact which not in provided list", false);
-				}
-			});
-		}
-	}
-	
-	private void validateDeploymentArtifactOnComponetInstance(ComponentInstance instacne, Map<String, List<String>> artifactsMap, String endswith){
-		if(instacne.getToscaComponentName().endsWith(endswith) ){
-			Set<String> types = artifactsMap.keySet();
-
-			Map<String, List<ArtifactDefinition>> collect = instacne.getDeploymentArtifacts().values().stream()
+			Map<String, List<ArtifactDefinition>> collect = instance.getDeploymentArtifacts().values().stream()
 					.filter( a -> types.contains(a.getArtifactType()))
 					.collect(Collectors.groupingBy( e -> e.getArtifactType()));
 		
@@ -329,11 +218,6 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 			});
 		}
 	}
-	
-	
-
-	
-	
 	
 	@Override
 	protected UserRoleEnum getRole() {

@@ -1,27 +1,52 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import org.mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_ID_PROP;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_CHANGED;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_GRANTED;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_ITEM;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.notification.services.SubscriptionService;
-import org.openecomp.sdc.versioning.ItemManager;
+import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.types.Item;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.*;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_CHANGED;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Created by ayalaben on 7/6/2017
@@ -35,11 +60,12 @@ public class ItemPermissionsManagerImplTest {
   private static final String AFFECTED_USER1 = "affected_user1";
   private static final String AFFECTED_USER2 = "affected_user2";
   private static final String AFFECTED_USER3 = "affected_user3";
+  private static final String tenant = "dox";
 
   @Mock
   private PermissionsServices permissionsServicesMock;
   @Mock
-  private ItemManager itemManagerMock;
+  private AsdcItemManager asdcItemManagerMock;
   @Mock
   private SubscriptionService subscriptionServiceMock;
   @Mock
@@ -53,7 +79,8 @@ public class ItemPermissionsManagerImplTest {
 
   @BeforeMethod
   public void setUp() throws Exception {
-    SessionContextProviderFactory.getInstance().createInterface().create(USER);
+    SessionContextProviderFactory.getInstance().createInterface().create(USER,
+        tenant);
     MockitoAnnotations.initMocks(this);
   }
 
@@ -72,7 +99,7 @@ public class ItemPermissionsManagerImplTest {
     doReturn(true).when(permissionsServicesMock).isAllowed(ITEM1_ID, USER, ACTION);
     Item item = new Item();
     item.setName("Item 1 Name");
-    doReturn(item).when(itemManagerMock).get(ITEM1_ID);
+    doReturn(item).when(asdcItemManagerMock).get(ITEM1_ID);
 
     Set<String> addedUsersIds =
             Stream.of(AFFECTED_USER1, AFFECTED_USER2).collect(Collectors.toSet());

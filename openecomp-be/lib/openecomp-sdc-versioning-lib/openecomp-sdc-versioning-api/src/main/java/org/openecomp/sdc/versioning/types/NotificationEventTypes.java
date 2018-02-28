@@ -6,6 +6,7 @@ package org.openecomp.sdc.versioning.types;
  */
 public enum NotificationEventTypes {
     SUBMIT("submit"),
+    DELETE("delete"),
     COMMIT("commit");
 
     private String eventName;

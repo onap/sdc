@@ -20,17 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -44,8 +36,14 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ArtifactValidationUtils {
 
@@ -109,16 +107,14 @@ public class ArtifactValidationUtils {
 				counter);
 	}
 
-	public static ESArtifactData parseArtifactRespFromES(RestResponse resResponse)
-			throws JsonParseException, JsonProcessingException, Exception {
+	public static ESArtifactData parseArtifactRespFromES(RestResponse resResponse) throws Exception {
 		String bodyToParse = resResponse.getResponse();
 		JsonElement jElement = new JsonParser().parse(bodyToParse);
 		JsonElement jsourceElement = jElement.getAsJsonObject().get("_source");
 
 		ObjectMapper mapper = new ObjectMapper();
-		ESArtifactData esArtifactObject = mapper.readValue(jsourceElement.toString(), ESArtifactData.class);
 
-		return esArtifactObject;
+		return mapper.readValue(jsourceElement.toString(), ESArtifactData.class);
 
 	}
 

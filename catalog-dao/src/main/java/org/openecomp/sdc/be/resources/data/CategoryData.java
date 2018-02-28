@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class CategoryData extends GraphNode {
 
@@ -107,7 +107,7 @@ public abstract class CategoryData extends GraphNode {
 	}
 
 	@Override
-	public Object getUniqueId() {
+	public String getUniqueId() {
 		return uniqueId;
 	}
 

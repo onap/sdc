@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 
-tosca_definitions_version: tosca_simple_openecomp_1_0
+tosca_definitions_version: tosca_simple_yaml_1_1
 
 metadata:
   filename: openecomp/nodes.yml
@@ -365,7 +365,6 @@ node_types:
         description: vfc naming
         type: org.openecomp.datatypes.Naming
         status: SUPPORTED
-        default: false
         required: false
       min_instances:
         description: Minimum number of VFC Instances

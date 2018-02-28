@@ -1,34 +1,25 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
@@ -60,7 +51,7 @@ import java.util.stream.Collectors;
 
 public abstract class ResourceTranslationBase {
 
-  protected static Logger logger = (Logger) LoggerFactory.getLogger(ResourceTranslationBase.class);
+  protected static Logger logger = LoggerFactory.getLogger(ResourceTranslationBase.class);
   protected abstract void translate(TranslateTo translateTo);
 
   /**
@@ -82,7 +73,7 @@ public abstract class ResourceTranslationBase {
         getResourceTranslatedId(heatFileName, heatOrchestrationTemplate, resourceId, context);
     context.getTranslatedResources().putIfAbsent(heatFileName, new HashSet<>());
 
-    if(isResourceWithSameIdAppearsInOtherFiles(heatFileName, resourceId, context)){
+    if (isResourceWithSameIdAppearsInOtherFiles(heatFileName, resourceId, context)) {
       throw new CoreException(
           new DuplicateResourceIdsInDifferentFilesErrorBuilder(resourceId).build());
     }
@@ -92,8 +83,8 @@ public abstract class ResourceTranslationBase {
     if (!translatedId.isPresent()) {
       return Optional.empty();
     }
-    logger.debug("Translate- file:" + heatFileName + " resource Id:" + resourceId
-        + " translated resource id:" + translatedId.get());
+    logger.debug("Translate- file: {}  resource Id: {} translated resource id: {}",
+            heatFileName, resourceId, translatedId.get());
     TranslateTo translateTo = new TranslateTo(heatFileName, serviceTemplate,
         heatOrchestrationTemplate, resource, resourceId, translatedId.get(), context);
     translate(translateTo);
@@ -111,7 +102,7 @@ public abstract class ResourceTranslationBase {
 
   private boolean isResourceWithSameIdAppearsInOtherFiles(String heatFileName,
                                                           String resourceId,
-                                                          TranslationContext context){
+                                                          TranslationContext context) {
     Set<String> translatedResourceIdsFromOtherFiles =
         context.getTranslatedResourceIdsFromOtherFiles(heatFileName);
 
@@ -200,10 +191,8 @@ public abstract class ResourceTranslationBase {
         generateTranslationTo(heatFileName, null, heatOrchestrationTemplate, resource, resourceId,
             null, context);
 
-    Optional<ToscaTopologyTemplateElements> translatedElementTemplate =
-        ResourceTranslationFactory.getInstance(resource)
-            .getTranslatedToscaTopologyElement(translateTo);
-    return translatedElementTemplate;
+    return ResourceTranslationFactory.getInstance(resource)
+        .getTranslatedToscaTopologyElement(translateTo);
   }
 
   protected String generateTranslatedId(TranslateTo translateTo) {
@@ -248,13 +237,7 @@ public abstract class ResourceTranslationBase {
 
   private void updateResourceDependency(TranslateTo translateTo) {
 
-    String heatFileName = translateTo.getHeatFileName();
     Resource resource = translateTo.getResource();
-    HeatOrchestrationTemplate heatOrchestrationTemplate = translateTo
-        .getHeatOrchestrationTemplate();
-    String translatedId = translateTo.getTranslatedId();
-    ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-    TranslationContext context = translateTo.getContext();
     if (resource.getDepends_on() == null) {
       return;
     }
@@ -294,7 +277,7 @@ public abstract class ResourceTranslationBase {
           .getResource(heatOrchestrationTemplate, dependsOnResourceId,
               translateTo.getHeatFileName());
       if (HeatToToscaUtil
-          .isValidDependsOnCandidate(heatOrchestrationTemplate, sourceResource, targetResource,
+          .isValidDependsOnCandidate(sourceResource, targetResource,
               ConsolidationEntityType.OTHER, translateTo.getContext())) {
         requirementAssignment.setNode(resourceTranslatedId.get());
         requirementAssignment.setCapability(ToscaCapabilityType.NATIVE_NODE);
@@ -302,9 +285,8 @@ public abstract class ResourceTranslationBase {
         DataModelUtil.addRequirementAssignment(
             serviceTemplate.getTopology_template().getNode_templates().get(nodeTemplateId),
             ToscaConstants.DEPENDS_ON_REQUIREMENT_ID, requirementAssignment);
-        Resource dependsOnResource = targetResource;
         ConsolidationDataUtil
-            .updateNodesConnectedData(translateTo, dependsOnResourceId, dependsOnResource,
+            .updateNodesConnectedData(translateTo, dependsOnResourceId, targetResource,
                 sourceResource, nodeTemplateId, ToscaConstants.DEPENDS_ON_REQUIREMENT_ID,
                 requirementAssignment);
       }

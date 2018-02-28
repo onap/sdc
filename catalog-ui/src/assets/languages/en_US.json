@@ -441,6 +441,10 @@
     "MAX_VALIDATION_ERROR": "Value cannot be higher than the 'max_vf_module_instances' and 'initial_count'",
     "MIN_MAX_VALIDATION": "Value must be between 'min_vf_module_instances' and 'max vf module instances'",
     "MIN_VALIDATION_VF_LEVE_ERROR": " Value of 'min_vf_module_instances' must not be lower than defined in VF level",
-    "MAX_VALIDATION_VF_LEVE_ERROR": " Value of 'max_vf_module_instances' must not be higher than defined in VF level"
+    "MAX_VALIDATION_VF_LEVE_ERROR": " Value of 'max_vf_module_instances' must not be higher than defined in VF level",
+
+    "=========== SERVICE PATH SELECTOR ===========": "",
+    "SERVICE_PATH_SELECTOR_HIDE_ALL_VALUE" : "⚊ Hide all ⚊",
+    "SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE" : "⚊ Show all ⚊"
 
 }

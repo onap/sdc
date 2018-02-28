@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,31 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -26,7 +48,6 @@ import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
@@ -35,7 +56,6 @@ import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
@@ -53,8 +73,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.OnboardingMethodErrorBuild
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
-import org.openecomp.sdc.versioning.ItemManager;
-import org.openecomp.sdc.versioning.ItemManagerFactory;
+import org.openecomp.sdc.versioning.AsdcItemManager;
+import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -87,30 +107,6 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
-
 @Named
 @Service("vendorSoftwareProducts")
 @Scope(value = "prototype")
@@ -124,7 +120,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   private static ItemCreationDto validationVsp;
 
-  private final ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
+  private final AsdcItemManager asdcItemManager = AsdcItemManagerFactory.getInstance()
+      .createInterface();
   private final ItemPermissionsManager permissionsManager =
       ItemPermissionsManagerFactory.getInstance().createInterface();
   private final VersioningManager versioningManager =
@@ -135,6 +132,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       ActivityLogManagerFactory.getInstance().createInterface();
   private final NotificationPropagationManager notifier =
       NotificationPropagationManagerFactory.getInstance().createInterface();
+  private final UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory
+      .getInstance().createInterface());
 
   @Override
   public Response createVsp(VspRequestDto vspRequestDto, String user) {
@@ -143,15 +142,16 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     try {
       onboardingMethod = OnboardingMethod.valueOf(vspRequestDto.getOnboardingMethod());
     } catch (IllegalArgumentException e) {
-        throwUnknownOnboardingMethodException();
+      LOGGER.error("Error while creating VSP. Message: " + e.getMessage());
+      throwUnknownOnboardingMethodException(e);
     }
-    ItemCreationDto itemCreationDto =  null;
+    ItemCreationDto itemCreationDto = null;
     if (onboardingMethod == OnboardingMethod.NetworkPackage
-            || onboardingMethod == OnboardingMethod.Manual) {
+        || onboardingMethod == OnboardingMethod.Manual) {
       itemCreationDto = getItemCreationDto(vspRequestDto, user, onboardingMethod);
 
     } else {
-       throwUnknownOnboardingMethodException();
+      throwUnknownOnboardingMethodException(new IllegalArgumentException("Wrong parameter Onboarding Method"));
     }
 
     return Response.ok(itemCreationDto).build();
@@ -166,14 +166,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     item.setOwner(user);
     item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
 
-    UniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
-    item = itemManager.create(item);
-    UniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+    uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+    item = asdcItemManager.create(item);
+    uniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
 
     Version version = versioningManager.create(item.getId(), new Version(), null);
 
     VspDetails vspDetails =
-            new MapVspDescriptionDtoToVspDetails().applyMapping(vspRequestDto, VspDetails.class);
+        new MapVspDescriptionDtoToVspDetails().applyMapping(vspRequestDto, VspDetails.class);
     vspDetails.setId(item.getId());
     vspDetails.setVersion(version);
     vspDetails.setOnboardingMethod(vspRequestDto.getOnboardingMethod());
@@ -185,14 +185,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
 
     activityLogManager.logActivity(new ActivityLogEntity(vspDetails.getId(), version,
-            ActivityType.Create, user, true, "", ""));
+        ActivityType.Create, user, true, "", ""));
     return itemCreationDto;
   }
 
-  private void throwUnknownOnboardingMethodException() {
+  private void throwUnknownOnboardingMethodException(IllegalArgumentException e) {
     ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
         .getInvalidOnboardingMethodErrorBuilder();
-    throw  new CoreException(onboardingMethodUpdateErrorCode);
+    throw new CoreException(onboardingMethodUpdateErrorCode,e);
   }
 
   @Override
@@ -200,12 +200,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     Predicate<Item> itemPredicate;
     if (VersionStatus.Certified.name().equals(versionStatus)) {
       itemPredicate = item -> ItemType.vsp.name().equals(item.getType())
-              && item.getVersionStatusCounters().containsKey(VersionStatus.Certified);
+          && item.getVersionStatusCounters().containsKey(VersionStatus.Certified);
 
     } else if (VersionStatus.Draft.name().equals(versionStatus)) {
       itemPredicate = item -> ItemType.vsp.name().equals(item.getType())
-              && item.getVersionStatusCounters().containsKey(VersionStatus.Draft)
-              && userHasPermission(item.getId(), user);
+          && item.getVersionStatusCounters().containsKey(VersionStatus.Draft)
+          && userHasPermission(item.getId(), user);
 
     } else {
       itemPredicate = item -> ItemType.vsp.name().equals(item.getType());
@@ -213,7 +213,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
     MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
-    itemManager.list(itemPredicate).stream()
+    asdcItemManager.list(itemPredicate).stream()
         .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
         .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
 
@@ -282,9 +282,27 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response deleteVsp(String vspId, String user) {
-    vendorSoftwareProductManager.deleteVsp(vspId);
+    Item vsp = asdcItemManager.get(vspId);
 
-    return Response.ok().build();
+    if(!vsp.getType().equals(ItemType.vsp.name())){
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder()
+              .withMessage(String.format("Vsp with id %s does not exist.",
+                      vspId)).build()));
+    }
+
+    Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
+    if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
+      asdcItemManager.delete(vsp);
+      permissionsManager.deleteItemPermissions(vspId);
+      uniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
+      notifyUsers(vspId, vsp.getName(), null, "VSP was deleted", user,
+          NotificationEventTypes.DELETE);
+
+      return Response.ok().build();
+    } else {
+      return Response.status(Response.Status.FORBIDDEN)
+          .entity(new Exception(Messages.DELETE_VSP_ERROR.getErrorMessage())).build();
+    }
   }
 
   @Override
@@ -296,20 +314,20 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     if (request.getAction() == VendorSoftwareProductAction.Submit) {
       if (!permissionsManager.isAllowed(vspId, user, SUBMIT_ITEM_ACTION)) {
         return Response.status(Response.Status.FORBIDDEN)
-                .entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
+            .entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
       }
       String message = request.getSubmitRequest() == null ? "Submit"
-              : request.getSubmitRequest().getMessage();
+          : request.getSubmitRequest().getMessage();
       Optional<ValidationResponse> validationResponse = submit(vspId, version, message, user);
 
       if (validationResponse.isPresent()) {
         ValidationResponseDto validationResponseDto = new MapValidationResponseToDto()
-                .applyMapping(validationResponse.get(), ValidationResponseDto.class);
+            .applyMapping(validationResponse.get(), ValidationResponseDto.class);
         return Response.status(Response.Status.EXPECTATION_FAILED).entity(validationResponseDto)
-                .build();
+            .build();
       }
 
-      notifyUsers(vspId, version, message, user, NotificationEventTypes.SUBMIT);
+      notifyUsers(vspId, null, version, message, user, NotificationEventTypes.SUBMIT);
 
     } else if (request.getAction() == VendorSoftwareProductAction.Create_Package) {
       return createPackage(vspId, version);
@@ -319,7 +337,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   @Override
-  public Response getValidationVsp(String user) throws Exception {
+  public Response getValidationVsp(String user) {
     if (validationVsp != null) {
       return Response.ok(validationVsp).build();
     }
@@ -334,11 +352,11 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     } catch (CoreException validationVspAlreadyExistException) {
       // find validationVsp
-      String validationVspId = itemManager.list(item ->
+      String validationVspId = asdcItemManager.list(item ->
           ItemType.vsp.name().equals(item.getType()) && VALIDATION_VSP_NAME.equals(item.getName()))
           .stream().findFirst().orElseThrow(() -> new IllegalStateException("Vsp with name %s "
-                + "does not exist even though the name exists according to unique value util"))
-              .getId();
+              + "does not exist even though the name exists according to unique value util"))
+          .getId();
       Version validationVspVersion = versioningManager.list(validationVspId).iterator().next();
 
       validationVsp = new ItemCreationDto();
@@ -383,12 +401,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   public Response getTranslatedFile(String vspId, String versionName, String user) {
     List<Version> versions = versioningManager.list(vspId);
     Version version;
-    if (versionName == null) version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
-            .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
-            .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
-    else {
+    if (versionName == null) {
+      version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
+          .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
+          .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
+    } else {
       version = versions.stream().filter(ver -> versionName.equals(ver.getName()))
-          .findFirst().orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
+          .findFirst()
+          .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
 
       if (version.getStatus() != VersionStatus.Certified) {
         throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
@@ -399,12 +419,10 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     Response.ResponseBuilder response = Response.ok(zipFile);
     if (zipFile == null) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_FAIL + vspId);
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + zipFile.getName());
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_SUCCESS + vspId);
     return response.build();
   }
 
@@ -475,15 +493,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     Map<String, List<ErrorMessage>> compilationErrors =
         vendorSoftwareProductManager.compile(vspId, version);
     if (!validationResponse.isValid() || MapUtils.isNotEmpty(compilationErrors)) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP_FAIL + vspId);
-      if (validationResponse.getVspErrors() != null) {
-        validationResponse.getVspErrors().forEach(errorCode -> LOGGER.audit(AuditMessages
-            .AUDIT_MSG + String.format(SUBMIT_VSP_ERROR, errorCode.message(), vspId)));
-      }
-      if (validationResponse.getUploadDataErrors() != null) {
-        validationResponse.getUploadDataErrors().values().forEach(errorMessages
-            -> printAuditForErrors(errorMessages, vspId, SUBMIT_VSP_ERROR));
-      }
+
       activityLogManager.logActivity(
           new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false,
               "Failed on validation before submit", ""));
@@ -492,21 +502,23 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     versioningManager.submit(vspId, version, message);
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
     activityLogManager.logActivity(
         new ActivityLogEntity(vspId, version, ActivityType.Submit, user, true, "", message));
     return Optional.empty();
   }
 
-  private void notifyUsers(String itemId, Version version, String message,
+  private void notifyUsers(String itemId, String itemName, Version version, String message,
                            String userName, NotificationEventTypes eventType) {
     Map<String, Object> eventProperties = new HashMap<>();
-    eventProperties.put(ITEM_NAME, itemManager.get(itemId).getName());
+    eventProperties.put(ITEM_NAME, itemName == null ? asdcItemManager.get(itemId).getName() : itemName);
     eventProperties.put(ITEM_ID, itemId);
 
-    Version ver = versioningManager.get(itemId, version);
-    eventProperties.put(VERSION_NAME, ver.getName());
-    eventProperties.put(VERSION_ID, ver.getId());
+    if (version != null) {
+      eventProperties.put(VERSION_NAME, version.getName() == null
+          ? versioningManager.get(itemId, version).getName()
+          : version.getName());
+      eventProperties.put(VERSION_ID, version.getId());
+    }
 
     eventProperties.put(SUBMIT_DESCRIPTION, message);
     eventProperties.put(PERMISSION_USER, userName);
@@ -526,8 +538,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private final Map<String, Object> attributes;
     private final String entityId;
 
-     SyncEvent(String eventType, String originatorId,
-                     Map<String, Object> attributes, String entityId) {
+    SyncEvent(String eventType, String originatorId,
+              Map<String, Object> attributes, String entityId) {
       this.eventType = eventType;
       this.originatorId = originatorId;
       this.attributes = attributes;
@@ -571,42 +583,27 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   private void addNetworkPackageInfo(String vspId, Version version, VspDetailsDto vspDetailsDto) {
-    OrchestrationTemplateEntity orchestrationTemplateInfo =
-        vendorSoftwareProductManager.getOrchestrationTemplateInfo(vspId, version);
-
-    vspDetailsDto.setValidationData(orchestrationTemplateInfo.getValidationDataStructure());
-    vspDetailsDto.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
-    vspDetailsDto.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix() == null
-        ? OnboardingTypesEnum.NONE.toString()
-        : orchestrationTemplateInfo.getFileSuffix());
-
     OrchestrationTemplateCandidateData candidateInfo =
         OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface()
             .getInfo(vspId, version);
-
-    //todo - remove after fix missing candidate element
-    if (candidateInfo == null) {
-      candidateInfo = new OrchestrationTemplateCandidateData();
-      candidateInfo.setFileSuffix("zip");
+    if (Objects.nonNull(candidateInfo) && Objects.nonNull(candidateInfo.getFileSuffix())) {
+      vspDetailsDto.setValidationData(candidateInfo.getValidationDataStructure());
+      vspDetailsDto.setNetworkPackageName(candidateInfo.getFileName());
+      vspDetailsDto.setCandidateOnboardingOrigin(candidateInfo.getFileSuffix());
+    } else {
+      OrchestrationTemplateEntity orchestrationTemplateInfo =
+          vendorSoftwareProductManager.getOrchestrationTemplateInfo(vspId, version);
+      if (Objects.nonNull(orchestrationTemplateInfo)) {
+        vspDetailsDto.setValidationData(orchestrationTemplateInfo.getValidationDataStructure());
+        vspDetailsDto.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
+        vspDetailsDto.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix());
+      }
     }
-
-    vspDetailsDto.setCandidateOnboardingOrigin(candidateInfo.getFileSuffix() == null
-        ? OnboardingTypesEnum.NONE.toString()
-        : candidateInfo.getFileSuffix());
   }
 
   private boolean userHasPermission(String itemId, String userId) {
     String permission = permissionsManager.getUserItemPermiission(itemId, userId);
     return permission != null && permission
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name());
-  }
-
-  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(
-            AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(), vspId));
-      }
-    });
   }
 }

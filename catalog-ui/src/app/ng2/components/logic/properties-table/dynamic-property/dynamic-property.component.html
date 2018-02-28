@@ -10,7 +10,16 @@
         </div>
         <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">{{property.name}}</div> <!-- simple children of complex type within map or list -->
         <div class="table-cell map-entry" *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP"><!-- map left cell -->
-            <input [value]="property.mapKey" #mapKey (change)="mapKeyChanged.emit(mapKey)" [readonly]="readonly" type="text" [ngClass]="{'disabled':readonly, 'error':!mapKey.validity.valid}" required/>
+            <!--<input [value]="property.mapKey" [placeholder]="property.name" (input)="mapKeyChanged.emit($event.target.value)" [readonly]="readonly" type="text" [ngClass]="{'disabled':readonly, 'error':property.mapKeyError}" required/>-->
+            <dynamic-element #mapKeyInput
+                class="value-input"
+                pattern="validationUtils.getValidationPattern(string)"
+                [value]="property.mapKey"
+                type="string"
+                [name]="property.name"
+                (elementChanged)="mapKeyChanged.emit($event.value)"
+                [readonly]="readonly"
+            ></dynamic-element>
         </div>
     </ng-container>
     <!-- RIGHT CELL OR FULL WIDTH CELL-->
@@ -18,11 +27,11 @@
         <div class="table-cell">
             <dynamic-element class="value-input"
                 pattern="validationUtils.getValidationPattern(property.type)"
-                [(value)]="property.valueObj"
+                [value]="property.valueObj"
                 [type]="property.isDeclared ? 'string' : property.type"
                 [name]="property.name"
                 [path]="property.propertiesName"
-                (valueChange)="valueChanged.emit();"
+                (elementChanged)="onElementChanged($event)"
                 [readonly]="readonly || property.isDeclared || property.isDisabled"
             ></dynamic-element>
         </div>
@@ -54,8 +63,8 @@
             [propertyNameSearchText]="propertyNameSearchText"
             [readonly]="readonly"
             [hasChildren]="getHasChildren(prop)"
-            (valueChanged)="childValueChanged(prop)"
-            (mapKeyChanged)="removeValueFromParent(prop, $event)"
+            (propertyChanged)="childValueChanged(prop)"
+            (mapKeyChanged)="updateChildKeyInParent(prop, $event)"
             (expandChild)="expandChildById($event)"
             (deleteItem)="deleteListOrMapItem($event)"
             (clickOnPropertyRow)="onClickPropertyRow($event)"

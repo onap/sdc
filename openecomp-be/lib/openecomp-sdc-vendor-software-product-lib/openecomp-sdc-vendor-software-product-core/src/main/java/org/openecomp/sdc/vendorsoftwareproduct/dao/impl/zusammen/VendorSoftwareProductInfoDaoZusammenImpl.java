@@ -1,10 +1,31 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
+import java.io.ByteArrayInputStream;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -12,17 +33,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.Eleme
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToVSPQuestionnaireConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
-
-import java.io.ByteArrayInputStream;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareProductInfoDao {
   private static final String EMPTY_DATA = "{}";
@@ -39,7 +53,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         new VersionableEntityMetadata(VersionableEntityStoreType.Zusammen, "VendorSoftwareProduct",
             null, null);
 
-    VersioningManagerFactory.getInstance().createInterface()
+    ActionVersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
   }
 
@@ -84,12 +98,13 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     ZusammenElement candidateContentElement =
         buildStructuralElement(ElementType.OrchestrationTemplateCandidateContent, Action.CREATE);
     candidateContentElement.setData(emptyData);
-
+    ZusammenElement validationData = buildStructuralElement(ElementType
+        .OrchestrationTemplateCandidateValidationData, Action.CREATE);
     ZusammenElement candidateElement =
         buildStructuralElement(ElementType.OrchestrationTemplateCandidate, Action.CREATE);
     candidateElement.setData(emptyData);
     candidateElement.addSubElement(candidateContentElement);
-
+    candidateElement.addSubElement(validationData);
     zusammenAdaptor.saveElement(context, elementContext, candidateElement,
         "Create Orchestration Template Candidate Elements");
   }
@@ -119,10 +134,15 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         buildStructuralElement(ElementType.OrchestrationTemplateValidationData, Action.CREATE);
     validationData.setData(emptyData);
 
+    ZusammenElement orchestrationTemplateStructure = buildStructuralElement(ElementType
+        .OrchestrationTemplateStructure, Action.CREATE);
+    validationData.setData(emptyData);
+
     ZusammenElement orchestrationTemplate =
         buildStructuralElement(ElementType.OrchestrationTemplate, Action.CREATE);
     orchestrationTemplate.setData(emptyData);
     orchestrationTemplate.addSubElement(validationData);
+    orchestrationTemplate.addSubElement(orchestrationTemplateStructure);
 
     return orchestrationTemplate;
   }
@@ -199,7 +219,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
   public boolean isManual(String vspId, Version version) {
     final VspDetails vspDetails = get(new VspDetails(vspId, version));
     if (vspDetails != null && "Manual".equals(vspDetails.getOnboardingMethod())) {
-        return true;
+      return true;
     }
     return false;
   }
@@ -248,6 +268,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     ON_BOARDING_METHOD("onboardingMethod");
 
     private String value;
+
     InfoPropertyName(String value){
       this.value=value;
     }

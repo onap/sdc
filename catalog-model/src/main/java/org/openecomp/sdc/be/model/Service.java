@@ -20,9 +20,11 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 
@@ -43,6 +45,7 @@ public class Service extends Component {
 	}
 
 	private Map<String, ArtifactDefinition> serviceApiArtifacts;
+	private Map<String, ForwardingPathDataDefinition> forwardingPaths;
 
 
 	public Map<String, ArtifactDefinition> getServiceApiArtifacts() {
@@ -55,6 +58,21 @@ public class Service extends Component {
 
 	public String getProjectCode() {
 		return getServiceMetadataDefinition().getProjectCode();
+	}
+
+	public Map<String, ForwardingPathDataDefinition> getForwardingPaths() {
+		return forwardingPaths;
+	}
+
+	public void setForwardingPaths(Map<String, ForwardingPathDataDefinition> forwardingPaths) {
+		this.forwardingPaths = forwardingPaths;
+	}
+
+	public ForwardingPathDataDefinition addForwardingPath(ForwardingPathDataDefinition forwardingPathDataDefinition){
+		if(forwardingPaths == null){
+			forwardingPaths = new HashMap<>();
+		}
+		return forwardingPaths.put(forwardingPathDataDefinition.getUniqueId(),forwardingPathDataDefinition);
 	}
 
 	public void setProjectCode(String projectName) {

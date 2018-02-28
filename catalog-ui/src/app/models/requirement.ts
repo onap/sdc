@@ -22,7 +22,9 @@
  * Created by obarda on 4/20/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {RequirementCapabilityModel} from "./capability";
+
 //this is an object contains keys, when each key has matching array.
 // for example: key = tosca.capabilities.network. and the match array is array of requirements objects
 export class RequirementsGroup {
@@ -44,6 +46,7 @@ export class Requirement implements RequirementCapabilityModel{
     name:string;
     ownerId:string;
     ownerName:string;
+    parentName: string;
     node:string;
     uniqueId:string;
     relationship:string;
@@ -60,6 +63,7 @@ export class Requirement implements RequirementCapabilityModel{
             this.name = requirement.name;
             this.ownerId = requirement.ownerId;
             this.ownerName = requirement.ownerName;
+            this.parentName = requirement.parentName;
             this.node = requirement.node;
             this.uniqueId = requirement.uniqueId;
             this.relationship = requirement.relationship;

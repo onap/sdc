@@ -26,6 +26,7 @@ import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
 import org.openecomp.sdc.common.errors.SdcConfigurationException;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
@@ -82,7 +83,8 @@ public class CassandraSessionFactory {
 
 
         Cluster cluster = builder.build();
-        String keyStore = CassandraUtils.getKeySpace();
+        String keyStore = SessionContextProviderFactory.getInstance().createInterface().get()
+            .getTenant();
         return cluster.connect(keyStore);
     }
 

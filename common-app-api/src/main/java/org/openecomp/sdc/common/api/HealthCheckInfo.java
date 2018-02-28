@@ -51,7 +51,7 @@ public class HealthCheckInfo {
 		this.version = version;
 		this.description = description;
 		this.componentsInfo = componentsInfo;
-	}
+}
 
 	public HealthCheckInfo() {
 		super();

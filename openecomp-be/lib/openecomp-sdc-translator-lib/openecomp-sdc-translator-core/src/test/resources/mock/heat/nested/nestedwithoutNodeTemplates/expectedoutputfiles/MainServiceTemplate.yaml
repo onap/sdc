@@ -11,6 +11,14 @@ topology_template:
     ssc_a_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_name_0
       type: string
       description: Name of VM A of SSC
       constraints:
@@ -18,6 +26,15 @@ topology_template:
     mgmt_net_plen:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: mgmt_net_plen
       type: float
       description: Management network prefix length
       constraints:
@@ -27,6 +44,14 @@ topology_template:
     ssc_b_name_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            source_type: HEAT
+            param_name: ssc_b_name_0
       type: string
       description: Name of VM B of SSC
       constraints:
@@ -34,16 +59,43 @@ topology_template:
     ssc_b_untrusted_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            source_type: HEAT
+            param_name: ssc_b_untrusted_ip_0
       type: string
       description: Fixed IPv4 address on Untrusted/access network for SSC B.
     ssc_b_untrusted_parent_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            source_type: HEAT
+            param_name: ssc_b_untrusted_parent_ip_0
       type: string
       description: Fixed IPv4 address on Untrusted/access parent network for SSC B.
     perimeta_untrusted_vlan_ids:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: perimeta_untrusted_vlan_ids
       type: list
       description: List of VLAN IDs to use on the untrusted/access network
       entry_schema:
@@ -51,16 +103,41 @@ topology_template:
     ssc_json_radius_servername:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_json_radius_servername
       type: string
       description: IP Address or hostname of RADIUS server
     ssc_mgmt_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_mgmt_vip_0
       type: string
       description: Management virtual IP address to use for SSC.
     rtp_msc_json_use_radius_authentication:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_json_use_radius_authentication
       type: string
       description: Json prefix, used to indicate if user account authentication is done externally through Radius
       constraints:
@@ -70,16 +147,45 @@ topology_template:
     ssc_trusted_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_trusted_vip_0
       type: string
       description: Virtual IPv4 address on Trusted/core network for SSC.
     ssc_untrusted_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_untrusted_vip_0
       type: string
       description: Virtual IPv4 address on Untrusted/access network for SSC.
     perimeta_untrusted_num_vlans:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: perimeta_untrusted_num_vlans
       type: float
       description: number of VLANs to connect to the untrusted/access interface
       constraints:
@@ -89,6 +195,15 @@ topology_template:
     rtp_msc_mgmt_vips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_mgmt_vips
       type: list
       description: List of management virtual IP addresses to use for RTP MSC.
       entry_schema:
@@ -96,6 +211,14 @@ topology_template:
     ssc_a_json_prefix:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_json_prefix
       type: string
       description: Json prefix, used to create the correct json file depending on the operation being performed
       default: ' '
@@ -106,6 +229,14 @@ topology_template:
     rtp_msc_a_untrusted_parent_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_untrusted_parent_ips
       type: list
       description: List of fixed IPv4 addresses on Untrusted/access parent network for RTP MSC A.
       entry_schema:
@@ -113,16 +244,41 @@ topology_template:
     ssc_b_trusted_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            source_type: HEAT
+            param_name: ssc_b_trusted_ip_0
       type: string
       description: Fixed IPv4 address on Trusted/core network for SSC B.
     shared_perimeta_ssc_server_group:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: shared_perimeta_ssc_server_group
       type: string
       description: Server group to use for these VMs
     ssc_json_radius_timeout:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_json_radius_timeout
       type: float
       description: Timeout for connect requests to RADIUS server
       constraints:
@@ -132,6 +288,15 @@ topology_template:
     rtp_msc_untrusted_vips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_untrusted_vips
       type: list
       description: List of virtual IPv4 addresses on Untrusted/access network for RTP MSC.
       entry_schema:
@@ -139,11 +304,27 @@ topology_template:
     rtp_msc_json_radius_servername:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_json_radius_servername
       type: string
       description: IP Address or hostname of RADIUS server
     rtp_msc_vnfcnames:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_vnfcnames
       type: list
       description: List of vnfc names of the RTP MSC. This is the name associated with the perimeta pair and corresponds to the VIP
       entry_schema:
@@ -151,6 +332,15 @@ topology_template:
     ssc_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_image_name
       type: string
       description: Glance image to use for launching SSC Perimeta instances.
       default: ISBC_SBC_v4.0.40_SU12.qcow2
@@ -159,6 +349,14 @@ topology_template:
     perimeta_max_rtp_msc_count:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_perimeta_deployment_create
+            source_type: HEAT
+            param_name: perimeta_max_rtp_msc_count
       type: float
       description: Max number of RTP MSCs in a site.
       default: 8
@@ -169,6 +367,17 @@ topology_template:
     trusted_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: trusted_net_id
       type: string
       description: Network ID of Trusted/core network.
       constraints: [
@@ -176,6 +385,15 @@ topology_template:
     ntp_server_ip_addrs:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ntp_server_ip_addrs
       type: string
       description: NTP server IPv4 addresses, separated by commas.  These must be accessible from the management network
       constraints:
@@ -183,6 +401,14 @@ topology_template:
     rtp_msc_json_radius_default:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_json_radius_default
       type: string
       description: Default authentication level for RADIUS users
       constraints:
@@ -195,6 +421,14 @@ topology_template:
     rtp_msc_a_vnfcnames:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_vnfcnames
       type: list
       description: List of vnfc names of the A of RTP MSC
       entry_schema:
@@ -202,11 +436,27 @@ topology_template:
     ssc_b_untrusted_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            source_type: HEAT
+            param_name: ssc_b_untrusted_v6_ip_0
       type: string
       description: Fixed IPv6 address on Untrusted/access network for SSC B.
     rtp_msc_b_index:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            source_type: HEAT
+            param_name: rtp_msc_b_index
       type: float
       description: Index of RTP MSC to instantiate / heal.
       constraints:
@@ -216,6 +466,15 @@ topology_template:
     rtp_msc_untrusted_v6_vips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_untrusted_v6_vips
       type: list
       description: List of virtual IPv6 addresses on Untrusted/access network for RTP MSC.
       entry_schema:
@@ -223,16 +482,41 @@ topology_template:
     shared_ssc_unused_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: shared_ssc_unused_net_id
       type: string
       description: Unused network ID
     ssc_b_rf_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            source_type: HEAT
+            param_name: ssc_b_rf_ip_0
       type: string
       description: RF fixed IP address to use for SSC B.
     rtp_msc_b_untrusted_parent_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            source_type: HEAT
+            param_name: rtp_msc_b_untrusted_parent_ips
       type: list
       description: List of fixed IPv4 addresses on Untrusted/access parent network for RTP MSC B.
       entry_schema:
@@ -240,6 +524,15 @@ topology_template:
     ssc_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_flavor_name
       type: string
       description: Flavor to use for creating SSC VM instance
       default: gv.c8r16d160
@@ -248,6 +541,17 @@ topology_template:
     mgmt_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: mgmt_net_id
       type: string
       description: Management network ID
       constraints: [
@@ -255,11 +559,27 @@ topology_template:
     ssc_json_radius_secret:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_json_radius_secret
       type: string
       description: Shared secret to use for the RADIUS Server
     rtp_msc_a_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_names
       type: list
       description: List of names of VM A of RTP MSC
       entry_schema:
@@ -267,6 +587,17 @@ topology_template:
     shared_int_ha_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: shared_int_ha_net_id
       type: string
       description: HA network id
       constraints: [
@@ -274,6 +605,14 @@ topology_template:
     ssc_vnfcname_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_vnfcname_0
       type: string
       description: Name of vnfc of SSC. This is the name associated with the perimeta pair and corresponds to the VIP
       constraints:
@@ -281,6 +620,15 @@ topology_template:
     rtp_msc_trusted_vips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_trusted_vips
       type: list
       description: List of virtual IPv4 addresses on Trusted/core network for RTP MSC.
       entry_schema:
@@ -288,6 +636,14 @@ topology_template:
     rtp_msc_json_radius_port:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_json_radius_port
       type: float
       description: Port to use to connect to RADIUS server
       constraints:
@@ -297,11 +653,30 @@ topology_template:
     vf_module_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: vf_module_id
       type: string
       description: Unique ID for this VF Module instance
     ssc_json_radius_port:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_json_radius_port
       type: float
       description: Port to use to connect to RADIUS server
       constraints:
@@ -311,6 +686,14 @@ topology_template:
     rtp_msc_b_untrusted_v6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            source_type: HEAT
+            param_name: rtp_msc_b_untrusted_v6_ips
       type: list
       description: List of fixed IPv6 addresses on Untrusted/access network for RTP MSC B.
       entry_schema:
@@ -318,6 +701,15 @@ topology_template:
     rtp_msc_b_mgmt_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_b_mgmt_ips
       type: list
       description: List of management fixed IP addresses to use for RTP MSC B.
       entry_schema:
@@ -325,21 +717,60 @@ topology_template:
     ssc_a_int_ha_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_int_ha_ip_0
       type: string
       description: HA fixed IP address to use for SSC A.
     ssc_b_mgmt_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_b_mgmt_ip_0
       type: string
       description: Management fixed IP address to use for SSC B.
     vnf_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            - base_perimeta_deployment_create
+            source_type: HEAT
+            param_name: vnf_name
       type: string
       description: Unique name for this VNF instance
     rtp_msc_flavor_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_flavor_name
       type: string
       description: Flavor to use for creating RTP MSC VM instance
       default: gv.c8r16d160
@@ -348,12 +779,28 @@ topology_template:
     perimeta_int_ha_net_prefix_v4:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_perimeta_deployment_create
+            source_type: HEAT
+            param_name: perimeta_int_ha_net_prefix_v4
       type: string
       description: IPv4 subnet prefix for internal HA network
       default: 172.26.1.4
     rtp_msc_b_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            source_type: HEAT
+            param_name: rtp_msc_b_names
       type: list
       description: List of names of VM B of RTP MSC
       entry_schema:
@@ -361,6 +808,14 @@ topology_template:
     rtp_msc_b_untrusted_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            source_type: HEAT
+            param_name: rtp_msc_b_untrusted_ips
       type: list
       description: List of fixed IPv4 addresses on Untrusted/access network for RTP MSC B.
       entry_schema:
@@ -368,12 +823,28 @@ topology_template:
     perimeta_ssh_key:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_perimeta_deployment_create
+            source_type: HEAT
+            param_name: perimeta_ssh_key
       type: string
       description: SSH public key
       default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDXvSadEWp+nsz3gEAAAAAAAAAAbggQ3t06mqFIauHfUYMiKZ3EUX3jDFf/uGQoNsIZU6SNE/gl3tY4fFvO8Yzj8OY/vstHHvEadbY5aXNE6kd39ik20uRNbeZLT+pRllBwVKBSVnFqG3kBDvNWmBIenlPZzu3Ay0LYT/aDq6fZaz8Mqy8hzhpAAAAAAAAAAEmS/ESYY4UMs/aF2fVGmCLqudSjLpSsyD8lXag2dmeiT7cTdwRkgtDNTULXCPVucolVZwZF9BxXPNK++B+fL/ZY4MrXHXgZYGEElrMCFYkQFb3jQv3XQtxZ6gVByrzgGc9eiU7tkCgY2cVfb22iIs9n Generated-by-Nova
     rtp_msc_a_index:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_index
       type: float
       description: Index of RTP MSC to instantiate / heal.
       constraints:
@@ -383,6 +854,14 @@ topology_template:
     rtp_msc_json_v41:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_json_v41
       type: string
       description: Json prefix, used to ensure that the json tags will be recognised by the server loading them
       default: ' '
@@ -393,6 +872,15 @@ topology_template:
     shared_perimeta_rtp_msc_server_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: shared_perimeta_rtp_msc_server_groups
       type: list
       description: Server group to use for these VMs
       entry_schema:
@@ -400,6 +888,14 @@ topology_template:
     rtp_msc_a_json_prefix:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_json_prefix
       type: string
       description: Json prefix, used to create the correct json file depending on the operation being performed
       default: ' '
@@ -410,11 +906,28 @@ topology_template:
     ssc_b_int_ha_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_b_int_ha_ip_0
       type: string
       description: HA fixed IP address to use for SSC B.
     rtp_msc_b_vnfcnames:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_b_vnfcnames
       type: list
       description: List of vnfc names of VM B of RTP MSC
       entry_schema:
@@ -422,26 +935,71 @@ topology_template:
     ssc_a_trusted_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_trusted_ip_0
       type: string
       description: Fixed IPv4 address on Trusted/core network for SSC A.
     vnf_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: vnf_id
       type: string
       description: ID of VNF
     availability_zone_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: Availability zone for A instances.
     availability_zone_1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            source_type: HEAT
+            param_name: availability_zone_1
       type: string
       description: Availability zone for B instances.
     perimeta_int_ha_net_prefix_len_v4:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_perimeta_deployment_create
+            source_type: HEAT
+            param_name: perimeta_int_ha_net_prefix_len_v4
       type: float
       description: Prefix length of subnet associated with internal HA network
       default: 26
@@ -452,11 +1010,28 @@ topology_template:
     ssc_a_untrusted_v6_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_untrusted_v6_ip_0
       type: string
       description: Fixed IPv6 address on Untrusted/access network for SSC A.
     rtp_msc_untrusted_parent_vips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_untrusted_parent_vips
       type: list
       description: List of virtual IPv4 addresses on Untrusted/access parent network for RTP MSC.
       entry_schema:
@@ -464,6 +1039,17 @@ topology_template:
     shared_int_ha_net_prefix_len_v4:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: shared_int_ha_net_prefix_len_v4
       type: float
       description: Prefix length of subnet associated with internal HA network
       constraints:
@@ -473,11 +1059,29 @@ topology_template:
     ssc_rf_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_rf_vip_0
       type: string
       description: RF virtual IP address to use for SSC.
     rtp_msc_a_int_ha_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_int_ha_ips
       type: list
       description: List of HA fixed IP addresses to use for RTP MSC A.
       entry_schema:
@@ -485,16 +1089,46 @@ topology_template:
     shared_perimeta_keypair:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: shared_perimeta_keypair
       type: string
       description: Keypair to use for accessing this Perimeta instance
     shared_int_untrusted_parent_net_id:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: shared_int_untrusted_parent_net_id
       type: string
       description: untrusted parent network id
     ssc_a_vnfcname_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_vnfcname_0
       type: string
       description: vnfc name of VM A of SSC
       constraints:
@@ -502,11 +1136,27 @@ topology_template:
     rtp_msc_json_radius_secret:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_json_radius_secret
       type: string
       description: Shared secret to use for the RADIUS Server
     rtp_msc_b_trusted_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            source_type: HEAT
+            param_name: rtp_msc_b_trusted_ips
       type: list
       description: List of fixed IPv4 addresses on Trusted/core network for RTP MSC B.
       entry_schema:
@@ -514,6 +1164,14 @@ topology_template:
     rtp_msc_a_trusted_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_trusted_ips
       type: list
       description: List of fixed IPv4 addresses on Trusted/core network for RTP MSC A.
       entry_schema:
@@ -521,6 +1179,15 @@ topology_template:
     rtp_msc_image_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_image_name
       type: string
       description: Glance image to use for launching RTP MSC Perimeta instances.
       default: ISBC_SBC_v4.0.40_SU12.qcow2
@@ -529,16 +1196,42 @@ topology_template:
     ssc_a_mgmt_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_mgmt_ip_0
       type: string
       description: Management fixed IP address to use for SSC A.
     ssc_untrusted_parent_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_untrusted_parent_vip_0
       type: string
       description: Virtual IPv4 address on Untrusted/access parent network for SSC.
     rtp_msc_b_int_ha_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_b_int_ha_ips
       type: list
       description: List of HA fixed IP addresses to use for RTP MSC B.
       entry_schema:
@@ -546,11 +1239,28 @@ topology_template:
     ssc_untrusted_v6_vip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_b
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_untrusted_v6_vip_0
       type: string
       description: Virtual IPv6 address on Untrusted/access network for SSC.
     rtp_msc_a_mgmt_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_mgmt_ips
       type: list
       description: List of management fixed IP addresses to use for RTP MSC A.
       entry_schema:
@@ -558,6 +1268,14 @@ topology_template:
     rtp_msc_a_untrusted_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_untrusted_ips
       type: list
       description: List of fixed IPv4 addresses on Untrusted/access network for RTP MSC A.
       entry_schema:
@@ -565,11 +1283,27 @@ topology_template:
     ssc_a_rf_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_rf_ip_0
       type: string
       description: RF fixed IP address to use for SSC A.
     ssc_json_use_radius_authentication:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_json_use_radius_authentication
       type: string
       description: Json prefix, used to indicate if user account authentication is done externally through Radius
       constraints:
@@ -579,11 +1313,30 @@ topology_template:
     ssc_a_untrusted_parent_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_untrusted_parent_ip_0
       type: string
       description: Fixed IPv4 address on Untrusted/access parent network for SSC A.
     perimeta_untrusted_vlan_networks:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: perimeta_untrusted_vlan_networks
       type: list
       description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
       entry_schema:
@@ -591,11 +1344,27 @@ topology_template:
     ssc_a_untrusted_ip_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_a_untrusted_ip_0
       type: string
       description: Fixed IPv4 address on Untrusted/access network for SSC A.
     rtp_msc_a_untrusted_v6_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_a_untrusted_v6_ips
       type: list
       description: List of fixed IPv6 addresses on Untrusted/access network for RTP MSC A.
       entry_schema:
@@ -603,11 +1372,28 @@ topology_template:
     mgmt_net_default_gateway:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: mgmt_net_default_gateway
       type: string
       description: Default gateway for management network
     rtp_msc_json_radius_timeout:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_a
+            source_type: HEAT
+            param_name: rtp_msc_json_radius_timeout
       type: float
       description: Timeout for connect requests to RADIUS server
       constraints:
@@ -617,6 +1403,14 @@ topology_template:
     ssc_b_vnfcname_0:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_b_vnfcname_0
       type: string
       description: vnfc name of VM B of SSC
       constraints:
@@ -624,6 +1418,14 @@ topology_template:
     ssc_json_v41:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_json_v41
       type: string
       description: Json prefix, used to ensure that the json tags will be recognised by the server loading them
       default: ' '
@@ -634,6 +1436,14 @@ topology_template:
     ssc_json_radius_default:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: ssc_json_radius_default
       type: string
       description: Default authentication level for RADIUS users
       constraints:
@@ -646,6 +1456,17 @@ topology_template:
     shared_perimeta_sec_groups:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - module_2_perimeta_rtp_msc_b
+            - module_1_perimeta_ssc_b
+            - module_2_perimeta_rtp_msc_a
+            - module_1_perimeta_ssc_a
+            source_type: HEAT
+            param_name: shared_perimeta_sec_groups
       type: list
       description: List of security groups to add on all interfaces.
       entry_schema:
@@ -1299,4 +2120,4 @@ topology_template:
                 get_input: vnf_name
         container_type: host
       targets:
-      - shared_perimeta_ssc_server_gp_group
+      - shared_perimeta_ssc_server_gp_group

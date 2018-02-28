@@ -9,6 +9,7 @@ public enum PermissionActionTypes {
   Change_Item_Permissions,
   Edit_Item,
   Commit_Item,
+  Delete_Item,
   Submit_Item;
 
 }

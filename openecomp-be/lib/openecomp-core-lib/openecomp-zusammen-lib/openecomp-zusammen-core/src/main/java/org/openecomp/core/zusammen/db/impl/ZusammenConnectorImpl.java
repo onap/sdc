@@ -109,6 +109,15 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   }
 
   @Override
+  public void deleteItem(SessionContext context, Id itemId){
+    Response<Void> response = itemAdaptorFactory.createInterface(context).delete(context, itemId);
+    if (!response.isSuccessful()) {
+      throw new SdcRuntimeException(
+          "Failed to delete Item. message:" + response.getReturnCode().toString());
+    }
+  }
+
+  @Override
   public void updateItem(SessionContext context, Id itemId, Info info) {
     Response<Void> response =
         itemAdaptorFactory.createInterface(context).update(context, itemId, info);

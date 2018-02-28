@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import { Component, Module, NodesFactory, ComponentInstance } from "app/models";
 import { ComponentInstanceFactory } from "app/utils";
 import { DeploymentGraphGeneralUtils } from "./deployment-utils/deployment-graph-general-utils";
@@ -133,7 +134,7 @@ export class DeploymentGraph implements ng.IDirective {
         });
 
         this.initGraphNodes(this._cy, scope.component); //creating instances nodes
-        this.commonGraphUtils.initGraphLinks(this._cy, scope.component.componentInstancesRelations);
+        this.commonGraphUtils.initGraphLinks(this._cy, scope.component.componentInstancesRelations, scope.component.getRelationRequirementCapability.bind(scope.component));
         this._cy.collapseAll();
         this.registerGraphEvents();
 

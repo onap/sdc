@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 
-tosca_definitions_version: tosca_simple_openecomp_1_0
+tosca_definitions_version: tosca_simple_yaml_1_1
 
 metadata:
   filename: openecomp/_index.yml
@@ -32,4 +32,6 @@ imports:
     file: groups.yml
 - data:
     file: data.yml
+- annotations:
+    file: annotations.yml
 

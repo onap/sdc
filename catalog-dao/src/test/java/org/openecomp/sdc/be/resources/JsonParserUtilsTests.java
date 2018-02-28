@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,54 +20,69 @@
 
 package org.openecomp.sdc.be.resources;
 
-import java.io.IOException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.ImmutableList;
+import org.junit.Test;
+import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.openecomp.sdc.be.utils.FixtureHelpers.fixture;
+import static org.openecomp.sdc.be.utils.JsonTester.testJsonMap;
 
 public class JsonParserUtilsTests {
-	@Test
-	public void testProperties() throws JsonGenerationException, JsonMappingException, IOException {
 
-		PropertyDataDefinition dataDefinition = new PropertyDataDefinition();
-		dataDefinition.setName("myName");
-		dataDefinition.setDescription("description");
-		dataDefinition.setDefaultValue("default11");
-		SchemaDefinition entrySchema = new SchemaDefinition();
-		PropertyDataDefinition property = new PropertyDataDefinition();
-		property.setName("name12");
-		property.setType("string");
-		entrySchema.setProperty(property);
-		Map<String, PropertyDataDefinition> properties = new HashMap<>();
-		properties.put("key1", property);
-		properties.put("key2", property);
-		
-		entrySchema.setProperties(properties );
-		dataDefinition.setSchema(entrySchema);
-		
-		Map<String, PropertyDataDefinition> map = new HashMap<>();
-		map.put("prop", dataDefinition);
-		
-//		String jsonstring = JsonParserUtils.jsonToString(map);
-		
-//		Map<String, PropertyDataDefinition> parseToJson = JsonParserUtils.parseToJson(jsonstring, PropertyDataDefinition.class);
-//		Map<String, PropertyDataDefinition> parseToJson;
-//		TypeReference<Map<String, PropertyDataDefinition>> typeRef = new TypeReference<Map<String, PropertyDataDefinition>>() {
-//		};
-//		ObjectMapper mapper = new ObjectMapper();
-//		try {
-//			parseToJson = mapper.readValue(jsonstring, typeRef);
-//		} catch (Exception e) {
-////			logger.debug("Failed to parse json {}", json, e);
-//		}
-		
-//		System.out.println(parseToJson);
-		
-	}
+    private static final String FIXTURE_PATH = "fixtures/ListCapabilityDataDefinition.json";
 
+    @Test
+    public void testToMap() {
+        String json = fixture(FIXTURE_PATH);
+        Map<String, ListCapabilityDataDefinition> actual = JsonParserUtils.toMap(json, ListCapabilityDataDefinition.class);
+        Map<String, ListCapabilityDataDefinition> expected = buildMap();
+        assertThat(actual).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    public void testJacksonFasterXml() {
+        ObjectMapper mapper = new ObjectMapper()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        assertThatCode(() -> testJsonMap(buildMap(), ListCapabilityDataDefinition.class, FIXTURE_PATH, mapper))
+                .doesNotThrowAnyException();
+    }
+
+    private Map<String, ListCapabilityDataDefinition> buildMap() {
+        Map<String, ListCapabilityDataDefinition> map = new HashMap<>();
+        map.put("org.openecomp.capabilities.Forwarder", buildListCapabilityDataDefinition());
+        return map;
+    }
+
+    private ListCapabilityDataDefinition buildListCapabilityDataDefinition() {
+        CapabilityDataDefinition dataDefinition = new CapabilityDataDefinition();
+        dataDefinition.setName("forwarder");
+        dataDefinition.setType("org.openecomp.capabilities.Forwarder");
+        dataDefinition.setUniqueId("capability.deb142fd-95eb-48f7-99ae-81ab09466b1e.forwarder");
+        dataDefinition.setOwnerId("deb142fd-95eb-48f7-99ae-81ab09466b1e");
+        dataDefinition.setMinOccurrences("1");
+        dataDefinition.setLeftOccurrences("UNBOUNDED");
+        dataDefinition.setMaxOccurrences("UNBOUNDED");
+        dataDefinition.setCapabilitySources(buildCapabilitySources());
+
+        return new ListCapabilityDataDefinition(ImmutableList.of(dataDefinition));
+    }
+
+    private List<String> buildCapabilitySources() {
+        return ImmutableList.of(
+                "org.openecomp.resource.cp.nodes.network.Port",
+                "org.openecomp.resource.cp.v2.extCP",
+                "org.openecomp.resource.cp.v2.extContrailCP");
+    }
 }

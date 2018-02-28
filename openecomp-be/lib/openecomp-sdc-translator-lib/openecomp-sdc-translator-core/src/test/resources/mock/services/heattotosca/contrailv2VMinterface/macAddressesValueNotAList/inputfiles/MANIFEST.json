@@ -4,6 +4,11 @@
   "version": "0.1",
   "data": [
     {
+      "isBase": true,
+      "file": "base_vmme_vlc.yml",
+      "type": "HEAT"
+    },
+    {
       "isBase": false,
       "file": "vmme_vlc.yml",
       "type": "HEAT"

@@ -4,19 +4,19 @@ from StringIO import StringIO
 import json
 import copy
 from importCommon import *
-################################################################################################################################################
-#																																		       #	
-# Import all users from a given file																										   #
-# 																																			   #		
-# activation :																																   #
-#       python importUsers.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#																																		  	   #			
-# shortest activation (be host = localhost, be port = 8080): 																				   #																       #
-#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           #
-#																																		       #	
-################################################################################################################################################
+#################################################################################################################################################################################
+#																																		       									#
+# Import all users from a given file																										   									#
+# 																																			   									#
+# activation :																																   									#
+#       python importUsers.py [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]   #
+#																																		  	   									#
+# shortest activation (be host = localhost, be port = 8080): 																				   									#
+#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           									#
+#																																		       									#
+#################################################################################################################################################################################
 
-def createNormativeElement(beHost, bePort, adminUser, fileDir, urlSuffix, ELEMENT_NAME, elementFormName):
+def createNormativeElement(scheme, beHost, bePort, adminUser, fileDir, urlSuffix, ELEMENT_NAME, elementFormName):
 	
 	try:
 		log("in create normative element ", ELEMENT_NAME)
@@ -24,7 +24,7 @@ def createNormativeElement(beHost, bePort, adminUser, fileDir, urlSuffix, ELEMEN
 		buffer = StringIO()
 		c = pycurl.Curl()
 
-		url = 'http://' + beHost + ':' + bePort + urlSuffix
+		url = scheme + '://' + beHost + ':' + bePort + urlSuffix
 		c.setopt(c.URL, url)
 		c.setopt(c.POST, 1)		
 
@@ -45,6 +45,10 @@ def createNormativeElement(beHost, bePort, adminUser, fileDir, urlSuffix, ELEMEN
 
 		#c.setopt(c.WRITEFUNCTION, lambda x: None)
 		c.setopt(c.WRITEFUNCTION, buffer.write)
+
+		if scheme == 'https':
+			c.setopt(c.SSL_VERIFYPEER, 0)
+
 		#print("before perform")	
 		res = c.perform()
 	

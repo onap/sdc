@@ -14,32 +14,89 @@ topology_template:
     shared_test_nova:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_test_nova
       type: string
     shared_test_contrail_net:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_test_contrail_net
       type: string
     contrail_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base
+            source_type: HEAT
+            param_name: contrail_net_name
       type: string
       description: network name of jsa log network
     shared_test_net:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_test_net
       type: string
     shared_test_contrailV2_net:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            source_type: HEAT
+            param_name: shared_test_contrailV2_net
       type: string
     jsa_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - addOn
+            - base
+            source_type: HEAT
+            param_name: jsa_net_name
       type: string
       description: network name of jsa log network
     jsa_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base
+            source_type: HEAT
+            param_name: jsa_name
       type: string
   node_templates:
     test_nestedInvalidConnectionToNetwork:

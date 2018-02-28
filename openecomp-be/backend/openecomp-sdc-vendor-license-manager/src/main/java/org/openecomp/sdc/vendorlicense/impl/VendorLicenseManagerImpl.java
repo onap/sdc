@@ -17,16 +17,11 @@
 package org.openecomp.sdc.vendorlicense.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerServiceName;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
@@ -58,19 +53,15 @@ import java.util.Optional;
 import java.util.Set;
 
 public class VendorLicenseManagerImpl implements VendorLicenseManager {
-  private VendorLicenseFacade vendorLicenseFacade;
-  private VendorLicenseModelDao vendorLicenseModelDao;
-  private LicenseAgreementDao licenseAgreementDao;
-  private FeatureGroupDao featureGroupDao;
-  private EntitlementPoolDao entitlementPoolDao;
-  private LicenseKeyGroupDao licenseKeyGroupDao;
-  private LimitDao limitDao;
-  private static final String VLM_ID = "VLM id";
-  private static final String EP_LKGID = "EP/LKGId";
-  private static final String VLM_ID_LKG_ID = "VLM id, LKG id";
-  private static final String VLM_ID_LA_ID = "VLM id, LA id";
-  private static final String VLM_ID_FG_ID = "VLM id, FG id";
-  private static final String VLM_ID_EP_ID = "VLM id, EP id";
+  private final UniqueValueUtil uniqueValueUtil;
+  private final VendorLicenseFacade vendorLicenseFacade;
+  private final VendorLicenseModelDao vendorLicenseModelDao;
+  private final LicenseAgreementDao licenseAgreementDao;
+  private final FeatureGroupDao featureGroupDao;
+  private final EntitlementPoolDao entitlementPoolDao;
+  private final LicenseKeyGroupDao licenseKeyGroupDao;
+  private final LimitDao limitDao;
+
   private static final String EP_POOL_START_TIME = "T00:00:00Z";
   private static final String EP_POOL_EXPIRY_TIME = "T23:59:59Z";
   private static final  DateTimeFormatter FORMATTER
@@ -81,7 +72,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
                                   FeatureGroupDao featureGroupDao,
                                   EntitlementPoolDao entitlementPoolDao,
                                   LicenseKeyGroupDao licenseKeyGroupDao,
-                                  LimitDao limitDao) {
+                                  LimitDao limitDao,
+                                  UniqueValueDao uniqueValueDao) {
     this.vendorLicenseFacade = vendorLicenseFacade;
     this.vendorLicenseModelDao = vendorLicenseModelDao;
     this.licenseAgreementDao = licenseAgreementDao;
@@ -89,6 +81,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     this.entitlementPoolDao = entitlementPoolDao;
     this.licenseKeyGroupDao = licenseKeyGroupDao;
     this.limitDao = limitDao;
+    this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
   }
 
 
@@ -106,7 +99,14 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   @Override
   public void updateVendorLicenseModel(VendorLicenseModelEntity vendorLicenseModelEntity) {
-    String existingVendorName = vendorLicenseModelDao.get(vendorLicenseModelEntity).getVendorName();
+    VendorLicenseModelEntity retrieved = vendorLicenseModelDao.get(vendorLicenseModelEntity);
+    if (retrieved == null){
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder()
+              .withMessage(String.format("Vlm with id %s and version %s does not exist.",
+                      vendorLicenseModelEntity.getId(), vendorLicenseModelEntity.getVersion().getId()))).build());
+    }
+
+    String existingVendorName = retrieved.getVendorName();
 
     updateUniqueName(VendorLicenseConstants.UniqueValues.VENDOR_NAME, existingVendorName,
         vendorLicenseModelEntity.getVendorName());
@@ -695,11 +695,11 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
   protected void updateUniqueName(String uniqueValueType, String oldName, String newName, String...
       context) {
-    UniqueValueUtil
+    uniqueValueUtil
         .updateUniqueValue(uniqueValueType, oldName, newName, context);
   }
 
   protected void deleteUniqueName(String uniqueValueType, String... uniqueCombination) {
-    UniqueValueUtil.deleteUniqueValue(uniqueValueType, uniqueCombination);
+    uniqueValueUtil.deleteUniqueValue(uniqueValueType, uniqueCombination);
   }
 }

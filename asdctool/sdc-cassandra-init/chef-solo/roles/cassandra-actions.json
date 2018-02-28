@@ -1,0 +1,24 @@
+{
+  "name": "cassandra-actions",
+  "description": "cassandra-actions",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[cassandra-actions::01-createCsUser]",
+    "recipe[cassandra-actions::02-createDoxKeyspace]",
+    "recipe[cassandra-actions::03-schemaCreation]",
+    "recipe[cassandra-actions::04-importComformance]"
+  ],
+
+  "env_run_lists": {
+
+  }
+}
+
+

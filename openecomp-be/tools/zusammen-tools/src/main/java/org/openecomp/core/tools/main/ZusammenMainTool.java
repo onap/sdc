@@ -1,13 +1,12 @@
 package org.openecomp.core.tools.main;
 
-import com.amdocs.zusammen.datatypes.SessionContext;
-import com.amdocs.zusammen.datatypes.UserInfo;
 import org.openecomp.core.tools.commands.AddContributorCommand;
 import org.openecomp.core.tools.commands.HealAll;
 import org.openecomp.core.tools.commands.SetHealingFlag;
 import org.openecomp.core.tools.exportinfo.ExportDataCommand;
 import org.openecomp.core.tools.importinfo.ImportDataCommand;
 import org.openecomp.core.tools.util.ToolsUtil;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
@@ -26,10 +25,10 @@ public class ZusammenMainTool {
 
     COMMANDS command = getCommand(args);
 
-    if(command == null){
+    if (command == null) {
       printMessage(logger,
-              "parameter -c is mandatory. script usage: zusammenMainTool.sh -c {command name} " +
-                      "[additional arguments depending on the command] ");
+          "parameter -c is mandatory. script usage: zusammenMainTool.sh -c {command name} " +
+              "[additional arguments depending on the command] ");
       printMessage(logger,
           "reset old version: -c RESET_OLD_VERSION [-v {version}]");
       printMessage(logger,
@@ -45,27 +44,23 @@ public class ZusammenMainTool {
     }
     Instant startTime = Instant.now();
 
-    SessionContext context = new SessionContext();
-    context.setUser(new UserInfo(GLOBAL_USER));
-    context.setTenant("dox");
+    SessionContextProviderFactory.getInstance().createInterface().create(GLOBAL_USER, "dox");
 
-
-
-    switch (command){
+    switch (command) {
       case RESET_OLD_VERSION:
-        SetHealingFlag.populateHealingTable(ToolsUtil.getParam("v",args));
+        SetHealingFlag.populateHealingTable(ToolsUtil.getParam("v", args));
         break;
       case EXPORT:
-        ExportDataCommand.exportData(ToolsUtil.getParam("i",args));
+        ExportDataCommand.exportData(ToolsUtil.getParam("i", args));
         break;
       case IMPORT:
-        ImportDataCommand.execute(context, ToolsUtil.getParam("f",args));
+        ImportDataCommand.execute(ToolsUtil.getParam("f", args));
         break;
       case HEAL_ALL:
-        HealAll.healAll(ToolsUtil.getParam("t",args));
+        HealAll.healAll(ToolsUtil.getParam("t", args));
         break;
       case ADD_CONTRIBUTOR:
-        AddContributorCommand.add(ToolsUtil.getParam("p",args),ToolsUtil.getParam("u",args));
+        AddContributorCommand.add(ToolsUtil.getParam("p", args), ToolsUtil.getParam("u", args));
 
     }
 
@@ -76,28 +71,28 @@ public class ZusammenMainTool {
 
 
     printMessage(logger,
-            "Zusammen tools command:[] finished . Total run time was : " + minutesPart + ":" +
-                    secondsPart
-                    + " minutes");
+        "Zusammen tools command:[] finished . Total run time was : " + minutesPart + ":" +
+            secondsPart
+            + " minutes");
     System.exit(status);
 
   }
 
   private static COMMANDS getCommand(String[] args) {
-    String commandSrt = ToolsUtil.getParam("c",args);
-    try{
+    String commandSrt = ToolsUtil.getParam("c", args);
+    try {
       return COMMANDS.valueOf(commandSrt);
-    }catch (IllegalArgumentException iae){
-      printMessage(logger,"message:"+commandSrt+ " is illegal.");
+    } catch (IllegalArgumentException iae) {
+      printMessage(logger, "message:" + commandSrt + " is illegal.");
     }
     return null;
   }
 
-  private enum COMMANDS{
+  private enum COMMANDS {
     RESET_OLD_VERSION,
     EXPORT,
     IMPORT,
     HEAL_ALL,
-    ADD_CONTRIBUTOR;
+    ADD_CONTRIBUTOR
   }
 }

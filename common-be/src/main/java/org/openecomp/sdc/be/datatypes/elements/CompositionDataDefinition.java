@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CompositionDataDefinition extends ToscaDataDefinition {
 	

@@ -24,13 +24,13 @@ import java.util.List;
 
 public class ServerListResponse {
 
-	private List<String> uebServerList;
+    private List<String> uebServerList;
 
-	public List<String> getUebServerList() {
-		return uebServerList;
-	}
+    public List<String> getUebServerList() {
+        return uebServerList;
+    }
 
-	public void setUebServerList(List<String> uebServerList) {
-		this.uebServerList = uebServerList;
-	}
+    public void setUebServerList(List<String> uebServerList) {
+        this.uebServerList = uebServerList;
+    }
 }

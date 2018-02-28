@@ -7,19 +7,19 @@ from importCommon import *
 from importNormativeTypes import *
 import importCommon
 
-################################################################################################################################################
-#																																		       #	
-# Import all users from a given file																										   #
-# 																																			   #		
-# activation :																																   #
-#       python importUsers.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#																																		  	   #			
-# shortest activation (be host = localhost, be port = 8080): 																				   #
-#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           #
-#																																		       #	
-################################################################################################################################################
+#####################################################################################################################################################################################################
+#																																		       														#	
+# Import all users from a given file																										   														#
+# 																																			   														#		
+# activation :																																   														#
+#       python importUsers.py [optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ] #
+#																																		  	  														#			
+# shortest activation (be host = localhost, be port = 8080): 																				   														#
+#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           														#
+#																																		       														#	
+#####################################################################################################################################################################################################
 
-def importOnapTypes(beHost, bePort, adminUser, fileDir, updateversion):
+def importOnapTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 	
 	onapTypes = [ "extImageFile",
 	              "extLocalStorage",
@@ -41,7 +41,7 @@ def importOnapTypes(beHost, bePort, adminUser, fileDir, updateversion):
 		
         results = []
         for onapType in onapTypes:
-                result = createNormativeType(beHost, bePort, adminUser, fileDir, onapType, updateversion)
+                result = createNormativeType(scheme, beHost, bePort, adminUser, fileDir, onapType, updateversion)
                 results.append(result)
                 if ( result[1] == None or result[1] not in responseCodes) :
 			print "Failed creating heat type " + onapType + ". " + str(result[1]) 				
@@ -55,6 +55,7 @@ def main(argv):
 	bePort = '8080'
 	adminUser = 'jh0003'
 	updateversion = 'true'
+	scheme = 'http'
 	
 	try:
 		opts, args = getopt.getopt(argv,"i:p:u:v:h:",["ip=","port=","user=","updateversion="])
@@ -73,17 +74,19 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-u", "--user"):
 			adminUser = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 		elif opt in ("-v", "--updateversion"):
 			if (arg.lower() == "false" or arg.lower() == "no"):
 				updateversion = 'false'
 
-	print 'be host =',beHost,', be port =', bePort,', user =', adminUser
+	print 'scheme =',scheme,',be host =',beHost,', be port =', bePort,', user =', adminUser
 	
 	if ( beHost == None ):
 		usage()
 		sys.exit(3)
 
-	results = importOnapTypes(beHost, bePort, adminUser, "../../../import/tosca/onap-types/", updateversion)
+	results = importOnapTypes(scheme, beHost, bePort, adminUser, "../../../import/tosca/onap-types/", updateversion)
 
 	print "-----------------------------"
 	for result in results:
@@ -104,5 +107,3 @@ def main(argv):
 
 if __name__ == "__main__":
         main(sys.argv[1:])
-
-

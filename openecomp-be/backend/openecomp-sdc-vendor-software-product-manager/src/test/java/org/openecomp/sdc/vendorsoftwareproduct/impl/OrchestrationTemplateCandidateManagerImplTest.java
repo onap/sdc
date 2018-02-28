@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import static org.mockito.Matchers.any;
@@ -11,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
@@ -23,6 +40,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
+import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.ZipFileUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -238,6 +256,43 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     Collection<ComponentDependencyModelEntity> componentDependenciesBeforeDelete =
         orchestrationUtil.getComponentDependenciesBeforeDelete(VSP_ID, VERSION01);
     Assert.assertEquals(componentDependenciesBeforeDelete.size(), 2);
+  }
+
+  @Test
+  public void testGetFileDataStructure() {
+    Optional<String> jsonFileDataStructure = Optional.of(new String("{\n" +
+        "  \"modules\": [\n" +
+        "    {\n" +
+        "      \"yaml\": \"hot-mog-0108-bs1271.yml\",\n" +
+        "      \"env\": \"hot-mog-0108-bs1271.env\"\n" +
+        "    }\n" +
+        "  ],\n" +
+        "  \"unassigned\": [],\n" +
+        "  \"artifacts\": [],\n" +
+        "  \"nested\": []\n" +
+        "}"));
+    Optional<FilesDataStructure> filesDataStructureOptional = Optional.of(JsonUtil.json2Object
+        (jsonFileDataStructure.get(), FilesDataStructure.class));
+    doReturn(filesDataStructureOptional).when(candidateServiceMock)
+        .getOrchestrationTemplateCandidateFileDataStructure(VSP_ID, VERSION01);
+    Optional<FilesDataStructure> filesDataStructure = candidateManager.getFilesDataStructure(VSP_ID,
+        VERSION01);
+    assertNotNull(filesDataStructure);
+    assertEquals(filesDataStructureOptional.get().getModules().size(), filesDataStructure.get()
+        .getModules().size());
+    assertEquals(filesDataStructureOptional.get().getModules().get(0).getName(),
+        filesDataStructure.get().getModules().get(0).getName());
+  }
+
+  @Test
+  public void testAbort() {
+
+    Mockito.doNothing().when(candidateServiceMock).deleteOrchestrationTemplateCandidate(VSP_ID,
+        VERSION01);
+    candidateManager.abort(VSP_ID, VERSION01);
+
+    Mockito.verify(candidateServiceMock, Mockito.times(1)).deleteOrchestrationTemplateCandidate
+        (VSP_ID, VERSION01);
   }
 
   private Map<String, String> getVspInitComponentIdNameInfo() {

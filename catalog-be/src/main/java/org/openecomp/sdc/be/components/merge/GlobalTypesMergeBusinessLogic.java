@@ -1,7 +1,6 @@
 package org.openecomp.sdc.be.components.merge;
 
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.merge.input.ComponentInputsMergeBL;
 import org.openecomp.sdc.be.components.merge.resource.MergeResourceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -11,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.List;
 
 @Component
 public class GlobalTypesMergeBusinessLogic implements MergeResourceBusinessLogic {

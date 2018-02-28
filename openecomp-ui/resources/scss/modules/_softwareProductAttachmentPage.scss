@@ -24,13 +24,12 @@
   .attachments-view-controllers {
     position: absolute;
     right: 40px;
-    top: 15px;
+    top: 10px;
     display: flex;
 
-
+    
     .icon-component {
-      margin-right: 30px;
-
+      margin-right: 30px;      
     }
 
     input[type="file"] {
@@ -39,6 +38,32 @@
       padding: 0;
       margin-left: -1px;
     }
+
+    .proceed-to-validation-btn {
+      width: 191px;
+      margin-right: 30px;
+      height: 36px;
+    }
+    .go-to-overview-btn {
+      width: 191px;
+      margin-right: 36px;
+      height: 36px;
+    }
+    .separator {
+      height: 27px;
+      border: 1px solid $light-gray;
+      margin-right: 31px;
+      margin-left: 0px; 
+      margin-top: 3px;
+    }
+    .abort-btn {      
+      fill: $blue;
+      color: $blue;
+      &:hover {
+        color: $light-blue;
+        fill: $light-blue;
+      }
+    }      
   }
 }
 

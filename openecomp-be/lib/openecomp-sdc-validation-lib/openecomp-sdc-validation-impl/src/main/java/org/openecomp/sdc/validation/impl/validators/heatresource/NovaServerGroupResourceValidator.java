@@ -25,8 +25,6 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.PolicyTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
@@ -65,17 +63,13 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
           globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                           .getErrorWithParameters(
                                   ERROR_CODE_HNG1, Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
-                                  resourceEntry.getKey()),
-                  LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
-                  LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
+                                  resourceEntry.getKey()));
         }
       } else {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                         .getErrorWithParameters(ERROR_CODE_HNG1,
                                 Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
-                                resourceEntry.getKey()),
-                LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
-                LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
+                                resourceEntry.getKey()));
       }
     }
   }
@@ -107,9 +101,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
                       ErrorMessagesFormatBuilder
                               .getErrorWithParameters(
                                       ERROR_CODE_HNG2, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                                      ValidatorConstants.Server_Group, resourceEntry.getKey()),
-                      LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
-                      LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
+                                      ValidatorConstants.Server_Group, resourceEntry.getKey()));
       return;
     }
 
@@ -130,9 +122,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
                       ErrorMessagesFormatBuilder
                               .getErrorWithParameters(
                                       ERROR_CODE_HNG3, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                                      ValidatorConstants.Server_Group, resourceEntry.getKey()),
-                      LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
-                      LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
+                                      ValidatorConstants.Server_Group, resourceEntry.getKey()));
     }
 
   }

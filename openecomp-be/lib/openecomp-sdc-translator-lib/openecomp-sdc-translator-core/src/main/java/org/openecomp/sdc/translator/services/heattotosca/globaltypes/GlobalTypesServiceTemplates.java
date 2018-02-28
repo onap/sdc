@@ -20,7 +20,6 @@ import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
@@ -31,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GlobalTypesServiceTemplates {
+
+  private static final String FAILED_TO_GENERATE_GLOBAL_TYPES = "Failed to generate globalTypes";
 
   private static final Map<OnboardingTypesEnum, Map<String, ServiceTemplate>>
       onboardingGlobalTypesServiceTemplates;
@@ -46,7 +47,7 @@ public class GlobalTypesServiceTemplates {
       throw coreException;
     } catch (Exception exception) {
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-          .withMessage(LoggerErrorDescription.FAILED_TO_GENERATE_GLOBAL_TYPES)
+          .withMessage(FAILED_TO_GENERATE_GLOBAL_TYPES)
           .withId("GlobalTypes Read Error").withCategory(ErrorCategory.APPLICATION).build(),
           exception);
     }
@@ -57,7 +58,7 @@ public class GlobalTypesServiceTemplates {
                                                                                 onboardingType) {
     if (onboardingType == null) {
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-          .withMessage(LoggerErrorDescription.FAILED_TO_GENERATE_GLOBAL_TYPES)
+          .withMessage(FAILED_TO_GENERATE_GLOBAL_TYPES)
           .withId("Invalid Onboarding Type").withCategory(ErrorCategory.APPLICATION).build());
     }
     return onboardingGlobalTypesServiceTemplates.get(onboardingType);

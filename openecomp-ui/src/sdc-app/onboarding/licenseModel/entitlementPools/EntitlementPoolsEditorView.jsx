@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -195,8 +195,8 @@ class EntitlementPoolsEditorView extends React.Component {
 			this.submit();
 		}
 	}
-	
-	state = {		
+
+	state = {
 		selectedTab: tabIds.GENERAL,
 		selectedLimit: ''
 	};
@@ -273,7 +273,7 @@ class EntitlementPoolsEditorView extends React.Component {
 							{i18n('Add Limit')}
 						</Button>
 					:
-						<div></div> // Render empty div to not break tabs
+						<div key='empty_ep_tab_key'></div> // Render empty div to not break tabs
 				}
 			</Tabs>
 			<GridSection className='license-model-modal-buttons entitlement-pools-editor-buttons'>

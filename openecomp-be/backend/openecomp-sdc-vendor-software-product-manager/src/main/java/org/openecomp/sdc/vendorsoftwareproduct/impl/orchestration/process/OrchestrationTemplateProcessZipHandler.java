@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,12 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
+import java.io.ByteArrayInputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
@@ -28,9 +34,7 @@ import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.messages.AuditMessages;
+import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
@@ -48,27 +52,16 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStru
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.ByteArrayInputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_ERROR;
-
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
-  private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
+
   private final CandidateService candidateService =
       CandidateServiceFactory.getInstance().createInterface();
-  private static final String VSP_ID = "VSP id";
 
   @Override
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
                                                      OrchestrationTemplateCandidateData candidateData) {
     String vspId = vspDetails.getId();
     Version version = vspDetails.getVersion();
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_STARTED + vspId);
     OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent = OrchestrationUtil
@@ -76,8 +69,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
             candidateData.getContentData().array());
     if (!fileContent.isPresent()) {
       response.addStructureErrors(uploadFileResponse.getErrors());
-      response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
-          HEAT_VALIDATION_ERROR));
       return response;
     }
 
@@ -89,8 +80,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     if (CollectionUtils.isNotEmpty(structure.getUnassigned())) {
       response.addErrorMessageToMap(SdcCommon.UPLOAD_FILE,
           Messages.FOUND_UNASSIGNED_FILES.getErrorMessage(), ErrorLevel.ERROR);
-      response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
-          HEAT_VALIDATION_ERROR));
       return response;
     }
 
@@ -102,13 +91,16 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         .fetchZipFileByteArrayInputStream(
             vspId, candidateData, manifest, OnboardingTypesEnum.ZIP, uploadErrors);
     if (!zipByteArrayInputStream.isPresent()) {
-      response.getErrors().values()
-          .forEach(errorList -> printAuditForErrors(errorList, vspId, HEAT_VALIDATION_ERROR));
       return response;
     }
 
     HeatStructureTree tree = createAndValidateHeatTree(response, fileContentMap);
-
+    Map<String, List<ErrorMessage>> errors = getErrors(response);
+    if (MapUtils.isNotEmpty(errors)) {
+      response.addStructureErrors(errors);
+      candidateService.updateValidationData(vspId, version, new ValidationStructureList(tree));
+      return response;
+    }
     Map<String, String> componentsQuestionnaire = new HashMap<>();
     Map<String, Map<String, String>> componentNicsQuestionnaire = new HashMap<>();
     Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList = new HashMap<>();
@@ -129,15 +121,6 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         .saveUploadData(vspDetails, candidateData, zipByteArrayInputStream.get(), fileContentMap,
             tree);
 
-    response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList, vspId,
-        HEAT_VALIDATION_ERROR));
-    if (MapUtils
-        .isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, response.getErrors()))) {
-      LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_COMPLETED + vspId);
-    }
-
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_STARTED + vspId);
-
     TranslatorOutput translatorOutput =
         HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap);
 
@@ -150,9 +133,17 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     orchestrationUtil.updateVspComponentDependencies(vspId, version,
         vspComponentIdNameInfoBeforeProcess, componentDependenciesBeforeDelete);
 
-    LOGGER.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     uploadFileResponse.addStructureErrors(uploadErrors);
+    candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
     return response;
+  }
+
+  private Map<String, List<ErrorMessage>> getErrors(OrchestrationTemplateActionResponse
+                                                        orchestrationTemplateActionResponse) {
+    Map<String, List<ErrorMessage>> errors =
+        MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR,
+            orchestrationTemplateActionResponse.getErrors());
+    return MapUtils.isEmpty(errors) ? null : orchestrationTemplateActionResponse.getErrors();
   }
 
   private HeatStructureTree createAndValidateHeatTree(OrchestrationTemplateActionResponse response,
@@ -163,15 +154,5 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     response.getErrors().putAll(validationErrors);
 
     return OrchestrationUtil.createHeatTree(fileContentMap, validationErrors);
-  }
-
-  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
-
-    errorList.forEach(errorMessage -> {
-      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
-        LOGGER.audit(
-            AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(), vspId));
-      }
-    });
   }
 }

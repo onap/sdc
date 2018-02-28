@@ -24,6 +24,7 @@ import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.mapping.UDTMapper;
+import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -44,11 +45,17 @@ import java.util.stream.Collectors;
 
 class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
 
+  private final UniqueValueUtil uniqueValueUtil;
   private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static Logger Logger =
       (Logger) LoggerFactory.getLogger(VersionableEntityDaoCassandraImpl.class);
   private static UDTMapper<Version> versionMapper =
       noSqlDb.getMappingManager().udtMapper(Version.class);
+
+  public VersionableEntityDaoCassandraImpl(
+      UniqueValueDao uniqueValueDao) {
+    this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
+  }
 
   private static String commaSeparatedQuestionMarks(int size) {
     StringBuilder sb = new StringBuilder(size * 2 - 1);
@@ -128,7 +135,7 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
     for (UniqueValueMetadata uniqueMetadata : metadata) {
       List<String> uniqueValueCombination = uniqueMetadata.getUniqueConstraintIdentifiers().stream()
           .map(colName -> (String) columnNameToValue.get(colName)).collect(Collectors.toList());
-      UniqueValueUtil.createUniqueValue(uniqueMetadata.getType(),
+      uniqueValueUtil.createUniqueValue(uniqueMetadata.getType(),
           uniqueValueCombination.toArray(new String[uniqueValueCombination.size()]));
     }
   }
@@ -138,7 +145,7 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
     for (UniqueValueMetadata uniqueMetadata : metadata) {
       List<String> uniqueValueCombination = uniqueMetadata.getUniqueConstraintIdentifiers().stream()
           .map(colName -> (String) columnNameToValue.get(colName)).collect(Collectors.toList());
-      UniqueValueUtil.deleteUniqueValue(uniqueMetadata.getType(),
+      uniqueValueUtil.deleteUniqueValue(uniqueMetadata.getType(),
           uniqueValueCombination.toArray(new String[uniqueValueCombination.size()]));
     }
   }

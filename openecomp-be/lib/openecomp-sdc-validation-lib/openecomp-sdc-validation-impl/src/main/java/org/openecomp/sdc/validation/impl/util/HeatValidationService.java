@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,12 @@ import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.impl.validators.HeatValidator;
+import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -49,7 +47,6 @@ import java.util.Set;
 public class HeatValidationService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HeatValidator.class);
-  private static final String NESTED_FILE = "nested file";
   private static final String NO_CONTENT_IN_FILE_MSG = "The file ' %s ' has no content";
   private HeatValidationService(){
 
@@ -71,9 +68,7 @@ public class HeatValidationService {
                       ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                               .getErrorWithParameters(
                                       globalContext.getMessageCode(),
-                                      Messages.MISSING_ARTIFACT.getErrorMessage(), artifactName),
-                      LoggerTragetServiceName.VALIDATE_ARTIFACTS_EXISTENCE,
-                      LoggerErrorDescription.MISSING_FILE));
+                                      Messages.MISSING_ARTIFACT.getErrorMessage(), artifactName)));
   }
 
   /**
@@ -112,11 +107,11 @@ public class HeatValidationService {
    * @param nestedParameters nested parameters.
    * @param nestedParametersNames nested parameter names.
    */
-  public static void checkNestedParameters(String parentFileName, String nestedFileName,
-                                           GlobalValidationContext globalContext,
-                                           Map<String, Parameter> parentParameters,
-                                           Map<String, Parameter> nestedParameters,
-                                           Set<String> nestedParametersNames) {
+  private static void checkNestedParameters(String parentFileName, String nestedFileName,
+                                            GlobalValidationContext globalContext,
+                                            Map<String, Parameter> parentParameters,
+                                            Map<String, Parameter> nestedParameters,
+                                            Set<String> nestedParametersNames) {
     HeatOrchestrationTemplate parentHeatOrchestrationTemplate;
     HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
 
@@ -192,9 +187,7 @@ public class HeatValidationService {
                                       .getErrorWithParameters(
                                               globalContext.getMessageCode(),
                                               Messages.MISSING_PARAMETER_IN_NESTED.getErrorMessage(),
-                                              nestedFileName, resourceName, propertyName),
-                              LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
-                              LoggerErrorDescription.MISSING_PARAMETER_IN_NESTED));
+                                              nestedFileName, resourceName, propertyName)));
     }
   }
 
@@ -235,9 +228,7 @@ public class HeatValidationService {
       globalContext.addMessage(parentFileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(globalContext.getMessageCode(),
                               Messages.WRONG_VALUE_TYPE_ASSIGNED_NESTED_INPUT.getErrorMessage(),
-                              resourceName, parameterName, nestedFileName),
-              LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
-              LoggerErrorDescription.WRONG_VALUE_ASSIGNED_NESTED_PARAMETER);
+                              resourceName, parameterName, nestedFileName));
     }
   }
 
@@ -268,9 +259,8 @@ public class HeatValidationService {
     Collection<Resource> nestedResources =
             nestedHeatOrchestrationTemplate.getResources() == null ? null
                     : nestedHeatOrchestrationTemplate.getResources().values();
-    boolean isNestedLoopExist = addNestedFilesInLoopAndCheckIfNestedLoopExist(nestedResources,
+    return addNestedFilesInLoopAndCheckIfNestedLoopExist(nestedResources,
                     callingFileName, filesInLoop, globalContext);
-    return isNestedLoopExist;
   }
   private static boolean addNestedFilesInLoopAndCheckIfNestedLoopExist(
                 Collection<Resource> nestedResources,String callingFileName,
@@ -288,6 +278,10 @@ public class HeatValidationService {
     }
     return false;
   }
+
+
+
+
   private static HeatOrchestrationTemplate getNestedHeatOrchestrationTemplate( String nestedFileName,
                                           GlobalValidationContext globalContext) throws Exception {
     Optional<InputStream> fileContent = globalContext.getFileContent(nestedFileName);
@@ -331,9 +325,41 @@ public class HeatValidationService {
     return envContent;
   }
 
+  /**
+   *  This method verifies whether the propertyValue contains a single parent port
+   * @param fileName on which the validation is currently run
+   * @param globalContext global validation context
+   * @param heatResourceValidationContext heat resource validation context
+   * @param propertyValue the value which is examined
+   * @return whether the vlan has single parent port
+   */
+  public static boolean hasSingleParentPort(String fileName, GlobalValidationContext globalContext,
+                                            HeatResourceValidationContext heatResourceValidationContext,
+                                            Object propertyValue) {
+    final boolean isList = propertyValue instanceof List;
+    if (!isList || ((List) propertyValue).size() != 1) {
+      return false;
+    }
 
-  public static String getResourceGroupResourceName(String resourceCallingToResourceGroup) {
-    return "OS::Heat::ResourceGroup in " + resourceCallingToResourceGroup;
+    final Object listValue = ((List) propertyValue).get(0);
+
+    final Set<String> getParamValues =
+        HeatStructureUtil.getReferencedValuesByFunctionName(fileName, "get_param",
+            listValue, globalContext);
+
+    return getParamValues.isEmpty() || (getParamValues.size() == 1) &&
+        validateGetParamValueOfType(getParamValues, heatResourceValidationContext,
+            DefinedHeatParameterTypes.STRING.getType());
+
+  }
+
+
+  private static boolean validateGetParamValueOfType(Set<String> values,
+                                        HeatResourceValidationContext
+                                            heatResourceValidationContext, String type) {
+
+    return values.stream().anyMatch(e -> Objects.equals(
+        heatResourceValidationContext.getHeatOrchestrationTemplate().getParameters().get(e).getType(), type));
   }
 
 }

@@ -1,24 +1,34 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on a "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
+
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.common.utils.SdcCommon.MANIFEST_NAME;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateComputeConnectivityIn;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateComputeConnectivityOut;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateDependsOnInConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateGetAttr;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateGroupsInConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateNestedConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateNestedConsolidationDataNodeTemplateIds;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortConnectivityIn;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortConnectivityOut;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortsInConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateVolumeInConsolidationData;
 
 import org.apache.commons.collections4.MapUtils;
 import org.junit.AfterClass;
@@ -33,15 +43,11 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -73,19 +79,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateComputeConnectivityIn;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateComputeConnectivityOut;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateDependsOnInConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateGetAttr;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateGroupsInConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateNestedConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateNestedConsolidationDataNodeTemplateIds;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortConnectivityIn;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortConnectivityOut;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortsInConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateVolumeInConsolidationData;
-
 
 public class BaseResourceTranslationTest {
 
@@ -100,23 +93,17 @@ public class BaseResourceTranslationTest {
   private Map<String, byte[]> expectedResultMap = new HashMap<>();
   private Set<String> expectedResultFileNameSet = new HashSet<>();
 
-  private final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
-  private String validationFilename = "validationOutput.json";
-
   protected static TestFeatureManager manager;
 
   @BeforeClass
-  public static void enableForwarderFeature(){
+  public static void enableToggleableFeatures(){
     manager = new TestFeatureManager(ToggleableFeature.class);
-    if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
-      manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
-    }
+    manager.enableAll();
   }
 
-
   @AfterClass
-  public static void disableForwarderFeature() {
-    manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
+  public static void disableToggleableFeatures() {
+    manager.disableAll();
     manager = null;
     TestFeatureManagerProvider.setFeatureManager(null);
   }
@@ -232,6 +219,7 @@ public class BaseResourceTranslationTest {
         if (file.getName().equals(MANIFEST_NAME)) {
           addManifest(translationContext, MANIFEST_NAME, fileContent);
         } else {
+          String validationFilename = "validationOutput.json";
           if (!file.getName().equals(zipFilename) && (!file.getName().equals(validationFilename))) {
             addFile(translationContext, file.getName(), fileContent);
           }
@@ -257,8 +245,8 @@ public class BaseResourceTranslationTest {
     translationContext.addFile(name, content);
   }
 
-  private static void addFilesFromManifestToTranslationContextManifestFilesMap(TranslationContext
-                                                                                   translationContext, List<FileData> fileDataListFromManifest) {
+  private static void addFilesFromManifestToTranslationContextManifestFilesMap(
+      TranslationContext translationContext, List<FileData> fileDataListFromManifest) {
     for (FileData fileFromManfiest : fileDataListFromManifest) {
       translationContext.addManifestFile(fileFromManfiest.getFile(), fileFromManfiest.getType());
     }

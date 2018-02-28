@@ -4,20 +4,20 @@ from StringIO import StringIO
 import json
 import copy
 
-################################################################################################################################################
-#																																		       #	
-# Import all users from a given file																										   #
-# 																																			   #		
-# activation :																																   #
-#       python importUsers.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#																																		  	   #			
-# shortest activation (be host = localhost, be port = 8080): 																				   #																       #
-#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           #
-#																																		       #	
-################################################################################################################################################
+#####################################################################################################################################################################################
+#																																		       									 	#
+# Import all users from a given file																										   										#
+# 																																			   										#
+# activation :																																   										#
+#       python importUsers.py  [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]   	#
+#																																		  	   										#
+# shortest activation (be host = localhost, be port = 8080): 																				   										#
+#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           										#
+#																																		       										#
+#####################################################################################################################################################################################
 
 
-def importUsers(beHost, bePort, users, adminUser):
+def importUsers(scheme, beHost, bePort, users, adminUser):
 	
 	result = []	
 
@@ -25,12 +25,12 @@ def importUsers(beHost, bePort, users, adminUser):
 			
 		#print("Going to add user " + user['userId'])
 	
-		getRes = getUser(beHost, bePort, user)	
+		getRes = getUser(scheme, beHost, bePort, user)	
 		userId = getRes[0]
 		error = getRes[1]
 		#print error
 		if ( error != None and error == 404 ):
-			res = createUser(beHost, bePort, user ,adminUser)			
+			res = createUser(scheme, beHost, bePort, user ,adminUser)			
 			result.append(res)			
 		else:
 			if ( error == 200 ):
@@ -54,7 +54,7 @@ def convertUsersToCreationObject(users):
 
 	return cloneUsers
 
-def getUser(beHost, bePort, user):
+def getUser(scheme, beHost, bePort, user):
 
 	userId = user['userId']
 	try:
@@ -62,12 +62,16 @@ def getUser(beHost, bePort, user):
 		c = pycurl.Curl()
 
 		#print type(userId)
-		url = 'http://' + beHost + ':' + bePort + '/sdc2/rest/v1/user/' + str(userId)
+		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user/' + str(userId)
 		c.setopt(c.URL, url)
 
 		#adminHeader = 'USER_ID: ' + adminUser
 		c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json'])
 		c.setopt(c.WRITEFUNCTION, lambda x: None)
+
+		if scheme == 'https':
+			c.setopt(c.SSL_VERIFYPEER, 0)
+
 		res = c.perform()
 					
 		#print("Before get response code")	
@@ -87,14 +91,14 @@ def getUser(beHost, bePort, user):
 
 		
 
-def createUser(beHost, bePort, user, adminUser):
+def createUser(scheme, beHost, bePort, user, adminUser):
 
 	userId = user['userId']
 	try:
 		buffer = StringIO()
 		c = pycurl.Curl()
 
-		url = 'http://' + beHost + ':' + bePort + '/sdc2/rest/v1/user'
+		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user'
 		c.setopt(c.URL, url)
 		c.setopt(c.POST, 1)		
 
@@ -105,6 +109,10 @@ def createUser(beHost, bePort, user, adminUser):
 		c.setopt(c.POSTFIELDS, data)	
 
 		c.setopt(c.WRITEFUNCTION, lambda x: None)
+
+		if scheme == 'https':
+			c.setopt(c.SSL_VERIFYPEER, 0)
+
 		#print("before perform")	
 		res = c.perform()
         #print(res)
@@ -133,7 +141,7 @@ def errorAndExit(errorCode, errorDesc):
 	sys.exit(errorCode)
 	
 def usage():
-	print sys.argv[0], '[-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]'
+	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]'
 
 def main(argv):
 	print 'Number of arguments:', len(sys.argv), 'arguments.'
@@ -141,11 +149,11 @@ def main(argv):
 	beHost = 'localhost' 
 	bePort = '8080'
 	inputfile = None 
-
+	scheme = 'http'
 	adminUser = 'jh0003'
 
 	try:
-		opts, args = getopt.getopt(argv,"i:p:f:h:",["ip=","port=","ifile="])
+		opts, args = getopt.getopt(argv,"i:p:f:h:s:",["ip=","port=","ifile=","scheme="])
 	except getopt.GetoptError:
 		usage()
 		errorAndExit(2, 'Invalid input')
@@ -161,8 +169,10 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-f", "--ifile"):
 			inputfile = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 
-	print 'be host =',beHost,', be port =', bePort,', users file =',inputfile
+	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', users file =',inputfile
 	
 	if ( inputfile == None ):
 		usage()
@@ -182,7 +192,7 @@ def main(argv):
 
 	#print activeUsers
 
-	resultTable = importUsers(beHost, bePort, activeUsers, adminUser)
+	resultTable = importUsers(scheme, beHost, bePort, activeUsers, adminUser)
 
 	g = lambda x: x[1] != 201 and x[1] != 409
 

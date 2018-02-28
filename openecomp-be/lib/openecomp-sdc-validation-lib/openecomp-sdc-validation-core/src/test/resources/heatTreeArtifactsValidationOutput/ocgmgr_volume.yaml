@@ -1,0 +1,44 @@
+heat_template_version: 2015-04-30 
+
+description: OCG template for MGR volumes
+#file version 1.0
+parameters:
+  vnf_name:
+    type: string
+    label: OCG VNF Name
+    description: OCG VNF Name
+  ocgmgr_volume_size_0:
+    type: number
+    label: Cinder volume 1 size
+    description: the size of the Cinder volume
+    constraints:
+      - range: { min: 50, max: 400 }
+  ocgmgr_volume_type_0:
+    type: string
+    label: mgr vm 1 volume type
+    description: the name of the target volume backend for the first OCG MGR
+  volume_count:
+    type: number
+    label: volume count
+    description: num of volumes needed
+    constraints:
+      - allowed_values: [0, 1, 2]
+resources:
+
+  ocgmgr_volume_resource_group:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: volume_count}
+      index_var: index
+      resource_def:
+        type: ocgmgr_nested_volume.yaml
+        properties:
+          index: index
+          size: {get_param: ocgmgr_volume_size_0}
+          volume_type: {get_param: ocgmgr_volume_type_0}
+          vnf_name: {get_param: vnf_name}
+
+outputs:
+  ocgmgr_volume_ids:
+    description: ocgmgr volume ids
+    value: {get_attr: [ocgmgr_volume_resource_group, ocgmgr_volume_id_0]}

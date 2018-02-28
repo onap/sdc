@@ -11,12 +11,28 @@ topology_template:
     untrusted_vlan_networks:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: untrusted_vlan_networks
       type: list
       entry_schema:
         type: string
     jsa_net_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_net_name
       type: string
       description: network name of jsa log network
   node_templates:

@@ -1,42 +1,37 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.mapping;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
-import org.openecomp.sdc.tosca.datatypes.model.Constraint;
-import org.openecomp.sdc.tosca.datatypes.model.EntrySchema;
-import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.datatypes.extend.ToscaAnnotationType;
+import org.openecomp.sdc.tosca.datatypes.model.*;
+import org.openecomp.sdc.tosca.datatypes.model.heatextend.AnnotationDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
+import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class TranslatorHeatToToscaParameterConverter {
@@ -73,11 +68,9 @@ public class TranslatorHeatToToscaParameterConverter {
       String heatFileName, TranslationContext context) {
     Map<String, ParameterDefinition> parameterDefinitionMap = new HashMap<>();
     for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
-      //parameterDefinitionMap.put(entry.getKey()+"_"+ FileUtils.getFileWithoutExtention
-      // (heatFileName),getToscaParameter(entry.getValue(), heatOrchestrationTemplate,
-      // heatFileName, context));
-      parameterDefinitionMap.put(entry.getKey(),
-          getToscaParameter(serviceTemplate,entry.getKey(), entry.getValue(),
+      String heatParamName = entry.getKey();
+      parameterDefinitionMap.put(heatParamName,
+          getToscaParameter(serviceTemplate,heatParamName, entry.getValue(),
               heatOrchestrationTemplate,
               heatFileName, context));
     }
@@ -118,7 +111,7 @@ public class TranslatorHeatToToscaParameterConverter {
    * @return the tosca parameter
    */
   public static ParameterDefinitionExt getToscaParameter(ServiceTemplate serviceTemplate,
-                                                         String parameterName,
+                                                         String heatParameterName,
                                                          Parameter heatParameter,
                                                          HeatOrchestrationTemplate
                                                              heatOrchestrationTemplate,
@@ -131,13 +124,47 @@ public class TranslatorHeatToToscaParameterConverter {
     toscaParameter.setLabel(heatParameter.getLabel());
     toscaParameter.setDescription(heatParameter.getDescription());
     toscaParameter.set_default(
-        getToscaParameterDefaultValue(serviceTemplate, parameterName, heatParameter.get_default(),
+        getToscaParameterDefaultValue(serviceTemplate, heatParameterName, heatParameter.get_default(),
             toscaParameter.getType(), heatFileName, heatOrchestrationTemplate, context));
     toscaParameter.setHidden(heatParameter.isHidden());
     toscaParameter.setImmutable(heatParameter.isImmutable());
     toscaParameter.setConstraints(getToscaConstrains(heatParameter.getConstraints()));
+    Optional<Map<String, AnnotationDefinition>>  annotations = getToscaAnnotations(context, serviceTemplate, heatFileName, heatParameterName);
+    annotations.ifPresent(ant->toscaParameter.setAnnotations(annotations.get()));
+
+
     return toscaParameter;
   }
+
+  private static Optional<Map<String, AnnotationDefinition> > getToscaAnnotations (TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName, String heatParameterName){
+
+    if(!isAnnotationRequired(context, serviceTemplate, heatFileName)){
+      return Optional.empty();
+    }
+
+    AnnotationDefinition annotationDefinition = new AnnotationDefinition();
+    annotationDefinition.setType(ToscaAnnotationType.SOURCE);
+    annotationDefinition.setProperties(new HashMap<>());
+    List<String> vfModuleList = new ArrayList<>();
+    vfModuleList.add( FileUtils.getFileWithoutExtention(heatFileName));
+    annotationDefinition.getProperties().put(ToscaConstants.VF_MODULE_LABEL_PROPERTY_NAME, vfModuleList);
+    annotationDefinition.getProperties().put(ToscaConstants.SOURCE_TYPE_PROPERTY_NAME, ToscaConstants.HEAT_SOURCE_TYPE);
+    annotationDefinition.getProperties().put(ToscaConstants.PARAM_NAME_PROPERTY_NAME, heatParameterName);
+    Map<String, AnnotationDefinition> annotationMap = new HashMap<>();
+    annotationMap.put(ToscaConstants.SOURCE_ANNOTATION_ID, annotationDefinition);
+    return Optional.of(annotationMap);
+
+  }
+
+  private static boolean isAnnotationRequired(TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName){
+    return HeatToToscaUtil.shouldAnnotationsToBeAdded() && !isNestedServiceTemplate(context, serviceTemplate, heatFileName);
+  }
+
+  private static boolean isNestedServiceTemplate(TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName) {
+    String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate.getMetadata());
+    return HeatToToscaUtil.isHeatFileNested(context, heatFileName) || context.getNestedHeatFileName().containsKey(serviceTemplateFileName);
+  }
+
 
   /**
    * Gets tosca output parameter.
@@ -148,7 +175,7 @@ public class TranslatorHeatToToscaParameterConverter {
    * @param context                   the context
    * @return the tosca output parameter
    */
-  public static ParameterDefinitionExt getToscaOutputParameter(ServiceTemplate serviceTemplate,
+  private static ParameterDefinitionExt getToscaOutputParameter(ServiceTemplate serviceTemplate,
                                                                String parameterName,
                                                                Output heatOutputParameter,
                                                                HeatOrchestrationTemplate

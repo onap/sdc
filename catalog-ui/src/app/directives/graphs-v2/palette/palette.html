@@ -24,9 +24,9 @@
             </div>
             <div class="i-sdc-designer-leftbar-section-content-item"
                  data-ng-class="{'default-pointer': isViewOnly}"
-                 data-ng-mouseover="!isViewOnly && onMouseOver(component)"
-                 data-ng-mouseleave="!isViewOnly && onMouseOut()"
-                 data-drag="{{!isViewOnly}}"
+                 data-ng-mouseover="!isViewOnly && onMouseOver(component, $event.currentTarget)"
+                 data-ng-mouseleave="!isViewOnly && onMouseOut(component)"
+                 data-drag="!isViewOnly"
                  data-jqyoui-options="{revert: 'invalid', helper:setElementTemplate, appendTo:'body', cursorAt: {left:38, top: 38}, cursor:'move'}"
                  jqyoui-draggable="{index:{{$index}},animate:true,onStart:'dragStartCallback(component)',onStop:'dragStopCallback()', onDrag:'onDragCallback()'}"
                  data-ng-repeat="component in components | orderBy: 'displayName' track by $index"
@@ -40,14 +40,16 @@
                     </div>
                 </div>
                 <div class="i-sdc-designer-leftbar-section-content-item-info">
-                        <span class="i-sdc-designer-leftbar-section-content-item-info-title"
-                              uib-tooltip="{{component.displayName}}" tooltip-class="uib-custom-tooltip"
-                              tooltip-placement="bottom" tooltip-popup-delay="700">
-                            {{component.displayName}}</span>
+                    <span class="i-sdc-designer-leftbar-section-content-item-info-title"
+                          uib-tooltip="{{component.displayName}}" tooltip-class="uib-custom-tooltip"
+                          tooltip-placement="bottom" tooltip-popup-delay="700">
+                        {{component.displayName}}</span>
                     <div class="i-sdc-designer-leftbar-section-content-item-info-text">
                         V.{{component.version}}
                     </div>
-                    <div class="i-sdc-designer-leftbar-section-content-item-info-text"> Type:
+                    <div class="i-sdc-designer-leftbar-section-content-item-info-text"
+                        uib-tooltip="{{component.type}}" tooltip-class="uib-custom-tooltip"
+                        tooltip-placement="top" tooltip-popup-delay="700"> Type:
                         {{component.componentSubType}}
                     </div>
                 </div>

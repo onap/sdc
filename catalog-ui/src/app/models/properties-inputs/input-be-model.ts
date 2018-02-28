@@ -41,9 +41,6 @@ export class InputBEModel extends PropertyBEModel {
         this.inputPath = input.inputPath;
     }
 
-    public toJSON = (): any => {
-    };
-
 }
 
 export interface ComponentInstanceModel extends InputBEModel {

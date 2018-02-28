@@ -23,8 +23,6 @@ import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.impl.util.HeatValidationService;
@@ -86,9 +84,7 @@ public class NestedResourceValidator implements ResourceValidator {
       globalContext.addMessage(resourceType, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(ERROR_CODE_HNR1,
                               Messages.MISSING_NESTED_FILE.getErrorMessage(),
-                              resourceType),
-              LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
-              LoggerErrorDescription.MISSING_FILE);
+                              resourceType));
     }
   }
 
@@ -99,8 +95,7 @@ public class NestedResourceValidator implements ResourceValidator {
             .isNestedLoopExistInFile(fileName, resourceType, filesInLoop, globalContext)) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                       .getErrorWithParameters(ERROR_CODE_HNR2, Messages.NESTED_LOOP.getErrorMessage(),
-                              HeatValidationService.drawFilesLoop(filesInLoop)),
-              LoggerTragetServiceName.VALIDATE_NESTING_LOOPS, LoggerErrorDescription.NESTED_LOOP);
+                              HeatValidationService.drawFilesLoop(filesInLoop)));
     }
   }
 }

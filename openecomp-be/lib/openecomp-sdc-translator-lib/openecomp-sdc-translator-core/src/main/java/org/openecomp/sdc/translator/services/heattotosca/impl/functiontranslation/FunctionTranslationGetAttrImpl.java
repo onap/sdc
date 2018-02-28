@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
+
+import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -30,8 +28,9 @@ import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.Template;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.EntityConsolidationData;
-import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
@@ -243,10 +242,16 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
                                           String attName) {
     Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
     boolean isNestedResource = HeatToToscaUtil.isNestedResource(resource);
+    String heatPropertyName = propertyName;
     String toscaPropertyName = propertyName;
+    //For handling get_attr in inner levels for complex properties
+    if (propertyName.contains(TRANS_MAPPING_DELIMITER_CHAR)) {
+      heatPropertyName = propertyName.substring(0,
+          propertyName.indexOf(TRANS_MAPPING_DELIMITER_CHAR));
+    }
     if (!isNestedResource) {
       toscaPropertyName = HeatToToscaUtil.getToscaPropertyName(context, resource
-          .getType(), propertyName);
+          .getType(), heatPropertyName);
     }
     ConsolidationDataUtil
         .updateNodeGetAttributeIn(entityConsolidationData,
@@ -271,13 +276,22 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
 
       return Optional.of(
           ConsolidationDataUtil.getComputeTemplateConsolidationData(context, serviceTemplate,
-              computeType, resourceId));
+              computeType, resourceTranslatedId));
     } else if (ConsolidationDataUtil.isPortResource(heatOrchestrationTemplate, resourceId)) {
       return Optional.of(ConsolidationDataUtil
-          .getPortTemplateConsolidationData(context, serviceTemplate, resourceId));
+          .getPortTemplateConsolidationData(context, serviceTemplate, resourceId, resource.getType(),
+              resourceTranslatedId));
+    } else if (HeatToToscaUtil.isSubInterfaceResource(resource, context)) {
+      TranslateTo subInterfaceTo = new TranslateTo(heatFileName, serviceTemplate, heatOrchestrationTemplate,
+          resource, resourceId, resourceTranslatedId, context);
+      Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
+          ConsolidationDataUtil.getSubInterfaceTemplateConsolidationData(subInterfaceTo, resourceTranslatedId);
+      if (subInterfaceTemplateConsolidationData.isPresent()) {
+        return Optional.of(subInterfaceTemplateConsolidationData.get());
+      }
     } else if (HeatToToscaUtil.isNestedResource(resource)) {
       return Optional.ofNullable(ConsolidationDataUtil
-          .getNestedTemplateConsolidationData(context, serviceTemplate, heatFileName, resourceId));
+          .getNestedTemplateConsolidationData(context, serviceTemplate, heatFileName, resourceTranslatedId));
     }
     return Optional.empty();
   }
@@ -330,7 +344,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
       if (isInteger(attributeParamList.get(j))) {
         continue;
       }
-      attributeFullPath.append(ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR);
+      attributeFullPath.append(TRANS_MAPPING_DELIMITER_CHAR);
       attributeFullPath.append(attributeParamList.get(j));
     }
     return attributeFullPath.toString();
@@ -341,13 +355,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
       return false;
     }
 
-    /*try {
-      Integer.parseInt(String.valueOf(inputNumber));
-      return true;
-    } catch (NumberFormatException exception) {
-      return false;
-    }*/
-    if(StringUtils.isNumeric(String.valueOf(inputNumber))){
+    if (StringUtils.isNumeric(String.valueOf(inputNumber))){
       return true;
     } else {
       return false;
@@ -377,15 +385,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
       return getResourceTranslatedAttributesList(resource, context);
     }
 
-    if(!(attributeParamList.get(1) instanceof String)){
-      //todo - once dynamic attr name will be supported the commented line will be support it in
-      // the first translation phase.
-//      Object toscaAttributeValue = getToscaAttributeValue(serviceTemplate, resourceId, propertyName,
-//          attributeParamList.get(1), resource
-//              .getType(), heatFileName, heatOrchestrationTemplate, null, context);
-//      List<Object> dynamicAttrValue = new ArrayList<>();
-//      dynamicAttrValue.add(toscaAttributeValue);
-//      return Optional.of(dynamicAttrValue);
+    if (!(attributeParamList.get(1) instanceof String)) {
       return Optional.empty();
     }
 

@@ -20,13 +20,10 @@
 
 package org.openecomp.sdc.be.components;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
+import fj.data.Either;
+import org.junit.BeforeClass;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,80 +45,85 @@ import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentBusinessLogicTest {
 
-	private static final User USER = new User();
-	private static final String ARTIFACT_LABEL = "toscaArtifact1";
-	private static final String ARTIFACT_LABEL2 = "toscaArtifact2";
+    private static final User USER = new User();
+    private static final String ARTIFACT_LABEL = "toscaArtifact1";
+    private static final String ARTIFACT_LABEL2 = "toscaArtifact2";
 
-	@InjectMocks
-	private ComponentBusinessLogic testInstance = new ComponentBusinessLogic() {
-		@Override
-		public Either<List<String>, ResponseFormat> deleteMarkedComponents() {
-			return null;
-		}
+    @InjectMocks
+    private ComponentBusinessLogic testInstance = new ComponentBusinessLogic() {
+        @Override
+        public Either<List<String>, ResponseFormat> deleteMarkedComponents() {
+            return null;
+        }
 
-		@Override
-		public ComponentInstanceBusinessLogic getComponentInstanceBL() {
-			return null;
-		}
+        @Override
+        public ComponentInstanceBusinessLogic getComponentInstanceBL() {
+            return null;
+        }
 
-		@Override
-		public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
-			return null;
-		}
+        @Override
+        public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
+            return null;
+        }
 
-		@Override
-		public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId, List<String> dataParamsToReturn) {
-			return null;
-		}
-	};
+        @Override
+        public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId, List<String> dataParamsToReturn) {
+            return null;
+        }
+    };
 
-	@Mock
-	private ArtifactsBusinessLogic artifactsBusinessLogic;
+    @Mock
+    private ArtifactsBusinessLogic artifactsBusinessLogic;
 
-	@BeforeClass
-	public static void setUp() throws Exception {
-		new DummyConfigurationManager();
-	}
+    @BeforeClass
+    public static void setUp() throws Exception {
+        new DummyConfigurationManager();
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void setToscaArtifactsPlaceHolders_normalizeArtifactName() throws Exception {
-		Resource resource = new ResourceBuilder().setUniqueId("uid")
-				.setComponentType(ComponentTypeEnum.RESOURCE)
-				.setSystemName("myResource")
-				.build();
-		Map<String, Object> artifactsFromConfig = new HashMap<>();
-		artifactsFromConfig.put(ARTIFACT_LABEL, buildArtifactMap("artifact:not normalized.yml"));
-		artifactsFromConfig.put(ARTIFACT_LABEL2, buildArtifactMap("alreadyNormalized.csar"));
-		when(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts()).thenReturn(artifactsFromConfig);
-		when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL, (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL), USER, ArtifactGroupTypeEnum.TOSCA))
-				.thenReturn(buildArtifactDef(ARTIFACT_LABEL));
-		when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL2, (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL2), USER, ArtifactGroupTypeEnum.TOSCA))
-				.thenReturn(buildArtifactDef(ARTIFACT_LABEL2));
-		testInstance.setToscaArtifactsPlaceHolders(resource, USER);
-		
-		Map<String, ArtifactDefinition> toscaArtifacts = resource.getToscaArtifacts();
-		assertThat(toscaArtifacts).hasSize(2);
-		ArtifactDefinition artifactDefinition = toscaArtifacts.get(ARTIFACT_LABEL);
-		assertThat(artifactDefinition.getArtifactName()).isEqualTo("resource-myResourceartifactnot-normalized.yml");
-		ArtifactDefinition artifactDefinition2 = toscaArtifacts.get(ARTIFACT_LABEL2);
-		assertThat(artifactDefinition2.getArtifactName()).isEqualTo("resource-myResourcealreadyNormalized.csar");
-	}
+    @SuppressWarnings("unchecked")
+    @Test
+    public void setToscaArtifactsPlaceHolders_normalizeArtifactName() throws Exception {
+        Resource resource = new ResourceBuilder().setUniqueId("uid")
+                .setComponentType(ComponentTypeEnum.RESOURCE)
+                .setSystemName("myResource")
+                .build();
+        Map<String, Object> artifactsFromConfig = new HashMap<>();
+        artifactsFromConfig.put(ARTIFACT_LABEL, buildArtifactMap("artifact:not normalized.yml"));
+        artifactsFromConfig.put(ARTIFACT_LABEL2, buildArtifactMap("alreadyNormalized.csar"));
+        when(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts()).thenReturn(artifactsFromConfig);
+        when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL, (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL), USER, ArtifactGroupTypeEnum.TOSCA))
+                .thenReturn(buildArtifactDef(ARTIFACT_LABEL));
+        when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL2, (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL2), USER, ArtifactGroupTypeEnum.TOSCA))
+                .thenReturn(buildArtifactDef(ARTIFACT_LABEL2));
+        testInstance.setToscaArtifactsPlaceHolders(resource, USER);
 
-	private Map<String, Object> buildArtifactMap(String artifactName) {
-		Map<String, Object> artifact = new HashMap<>();
-		artifact.put("artifactName", artifactName);
-		return artifact;
-	}
+        Map<String, ArtifactDefinition> toscaArtifacts = resource.getToscaArtifacts();
+        assertThat(toscaArtifacts).hasSize(2);
+        ArtifactDefinition artifactDefinition = toscaArtifacts.get(ARTIFACT_LABEL);
+        assertThat(artifactDefinition.getArtifactName()).isEqualTo("resource-myResourceartifactnot-normalized.yml");
+        ArtifactDefinition artifactDefinition2 = toscaArtifacts.get(ARTIFACT_LABEL2);
+        assertThat(artifactDefinition2.getArtifactName()).isEqualTo("resource-myResourcealreadyNormalized.csar");
+    }
 
-	private ArtifactDefinition buildArtifactDef(String artifactLabel) {
-		ArtifactDefinition artifactDefinition = new ArtifactDefinition();
-		artifactDefinition.setArtifactLabel(artifactLabel);
-		return artifactDefinition;
-	}
+    private Map<String, Object> buildArtifactMap(String artifactName) {
+        Map<String, Object> artifact = new HashMap<>();
+        artifact.put("artifactName", artifactName);
+        return artifact;
+    }
+
+    private ArtifactDefinition buildArtifactDef(String artifactLabel) {
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        artifactDefinition.setArtifactLabel(artifactLabel);
+        return artifactDefinition;
+    }
 }

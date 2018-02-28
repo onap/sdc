@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +16,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openecomp.sdc.asdctool.impl.validator.utils.VfModuleArtifactPayloadEx;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
@@ -29,39 +33,40 @@ import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.tosca.ToscaRepresentation;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
+
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import fj.data.Either;
 
@@ -77,6 +82,7 @@ public class ArtifactUuidFix {
 	private ToscaExportHandler toscaExportUtils;
 	@Autowired
 	private ArtifactCassandraDao artifactCassandraDao;
+
 
 	@Autowired
 	private CsarUtils csarUtils;
@@ -156,7 +162,7 @@ public class ArtifactUuidFix {
 						.getToscaElement(gv.getUniqueId());
 				if (toscaElement.isRight()) {
 					log.info("Failed to fetch resources {} {}", gv.getUniqueId(), toscaElement.right().value());
-					return false;
+					continue;
 				}
 
 				Resource resource = toscaElement.left().value();
@@ -217,20 +223,25 @@ public class ArtifactUuidFix {
 				for (ComponentInstance ci : componentInstances) {
 					if (!vfIds.contains(ci.getComponentUid())) {
 						vfIds.add(ci.getComponentUid());
+						ComponentParametersView filter = new ComponentParametersView(true);
+						filter.setIgnoreComponentInstances(false);
+						filter.setIgnoreArtifacts(false);
+						filter.setIgnoreGroups(false);
 						Either<Resource, StorageOperationStatus> toscaElement = toscaOperationFacade
-								.getToscaElement(ci.getComponentUid());
+								.getToscaElement(ci.getComponentUid(), filter);
 						if (toscaElement.isRight()) {
 							log.info("Failed to fetch resource {} {}", ci.getComponentUid(),
 									toscaElement.right().value());
-							return false;
+							continue;
 						}
 						Resource resource = toscaElement.left().value();
 						if (resource.getResourceType().equals(ResourceTypeEnum.VF)) {
 							vfLst.add(resource);
 							writeModuleResultToFile(writer, resource, service);
 							writer.flush();
-							titanDao.commit();
+							
 						}
+						titanDao.commit();
 					}
 				}
 			}
@@ -262,7 +273,7 @@ public class ArtifactUuidFix {
 			Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
 			hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
 			if (fixServices.equals("distributed_only")) {
-				hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+				hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());			
 				hasProps.put(GraphPropertyEnum.DISTRIBUTION_STATUS, DistributionStatusEnum.DISTRIBUTED.name());
 			}
 
@@ -284,44 +295,23 @@ public class ArtifactUuidFix {
 				filter.setIgnoreGroups(false);
 
 				Either<Service, StorageOperationStatus> toscaElement = toscaOperationFacade
-						.getToscaElement(gv.getUniqueId());
+						.getToscaElement(gv.getUniqueId(), filter);
 				if (toscaElement.isRight()) {
 					log.info("Failed to fetch service {} {}", gv.getUniqueId(), toscaElement.right().value());
 					continue;
 				}
 				Service service = toscaElement.left().value();
-				List<ComponentInstance> componentInstances = service.getComponentInstances();
-				boolean isProblematic = false;
-				if (componentInstances == null) {
-					log.info("No instances for service {} ", gv.getUniqueId());
-					continue;
-				}
+				
 				String serviceName = (String) gv.getMetadataProperty(GraphPropertyEnum.NAME);
-
-				for (ComponentInstance ci : componentInstances) {
-					Map<String, ArtifactDefinition> deploymentArtifacts = ci.getDeploymentArtifacts();
-					List<GroupInstance> groupInstances = ci.getGroupInstances();
-					if (groupInstances == null || groupInstances.isEmpty()) {
-						log.info("No instance groups for instance {} in service {} id {} ", ci.getName(), serviceName,
-								gv.getUniqueId());
-						continue;
-					}
-
-					for (GroupInstance gi : groupInstances) {
-						if (gi.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
-							if (isProblematicGroupInstance(gi, ci.getName(), serviceName, deploymentArtifacts)) {
-								isProblematic = true;
-								break;
-							}
-						}
-					}
-					if (isProblematic) {
-						serviceList.add(service);
-						writeModuleResultToFile(writer, service, null);
-						writer.flush();
-						break;
-					}
+				
+				boolean isProblematic = isProblematicService(service, serviceName);
+				if (isProblematic) {
+					serviceList.add(service);
+					writeModuleResultToFile(writer, service, null);
+					writer.flush();
+				
 				}
+				
 				titanDao.commit();
 			}
 			log.info("output file with list of services : {}", fileName);
@@ -338,6 +328,69 @@ public class ArtifactUuidFix {
 			}
 		}
 		return true;
+	}
+
+	private boolean isProblematicService( Service service, String serviceName) throws IOException {
+		
+		List<ComponentInstance> componentInstances = service.getComponentInstances();
+		
+		if (componentInstances == null) {
+			log.info("No instances for service {} ", service.getUniqueId());
+			return false;
+		}
+		boolean isCheckVFModules = true;
+		if(service.getLifecycleState() == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN ||
+				service.getLifecycleState() == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT){
+			isCheckVFModules = false;
+		}
+		for (ComponentInstance ci : componentInstances) {
+			Map<String, ArtifactDefinition> deploymentArtifacts = ci.getDeploymentArtifacts();
+			List<GroupInstance> groupInstances = ci.getGroupInstances();
+			if (groupInstances == null || groupInstances.isEmpty()) {
+				log.info("No instance groups for instance {} in service {} id {} ", ci.getName(), serviceName,
+						service.getUniqueId());
+				continue;
+			}
+			List<VfModuleArtifactPayloadEx> vfModules = null;
+			if(isCheckVFModules){
+				Optional<ArtifactDefinition> optionalVfModuleArtifact = deploymentArtifacts.values().stream()
+						.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
+				
+				 if(!optionalVfModuleArtifact.isPresent())
+					 return true;
+			
+				 ArtifactDefinition vfModuleArtifact = optionalVfModuleArtifact.get();
+				 Either<List<VfModuleArtifactPayloadEx>, StorageOperationStatus> vfModulesEither = parseVFModuleJson(vfModuleArtifact);
+				 if(vfModulesEither.isRight()){
+					 log.error("Failed to parse vfModule for service {} status is {}", service.getUniqueId(), vfModulesEither.right().value());
+					 return true;
+				 }
+				 vfModules = vfModulesEither.left().value();
+				 if(vfModules == null || vfModules.isEmpty() ){
+					 log.info("vfModules empty for service {}", service.getUniqueId());
+					 return true;
+				 }	
+			}
+
+			for (GroupInstance gi : groupInstances) {
+				if (gi.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
+					VfModuleArtifactPayloadEx vfModule= null;
+					if(isCheckVFModules && vfModules != null){
+						Optional<VfModuleArtifactPayloadEx> op = vfModules.stream().filter(vf -> vf.getVfModuleModelName().equals(gi.getGroupName())).findAny();
+						if(!op.isPresent()){
+							 log.error("Failed to find vfModule for group {}", gi.getGroupName());
+							return true;
+						}
+						vfModule = op.get();
+					}
+					if (isProblematicGroupInstance(gi, ci.getName(), serviceName, deploymentArtifacts, vfModule)) {
+						return true;
+					}
+				}
+			}
+			
+		}
+		return false;
 	}
 
 	private boolean isProblematicGroup(GroupDefinition gr, String resourceName,
@@ -406,14 +459,15 @@ public class ArtifactUuidFix {
 	}
 
 	private boolean isProblematicGroupInstance(GroupInstance gi, String instName, String servicename,
-			Map<String, ArtifactDefinition> deploymentArtifacts) {
+			Map<String, ArtifactDefinition> deploymentArtifacts, VfModuleArtifactPayloadEx vfModule) {
 		List<String> artifacts = gi.getArtifacts();
 		List<String> artifactsUuid = gi.getArtifactsUuid();
 		List<String> instArtifactsUuid = gi.getGroupInstanceArtifactsUuid();
 		List<String> instArtifactsId = gi.getGroupInstanceArtifacts();
 		Set<String> instArtifatIdSet = new HashSet<>();
-		Set<String> artifactsSet = new HashSet<>();
-
+		Set<String> artifactsSet = new HashSet<>();	
+	
+		log.info("check group {} for instance {} ", gi.getGroupName(), instName);
 		if ((artifactsUuid == null || artifactsUuid.isEmpty()) && (artifacts == null || artifacts.isEmpty())) {
 			log.info("No instance groups for instance {} in service {} ", instName, servicename);
 			return true;
@@ -496,8 +550,42 @@ public class ArtifactUuidFix {
 				return true;
 			}
 		}
+		if(vfModule != null ){
+			return isProblematicVFModule(vfModule, artifactsUuid, instArtifactsUuid);
+		}
+		
 		return false;
 	}
+
+	private boolean isProblematicVFModule(VfModuleArtifactPayloadEx vfModule, List<String> artifactsUuid,
+			List<String> instArtifactsUuid) {
+		log.info(" isProblematicVFModule  {}  ", vfModule.getVfModuleModelName());
+		List<String> vfModuleArtifacts = vfModule.getArtifacts();
+		List<String> allArtifacts = new ArrayList<>();
+		allArtifacts.addAll(artifactsUuid);
+		if(instArtifactsUuid != null)
+			allArtifacts.addAll(instArtifactsUuid);
+		if((vfModuleArtifacts == null || vfModuleArtifacts.isEmpty()) && !artifactsUuid.isEmpty()){
+			log.error(" vfModuleArtifacts == null || vfModuleArtifacts.isEmpty()) && !artifactsUuid.isEmpty()");
+			return true;
+		}
+		if(vfModuleArtifacts!= null){
+			if( vfModuleArtifacts.size() != allArtifacts.size()){
+				log.error(" vfModuleArtifacts.size() != allArtifacts.size()");
+				return true;
+			}
+			for(String vfModuleArtifact: vfModuleArtifacts){
+				Optional<String> op = allArtifacts.stream().filter(a -> a.equals(vfModuleArtifact)).findAny();
+				if(!op.isPresent()){
+					log.error("failed to find artifact {} in group artifacts {}", vfModuleArtifact,  allArtifacts);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	
 
 	private boolean fix(List<Resource> vfLst, List<Service> serviceList, Map<String, List<Component>> nodesToFixTosca,
 			Map<String, List<Component>> vfToFixTosca, Map<String, List<Component>> servicesToFixTosca) {
@@ -514,108 +602,107 @@ public class ArtifactUuidFix {
 		}
 
 		Set<String> fixedIds = new HashSet<>();
-		if (res && nodesToFixTosca != null && !nodesToFixTosca.isEmpty()) {
 
-			generateAndSaveToscaArtifacts(nodesToFixTosca, fixedIds, null);
+		long time = System.currentTimeMillis();
+		String fileName = "FailedGenerateTosca" + "_" + time + ".csv";
+		Writer writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+			writer.write("componentType, name, version, UID, UUID, invariantUUID, state\n");
+			List<Component> failedList = new ArrayList<>();
 
-			for (Map.Entry<String, List<Component>> entry : nodesToFixTosca.entrySet()) {
-				List<Component> components = entry.getValue();
-				for (Component c : components) {
+			if (res && nodesToFixTosca != null && !nodesToFixTosca.isEmpty()) {
 
-					ToscaElement topologyTemplate = ModelConverter.convertToToscaElement(c);
-					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
-					res = fixDataOnGraph(c.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS, EdgeLabelEnum.TOSCA_ARTIFACTS,
-							arifacts);
-					titanDao.commit();
-				}
+				generateAndSaveToscaArtifacts(nodesToFixTosca, fixedIds, null, failedList);
+
 			}
+			if (vfToFixTosca != null && !vfToFixTosca.isEmpty()) {
 
-		}
-		if (res && vfToFixTosca != null && !vfToFixTosca.isEmpty()) {
+				generateAndSaveToscaArtifacts(vfToFixTosca, fixedIds, vfLst, failedList);
 
-			generateAndSaveToscaArtifacts(vfToFixTosca, fixedIds, vfLst);
-
-			for (Map.Entry<String, List<Component>> entry : vfToFixTosca.entrySet()) {
-				List<Component> components = entry.getValue();
-				for (Component c : components) {
-					TopologyTemplate topologyTemplate = ModelConverter.convertToToscaElement(c);
-					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
-					res = fixDataOnGraph(c.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS, EdgeLabelEnum.TOSCA_ARTIFACTS,
-							arifacts);
-					titanDao.commit();
-				}
 			}
-
-		}
-
-		if (res && servicesToFixTosca != null && !servicesToFixTosca.isEmpty()) {
-			generateAndSaveToscaArtifacts(servicesToFixTosca, fixedIds, serviceList);
-
-			for (Map.Entry<String, List<Component>> entry : servicesToFixTosca.entrySet()) {
-				List<Component> components = entry.getValue();
-				for (Component c : components) {
-					TopologyTemplate topologyTemplate = ModelConverter.convertToToscaElement(c);
-					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
-					res = fixDataOnGraph(c.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS, EdgeLabelEnum.TOSCA_ARTIFACTS,
-							arifacts);
-					titanDao.commit();
-				}
-			}
-
-		}
-
-		if (res) {
-
+			
 			for (Component component : vfLst) {
-				generateToscaPerComponent(fixedIds, component);
-
-				TopologyTemplate topologyTemplate = ModelConverter.convertToToscaElement(component);
-				Map<String, GroupDataDefinition> groups = topologyTemplate.getGroups();
-				res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.GROUPS, EdgeLabelEnum.GROUPS, groups);
+				res = generateToscaPerComponent(fixedIds, component);
 				if (res) {
-					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getDeploymentArtifacts();
-					res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.DEPLOYMENT_ARTIFACTS,
-							EdgeLabelEnum.DEPLOYMENT_ARTIFACTS, arifacts);
+					TopologyTemplate topologyTemplate = ModelConverter.convertToToscaElement(component);
+					Map<String, GroupDataDefinition> groups = topologyTemplate.getGroups();
+					res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.GROUPS, EdgeLabelEnum.GROUPS, groups);
+					if (res) {
+						Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getDeploymentArtifacts();
+						res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.DEPLOYMENT_ARTIFACTS,
+								EdgeLabelEnum.DEPLOYMENT_ARTIFACTS, arifacts);
+					}
+					if (res) {
+						Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
+						res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS,
+								EdgeLabelEnum.TOSCA_ARTIFACTS, arifacts);
+					}
+					titanDao.commit();
+				} else {
+					failedList.add(component);
 				}
-				if (res) {
-					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
-					res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS,
-							EdgeLabelEnum.TOSCA_ARTIFACTS, arifacts);
-				}
-				titanDao.commit();
 			}
-		}
 
-		if (res) {
+			if (servicesToFixTosca != null && !servicesToFixTosca.isEmpty()) {
+				generateAndSaveToscaArtifacts(servicesToFixTosca, fixedIds, serviceList, failedList);
 
+			}
+
+			
 			for (Component component : serviceList) {
-				generateToscaPerComponent(fixedIds, component);
-
-				TopologyTemplate topologyTemplate = ModelConverter.convertToToscaElement(component);
-				Map<String, MapGroupsDataDefinition> groups = topologyTemplate.getInstGroups();
-				res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.INST_GROUPS, EdgeLabelEnum.INST_GROUPS,
-						groups);
-
+				res = generateToscaPerComponent(fixedIds, component);
 				if (res) {
-					Map<String, MapArtifactDataDefinition> artifacts = topologyTemplate.getInstDeploymentArtifacts();
-					res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS,
-							EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, artifacts);
+					TopologyTemplate topologyTemplate = ModelConverter.convertToToscaElement(component);
+					Map<String, MapGroupsDataDefinition> groups = topologyTemplate.getInstGroups();
+					res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.INST_GROUPS, EdgeLabelEnum.INST_GROUPS,
+							groups);
+
+					if (res) {
+						Map<String, MapArtifactDataDefinition> artifacts = topologyTemplate
+								.getInstDeploymentArtifacts();
+						res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS,
+								EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, artifacts);
+					}
+					if (res) {
+						Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
+						res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS,
+								EdgeLabelEnum.TOSCA_ARTIFACTS, arifacts);
+					}
+					titanDao.commit();
+				} else {
+					failedList.add(component);
 				}
-				if (res) {
-					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
-					res = fixDataOnGraph(component.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS,
-							EdgeLabelEnum.TOSCA_ARTIFACTS, arifacts);
-				}
-				titanDao.commit();
+
 			}
+			if (!failedList.isEmpty()) {
+				for (Component component : failedList) {
+					StringBuilder sb = new StringBuilder(component.getComponentType().getValue());
+					sb.append(",").append(component.getName()).append(",").append(component.getVersion()).append(",")
+							.append(component.getUniqueId()).append(",").append(component.getUUID()).append(",")
+							.append(component.getInvariantUUID()).append(",").append(component.getLifecycleState());
 
+					sb.append("\n");
+					writer.write(sb.toString());
+				}
+				writer.flush();
+			}
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} finally {
+			titanDao.commit();
+			try {
+				writer.flush();
+				writer.close();
+			} catch (Exception ex) {
+				/* ignore */}
 		}
 		log.info(" Fix finished with res {} ***** ", res);
 		return res;
 	}
 
 	private boolean generateAndSaveToscaArtifacts(Map<String, List<Component>> nodesToFixTosca, Set<String> fixedIds,
-			List<? extends Component> componentsWithFailedGroups) {
+			List<? extends Component> componentsWithFailedGroups, List<Component> failedList) {
 		boolean res = true;
 		log.debug("Migration1707ArtifactUuidFix  generateAndSaveToscaArtifacts started ");
 		for (Map.Entry<String, List<Component>> entry : nodesToFixTosca.entrySet()) {
@@ -631,6 +718,16 @@ public class ArtifactUuidFix {
 						res = generateToscaPerComponent(fixedIds, c);
 				} else
 					res = generateToscaPerComponent(fixedIds, c);
+				if (res) {
+					ToscaElement topologyTemplate = ModelConverter.convertToToscaElement(c);
+					Map<String, ArtifactDataDefinition> arifacts = topologyTemplate.getToscaArtifacts();
+					res = fixDataOnGraph(c.getUniqueId(), VertexTypeEnum.TOSCA_ARTIFACTS, EdgeLabelEnum.TOSCA_ARTIFACTS,
+							arifacts);
+					titanDao.commit();
+				} else {
+					failedList.add(c);
+				}
+
 			}
 		}
 		log.debug("Migration1707ArtifactUuidFix  generateAndSaveToscaArtifacts finished with res {} ", res);
@@ -660,59 +757,24 @@ public class ArtifactUuidFix {
 				});
 			}
 
-			Map<String, ArtifactDefinition> toscaArtifacts = c.getToscaArtifacts();
-			log.debug("Migration1707ArtifactUuidFix  generateToscaPerComponent tocsa artifacts size {}",
-					toscaArtifacts.size());
+			Either<Component, ToscaError> either = generateToscaArtifact(toscaElementFull);
 
-			Either<ArtifactDefinition, ToscaError> either = Either.right(ToscaError.GENERAL_ERROR);
-			ArtifactDefinition toscaArtifact = null;
-			Optional<ArtifactDefinition> op = toscaArtifacts.values().stream()
-					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType())).findAny();
-
-			if (op.isPresent()) {
-				toscaArtifact = op.get();
+			if (either.isRight()) {
+				log.error("Couldn't generate and save tosca template component  unique id {}, name {} error: {}",
+						toscaElementFull.getUniqueId(), toscaElementFull.getName(), either.right().value());
+				res = false;
+				
 			}
-
-			if (toscaArtifact != null) {
-				log.debug("Migration1707ArtifactUuidFix  generateToscaPerComponent artifact name {} id {} esId {}",
-						toscaArtifact.getArtifactName(), toscaArtifact.getUniqueId(), toscaArtifact.getEsId());
-				either = generateToscaArtifact(toscaElementFull, toscaArtifact);
-				if (either.isRight()) {
-					log.error("Couldn't generate and save tosca template component  unique id {}, name {} error: {}",
-							toscaElementFull.getUniqueId(), toscaElementFull.getName(), either.right().value());
-					res = false;
-
-				}
-			}
+			
 			if (res) {
-
-				ArtifactDefinition csarArtifact = null;
-				op = toscaArtifacts.values().stream()
-						.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny();
-
-				if (op.isPresent()) {
-					csarArtifact = op.get();
-				}
-
-				if (csarArtifact != null) {
-					log.debug("Migration1707ArtifactUuidFix  generateToscaPerComponent artifact name {} id {} esId {}",
-							csarArtifact.getArtifactName(), csarArtifact.getUniqueId(), csarArtifact.getEsId());
-					either = generateToscaArtifact(toscaElementFull, csarArtifact);
-					if (either.isRight()) {
-						log.error("Couldn't generate and save tosca csar for component  uuid {}, id {}, name {}.  error: {}",
-								toscaElementFull.getUUID(), toscaElementFull.getUniqueId(), toscaElementFull.getName(), either.right().value());
-						res = false;
-
-					}
-				}
-			}
-			c.setToscaArtifacts(toscaArtifacts);
-
-			if (res) {
+				c.setToscaArtifacts(either.left().value().getToscaArtifacts());
 				fixedIds.add(toscaElementFull.getUniqueId());
 			}
 		} finally {
-			titanDao.commit();
+			if (res)
+				titanDao.commit();
+			else
+				titanDao.rollback();
 		}
 		log.debug("Migration1707ArtifactUuidFix  generateToscaPerComponent finished  component name {} id {} res {}",
 				c.getName(), c.getUniqueId(), res);
@@ -797,10 +859,15 @@ public class ArtifactUuidFix {
 
 			Optional<ArtifactDefinition> optionalVfModuleArtifact = artifactsMap.values().stream()
 					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
-			if (optionalVfModuleArtifact.isPresent()) {
-				ArtifactDefinition vfModuleAertifact = optionalVfModuleArtifact.get();
-				fillVfModuleInstHeatEnvPayload(groupsList, vfModuleAertifact);
+			ArtifactDefinition vfModuleAertifact = null;
+			if(!optionalVfModuleArtifact.isPresent()){
+				vfModuleAertifact = createVfModuleArtifact(instance, service);
+				artifactsMap.put(vfModuleAertifact.getArtifactLabel(), vfModuleAertifact);
 			}
+			else {
+				vfModuleAertifact = optionalVfModuleArtifact.get();				
+			}
+			fillVfModuleInstHeatEnvPayload(service, instance, groupsList, vfModuleAertifact);
 		}
 	}
 
@@ -809,15 +876,19 @@ public class ArtifactUuidFix {
 		if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
 			log.debug("Migration1707ArtifactUuidFix  fix group:  resource id {}, group name {} ", service.getUniqueId(),
 					group.getName());
-			List<String> groupArtifacts = new ArrayList<String>(group.getArtifacts());
-
-			group.getArtifacts().clear();
-			group.getArtifactsUuid().clear();
-			group.getGroupInstanceArtifacts().clear();
-			group.getGroupInstanceArtifactsUuid().clear();
-
-			for (String artifactId : groupArtifacts) {
-				fixArtifactUndergroupInstances(artifactsMap, group, groupArtifacts, artifactId);
+			if(group.getArtifacts() != null){
+				Set<String> groupArtifactsSet = new HashSet<>(group.getArtifacts());
+				if(group.getGroupInstanceArtifacts() != null){
+					List<String> groupInsArtifacts = new ArrayList<>(group.getGroupInstanceArtifacts());
+					groupArtifactsSet.addAll(groupInsArtifacts);
+				}
+				List<String> groupArtifacts = new ArrayList<>(groupArtifactsSet);
+	
+				clearGroupInstanceArtifacts(group);
+	
+				for (String artifactId : groupArtifacts) {
+					fixArtifactUndergroupInstances(artifactsMap, group, groupArtifacts, artifactId);
+				}
 			}
 			if (group.getArtifacts() == null || group.getArtifacts().isEmpty()) {
 				log.debug(
@@ -826,6 +897,27 @@ public class ArtifactUuidFix {
 				groupsToDelete.add(group);
 			}
 		}
+	}
+
+	private void clearGroupInstanceArtifacts(GroupInstance group) {
+		if(group.getArtifacts() != null)
+			group.getArtifacts().clear();
+		else
+			group.setArtifacts(new ArrayList<>());
+		if(group.getArtifactsUuid() != null)
+			group.getArtifactsUuid().clear();
+		else{
+			group.setArtifactsUuid(new ArrayList<>());
+		}
+		if(group.getGroupInstanceArtifacts() != null)
+			group.getGroupInstanceArtifacts().clear();
+		else{
+			group.setGroupInstanceArtifacts(new ArrayList<>());
+		}
+		if(group.getGroupInstanceArtifactsUuid() != null )				
+			group.getGroupInstanceArtifactsUuid().clear();
+		else
+			group.setGroupInstanceArtifactsUuid(new ArrayList<>());
 	}
 
 	private void fixArtifactUndergroupInstances(Map<String, ArtifactDefinition> artifactsMap, GroupInstance group,
@@ -841,7 +933,6 @@ public class ArtifactUuidFix {
 			if (artifactType != ArtifactTypeEnum.HEAT_ENV) {
 				boolean isAddToGroup = true;
 				if (groupArtifacts.size() == 1) {
-
 					if (artifactType == ArtifactTypeEnum.HEAT_ARTIFACT) {
 						isAddToGroup = false;
 						artifact.setArtifactType(ArtifactTypeEnum.OTHER.getType());
@@ -859,10 +950,14 @@ public class ArtifactUuidFix {
 			} else {
 				log.debug(
 						"Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ",
-						group.getName(), correctArtifactId, correctArtifactUUID);
-				group.getGroupInstanceArtifacts().add(correctArtifactId);
+						group.getName(), correctArtifactId, correctArtifactUUID);				
+				Set<String> tmpSet = new HashSet<>(group.getGroupInstanceArtifacts());
+				tmpSet.add(correctArtifactId);
+				group.setGroupInstanceArtifacts(new ArrayList<>(tmpSet));
 				if (correctArtifactUUID != null && !correctArtifactUUID.isEmpty()) {
-					group.getGroupInstanceArtifactsUuid().add(correctArtifactUUID);
+					Set<String> tmpSetUUID = new HashSet<>(group.getGroupInstanceArtifactsUuid());
+					tmpSetUUID.add(correctArtifactUUID);
+					group.setGroupInstanceArtifactsUuid(new ArrayList<>(tmpSetUUID));
 				}
 			}
 		}
@@ -903,7 +998,10 @@ public class ArtifactUuidFix {
 	private void fixVfGroup(Resource resource, Map<String, ArtifactDefinition> artifactsMap, GroupDefinition group) {
 		log.debug("Migration1707ArtifactUuidFix  fix group:  resource id {}, group name {} ", resource.getUniqueId(),
 				group.getName());
-		List<String> groupArtifacts = new ArrayList<>(group.getArtifacts());
+		Set<String> groupArtifactsSet = new HashSet<>(group.getArtifacts());
+		List<String> groupArtifacts = new ArrayList<>(groupArtifactsSet);
+		group.getArtifacts().clear();
+		group.getArtifactsUuid().clear();
 
 		for (String artifactId : groupArtifacts) {
 			fixArtifactUnderGroup(artifactsMap, group, groupArtifacts, artifactId);
@@ -912,8 +1010,7 @@ public class ArtifactUuidFix {
 
 	private void fixArtifactUnderGroup(Map<String, ArtifactDefinition> artifactsMap, GroupDefinition group,
 			List<String> groupArtifacts, String artifactId) {
-		group.getArtifacts().clear();
-		group.getArtifactsUuid().clear();
+
 		String artifactlabel = findArtifactLabelFromArtifactId(artifactId);
 		log.debug("Migration1707ArtifactUuidFix  fix group:  group name {} artifactId for fix {} artifactlabel {} ",
 				group.getName(), artifactId, artifactlabel);
@@ -1021,10 +1118,10 @@ public class ArtifactUuidFix {
 
 			Either<List<GraphVertex>, TitanOperationStatus> resultsEither = titanDao.getByCriteria(type, hasProps);
 			if (resultsEither.isRight()) {
-				System.out.println("getVerticesToValidate failed " + resultsEither.right().value());
+				log.error("getVerticesToValidate failed {} ",resultsEither.right().value());
 				return result;
 			}
-			System.out.println("getVerticesToValidate: " + resultsEither.left().value().size() + " vertices to scan");
+			log.info("getVerticesToValidate: {}  vertices to scan", resultsEither.left().value().size());
 			List<GraphVertex> componentsList = resultsEither.left().value();
 			componentsList.forEach(vertex -> {
 				String ivariantUuid = (String) vertex.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID);
@@ -1040,8 +1137,8 @@ public class ArtifactUuidFix {
 				Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade
 						.getToscaElement(vertex.getUniqueId(), filter);
 				if (toscaElement.isRight()) {
-					System.out.println("getVerticesToValidate: failed to find element" + vertex.getUniqueId()
-							+ " staus is" + toscaElement.right().value());
+					log.error("getVerticesToValidate: failed to find element {}  staus is {}", vertex.getUniqueId()
+							,toscaElement.right().value());
 				} else {
 					compList.add(toscaElement.left().value());
 				}
@@ -1124,23 +1221,22 @@ public class ArtifactUuidFix {
 		return result;
 	}
 
-	private Either<ArtifactDefinition, ToscaError> generateToscaArtifact(Component parent,
-			ArtifactDefinition artifactInfo) {
+	private Either<Component, ToscaError> generateToscaArtifact(Component parent) {
 		log.debug("tosca artifact generation");
 		try {
-			if (artifactInfo.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())) {
-				Either<byte[], ResponseFormat> generated = csarUtils.createCsar(parent, true, true);
+			Map<String, ArtifactDefinition> toscaArtifacts = parent.getToscaArtifacts();
 
-				if (generated.isRight()) {
-					log.debug("Failed to export tosca csar for component {} error {}", parent.getUniqueId(),
-							generated.right().value());
+			ArtifactDefinition toscaArtifact = null;
+			Optional<ArtifactDefinition> op = toscaArtifacts.values().stream()
+					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType())).findAny();
 
-					return Either.right(ToscaError.GENERAL_ERROR);
-				}
-				byte[] value = generated.left().value();
-				artifactInfo.setPayload(value);
+			if (op.isPresent()) {
+				toscaArtifact = op.get();
+			}
+			if (toscaArtifact != null) {
+				log.debug("Migration1707ArtifactUuidFix  generateToscaPerComponent artifact name {} id {} esId {}",
+						toscaArtifact.getArtifactName(), toscaArtifact.getUniqueId(), toscaArtifact.getEsId());
 
-			} else {
 				Either<ToscaRepresentation, ToscaError> exportComponent = toscaExportUtils.exportComponent(parent);
 				if (exportComponent.isRight()) {
 					log.debug("Failed export tosca yaml for component {} error {}", parent.getUniqueId(),
@@ -1151,29 +1247,90 @@ public class ArtifactUuidFix {
 				log.debug("Tosca yaml exported for component {} ", parent.getUniqueId());
 				String payload = exportComponent.left().value().getMainYaml();
 
-				artifactInfo.setPayloadData(payload);
+				toscaArtifact.setPayloadData(payload);
+				byte[] decodedPayload = toscaArtifact.getPayloadData();
+
+				String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(parent.getUniqueId(),
+						toscaArtifact.getArtifactLabel());
+				toscaArtifact.setUniqueId(uniqueId);
+				toscaArtifact.setEsId(toscaArtifact.getUniqueId());
+
+				toscaArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
+				ESArtifactData artifactData = new ESArtifactData(toscaArtifact.getEsId(), decodedPayload);
+				artifactCassandraDao.saveArtifact(artifactData);
+
+				log.debug("Tosca yaml artifact esId  {} ", toscaArtifact.getEsId());
+			}
+			ArtifactDefinition csarArtifact = null;
+			op = toscaArtifacts.values().stream()
+					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny();
+
+			if (op.isPresent()) {
+				csarArtifact = op.get();
 			}
 
-			byte[] decodedPayload = artifactInfo.getPayloadData();
-			artifactInfo.setEsId(artifactInfo.getUniqueId());
-			artifactInfo.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
-			ESArtifactData artifactData = new ESArtifactData(artifactInfo.getEsId(), decodedPayload);
-			artifactCassandraDao.saveArtifact(artifactData);
-			log.debug("Tosca yaml artifact esId  ", artifactInfo.getEsId());
+			if (csarArtifact != null) {
+				Either<byte[], ResponseFormat> generated = csarUtils.createCsar(parent, true, true);
+
+				if (generated.isRight()) {
+					log.debug("Failed to export tosca csar for component {} error {}", parent.getUniqueId(),
+							generated.right().value());
+
+					return Either.right(ToscaError.GENERAL_ERROR);
+				}
+				byte[] value = generated.left().value();
+				csarArtifact.setPayload(value);
+				byte[] decodedPayload = csarArtifact.getPayloadData();
+
+				String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(parent.getUniqueId(),
+						csarArtifact.getArtifactLabel());
+				csarArtifact.setUniqueId(uniqueId);
+				csarArtifact.setEsId(csarArtifact.getUniqueId());
+
+				csarArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
+				ESArtifactData artifactData = new ESArtifactData(csarArtifact.getEsId(), decodedPayload);
+				artifactCassandraDao.saveArtifact(artifactData);
+				log.debug("Tosca csar artifact esId  {} ", csarArtifact.getEsId());
+
+			}
+
 		} catch (Exception ex) {
-			log.error("Failed to generate tosca atifact id {} component id {} component name {} error {}",artifactInfo.getUniqueId(),
-					parent.getUniqueId(), parent.getName(), ex.getMessage()	);
+			log.error("Failed to generate tosca atifact component id {} component name {} error {}",
+					parent.getUniqueId(), parent.getName(), ex.getMessage());
 
 			return Either.right(ToscaError.GENERAL_ERROR);
 		}
-		
-		return Either.left(artifactInfo);
+
+		return Either.left(parent);
 	}
+	
+	   private ArtifactDefinition createVfModuleArtifact(ComponentInstance currVF, Service service) {
 
-	private void fillVfModuleInstHeatEnvPayload(List<GroupInstance> groupsForCurrVF,
+	        ArtifactDefinition vfModuleArtifactDefinition = new ArtifactDefinition();
+	        String newCheckSum = null;
+
+	        vfModuleArtifactDefinition.setDescription("Auto-generated VF Modules information artifact");
+	        vfModuleArtifactDefinition.setArtifactDisplayName("Vf Modules Metadata");
+	        vfModuleArtifactDefinition.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.getType());
+	        vfModuleArtifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+	        vfModuleArtifactDefinition.setArtifactLabel("vfModulesMetadata");
+	        vfModuleArtifactDefinition.setTimeout(0);
+	        vfModuleArtifactDefinition.setArtifactName(currVF.getNormalizedName() + "_modules.json");
+	       
+	       return vfModuleArtifactDefinition;
+	    }
+
+
+	private void fillVfModuleInstHeatEnvPayload(Component parent, ComponentInstance instance, List<GroupInstance> groupsForCurrVF,
 			ArtifactDefinition vfModuleArtifact) {
+		log.debug("generate new vf module for component. name  {}, id {}, Version {}", instance.getName(), instance.getUniqueId());
+		
+		String uniqueId = UniqueIdBuilder.buildInstanceArtifactUniqueId(parent.getUniqueId(), instance.getUniqueId(), vfModuleArtifact.getArtifactLabel());
+				
+		vfModuleArtifact.setUniqueId(uniqueId);
+		vfModuleArtifact.setEsId(vfModuleArtifact.getUniqueId());
 
-		List<VfModuleArtifactPayload> vfModulePayloadForCurrVF = new ArrayList<VfModuleArtifactPayload>();
+		List<VfModuleArtifactPayload> vfModulePayloadForCurrVF = new ArrayList<>();
 		if (groupsForCurrVF != null) {
 			for (GroupInstance groupInstance : groupsForCurrVF) {
 				VfModuleArtifactPayload modulePayload = new VfModuleArtifactPayload(groupInstance);
@@ -1185,6 +1342,7 @@ public class ArtifactUuidFix {
 			final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 			String vfModulePayloadString = gson.toJson(vfModulePayloadForCurrVF);
+			log.debug("vfModulePayloadString {}", vfModulePayloadString);
 			if (vfModulePayloadString != null) {
 				String newCheckSum = GeneralUtility
 						.calculateMD5Base64EncodedByByteArray(vfModulePayloadString.getBytes());
@@ -1199,4 +1357,89 @@ public class ArtifactUuidFix {
 		}
 
 	}
+	
+	private Either<List<VfModuleArtifactPayloadEx>, StorageOperationStatus> parseVFModuleJson(ArtifactDefinition vfModuleArtifact) {
+		log.info("Try to get vfModule json from cassandra {}", vfModuleArtifact.getEsId());
+		Either<ESArtifactData, CassandraOperationStatus> vfModuleData = artifactCassandraDao.getArtifact(vfModuleArtifact.getEsId());
+		
+		if (vfModuleData.isRight()) {
+			CassandraOperationStatus resourceUploadStatus = vfModuleData.right().value();
+			StorageOperationStatus storageResponse = DaoStatusConverter.convertCassandraStatusToStorageStatus(resourceUploadStatus);
+			log.error("failed to fetch vfModule json {} from cassandra. Status is {}", vfModuleArtifact.getEsId(), storageResponse);
+			return Either.right(storageResponse);
+			
+		}
+
+		ESArtifactData esArtifactData = vfModuleData.left().value();
+		String gsonData = new String( esArtifactData.getDataAsArray());
+		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		JsonArray jsonElement = new JsonArray();
+		jsonElement = gson.fromJson(gsonData, jsonElement.getClass());
+		List<VfModuleArtifactPayloadEx> vfModules = new ArrayList<>();
+		jsonElement.forEach(je ->{
+			VfModuleArtifactPayloadEx vfModule = ComponentsUtils.parseJsonToObject(je.toString(), VfModuleArtifactPayloadEx.class);
+			vfModules.add(vfModule);
+		});
+		
+		log.debug  ("parse vf module finish {}", gsonData);
+		return Either.left(vfModules);
+		
+	}
+
+	/*public boolean manualFix() {
+
+		Set<String> fixedIds = new HashSet<>();
+		Component component;
+		String componentId = "86683566-20e8-4cc5-872d-12abca1d57f0";//"9f6a6976-18e3-488a-98a4-c1aade480739";
+		Either<Resource, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaFullElement(componentId);
+		if (toscaElement.isRight()) {
+			log.info("Failed to fetch resources {} {}", componentId, toscaElement.right().value());
+
+		}
+		boolean res = generateToscaPerComponent(fixedIds, toscaElement.left().value());
+		log.info("Fix component return res {} ", res);
+		titanDao.commit();
+
+		return res;
+	}
+
+	
+	public boolean manualCheck() {
+
+	Set<String> fixedIds = new HashSet<>();
+	Component component;
+	String componentId = "86d50186-7b00-4bfc-abcb-9e4c6892f338";//"9f6a6976-18e3-488a-98a4-c1aade480739";
+	Either<Service, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaFullElement(componentId);
+	if (toscaElement.isRight()) {
+		log.info("Failed to fetch resources {} {}", componentId, toscaElement.right().value());
+
+	}
+	boolean res = true;
+	try {
+		res = isProblematicService(toscaElement.left().value(), toscaElement.left().value().getName());
+		if(res){
+			List<Service> services = new ArrayList<>();
+			services.add(toscaElement.left().value());
+			this.fix(new ArrayList<Resource>(), services, null, null, null);
+			
+			Either<Service, StorageOperationStatus> toscaElementNew  = toscaOperationFacade.getToscaFullElement(componentId);
+			if (toscaElement.isRight()) {
+				log.info("Failed to fetch resources {} {}", componentId, toscaElementNew.right().value());
+
+			}
+			res = isProblematicService(toscaElementNew.left().value(), toscaElementNew.left().value().getName());
+		}
+		titanDao.commit();
+
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	log.info("Fix component return res {} ", res);
+	
+	return res;
+}*/
+
 }
+
+

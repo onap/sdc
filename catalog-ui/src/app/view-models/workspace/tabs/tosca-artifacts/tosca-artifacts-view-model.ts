@@ -19,10 +19,12 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ArtifactModel, IFileDownload} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
 import {ComponentServiceNg2} from "../../../../ng2/services/component-services/component.service";
+
 export interface IToscaArtifactsScope extends IWorkspaceViewModelScope {
     artifacts:Array<ArtifactModel>;
     tableHeadersList:Array<any>;

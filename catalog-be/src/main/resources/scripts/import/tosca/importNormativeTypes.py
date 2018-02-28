@@ -5,19 +5,19 @@ import json
 import copy
 from importCommon import *
 import importCommon
-################################################################################################################################################
-#																																		       #	
-# Import all users from a given file																										   #
-# 																																			   #		
-# activation :																																   #
-#       python importUsers.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#							  [-v <true|false> | --updateversion=<true|false>]																											  	   #			
-# shortest activation (be host = localhost, be port = 8080): 																				   #																       #
-#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           #
-#																																		       #	
-################################################################################################################################################
+#########################################################################################################################################################################################
+#																																		       											#
+# Import all users from a given file																										   											#
+# 																																			   											#
+# activation :																																   											#
+#       python importNormativeTypes.py [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]	#
+#							  [-v <true|false> | --updateversion=<true|false>]																											#
+# shortest activation (be host = localhost, be port = 8080): 																				   											#
+#		python importNormativeTypes.py [-f <input file> | --ifile=<input file> ]												 				           								#
+#																																		       											#	
+#########################################################################################################################################################################################
 
-def createNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME, updateversion):
+def createNormativeType(scheme, beHost, bePort, adminUser, fileDir, ELEMENT_NAME, updateversion):
 	
 	try:
 		log("in create normative type ", ELEMENT_NAME)
@@ -27,7 +27,7 @@ def createNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME, update
 		buffer = StringIO()
 		c = pycurl.Curl()
 
-		url = 'http://' + beHost + ':' + bePort + '/sdc2/rest/v1/catalog/upload/multipart'
+		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/catalog/upload/multipart'
 		if updateversion != None:
 			url += '?createNewVersion=' + updateversion
 		c.setopt(c.URL, url)
@@ -58,6 +58,9 @@ def createNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME, update
 		#data = json.dumps(user)
 		#c.setopt(c.POSTFIELDS, data)	
 
+		if scheme == 'https':
+			c.setopt(c.SSL_VERIFYPEER, 0)
+
 		#c.setopt(c.WRITEFUNCTION, lambda x: None)
 		c.setopt(c.WRITEFUNCTION, buffer.write)
 		#print("before perform")	
@@ -79,10 +82,10 @@ def createNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME, update
 
 
 def usage():
-	print sys.argv[0], '[-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-v <true|false> | --updateversion=<true|false>]'
+	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-v <true|false> | --updateversion=<true|false>]'
 
 
-def importNormativeTypes(beHost, bePort, adminUser, fileDir, updateversion):
+def importNormativeTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 	
 	normativeTypes = [ "root", "compute", "softwareComponent", "webServer", "webApplication", "DBMS", "database", "objectStorage", "blockStorage", "containerRuntime", "containerApplication", "loadBalancer", "port", "network", "allottedResource"]
 	#normativeTypes = [ "root" ]
@@ -93,7 +96,7 @@ def importNormativeTypes(beHost, bePort, adminUser, fileDir, updateversion):
 	
         results = []
         for normativeType in normativeTypes:
-                result = createNormativeType(beHost, bePort, adminUser, fileDir, normativeType, updateversion)
+                result = createNormativeType(scheme, beHost, bePort, adminUser, fileDir, normativeType, updateversion)
                 results.append(result)
                 if ( result[1] == None or result[1] not in responseCodes ):
 			print "Failed creating normative type " + normativeType + ". " + str(result[1]) 				
@@ -107,9 +110,10 @@ def main(argv):
 	bePort = '8080'
 	adminUser = 'jh0003'
 	updateversion = 'true'
+	scheme = 'http'
 
 	try:
-		opts, args = getopt.getopt(argv,"i:p:u:v:h:",["ip=","port=","user=","updateversion="])
+		opts, args = getopt.getopt(argv,"i:p:u:v:h:s:",["ip=","port=","user=","updateversion=","scheme="])
 	except getopt.GetoptError:
 		usage()
 		errorAndExit(2, 'Invalid input')
@@ -125,17 +129,19 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-u", "--user"):
 			adminUser = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 		elif opt in ("-v", "--updateversion"):
 			if (arg.lower() == "false" or arg.lower() == "no"):
 				updateversion = 'false'
 
-	print 'be host =',beHost,', be port =', bePort,', user =', adminUser, ', updateversion =', updateversion
+	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', user =', adminUser, ', updateversion =', updateversion
 	
 	if ( beHost == None ):
 		usage()
 		sys.exit(3)
 
-	results = importNormativeTypes(beHost, bePort, adminUser, "../../../import/tosca/normative-types/", updateversion)
+	results = importNormativeTypes(scheme, beHost, bePort, adminUser, "../../../import/tosca/normative-types/", updateversion)
 
 	print "-----------------------------"
 	for result in results:

@@ -11,21 +11,53 @@ topology_template:
     p1:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: p1
       type: string
       description: UID of osm network
     p2:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: p2
       type: string
       description: UID of osm network
     rd_server_1b_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: rd_server_1b_flavor
       type: string
       description: Flavor for PD server
     BE_1c1_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: BE_1c1_names
       type: list
       description: BE1, BE2 server names
       entry_schema:
@@ -33,14 +65,38 @@ topology_template:
     ps_server_1b_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: ps_server_1b_ips
       type: string
     packet_internal_network_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: packet_internal_network_name
       type: string
     security_group_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: security_group_name
       type: list
       description: BE1, BE2 server names
       entry_schema:
@@ -48,6 +104,14 @@ topology_template:
     osm_server_1c2_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: osm_server_1c2_names
       type: list
       description: BE1, BE2 server names
       entry_schema:
@@ -55,15 +119,39 @@ topology_template:
     osm_server_1c2_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: osm_server_1c2_flavor
       type: string
       description: Flavor for BE server
     rd_server_1b_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: rd_server_1b_ips
       type: string
     ps_server_1b_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: ps_server_1b_names
       type: list
       description: Ps server names
       entry_schema:
@@ -71,6 +159,14 @@ topology_template:
     rd_server_1b_names:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: rd_server_1b_names
       type: list
       description: PD server names
       entry_schema:
@@ -78,54 +174,142 @@ topology_template:
     jsa_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_name
       type: string
       description: network name of jsa log network
     osm_server_1c2_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: osm_server_1c2_image
       type: string
       description: Image for BE server
     BE_osm_ips:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: BE_osm_ips
       type: string
     packet_external_network_name:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: packet_external_network_name
       type: string
     BE_1c1_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: BE_1c1_image
       type: string
       description: Image for BE server
     availability_zone_0:
       label: availabilityzone name
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: availability_zone_0
       type: string
       description: availabilityzone name
     rd_server_1b_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: rd_server_1b_image
       type: string
       description: PD Image server
     ps_server_1b_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: ps_server_1b_flavor
       type: string
       description: Flavor for PS server
     ps_server_1b_image:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: ps_server_1b_image
       type: string
       description: Ps Image server
     net:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: net
       type: string
     BE_1c1_flavor:
       hidden: false
       immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - nested2
+            source_type: HEAT
+            param_name: BE_1c1_flavor
       type: string
       description: Flavor for BE server
   node_templates:
@@ -426,21 +610,31 @@ topology_template:
           mac_count_required:
             is_required: false
         port_BE_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - BE_osm_ips
-            - 0
+        - - ip_address:
+              get_input:
+              - BE_osm_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - BE_osm_ips
+              - 0
         compute_BE_1c1_availability_zone:
         - get_input: availability_zone_0
         - get_input: availability_zone_0
         port_BE_port_network:
         - packet_internal_network_2
+        - packet_internal_network_2
         port_BE_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
         vm_image_name:
           get_input: BE_1c1_image
         compute_BE_1c1_name:
@@ -451,6 +645,7 @@ topology_template:
           - BE_1c1_names
           - 0
         port_BE_port_replacement_policy:
+        - AUTO
         - AUTO
         service_template_filter:
           substitute_service_template: Nested_BE_1c1ServiceTemplate.yaml
@@ -512,4 +707,4 @@ topology_template:
       value:
         get_attribute:
         - abstract_osm_server_1c2_1
-        - osm_server_1c2_accessIPv4
+        - osm_server_1c2_accessIPv4

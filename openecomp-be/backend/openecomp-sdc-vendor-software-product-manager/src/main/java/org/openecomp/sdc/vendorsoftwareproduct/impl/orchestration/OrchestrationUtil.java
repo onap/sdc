@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConst
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -282,7 +283,9 @@ public class OrchestrationUtil {
       Collection<ProcessEntity> processList = processes.get(componentName);
       processList.forEach(process -> {
         process.setComponentId(componentId);
-        UniqueValueUtil.createUniqueValue(PROCESS_NAME, vspId, version.getId(), componentId,
+        UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance()
+            .createInterface());
+        uniqueValueUtil.createUniqueValue(PROCESS_NAME, vspId, version.getId(), componentId,
             process.getName());
         processDao.create(process);
         if (processArtifact.containsKey(process.getId())) {
@@ -317,6 +320,7 @@ public class OrchestrationUtil {
         (String) manifestAsMap.get("name"));
     uploadData.setPackageVersion(Objects.isNull(manifestAsMap.get("version")) ? null :
         (String) manifestAsMap.get("version"));
+    uploadData.setFilesDataStructure(candidateData.getFilesDataStructure());
     orchestrationTemplateDataDao.update(vspDetails.getId(), vspDetails.getVersion(), uploadData);
 
     VspMergeDaoFactory.getInstance().createInterface()

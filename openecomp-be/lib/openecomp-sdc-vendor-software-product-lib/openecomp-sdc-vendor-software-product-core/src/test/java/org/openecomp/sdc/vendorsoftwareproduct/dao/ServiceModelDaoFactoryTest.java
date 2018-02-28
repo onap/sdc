@@ -65,10 +65,11 @@ public class ServiceModelDaoFactoryTest {
   private static final Version version = Version.valueOf("1.0");
   private static final String baseServiceTemplateName = "baseYaml.yaml";
   private static String artifact001;
+  private static final String tenant = "dox";
 
   @BeforeMethod
   public void setUp(){
-    SessionContextProviderFactory.getInstance().createInterface().create("test");
+    SessionContextProviderFactory.getInstance().createInterface().create("test", tenant);
   }
 
   @AfterMethod
@@ -404,6 +405,11 @@ public class ServiceModelDaoFactoryTest {
     @Override
     public Item getItem(SessionContext context, Id itemId) {
       return null;
+    }
+
+    @Override
+    public void deleteItem(SessionContext context, Id itemId) {
+
     }
   }
 }

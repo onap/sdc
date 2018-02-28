@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.collections4.MapUtils;
 import org.junit.AfterClass;
@@ -35,9 +33,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorCode;
-import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
@@ -58,8 +53,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.junit.Assert.assertEquals;
-
 
 public class BaseFullTranslationTest {
 
@@ -69,17 +62,16 @@ public class BaseFullTranslationTest {
   protected static TestFeatureManager manager;
 
   @BeforeClass
-  public static void enableForwarderFeature(){
+  public static void enableToggleableFeatures(){
     manager = new TestFeatureManager(ToggleableFeature.class);
-    if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
-      manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
-    }
+    manager.enableAll();
+    TestFeatureManagerProvider.setFeatureManager(manager);
   }
 
 
   @AfterClass
-  public static void disableForwarderFeature() {
-    manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
+  public static void disableToggleableFeatures() {
+    manager.disableAll();
     manager = null;
     TestFeatureManagerProvider.setFeatureManager(null);
   }

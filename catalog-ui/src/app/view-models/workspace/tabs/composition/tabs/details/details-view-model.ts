@@ -19,11 +19,15 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {Component} from "app/models";
 import {GRAPH_EVENTS} from "app/utils";
 import {LeftPaletteLoaderService, EventListenerService} from "app/services";
 import {ICompositionViewModelScope} from "../../composition-view-model";
 import {LeftPaletteComponent} from "../../../../../../models/components/displayComponent";
+import {ComponentServiceFactoryNg2} from "app/ng2/services/component-services/component.service.factory";
+import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
+import {Service} from "app/models/components/service";
 
 export interface IEditResourceVersion {
     allVersions:any;
@@ -45,13 +49,16 @@ export class DetailsViewModel {
     static '$inject' = [
         '$scope',
         'LeftPaletteLoaderService',
-        'EventListenerService'
-
+        'EventListenerService',
+        'ComponentServiceFactoryNg2',
+        'ServiceServiceNg2'
     ];
 
     constructor(private $scope:IDetailsViewModelScope,
                 private LeftPaletteLoaderService:LeftPaletteLoaderService,
-                private eventListenerService:EventListenerService) {
+                private eventListenerService:EventListenerService,
+                private ComponentServiceFactoryNg2: ComponentServiceFactoryNg2,
+                private serviceService: ServiceServiceNg2) {
         this.initScope();
     }
 
@@ -112,22 +119,43 @@ export class DetailsViewModel {
             this.$scope.isLoading = true;
             this.$scope.$parent.isLoading = true;
 
-            let onSuccess = (component:Component)=> {
+            let service = <Service>this.$scope.currentComponent;
+            let {changeVersion} = this.$scope.editResourceVersion;
+            let componentUid:string = this.$scope.editResourceVersion.allVersions[changeVersion];
+
+            let onCancel = (error:any) => {
                 this.$scope.isLoading = false;
                 this.$scope.$parent.isLoading = false;
-                this.$scope.onComponentInstanceVersionChange(component);
+                this.$scope.editResourceVersion.changeVersion = this.$scope.currentComponent.selectedInstance.componentVersion;
 
-                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_VERSION_CHANGED, this.$scope.currentComponent);
+                if (error) {
+                    console.log(error);
+                }
             };
 
-            let onFailed = (error:any)=> {
-                this.$scope.isLoading = false;
-                this.$scope.$parent.isLoading = false;
-                console.log(error);
+            let onUpdate = () => {
+                let onSuccess = (component:Component) => {
+                    this.$scope.isLoading = false;
+                    this.$scope.$parent.isLoading = false;
+                    this.$scope.onComponentInstanceVersionChange(component);
+                };
+ 
+                this.$scope.currentComponent.changeComponentInstanceVersion(componentUid).then(onSuccess, onCancel);
             };
 
-            let componentUid:string = this.$scope.editResourceVersion.allVersions[this.$scope.editResourceVersion.changeVersion];
-            this.$scope.currentComponent.changeComponentInstanceVersion(componentUid).then(onSuccess, onFailed);
+            this.serviceService.checkComponentInstanceVersionChange(service, componentUid).subscribe((pathsToDelete:string[]) => {
+                if (pathsToDelete && pathsToDelete.length) {
+                    this.$scope.isLoading = false;
+                    this.$scope.$parent.isLoading = false;
+                    this.$scope.$parent.openVersionChangeModal(pathsToDelete).then(() => {
+                        this.$scope.isLoading = true;
+                        this.$scope.$parent.isLoading = true;
+                        onUpdate();
+                    }, onCancel);
+                } else {
+                    onUpdate();
+                }
+            }, onCancel);
         };
     }
 }
