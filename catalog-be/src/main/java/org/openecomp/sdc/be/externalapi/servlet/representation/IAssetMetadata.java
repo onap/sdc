@@ -22,24 +22,24 @@ package org.openecomp.sdc.be.externalapi.servlet.representation;
 
 public interface IAssetMetadata {
 
-	String getUuid();
+    String getUuid();
 
-	void setUuid(String uuid);
+    void setUuid(String uuid);
 
-	String getInvariantUUID();
+    String getInvariantUUID();
 
-	void setInvariantUUID(String invariantUUID);
+    void setInvariantUUID(String invariantUUID);
 
-	String getName();
+    String getName();
 
-	void setName(String name);
+    void setName(String name);
 
-	String getVersion();
+    String getVersion();
 
-	void setVersion(String version);
+    void setVersion(String version);
 
-	String getToscaModelURL();
+    String getToscaModelURL();
 
-	void setToscaModelURL(String toscaModelURL);
+    void setToscaModelURL(String toscaModelURL);
 
 }

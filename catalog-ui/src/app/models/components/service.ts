@@ -22,11 +22,13 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {IServiceService} from "../../services/components/service-service";
 import {Component, PropertyModel, DisplayModule, InputsAndProperties, InputModel, InstancesInputsOrPropertiesMapData, InstancesInputsPropertiesMap,
     Distribution, DistributionComponent, ArtifactGroupModel} from "../../models";
 import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
+import {ForwardingPath} from "app/models/forwarding-path";
 
 export class Service extends Component {
 
@@ -37,6 +39,7 @@ export class Service extends Component {
     public serviceType:string;
     public serviceRole:string;
     public environmentContext:string;
+    public forwardingPaths:{ [key:string]:ForwardingPath } = {};
 
     constructor(componentService:IServiceService, $q:ng.IQService, component?:Service) {
         super(componentService, $q, component);

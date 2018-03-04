@@ -21,11 +21,10 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -37,43 +36,43 @@ import com.datastax.driver.mapping.annotations.Table;
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_DOWNLOAD_EVENT_TYPE)
 public class DistributionDownloadEvent extends AuditingGenericEvent {
 
-	private static String DISTRIBUTION_DOWNLOAD_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
-			+ "consumerId=\"%s\" resourceUrl=\"%s\" status=\"%s\" desc=\"%s\"";
+    private static String DISTRIBUTION_DOWNLOAD_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
+            + "consumerId=\"%s\" resourceUrl=\"%s\" status=\"%s\" desc=\"%s\"";
 
-	@PartitionKey
-	protected UUID timebaseduuid;
+    @PartitionKey
+    protected UUID timebaseduuid;
 
-	@ClusteringColumn
-	protected Date timestamp1;
+    @ClusteringColumn
+    protected Date timestamp1;
 
-	@Column(name = "request_id")
-	protected String requestId;
+    @Column(name = "request_id")
+    protected String requestId;
 
-	@Column(name = "service_instance_id")
-	protected String serviceInstanceId;
+    @Column(name = "service_instance_id")
+    protected String serviceInstanceId;
 
-	@Column
-	protected String action;
-	@Column
-	protected String status;
+    @Column
+    protected String action;
+    @Column
+    protected String status;
 
-	@Column(name = "description")
-	protected String desc;
+    @Column(name = "description")
+    protected String desc;
 
-	@Column(name = "consumer_id")
-	private String consumerId;
+    @Column(name = "consumer_id")
+    private String consumerId;
 
-	@Column(name = "resource_url")
-	private String resourceUrl;
+    @Column(name = "resource_url")
+    private String resourceUrl;
 
-	public DistributionDownloadEvent() {
+    public DistributionDownloadEvent() {
 		super();
 
-		timestamp1 = new Date();
-		timebaseduuid = UUIDs.timeBased();
-	}
+        timestamp1 = new Date();
+        timebaseduuid = UUIDs.timeBased();
+    }
 
-	public DistributionDownloadEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public DistributionDownloadEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
@@ -104,17 +103,27 @@ public class DistributionDownloadEvent extends AuditingGenericEvent {
 		if (value != null) {
 			setResourceUrl((String) value);
 		}
-
 	}
+
+    public DistributionDownloadEvent(String action, CommonAuditData commonAuditData, DistributionData distributionData) {
+        this();
+        this.action = action;
+        this.requestId = commonAuditData.getRequestId();
+        this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+        this.status = commonAuditData.getStatus();
+        this.desc = commonAuditData.getDescription();
+        this.consumerId = distributionData.getConsumerId();
+        this.resourceUrl = distributionData.getResourceUrl();
+    }
 
 	@Override
 	public void fillFields() {
 		fields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-
 		fields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
+
 		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), getConsumerId());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName(), getResourceUrl());
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
@@ -122,84 +131,83 @@ public class DistributionDownloadEvent extends AuditingGenericEvent {
 		fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
 	}
 
-	public String getConsumerId() {
-		return consumerId;
-	}
+    public String getConsumerId() {
+        return consumerId;
+    }
 
-	public void setConsumerId(String consumerId) {
-		this.consumerId = consumerId;
-	}
+    public void setConsumerId(String consumerId) {
+        this.consumerId = consumerId;
+    }
 
-	public String getResourceUrl() {
-		return resourceUrl;
-	}
+    public String getResourceUrl() {
+        return resourceUrl;
+    }
 
-	public void setResourceUrl(String resourceUrl) {
-		this.resourceUrl = resourceUrl;
-	}
+    public void setResourceUrl(String resourceUrl) {
+        this.resourceUrl = resourceUrl;
+    }
 
-	public UUID getTimebaseduuid() {
-		return timebaseduuid;
-	}
+    public UUID getTimebaseduuid() {
+        return timebaseduuid;
+    }
 
-	public void setTimebaseduuid(UUID timebaseduuid) {
-		this.timebaseduuid = timebaseduuid;
-	}
+    public void setTimebaseduuid(UUID timebaseduuid) {
+        this.timebaseduuid = timebaseduuid;
+    }
 
-	public Date getTimestamp1() {
-		return timestamp1;
-	}
+    public Date getTimestamp1() {
+        return timestamp1;
+    }
 
-	public void setTimestamp1(Date timestamp1) {
-		this.timestamp1 = timestamp1;
-	}
+    public void setTimestamp1(Date timestamp1) {
+        this.timestamp1 = timestamp1;
+    }
 
-	public String getRequestId() {
-		return requestId;
-	}
+    public String getRequestId() {
+        return requestId;
+    }
 
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
-	public String getServiceInstanceId() {
-		return serviceInstanceId;
-	}
+    public String getServiceInstanceId() {
+        return serviceInstanceId;
+    }
 
-	public void setServiceInstanceId(String serviceInstanceId) {
-		this.serviceInstanceId = serviceInstanceId;
-	}
+    public void setServiceInstanceId(String serviceInstanceId) {
+        this.serviceInstanceId = serviceInstanceId;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public String getDesc() {
+        return desc;
+    }
 
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
-	@Override
+   @Override
 	public String toString() {
 		return "DistributionDownloadEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1
 				+ ", requestId=" + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action
-				+ ", status=" + status + ", desc=" + desc + ", consumerId=" + consumerId + ", resourceUrl="
-				+ resourceUrl + "]";
+				+ ", status=" + status + ", desc=" + desc + ", consumerId=" + consumerId + ", resourceUrl="	+ resourceUrl + "]";
 	}
 
 }

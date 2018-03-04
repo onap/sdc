@@ -20,18 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.codehaus.jackson.map.ObjectMapper;
+import com.aventstack.extentreports.Status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codehaus.jettison.json.JSONObject;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -56,7 +46,16 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.UserRestUtils;
 
-import com.aventstack.extentreports.Status;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class RestCDUtils {
 

@@ -20,6 +20,7 @@
 
 'use strict';
 
+import * as _ from "lodash";
 import {ArtifactType} from './../utils';
 import {HeatParameterModel} from "./heat-parameters";
 

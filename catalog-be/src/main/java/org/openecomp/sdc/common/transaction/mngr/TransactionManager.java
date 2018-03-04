@@ -20,11 +20,8 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import java.util.Queue;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.Resource;
-
+import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Queues;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.common.transaction.api.ITransactionSdnc;
@@ -34,70 +31,71 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.Queues;
+import javax.annotation.Resource;
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component("transactionManager")
 public class TransactionManager {
 
-	private static Logger log = LoggerFactory.getLogger(TransactionManager.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TransactionManager.class);
 
-	private AtomicInteger transactionIDCounter = new AtomicInteger(0);
+    private AtomicInteger transactionIDCounter = new AtomicInteger(0);
 
-	private Queue<ITransactionSdnc> transactions;
-	@Resource
-	private ESCatalogDAO esCatalogDao;
-	@Resource
-	private TitanGenericDao titanGenericDao;
+    private Queue<ITransactionSdnc> transactions;
+    @Resource
+    private ESCatalogDAO esCatalogDao;
+    @Resource
+    private TitanGenericDao titanGenericDao;
 
-	/**
-	 * userId and actionType parameters are used only for logging purposes.
-	 */
-	public ITransactionSdnc getTransaction(String userId, ActionTypeEnum actionType) {
-		if (transactions == null) {
-			init();
-		}
-		log.debug("TransactionManager creating new SdncTransaction");
-		ITransactionSdnc tx = new TransactionSdncImpl(generateTransactionID(), userId, actionType, esCatalogDao, titanGenericDao);
-		transactions.add(tx);
+    /**
+     * userId and actionType parameters are used only for logging purposes.
+     */
+    public ITransactionSdnc getTransaction(String userId, ActionTypeEnum actionType) {
+        if (transactions == null) {
+            init();
+        }
+        log.debug("TransactionManager creating new SdncTransaction");
+        ITransactionSdnc tx = new TransactionSdncImpl(generateTransactionID(), userId, actionType, esCatalogDao, titanGenericDao);
+        transactions.add(tx);
 
-		return tx;
+        return tx;
 
-	}
+    }
 
-	private Integer generateTransactionID() {
-		boolean generatedSuccessfully = false;
-		int nextId = 0;
+    private Integer generateTransactionID() {
+        boolean generatedSuccessfully = false;
+        int nextId = 0;
 
-		while (!generatedSuccessfully) {
-			int prevId = transactionIDCounter.get();
-			if (prevId > TransactionUtils.TRANSACTION_ID_RESET_LIMIT) {
-				resetTransactionId();
-			}
-			nextId = prevId + 1;
-			generatedSuccessfully = transactionIDCounter.compareAndSet(prevId, nextId);
-		}
-		return nextId;
-	}
+        while (!generatedSuccessfully) {
+            int prevId = transactionIDCounter.get();
+            if (prevId > TransactionUtils.TRANSACTION_ID_RESET_LIMIT) {
+                resetTransactionId();
+            }
+            nextId = prevId + 1;
+            generatedSuccessfully = transactionIDCounter.compareAndSet(prevId, nextId);
+        }
+        return nextId;
+    }
 
-	private void resetTransactionId() {
+    private void resetTransactionId() {
 
-		boolean resetSuccessfully = false;
-		while (!resetSuccessfully) {
-			int prevId = transactionIDCounter.get();
-			resetSuccessfully = transactionIDCounter.compareAndSet(prevId, 0);
-		}
+        boolean resetSuccessfully = false;
+        while (!resetSuccessfully) {
+            int prevId = transactionIDCounter.get();
+            resetSuccessfully = transactionIDCounter.compareAndSet(prevId, 0);
+        }
 
-	}
+    }
 
-	private synchronized void init() {
-		if (transactions == null) {
-			log.info("TransactionManager Initialized");
-			EvictingQueue<ITransactionSdnc> queue = EvictingQueue
-					.<ITransactionSdnc>create(TransactionUtils.MAX_SIZE_TRANSACTION_LIST);
-			// make thread-safe
-			transactions = Queues.synchronizedQueue(queue);
-		}
-	}
+    private synchronized void init() {
+        if (transactions == null) {
+            log.info("TransactionManager Initialized");
+            EvictingQueue<ITransactionSdnc> queue = EvictingQueue
+                    .<ITransactionSdnc>create(TransactionUtils.MAX_SIZE_TRANSACTION_LIST);
+            // make thread-safe
+            transactions = Queues.synchronizedQueue(queue);
+        }
+    }
 
 }

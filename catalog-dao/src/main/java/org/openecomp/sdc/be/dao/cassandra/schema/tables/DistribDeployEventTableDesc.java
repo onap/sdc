@@ -20,61 +20,36 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 import com.datastax.driver.core.DataType;
 
-public class DistribDeployEventTableDesc implements ITableDescription {
+public class DistribDeployEventTableDesc extends DistribBaseEventTableDesc {
 
-	@Override
-	public List<ImmutablePair<String, DataType>> primaryKeys() {
-		List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-		keys.add(new ImmutablePair<String, DataType>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
-		return keys;
-	}
-
-	@Override
-	public List<ImmutablePair<String, DataType>> clusteringKeys() {
-		List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-		keys.add(new ImmutablePair<String, DataType>(TIMESTAMP_FIELD, DataType.timestamp()));
-		return keys;
-	}
-
-	@Override
-	public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
-		Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
-
-		for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
-			columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
-		}
-
-		return columns;
-	}
-
-	@Override
-	public String getKeyspace() {
-		return AuditingTypesConstants.AUDIT_KEYSPACE;
-	}
 
 	@Override
 	public String getTableName() {
 		return AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE;
 	}
 
+	@Override
+	protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
+		for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
+			columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
+		}
+		//replace the base indexed flag value with the correct one for a given table:
+		columns.put(DistFieldsDescription.STATUS.getName(),
+				new ImmutablePair<DataType, Boolean>(DistFieldsDescription.STATUS.getType(), true));
+        columns.put(DistFieldsDescription.SERVICE_INST_ID.getName(),
+                new ImmutablePair<DataType, Boolean>(DistFieldsDescription.SERVICE_INST_ID.getType(), true));
+
+    }
+
 	enum DSEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), 
-		STATUS("status", DataType.varchar(), true), 
-		DESCRIPTION("description", DataType.varchar(), false), 
-		REQUEST_ID("request_id", DataType.varchar(), false), 
-		SERVICE_INST_ID("service_instance_id", DataType.varchar(), true), 
-		MODIFIER("modifier", DataType.varchar(), false), 
+		MODIFIER("modifier", DataType.varchar(), false),
 		CURR_VERSION("curr_version", DataType.varchar(), false), 
 		DID("did", DataType.varchar(), true), 
 		RESOURCE_NAME("resource_name", DataType.varchar(), false), 

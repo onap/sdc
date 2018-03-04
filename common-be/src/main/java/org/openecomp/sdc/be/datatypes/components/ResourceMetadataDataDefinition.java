@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.datatypes.components;
 
-import java.io.Serializable;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+
+import java.io.Serializable;
 
 public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
 
@@ -190,6 +190,11 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 			return false;
 
 		return super.equals(obj);
+	}
+
+	@Override
+	public String getActualComponentType() {
+		return getResourceType().getValue();
 	}
 
 }

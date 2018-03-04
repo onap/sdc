@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 //import com.google.gson.reflect.TypeToken;
 
@@ -86,6 +86,7 @@ public class ArtifactDataDefinition extends ToscaDataDefinition implements Seria
 		if (a.getHeatParameters() != null)
 			this.setHeatParameters(new ArrayList<>(a.getHeatParameters()));
 		this.setGeneratedFromId( a.getGeneratedFromId());
+		this.setIsFromCsar(a.getIsFromCsar());
 
 
 	}
@@ -349,6 +350,13 @@ public class ArtifactDataDefinition extends ToscaDataDefinition implements Seria
 
 	public String getGeneratedFromId() {
 		return  (String) getToscaPresentationValue(JsonPresentationFields.GENERATED_FROM_ID);
+	}
+	public boolean getIsFromCsar(){
+		Boolean isFromCsar = (Boolean) getToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR);
+		return 	isFromCsar == null ? Boolean.FALSE: isFromCsar;
+	}
+	public void setIsFromCsar(Boolean isFromCsar) {
+		setToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR, isFromCsar);
 	}
 
 	public void setGeneratedFromId(String generatedFromId) {

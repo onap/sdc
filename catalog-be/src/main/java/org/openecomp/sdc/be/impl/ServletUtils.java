@@ -20,30 +20,29 @@
 
 package org.openecomp.sdc.be.impl;
 
-import javax.annotation.Resource;
-
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
+import javax.annotation.Resource;
 
 @Component("servletUtils")
 public class ServletUtils {
-	@Resource
-	private ComponentsUtils componentsUtils;
-	private Gson gson = new Gson();
-	@Resource
-	private IUserBusinessLogic adminManager;
+    @Resource
+    private ComponentsUtils componentsUtils;
+    private Gson gson = new Gson();
+    @Resource
+    private IUserBusinessLogic adminManager;
 
-	public ComponentsUtils getComponentsUtils() {
-		return componentsUtils;
-	}
+    public ComponentsUtils getComponentsUtils() {
+        return componentsUtils;
+    }
 
-	public Gson getGson() {
-		return gson;
-	}
+    public Gson getGson() {
+        return gson;
+    }
 
-	public IUserBusinessLogic getUserAdmin() {
-		return adminManager;
-	}
+    public IUserBusinessLogic getUserAdmin() {
+        return adminManager;
+    }
 }

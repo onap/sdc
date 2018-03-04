@@ -36,7 +36,7 @@ export class InputsTableComponent {
     @Input() instanceNamesMap: Map<string, string>;
     @Input() readonly:boolean;
     @Input() isLoading:boolean;
-    @Output() inputValueChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() inputChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
 
     selectedInputToDelete:InputFEModel;
@@ -44,8 +44,9 @@ export class InputsTableComponent {
     constructor(private modalService: ModalService){
     }
 
-    onInputValueChanged = (input) => {
-        this.inputValueChanged.emit(input);
+    onInputChanged = (input, event) => {
+        input.updateDefaultValueObj(event.value, event.isValid);
+        this.inputChanged.emit(input);
     };
 
     onDeleteInput = () => {

@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import { Injectable } from '@angular/core';
 import { PropertyFEModel, PropertyBEModel, PropertyDeclareAPIModel, DerivedFEProperty} from "app/models";
 

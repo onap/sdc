@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+
+import java.util.List;
 
 public class ComponentParametersView {
 
@@ -46,10 +46,12 @@ public class ComponentParametersView {
 	boolean ignoreInputs = false;
 	boolean ignoreComponentInstancesInputs = false;
 	boolean ignoreCapabiltyProperties = true;
-	
+	boolean ignoreServicePath = true;
+	boolean ignorePolicies = false;
+
 	public ComponentParametersView() {
 	}
-	
+
 	public ComponentParametersView(boolean setAllToIgnore) {
 		this();
 		if(setAllToIgnore){
@@ -59,9 +61,9 @@ public class ComponentParametersView {
 
 	public ComponentParametersView(List<String> filters) {
 		this(true);
-		
+
 		for(String fieldName: filters) {
-			switch (ComponentFieldsEnum.findByValue(fieldName)) {	
+			switch (ComponentFieldsEnum.findByValue(fieldName)) {
 			case PROPERTIES:
 				this.setIgnoreProperties(false);
 				break;
@@ -89,11 +91,11 @@ public class ComponentParametersView {
 				this.setIgnoreRequirements(false);
 				break;
 			case COMPONENT_INSTANCES_PROPERTIES:
-				this.setIgnoreComponentInstances(false); //we need this in order to get the calculate capabilities requirements 
+				this.setIgnoreComponentInstances(false); //we need this in order to get the calculate capabilities requirements
 				this.setIgnoreComponentInstancesProperties(false);
 				break;
 			case CAPABILITIES:
-				this.setIgnoreComponentInstances(false);//we need this in order to get the calculate capabilities requirements 
+				this.setIgnoreComponentInstances(false);//we need this in order to get the calculate capabilities requirements
 				this.setIgnoreCapabilities(false);
 				break;
 			case REQUIREMENTS:
@@ -132,10 +134,16 @@ public class ComponentParametersView {
 			case INSTANCE_CAPABILTY_PROPERTIES:
 				this.setIgnoreCapabiltyProperties(false);
 				break;
+			case FORWARDING_PATHS:
+				this.setIgnoreForwardingPath(false);
+				break;
+			case POLICIES:
+				this.setIgnorePolicies(false);
+				break;
 			default:
 				break;
 			}
-						
+
 		}
 	}
 
@@ -249,6 +257,16 @@ public class ComponentParametersView {
 		if (ignoreComponentInstancesInputs) {
 			component.setComponentInstancesInputs(null);
 		}
+
+		if (ignoreServicePath){
+			switch (componentType) {
+				case SERVICE:
+					((Service) component).setForwardingPaths(null);
+					break;
+				default:
+					break;
+			}
+		}
 		return component;
 
 	}
@@ -272,6 +290,7 @@ public class ComponentParametersView {
 		ignoreComponentInstancesAttributesFrom = true;
 		ignoreComponentInstancesInputs = true;
 		ignoreCapabiltyProperties = true;
+		ignoreServicePath = true;
 	}
 
 	public boolean isIgnoreGroups() {
@@ -418,6 +437,22 @@ public class ComponentParametersView {
 		this.ignoreCapabiltyProperties = ignoreCapabiltyProperties;
 	}
 
+	public boolean isIgnoreForwardingPath() {
+		return ignoreServicePath;
+	}
+
+	public void setIgnoreForwardingPath(boolean ignoreServicePath) {
+		this.ignoreServicePath = ignoreServicePath;
+	}
+	
+	public boolean isIgnorePolicies() {
+		return ignorePolicies;
+	}
+
+	public void setIgnorePolicies(boolean ignorePolicies) {
+		this.ignorePolicies = ignorePolicies;
+	}
+	
 	public JsonParseFlagEnum detectParseFlag() {
 		JsonParseFlagEnum parseFlag;
 		if(isIgnoreComponentInstances()){

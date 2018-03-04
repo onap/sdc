@@ -24,14 +24,14 @@ import java.util.List;
 
 public class ToscaNodeTypeInterface {
 
-	List<String> scripts;
+    List<String> scripts;
 
-	public List<String> getScripts() {
-		return scripts;
-	}
+    public List<String> getScripts() {
+        return scripts;
+    }
 
-	public void setScripts(List<String> scripts) {
-		this.scripts = scripts;
-	}
+    public void setScripts(List<String> scripts) {
+        this.scripts = scripts;
+    }
 
 }

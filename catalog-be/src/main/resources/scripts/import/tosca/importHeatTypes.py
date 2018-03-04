@@ -7,19 +7,19 @@ from importCommon import *
 from importNormativeTypes import *
 import importCommon
 
-################################################################################################################################################
-#																																		       #	
-# Import all users from a given file																										   #
-# 																																			   #		
-# activation :																																   #
-#       python importUsers.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#																																		  	   #			
-# shortest activation (be host = localhost, be port = 8080): 																				   #
-#		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           #
-#																																		       #	
-################################################################################################################################################
+#####################################################################################################################################################################################
+#																																		       										#
+# Import heat types																										   															#
+# 																																			   										#
+# activation :																																   										#
+#       python importHeatTypes.py [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]	#
+#																																		  	   										#
+# shortest activation (be host = localhost, be port = 8080): 																				   										#
+#		python importHeatTypes.py [-f <input file> | --ifile=<input file> ]												 				           									#
+#																																		       										#
+#####################################################################################################################################################################################
 
-def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
+def importHeatTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 	
 	heatTypes = [ "globalNetwork",
 				  "globalPort",
@@ -38,6 +38,7 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "abstractSubstitute",
 				  "Generic_VFC", 
 				  "Generic_VF",
+				  "Generic_CR",
 				  "Generic_PNF",
 				  "Generic_Service",
 				  "contrailNetworkRules",
@@ -57,7 +58,8 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "extCp2",
 				  "extNeutronCP",
                   "extContrailCP",
-				  "portMirroringByPolicy"
+				  "portMirroringByPolicy",
+				  "forwardingPath"
 				  ]
 		
 	responseCodes = [200, 201]
@@ -67,7 +69,7 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 		
         results = []
         for heatType in heatTypes:
-                result = createNormativeType(beHost, bePort, adminUser, fileDir, heatType, updateversion)
+                result = createNormativeType(scheme, beHost, bePort, adminUser, fileDir, heatType, updateversion)
                 results.append(result)
                 if ( result[1] == None or result[1] not in responseCodes) :
 			print "Failed creating heat type " + heatType + ". " + str(result[1]) 				
@@ -81,9 +83,10 @@ def main(argv):
 	bePort = '8080'
 	adminUser = 'jh0003'
 	updateversion = 'true'
+	scheme = 'http'
 	
 	try:
-		opts, args = getopt.getopt(argv,"i:p:u:v:h:",["ip=","port=","user=","updateversion="])
+		opts, args = getopt.getopt(argv,"i:p:u:v:h:s:",["ip=","port=","user=","updateversion=","scheme="])
 	except getopt.GetoptError:
 		usage()
 		errorAndExit(2, 'Invalid input')
@@ -99,17 +102,19 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-u", "--user"):
 			adminUser = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 		elif opt in ("-v", "--updateversion"):
 			if (arg.lower() == "false" or arg.lower() == "no"):
 				updateversion = 'false'
 
-	print 'be host =',beHost,', be port =', bePort,', user =', adminUser
+	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', user =', adminUser
 	
 	if ( beHost == None ):
 		usage()
 		sys.exit(3)
 
-	results = importHeatTypes(beHost, bePort, adminUser, "../../../import/tosca/heat-types/", updateversion)
+	results = importHeatTypes(scheme, beHost, bePort, adminUser, "../../../import/tosca/heat-types/", updateversion)
 
 	print "-----------------------------"
 	for result in results:

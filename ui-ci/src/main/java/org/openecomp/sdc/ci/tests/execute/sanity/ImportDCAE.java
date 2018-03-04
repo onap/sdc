@@ -71,6 +71,7 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -197,6 +198,11 @@ public class ImportDCAE extends SetupCDTest {
 	
 	@Test
 	public void addPropertiesToVfcInstanceInDCAEAssetTest() throws Exception {
+		
+		if(true){
+			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");			
+		}
+		
 		String fileName = "importVFC_VFC15.yml";
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		

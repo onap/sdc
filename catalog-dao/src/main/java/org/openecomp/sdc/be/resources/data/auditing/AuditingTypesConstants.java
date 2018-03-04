@@ -40,11 +40,13 @@ public interface AuditingTypesConstants {
 	String DISTRIBUTION_GET_UEB_CLUSTER_EVENT_TYPE = "auditinggetuebclusterevent";
 	String DISTRIBUTION_GET_VALID_ARTIFACT_TYPES_EVENT_TYPE = "auditinggetvalidartifacttypesevent";
 
+	String ECOMP_OPERATIONAL_ENV_EVENT_TYPE = "ecompopenvironmentevent";
 	String AUTH_EVENT_TYPE = "authevent";
 	String CONSUMER_EVENT_TYPE = "consumerevent";
 	String CATEGORY_EVENT_TYPE = "categoryevent";
 	String GET_USERS_LIST_EVENT_TYPE = "getuserslistevent";
 	String GET_CATEGORY_HIERARCHY_EVENT_TYPE = "getcategoryhierarchyevent";
 	String EXTERNAL_API_EVENT_TYPE = "externalapievent";
+	String ENVIRONMENT_ENGINE_EVENT_TYPE = "environmentengineevent";
 
 }

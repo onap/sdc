@@ -4,7 +4,7 @@
     type="text"
     [name]="name"
     [(ngModel)]="value"
-    (change)="onSave()"
+    (input)="onChange()"
     [attr.maxlength]="validation.propertyValue.max"
     [attr.minlength]="validation.propertyValue.min"
     [pattern]="pattern"

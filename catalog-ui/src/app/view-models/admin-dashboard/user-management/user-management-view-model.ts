@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ModalsHandler} from "app/utils";
 import {User, IUserProperties, IUser, IAppConfigurtaion} from "app/models";
 import {UserService} from "../../../ng2/services/user.service";

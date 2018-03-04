@@ -1,14 +1,14 @@
 package org.openecomp.sdc.be.components.merge.heat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chaya on 9/14/2017.

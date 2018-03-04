@@ -659,3 +659,56 @@ environmentContext:
        - Needed_Non-Revenue
        - Useful_Non-Revenue
        - General_Non-Revenue
+
+dmaapConsumerConfiguration:
+    hosts: olsd004.wnsnet.attws.com:3905
+    consumerGroup: asdc
+    consumerId: mama
+    timeoutMs: 15000
+    limit: 1
+    pollingInterval: 2
+    topic: com.att.sdc.23911-SDCforTestDev-v001
+    latitude: 32.109333
+    longitude: 34.855499
+    version: 1.0
+    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.att.com/events
+    environment: TEST
+    partner: BOT_R
+    routeOffer: MR1
+    protocol: https
+    contenttype: application/json
+    dme2TraceOn: true
+    aftEnvironment: AFTUAT
+    aftDme2ConnectionTimeoutMs: 15000
+    aftDme2RoundtripTimeoutMs: 240000
+    aftDme2ReadTimeoutMs: 50000
+    dme2preferredRouterFilePath: DME2preferredRouter.txt
+    timeLimitForNotificationHandleMs: 120000 
+    credential:
+        username: m09875@sdc.att.com
+        password: hmXYcznAljMSisdy8zgcag==
+        
+dmeConfiguration:
+    dme2Search: DME2SEARCH
+    dme2Resolve: DME2RESOLVE
+
+excludedPolicyTypesMapping:
+   # VF:
+    #  - a.b.c
+    #  - c.d.e
+    #CR:
+    #  - x.y.z
+ 
+excludedGroupTypesMapping:
+    CR:
+       - org.openecomp.groups.VfModule
+       - org.openecomp.groups.heat.HeatStack
+       - tosca.groups.Root
+    VF:
+       - org.openecomp.groups.VfModule
+       - org.openecomp.groups.heat.HeatStack
+       - tosca.groups.Root
+    Service:
+       - org.openecomp.groups.VfModule
+       - org.openecomp.groups.heat.HeatStack
+       - tosca.groups.Root

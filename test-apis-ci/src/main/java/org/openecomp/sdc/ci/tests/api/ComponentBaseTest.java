@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.log4j.Logger;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.rules.TestName;
@@ -66,15 +67,10 @@ import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.*;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
@@ -85,11 +81,17 @@ import com.thinkaurelius.titan.core.TitanVertex;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 
-
 public abstract class ComponentBaseTest {
 
+//	private static Logger logger = LoggerFactory.getLogger(ComponentBaseTest.class.getName());
+	
+	protected static Logger logger= Logger.getLogger(ComponentBaseTest.class);	
+	
 
-	protected static Logger logger= LoggerFactory.getLogger(ComponentBaseTest.class);
+//	 public ComponentBaseTest(TestName testName, String className) {
+//	 super(testName, className);
+//	 }
+
 	protected static final String REPORT_FOLDER = "." + File.separator + "ExtentReport" + File.separator;
 	private static final String VERSIONS_INFO_FILE_NAME = "versions.info";
 	private static final String REPORT_FILE_NAME = "SDC_CI_Extent_Report.html";
@@ -127,16 +129,16 @@ public abstract class ComponentBaseTest {
 		myContext=context;
 		ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);	
 		AtomicOperationUtils.createDefaultConsumer(true);
-		openTitanLogic();
+//		openTitanLogic();
 		performClean();
-
-
+		
+		
 
 	}
 	
 	@BeforeMethod(alwaysRun = true)
 	public void setupBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
-
+		
 		System.out.println(" method.getName() " + method.getName());
 		if (!method.getName().equals("onboardVNFShotFlow"))  {
 //			System.out.println("ExtentReport instance started from BeforeMethod...");
@@ -182,7 +184,7 @@ public abstract class ComponentBaseTest {
 		
 	}
 
-	@AfterClass(alwaysRun = true)
+/*	@AfterClass(alwaysRun = true)
 	public synchronized static void cleanAfterClass() throws Exception{
 
 //		System.out.println("<<<<<<<<class name>>>>>"+method.getDeclaringClass());
@@ -190,19 +192,23 @@ public abstract class ComponentBaseTest {
 
 
 		System.out.println("delete components AfterClass");
-		deleteCreatedComponents(getCatalogAsMap());
+		if(!config.getSystemUnderDebug()){
+			deleteCreatedComponents(getCatalogAsMap());
+//			CassandraUtils.truncateAllKeyspaces();
+		}else{
+			System.out.println("Accordindig to configuration components will not be deleted, in case to unable option to delete, please change systemUnderDebug parameter value to false ...");
+		}
 //		extentReport.flush();
 
-	}
+	}*/
 	
 	@AfterSuite(alwaysRun = true)
 	public static void shutdownTitan() throws Exception {
 		
 		performClean();
-		shutdownTitanLogic();
+//		shutdownTitanLogic();
 
 	}
-
 	protected static void openTitanLogic() throws Exception {
 	
 		logger.trace(config.toString());
@@ -234,9 +240,8 @@ public abstract class ComponentBaseTest {
 //		cleanComponents();
 		if(!config.getSystemUnderDebug()){
 			deleteCreatedComponents(getCatalogAsMap());
-			CassandraUtils.truncateAllKeyspaces();
+//			CassandraUtils.truncateAllKeyspaces();
 			FileHandling.overWriteExistindDir("outputCsar");
-
 		}else{
 			System.out.println("Accordindig to configuration components will not be deleted, in case to unable option to delete, please change systemUnderDebug parameter value to false ...");
 		}

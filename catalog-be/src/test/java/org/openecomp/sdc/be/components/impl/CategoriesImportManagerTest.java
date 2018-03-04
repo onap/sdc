@@ -20,16 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,64 +36,66 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
 
-import fj.data.Either;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class CategoriesImportManagerTest {
-	@InjectMocks
-	static CategoriesImportManager importManager = new CategoriesImportManager();
-	public static final IElementOperation elementOperation = Mockito.mock(IElementOperation.class);
-	public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+    @InjectMocks
+    static CategoriesImportManager importManager = new CategoriesImportManager();
+    public static final IElementOperation elementOperation = Mockito.mock(IElementOperation.class);
+    public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+    private static SubCategoryDefinition subcategory;
 
-	static Logger log = Mockito.spy(Logger.class);
+    @BeforeClass
+    public static void beforeClass() throws IOException {
+        subcategory = new SubCategoryDefinition();
+        subcategory.setUniqueId("123");
 
-	private static SubCategoryDefinition subcategory;
+        when(elementOperation.createCategory(Mockito.any(CategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer((Answer<Either<CategoryDefinition, ActionStatus>>) invocation -> {
+            Object[] args = invocation.getArguments();
+            CategoryDefinition category = (CategoryDefinition) args[0];
+            category.setUniqueId("123");
+            Either<CategoryDefinition, ActionStatus> ans = Either.left(category);
+            return ans;
+        });
+        when(elementOperation.createSubCategory(Mockito.any(String.class), Mockito.any(SubCategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer(new Answer<Either<SubCategoryDefinition, ActionStatus>>() {
+            public Either<SubCategoryDefinition, ActionStatus> answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                // subcategory.setName(((SubCategoryDefinition)args[0]).getName());
+                Either<SubCategoryDefinition, ActionStatus> ans = Either.left(subcategory);
+                return ans;
+            }
 
-	@BeforeClass
-	public static void beforeClass() throws IOException {
-		InterfaceLifecycleTypeImportManager.setLog(log);
+        });
 
-		subcategory = new SubCategoryDefinition();
-		subcategory.setUniqueId("123");
+        // when(Mockito.any(SubCategoryDefinition.class).getUniqueId()).thenReturn("123");
+    }
 
-		when(elementOperation.createCategory(Mockito.any(CategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer((Answer<Either<CategoryDefinition, ActionStatus>>) invocation -> {
-			Object[] args = invocation.getArguments();
-			CategoryDefinition category = (CategoryDefinition) args[0];
-			category.setUniqueId("123");
-			Either<CategoryDefinition, ActionStatus> ans = Either.left(category);
-			return ans;
-		});
-		when(elementOperation.createSubCategory(Mockito.any(String.class), Mockito.any(SubCategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer(new Answer<Either<SubCategoryDefinition, ActionStatus>>() {
-			public Either<SubCategoryDefinition, ActionStatus> answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				// subcategory.setName(((SubCategoryDefinition)args[0]).getName());
-				Either<SubCategoryDefinition, ActionStatus> ans = Either.left(subcategory);
-				return ans;
-			}
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-		});
+    @Test
+    public void importCategoriesTest() throws IOException {
+        String ymlContent = getYmlContent();
+        Either<Map<String, List<CategoryDefinition>>, ResponseFormat> createCapabilityTypes = importManager.createCategories(ymlContent);
+        assertTrue(createCapabilityTypes.isLeft());
 
-		// when(Mockito.any(SubCategoryDefinition.class).getUniqueId()).thenReturn("123");
-	}
+    }
 
-	@Before
-	public void initMocks() {
-		MockitoAnnotations.initMocks(this);
-	}
-
-	@Test
-	public void importCategoriesTest() throws IOException {
-		String ymlContent = getYmlContent();
-		Either<Map<String, List<CategoryDefinition>>, ResponseFormat> createCapabilityTypes = importManager.createCategories(ymlContent);
-		assertTrue(createCapabilityTypes.isLeft());
-
-	}
-
-	private String getYmlContent() throws IOException {
-		Path filePath = Paths.get("src/test/resources/types/categoryTypes.yml");
-		byte[] fileContent = Files.readAllBytes(filePath);
-		String ymlContent = new String(fileContent);
-		return ymlContent;
-	}
+    private String getYmlContent() throws IOException {
+        Path filePath = Paths.get("src/test/resources/types/categoryTypes.yml");
+        byte[] fileContent = Files.readAllBytes(filePath);
+        String ymlContent = new String(fileContent);
+        return ymlContent;
+    }
 }

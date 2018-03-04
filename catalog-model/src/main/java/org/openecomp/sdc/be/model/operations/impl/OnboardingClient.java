@@ -27,20 +27,14 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.http.HttpStatus;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.rest.HttpRestClient;
-import org.openecomp.sdc.be.dao.rest.RestConfigurationInfo;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.rest.api.RestResponse;
-import org.openecomp.sdc.common.rest.api.RestResponseAsByteArray;
+import org.openecomp.sdc.common.http.client.api.HttpRequest;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +45,6 @@ import fj.data.Either;
 public class OnboardingClient {
 
 	private static Logger log = LoggerFactory.getLogger(OnboardingClient.class.getName());
-
-	private HttpRestClient httpRestClient = null;
 
 	private static Properties downloadCsarHeaders = new Properties();
 
@@ -67,28 +59,10 @@ public class OnboardingClient {
 	public static void main(String[] args) {
 
 		OnboardingClient csarOperation = new OnboardingClient();
-		csarOperation.init();
 
 		String csarUuid = "70025CF6081B489CA7B1CBA583D5278D";
 		Either<Map<String, byte[]>, StorageOperationStatus> csar = csarOperation.getCsar(csarUuid, null);
 		System.out.println(csar.left().value());
-
-	}
-
-	@PostConstruct
-	public void init() {
-
-		// TODO: read connection configuration from OnboardingConfig
-		// onboardingConfig =
-		// ConfigurationManager.getConfigurationManager().getConfiguration().getOnboarding();
-
-		RestConfigurationInfo restConfigurationInfo = new RestConfigurationInfo();
-		httpRestClient = new HttpRestClient(restConfigurationInfo);
-
-		if (false == httpRestClient.isInitialized()) {
-			BeEcompErrorManager.getInstance().logInternalFlowError("InitializeRestClient", "Failed to initialize rest client", ErrorSeverity.FATAL);
-			httpRestClient = null;
-		}
 
 	}
 
@@ -116,12 +90,6 @@ public class OnboardingClient {
 	}
 
 	public Either<Map<String, byte[]>, StorageOperationStatus> getCsar(String csarUuid, String userId) {
-
-		if (httpRestClient == null) {
-			BeEcompErrorManager.getInstance().logInternalFlowError("RestClient", "Rest Client could not be initialized", ErrorSeverity.ERROR);
-			return Either.right(StorageOperationStatus.GENERAL_ERROR);
-		}
-
 		String url = buildDownloadCsarUrl() + "/" + csarUuid;
 
 		Properties headers = new Properties();
@@ -135,36 +103,35 @@ public class OnboardingClient {
 
 		log.debug("Url for downloading csar is {}. Headers are {}", url, headers);
 
-		RestResponseAsByteArray restResponse = httpRestClient.doGetAsByteArray(url, headers);
-		log.debug("After fetching csar {}. Http return code is {}", csarUuid, restResponse.getHttpStatusCode());
-
-		switch (restResponse.getHttpStatusCode()) {
-		case HttpStatus.SC_OK:
-			byte[] data = restResponse.getResponse();
-			if (data != null && data.length > 0) {
-				Map<String, byte[]> readZip = ZipUtil.readZip(data);
-				return Either.left(readZip);
-			} else {
-				log.debug("Data received from rest is null or empty");
-				return Either.right(StorageOperationStatus.NOT_FOUND);
-			}
-
-		case HttpStatus.SC_NOT_FOUND:
-			return Either.right(StorageOperationStatus.CSAR_NOT_FOUND);
-
-		default:
-			return Either.right(StorageOperationStatus.GENERAL_ERROR);
+		try {
+    		HttpResponse<byte []> httpResponse = HttpRequest.getAsByteArray(url, headers);
+    		log.debug("After fetching csar {}. Http return code is {}", csarUuid, httpResponse.getStatusCode());
+    
+    		switch (httpResponse.getStatusCode()) {
+    		case HttpStatus.SC_OK:
+    			byte[] data = httpResponse.getResponse();
+    			if (data != null && data.length > 0) {
+    				Map<String, byte[]> readZip = ZipUtil.readZip(data);
+    				return Either.left(readZip);
+    			} else {
+    				log.debug("Data received from rest is null or empty");
+    				return Either.right(StorageOperationStatus.NOT_FOUND);
+    			}
+    
+    		case HttpStatus.SC_NOT_FOUND:
+    			return Either.right(StorageOperationStatus.CSAR_NOT_FOUND);
+    
+    		default:
+    			return Either.right(StorageOperationStatus.GENERAL_ERROR);
+    		}
 		}
-
+		catch(Exception e) {
+		    log.debug("Request failed with exception {}", e);
+		    return Either.right(StorageOperationStatus.GENERAL_ERROR);
+		}
 	}
 	
 	public Either<String, StorageOperationStatus> getPackages(String userId) {
-
-		if (httpRestClient == null) {
-			BeEcompErrorManager.getInstance().logInternalFlowError("RestClient", "Rest Client could not be initialized", ErrorSeverity.ERROR);
-			return Either.right(StorageOperationStatus.GENERAL_ERROR);
-		}
-
 		String url = buildDownloadCsarUrl();
 
 		Properties headers = new Properties();
@@ -176,29 +143,26 @@ public class OnboardingClient {
 
 		log.debug("Url for downloading packages is {}. Headers are {}", url, headers);
 
-		RestResponse restResponse = httpRestClient.doGET(url, headers);
-		log.debug("After fetching packages. Http return code is {}", restResponse.getHttpStatusCode());
-
-		switch (restResponse.getHttpStatusCode()) {
-		case HttpStatus.SC_OK:
-			String data = restResponse.getResponse();
-			return Either.left(data);
-
-		case HttpStatus.SC_NOT_FOUND:
-			return Either.right(StorageOperationStatus.CSAR_NOT_FOUND);
-
-		default:
-			return Either.right(StorageOperationStatus.GENERAL_ERROR);
+		try {
+    		HttpResponse<String> httpResposne = HttpRequest.get(url, headers);
+    		log.debug("After fetching packages. Http return code is {}", httpResposne.getStatusCode());
+    
+    		switch (httpResposne.getStatusCode()) {
+    		case HttpStatus.SC_OK:
+    			String data = httpResposne.getResponse();
+    			return Either.left(data);
+    
+    		case HttpStatus.SC_NOT_FOUND:
+    			return Either.right(StorageOperationStatus.CSAR_NOT_FOUND);
+    
+    		default:
+    			return Either.right(StorageOperationStatus.GENERAL_ERROR);
+    		}
 		}
-
-	}
-
-	public HttpRestClient getHttpRestClient() {
-		return httpRestClient;
-	}
-
-	public void setHttpRestClient(HttpRestClient httpRestClient) {
-		this.httpRestClient = httpRestClient;
+		catch(Exception e) {
+            log.debug("Request failed with exception {}", e);
+            return Either.right(StorageOperationStatus.GENERAL_ERROR);
+		}
 	}
 
 	/**

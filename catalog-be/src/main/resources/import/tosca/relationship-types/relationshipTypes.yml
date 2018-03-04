@@ -109,3 +109,6 @@
         type: string
         status: SUPPORTED
         required: false
+  org.openecomp.relationships.ForwardsTo:
+    derived_from: tosca.relationships.Root
+    valid_target_types: [org.openecomp.capabilities.Forwarder]

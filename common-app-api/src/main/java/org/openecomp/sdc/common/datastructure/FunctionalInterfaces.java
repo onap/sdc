@@ -21,10 +21,25 @@
 package org.openecomp.sdc.common.datastructure;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fj.F;
 import fj.data.Either;
 
 /**
@@ -36,14 +51,16 @@ import fj.data.Either;
 public class FunctionalInterfaces {
 	private static final int DEFAULT_REDO_INTERVAL_TIME_MS = 50;
 	private static final int DEFAULT_MAX_WAIT_TIME_MS = 10000;
-	 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FunctionalInterfaces.class);
+
 	/**
 	 * This is an interface of a List that implements Serializable
+	 * 
 	 * @author mshitrit
 	 *
 	 * @param <T>
 	 */
-	public interface SerializableList<T> extends List<T> , Serializable {
+	public interface SerializableList<T> extends List<T>, Serializable {
 	}
 
 	/**
@@ -93,6 +110,17 @@ public class FunctionalInterfaces {
 		 */
 		R apply(T t) throws E;
 	}
+
+    public interface FunctionTwoParamThrows<T1, T2, R, E extends Exception> {
+        /**
+         * Same apply method, but throws an exception
+         * 
+         * @param t1
+         * @param t2
+         * @return
+         */
+        R apply(T1 t1, T2 t2) throws E;
+    }
 
 	/**
 	 * @author mshitrit Supplier that throws an exception
@@ -264,6 +292,80 @@ public class FunctionalInterfaces {
 
 	/**
 	 * Runs the given method.<br>
+	 * Verify the method result against the resultVerifier.<br>
+	 * If verification passed returns the result.<br>
+	 * If Verification failed keeps retrying until maxRetries reached.<br>
+	 * If Exception Occurred keeps retrying until it passes or until maxRetries
+	 * reached,<br>
+	 * If last retry result caused an exception - it is thrown.
+	 * 
+	 * @param methodToRun
+	 *            given Method
+	 * @param resultVerifier
+	 *            verifier for the method result
+	 * @param maxRetries
+	 * @return
+	 */
+	public static <R> R retryMethodOnResult(Supplier<R> methodToRun, Function<R, Boolean> resultVerifier,
+			long maxRetries) {
+		boolean stopSearch = false;
+		R ret = null;
+		int retriesCount = 0;
+		FunctionalAttException functionalExceotion = null;
+		boolean isExceptionInLastTry = false;
+		while (!stopSearch) {
+			try {
+				ret = methodToRun.get();
+				stopSearch = resultVerifier.apply(ret);
+				isExceptionInLastTry = false;
+			} catch (Exception e) {
+				functionalExceotion = new FunctionalAttException(e);
+				isExceptionInLastTry = true;
+			} finally {
+				if (++retriesCount >= maxRetries) {
+					stopSearch = true;
+				}
+			}
+		}
+		if (isExceptionInLastTry) {
+			throw functionalExceotion;
+		} else {
+			return ret;
+		}
+	}
+
+    public static <R> R retryMethodOnException(SupplierThrows<R, Exception> methodToRun, 
+            Function<Exception, Boolean> exceptionVerifier, long maxRetries) throws Exception {
+        boolean stopSearch = false;
+        R ret = null;
+        int retriesCount = 0;
+        Exception exception = null;
+        while (!stopSearch) {
+            try {
+                exception = null;
+                ret = methodToRun.get();
+                stopSearch = true;
+            }
+            catch (Exception e) {
+                exception = e;
+                stopSearch = exceptionVerifier.apply(e);
+            }
+            finally {
+                if (++retriesCount >= maxRetries) {
+                    stopSearch = true;
+                }
+            }
+        }
+        if (exception != null) {
+            throw exception;
+        }
+        else {
+            return ret;
+        }
+    }
+
+	/**
+	 * Runs the given method.<br>
 	 * In case exception occurred runs the method again either until succeed or
 	 * until 10 seconds pass.
 	 * 
@@ -312,17 +414,15 @@ public class FunctionalInterfaces {
 	 * @param eitherToConvert
 	 * @return
 	 */
-	public static <T1,T2,T3> Either<T1,T2> convertEitherRight(Either<T3,T2> eitherToConvert){
-		if( eitherToConvert.isLeft() ){
+	public static <T1, T2, T3> Either<T1, T2> convertEitherRight(Either<T3, T2> eitherToConvert) {
+		if (eitherToConvert.isLeft()) {
 			throw new UnsupportedOperationException("Can not convert either right value because it has left value");
-		}
-		else{
+		} else {
 			return Either.right(eitherToConvert.right().value());
 		}
-		
-			
+
 	}
-	
+
 	/**
 	 * Converts Either containing left value to another either with different
 	 * type of right value and the same type of left value.
@@ -330,14 +430,95 @@ public class FunctionalInterfaces {
 	 * @param eitherToConvert
 	 * @return
 	 */
-	public static <T1,T2,T3> Either<T1,T2> convertEitherLeft(Either<T1,T3> eitherToConvert){
-		if( eitherToConvert.isLeft() ){
+	public static <T1, T2, T3> Either<T1, T2> convertEitherLeft(Either<T1, T3> eitherToConvert) {
+		if (eitherToConvert.isLeft()) {
 			throw new UnsupportedOperationException("Can not convert either left value because it has right value");
-		}
-		else{
+		} else {
 			return Either.left(eitherToConvert.left().value());
 		}
-			
+
+	}
+
+	/**
+	 * Returns enum value for a field <br>
+	 * 
+	 * @param fieldValue
+	 * @param values
+	 * @param enumValueGetter
+	 * @return
+	 */
+	public static <T extends Enum<T>> T getEnumValueByFieldValue(String fieldValue, T[] values,
+			Function<T, String> enumValueGetter, T defaultValue) {
+		return getEnumValueByFieldValue(fieldValue, values, enumValueGetter, defaultValue, true);
+
+	}
+	
+	
+	public static <T extends Enum<T>> T getEnumValueByFieldValue(String fieldValue, T[] values,
+			Function<T, String> enumValueGetter, T defaultValue, boolean isCaseSensetive ){
+
+		final Predicate<? super T> predicate;
+		if( isCaseSensetive ){
+			predicate = e -> fieldValue.equals(enumValueGetter.apply(e));
+		}
+		else{
+			predicate = e -> fieldValue.equalsIgnoreCase(enumValueGetter.apply(e));
+		}
+		Optional<T> optionalFound =
+				// Stream of values of enum
+				Arrays.asList(values).stream().
+				// Filter in the one that match the field
+						filter(predicate).
+						// collect
+						findAny();
+		T ret;
+		ret = optionalFound.isPresent() ? optionalFound.get() : defaultValue;
+		return ret;
+
+	}
+
+	/**
+	 * This method runs the given method.<br>
+	 * In case given method finished running within timeoutInMs limit it returns
+	 * Either which left value is the result of the method that ran.<br>
+	 * In case given method did not finish running within timeoutInMs limit it
+	 * returns Either which right value is false. <br>
+	 * 
+	 * @param supplier
+	 * @param timeoutInMs
+	 *            - if 0 or lower no timeout is used
+	 * @return
+	 */
+	public static <T> Either<T, Boolean> runMethodWithTimeOut(Supplier<T> supplier, long timeoutInMs) {
+		Either<T, Boolean> result;
+		if (timeoutInMs <= NumberUtils.LONG_ZERO) {
+			result = Either.left(supplier.get());
+		} else {
+			ExecutorService pool = Executors.newSingleThreadExecutor();
+			Future<T> future = pool.submit(supplier::get);
+			try {
+				T calcValue = future.get(timeoutInMs, TimeUnit.MILLISECONDS);
+				result = Either.left(calcValue);
+			} catch (InterruptedException | ExecutionException | TimeoutException e) {
+				LOGGER.debug("method run was canceled because it has passed its time limit of {} MS", timeoutInMs, e);
+				result = Either.right(false);
+			} finally {
+				pool.shutdownNow();
+			}
+		}
+		return result;
+	}
+
+	public static <T> F<T, Boolean> convertToFunction(Consumer<T> consumer) {
+		F<T, Boolean> func = t -> {
+			try {
+				consumer.accept(t);
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		};
+		return func;
 	}
 
 }

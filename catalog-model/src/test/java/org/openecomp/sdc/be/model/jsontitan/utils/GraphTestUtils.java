@@ -32,6 +32,7 @@ import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -43,6 +44,12 @@ import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
 
 public final class GraphTestUtils {
+
+	public static void createRootCatalogVertex(TitanDao titanDao) {
+		GraphVertex catalogRootVertex = new GraphVertex(VertexTypeEnum.CATALOG_ROOT);
+		catalogRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
+		titanDao.createVertex(catalogRootVertex);
+	}
 
     public static GraphVertex createResourceVertex(TitanDao titanDao, Map<GraphPropertyEnum,Object> metadataProps, ResourceTypeEnum type) {
         GraphVertex vertex = new GraphVertex();

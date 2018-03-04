@@ -165,8 +165,6 @@ public class ArtifactOperation implements IArtifactOperation {
 				if (createNodeResult.isRight()) {
 					TitanOperationStatus operationStatus = createNodeResult.right().value();
 					log.debug("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
-					BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedCreateNodeError, "Failed to add artifact " + artifactData.getArtifactDataDefinition().getArtifactName() + " to graph. status is " + operationStatus,
-							artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
 					BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add artifact", artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
 					return DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus);
 				}
@@ -229,8 +227,6 @@ public class ArtifactOperation implements IArtifactOperation {
 				if (createNodeResult.isRight()) {
 					TitanOperationStatus operationStatus = createNodeResult.right().value();
 					log.debug("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
-					BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedCreateNodeError, "Failed to add artifact " + artifactData.getArtifactDataDefinition().getArtifactName() + " to graph. status is " + operationStatus,
-							artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
 					BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add artifact", artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
 					return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus));
 				}
@@ -309,8 +305,6 @@ public class ArtifactOperation implements IArtifactOperation {
 				titanGenericDao.rollback();
 			}
 			log.debug("Failed to update artifact {} of {} {}. status is {}", artifactId, type.getName(), id, status.right().value());
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedUpdateNodeError, "Failed to update artifact " + artifactId + " of " + type.getName() + " " + id + ". status is" + status.right().value(), artifactId,
-					String.valueOf(status.right().value()));
 			BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("Update Artifact", artifactId, String.valueOf(status.right().value()));
 			return Either.right(status.right().value());
 		} else {
@@ -335,7 +329,6 @@ public class ArtifactOperation implements IArtifactOperation {
 			}
 			log.debug("Failed to delete artifact {} of resource {}", artifactId, id);
 
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedDeleteNodeError, "Failed to delete artifact " + artifactId + " of resource " + id, artifactId, String.valueOf(status.right().value()));
 			BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("Delete Artifact", artifactId, String.valueOf(status.right().value()));
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status.right().value()));
 		} else {

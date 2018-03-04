@@ -23,6 +23,8 @@ import { Tab } from './tab/tab.component';
 import { ViewEncapsulation } from '@angular/core';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/core';
 
+export {Tab};
+
 @Component({
     selector: 'tabs',
     templateUrl: './tabs.component.html',

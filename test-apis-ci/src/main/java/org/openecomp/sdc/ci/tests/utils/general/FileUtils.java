@@ -104,8 +104,7 @@ public class FileUtils {
 		return loadPayloadFile(newList, pattern, isBase64);
 	}
 
-	public static String loadPayloadFile(List<String> listFileName, String pattern, Boolean isBase64)
-			throws IOException {
+	public static String loadPayloadFile(List<String> listFileName, String pattern, Boolean isBase64) throws IOException {
 		String fileName;
 		String payload = null;
 		fileName = FileUtils.getFilePathFromListByPattern(listFileName, pattern);

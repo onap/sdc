@@ -22,6 +22,7 @@
  * Created by obarda on 1/27/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {IAppConfigurtaion} from "app/models";
 
 export class FileUploadModel {
