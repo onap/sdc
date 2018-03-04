@@ -24,28 +24,28 @@ import java.util.List;
 
 public class ServiceInfo {
 
-	private String name;
-	private List<ServiceVersionInfo> versions;
+    private String name;
+    private List<ServiceVersionInfo> versions;
 
-	public ServiceInfo(String serviceName, List<ServiceVersionInfo> list) {
-		this.name = serviceName;
-		this.versions = list;
-	}
+    public ServiceInfo(String serviceName, List<ServiceVersionInfo> list) {
+        this.name = serviceName;
+        this.versions = list;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public List<ServiceVersionInfo> getVersions() {
-		return versions;
-	}
+    public List<ServiceVersionInfo> getVersions() {
+        return versions;
+    }
 
-	public void setVersions(List<ServiceVersionInfo> versions) {
-		this.versions = versions;
-	}
+    public void setVersions(List<ServiceVersionInfo> versions) {
+        this.versions = versions;
+    }
 
 }

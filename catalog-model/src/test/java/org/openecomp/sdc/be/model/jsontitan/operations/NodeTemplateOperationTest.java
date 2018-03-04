@@ -25,7 +25,6 @@ import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
 import com.google.common.collect.Lists;
 
 import fj.data.Either;

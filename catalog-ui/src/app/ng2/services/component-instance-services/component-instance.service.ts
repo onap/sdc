@@ -23,10 +23,9 @@ import {Response, RequestOptions, Headers} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import {PropertyFEModel, PropertyBEModel} from "app/models";
 import {CommonUtils} from "app/utils";
-import {Component, ComponentInstance, InputModel} from "app/models";
+import {Component, ComponentInstance, Capability, PropertyModel} from "app/models";
 import { HttpService } from '../http.service';
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
-import {isEqual} from "lodash";
 
 @Injectable()
 export class ComponentInstanceServiceNg2 {
@@ -52,43 +51,45 @@ export class ComponentInstanceServiceNg2 {
             })
     }
 
-    updateInstanceProperty(component: Component, componentInstanceId: string, property: PropertyBEModel): Observable<PropertyBEModel> {
+    updateInstanceProperties(component: Component, componentInstanceId: string, properties: PropertyBEModel[]) {
 
-        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/property', property)
-            .map((res: Response) => {
-                return new PropertyBEModel(res.json());
-        })
-    }
-
-    getInstanceCapabilityProperties(component: Component, componentInstanceId: string, capabilityType: string, capabilityName: string): Observable<Array<PropertyBEModel>> {
-
-        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/capability/' + capabilityType +
-            '/capabilityName/' +  capabilityName + '/properties')
-            .map((res: Response) => {
-                return CommonUtils.initBeProperties(res.json());
-            })
-    }
-
-    updateInstanceCapabilityProperties(component: Component, componentInstanceId: string, capabilityType: string, capabilityName: string, properties: PropertyBEModel[]): Observable<PropertyBEModel[]> {
-
-        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/capability/' +  capabilityType +
-            '/capabilityName/' +  capabilityName +'/properties', properties)
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/properties', properties)
             .map((res: Response) => {
                 return res.json().map((resProperty) => new PropertyBEModel(resProperty));
-            })
+            });
     }
 
-    updateInstanceInput(component: Component, componentInstanceId: string, input: PropertyBEModel): Observable<PropertyBEModel> {
+    getInstanceCapabilityProperties(component: Component, componentInstanceId: string, capability: Capability): Observable<Array<PropertyModel>> {
 
-        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/input', input)
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/capability/' + capability.type +
+            '/capabilityName/' +  capability.name + '/ownerId/' + capability.ownerId + '/properties')
             .map((res: Response) => {
-                return new PropertyBEModel(res.json());
+                capability.properties = res.json().map((capProp) => new PropertyModel(capProp));  // update capability properties
+                return capability.properties;
             })
     }
 
-    hasPropertyChanged(property: PropertyFEModel) {
-        let oldValue: any = property.value;
-        const newValue = property.getJSONValue();
-        return ((oldValue || newValue) && !isEqual(oldValue, newValue));
+    updateInstanceCapabilityProperties(component: Component, componentInstanceId: string, capability: Capability, properties: PropertyBEModel[]): Observable<Array<PropertyModel>> {
+
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/capability/' +  capability.type +
+            '/capabilityName/' +  capability.name + '/ownerId/' + capability.ownerId + '/properties', properties)
+            .map((res: Response) => {
+                const savedProperties: PropertyModel[] = res.json().map((resProperty) => new PropertyModel(resProperty));
+                savedProperties.forEach((savedProperty) => {
+                    const propIdx = capability.properties.findIndex((p) => p.uniqueId === savedProperty.uniqueId);
+                    if (propIdx !== -1) {
+                        capability.properties.splice(propIdx, 1, savedProperty);
+                    }
+                });
+                return savedProperties;
+            })
+    }
+
+    updateInstanceInputs(component: Component, componentInstanceId: string, inputs: PropertyBEModel[]): Observable<PropertyBEModel[]> {
+
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/inputs', inputs)
+            .map((res: Response) => {
+                return res.json().map((resInput) => new PropertyBEModel(resInput));
+            });
     }
 }

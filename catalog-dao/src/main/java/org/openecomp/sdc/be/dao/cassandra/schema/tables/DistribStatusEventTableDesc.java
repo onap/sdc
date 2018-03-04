@@ -20,46 +20,20 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 import com.datastax.driver.core.DataType;
 
-public class DistribStatusEventTableDesc implements ITableDescription {
-	@Override
-	public List<ImmutablePair<String, DataType>> primaryKeys() {
-		List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-		keys.add(new ImmutablePair<String, DataType>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
-		return keys;
-	}
+public class DistribStatusEventTableDesc extends DistribBaseEventTableDesc{
 
 	@Override
-	public List<ImmutablePair<String, DataType>> clusteringKeys() {
-		List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-		keys.add(new ImmutablePair<String, DataType>(TIMESTAMP_FIELD, DataType.timestamp()));
-		return keys;
-	}
-
-	@Override
-	public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
-		Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
-
+	protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
 		for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
 			columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
 		}
-
-		return columns;
-	}
-
-	@Override
-	public String getKeyspace() {
-		return AuditingTypesConstants.AUDIT_KEYSPACE;
 	}
 
 	@Override
@@ -68,15 +42,10 @@ public class DistribStatusEventTableDesc implements ITableDescription {
 	}
 
 	enum DSEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), 
-		STATUS("status", DataType.varchar(), false), 
-		DESCRIPTION("description", DataType.varchar(), false),
-		DID("did", DataType.varchar(), true), 
+		DID("did", DataType.varchar(), true),
 		CONSUMER_ID("consumer_id", DataType.varchar(), false), 
-		REQUEST_ID("request_id", DataType.varchar(), false), 
-		RESOURCE_URL("resoure_URL", DataType.varchar(), false), 
-		SERVICE_INST_ID("service_instance_id", DataType.varchar(), false), 
-		TOPIC_NAME("topic_name", DataType.varchar(), false), 
+		RESOURCE_URL("resoure_URL", DataType.varchar(), false),
+		TOPIC_NAME("topic_name", DataType.varchar(), false),
 		STATUS_TIME("status_time", DataType.varchar(), false);
 
 		private String name;

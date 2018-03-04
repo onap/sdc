@@ -42,8 +42,10 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
 
 	public static BeEcompErrorManager getInstance() {
 		if (instance == null) {
-
-			instance = init();
+			synchronized (BeEcompErrorManager.class){
+				if (instance == null)
+					instance = init();
+			}
 		}
 		return instance;
 	}
@@ -79,6 +81,14 @@ public class BeEcompErrorManager extends AbsEcompErrorManager {
 
 	public void logBeHealthCheckUebClusterRecovery(String context) {
 		processEcompError(context, EcompErrorEnum.BeHealthCheckUebClusterRecovery);
+	}
+
+	public void logDmaapHealthCheckError(String context) {
+		processEcompError(context, EcompErrorEnum.DmaapHealthCheckError);
+	}
+
+	public void logDmaapHealthCheckRecovery(String context) {
+		processEcompError(context, EcompErrorEnum.DmaapHealthCheckRecovery);
 	}
 
 	public void logFeHealthCheckRecovery(String context) {

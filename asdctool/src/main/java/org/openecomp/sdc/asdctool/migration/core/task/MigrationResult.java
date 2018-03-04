@@ -21,6 +21,19 @@ public class MigrationResult {
         this.migrationStatus = migrationStatus;
     }
 
+    public static MigrationResult success() {
+        MigrationResult success = new MigrationResult();
+        success.setMigrationStatus(MigrationResult.MigrationStatus.COMPLETED);
+        return success;
+    }
+
+    public static MigrationResult error(String msg) {
+        MigrationResult error = new MigrationResult();
+        error.setMigrationStatus(MigrationStatus.FAILED);
+        error.setMsg(msg);
+        return error;
+    }
+
     public enum MigrationStatus {
         COMPLETED,
         COMPLETED_WITH_ERRORS,

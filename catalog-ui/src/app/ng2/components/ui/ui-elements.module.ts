@@ -27,6 +27,10 @@ import {ModalModule} from "./modal/modal.module";
 import {PopoverModule} from "./popover/popover.module";
 import {SearchBarComponent} from "./search-bar/search-bar.component";
 import {SearchWithAutoCompleteComponent} from "./search-with-autocomplete/search-with-autocomplete.component";
+import {PalettePopupPanelComponent} from "./palette-popup-panel/palette-popup-panel.component";
+import {ZoneContainerComponent} from "./canvas-zone/zone-container.component";
+import {ZoneInstanceComponent } from "./canvas-zone/zone-instance/zone-instance.component";
+import {PaletteAnimationComponent} from "./palette-animation/palette-animation.component"
 import {TabModule} from "./tabs/tabs.module";
 import {TooltipModule} from "./tooltip/tooltip.module";
 import {CommonModule} from "@angular/common";
@@ -35,15 +39,21 @@ import {BrowserModule} from "@angular/platform-browser";
 import {MultiStepsWizardModule} from "./multi-steps-wizard/multi-steps-wizard.module";
 import {MenuListModule} from "./menu/menu-list.module";
 import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-ng2.module";
+//import {SdcUiComponentsModule} from "sdc-ui/lib/angular";
 
 @NgModule({
   declarations: [
     LoaderComponent,
     SearchBarComponent,
-    SearchWithAutoCompleteComponent
-  ],
+    SearchWithAutoCompleteComponent,
+    PalettePopupPanelComponent,
+    ZoneContainerComponent,
+    ZoneInstanceComponent,
+    PaletteAnimationComponent
+],
 
   imports: [
+    //SdcUiComponentsModule,
     BrowserModule,
     FormsModule,
     CommonModule,
@@ -63,6 +73,9 @@ import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-n
     MultiStepsWizardModule,
     SearchBarComponent,
     SearchWithAutoCompleteComponent,
+    PalettePopupPanelComponent,
+    ZoneContainerComponent,
+    ZoneInstanceComponent,
     DynamicElementModule,
     NavbarModule,
     FormElementsModule,
@@ -71,10 +84,10 @@ import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-n
     TabModule,
     TooltipModule,
     MenuListModule,
-    MenuListNg2Module
+    MenuListNg2Module,
+    PaletteAnimationComponent
   ],
-
-  entryComponents: [SearchWithAutoCompleteComponent]
+  entryComponents: [SearchWithAutoCompleteComponent, PalettePopupPanelComponent, ZoneContainerComponent, ZoneInstanceComponent, PaletteAnimationComponent]
 })
 
 export class UiElementsModule {}

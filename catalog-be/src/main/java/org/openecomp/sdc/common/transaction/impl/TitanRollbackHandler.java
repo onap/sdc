@@ -28,28 +28,28 @@ import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
 
 public class TitanRollbackHandler extends RollbackHandler {
 
-	private TitanGenericDao titanGenericDao;
+    private TitanGenericDao titanGenericDao;
 
-	public TitanRollbackHandler(Integer transactionId, String userId, String actionType, TitanGenericDao titanGenericDao) {
-		super(transactionId, userId, actionType);
-		this.titanGenericDao = titanGenericDao;
-	}
+    public TitanRollbackHandler(Integer transactionId, String userId, String actionType, TitanGenericDao titanGenericDao) {
+        super(transactionId, userId, actionType);
+        this.titanGenericDao = titanGenericDao;
+    }
 
-	public DBTypeEnum getDBType() {
-		return DBTypeEnum.TITAN;
-	}
+    public DBTypeEnum getDBType() {
+        return DBTypeEnum.TITAN;
+    }
 
-	protected boolean isRollbackForPersistenceData() {
-		return false;
-	}
+    protected boolean isRollbackForPersistenceData() {
+        return false;
+    }
 
-	public DBActionCodeEnum doNonPersistenceDataRollback() {
-		DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
-		TitanOperationStatus titanStatus = titanGenericDao.rollback();
-		if (titanStatus != TitanOperationStatus.OK) {
-			result = DBActionCodeEnum.FAIL_GENERAL;
-		}
-		return result;
-	}
+    public DBActionCodeEnum doNonPersistenceDataRollback() {
+        DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
+        TitanOperationStatus titanStatus = titanGenericDao.rollback();
+        if (titanStatus != TitanOperationStatus.OK) {
+            result = DBActionCodeEnum.FAIL_GENERAL;
+        }
+        return result;
+    }
 
 }

@@ -5,7 +5,7 @@
 </div>
 <div class="properties-table-container">
     <properties-table class="properties-table"
-                      (valueChanged)="propertyValueChanged($event)"
+                      (propertyChanged)="propertyValueChanged($event)"
                       [fePropertiesMap]="capabilityPropertiesMap"
                       [selectedPropertyId]="''"
                       [hidePropertyType]="true">

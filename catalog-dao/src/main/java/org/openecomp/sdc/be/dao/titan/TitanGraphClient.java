@@ -392,10 +392,8 @@ public class TitanGraphClient {
 
 	private void logAlarm() {
 		if (lastHealthState == true) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeHealthCheckRecovery, TITAN_HEALTH_CHECK_STR);
 			BeEcompErrorManager.getInstance().logBeHealthCheckTitanRecovery(TITAN_HEALTH_CHECK_STR);
 		} else {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeHealthCheckError, TITAN_HEALTH_CHECK_STR);
 			BeEcompErrorManager.getInstance().logBeHealthCheckTitanError(TITAN_HEALTH_CHECK_STR);
 		}
 	}

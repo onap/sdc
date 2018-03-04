@@ -21,6 +21,7 @@
                         <div class="w-sdc-dashboard-card-new-content-plus" data-ng-show="!displayActions"></div>
                         <div class="sdc-dashboard-create-element-container" data-ng-show="displayActions">
                             <button data-ng-if="roles[user.role].dashboard.showCreateNew" data-tests-id="createResourceButton" class="tlv-btn outline blue" data-ng-click="openCreateModal('RESOURCE')">Add VF</button>
+                            <button data-ng-if="roles[user.role].dashboard.showCreateNew" data-tests-id="createCRButton" class="tlv-btn outline blue" data-ng-click="createCR()">Add CR</button>
                             <button data-ng-if="roles[user.role].dashboard.showCreateNew" data-tests-id="createPNFButton" class="tlv-btn outline blue" data-ng-click="createPNF()">Add PNF</button>
                             <button data-ng-if="roles[user.role].dashboard.showCreateNew" data-tests-id="createServiceButton" class="tlv-btn outline blue" data-ng-click="openCreateModal('SERVICE')">Add Service</button>
                         </div>

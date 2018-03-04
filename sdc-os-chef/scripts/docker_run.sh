@@ -17,7 +17,7 @@ function cleanup {
     echo "performing old dockers cleanup"
 
 	if [ "$1" == "all" ] ; then
-		docker_ids=`docker ps -a | egrep -v "openecomp/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
+		docker_ids=`docker ps -a | egrep -v "onap/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
 		for X in ${docker_ids}
 		do
 			docker rm -f ${X}
@@ -106,6 +106,7 @@ if [ -n "$MATCH" ]; then
    match_result=true
 fi
 }
+
 function monitor_docker {
 
     echo monitor $1 Docker
@@ -229,10 +230,9 @@ fi
 echo ""
 
 
-
+#Elastic-Search
 function sdc-es {
-
-# Elastic-Search
+dir_perms
 echo "docker run sdc-elasticsearch..."
 if [ ${LOCAL} = false ]; then
 	echo "pulling code"
@@ -244,8 +244,10 @@ echo "please wait while ES is starting..."
 monitor_docker sdc-es
 }
 
+
+#Init-Elastic-Search
 function sdc-init-es {
-# Init-Elastic-Search
+dir_perms
 echo "docker run sdc-init-elasticsearch..."
 if [ ${LOCAL} = false ]; then
 	echo "pulling code"
@@ -258,8 +260,9 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 
 }
 
+#Cassandra
 function sdc-cs {
-# Cassandra
+dir_perms
 echo "docker run sdc-cassandra..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
@@ -271,8 +274,8 @@ echo "please wait while CS is starting..."
 monitor_docker sdc-cs
 }
 
+#Cassandra-init
 function sdc-cs-init {
-# cassandra-init
 echo "docker run sdc-cassandra-init..."
 if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-cassandra-init:${RELEASE}
@@ -283,21 +286,19 @@ docker_logs sdc-cs-init
 if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
+#Kibana
 function sdc-kbn {
-# kibana
+dir_perms
 echo "docker run sdc-kibana..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-kibana:${RELEASE}
 docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
 fi
-
 }
 
-
+#Back-End
 function sdc-BE {
-
 dir_perms
-# Back-End
 echo "docker run sdc-backend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-backend:${RELEASE}
@@ -310,10 +311,9 @@ echo "please wait while BE is starting..."
 monitor_docker sdc-BE
 }
 
-function sdc-BE-init {
-
-dir_perms
 # Back-End-Init
+function sdc-BE-init {
+dir_perms
 echo "docker run sdc-backend-init..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-backend-init:${RELEASE}
@@ -324,9 +324,10 @@ docker_logs sdc-BE-init
 if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
+
+# Front-End
 function sdc-FE {
 dir_perms
-# Front-End
 echo "docker run sdc-frontend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-frontend:${RELEASE}
@@ -338,9 +339,8 @@ monitor_docker sdc-FE
 }
 
 
-
-function sdc-sanity {
 # sanityDocker
+function sdc-sanity {
 if [[ (${RUNTESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
     echo "docker run sdc-sanity..."
     echo "Triger sanity docker, please wait..."

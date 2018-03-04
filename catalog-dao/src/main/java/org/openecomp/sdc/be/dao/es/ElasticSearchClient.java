@@ -33,14 +33,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.apache.commons.lang.SystemUtils;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.shield.ShieldPlugin;
@@ -172,34 +168,6 @@ public class ElasticSearchClient {
 
 	public String getServerPort() {
 		return serverPort;
-	}
-
-	/**
-	 * Wait for green status for the given indices.
-	 * 
-	 * @param indices
-	 *            The indices to wait for.
-	 * @return A {@link ClusterHealthResponse} that contains the cluster health
-	 *         after waiting maximum 5 minutes for green status.
-	 */
-	public ClusterHealthResponse waitForGreenStatus(String... indices) {
-		ClusterHealthAction healthAction = ClusterHealthAction.INSTANCE;
-
-		ClusterHealthRequestBuilder builder = healthAction.newRequestBuilder(this.client.admin().cluster());
-		builder.setIndices(indices);
-		builder.setWaitForGreenStatus();
-		builder.setTimeout(TimeValue.timeValueSeconds(30));
-		ClusterHealthResponse response = builder.execute().actionGet();
-		log.debug("getStatus                : {}", response.getStatus());
-		log.debug("getActivePrimaryShards   : {}", response.getActivePrimaryShards());
-		log.debug("getActiveShards          : {}", response.getActiveShards());
-		log.debug("getInitializingShards    : {}", response.getInitializingShards());
-		log.debug("getNumberOfDataNodes     : {}", response.getNumberOfDataNodes());
-		log.debug("getNumberOfNodes         : {}", response.getNumberOfNodes());
-		log.debug("getRelocatingShards      : {}", response.getRelocatingShards());
-		log.debug("getUnassignedShards      : {}", response.getUnassignedShards());
-		log.debug("getAllValidationFailures : {}", response.getAllValidationFailures());
-		return response;
 	}
 
 	@Value("#{elasticsearchConfig['cluster.name']}")

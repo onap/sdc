@@ -12,10 +12,6 @@ import {UiElementBaseInterface, UiElementBase} from "../ui-element-base.componen
 })
 export class RadioButtonComponent  extends UiElementBase implements UiElementBaseInterface {
     
-    onSave() {
-        this.baseEmitter.emit(this.value);
-    }
-
     @Input() options:Array<RadioButtonModel>;
     @Input() readonly:boolean;
     @Input() direction:string = 'vertical'; //get 'horizontal' | 'vertical'
@@ -23,7 +19,7 @@ export class RadioButtonComponent  extends UiElementBase implements UiElementBas
     
     select(value:any) {
         this.value = value;
-        this.baseEmitter.emit(this.value);
+        this.onChange();
     }
 }
 

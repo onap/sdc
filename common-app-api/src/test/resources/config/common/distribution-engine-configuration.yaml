@@ -33,3 +33,35 @@ distributionStatusTopic:
 createTopic:
    partitionCount: 1
    replicationCount: 1
+
+aaiConfig:
+   httpRequestConfig:
+      serverRootUrl: https://127.0.0.1/aai/v1
+      resourceNamespaces:
+         operationalEnvironments: /aai/cloud-infrastructure/operational-environments
+
+   httpClientConfig:
+      timeouts:
+         readTimeoutMs: 5000
+         connectTimeoutMs: 1000
+      clientCertificate:
+         keyStore: /opt/app/jetty/base/be/etc/non-prod.jks
+         keyStorePassword: hmXYcznAljMSisdy8zgcag==
+      headers:
+         X-FromAppId: asdc
+      numOfRetries: 3
+
+msoConfig:
+   httpRequestConfig:
+      serverRootUrl: http://127.0.0.1:8080/onap/so/infra/modelDistributions/v1
+      resourceNamespaces:
+         distributions: /distributions
+
+   httpClientConfig:
+       timeouts:
+          readTimeoutMs: 2000
+          connectTimeoutMs: 500
+       basicAuthorization:
+          userName: asdc
+          password: OTLEp5lfVhYdyw5EAtTUBQ==
+       numOfRetries: 3

@@ -23,36 +23,42 @@ package org.openecomp.sdc.common.transaction.impl;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
+import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.transaction.api.IDBAction;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ESAction implements IDBAction {
 
-	private ESCatalogDAO esCatalogDao;
-	private ESArtifactData artifactData;
-	private ESActionTypeEnum esActionType;
+    private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
 
-	public ESAction(ESCatalogDAO esCatalogDao, ESArtifactData artifactData, ESActionTypeEnum esActiontype) {
-		this.esCatalogDao = esCatalogDao;
-		this.artifactData = artifactData;
-		this.esActionType = esActiontype;
-	}
+    private ESCatalogDAO esCatalogDao;
+    private ESArtifactData artifactData;
+    private ESActionTypeEnum esActionType;
 
-	@Override
-	public DBActionCodeEnum doAction() {
-		DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
-		try {
-			if (esActionType == ESActionTypeEnum.ADD_ARTIFACT || esActionType == ESActionTypeEnum.UPDATE_ARTIFACT) {
-				esCatalogDao.writeArtifact(artifactData);
-			} else if (esActionType == ESActionTypeEnum.REMOVE_ARTIFACT) {
-				esCatalogDao.deleteArtifact(artifactData.getId());
-			}
+    public ESAction(ESCatalogDAO esCatalogDao, ESArtifactData artifactData, ESActionTypeEnum esActiontype) {
+        this.esCatalogDao = esCatalogDao;
+        this.artifactData = artifactData;
+        this.esActionType = esActiontype;
+    }
 
-		} catch (ResourceDAOException daoException) {
-			result = DBActionCodeEnum.FAIL_GENERAL;
-		}
-		return result;
-	}
+    @Override
+    public DBActionCodeEnum doAction() {
+        DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
+        try {
+            if (esActionType == ESActionTypeEnum.ADD_ARTIFACT || esActionType == ESActionTypeEnum.UPDATE_ARTIFACT) {
+                esCatalogDao.writeArtifact(artifactData);
+            } else if (esActionType == ESActionTypeEnum.REMOVE_ARTIFACT) {
+                esCatalogDao.deleteArtifact(artifactData.getId());
+            }
+
+        } catch (ResourceDAOException daoException) {
+            result = DBActionCodeEnum.FAIL_GENERAL;
+            log.error("#doAction - {}, es action failed with error : ", result, daoException);
+        }
+        return result;
+    }
 
 }

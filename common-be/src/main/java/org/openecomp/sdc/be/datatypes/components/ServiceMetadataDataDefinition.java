@@ -169,4 +169,10 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		return super.equals(obj);
 	}
 
+	@Override
+	public String getActualComponentType() {
+
+		return  componentType.getValue();
+	}
+
 }

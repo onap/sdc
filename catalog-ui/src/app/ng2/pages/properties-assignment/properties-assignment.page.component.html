@@ -1,43 +1,50 @@
 <div class="properties-assignment-page">
     <div class="main-content">
         <div class="left-column">
-            <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true">
-                <tab tabTitle="Properties">
-                    <properties-table class="properties-table"
-                        [fePropertiesMap]="instanceFePropertiesMap"
-                        [feInstanceNamesMap]="componentInstanceNamesMap"
-                        [searchTerm]="searchQuery"
-                        [selectedPropertyId]="selectedFlatProperty.path"
-                        [propertyNameSearchText]="searchPropertyName"
-                        [readonly]="isReadonly"
-                        [isLoading]="loadingProperties"
-                        [hasDeclareOption]="true"
-                        (valueChanged)="propertyValueChanged($event)"
-                        (propertySelected)="propertySelected($event)"
-                        (selectPropertyRow)="selectPropertyRow($event)"
-                        (selectChildProperty)="selectChildProperty($event)"
-                        (updateCheckedPropertyCount)="updateCheckedPropertyCount($event)"
-                        (selectInstanceRow)="selectInstanceRow($event)">
+            <div class="main-tabs-section">
+                <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true">
+                    <tab tabTitle="Properties">
+                        <properties-table class="properties-table"
+                            [fePropertiesMap]="instanceFePropertiesMap"
+                            [feInstanceNamesMap]="componentInstanceNamesMap"
+                            [searchTerm]="searchQuery"
+                            [selectedPropertyId]="selectedFlatProperty.path"
+                            [propertyNameSearchText]="searchPropertyName"
+                            [readonly]="isReadonly"
+                            [isLoading]="loadingProperties || savingChangedData"
+                            [hasDeclareOption]="true"
+                            (propertyChanged)="dataChanged($event)"
+                            (propertySelected)="propertySelected($event)"
+                            (selectPropertyRow)="selectPropertyRow($event)"
+                            (selectChildProperty)="selectChildProperty($event)"
+                            (updateCheckedPropertyCount)="updateCheckedPropertyCount($event)"
+                            (selectInstanceRow)="selectInstanceRow($event)">
                         </properties-table>
-                </tab>
-                <tab tabTitle="Inputs">
-                    <inputs-table class="properties-table"
-                                  [readonly]="isReadonly"
-                                  [inputs]="inputs | searchFilter:'name':searchQuery"
-                                  [instanceNamesMap]="componentInstanceNamesMap"
-                                  [isLoading]="loadingInputs"
-                                  (deleteInput)="deleteInput($event)"
-                                  (inputValueChanged)="inputValueChanged($event)"></inputs-table>
-                </tab>
-            </tabs>
+                    </tab>
+                    <tab tabTitle="Inputs">
+                        <inputs-table class="properties-table"
+                                      [readonly]="isReadonly"
+                                      [inputs]="inputs | searchFilter:'name':searchQuery"
+                                      [instanceNamesMap]="componentInstanceNamesMap"
+                                      [isLoading]="loadingInputs"
+                                      (deleteInput)="deleteInput($event)"
+                                      (inputChanged)="dataChanged($event)">
+                        </inputs-table>
+                    </tab>
+                </tabs>
+                <div class="main-tabs-section-buttons">
+                    <button class="tlv-btn outline blue" [disabled]="!hasChangedData || savingChangedData" (click)="reverseChangedData()" data-tests-id="properties-reverse-button">Discard</button>
+                    <button class="tlv-btn blue" [disabled]="!hasChangedData || !isValidChangedData || savingChangedData" (click)="doSaveChangedData()" data-tests-id="properties-save-button">{{savingChangedData ? 'Saving' : 'Save'}}</button>
+                </div>
+            </div>
             <div class="header">
-                <div class="search-filter-container" [class.without-filter]="isInpusTabSelected">
-                    <span *ngIf="displayClearSearch && !isInpusTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</span>
+                <div class="search-filter-container" [class.without-filter]="isInputsTabSelected">
+                    <span *ngIf="displayClearSearch && isPropertiesTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</span>
                     <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" data-tests-id="search-box"/>
                     <span class="sprite search-icon" data-tests-id="search-button"></span>
-                    <filter-properties-assignment *ngIf="!isInpusTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
+                    <filter-properties-assignment *ngIf="isPropertiesTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
                 </div>
-                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly" (click)="declareProperties()" data-tests-id="declare-button">Declare</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button">Declare</button>
             </div>
         </div>
         <div class="right-column gray-border">
@@ -48,10 +55,10 @@
                         <div class="hierarchy-header white-sub-header">
                             <span tooltip="{{component.name}}">{{component.name}}</span>
                         </div>
-                        <div *ngIf="!instancesNavigationData || instancesNavigationData.length === 0 || isInpusTabSelected">No data to display</div>
+                        <div *ngIf="!instancesNavigationData || instancesNavigationData.length === 0 || isInputsTabSelected">No data to display</div>
                         <hierarchy-navigation class="hierarchy-nav"
                                 (updateSelected)="onInstanceSelectedUpdate($event)"
-                                [displayData]="isInpusTabSelected ? []: instancesNavigationData"
+                                [displayData]="isInputsTabSelected ? []: instancesNavigationData"
                                 [selectedItem]="selectedInstanceData.uniqueId"
                                 [displayOptions]="hierarchyInstancesDisplayOptions"></hierarchy-navigation>
                     </div>
@@ -59,12 +66,12 @@
                 <tab tabTitle="Property Structure">
                     <div class="hierarchy-nav-container">
                     <div class="hierarchy-header white-sub-header" [class.selected]="selectedFlatProperty.path == propertyStructureHeader">
-                        <span tooltip="{{!isInpusTabSelected ? propertyStructureHeader : ''}}">{{!isInpusTabSelected ? (propertyStructureHeader || "No Property Selected") : "No Property Selected"}}</span>
+                        <span tooltip="{{isPropertiesTabSelected ? propertyStructureHeader : ''}}">{{isPropertiesTabSelected ? (propertyStructureHeader || "No Property Selected") : "No Property Selected"}}</span>
                     </div>
-                    <div *ngIf="!propertiesNavigationData || propertiesNavigationData.length === 0 || isInpusTabSelected">No data to display</div>
+                    <div *ngIf="!propertiesNavigationData || propertiesNavigationData.length === 0 || isInputsTabSelected">No data to display</div>
                     <hierarchy-navigation class="hierarchy-nav"
                             (updateSelected)="onPropertySelectedUpdate($event)"
-                            [displayData]="isInpusTabSelected ? [] : propertiesNavigationData"
+                            [displayData]="isInputsTabSelected ? [] : propertiesNavigationData"
                             [selectedItem]="selectedFlatProperty.path"
                             [displayOptions]="hierarchyPropertiesDisplayOptions"></hierarchy-navigation>
                     </div>
@@ -72,4 +79,9 @@
             </tabs>
         </div>
     </div>
+    <template #saveChangedDataModalContentTemplate>
+        <loader [display]="savingChangedData" [size]="'medium'" [relative]="true"></loader>
+        Your changes{{isValidChangedData ? '' : ' (invalid)'}} have not been saved.<br>
+        Do you want to {{isValidChangedData ? 'save' : 'discard'}} them?
+    </template>
 </div>

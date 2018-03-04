@@ -20,15 +20,12 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.List;
-
-import com.datastax.driver.core.SocketOptions;
+import com.datastax.driver.core.*;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import java.util.List;
 
 public class SdcSchemaUtils {
 
@@ -74,19 +71,6 @@ public class SdcSchemaUtils {
             System.setProperty("javax.net.ssl.trustStorePassword", truststorePassword);
             clusterBuilder.withSSL();
         }
-
-        SocketOptions socketOptions =new SocketOptions();
-        Integer socketConnectTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getSocketConnectTimeout();
-        if( socketConnectTimeout!=null ){
-            log.info("SocketConnectTimeout was provided, setting Cassandra client to use SocketConnectTimeout: {} .",socketConnectTimeout);
-            socketOptions.setConnectTimeoutMillis(socketConnectTimeout);
-        }
-        Integer socketReadTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getSocketReadTimeout();
-        if( socketReadTimeout != null ){
-            log.info("SocketReadTimeout was provided, setting Cassandra client to use SocketReadTimeout: {} .",socketReadTimeout);
-            socketOptions.setReadTimeoutMillis(socketReadTimeout);
-        }
-        clusterBuilder.withSocketOptions(socketOptions);
         return clusterBuilder.build();
     }
 

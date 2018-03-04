@@ -6,9 +6,9 @@ REPORT_NAME=$1
 VERSION=$2
 ENV=$3
 
-RECIPIENTS1="dl-sdcqa@intl.att.com,ml636r@intl.att.com,bl5783intl.att.com,ak314p@intl.att.com,el489u@intl.att.com,hk096q@intl.att.com,bs5719@intl.att.com"
-RECIPIENTS2="dl-asdcqa@intl.att.com"
-
+RECIPIENTS1="dl-sdcqa@att.com,ml636r@att.com,bl5783@att.com,ak314p@att.com,el489u@att.com,hk096q@att.com,bs5719@att.com"
+#RECIPIENTS2="dl-asdcqa@intl.att.com"
+RECIPIENTS2="md9897@att.com,ms656r@att.com,al714h@att.com,ak991p@att.com,ya107f@att.com,bv095y@att.com,st198j@att.com,th0695@att.com,vk195d@att.com,gg980r@att.com,il0695@att.com,el489u@att.com"
 source ExtentReport/versions.info
 if [ -z "$REPORT_NAME" ]
  then

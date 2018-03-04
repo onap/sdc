@@ -212,17 +212,16 @@
 							<verbose>true</verbose>
 							<apiVersion>1.23</apiVersion>
 							<registry>nexus3.onap.org:10001</registry>
-                            <authConfig>
-                                <pull>
-      					            <username>docker</username>
-      					            <password>docker</password>
-      				            </pull>
-    			            </authConfig>
+							<authConfig>
+								<pull>
+									<username>docker</username>
+									<password>docker</password>
+								</pull>
+							</authConfig>
 							<images>
-
 								<!-- Build simulator image -->
 								<image>
-									<name>openecomp/sdc-simulator</name>
+									<name>onap/sdc-simulator</name>
 									<alias>sdc-simulator</alias>
 									<build>
 										<cleanup>try</cleanup>
@@ -251,11 +250,11 @@
 								</goals>
 							</execution>
 							<execution>
-                                <id>push-images</id>
-                                <phase>deploy</phase>
-                                <goals>
+								<id>push-images</id>
+								<phase>deploy</phase>
+								<goals>
 									<goal>push</goal>
-                                </goals>
+								</goals>
 							</execution>
 						</executions>
 					</plugin>

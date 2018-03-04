@@ -22,6 +22,7 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
 import {Distribution, DistributionComponent, Service, PropertyModel, Component, IAppConfigurtaion} from "app/models";
 import {SharingService} from "../sharing-service";

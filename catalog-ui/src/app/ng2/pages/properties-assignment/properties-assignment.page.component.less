@@ -76,6 +76,7 @@
                 outline: none;
                 font-style: italic;
                 color:@ng2-med-dark-gray;
+                width: auto;
 
                 &::-moz-placeholder { color:@ng2-med-dark-gray;}
                 &::-webkit-input-placeholder{ color:@ng2-med-dark-gray;}
@@ -112,6 +113,17 @@
             position: absolute;
             top: 0;
             right: 0;
+        }
+
+        .main-tabs-section {
+            position: relative;
+
+            .main-tabs-section-buttons {
+                position: absolute;
+                top: 45px;
+                right: 0;
+                padding: 4px;
+            }
         }
     }
 

@@ -24,50 +24,58 @@ import java.util.List;
 import java.util.Map;
 
 public class ToscaNodeTemplate {
-	private String type;
-	private ToscaMetadata metadata;
-	private Map<String, Object> properties;
-	private List<Map<String, ToscaTemplateRequirement>> requirements;
-	private Map<String, ToscaTemplateCapability> capabilities;
+    private String type;
+    private ToscaMetadata metadata;
+    private String description;
+    private Map<String, Object> properties;
+    private List<Map<String, ToscaTemplateRequirement>> requirements;
+    private Map<String, ToscaTemplateCapability> capabilities;
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public Map<String, Object> getProperties() {
-		return properties;
-	}
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, Object> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
 
-	public List<Map<String, ToscaTemplateRequirement>> getRequirements() {
-		return requirements;
-	}
+    public List<Map<String, ToscaTemplateRequirement>> getRequirements() {
+        return requirements;
+    }
 
-	public void setRequirements(List<Map<String, ToscaTemplateRequirement>> requirements) {
-		this.requirements = requirements;
-	}
+    public void setRequirements(List<Map<String, ToscaTemplateRequirement>> requirements) {
+        this.requirements = requirements;
+    }
 
-	public Map<String, ToscaTemplateCapability> getCapabilities() {
-		return capabilities;
-	}
+    public Map<String, ToscaTemplateCapability> getCapabilities() {
+        return capabilities;
+    }
 
-	public void setCapabilities(Map<String, ToscaTemplateCapability> capabilities) {
-		this.capabilities = capabilities;
-	}
+    public void setCapabilities(Map<String, ToscaTemplateCapability> capabilities) {
+        this.capabilities = capabilities;
+    }
 
-	public ToscaMetadata getMetadata() {
-		return metadata;
-	}
+    public ToscaMetadata getMetadata() {
+        return metadata;
+    }
 
-	public void setMetadata(ToscaMetadata metadata) {
-		this.metadata = metadata;
-	}
+    public void setMetadata(ToscaMetadata metadata) {
+        this.metadata = metadata;
+    }
 
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }

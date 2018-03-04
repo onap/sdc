@@ -7,7 +7,7 @@
             </Pattern>
         </encoder>
     </appender>
-    <root level="OFF">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

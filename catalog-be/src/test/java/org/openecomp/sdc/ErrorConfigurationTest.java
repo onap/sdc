@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ErrorConfiguration;
@@ -37,41 +33,45 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
+import static org.junit.Assert.assertTrue;
+
 public class ErrorConfigurationTest {
-	ConfigurationSource configurationSource = null;
-	private static Logger log = LoggerFactory.getLogger(ErrorConfigurationTest.class.getName());
+    ConfigurationSource configurationSource = null;
+    private static final Logger log = LoggerFactory.getLogger(ErrorConfigurationTest.class);
 
-	@Before
-	public void setup() {
+    @Before
+    public void setup() {
 
-		ExternalConfiguration.setAppName("catalog-be");
-		ExternalConfiguration.setConfigDir("src/test/resources/config");
-		ExternalConfiguration.listenForChanges();
+        ExternalConfiguration.setAppName("catalog-be");
+        ExternalConfiguration.setConfigDir("src/test/resources/config");
+        ExternalConfiguration.listenForChanges();
 
-		configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), ExternalConfiguration.getConfigDir() + File.separator + ExternalConfiguration.getAppName());
+        configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), ExternalConfiguration.getConfigDir() + File.separator + ExternalConfiguration.getAppName());
 
-	}
+    }
 
-	@Test
-	public void testReadConfigurationFile() {
+    @Test
+    public void testReadConfigurationFile() {
 
-		ConfigurationListener configurationListener = new ConfigurationListener(ErrorConfiguration.class, new FileChangeCallback() {
+        ConfigurationListener configurationListener = new ConfigurationListener(ErrorConfiguration.class, new FileChangeCallback() {
 
-			public void reconfigure(BasicConfiguration obj) {
-				// TODO Auto-generated method stub
-				log.debug("In reconfigure of {}", obj);
-			}
+            public void reconfigure(BasicConfiguration obj) {
+                // TODO Auto-generated method stub
+                log.debug("In reconfigure of {}", obj);
+            }
 
-		});
+        });
 
-		ErrorConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(ErrorConfiguration.class, configurationListener);
+        ErrorConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(ErrorConfiguration.class, configurationListener);
 
-		assertTrue(testConfiguration != null);
-		ErrorInfo errorInfo = testConfiguration.getErrorInfo("USER_NOT_FOUND");
-		assertTrue(errorInfo != null);
-		log.debug("{}", testConfiguration);
-		log.debug("{}", errorInfo);
+        assertTrue(testConfiguration != null);
+        ErrorInfo errorInfo = testConfiguration.getErrorInfo("USER_NOT_FOUND");
+        assertTrue(errorInfo != null);
+        log.debug("{}", testConfiguration);
+        log.debug("{}", errorInfo);
 
-	}
+    }
 
 }

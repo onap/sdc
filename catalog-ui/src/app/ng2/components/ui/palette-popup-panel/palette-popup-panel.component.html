@@ -1,0 +1,9 @@
+<div class="popup-panel" [ngClass]="{'hide':!isShowPanel}" [style.left]="popupPanelPosition.x + 'px'" [style.top]="popupPanelPosition.y + 'px'"
+     (mousedown)="addZoneInstance()"
+     (mouseenter)="onMouseEnter()"
+     (mouseleave)="onMouseLeave()">
+    <div class="popup-panel-group">
+        <div class="popup-panel-plus">+</div>
+        <div class="popup-panel-title">{{panelTitle}}</div>
+    </div>
+</div>

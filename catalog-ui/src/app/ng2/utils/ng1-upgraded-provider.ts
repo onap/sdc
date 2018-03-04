@@ -27,6 +27,7 @@ import {SharingService} from "../../services/sharing-service";
 import {CookieService} from "../../services/cookie-service";
 import {CacheService} from "../../services/cache-service";
 import {EventListenerService} from "app/services/event-listener-service";
+import IScope = angular.IScope;
 
 /** Services we need to upgrade from angular1 to angular2 - in the future we need to rewrite them all to angular2 **/
 
@@ -60,6 +61,10 @@ export function cacheServiceFactory(cacheObj: ICacheObject) {
 
 export function eventListenerServiceServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('EventListenerService');
+}
+
+export function notificationServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('Notification');
 }
 
 export const DataTypesServiceProvider = {
@@ -109,5 +114,11 @@ export const CacheServiceProvider = {
 export const EventListenerServiceProvider = {
     provide: EventListenerService,
     useFactory: eventListenerServiceServiceFactory,
+    deps: ['$injector']
+};
+
+export const NotificationServiceProvider = {
+    provide: 'Notification',
+    useFactory: notificationServiceFactory,
     deps: ['$injector']
 };

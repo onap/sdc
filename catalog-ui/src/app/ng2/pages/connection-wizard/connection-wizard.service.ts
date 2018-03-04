@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import {ConnectRelationModel} from "../../../models/graph/connectRelationModel";
 import {Injectable} from "@angular/core";
 import { Requirement, Capability} from "app/models";

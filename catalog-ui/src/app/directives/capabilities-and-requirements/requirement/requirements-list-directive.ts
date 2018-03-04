@@ -28,6 +28,7 @@
  * Created by obarda on 1/8/2017.
  */
 'use strict';
+import * as _ from "lodash";
 import {RequirementsGroup, Component, Relationship, RelationshipModel} from "app/models";
 
 export interface IRequirementsListScope extends ng.IScope {

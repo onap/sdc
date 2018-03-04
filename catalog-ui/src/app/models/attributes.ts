@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {SchemaAttributeGroupModel, SchemaAttribute} from "./schema-attribute";
 import {SchemaPropertyGroupModel, SchemaProperty} from "./aschema-property";
 

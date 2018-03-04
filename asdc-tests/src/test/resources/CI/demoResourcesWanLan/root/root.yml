@@ -1,3 +1,0 @@
-org.openecomp.asdc.nodes.Root:
-  #Define the root node for ASDC modeling
-    derived_from: tosca.nodes.Root

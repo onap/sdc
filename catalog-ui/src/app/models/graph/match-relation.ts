@@ -29,7 +29,6 @@ export class Match {
     isFromTo:boolean;
     fromNode:string;
     toNode:string;
-    capabilityProperties:Array<PropertyModel>;  // use this to store the capability properties, since there are times the capability itself is not available (when fulfilled).
     private _relationship:Relationship;
 
     constructor(requirement:Requirement, capability:Capability, isFromTo:boolean, fromNode:string, toNode:string) {

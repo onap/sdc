@@ -48,7 +48,7 @@
                         [expandedChildId]="property.expandedChildPropertyId"
                         [propertyNameSearchText]="propertyNameSearchText"
                         [readonly]="readonly"
-                        (valueChanged)="propValueChanged(property);"
+                        (propertyChanged)="onPropertyChanged(property)"
                         (expandChild)="property.updateExpandedChildPropertyId($event)"
                         (clickOnPropertyRow)="onClickPropertyInnerRow($event, instanceId)"
                         (checkProperty)="propertyChecked(property, $event)"
