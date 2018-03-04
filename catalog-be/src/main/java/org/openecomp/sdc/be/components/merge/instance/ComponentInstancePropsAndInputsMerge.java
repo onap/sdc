@@ -1,20 +1,10 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.merge.input.ComponentInputsMergeBL;
-import org.openecomp.sdc.be.components.merge.property.ComponentInstanceInputsMergeBL;
-import org.openecomp.sdc.be.components.merge.property.ComponentInstancePropertiesMergeBL;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -22,7 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chaya on 9/20/2017.
@@ -30,7 +21,7 @@ import fj.data.Either;
 @org.springframework.stereotype.Component("ComponentInstancePropsAndInputsMerge")
 public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMergeInterface {
 
-    private static Logger log = LoggerFactory.getLogger(ComponentInstancePropsAndInputsMerge.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentInstancePropsAndInputsMerge.class);
 
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
@@ -81,19 +72,19 @@ public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMe
         ActionStatus actionStatus = componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(originComponentInstanceProps, originComponentsInputs, updatedComponent, instanceId);
 
         if (actionStatus != ActionStatus.OK) {
-            log.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesProps);
+            LOGGER.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesProps);
             return Either.right(actionStatus);
         }
         return Either.left(newComponentInstancesProps);
     }
 
     private Either<List<ComponentInstanceInput>, ActionStatus> mergeComponentInstanceInputsIntoContainer(DataForMergeHolder dataHolder, Component updatedComponent, String instanceId) {
-        List<ComponentInstanceInput> originComponentInstanceInputs 	= dataHolder.getOrigComponentInstanceInputs();
+        List<ComponentInstanceInput> originComponentInstanceInputs = dataHolder.getOrigComponentInstanceInputs();
         List<InputDefinition> originComponentsInputs = dataHolder.getOrigComponentInputs();
         List<ComponentInstanceInput> newComponentInstancesInputs = updatedComponent.safeGetComponentInstanceInput(instanceId);
         ActionStatus actionStatus = resourceInstanceInputsMergeBL.mergeComponentInstanceInputs(originComponentInstanceInputs, originComponentsInputs, updatedComponent, instanceId);
         if (actionStatus != ActionStatus.OK) {
-            log.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesInputs);
+            LOGGER.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesInputs);
             return Either.right(actionStatus);
         }
         return Either.left(newComponentInstancesInputs);
@@ -106,14 +97,14 @@ public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMe
             // get  instance inputs and properties after merge
             Either<Component, StorageOperationStatus> componentWithInstancesInputsAndProperties = getComponentWithInstancesInputsAndProperties(newContainerComponentId);
             if (componentWithInstancesInputsAndProperties.isRight()) {
-                log.error("Component %s was not found", newContainerComponentId);
+                LOGGER.error("Component %s was not found", newContainerComponentId);
                 return Either.right(componentsUtils.convertFromStorageResponse(componentWithInstancesInputsAndProperties.right().value()));
             }
             Component updatedContainerComponent = componentWithInstancesInputsAndProperties.left().value();
 
             ActionStatus redeclareStatus = resourceInputsMergeBL.redeclareComponentInputsForInstance(origComponentInputs, updatedContainerComponent, newInstanceId);
             if (redeclareStatus != ActionStatus.OK) {
-                log.error("Failed to update component {} with merged inputs {}", newContainerComponentId, inputsToAddToContainer);
+                LOGGER.error("Failed to update component {} with merged inputs {}", newContainerComponentId, inputsToAddToContainer);
                 Either.right(redeclareStatus);
             }
         }

@@ -76,6 +76,8 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thinkaurelius.titan.core.TitanVertex;
+
 import fj.data.Either;
 
 @org.springframework.stereotype.Component("tosca-element-lifecycle-operation")
@@ -223,29 +225,43 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		Either<GraphVertex, TitanOperationStatus> getToscaElementRes = null;
 		Iterator<Edge> nextVersionComponentIter = null;
 		ToscaElementOperation operation;
+		Vertex preVersionVertex = null;
 		try {
 			getToscaElementRes = titanDao.getVertexById(toscaElementId, JsonParseFlagEnum.ParseMetadata);
 			if (getToscaElementRes.isRight()) {
 				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getToscaElementRes.right().value()));
 			}
-			if (result == null && hasPreviousVersion(getToscaElementRes.left().value())) {
+			GraphVertex currVersionV = getToscaElementRes.left().value();
+			if (result == null && hasPreviousVersion(currVersionV)) {
 				// find previous version
-				nextVersionComponentIter = getToscaElementRes.left().value().getVertex().edges(Direction.IN, EdgeLabelEnum.VERSION.name());
+				nextVersionComponentIter = currVersionV.getVertex().edges(Direction.IN, EdgeLabelEnum.VERSION.name());
 				if (nextVersionComponentIter == null || !nextVersionComponentIter.hasNext()) {
-					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch previous version of tosca element with name {}. ", getToscaElementRes.left().value().getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME).toString());
+					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch previous version of tosca element with name {}. ", currVersionV.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME).toString());
 					result = Either.right(StorageOperationStatus.NOT_FOUND);
 				}
 				if (result == null) {
-					StorageOperationStatus updateOldResourceResult = updateOldToscaElementBeforeUndoCheckout(nextVersionComponentIter.next().outVertex());
+					preVersionVertex = nextVersionComponentIter.next().outVertex();
+					StorageOperationStatus updateOldResourceResult = updateOldToscaElementBeforeUndoCheckout(preVersionVertex);
 					if (updateOldResourceResult != StorageOperationStatus.OK) {
 						result = Either.right(updateOldResourceResult);
 					}
 				}
 			}
 			if (result == null) {
-				operation = getToscaElementOperation(getToscaElementRes.left().value().getLabel());
-				result = operation.deleteToscaElement(getToscaElementRes.left().value());
+				GraphVertex prevVersionV = null;
+				if (preVersionVertex != null) {
+					prevVersionV = new GraphVertex();
+					prevVersionV.setVertex((TitanVertex) preVersionVertex);
+					String uniqueIdPreVer = (String) titanDao.getProperty((TitanVertex) preVersionVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
+					prevVersionV.setUniqueId(uniqueIdPreVer);
+				}
+				StorageOperationStatus updateCatalogRes = updateEdgeToCatalogRoot(prevVersionV, currVersionV);
+				if (updateCatalogRes != StorageOperationStatus.OK) {
+					return Either.right(updateCatalogRes);
+				}
+				operation = getToscaElementOperation(currVersionV.getLabel());
+				result = operation.deleteToscaElement(currVersionV);
 			}
 		} catch (Exception e) {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Exception occured during undo checkout tosca element {}. {}", toscaElementId, e.getMessage());
@@ -539,11 +555,12 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		if (result == null) {
 			TitanOperationStatus createVersionEdgeStatus = titanDao.createEdge(toscaElement, certifiedToscaElement, EdgeLabelEnum.VERSION, new HashMap<>());
 			if (createVersionEdgeStatus != TitanOperationStatus.OK) {
-				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to create version edge from last element {} to new certified element {}. status=", toscaElement.getUniqueId(),certifiedToscaElement.getUniqueId(), createVersionEdgeStatus);
+				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to create version edge from last element {} to new certified element {}. status=", toscaElement.getUniqueId(), certifiedToscaElement.getUniqueId(),
+						createVersionEdgeStatus);
 				result = DaoStatusConverter.convertTitanStatusToStorageStatus(createVersionEdgeStatus);
 			}
 		}
-		if(result == null){
+		if (result == null) {
 
 			while (certReqUserEdgeIter.hasNext()) {
 				Edge edge = certReqUserEdgeIter.next();
@@ -698,6 +715,14 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to set highest version  of tosca element {} to [{}]. Status is {}", toscaElement.getUniqueId(), false, status);
 					result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 				}
+				// remove previous certified version from the catalog
+				GraphVertex lastCertifiedV = new GraphVertex();
+				lastCertifiedV.setVertex((TitanVertex) lastCertifiedVertex);
+				lastCertifiedV.setUniqueId((String) titanDao.getProperty((TitanVertex) lastCertifiedVertex, GraphPropertyEnum.UNIQUE_ID.getProperty()));
+				StorageOperationStatus res = updateEdgeToCatalogRoot(null, lastCertifiedV);
+				if (res != StorageOperationStatus.OK) {
+					return res;
+				}
 			}
 		}
 		if (result == null) {
@@ -811,9 +836,9 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 
 				Map<String, Object> propertiesToUpdate = new HashMap<>();
 				propertiesToUpdate.put(GraphPropertyEnum.IS_HIGHEST_VERSION.getProperty(), true);
-				Map<String, Object> jsonMetadataMap = JsonParserUtils.parseToJson((String) previousVersionToscaElement.property(GraphPropertyEnum.METADATA.getProperty()).value());
+				Map<String, Object> jsonMetadataMap = JsonParserUtils.toMap((String) previousVersionToscaElement.property(GraphPropertyEnum.METADATA.getProperty()).value());
 				jsonMetadataMap.put(GraphPropertyEnum.IS_HIGHEST_VERSION.getProperty(), true);
-				propertiesToUpdate.put(GraphPropertyEnum.METADATA.getProperty(), JsonParserUtils.jsonToString(jsonMetadataMap));
+				propertiesToUpdate.put(GraphPropertyEnum.METADATA.getProperty(), JsonParserUtils.toJson(jsonMetadataMap));
 
 				titanDao.setVertexProperties(previousVersionToscaElement, propertiesToUpdate);
 
@@ -832,6 +857,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 							result = DaoStatusConverter.convertTitanStatusToStorageStatus(replaceRes);
 						}
 					}
+
 				}
 			} catch (Exception e) {
 				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Exception occured during update previous tosca element {} before undo checkout. {} ", e.getMessage());
@@ -888,9 +914,9 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		// check if component with the next version doesn't exist.
 		Iterator<Edge> nextVersionComponentIter = toscaElementVertex.getVertex().edges(Direction.OUT, EdgeLabelEnum.VERSION.name());
 		if (nextVersionComponentIter != null && nextVersionComponentIter.hasNext()) {
-			Vertex  nextVersionVertex =  nextVersionComponentIter.next().inVertex();
+			Vertex nextVersionVertex = nextVersionComponentIter.next().inVertex();
 			String fetchedVersion = (String) nextVersionVertex.property(GraphPropertyEnum.VERSION.getProperty()).value();
-			String fetchedName = (String)nextVersionVertex.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
+			String fetchedName = (String) nextVersionVertex.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to checkout component {} with version {}. The component with name {} and version {} was fetched from graph as existing following version. ",
 					toscaElementVertex.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME).toString(), toscaElementVertex.getMetadataProperty(GraphPropertyEnum.VERSION).toString(), fetchedName, fetchedVersion);
 			result = Either.right(StorageOperationStatus.ENTITY_ALREADY_EXISTS);
@@ -912,16 +938,22 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 			}
 		}
 		if (result == null) {
+			Boolean isHighest = (Boolean) toscaElementVertex.getMetadataProperty(GraphPropertyEnum.IS_HIGHEST_VERSION);
+			GraphVertex prevVersionInCatalog = (isHighest != null && isHighest) ? null : toscaElementVertex;
+			StorageOperationStatus updateCatalogRes = updateEdgeToCatalogRoot(clonedVertex, prevVersionInCatalog);
+			if (updateCatalogRes != StorageOperationStatus.OK) {
+				return Either.right(updateCatalogRes);
+			}
 			result = operation.getToscaElement(cloneResult.left().value().getUniqueId());
 			if (result.isRight()) {
 				return result;
 			}
-
 			ToscaElement toscaElement = result.left().value();
 			if (toscaElement.getToscaType() == ToscaElementTypeEnum.TopologyTemplate) {
 				result = handleFixTopologyTemplate(toscaElementVertex, result, operation, clonedVertex, toscaElement);
 			}
 		}
+
 		return result;
 	}
 
@@ -952,7 +984,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 					collectInstanceInputAndGroups(instInputs, instGroups, instArtifactsMap, origCompMap, isAddInstGroup, vfInst, clonedVertex);
 				}
 				needUpdateComposition = needUpdateComposition || fixToscaComponentName(vfInst, origCompMap);
-				if(needUpdateComposition){
+				if (needUpdateComposition) {
 					instancesMap.put(vfInst.getUniqueId(), vfInst);
 				}
 			}
@@ -1010,8 +1042,8 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		}
 		return result;
 	}
-	
-	//TODO remove after jsonModelMigration
+
+	// TODO remove after jsonModelMigration
 	public boolean resolveToscaComponentName(ComponentInstanceDataDefinition vfInst, Map<String, ToscaElement> origCompMap) {
 		return fixToscaComponentName(vfInst, origCompMap);
 	}
@@ -1026,7 +1058,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 				Either<ToscaElement, StorageOperationStatus> origCompEither;
 				if (vfInst.getOriginType() == null || vfInst.getOriginType().name().equals(OriginTypeEnum.VF.name())) {
 					origCompEither = topologyTemplateOperation.getToscaElement(origCompUid);
-				}else{
+				} else {
 					origCompEither = nodeTypeOperation.getToscaElement(origCompUid);
 				}
 				if (origCompEither.isRight()) {
@@ -1088,7 +1120,6 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "before create group instance. ");
 			List<GroupDataDefinition> filteredGroups = null;
 
-			
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "check vf groups before filter. Size is {} ", filteredGroups == null ? 0 : filteredGroups.size());
 			if (origComp.getGroups() != null && !origComp.getGroups().isEmpty()) {
 				filteredGroups = origComp.getGroups().values().stream().filter(g -> g.getType().equals(VF_MODULE)).collect(Collectors.toList());
@@ -1097,39 +1128,38 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "check vf groups after filter. Size is {} ", filteredGroups == null ? 0 : filteredGroups.size());
 			if (CollectionUtils.isNotEmpty(filteredGroups)) {
 				MapArtifactDataDefinition instArifacts = null;
-				if(!instArtifactsMap.containsKey(ciUid)){
-				
-						CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "istance artifacts not found ");
-						
-						Map<String, ArtifactDataDefinition> deploymentArtifacts = origComp.getDeploymentArtifacts();
-						
-						
-						instArifacts = new MapArtifactDataDefinition(deploymentArtifacts);
-						 addToscaDataDeepElementsBlockToToscaElement(clonedVertex, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, instArifacts, ciUid);
-						
-						 instArtifactsMap.put(ciUid, instArifacts);
-						
-				}else{
+				if (!instArtifactsMap.containsKey(ciUid)) {
+
+					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "istance artifacts not found ");
+
+					Map<String, ArtifactDataDefinition> deploymentArtifacts = origComp.getDeploymentArtifacts();
+
+					instArifacts = new MapArtifactDataDefinition(deploymentArtifacts);
+					addToscaDataDeepElementsBlockToToscaElement(clonedVertex, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, instArifacts, ciUid);
+
+					instArtifactsMap.put(ciUid, instArifacts);
+
+				} else {
 					instArifacts = instArtifactsMap.get(ciUid);
 				}
-					
-				if(instArifacts != null){
+
+				if (instArifacts != null) {
 					Map<String, ArtifactDataDefinition> instDeplArtifMap = instArifacts.getMapToscaDataDefinition();
-				
+
 					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "check group dep artifacts. Size is {} ", instDeplArtifMap == null ? 0 : instDeplArtifMap.values().size());
 					Map<String, GroupInstanceDataDefinition> groupInstanceToCreate = new HashMap<>();
-					for(GroupDataDefinition group:filteredGroups){
+					for (GroupDataDefinition group : filteredGroups) {
 						CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "create new groupInstance  {} ", group.getName());
 						GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition(group, vfInst, instDeplArtifMap);
 						List<String> artifactsUid = new ArrayList<>();
 						List<String> artifactsId = new ArrayList<>();
 						for (ArtifactDataDefinition artifact : instDeplArtifMap.values()) {
-							//CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "create new groupInstance  {} ", artifact.getA);
+							// CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "create new groupInstance {} ", artifact.getA);
 							Optional<String> op = group.getArtifacts().stream().filter(p -> p.equals(artifact.getGeneratedFromId())).findAny();
 							if (op.isPresent()) {
 								artifactsUid.add(artifact.getArtifactUUID());
 								artifactsId.add(artifact.getUniqueId());
-								
+
 							}
 						}
 						groupInstance.setGroupInstanceArtifacts(artifactsId);
@@ -1138,7 +1168,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 					}
 					if (MapUtils.isNotEmpty(groupInstanceToCreate)) {
 						instGroups.put(vfInst.getUniqueId(), new MapGroupsDataDefinition(groupInstanceToCreate));
-	
+
 					}
 				}
 			}
@@ -1195,6 +1225,10 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to clone tosca element {} for certification. Sattus is {}. ", toscaElementVertex.getUniqueId(), result.right().value());
 		} else {
 			clonedToscaElement = result.left().value();
+			StorageOperationStatus updateEdgeToCatalog = updateEdgeToCatalogRoot(clonedToscaElement, toscaElementVertex);
+			if (updateEdgeToCatalog != StorageOperationStatus.OK) {
+				return Either.right(updateEdgeToCatalog);
+			}
 			deleteResult = deleteAllPreviousNotCertifiedVersions(toscaElementVertex);
 			if (deleteResult.isRight()) {
 				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to delete all previous npt certified versions of tosca element {}. Status is {}. ", toscaElementVertex.getUniqueId(), deleteResult.right().value());
@@ -1229,6 +1263,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 					result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				}
 			}
+
 		}
 		if (result == null) {
 			result = Either.left(clonedToscaElement);
@@ -1436,13 +1471,12 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		return verticesToGetParameters;
 	}
 
-
 	private String getNextCertifiedVersion(String version) {
 		String[] versionParts = version.split(VERSION_DELIMETER_REGEXP);
 		Integer nextMajorVersion = Integer.parseInt(versionParts[0]) + 1;
 		return nextMajorVersion + VERSION_DELIMETER + "0";
 	}
-	
+
 	private String getNextVersion(String currVersion) {
 		String[] versionParts = currVersion.split(VERSION_DELIMETER_REGEXP);
 		Integer minorVersion = Integer.parseInt(versionParts[1]) + 1;
@@ -1466,7 +1500,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		return false;
 	}
 
-	public Either<ToscaElement,StorageOperationStatus> forceCerificationOfToscaElement(String toscaElementId, String modifierId, String ownerId, String currVersion) {
+	public Either<ToscaElement, StorageOperationStatus> forceCerificationOfToscaElement(String toscaElementId, String modifierId, String ownerId, String currVersion) {
 		Either<GraphVertex, StorageOperationStatus> resultUpdate = null;
 		Either<ToscaElement, StorageOperationStatus> result = null;
 		GraphVertex toscaElement = null;
@@ -1514,23 +1548,55 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 
 	private StorageOperationStatus handleRelationsUponForceCertification(GraphVertex toscaElement, GraphVertex modifier, GraphVertex owner) {
 
-			StorageOperationStatus result = null;
-			TitanOperationStatus status = titanDao.replaceEdgeLabel(owner.getVertex(), toscaElement.getVertex(), EdgeLabelEnum.STATE, EdgeLabelEnum.LAST_STATE);
+		StorageOperationStatus result = null;
+		TitanOperationStatus status = titanDao.replaceEdgeLabel(owner.getVertex(), toscaElement.getVertex(), EdgeLabelEnum.STATE, EdgeLabelEnum.LAST_STATE);
+		if (status != TitanOperationStatus.OK) {
+			result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+		}
+		if (result == null) {
+			Map<EdgePropertyEnum, Object> properties = new EnumMap<>(EdgePropertyEnum.class);
+			properties.put(EdgePropertyEnum.STATE, LifecycleStateEnum.CERTIFIED);
+			status = titanDao.createEdge(modifier, toscaElement, EdgeLabelEnum.STATE, properties);
 			if (status != TitanOperationStatus.OK) {
+				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "failed to create edge. Status is {}", status);
 				result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 			}
-			if (result == null) {
-				Map<EdgePropertyEnum, Object> properties = new EnumMap<>(EdgePropertyEnum.class);
-				properties.put(EdgePropertyEnum.STATE, LifecycleStateEnum.CERTIFIED);
-				status = titanDao.createEdge(modifier, toscaElement, EdgeLabelEnum.STATE, properties);
-				if (status != TitanOperationStatus.OK) {
-					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "failed to create edge. Status is {}", status);
-					result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+		}
+		if (result == null) {
+			result = StorageOperationStatus.OK;
+		}
+		return result;
+	}
+
+	private StorageOperationStatus updateEdgeToCatalogRoot(GraphVertex newVersionV, GraphVertex prevVersionV) {
+		Either<GraphVertex, TitanOperationStatus> catalog = titanDao.getVertexByLabel(VertexTypeEnum.CATALOG_ROOT);
+		if (catalog.isRight()) {
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch catalog vertex. error {}", catalog.right().value());
+			return DaoStatusConverter.convertTitanStatusToStorageStatus(catalog.right().value());
+		}
+		GraphVertex catalogV = catalog.left().value();
+		if (newVersionV != null) {
+			Boolean isAbstract = (Boolean) newVersionV.getMetadataProperty(GraphPropertyEnum.IS_ABSTRACT);
+			if (isAbstract == null || !isAbstract) {
+				// no new vertex, only delete previous
+				TitanOperationStatus result = titanDao.createEdge(catalogV, newVersionV, EdgeLabelEnum.CATALOG_ELEMENT, null);
+				if (result != TitanOperationStatus.OK) {
+					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to create edge from {} to catalog vertex. error {}", newVersionV.getUniqueId(), result);
+					return DaoStatusConverter.convertTitanStatusToStorageStatus(result);
 				}
 			}
-			if (result == null) {
-				result = StorageOperationStatus.OK;
+		}
+		if (prevVersionV != null) {
+			Boolean isAbstract = (Boolean) prevVersionV.getMetadataProperty(GraphPropertyEnum.IS_ABSTRACT);
+			if (isAbstract == null || !isAbstract) {
+				// if prev == null -> new resource was added
+				Either<Edge, TitanOperationStatus> deleteResult = titanDao.deleteEdge(catalogV, prevVersionV, EdgeLabelEnum.CATALOG_ELEMENT);
+				if (deleteResult.isRight()) {
+					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to delete edge from {} to catalog vertex. error {}", prevVersionV.getUniqueId(), deleteResult.right().value());
+					return DaoStatusConverter.convertTitanStatusToStorageStatus(deleteResult.right().value());
+				}
 			}
-			return result;
+		}
+		return StorageOperationStatus.OK;
 	}
 }

@@ -1,82 +1,63 @@
 package org.openecomp.sdc.be.components.merge.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.merge.input.ComponentInputsMergeBL;
-import org.openecomp.sdc.be.components.merge.property.ComponentInstanceInputsMergeBL;
-import org.openecomp.sdc.be.components.merge.property.ComponentInstancePropertiesMergeBL;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.merge.instance.ComponentsMergeCommand;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Resource;
 
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class ResourceDataMergeBusinessLogicTest {
 
     @InjectMocks
     private ResourceDataMergeBusinessLogic testInstance;
 
     @Mock
-    private ComponentInstanceInputsMergeBL instanceInputsValueMergeBLMock;
+    private ComponentsMergeCommand commandA;
 
     @Mock
-    private ComponentInstancePropertiesMergeBL instancePropertiesValueMergeBLMock;
+    private ComponentsMergeCommand commandB;
 
     @Mock
-    private ComponentInputsMergeBL inputsValueMergeBLMock;
+    private ComponentsMergeCommand commandC;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        testInstance = new ResourceDataMergeBusinessLogic(Arrays.asList(commandA, commandB, commandC));
     }
 
     @Test
-    public void mergeResourceInputs_allMergeClassesAreCalled() throws Exception {
+    public void mergeResources_allMergeClassesAreCalled() {
         Resource oldResource = ObjectGenerator.buildBasicResource();
         Resource newResource = ObjectGenerator.buildBasicResource();
-        when(instancePropertiesValueMergeBLMock.mergeComponentInstancesProperties(oldResource, newResource)).thenReturn(ActionStatus.OK);
-        when(instanceInputsValueMergeBLMock.mergeComponentInstancesInputs(oldResource, newResource)).thenReturn(ActionStatus.OK);
-        when(inputsValueMergeBLMock.mergeAndRedeclareComponentInputs(oldResource, newResource, Collections.emptyList())).thenReturn(ActionStatus.OK);
+        when(commandA.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.OK);
+        when(commandB.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.OK);
+        when(commandC.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.OK);
         ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
         assertEquals(ActionStatus.OK, actionStatus);
     }
 
     @Test
-    public void mergeResourceInputs_failToMergeProperties_dontCallOtherMergeMethods() throws Exception {
+    public void mergeResources_mergeCommandFailed_dontCallOtherMergeMethods() {
         Resource oldResource = ObjectGenerator.buildBasicResource();
         Resource newResource = ObjectGenerator.buildBasicResource();
-        when(instancePropertiesValueMergeBLMock.mergeComponentInstancesProperties(oldResource, newResource)).thenReturn(ActionStatus.GENERAL_ERROR);
+        when(commandA.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.GENERAL_ERROR);
         ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
         assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
-        verifyZeroInteractions(instanceInputsValueMergeBLMock, inputsValueMergeBLMock);
+        verify(commandA).description();
+        verifyZeroInteractions(commandB, commandC);
     }
 
-    @Test
-    public void mergeResourceInputs_failToMergeInstanceInputs_dontCallOtherMergeMethods() throws Exception {
-        Resource oldResource = ObjectGenerator.buildBasicResource();
-        Resource newResource = ObjectGenerator.buildBasicResource();
-        when(instancePropertiesValueMergeBLMock.mergeComponentInstancesProperties(oldResource, newResource)).thenReturn(ActionStatus.OK);
-        when(instanceInputsValueMergeBLMock.mergeComponentInstancesInputs(oldResource, newResource)).thenReturn(ActionStatus.GENERAL_ERROR);
-        ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
-        assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
-        verifyZeroInteractions(inputsValueMergeBLMock);
-    }
-
-    @Test
-    public void mergeResourceInputs_failedToMergeInputs() throws Exception {
-        Resource oldResource = ObjectGenerator.buildBasicResource();
-        Resource newResource = ObjectGenerator.buildBasicResource();
-        when(instancePropertiesValueMergeBLMock.mergeComponentInstancesProperties(oldResource, newResource)).thenReturn(ActionStatus.OK);
-        when(instanceInputsValueMergeBLMock.mergeComponentInstancesInputs(oldResource, newResource)).thenReturn(ActionStatus.OK);
-        when(inputsValueMergeBLMock.mergeAndRedeclareComponentInputs(oldResource, newResource, Collections.emptyList())).thenReturn(ActionStatus.GENERAL_ERROR);
-        ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
-        assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
-    }
 }

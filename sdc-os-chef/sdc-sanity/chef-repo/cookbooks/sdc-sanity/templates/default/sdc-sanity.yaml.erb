@@ -18,7 +18,7 @@ errorConfigurationFile: <%= @errorConfigurationFile %>
 configurationFile: <%= @ConfigurationFile %>
 importTypesConfigDir: <%= @importTypesDir %>
 titanPropertiesFile: <%= @titan_file %>
-systemUnderDebug: false
+systemUnderDebug: true
 
 cassandraHost: <%= @CASSANDRA_IP %>
 cassandraAuthenticate: true
@@ -29,6 +29,15 @@ cassandraTruststorePath : /tmp/.truststore
 cassandraTruststorePassword : Aa123456
 cassandraAuditKeySpace: sdcAudit
 cassandraArtifactKeySpace: sdcArtifact
+
+# catalog backend protocol
+<% if node[:disableHttp] -%>
+sdcHttpMethod: https
+<% else %>
+sdcHttpMethod: http
+<% end -%>
+
+localDataCenter: DC-Automate01
 
 stopOnClassFailure: false
 

@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {AttributeModel, Component} from "app/models";
 import {IMapRegex, ValidationUtils, FormState, PROPERTY_TYPES} from "app/utils";
 

@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.Arrays;
+import fj.data.Either;
 
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
@@ -44,97 +44,97 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.Arrays;
 
 public class UndoCheckoutTransition extends LifeCycleTransition {
-	private static Logger log = LoggerFactory.getLogger(CheckoutTransition.class.getName());
-	private ArtifactsBusinessLogic artifactsManager;
+    private static final Logger log = LoggerFactory.getLogger(CheckoutTransition.class);
+    private ArtifactsBusinessLogic artifactsManager;
 
-	public UndoCheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
-		super(componentUtils, lifecycleOperation, toscaOperationFacade,  titanDao);
+    public UndoCheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+        super(componentUtils, lifecycleOperation, toscaOperationFacade,  titanDao);
 
-		// authorized roles
-		Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
-		Role[] productCheckoutRoles = { Role.ADMIN, Role.PRODUCT_MANAGER };
-		addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(resourceServiceCheckoutRoles));
-		addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(resourceServiceCheckoutRoles));
-		addAuthorizedRoles(ComponentTypeEnum.PRODUCT, Arrays.asList(productCheckoutRoles));
+        // authorized roles
+        Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
+        Role[] productCheckoutRoles = { Role.ADMIN, Role.PRODUCT_MANAGER };
+        addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(resourceServiceCheckoutRoles));
+        addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(resourceServiceCheckoutRoles));
+        addAuthorizedRoles(ComponentTypeEnum.PRODUCT, Arrays.asList(productCheckoutRoles));
 
-	}
+    }
 
-	@Override
-	public LifeCycleTransitionEnum getName() {
-		return LifeCycleTransitionEnum.UNDO_CHECKOUT;
-	}
+    @Override
+    public LifeCycleTransitionEnum getName() {
+        return LifeCycleTransitionEnum.UNDO_CHECKOUT;
+    }
 
-	@Override
-	public AuditingActionEnum getAuditingAction() {
-		return AuditingActionEnum.UNDO_CHECKOUT_RESOURCE;
-	}
+    @Override
+    public AuditingActionEnum getAuditingAction() {
+        return AuditingActionEnum.UNDO_CHECKOUT_RESOURCE;
+    }
 
-	public ArtifactsBusinessLogic getArtifactsBusinessLogic() {
-		return artifactsManager;
-	}
+    public ArtifactsBusinessLogic getArtifactsBusinessLogic() {
+        return artifactsManager;
+    }
 
-	public void setArtifactsBusinessLogic(ArtifactsBusinessLogic artifactsBusinessLogic) {
-		this.artifactsManager = artifactsBusinessLogic;
-	}
+    public void setArtifactsBusinessLogic(ArtifactsBusinessLogic artifactsBusinessLogic) {
+        this.artifactsManager = artifactsBusinessLogic;
+    }
 
-	@Override
-	public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
-		String componentName = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
-		log.debug("validate before undo checkout. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
+    @Override
+    public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
+        String componentName = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
+        log.debug("validate before undo checkout. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
 
-		// validate user
-		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
-		if (userValidationResponse.isRight()) {
-			return userValidationResponse;
-		}
+        // validate user
+        Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
+        if (userValidationResponse.isRight()) {
+            return userValidationResponse;
+        }
 
-		// check resource is not locked by another user
-		if (!oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
-			ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_ALREADY_CHECKED_IN, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-			return Either.right(error);
-		}
+        // check resource is not locked by another user
+        if (!oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
+            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_ALREADY_CHECKED_IN, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+            return Either.right(error);
+        }
 
-		if (!modifier.equals(owner) && !modifier.getRole().equals(Role.ADMIN.name())) {
-			ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-			return Either.right(error);
-		}
+        if (!modifier.equals(owner) && !modifier.getRole().equals(Role.ADMIN.name())) {
+            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+            return Either.right(error);
+        }
 
-		return Either.left(true);
-	}
+        return Either.left(true);
+    }
 
-	@Override
-	public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
+    @Override
+    public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
 
-		Either<? extends Component, ResponseFormat> result = null;
-		log.debug("start performing undo-checkout for resource {}", component.getUniqueId());
+        Either<? extends Component, ResponseFormat> result = null;
+        log.debug("start performing undo-checkout for resource {}", component.getUniqueId());
 
-		try {
-			Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId());
+        try {
+            Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId());
 
-			if (undoCheckoutResourceResult.isRight()) {
-				log.debug("checkout failed on graph");
-				StorageOperationStatus response = undoCheckoutResourceResult.right().value();
-				ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
-				ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-				result =  Either.right(responseFormat);
-			}
-			else {
-				result =  Either.left(ModelConverter.convertFromToscaElement(undoCheckoutResourceResult.left().value()));
-			}
-		} finally {
-			if (result == null || result.isRight()) {
-				BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState - Undo Checkout failed on graph");
-				log.debug("operation failed. do rollback");
-				titanDao.rollback();
-			} else {
-				log.debug("operation success. do commit");
-				titanDao.commit();
-			}
-		}
-		return result;
-	}
+            if (undoCheckoutResourceResult.isRight()) {
+                log.debug("checkout failed on graph");
+                StorageOperationStatus response = undoCheckoutResourceResult.right().value();
+                ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
+                ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
+                result =  Either.right(responseFormat);
+            }
+            else {
+                result =  Either.left(ModelConverter.convertFromToscaElement(undoCheckoutResourceResult.left().value()));
+            }
+        } finally {
+            if (result == null || result.isRight()) {
+                BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState - Undo Checkout failed on graph");
+                log.debug("operation failed. do rollback");
+                titanDao.rollback();
+            } else {
+                log.debug("operation success. do commit");
+                titanDao.commit();
+            }
+        }
+        return result;
+    }
 
 }

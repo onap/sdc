@@ -32,10 +32,4 @@ export class UiElementInputComponent extends UiElementBase implements UiElementB
         super();
         this.pattern = this.validation.validationPatterns.comment;
     }
-
-    onSave() {
-        if (!this.control.invalid){
-            this.baseEmitter.emit(this.value);
-        }
-    }
 }

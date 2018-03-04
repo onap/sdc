@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.Map;
 
 public class UniqueIdData extends GraphNode {
 
@@ -35,7 +35,7 @@ public class UniqueIdData extends GraphNode {
 	}
 
 	@Override
-	public Object getUniqueId() {
+	public String getUniqueId() {
 		return uniqueId;
 	}
 

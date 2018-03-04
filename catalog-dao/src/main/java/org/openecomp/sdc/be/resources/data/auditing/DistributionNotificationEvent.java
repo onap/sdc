@@ -21,11 +21,10 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.OperationalEnvAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -81,13 +80,22 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
 	@Column
 	private String did;
 
+	@Column(name = "env_id")
+	private String envId;
+
+	@Column(name = "vnf_workload_context")
+	private String vnfWorkloadContext;
+
+	@Column(name = "tenant")
+	private String tenant;
+
 	public DistributionNotificationEvent() {
 		super();
 		timestamp1 = new Date();
 		timebaseduuid = UUIDs.timeBased();
 	}
 
-	public DistributionNotificationEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public DistributionNotificationEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
@@ -138,6 +146,40 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
 		if (value != null) {
 			setTopicName((String) value);
 		}
+        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVIRONMENT_ID);
+        if (value != null) {
+            setEnvId((String) value);
+        }
+        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_VNF_WORKLOAD_CONTEXT);
+        if (value != null) {
+            setVnfWorkloadContext((String) value);
+        }
+        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TENANT);
+        if (value != null) {
+            setTenant((String) value);
+        }
+
+	}
+
+	public DistributionNotificationEvent(String action, CommonAuditData commonAuditData, String did, String modifier, String resourceCurrState,
+                                         String resourceCurrVersion, String resourceName, String resourceType, String topicName,
+                                         OperationalEnvAuditData opEnvFields) {
+		this();
+        this.action = action;
+		this.requestId = commonAuditData.getRequestId();
+		this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+		this.status = commonAuditData.getStatus();
+		this.desc = commonAuditData.getDescription();
+		this.did = did;
+		this.modifier = modifier;
+		this.currState = resourceCurrState;
+		this.currVersion = resourceCurrVersion;
+		this.resourceName = resourceName;
+		this.resourceType = resourceType;
+		this.topicName = topicName;
+		this.envId = opEnvFields.getEnvId();
+		this.vnfWorkloadContext = opEnvFields.getVnfWorkloadContext();
+		this.tenant = opEnvFields.getTenant();
 
 	}
 
@@ -149,6 +191,9 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
 		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
+		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVIRONMENT_ID.getDisplayName(), getEnvId());
+		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_VNF_WORKLOAD_CONTEXT.getDisplayName(), getVnfWorkloadContext());
+		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TENANT.getDisplayName(), getTenant());
 
 		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID.getDisplayName(), getDid());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
@@ -274,13 +319,38 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
 		this.did = did;
 	}
 
+	public String getVnfWorkloadContext() {
+		return vnfWorkloadContext;
+	}
+
+	public void setVnfWorkloadContext(String vnfWorkloadContext) {
+		this.vnfWorkloadContext = vnfWorkloadContext;
+	}
+
+	public String getEnvId() {
+		return envId;
+	}
+
+	public void setEnvId(String envId) {
+		this.envId = envId;
+	}
+
+	public String getTenant() {
+		return tenant;
+	}
+
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
+	}
+
 	@Override
 	public String toString() {
 		return "DistributionNotificationEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1
 				+ ", requestId=" + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action
 				+ ", status=" + status + ", desc=" + desc + ", resourceName=" + resourceName + ", resourceType="
 				+ resourceType + ", currVersion=" + currVersion + ", modifier=" + modifier + ", currState=" + currState
-				+ ", topicName=" + topicName + ", did=" + did + "]";
+				+ ", topicName=" + topicName + ", did=" + did
+                + ", envId=" + envId + ", vnfWorkloadContext=" + vnfWorkloadContext + ", tenant=" + tenant + "]";
 	}
 
 }

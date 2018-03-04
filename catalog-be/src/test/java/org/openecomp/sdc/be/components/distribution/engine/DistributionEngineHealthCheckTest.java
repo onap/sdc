@@ -20,115 +20,114 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.BeConfDependentTest;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+
+import java.util.List;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
+public class DistributionEngineHealthCheckTest extends BeConfDependentTest {
 
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.openecomp.sdc.be.components.BaseConfDependentTest;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+    @Mock
+    private CambriaHandler cambriaHandler = Mockito.mock(CambriaHandler.class);
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+    DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();
 
-public class DistributionEngineHealthCheckTest extends BaseConfDependentTest {
+    Gson gson = new Gson();
 
-	@Mock
-	private CambriaHandler cambriaHandler = Mockito.mock(CambriaHandler.class);
+    Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
-	DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();
+    //
+    // @Test
+    // public void validateDownWhenEnvAreDown() {
+    //
+    // Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+    // envNamePerStatus.put("PROD1", new AtomicBoolean(false));
+    // envNamePerStatus.put("PROD2", new AtomicBoolean(false));
+    //
+    // distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
+    //
+    // HealthCheckInfo healthCheckInfo =
+    // distributionEngineClusterHealth.getHealthCheckInfo();
+    // assertEquals("verify down", HealthCheckStatus.DOWN,
+    // healthCheckInfo.getHealthCheckStatus());
+    // assertEquals("verify DE component", HealthCheckComponent.DE,
+    // healthCheckInfo.getHealthCheckComponent());
+    //
+    // }
 
-	Gson gson = new Gson();
+    @Test
+    public void validateUpWhenQuerySucceed() {
 
-	Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        // Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+        // envNamePerStatus.put("PROD1", new AtomicBoolean(true));
+        // envNamePerStatus.put("PROD2", new AtomicBoolean(false));
+        //
+        // distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus,
+        // false);
 
-	//
-	// @Test
-	// public void validateDownWhenEnvAreDown() {
-	//
-	// Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-	// envNamePerStatus.put("PROD1", new AtomicBoolean(false));
-	// envNamePerStatus.put("PROD2", new AtomicBoolean(false));
-	//
-	// distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
-	//
-	// HealthCheckInfo healthCheckInfo =
-	// distributionEngineClusterHealth.getHealthCheckInfo();
-	// assertEquals("verify down", HealthCheckStatus.DOWN,
-	// healthCheckInfo.getHealthCheckStatus());
-	// assertEquals("verify DE component", HealthCheckComponent.DE,
-	// healthCheckInfo.getHealthCheckComponent());
-	//
-	// }
+        CambriaErrorResponse cambriaOkResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
+        CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
+        CambriaErrorResponse cambriaNotErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.AUTHENTICATION_ERROR, 403);
 
-	@Test
-	public void validateUpWhenQuerySucceed() {
+        List<String> uebServers = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getUebServers();
+        if (uebServers.size() >= 2) {
+            when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(0)), Mockito.any(String.class))).thenReturn(cambriaOkResponse);
+            when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(1)), Mockito.any(String.class))).thenReturn(cambriaOkResponse);
+        }
 
-		// Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-		// envNamePerStatus.put("PROD1", new AtomicBoolean(true));
-		// envNamePerStatus.put("PROD2", new AtomicBoolean(false));
-		//
-		// distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus,
-		// false);
+        UebHealthCheckCall healthCheckCall1 = new UebHealthCheckCall(uebServers.get(0), "publicKey");
+        healthCheckCall1.setCambriaHandler(cambriaHandler);
+        Boolean call1 = healthCheckCall1.call();
+        assertTrue("check response okay", call1);
 
-		CambriaErrorResponse cambriaOkResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
-		CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
-		CambriaErrorResponse cambriaNotErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.AUTHENTICATION_ERROR, 403);
+        UebHealthCheckCall healthCheckCall2 = new UebHealthCheckCall(uebServers.get(1), "publicKey");
+        healthCheckCall2.setCambriaHandler(cambriaHandler);
 
-		List<String> uebServers = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getUebServers();
-		if (uebServers.size() >= 2) {
-			when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(0)), Mockito.any(String.class))).thenReturn(cambriaOkResponse);
-			when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(1)), Mockito.any(String.class))).thenReturn(cambriaOkResponse);
-		}
+        Boolean call2 = healthCheckCall2.call();
+        assertTrue("check response okay", call2);
 
-		UebHealthCheckCall healthCheckCall1 = new UebHealthCheckCall(uebServers.get(0), "publicKey");
-		healthCheckCall1.setCambriaHandler(cambriaHandler);
-		Boolean call1 = healthCheckCall1.call();
-		assertTrue("check response okay", call1);
+        if (uebServers.size() >= 2) {
+            when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(0)), Mockito.any(String.class))).thenReturn(cambriaErrorResponse);
+            when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(1)), Mockito.any(String.class))).thenReturn(cambriaOkResponse);
+        }
+        healthCheckCall1 = new UebHealthCheckCall(uebServers.get(0), "publicKey");
+        healthCheckCall1.setCambriaHandler(cambriaHandler);
 
-		UebHealthCheckCall healthCheckCall2 = new UebHealthCheckCall(uebServers.get(1), "publicKey");
-		healthCheckCall2.setCambriaHandler(cambriaHandler);
+        call1 = healthCheckCall1.call();
+        assertFalse("check response okay", call1);
 
-		Boolean call2 = healthCheckCall2.call();
-		assertTrue("check response okay", call2);
+        healthCheckCall2 = new UebHealthCheckCall(uebServers.get(1), "publicKey");
+        healthCheckCall2.setCambriaHandler(cambriaHandler);
 
-		if (uebServers.size() >= 2) {
-			when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(0)), Mockito.any(String.class))).thenReturn(cambriaErrorResponse);
-			when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(1)), Mockito.any(String.class))).thenReturn(cambriaOkResponse);
-		}
-		healthCheckCall1 = new UebHealthCheckCall(uebServers.get(0), "publicKey");
-		healthCheckCall1.setCambriaHandler(cambriaHandler);
+        call2 = healthCheckCall2.call();
+        assertTrue("check response okay", call2);
 
-		call1 = healthCheckCall1.call();
-		assertFalse("check response okay", call1);
+        if (uebServers.size() >= 2) {
+            when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(0)), Mockito.any(String.class))).thenReturn(cambriaErrorResponse);
+            when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(1)), Mockito.any(String.class))).thenReturn(cambriaNotErrorResponse);
+        }
+        healthCheckCall1 = new UebHealthCheckCall(uebServers.get(0), "publicKey");
+        healthCheckCall1.setCambriaHandler(cambriaHandler);
 
-		healthCheckCall2 = new UebHealthCheckCall(uebServers.get(1), "publicKey");
-		healthCheckCall2.setCambriaHandler(cambriaHandler);
+        call1 = healthCheckCall1.call();
+        assertFalse("check response okay", call1);
 
-		call2 = healthCheckCall2.call();
-		assertTrue("check response okay", call2);
+        healthCheckCall2 = new UebHealthCheckCall(uebServers.get(1), "publicKey");
+        healthCheckCall2.setCambriaHandler(cambriaHandler);
 
-		if (uebServers.size() >= 2) {
-			when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(0)), Mockito.any(String.class))).thenReturn(cambriaErrorResponse);
-			when(cambriaHandler.getApiKey(Mockito.eq(uebServers.get(1)), Mockito.any(String.class))).thenReturn(cambriaNotErrorResponse);
-		}
-		healthCheckCall1 = new UebHealthCheckCall(uebServers.get(0), "publicKey");
-		healthCheckCall1.setCambriaHandler(cambriaHandler);
+        call2 = healthCheckCall2.call();
+        assertTrue("check response okay", call2);
 
-		call1 = healthCheckCall1.call();
-		assertFalse("check response okay", call1);
-
-		healthCheckCall2 = new UebHealthCheckCall(uebServers.get(1), "publicKey");
-		healthCheckCall2.setCambriaHandler(cambriaHandler);
-
-		call2 = healthCheckCall2.call();
-		assertTrue("check response okay", call2);
-
-	}
+    }
 
 }

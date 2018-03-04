@@ -107,6 +107,7 @@ elasticSearch:
         creationPeriod: month
       - indexPrefix: monitoring_events
         creationPeriod: month
+
 artifactTypes:
    - CHEF
    - PUPPET
@@ -143,13 +144,25 @@ resourceTypes: &allResourceTypes
   - VF
   - VFCMT
   - Abstract
+  - CVFC
 
 # validForResourceTypes usage
 #     validForResourceTypes:
 #        - VF
 #        - VL
 deploymentResourceArtifacts:
-
+#  heat:
+#      displayName: "Base HEAT Template"
+#      type: HEAT
+#      validForResourceTypes: *allResourceTypes
+#  heatVol:
+#      displayName: "Volume HEAT Template"
+#      type: HEAT_VOL
+#      validForResourceTypes: *allResourceTypes
+#  heatNet:
+#      displayName: "Network HEAT Template"
+#      type: HEAT_NET
+#      validForResourceTypes: *allResourceTypes
 
 deploymentResourceInstanceArtifacts:
   heatEnv:
@@ -179,6 +192,8 @@ toscaArtifacts:
 #Informational artifacts placeHolder
 excludeResourceCategory:
   - Generic
+excludeResourceType:
+  - PNF  
 informationalResourceArtifacts:
   features:
       displayName: Features
@@ -265,13 +280,13 @@ serviceApiArtifacts:
       displayName: Testing
       type: OTHER
 
-
 additionalInformationMaxNumberOfKeys: 50
 
 systemMonitoring:
     enabled: true
     isProxy: false
     probeIntervalInSeconds: 15
+
 defaultHeatArtifactTimeoutMinutes: 60
 
 serviceDeploymentArtifacts:
@@ -287,6 +302,11 @@ serviceDeploymentArtifacts:
     MODEL_QUERY_SPEC:
         acceptedTypes:
             - xml
+    UCPE_LAYER_2_CONFIGURATION:
+        acceptedTypes:
+            - xml
+
+#AAI Artifacts
     AAI_SERVICE_MODEL:
         acceptedTypes:
             - xml
@@ -298,7 +318,6 @@ serviceDeploymentArtifacts:
             - xml
     OTHER:
         acceptedTypes:
-
 
 resourceDeploymentArtifacts:
     HEAT:
@@ -484,7 +503,15 @@ resourceInformationalArtifacts:
         validForResourceTypes: *allResourceTypes
     OTHER:
         acceptedTypes:
-        validForResourceTypes: *allResourceTypes
+        validForResourceTypes: 
+            - VFC
+            - CVFC
+            - CP
+            - VL
+            - VF
+            - VFCMT
+            - Abstract
+            - PNF
     SNMP_POLL:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
@@ -496,9 +523,9 @@ resourceInformationalArtifacts:
         validForResourceTypes:
             - VF
             - VFC
+            - CVFC
 
 resourceInformationalDeployedArtifacts:
-
 
 requirementsToFulfillBeforeCert:
 
@@ -587,7 +614,9 @@ vfModuleProperties:
 
 genericAssetNodeTypes:
   VFC: org.openecomp.resource.abstract.nodes.VFC
+  CVFC: org.openecomp.resource.abstract.nodes.VFC
   VF : org.openecomp.resource.abstract.nodes.VF
+  PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
 
 workloadContext: Production

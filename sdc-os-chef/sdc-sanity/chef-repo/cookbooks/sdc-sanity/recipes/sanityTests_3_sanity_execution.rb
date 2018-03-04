@@ -1,5 +1,11 @@
 tests_base="/var/lib/tests"
-ci_test_suite="pass.xml"
+ci_test_suite="onap.xml"
+
+bash "echo status" do
+   code <<-EOH
+     echo "DOCKER STARTED"
+   EOH
+end
 
 bash "run asdc ci sanity tests" do
 cwd "#{tests_base}"
@@ -10,10 +16,4 @@ code <<-EOH
    echo "return code from startTest.sh = [$?]"
    echo "DOCKER STARTED"
 EOH
-timeout 72000
-end
-bash "echo status" do
-   code <<-EOH
-     echo "DOCKER STARTED"
-   EOH
 end

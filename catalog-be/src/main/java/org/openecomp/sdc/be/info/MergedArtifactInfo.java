@@ -20,150 +20,145 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
+import java.util.*;
 public class MergedArtifactInfo {
 
-	private List<ArtifactDefinition> createdArtifact;
-	private ArtifactTemplateInfo jsonArtifactTemplate;
-	private Set<String> parsetArtifactsNames;
+    private List<ArtifactDefinition> createdArtifact;
+    private ArtifactTemplateInfo jsonArtifactTemplate;
+    private Set<String> parsetArtifactsNames;
 
-	public List<ArtifactDefinition> getCreatedArtifact() {
-		return createdArtifact;
-	}
+    public List<ArtifactDefinition> getCreatedArtifact() {
+        return createdArtifact;
+    }
 
-	public void setCreatedArtifact(List<ArtifactDefinition> createdArtifact) {
-		this.createdArtifact = createdArtifact;
-		parsetArtifactsNames = new HashSet<String>();
-		parsetArtifactsNames.add(jsonArtifactTemplate.getFileName());
-		List<ArtifactTemplateInfo> relatedGroupTemplateList = jsonArtifactTemplate.getRelatedArtifactsInfo();
-		if (relatedGroupTemplateList != null && !relatedGroupTemplateList.isEmpty()) {
-			this.createArtifactsGroupSet(relatedGroupTemplateList, parsetArtifactsNames);
-		}
+    public void setCreatedArtifact(List<ArtifactDefinition> createdArtifact) {
+        this.createdArtifact = createdArtifact;
+        parsetArtifactsNames = new HashSet<String>();
+        parsetArtifactsNames.add(jsonArtifactTemplate.getFileName());
+        List<ArtifactTemplateInfo> relatedGroupTemplateList = jsonArtifactTemplate.getRelatedArtifactsInfo();
+        if (relatedGroupTemplateList != null && !relatedGroupTemplateList.isEmpty()) {
+            this.createArtifactsGroupSet(relatedGroupTemplateList, parsetArtifactsNames);
+        }
 
-	}
+    }
 
-	public ArtifactTemplateInfo getJsonArtifactTemplate() {
-		return jsonArtifactTemplate;
-	}
+    public ArtifactTemplateInfo getJsonArtifactTemplate() {
+        return jsonArtifactTemplate;
+    }
 
-	public void setJsonArtifactTemplate(ArtifactTemplateInfo jsonArtifactTemplate) {
-		this.jsonArtifactTemplate = jsonArtifactTemplate;
-	}
+    public void setJsonArtifactTemplate(ArtifactTemplateInfo jsonArtifactTemplate) {
+        this.jsonArtifactTemplate = jsonArtifactTemplate;
+    }
 
-	public List<ArtifactTemplateInfo> getListToAssociateArtifactToGroup() {
-		List<ArtifactTemplateInfo> resList = new ArrayList<ArtifactTemplateInfo>();
-		List<ArtifactTemplateInfo> relatedArtifacts = jsonArtifactTemplate.getRelatedArtifactsInfo();
-		if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
-			getNewArtifactsInGroup(resList, relatedArtifacts);
-		}
-		return resList;
-	}
+    public List<ArtifactTemplateInfo> getListToAssociateArtifactToGroup() {
+        List<ArtifactTemplateInfo> resList = new ArrayList<ArtifactTemplateInfo>();
+        List<ArtifactTemplateInfo> relatedArtifacts = jsonArtifactTemplate.getRelatedArtifactsInfo();
+        if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
+            getNewArtifactsInGroup(resList, relatedArtifacts);
+        }
+        return resList;
+    }
 
-	public List<ArtifactDefinition> getListToDissotiateArtifactFromGroup(List<ArtifactDefinition> deletedArtifacts) {
-		List<ArtifactDefinition> resList = new ArrayList<ArtifactDefinition>();
-		for (ArtifactDefinition artifactDefinition : createdArtifact) {
-			boolean isDissotiate = true;
-			if(parsetArtifactsNames.contains(artifactDefinition.getArtifactName())){
-				isDissotiate = false;
-			}else{
-				if (artifactDefinition.getGeneratedFromId() != null && !artifactDefinition.getGeneratedFromId().isEmpty()){
-					Optional<ArtifactDefinition> op = createdArtifact.stream().filter(p -> p.getUniqueId().equals(artifactDefinition.getGeneratedFromId())).findAny();
-					if(op.isPresent()){
-						ArtifactDefinition generatedFromArt = op.get();
-						if(parsetArtifactsNames.contains(generatedFromArt.getArtifactName())){
-							isDissotiate = false;
-						}
-					}
-					else{
-						isDissotiate = true;
-					}
-						
-				}
-			}
-			if (isDissotiate) {
-				boolean isDeleted = false;
-				for (ArtifactDefinition deletedArtifact : deletedArtifacts) {
-					if (artifactDefinition.getUniqueId().equalsIgnoreCase(deletedArtifact.getUniqueId())) {
-						isDeleted = true;
-						break;
-					}
+    public List<ArtifactDefinition> getListToDissotiateArtifactFromGroup(List<ArtifactDefinition> deletedArtifacts) {
+        List<ArtifactDefinition> resList = new ArrayList<ArtifactDefinition>();
+        for (ArtifactDefinition artifactDefinition : createdArtifact) {
+            boolean isDissotiate = true;
+            if(parsetArtifactsNames.contains(artifactDefinition.getArtifactName())){
+                isDissotiate = false;
+            }else{
+                if (artifactDefinition.getGeneratedFromId() != null && !artifactDefinition.getGeneratedFromId().isEmpty()){
+                    Optional<ArtifactDefinition> op = createdArtifact.stream().filter(p -> p.getUniqueId().equals(artifactDefinition.getGeneratedFromId())).findAny();
+                    if(op.isPresent()){
+                        ArtifactDefinition generatedFromArt = op.get();
+                        if(parsetArtifactsNames.contains(generatedFromArt.getArtifactName())){
+                            isDissotiate = false;
+                        }
+                    }
+                    else{
+                        isDissotiate = true;
+                    }
 
-				}
-				if (!isDeleted)
-					resList.add(artifactDefinition);
-			}
+                }
+            }
+            if (isDissotiate) {
+                boolean isDeleted = false;
+                for (ArtifactDefinition deletedArtifact : deletedArtifacts) {
+                    if (artifactDefinition.getUniqueId().equalsIgnoreCase(deletedArtifact.getUniqueId())) {
+                        isDeleted = true;
+                        break;
+                    }
 
-		}
+                }
+                if (!isDeleted)
+                    resList.add(artifactDefinition);
+            }
 
-		return resList;
-	}
+        }
 
-	public List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> getListToUpdateArtifactInGroup() {
-		List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> resList = new ArrayList<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>();
-		for (ArtifactDefinition artifactDefinition : createdArtifact) {
-			if (artifactDefinition.getArtifactName().equalsIgnoreCase(jsonArtifactTemplate.getFileName())) {
-				resList.add(new ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>(artifactDefinition, jsonArtifactTemplate));
-			}
-		}
-		List<ArtifactTemplateInfo> relatedArtifacts = jsonArtifactTemplate.getRelatedArtifactsInfo();
-		if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
-			getUpdateArtifactsInGroup(resList, relatedArtifacts);
-		}
-		return resList;
-	}
+        return resList;
+    }
 
-	private void getUpdateArtifactsInGroup(List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> resList, List<ArtifactTemplateInfo> jsonArtifacts) {
+    public List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> getListToUpdateArtifactInGroup() {
+        List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> resList = new ArrayList<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>();
+        for (ArtifactDefinition artifactDefinition : createdArtifact) {
+            if (artifactDefinition.getArtifactName().equalsIgnoreCase(jsonArtifactTemplate.getFileName())) {
+                resList.add(new ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>(artifactDefinition, jsonArtifactTemplate));
+            }
+        }
+        List<ArtifactTemplateInfo> relatedArtifacts = jsonArtifactTemplate.getRelatedArtifactsInfo();
+        if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
+            getUpdateArtifactsInGroup(resList, relatedArtifacts);
+        }
+        return resList;
+    }
 
-		for (ArtifactTemplateInfo artifactTemplateInfo : jsonArtifacts) {
+    private void getUpdateArtifactsInGroup(List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> resList, List<ArtifactTemplateInfo> jsonArtifacts) {
 
-			for (ArtifactDefinition artifactDefinition : createdArtifact) {
-				if (artifactDefinition.getArtifactName().equalsIgnoreCase(artifactTemplateInfo.getFileName())) {
-					resList.add(new ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>(artifactDefinition, artifactTemplateInfo));
-				}
-			}
+        for (ArtifactTemplateInfo artifactTemplateInfo : jsonArtifacts) {
 
-			List<ArtifactTemplateInfo> relatedArtifacts = artifactTemplateInfo.getRelatedArtifactsInfo();
-			if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
-				getUpdateArtifactsInGroup(resList, relatedArtifacts);
-			}
-		}
-	}
+            for (ArtifactDefinition artifactDefinition : createdArtifact) {
+                if (artifactDefinition.getArtifactName().equalsIgnoreCase(artifactTemplateInfo.getFileName())) {
+                    resList.add(new ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>(artifactDefinition, artifactTemplateInfo));
+                }
+            }
 
-	private void getNewArtifactsInGroup(List<ArtifactTemplateInfo> resList, List<ArtifactTemplateInfo> jsonArtifacts) {
+            List<ArtifactTemplateInfo> relatedArtifacts = artifactTemplateInfo.getRelatedArtifactsInfo();
+            if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
+                getUpdateArtifactsInGroup(resList, relatedArtifacts);
+            }
+        }
+    }
 
-		for (ArtifactTemplateInfo artifactTemplateInfo : jsonArtifacts) {
-			boolean isNewArtifact = true;
-			for (ArtifactDefinition artifactDefinition : createdArtifact) {
-				if (artifactDefinition.getArtifactName().equalsIgnoreCase(artifactTemplateInfo.getFileName())) {
-					isNewArtifact = false;
-				}
-			}
-			if (isNewArtifact)
-				resList.add(artifactTemplateInfo);
-			List<ArtifactTemplateInfo> relatedArtifacts = artifactTemplateInfo.getRelatedArtifactsInfo();
-			if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
-				getNewArtifactsInGroup(resList, relatedArtifacts);
-			}
-		}
-	}
+    private void getNewArtifactsInGroup(List<ArtifactTemplateInfo> resList, List<ArtifactTemplateInfo> jsonArtifacts) {
 
-	private void createArtifactsGroupSet(List<ArtifactTemplateInfo> parsedGroupTemplateList, Set<String> parsedArtifactsName) {
+        for (ArtifactTemplateInfo artifactTemplateInfo : jsonArtifacts) {
+            boolean isNewArtifact = true;
+            for (ArtifactDefinition artifactDefinition : createdArtifact) {
+                if (artifactDefinition.getArtifactName().equalsIgnoreCase(artifactTemplateInfo.getFileName())) {
+                    isNewArtifact = false;
+                }
+            }
+            if (isNewArtifact)
+                resList.add(artifactTemplateInfo);
+            List<ArtifactTemplateInfo> relatedArtifacts = artifactTemplateInfo.getRelatedArtifactsInfo();
+            if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
+                getNewArtifactsInGroup(resList, relatedArtifacts);
+            }
+        }
+    }
 
-		for (ArtifactTemplateInfo parsedGroupTemplate : parsedGroupTemplateList) {
-			parsedArtifactsName.add(parsedGroupTemplate.getFileName());
-			List<ArtifactTemplateInfo> relatedArtifacts = parsedGroupTemplate.getRelatedArtifactsInfo();
-			if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
-				createArtifactsGroupSet(relatedArtifacts, parsedArtifactsName);
-			}
-		}
-	}
+    private void createArtifactsGroupSet(List<ArtifactTemplateInfo> parsedGroupTemplateList, Set<String> parsedArtifactsName) {
+
+        for (ArtifactTemplateInfo parsedGroupTemplate : parsedGroupTemplateList) {
+            parsedArtifactsName.add(parsedGroupTemplate.getFileName());
+            List<ArtifactTemplateInfo> relatedArtifacts = parsedGroupTemplate.getRelatedArtifactsInfo();
+            if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
+                createArtifactsGroupSet(relatedArtifacts, parsedArtifactsName);
+            }
+        }
+    }
 
 }

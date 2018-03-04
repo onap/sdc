@@ -43,9 +43,4 @@ export class UiElementDropDownComponent extends UiElementBase implements UiEleme
   constructor() {
     super();
   }
-
-    onSave() {
-        this.baseEmitter.emit(this.value);
-    }
-
 }

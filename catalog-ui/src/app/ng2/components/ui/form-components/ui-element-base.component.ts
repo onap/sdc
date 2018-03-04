@@ -23,7 +23,12 @@ import { ValidationConfiguration } from "app/models";
 import { FormControl, Validators } from '@angular/forms';
 
 export interface UiElementBaseInterface {
-    onSave();
+    onChange();
+}
+
+export interface IUiElementChangeEvent {
+    value: any;
+    isValid: boolean;
 }
 
 @Component({
@@ -35,21 +40,29 @@ export class UiElementBase {
     protected validation = ValidationConfiguration.validation;
     protected control: FormControl;
 
-    // Two way binding for value (need to write the "Change" word like this)
-    @Output('valueChange') baseEmitter: EventEmitter<string> = new EventEmitter<any>();
-    @Input('value') set setValueValue(value) {
-        this.value = value;
-    }
+    @Input() value: any;
+    @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();
+    @Output('elementChanged') baseEmitter: EventEmitter<IUiElementChangeEvent> = new EventEmitter<IUiElementChangeEvent>();
 
     @Input() name: string;
     @Input() type: string;
-    @Input() value: any;
     @Input() pattern: any;
     @Input() readonly:boolean;
 
     constructor() {
         //this.control = new FormControl('', [Validators.required]);
         this.control = new FormControl('', []);
+
+        this.baseEmitter.subscribe((changeEvent: IUiElementChangeEvent) => {
+            this.valueChange.emit(changeEvent.value);
+        })
+    }
+
+    onChange() {
+        this.baseEmitter.emit({
+            value: this.value,
+            isValid: this.control.valid
+        });
     }
 
 }

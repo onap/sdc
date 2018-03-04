@@ -20,20 +20,13 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
-
-import javax.annotation.PreDestroy;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -41,79 +34,83 @@ import org.springframework.stereotype.Component;
 @Component("distributionNotificationSender")
 public class DistributionNotificationSender {
 
-	protected static final String DISTRIBUTION_NOTIFICATION_SENDING = "distributionNotificationSending";
+    protected static final String DISTRIBUTION_NOTIFICATION_SENDING = "distributionNotificationSending";
 
-	private static Logger logger = LoggerFactory.getLogger(DistributionNotificationSender.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DistributionNotificationSender.class);
 
-	// final String BASE_ARTIFACT_URL = "/sdc/v1/catalog/services/%s/%s/";
-	// final String RESOURCE_ARTIFACT_URL = BASE_ARTIFACT_URL
-	// + "resources/%s/%s/artifacts/%s";
-	// final String SERVICE_ARTIFACT_URL = BASE_ARTIFACT_URL + "artifacts/%s";
+    @javax.annotation.Resource
+    protected ComponentsUtils componentUtils;
+    private CambriaHandler cambriaHandler = new CambriaHandler();
+    private DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
 
-	@javax.annotation.Resource
-	InterfaceLifecycleOperation interfaceLifecycleOperation;
+    public ActionStatus sendNotification(String topicName, String distributionId, EnvironmentMessageBusData messageBusData, INotificationData notificationData, Service service, String userId, String modifierName) {
+        long startTime = System.currentTimeMillis();
+        CambriaErrorResponse status = cambriaHandler.sendNotificationAndClose(topicName, messageBusData.getUebPublicKey(), messageBusData.getUebPrivateKey(), messageBusData.getDmaaPuebEndpoints(), notificationData,
+                deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
+        logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.getHttpCode());
+        auditDistributionNotification(topicName, distributionId, status, service, messageBusData.getEnvId(), userId, modifierName, notificationData.getWorkloadContext(), messageBusData.getTenant());
+        long endTime = System.currentTimeMillis();
+        logger.debug("After building and publishing artifacts object. Total took {} milliseconds", (endTime - startTime));
+        return convertCambriaResponse(status);
+    }
 
-	@javax.annotation.Resource
-	protected ComponentsUtils componentUtils;
+    private void auditDistributionNotification(String topicName, String distributionId, CambriaErrorResponse status, Service service, String envId, String userId, String modifierName, String workloadContext, String tenant) {
+        if (this.componentUtils != null) {
+            Integer httpCode = status.getHttpCode();
+            String httpCodeStr = String.valueOf(httpCode);
 
-	ExecutorService executorService = null;
+            String desc = getDescriptionFromErrorResponse(status);
 
-	CambriaHandler cambriaHandler = new CambriaHandler();
+            this.componentUtils.auditDistributionNotification(AuditingActionEnum.DISTRIBUTION_NOTIFY, service.getUUID(), service.getName(), "Service", service.getVersion(), userId, modifierName, envId, service.getLifecycleState().name(), topicName,
+                    distributionId, desc, httpCodeStr, workloadContext, tenant);
+        }
+    }
 
-	NotificationExecutorService notificationExecutorService = new NotificationExecutorService();
+    private String getDescriptionFromErrorResponse(CambriaErrorResponse status) {
 
-	public DistributionNotificationSender() {
-		super();
+        CambriaOperationStatus operationStatus = status.getOperationStatus();
 
-		DistributionNotificationTopicConfig distributionNotificationTopic = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getDistributionNotificationTopic();
+        switch (operationStatus) {
+            case OK:
+                return "OK";
+            case AUTHENTICATION_ERROR:
+                return "Error: Authentication problem towards U-EB server";
+            case INTERNAL_SERVER_ERROR:
+                return "Error: Internal U-EB server error";
+            case UNKNOWN_HOST_ERROR:
+                return "Error: Cannot reach U-EB server host";
+            case CONNNECTION_ERROR:
+                return "Error: Cannot connect to U-EB server";
+            case OBJECT_NOT_FOUND:
+                return "Error: object not found in U-EB server";
+            default:
+                return "Error: Internal Cambria server problem";
 
-		executorService = notificationExecutorService.createExcecutorService(distributionNotificationTopic);
-	}
+        }
 
-	@PreDestroy
-	public void shutdown() {
-		logger.debug("Going to close notificationExecutorService");
-		if (executorService != null) {
+    }
 
-			long maxWaitingTime = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds();
+    private ActionStatus convertCambriaResponse(CambriaErrorResponse status) {
+        CambriaOperationStatus operationStatus = status.getOperationStatus();
 
-			notificationExecutorService.shutdownAndAwaitTermination(executorService, maxWaitingTime + 1);
-		}
-	}
+        switch (operationStatus) {
+            case OK:
+                return ActionStatus.OK;
+            case AUTHENTICATION_ERROR:
+                return ActionStatus.AUTHENTICATION_ERROR;
+            case INTERNAL_SERVER_ERROR:
+                return ActionStatus.GENERAL_ERROR;
+            case UNKNOWN_HOST_ERROR:
+                return ActionStatus.UNKNOWN_HOST;
+            case CONNNECTION_ERROR:
+                return ActionStatus.CONNNECTION_ERROR;
+            case OBJECT_NOT_FOUND:
+                return ActionStatus.OBJECT_NOT_FOUND;
+            default:
+                return ActionStatus.GENERAL_ERROR;
 
-	public StorageOperationStatus sendNotification(String topicName, String distributionId, DistributionEngineConfiguration deConfiguration, String envName, INotificationData notificationData, Service service, String userId, String modifierName) {
+        }
+    }
 
-		Runnable task = new PublishNotificationRunnable(envName, distributionId, service, notificationData, deConfiguration, topicName, userId, modifierName, cambriaHandler, componentUtils, ThreadLocalsHolder.getUuid());
-		try {
-			executorService.submit(task);
-		} catch (RejectedExecutionException e) {
-			logger.warn("Failed to submit task. Number of threads exceeeds", e);
-			return StorageOperationStatus.OVERLOAD;
-		}
-
-		return StorageOperationStatus.OK;
-	}
-
-	/**
-	 * Audit the publishing notification in case of internal server error.
-	 * 
-	 * @param topicName
-	 * @param status
-	 * @param distributionId
-	 * @param envName
-	 */
-	private void auditDistributionNotificationInternalServerError(String topicName, StorageOperationStatus status, String distributionId, String envName) {
-
-		if (this.componentUtils != null) {
-			this.componentUtils.auditDistributionNotification(AuditingActionEnum.DISTRIBUTION_NOTIFY, "", " ", "Service", " ", " ", " ", envName, " ", topicName, distributionId, "Error: Internal Server Error. " + status, " ");
-		}
-	}
-
-	protected CambriaErrorResponse publishNotification(INotificationData data, DistributionEngineConfiguration deConfiguration, String topicName) {
-
-		CambriaErrorResponse status = cambriaHandler.sendNotification(topicName, deConfiguration.getUebPublicKey(), deConfiguration.getUebSecretKey(), deConfiguration.getUebServers(), data);
-
-		return status;
-	}
 
 }

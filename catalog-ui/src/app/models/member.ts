@@ -22,6 +22,7 @@
  * Created by obarda on 8/2/2016.
  */
 'use strict';
+import * as _ from "lodash";
 
 export class Members {
 

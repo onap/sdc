@@ -20,12 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import static org.testng.AssertJUnit.assertEquals;
-
-import java.util.Map;
-
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -34,7 +31,9 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 
-import com.google.gson.Gson;
+import java.util.Map;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class ConsumerRestUtils extends BaseRestUtils {
 
@@ -123,9 +122,8 @@ public class ConsumerRestUtils extends BaseRestUtils {
 
 		String bodyToParse = restResponse.getResponse();
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try {
-			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			ConsumerDataDefinition component = mapper.readValue(bodyToParse, ConsumerDataDefinition.class);
 			return component;
 		} catch (Exception e) {

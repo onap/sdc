@@ -22,5 +22,5 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 public enum SubscriberTypeEnum {
 
-	CONSUMER, PRODUCER;
+    CONSUMER, PRODUCER;
 }

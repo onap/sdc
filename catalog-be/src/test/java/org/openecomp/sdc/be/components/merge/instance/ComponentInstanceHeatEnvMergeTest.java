@@ -1,13 +1,6 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +19,13 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.mockito.Mockito.when;
 
 public class ComponentInstanceHeatEnvMergeTest {
 
@@ -67,7 +66,7 @@ public class ComponentInstanceHeatEnvMergeTest {
         for (ArtifactDefinition mergedArtifact : mergedArtifacts) {
             Map<String, Object> json = new HashMap<>();
             when(artifactsBusinessLogicMock.buildJsonForUpdateArtifact(mergedArtifact, ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(json);
-            ArtifactsBusinessLogic.ArtifactOperationInfo artifactUpdateOperation = artifactsBusinessLogicMock.new ArtifactOperationInfo(false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.Update);
+            ArtifactsBusinessLogic.ArtifactOperationInfo artifactUpdateOperation = artifactsBusinessLogicMock.new ArtifactOperationInfo(false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.UPDATE);
             when(artifactsBusinessLogicMock.updateResourceInstanceArtifactNoContent(Mockito.eq(instanceId), Mockito.eq(resource),
                                                                                     Mockito.eq(USER), Mockito.eq(json),
                                                                                     Mockito.refEq(artifactUpdateOperation),

@@ -1,10 +1,12 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class ComponentInstanceBuilder {
 
@@ -12,10 +14,26 @@ public class ComponentInstanceBuilder {
 
     public ComponentInstanceBuilder() {
         componentInstance = new ComponentInstance();
+        componentInstance.setCapabilities(new HashMap<>());
+        componentInstance.setDeploymentArtifacts(new HashMap<>());
+    }
+
+    public ComponentInstanceBuilder(ComponentInstance componentInstance) {
+        this.componentInstance = componentInstance;
     }
 
     public ComponentInstanceBuilder setName(String name) {
         componentInstance.setName(name);
+        return this;
+    }
+
+    public ComponentInstanceBuilder setNormalizedName(String name) {
+        componentInstance.setNormalizedName(name);
+        return this;
+    }
+
+    public ComponentInstanceBuilder setUniqueId(String uniqueId) {
+        componentInstance.setUniqueId(uniqueId);
         return this;
     }
 
@@ -35,11 +53,17 @@ public class ComponentInstanceBuilder {
     }
 
     public ComponentInstanceBuilder addDeploymentArtifact(ArtifactDefinition artifactDefinition) {
-        Map<String, ArtifactDefinition> deploymentArtifacts = componentInstance.getDeploymentArtifacts();
-        if (deploymentArtifacts == null) {
-            componentInstance.setDeploymentArtifacts(new HashMap<>());
-        }
         componentInstance.getDeploymentArtifacts().put(artifactDefinition.getArtifactName(), artifactDefinition);
+        return this;
+    }
+
+    public ComponentInstanceBuilder addCapability(CapabilityDefinition capabilityDefinition) {
+        componentInstance.getCapabilities().computeIfAbsent(capabilityDefinition.getType(), key -> new ArrayList<>()).add(capabilityDefinition);
+        return this;
+    }
+
+    public ComponentInstanceBuilder addCapabilities(CapabilityDefinition ... capabilities) {
+        Stream.of(capabilities).forEach(this::addCapability);
         return this;
     }
 

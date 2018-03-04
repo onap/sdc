@@ -20,13 +20,10 @@
 
 package org.openecomp.sdc.externalApis;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.json.simple.parser.JSONParser;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -36,34 +33,29 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.SearchCriteriaEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedExternalAudit;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 
@@ -101,15 +93,19 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 		List<String> variables = Arrays.asList("resourceTypeinvalid", "[resourceType, subCategory, category]");
 		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_FILTER_KEY.name(), variables, restResponse.getResponse());
 
+		/*validateFailureAudit(variables);*/
+	}
+
+	/*private void validateFailureAudit(List<String> variables) throws Exception {
 		ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "invalid=" + ResourceTypeEnum.VFC.toString());
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_FILTER_KEY.name());
 		expectedExternalAudit.setDESC(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
 		expectedExternalAudit.setSTATUS("400");
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
+		Map<AuditingFieldsKeysEnum, String> body = new HashMap<>();
 		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedExternalAudit.getRESOURCE_URL());
 		AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);
-	}
-	
+	}*/
+
 	@DataProvider(name="searchForResourceTypeNegativeTest", parallel=true) 
 	public static Object[][] dataProviderSearchForResourceTypeNegativeTest() {
 		return new Object[][] {
@@ -129,13 +125,13 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 		List<String> variables = Arrays.asList();
 		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_CONTENT.name(), variables, restResponse.getResponse());
 
-		ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + resourceType);
+		/*ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + resourceType);
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_CONTENT.name());
 		expectedExternalAudit.setDESC(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
 		expectedExternalAudit.setSTATUS("400");
 		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
 		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedExternalAudit.getRESOURCE_URL());
-		AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);
+		AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);*/
 	}
 	
 	// Searching for resource filter incorrect resource type using external API
@@ -160,10 +156,10 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 			}
 			
 			
-			ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + resourceTypeEnum.toString());
+			/*ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + resourceTypeEnum.toString());
 			Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
 			body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedExternalAudit.getRESOURCE_URL());
-			AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);
+			AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);*/
 		}
 	}
 	
@@ -182,10 +178,10 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 			Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
 			validateJsonContainResource(restResponse.getResponse(), createdResoucesName, true);
 			
-			ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + resourceTypeEnum.toString());
+			/*ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + resourceTypeEnum.toString());
 			Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
 			body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedExternalAudit.getRESOURCE_URL());
-			AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);
+			AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);*/
 		}
 	}
 	
@@ -209,8 +205,8 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 		Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
 		validateJsonContainResource(restResponse.getResponse(), createdResoucesName, true);
 		
-		ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + ResourceTypeEnum.VFCMT.toString());
-		AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), null);
+		/*ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalAuditObject(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_FILTERED_ASSET_LIST, "?" + SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "=" + ResourceTypeEnum.VFCMT.toString());
+		AuditValidationUtils.validateAuditExternalSearchAPI(expectedExternalAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), null);*/
 	}
 	
 	

@@ -25,56 +25,56 @@ import java.util.Map;
 
 public class ToscaCapability {
 
-	private String type;
-	private String description;
+    private String type;
+    private String description;
 
-	private List<Object> occurrences;
+    private List<Object> occurrences;
 
-	private List<String> valid_source_types;
+    private List<String> valid_source_types;
 
-	private Map<String, ToscaProperty> properties;
+    private Map<String, ToscaProperty> properties;
 
-	public List<String> getValid_source_types() {
-		return valid_source_types;
-	}
+    public List<String> getValid_source_types() {
+        return valid_source_types;
+    }
 
-	public void setValid_source_types(List<String> valid_source_types) {
-		this.valid_source_types = valid_source_types;
-	}
+    public void setValid_source_types(List<String> valid_source_types) {
+        this.valid_source_types = valid_source_types;
+    }
 
-	public ToscaCapability() {
-	}
+    public ToscaCapability() {
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public List<Object> getOccurrences() {
-		return occurrences;
-	}
+    public List<Object> getOccurrences() {
+        return occurrences;
+    }
 
-	public void setOccurrences(List<Object> occurrences) {
-		this.occurrences = occurrences;
-	}
+    public void setOccurrences(List<Object> occurrences) {
+        this.occurrences = occurrences;
+    }
 
-	public Map<String, ToscaProperty> getProperties() {
-		return properties;
-	}
+    public Map<String, ToscaProperty> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, ToscaProperty> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, ToscaProperty> properties) {
+        this.properties = properties;
+    }
 
 }

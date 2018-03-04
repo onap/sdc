@@ -1,9 +1,7 @@
 package org.openecomp.sdc.be.components.merge.input;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import org.openecomp.sdc.be.components.merge.instance.ComponentsMergeCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -12,10 +10,13 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Component
-public class ComponentInputsMergeBL {
+public class ComponentInputsMergeBL implements ComponentsMergeCommand {
 
     @javax.annotation.Resource
     private InputsValuesMergingBusinessLogic inputsValuesMergingBusinessLogic;
@@ -25,6 +26,17 @@ public class ComponentInputsMergeBL {
 
     @javax.annotation.Resource
     private ComponentsUtils componentsUtils;
+
+    @Override
+    public ActionStatus mergeComponents(Component prevComponent, Component currentComponent) {
+        List<InputDefinition> inputsToMerge = currentComponent.getInputs() != null ? currentComponent.getInputs() : new ArrayList<>();
+        return this.mergeAndRedeclareComponentInputs(prevComponent, currentComponent, inputsToMerge);
+    }
+
+    @Override
+    public String description() {
+        return "merge component inputs";
+    }
 
     public ActionStatus mergeAndRedeclareComponentInputs(Component prevComponent, Component newComponent, List<InputDefinition> inputsToMerge) {
         mergeInputs(prevComponent, inputsToMerge);

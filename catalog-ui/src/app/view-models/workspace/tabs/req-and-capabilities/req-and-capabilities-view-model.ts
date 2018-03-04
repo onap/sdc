@@ -22,6 +22,7 @@
  * Created by rcohen on 9/22/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {ModalsHandler} from "app/utils";
 import {Capability, PropertyModel, Requirement} from "app/models";

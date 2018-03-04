@@ -78,8 +78,6 @@ public class ResourceUploader implements IResourceUploader {
 	public ResourceUploadStatus saveArtifact(ESArtifactData artifactData, boolean isReload) {
 		ResourceUploadStatus status = ResourceUploadStatus.OK;
 		if (resourceDAO == null) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInitializationError,
-					"Save Artifact - internal object not initialized");
 			BeEcompErrorManager.getInstance()
 					.logBeInitializationError("Save Artifact - internal object not initialized");
 			log.debug("update artifact failed - resourceDAO is null");
@@ -101,8 +99,6 @@ public class ResourceUploader implements IResourceUploader {
 
 			} catch (ResourceDAOException e) {
 				status = ResourceUploadStatus.ERROR;
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-						"Save Artifact to database");
 				BeEcompErrorManager.getInstance().logBeDaoSystemError("Save Artifact to database");
 				log.debug("ResourceUploadStatus:saveArtifact failed with exception ", e);
 			}

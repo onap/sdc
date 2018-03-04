@@ -1,19 +1,6 @@
 {
   "heat": [
-    "contrailPort",
-    "extCp",
-    "contrailV2VirtualMachineInterface",
-    "neutronPort",
-    "Generic_PNF",
-    "portMirroring",
-    "Generic_VF",
-	"serviceProxy",
-    "extCp2",
-    "extContrailCP",
-	"vnfConfiguration",
-	"extVl",
-	"multiFlavorVFC",
-	"portMirroringByPolicy"
+    "Generic_CR"
   ],
   "normative": [
   ]

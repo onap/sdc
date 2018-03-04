@@ -318,6 +318,13 @@ export class DashboardViewModel {
             });
         };
 
+        this.$scope.createCR = ():void => {
+            this.$state.go('workspace.general', {
+                type: ComponentType.RESOURCE.toLowerCase(),
+                resourceType: ResourceType.CR
+            });
+        };
+
         this.$scope.entitiesCount = (folderItem:FoldersItemsMenu):any => {
             let self = this;
             let total:number = 0;

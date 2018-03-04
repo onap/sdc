@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -32,8 +31,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.AssertJUnit;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
 
 public class CompositionPage extends GeneralPageElements {
 
@@ -92,6 +92,10 @@ public class CompositionPage extends GeneralPageElements {
 	}
 
 	public static void changeComponentVersion(CanvasManager canvasManager, CanvasElement element, String version) {
+		changeComponentVersion(canvasManager,element,version,false);
+	}
+
+	public static void changeComponentVersion(CanvasManager canvasManager, CanvasElement element, String version, boolean isValidate) {
 		try{
 			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Changing component version to  %s", version));
 			canvasManager.clickOnCanvaElement(element);
@@ -105,6 +109,16 @@ public class CompositionPage extends GeneralPageElements {
 			selectlist.selectByValue(version);
 			GeneralUIUtils.ultimateWait();
 			GeneralUIUtils.clickSomewhereOnPage();
+
+			// Validate Selection
+			if(isValidate)
+			{
+				GeneralUIUtils.ultimateWait();
+				canvasManager.clickOnCanvaElement(element);
+				SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating component version changed to %s", version));
+				String actualSelectedValue = GeneralUIUtils.getWebElementBy(By.xpath(String.format("//select[@data-tests-id='%s']//option[@selected='selected']",DataTestIdEnum.CompositionScreenEnum.CHANGE_VERSION.getValue()))).getText();
+				AssertJUnit.assertTrue(actualSelectedValue.equals(version));
+			}
 		}
 		catch(Exception e){
 			throw e;
@@ -117,7 +131,7 @@ public class CompositionPage extends GeneralPageElements {
 	}
 	
 	public static String getSelectedInstanceName(){
-		return GeneralUIUtils.getWebElementByTestID("selectedCompTitle").getText();
+		return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionRightPanel.COMPONENT_TITLE.getValue()).getText();
 	}
 	
 	public static void showInformationArtifactTab() throws Exception {
@@ -187,6 +201,21 @@ public class CompositionPage extends GeneralPageElements {
 		 GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.DeploymentArtifactCompositionRightMenu.ARTIFACT_ENV.getValue() + fileName);
 		 return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT_ENV.getValue() +fileName);
 	}
+
+	public static void setSingleProperty(String propertyDataTestID, String propertyValue)
+	{
+			WebElement findElement = GeneralUIUtils.getWebElementByTestID(propertyDataTestID);
+			findElement.click();
+			PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(propertyValue);
+			PropertiesPage.getPropertyPopup().clickSave();
+			GeneralUIUtils.ultimateWait();
+			findElement = GeneralUIUtils.getWebElementByTestID("value_" + propertyDataTestID);
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating property %s is set", propertyValue));
+			AssertJUnit.assertTrue(findElement.getText().equals(propertyValue));
+			GeneralUIUtils.ultimateWait();
+	}
+
+
 
 	
 	

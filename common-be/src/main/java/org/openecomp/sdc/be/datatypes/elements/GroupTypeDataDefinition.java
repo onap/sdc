@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class GroupTypeDataDefinition extends ToscaDataDefinition implements Serializable {
 

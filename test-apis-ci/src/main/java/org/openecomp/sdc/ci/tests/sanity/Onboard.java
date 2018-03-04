@@ -21,6 +21,9 @@
 package org.openecomp.sdc.ci.tests.sanity;
 
 
+
+
+
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -49,6 +52,10 @@ import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
 
 import fj.data.Either;
+
+
+
+
 
 
 public class Onboard extends ComponentBaseTest {
@@ -86,7 +93,7 @@ public class Onboard extends ComponentBaseTest {
 		System.out.println("print - >" + makeDistributionValue);
 		runOnboardToDistributionFlow(filePath, vnfFile);
 	}
-
+	
 	@Test
 	public void passTest() {
 		System.out.println("print - >" + "test Passed");

@@ -41,54 +41,53 @@ import org.slf4j.LoggerFactory;
 
 public class BEAppContextListener extends AppContextListener implements ServletContextListener {
 
-	private static final String MANIFEST_FILE_NAME = "/META-INF/MANIFEST.MF";
-	private static Logger log = LoggerFactory.getLogger(BEAppContextListener.class.getName());
-	
-	public void contextInitialized(ServletContextEvent context) {
+    private static final String MANIFEST_FILE_NAME = "/META-INF/MANIFEST.MF";
+    private static final Logger log = LoggerFactory.getLogger(BEAppContextListener.class);
 
-		super.contextInitialized(context);
+    public void contextInitialized(ServletContextEvent context) {
 
-		ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());
-		log.debug("loading configuration from configDir: {} appName: {}", ExternalConfiguration.getConfigDir(), ExternalConfiguration.getAppName());
+        super.contextInitialized(context);
 
-		context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
+        ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());
+        log.debug("loading configuration from configDir: {} appName: {}", ExternalConfiguration.getConfigDir(), ExternalConfiguration.getAppName());
 
-		WebAppContextWrapper webAppContextWrapper = new WebAppContextWrapper();
-		context.getServletContext().setAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR, webAppContextWrapper);
+        context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
 
-		DownloadArtifactLogic downloadArtifactLogic = new DownloadArtifactLogic();
-		context.getServletContext().setAttribute(Constants.DOWNLOAD_ARTIFACT_LOGIC_ATTR, downloadArtifactLogic);
+        WebAppContextWrapper webAppContextWrapper = new WebAppContextWrapper();
+        context.getServletContext().setAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR, webAppContextWrapper);
 
-		context.getServletContext().setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
+        DownloadArtifactLogic downloadArtifactLogic = new DownloadArtifactLogic();
+        context.getServletContext().setAttribute(Constants.DOWNLOAD_ARTIFACT_LOGIC_ATTR, downloadArtifactLogic);
 
-		// Monitoring service
-		BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
-		bms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
+        context.getServletContext().setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
 
-		log.debug("After executing {}", this.getClass());
+        // Monitoring service
+        BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
+        bms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
 
-	}
-	
-	private String getVersionFromManifest(ServletContextEvent context) {
-		ServletContext servletContext = context.getServletContext();
-		InputStream inputStream = servletContext.getResourceAsStream(MANIFEST_FILE_NAME);
+        log.debug("After executing {}", this.getClass());
 
-		String version = null;
-		try {
-			Manifest mf = new Manifest(inputStream);
-			Attributes atts = mf.getMainAttributes();
-			version = atts.getValue(Constants.ASDC_RELEASE_VERSION_ATTR);
-			if (version == null || version.isEmpty()) {
-				log.warn("failed to read ASDC version from MANIFEST.");
-			} else {
-				log.info("ASDC version from MANIFEST is {}", version);
-			}
+    }
 
-		} catch (IOException e) {
-			log.warn("failed to read ASDC version from MANIFEST", e.getMessage());
-		}
+    private String getVersionFromManifest(ServletContextEvent context) {
+        ServletContext servletContext = context.getServletContext();
+        InputStream inputStream = servletContext.getResourceAsStream(MANIFEST_FILE_NAME);
 
-		return version;
-	}
+        String version = null;
+        try {
+            Manifest mf = new Manifest(inputStream);
+            Attributes atts = mf.getMainAttributes();
+            version = atts.getValue(Constants.ASDC_RELEASE_VERSION_ATTR);
+            if (version == null || version.isEmpty()) {
+                log.warn("failed to read ASDC version from MANIFEST.");
+            } else {
+                log.info("ASDC version from MANIFEST is {}", version);
+            }
+
+        } catch (IOException e) {
+            log.warn("failed to read ASDC version from MANIFEST", e);
+        }
+        return version;
+    }
 
 }

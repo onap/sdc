@@ -30,11 +30,13 @@ import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribDownloadEventTabl
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribEngineEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribNotifEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribStatusEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.EcompOperationalEnvironmentEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.ExternalApiEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetCatHierEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUebClusterEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUsersListEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.OperationalEnvironmentsTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.ResAdminEventTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.SdcSchemaFilesTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAccessEventTableDescription;
@@ -42,25 +44,28 @@ import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAdminEventTableDescr
 
 public enum Table {
 
-	ARTIFACT(new ArtifactTableDescription()), 
-	USER_ADMIN_EVENT(new UserAdminEventTableDescription()), 
-	USER_ACCESS_EVENT(new UserAccessEventTableDescription()), 
-	RESOURCE_ADMIN_EVENT(new ResAdminEventTableDescription()), 
-	DISTRIBUTION_DOWNLOAD_EVENT(new DistribDownloadEventTableDesc()), 
-	DISTRIBUTION_ENGINE_EVENT(new DistribEngineEventTableDesc()), 
-	DISTRIBUTION_NOTIFICATION_EVENT(new DistribNotifEventTableDesc()),
-	DISTRIBUTION_STATUS_EVENT(new DistribStatusEventTableDesc()), 
-	DISTRIBUTION_DEPLOY_EVENT(new DistribDeployEventTableDesc()), 
-	DISTRIBUTION_GET_UEB_CLUSTER_EVENT(new GetUebClusterEventTableDesc()), 
-	AUTH_EVENT(new AuthEventTableDescription()), 
-	CONSUMER_EVENT(new ConsumerEventTableDefinition()), 
-	CATEGORY_EVENT(new CategoryEventTableDescription()), 
-	GET_USERS_LIST_EVENT(new GetUsersListEventTableDesc()), 
-	GET_CATEGORY_HIERARCHY_EVENT(new GetCatHierEventTableDesc()), 
-	EXTERNAL_API_EVENT(new ExternalApiEventTableDesc()), 
-	COMPONENT_CACHE(new ComponentCacheTableDescription()),
-	SDC_SCHEMA_FILES(new SdcSchemaFilesTableDescription()),
-	SDC_REPO(new MigrationTasksTableDescription());
+    ARTIFACT(new ArtifactTableDescription()),
+    USER_ADMIN_EVENT(new UserAdminEventTableDescription()),
+    USER_ACCESS_EVENT(new UserAccessEventTableDescription()),
+    RESOURCE_ADMIN_EVENT(new ResAdminEventTableDescription()),
+    DISTRIBUTION_DOWNLOAD_EVENT(new DistribDownloadEventTableDesc()),
+    DISTRIBUTION_ENGINE_EVENT(new DistribEngineEventTableDesc()),
+    DISTRIBUTION_NOTIFICATION_EVENT(new DistribNotifEventTableDesc()),
+    DISTRIBUTION_STATUS_EVENT(new DistribStatusEventTableDesc()),
+    DISTRIBUTION_DEPLOY_EVENT(new DistribDeployEventTableDesc()),
+    DISTRIBUTION_GET_UEB_CLUSTER_EVENT(new GetUebClusterEventTableDesc()),
+    AUTH_EVENT(new AuthEventTableDescription()),
+    CONSUMER_EVENT(new ConsumerEventTableDefinition()),
+    CATEGORY_EVENT(new CategoryEventTableDescription()),
+    GET_USERS_LIST_EVENT(new GetUsersListEventTableDesc()),
+    GET_CATEGORY_HIERARCHY_EVENT(new GetCatHierEventTableDesc()),
+    EXTERNAL_API_EVENT(new ExternalApiEventTableDesc()),
+    COMPONENT_CACHE(new ComponentCacheTableDescription()),
+    SDC_SCHEMA_FILES(new SdcSchemaFilesTableDescription()),
+    SDC_REPO(new MigrationTasksTableDescription()),
+    SDC_OPERATIONAL_ENVIRONMENT(new OperationalEnvironmentsTableDescription()),
+    AUDIT_ECOMP_OPERATIONAL_ENVIRONMENT(new EcompOperationalEnvironmentEventTableDesc());
+
 	ITableDescription tableDescription;
 
 	Table(ITableDescription tableDescription) {

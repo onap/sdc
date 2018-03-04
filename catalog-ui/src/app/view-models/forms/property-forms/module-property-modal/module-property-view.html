@@ -12,7 +12,8 @@
                name="value"
                data-ng-pattern="getValidationPattern(property.type)"
                data-ng-model-options="{ debounce: 200 }"
-               data-ng-change="onValueChange()"
+               data-ng-blur="onValueChange()"
+               data-ng-focus="clearValidationError()"
                />
         <select class="i-sdc-form-select"
                 data-tests-id="booleantype"
