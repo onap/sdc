@@ -70,7 +70,6 @@ public class ErrorInfo {
 			this.errorInfoType = ErrorInfoType.POLICY_EXCEPTION;
 		} else {
 			// unexpected - should it fail the startup?
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.ErrorConfigFileFormat, "Error Info");
 			BeEcompErrorManager.getInstance().logErrorConfigFileFormat("Error Info",
 					"Could not set error info type for message id " + messageId);
 			log.debug("Error: unexpected error message ID {}, should start with {} or {}", messageId, SVC_PREFIX,

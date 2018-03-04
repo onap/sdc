@@ -67,7 +67,7 @@ public class CatalogRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.GET_ALL_CATEGORIES_FE, config.getCatalogFeHost(), config.getCatalogFePort(),
 				BaseRestUtils.RESOURCE_COMPONENT_TYPE);
 
-		Map<String, String> additionalHeaders = new HashMap<String, String>();
+		Map<String, String> additionalHeaders = new HashMap<>();
 		additionalHeaders.put(HttpHeaderEnum.X_ECOMP_REQUEST_ID_HEADER.getValue(), uuid);
 
 		return sendGet(url, UserRoleEnum.DESIGNER.getUserId(), additionalHeaders);

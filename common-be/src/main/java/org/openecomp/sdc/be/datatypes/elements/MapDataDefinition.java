@@ -20,14 +20,16 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public  class MapDataDefinition <T extends ToscaDataDefinition>  extends ToscaDataDefinition  {
 	

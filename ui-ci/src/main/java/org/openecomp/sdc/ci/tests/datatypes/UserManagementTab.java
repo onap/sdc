@@ -61,6 +61,7 @@ public class UserManagementTab {
 	
 	public void clickCreateButton(){
 		ExtentTestActions.log(Status.INFO, "Clicking on 'Create' button.");
+		GeneralUIUtils.ultimateWait();
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.UserManagementEnum.CREATE_BUTTON.getValue());
 	}
 	
@@ -99,7 +100,9 @@ public class UserManagementTab {
 	
 	public void deleteUser(int index){
 		ExtentTestActions.log(Status.INFO, "Deleting the user in row " + (index + 1));
+		GeneralUIUtils.ultimateWait();
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.UserManagementEnum.DELETE_USER.getValue() + index);
+		GeneralUIUtils.ultimateWait();
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
 	}
 	

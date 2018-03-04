@@ -44,23 +44,18 @@ public class ProductLogic {
 	public boolean deleteAllProducts(String titanFile, String beHost, String bePort, String adminUser) {
 		log.debug("retrieving all products from graph");
 		RestUtils restUtils = null;
-		try {
-			List<String> productList = getAllProducts(titanFile);
-			restUtils = new RestUtils();
-			if (productList != null) {
-				for (String productUid : productList) {
-					Integer status = restUtils.deleteProduct(productUid, beHost, bePort, adminUser);
-				}
-				return true;
-			} else {
-				log.error("failed to get products from graph");
-				return false;
-			}
-		} finally {
-			if (restUtils != null) {
-				restUtils.closeClient();
-			}
-		}
+        List<String> productList = getAllProducts(titanFile);
+        restUtils = new RestUtils();
+        if (productList != null) {
+            for (String productUid : productList) {
+                restUtils.deleteProduct(productUid, beHost, bePort, adminUser);
+            }
+            return true;
+        }
+        else {
+            log.error("failed to get products from graph");
+            return false;
+        }
 	}
 
 	private List<String> getAllProducts(String titanFile) {

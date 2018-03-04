@@ -18,8 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {CommonNodeBase, CompositionCiLinkBase, RelationshipModel, Relationship, CompositionCiNodeBase, NodesFactory, LinksFactory} from "app/models";
 import {GraphUIObjects} from "app/utils";
+import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
+import {Requirement, Capability} from "app/models";
 /**
  * Created by obarda on 12/21/2016.
  */
@@ -56,11 +59,11 @@ export class CommonGraphUtils {
             classes: compositionGraphNode.classes
         });
 
-            if(!node.data().isUcpe) { //ucpe should not have tooltip
-                this.initNodeTooltip(node);
-            }
-            return node;
-        };
+        if(!node.data().isUcpe) { //ucpe should not have tooltip
+            this.initNodeTooltip(node);
+        }
+        return node;
+    };
 
     /**
      * The function will create a component instance node by the componentInstance position.
@@ -135,33 +138,30 @@ export class CommonGraphUtils {
     };
 
     /**
-     *
+     * Returns relation source and target nodes.
      * @param nodes - all nodes in graph in order to find the edge connecting the two nodes
      * @param fromNodeId
      * @param toNodeId
-     * @returns {boolean} true/false if the edge is certified (from node and to node are certified)
+     * @returns [source, target] array of source node and target node.
      */
-    public isRelationCertified(nodes:Cy.CollectionNodes, fromNodeId:string, toNodeId:string):boolean {
-        let resourceTemp = _.filter(nodes, function (node:Cy.CollectionFirst) {
-            return node.data().id === fromNodeId || node.data().id === toNodeId;
-        });
-        let certified:boolean = true;
-
-        _.forEach(resourceTemp, (item) => {
-            certified = certified && item.data().certified;
-        });
-
-        return certified;
+    public getRelationNodes(nodes:Cy.CollectionNodes, fromNodeId:string, toNodeId:string) {
+        return [
+            _.find(nodes, (node:Cy.CollectionFirst) => node.data().id === fromNodeId),
+            _.find(nodes, (node:Cy.CollectionFirst) => node.data().id === toNodeId)
+        ];
     }
 
     /**
      * Add link to graph - only draw the link
      * @param cy
      * @param link
+     * @param getRelationRequirementCapability
      */
-    public insertLinkToGraph = (cy:Cy.Instance, link:CompositionCiLinkBase) => {
-
-        if (!this.isRelationCertified(cy.nodes(), link.source, link.target)) {
+    public insertLinkToGraph = (cy:Cy.Instance, link:CompositionCiLinkBase, getRelationRequirementCapability:Function) => {
+        const relationNodes = this.getRelationNodes(cy.nodes(), link.source, link.target);
+        const sourceNode:CompositionCiNodeBase = relationNodes[0] && relationNodes[0].data();
+        const targetNode:CompositionCiNodeBase = relationNodes[1] && relationNodes[1].data();
+        if ((sourceNode && !sourceNode.certified) || (targetNode && !targetNode.certified)) {
             link.classes = 'not-certified-link';
         }
         let linkElement = cy.add({
@@ -169,32 +169,85 @@ export class CommonGraphUtils {
             data: link,
             classes: link.classes
         });
-        this.initLinkTooltip(linkElement, link);
+        const getLinkRequirementCapability = () =>
+            getRelationRequirementCapability(link.relation.relationships[0], sourceNode.componentInstance, targetNode.componentInstance);
+        this.initLinkTooltip(linkElement, link.relation.relationships[0], getLinkRequirementCapability);
     };
 
     /**
+     * Add service path link to graph - only draw the link
+     * @param cy
+     * @param link
+     */
+    public insertServicePathLinkToGraph = (cy:Cy.Instance, link:CompositionCiServicePathLink) => {
+        let linkElement = cy.add({
+            group: 'edges',
+            data: link,
+            classes: link.classes
+        });
+        this.initServicePathTooltip(linkElement, link);
+    };
+
+    /**
+     * Returns function for the link tooltip content
+     * @param {Relationship} linkRelation
+     * @param {Requirement} requirement
+     * @param {Capability} capability
+     * @returns {() => string}
+     * @private
+     */
+    private _getLinkTooltipContent(linkRelation:Relationship, requirement?:Requirement, capability?:Capability):string {
+        return '<div class="line">' +
+            '<span class="req-cap-label">R: </span>' +
+            '<span>' + (requirement ? requirement.getTitle() : linkRelation.relation.requirement) + '</span>' +
+            '</div>' +
+            '<div class="line">' +
+            '<div class="sprite-new link-tooltip-arrow"></div>' +
+            '<span class="req-cap-label">C: </span>' +
+            '<span>' + (capability ? capability.getTitle() : linkRelation.relation.capability) + '</span>' +
+            '</div>';
+    }
+
+    /**
      * This function will init qtip tooltip on the link
-     * @params linkElement - the link we want the tooltip to apply on,
+     * @param linkElement - the link we want the tooltip to apply on,
+     * @param link
+     * @param getLinkRequirementCapability
      * link - the link obj
      */
-    public initLinkTooltip(linkElement:Cy.CollectionElements, link:CompositionCiLinkBase) {
+    public initLinkTooltip(linkElement:Cy.CollectionElements, link:Relationship, getLinkRequirementCapability:Function) {
+        const content = () => this._getLinkTooltipContent(link);  // base tooltip content without owner names
+        const render = (event, api) => {
+            // on render (called once at first show), get the link requirement and capability and change to full tooltip content (with owner names)
+            getLinkRequirementCapability().then((linkReqCap) => {
+                const fullContent = () => this._getLinkTooltipContent(link, linkReqCap.requirement, linkReqCap.capability);
+                api.set('content.text', fullContent);
+            });
+        };
+        linkElement.qtip(this.prepareInitTooltipData({content, events: {render}}));
+    };
 
-        let opts = {
-            content: function () {
-                return '<div class="line">' +
-                            '<span class="req-cap-label">R: </span>' +
-                            '<span>'+ link.relation.relationships[0].relation.requirement + '</span>' +
-                        '</div>' +
-                        '<div class="line">' +
-                            '<div class="sprite-new link-tooltip-arrow"></div>' +
-                            '<span class="req-cap-label">C: </span>' +
-                            '<span>' + link.relation.relationships[0].relation.capability + '</span>' +
-                        '</div>';
-            },
+    /**
+     *
+     * @param linkElement
+     * @param link
+     */
+    public initServicePathTooltip(linkElement:Cy.CollectionElements, link:CompositionCiServicePathLink) {
+        let content = function () {
+            return '<div class="line">' +
+                '<div>'+link.pathName+'</div>' +
+                '</div>';
+        };
+        linkElement.qtip(this.prepareInitTooltipData({content}));
+    };
+
+    private prepareInitTooltipData(options?:Object) {
+        return _.merge({
             position: {
                 my: 'top center',
                 at: 'bottom center',
-                adjust: {x:0, y:0}
+                adjust: {x:0, y:0},
+                effect: false
             },
             style: {
                 classes: 'qtip-dark qtip-rounded qtip-custom link-qtip',
@@ -208,24 +261,24 @@ export class CommonGraphUtils {
                 delay: 1000
             },
             hide: {event: 'mouseout mousedown'},
-            includeLabels: true
-        };
-
-        linkElement.qtip(opts);
-    };
+            includeLabels: true,
+            events: {}
+        }, options);
+    }
 
     /**
      *  go over the relations and draw links on the graph
      * @param cy
      * @param instancesRelations
+     * @param getRelationRequirementCapability - function to get requirement and capability of a relation
      */
-    public initGraphLinks(cy:Cy.Instance, instancesRelations:Array<RelationshipModel>) {
+    public initGraphLinks(cy:Cy.Instance, instancesRelations:Array<RelationshipModel>, getRelationRequirementCapability:Function) {
 
         if (instancesRelations) {
             _.forEach(instancesRelations, (relationshipModel:RelationshipModel) => {
                 _.forEach(relationshipModel.relationships, (relationship:Relationship) => {
                     let linkToCreate = this.LinksFactory.createGraphLink(cy, relationshipModel, relationship);
-                    this.insertLinkToGraph(cy, linkToCreate);
+                    this.insertLinkToGraph(cy, linkToCreate, getRelationRequirementCapability);
                 });
             });
         }
@@ -297,8 +350,8 @@ export class CommonGraphUtils {
 
     public getCytoscapeNodePosition = (cy:Cy.Instance, event:IDragDropEvent):Cy.Position => {
         let targetOffset = $(event.target).offset();
-        let x = event.pageX - targetOffset.left;
-        let y = event.pageY - targetOffset.top;
+        let x = (event.pageX - targetOffset.left) / cy.zoom();
+        let y = (event.pageY - targetOffset.top) / cy.zoom();
 
         return this.HTMLCoordsToCytoscapeCoords(cy.extent(), {
             x: x,
@@ -316,14 +369,14 @@ export class CommonGraphUtils {
         return nodePosition;
     }
 
-        /**
-         * Generic function that can be used for any html elements overlaid on canvas
-         * Returns the html position of a node on canvas, including left palette and header offsets. Option to pass in additional offset to add to return position.
-         * @param node
-         * @param additionalOffset
-         * @returns {Cy.Position}
-         
-        public getNodePositionWithOffset = (node:Cy.CollectionFirstNode, additionalOffset?:Cy.Position): Cy.Position => {
+    /**
+     * Generic function that can be used for any html elements overlaid on canvas
+     * Returns the html position of a node on canvas, including left palette and header offsets. Option to pass in additional offset to add to return position.
+     * @param node
+     * @param additionalOffset
+     * @returns {Cy.Position}
+
+     public getNodePositionWithOffset = (node:Cy.CollectionFirstNode, additionalOffset?:Cy.Position): Cy.Position => {
             if(!additionalOffset) additionalOffset = {x: 0, y:0};
 
             let nodePosition = node.renderedPosition();
@@ -334,13 +387,13 @@ export class CommonGraphUtils {
             return posWithOffset;
         };*/
 
-        /**
-         *  return true/false if first node contains in second - this used in order to verify is node is entirely inside ucpe
-         * @param firstBox
-         * @param secondBox
-         * @returns {boolean}
-         */
-        public isFirstBoxContainsInSecondBox(firstBox:Cy.BoundingBox, secondBox:Cy.BoundingBox) {
+    /**
+     *  return true/false if first node contains in second - this used in order to verify is node is entirely inside ucpe
+     * @param firstBox
+     * @param secondBox
+     * @returns {boolean}
+     */
+    public isFirstBoxContainsInSecondBox(firstBox:Cy.BoundingBox, secondBox:Cy.BoundingBox) {
 
         return firstBox.x1 > secondBox.x1 && firstBox.x2 < secondBox.x2 && firstBox.y1 > secondBox.y1 && firstBox.y2 < secondBox.y2;
 
@@ -385,50 +438,50 @@ export class CommonGraphUtils {
      */
     public nodeLocationsCompatible(cy:Cy.Instance, node1:Cy.CollectionFirstNode, node2:Cy.CollectionFirstNode) {
 
-            let ucpe = cy.nodes('[?isUcpe]');
-            if(!ucpe.length){ return true; }
-            if(node1.data().isUcpePart || node2.data().isUcpePart) { return true; }
+        let ucpe = cy.nodes('[?isUcpe]');
+        if(!ucpe.length){ return true; }
+        if(node1.data().isUcpePart || node2.data().isUcpePart) { return true; }
 
         return (this.isFirstBoxContainsInSecondBox(node1.boundingbox(), ucpe.boundingbox()) == this.isFirstBoxContainsInSecondBox(node2.boundingbox(), ucpe.boundingbox()));
 
     }
 
-        /**
-         * This function will init qtip tooltip on the node
-         * @param node - the node we want the tooltip to apply on
-         */
-        public initNodeTooltip(node:Cy.CollectionNodes) {
-    
-            let opts = {
-                content: function () {
-                    return this.data('name');
-                },
-                position: {
-                    my: 'top center',
-                    at: 'bottom center',
-                    adjust: {x:0, y:-5}
-                },
-                style: {
-                    classes: 'qtip-dark qtip-rounded qtip-custom',
-                    tip: {
-                        width: 16,
-                        height: 8
-                    }
-                },
-                show: {
-                    event: 'mouseover',
-                    delay: 1000
-                },
-                hide: {event: 'mouseout mousedown'},
-                includeLabels: true
-            };
-    
-            if (node.data().isUcpePart){ //fix tooltip positioning for UCPE-cps
-                opts.position.adjust = {x:0, y:20};
-            }
-    
-            node.qtip(opts);
+    /**
+     * This function will init qtip tooltip on the node
+     * @param node - the node we want the tooltip to apply on
+     */
+    public initNodeTooltip(node:Cy.CollectionNodes) {
+
+        let opts = {
+            content: function () {
+                return this.data('name');
+            },
+            position: {
+                my: 'top center',
+                at: 'bottom center',
+                adjust: {x:0, y:-5}
+            },
+            style: {
+                classes: 'qtip-dark qtip-rounded qtip-custom',
+                tip: {
+                    width: 16,
+                    height: 8
+                }
+            },
+            show: {
+                event: 'mouseover',
+                delay: 1000
+            },
+            hide: {event: 'mouseout mousedown'},
+            includeLabels: true
         };
+
+        if (node.data().isUcpePart){ //fix tooltip positioning for UCPE-cps
+            opts.position.adjust = {x:0, y:20};
+        }
+
+        node.qtip(opts);
+    };
 }
 
 CommonGraphUtils.$inject = ['NodesFactory', 'LinksFactory'];

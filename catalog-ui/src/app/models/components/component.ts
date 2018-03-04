@@ -20,6 +20,7 @@
 
 'use strict';
 
+import * as _ from "lodash";
 import {AsdcComment, ArtifactModel, ArtifactGroupModel, IFileDownload, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance,
     InputModel, DisplayModule, Module, IValidate, RelationshipModel, IMainCategory, RequirementsGroup, CapabilitiesGroup, AdditionalInformationModel,
     Resource, IAppMenu, Service} from "../../models";
@@ -31,6 +32,9 @@ import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
 import {Capability} from "../capability";
 import {Requirement} from "../requirement";
+import {Relationship} from "../graph/relationship";
+import { PolicyInstance } from "app/models/graph/zones/policy-instance";
+
 
 // import {}
 export interface IComponent {
@@ -57,7 +61,7 @@ export interface IComponent {
     //Property API
     addOrUpdateProperty(property:PropertyModel):ng.IPromise<PropertyModel>;
     deleteProperty(propertyId:string):ng.IPromise<PropertyModel>;
-    updateInstanceProperty(property:PropertyModel):ng.IPromise<PropertyModel>;
+    updateInstanceProperties(componentInstanceId:string, properties:PropertyModel[]):ng.IPromise<PropertyModel[]>;
 
     //Attribute API
     deleteAttribute(attributeId:string):ng.IPromise<AttributeModel>;
@@ -73,6 +77,7 @@ export interface IComponent {
     addOrUpdateInstanceArtifact(artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
     deleteInstanceArtifact(artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel>;
     uploadInstanceEnvFile(artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
+    checkComponentInstanceVersionChange(componentUid:string):ng.IPromise<any>;
     changeComponentInstanceVersion(componentUid:string):ng.IPromise<Component>;
     updateComponentInstance(componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
     updateMultipleComponentInstances(instances:Array<ComponentInstance>):ng.IPromise<Array<ComponentInstance>>;
@@ -131,6 +136,8 @@ export abstract class Component implements IComponent {
     public toscaArtifacts:ArtifactGroupModel;
     public distributionStatus:string;
     public categories:Array<IMainCategory>;
+    public categoryNormalizedName: string;
+    public subCategoryNormalizedName: string;
     public componentInstancesProperties:PropertiesGroup;
     public componentInstancesAttributes:AttributesGroup;
     public componentInstancesRelations:Array<RelationshipModel>;
@@ -149,6 +156,7 @@ export abstract class Component implements IComponent {
     public normalizedName:string;
     public systemName:string;
     public projectCode:string;
+    public policies:Array<PolicyInstance>;
     public groups:Array<Module>;
     //custom properties
     public componentService:IComponentService;
@@ -172,6 +180,8 @@ export abstract class Component implements IComponent {
             this.toscaArtifacts = new ArtifactGroupModel(component.toscaArtifacts);
             this.contactId = component.contactId;
             this.categories = component.categories;
+            this.categoryNormalizedName = component.categoryNormalizedName;
+            this.subCategoryNormalizedName = component.subCategoryNormalizedName;
             this.creatorUserId = component.creatorUserId;
             this.creationDate = component.creationDate;
             this.creatorFullName = component.creatorFullName;
@@ -423,23 +433,25 @@ export abstract class Component implements IComponent {
         return deferred.promise;
     };
 
-    public updateInstanceProperty = (property:PropertyModel):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer();
-        let onSuccess = (newProperty:PropertyModel):void => {
-            // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
-            let existProperty:PropertyModel = <PropertyModel>_.find(this.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
-                uniqueId: newProperty.uniqueId,
-                path: newProperty.path
+    public updateInstanceProperties = (componentInstanceId:string, properties:PropertyModel[]):ng.IPromise<PropertyModel[]> => {
+        let deferred = this.$q.defer<PropertyModel[]>();
+        let onSuccess = (newProperties:PropertyModel[]):void => {
+            newProperties.forEach((newProperty) => {
+                // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
+                let existProperty: PropertyModel = <PropertyModel>_.find(this.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
+                    uniqueId: newProperty.uniqueId,
+                    path: newProperty.path
+                });
+                let index = this.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
+                this.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
             });
-            let index = this.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
-            this.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
-            deferred.resolve(newProperty);
+            deferred.resolve(newProperties);
         };
         let onFailed = (error:any):void => {
             console.log('Failed to update property value');
             deferred.reject(error);
         };
-        this.componentService.updateInstanceProperty(this.uniqueId, property).then(onSuccess, onFailed);
+        this.componentService.updateInstanceProperties(this.uniqueId, componentInstanceId, properties).then(onSuccess, onFailed);
         return deferred.promise;
     };
 
@@ -532,6 +544,10 @@ export abstract class Component implements IComponent {
         };
         this.componentService.changeResourceInstanceVersion(this.uniqueId, this.selectedInstance.uniqueId, componentUid).then(onSuccess, onFailed);
         return deferred.promise;
+    };
+
+    public checkComponentInstanceVersionChange = (componentUid:string):ng.IPromise<any> => {
+        return this.componentService.checkResourceInstanceVersionChange(this.uniqueId, this.selectedInstance.uniqueId, componentUid);
     };
 
     public createComponentInstance = (componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
@@ -712,6 +728,33 @@ export abstract class Component implements IComponent {
         this.componentService.deleteRelation(this.uniqueId, relation).then(onSuccess, onFailed);
         return deferred.promise;
     };
+
+    public getRelationRequirementCapability(relationship: Relationship, sourceNode:ComponentInstance, targetNode:ComponentInstance): Promise<{requirement:Requirement, capability:Capability}> {
+        // try find the requirement and capability in the source and target component instances:
+        let capability:Capability = targetNode.findCapability(undefined,
+            relationship.relation.capabilityUid,
+            relationship.relation.capabilityOwnerId,
+            relationship.relation.capability);
+        let requirement:Requirement = sourceNode.findRequirement(undefined,
+            relationship.relation.requirementUid,
+            relationship.relation.requirementOwnerId,
+            relationship.relation.requirement);
+
+        return new Promise<{requirement:Requirement, capability:Capability}>((resolve, reject) => {
+            if (capability && requirement) {
+                resolve({capability, requirement});
+            }
+            else {
+                // if requirement and/or capability is missing, then fetch the full relation with its requirement and capability:
+                this.fetchRelation(relationship.relation.id).then((fetchedRelation) => {
+                    resolve({
+                        capability: capability || fetchedRelation.relationships[0].capability,
+                        requirement: requirement || fetchedRelation.relationships[0].requirement
+                    });
+                }, reject);
+            }
+        });
+    }
 
     public updateRequirementsCapabilities = ():ng.IPromise<any> => {
         let deferred = this.$q.defer();

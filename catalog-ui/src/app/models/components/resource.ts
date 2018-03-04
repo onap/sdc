@@ -22,6 +22,7 @@
  * Created by obarda on 2/3/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {InstancesInputsOrPropertiesMapData} from "../instance-inputs-properties-map";
 import {PropertyModel} from "../properties";
 import {DisplayModule} from "../modules/base-module";
@@ -91,7 +92,7 @@ export class Resource extends Component {
     };
 
     public isComplex = ():boolean => {
-        return this.resourceType === ResourceType.VF || this.resourceType === ResourceType.PNF || this.resourceType === ResourceType.CVFC;
+        return this.resourceType === ResourceType.VF || this.resourceType === ResourceType.PNF || this.resourceType === ResourceType.CVFC || this.resourceType === ResourceType.CR;
     };
 
     public isVl = ():boolean => {

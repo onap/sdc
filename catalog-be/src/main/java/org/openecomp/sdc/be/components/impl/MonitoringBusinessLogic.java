@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.MonitoringDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -29,43 +30,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
-
 @Component("monitoringBusinessLogic")
 public class MonitoringBusinessLogic {
 
-	private static Logger log = LoggerFactory.getLogger(MonitoringBusinessLogic.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(MonitoringBusinessLogic.class);
 
-	@javax.annotation.Resource
-	private MonitoringDao monitoringDao;
+    @javax.annotation.Resource
+    private MonitoringDao monitoringDao;
 
-	@javax.annotation.Resource
-	private ComponentsUtils componentsUtils;
+    @javax.annotation.Resource
+    private ComponentsUtils componentsUtils;
 
-	public Either<Boolean, ResponseFormat> logMonitoringEvent(MonitoringEvent monitoringEvent) {
-		if (monitoringDao == null) {
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-		}
-		ActionStatus status = monitoringDao.addRecord(monitoringEvent);
-		if (!status.equals(ActionStatus.OK)) {
-			log.warn("Failed to persist monitoring event: {}", status.name());
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-		}
-		return Either.left(true);
-	}
+    public Either<Boolean, ResponseFormat> logMonitoringEvent(MonitoringEvent monitoringEvent) {
+        if (monitoringDao == null) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        ActionStatus status = monitoringDao.addRecord(monitoringEvent);
+        if (!status.equals(ActionStatus.OK)) {
+            log.warn("Failed to persist monitoring event: {}", status);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        return Either.left(true);
+    }
 
-	public String getEsHost() {
+    public String getEsHost() {
 
-		String res = monitoringDao.getEsHost();
-		res = res.replaceAll("[\\[\\]]", "");
-		res = res.split(",")[0];
-		res = res.replaceAll("[']", "");
-		res = res.split(":")[0];
-		return res;
-	}
+        String res = monitoringDao.getEsHost();
+        res = res.replaceAll("[\\[\\]]", "");
+        res = res.split(",")[0];
+        res = res.replaceAll("[']", "");
+        res = res.split(":")[0];
+        return res;
+    }
 
-	public String getEsPort() {
-		return monitoringDao.getEsPort();
-	}
+    public String getEsPort() {
+        return monitoringDao.getEsPort();
+    }
 
 }

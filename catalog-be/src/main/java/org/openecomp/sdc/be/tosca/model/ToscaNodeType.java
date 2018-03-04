@@ -24,64 +24,64 @@ import java.util.List;
 import java.util.Map;
 
 public class ToscaNodeType {
-	public ToscaNodeType() {
-	}
+    public ToscaNodeType() {
+    }
 
-	private ToscaMetadata metadata;
-	private String derived_from;
-	private String description;
+    private ToscaMetadata metadata;
+    private String derived_from;
+    private String description;
 
-	private Map<String, ToscaProperty> properties;
-	private Map<String, ToscaCapability> capabilities;
+    private Map<String, ToscaProperty> properties;
+    private Map<String, ToscaCapability> capabilities;
 
-	private List<Map<String, ToscaRequirement>> requirements;
+    private List<Map<String, ToscaRequirement>> requirements;
 
-	public Map<String, ToscaProperty> getProperties() {
-		return properties;
-	}
+    public Map<String, ToscaProperty> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, ToscaProperty> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, ToscaProperty> properties) {
+        this.properties = properties;
+    }
 
-	public Map<String, ToscaCapability> getCapabilities() {
-		return capabilities;
-	}
+    public Map<String, ToscaCapability> getCapabilities() {
+        return capabilities;
+    }
 
-	public void setCapabilities(Map<String, ToscaCapability> capabilities) {
-		this.capabilities = capabilities;
-	}
+    public void setCapabilities(Map<String, ToscaCapability> capabilities) {
+        this.capabilities = capabilities;
+    }
 
-	public List<Map<String, ToscaRequirement>> getRequirements() {
-		return requirements;
-	}
+    public List<Map<String, ToscaRequirement>> getRequirements() {
+        return requirements;
+    }
 
-	public void setRequirements(List<Map<String, ToscaRequirement>> requirements) {
-		this.requirements = requirements;
-	}
+    public void setRequirements(List<Map<String, ToscaRequirement>> requirements) {
+        this.requirements = requirements;
+    }
 
-	public String getDerived_from() {
-		return derived_from;
-	}
+    public String getDerived_from() {
+        return derived_from;
+    }
 
-	public void setDerived_from(String derived_from) {
-		this.derived_from = derived_from;
-	}
+    public void setDerived_from(String derived_from) {
+        this.derived_from = derived_from;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public ToscaMetadata getMetadata() {
-		return metadata;
-	}
+    public ToscaMetadata getMetadata() {
+        return metadata;
+    }
 
-	public void setMetadata(ToscaMetadata metadata) {
-		this.metadata = metadata;
-	}
+    public void setMetadata(ToscaMetadata metadata) {
+        this.metadata = metadata;
+    }
 
 }

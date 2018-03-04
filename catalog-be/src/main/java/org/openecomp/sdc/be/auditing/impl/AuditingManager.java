@@ -20,12 +20,7 @@
 
 package org.openecomp.sdc.be.auditing.impl;
 
-import java.util.EnumMap;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
-import org.openecomp.sdc.be.auditing.api.IAuditingManager;
+import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -39,99 +34,134 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("auditingManager")
-public class AuditingManager implements IAuditingManager {
+import java.util.Map;
+import java.util.Map.Entry;
 
-	private static Logger log = LoggerFactory.getLogger(AuditingManager.class.getName());
+@Component
+public class AuditingManager {
 
-	@Resource
-	private AuditingDao auditingDao;
-	@Autowired
-	private AuditCassandraDao cassandraDao;
+    private static final Logger log = LoggerFactory.getLogger(AuditingManager.class);
+    private final AuditingDao auditingDao;
+    private final AuditCassandraDao cassandraDao;
 
-	@Override
-	public void auditEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
-		try {
-			boolean disableAudit = ConfigurationManager.getConfigurationManager().getConfiguration().isDisableAudit();
-			if (disableAudit) {
-				return;
-			}
-			// Adding UUID from thread local
-			auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, ThreadLocalsHolder.getUuid());
+    public AuditingManager(AuditingDao auditingDao, AuditCassandraDao cassandraDao) {
+        this.auditingDao = auditingDao;
+        this.cassandraDao = cassandraDao;
+    }
 
-			Object status = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
-			auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, String.valueOf(status));
+    // TODO remove after completing refactoring
+    public String auditEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
+        String msg = "";
+        try {
+            boolean disableAudit = ConfigurationManager.getConfigurationManager().getConfiguration().isDisableAudit();
+            if (disableAudit) {
+                return null;
+            }
+            // Adding UUID from thread local
+            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, ThreadLocalsHolder.getUuid());
 
-			// normalizing empty string values - US471661
-			normalizeEmptyAuditStringValues(auditingFields);
+            Object status = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
+            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, String.valueOf(status));
 
-			// Format modifier
-			formatModifier(auditingFields);
+            // normalizing empty string values - US471661
+            normalizeEmptyAuditStringValues(auditingFields);
 
-			// Format user
-			formatUser(auditingFields);
+            // Format modifier
+            formatModifier(auditingFields);
 
-			// Logging the event
-			AuditingLogFormatUtil.logAuditEvent(auditingFields);
+            // Format user
+            formatUser(auditingFields);
 
-			// Determining the type of the auditing data object
-			AuditingActionEnum actionEnum = AuditingActionEnum.getActionByName((String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION));
-			log.info("audit event {} of type {}", actionEnum.getName(), actionEnum.getAuditingEsType());
-			ActionStatus addRecordStatus = auditingDao.addRecord(auditingFields, actionEnum.getAuditingEsType());
-			if (!addRecordStatus.equals(ActionStatus.OK)) {
-				log.warn("Failed to persist auditing event: {}", addRecordStatus.name());
-			}
+            // Logging the event
+            msg = AuditingLogFormatUtil.logAuditEvent(auditingFields);
 
-			AuditingGenericEvent recordForCassandra = AuditRecordFactory.createAuditRecord(auditingFields);
-			if (recordForCassandra != null) {
-				CassandraOperationStatus result = cassandraDao.saveRecord(recordForCassandra);
-				if (!result.equals(CassandraOperationStatus.OK)) {
-					log.warn("Failed to persist to cassandra auditing event: {}", addRecordStatus.name());
-				}
-			}
+            // Determining the type of the auditing data object
+            AuditingActionEnum actionEnum = AuditingActionEnum.getActionByName((String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION));
+            log.info("audit event {} of type {}", actionEnum.getName(), actionEnum.getAuditingEsType());
+            ActionStatus addRecordStatus = auditingDao.addRecord(auditingFields, actionEnum.getAuditingEsType());
+            if (!addRecordStatus.equals(ActionStatus.OK)) {
+                log.warn("Failed to persist auditing event: {}", addRecordStatus);
+            }
 
-		} catch (Exception e) {
-			// Error during auditing shouldn't terminate flow
-			log.warn("Error during auditEvent: {}", e);
-		}
-	}
+            AuditingGenericEvent recordForCassandra = AuditRecordFactory.createAuditRecord(auditingFields);
+            if (recordForCassandra != null) {
+                saveEventToCassandra(recordForCassandra);
+            }
 
-	private void formatUser(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
-		if (auditingFields.get(AuditingFieldsKeysEnum.AUDIT_USER_UID) != null) {
-			String userDetails = (String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_USER_UID);
+        } catch (Exception e) {
+            // Error during auditing shouldn't terminate flow
+            log.warn("Error during auditEvent: {}", e);
+        }
+        return msg;
+    }
 
-			String user = AuditingLogFormatUtil.getUser(userDetails);
-			auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_UID, user);
-		}
-	}
 
-	private void formatModifier(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
-		String modifier = AuditingLogFormatUtil.getModifier((String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME), (String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID));
-		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier);
-		auditingFields.remove(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME);
-	}
+    public String auditEvent(AuditEventFactory factory) {
+        if (ConfigurationManager.getConfigurationManager().getConfiguration().isDisableAudit()) {
+            return null;
+        }
+        AuditingGenericEvent event = factory.getDbEvent();
+        // Logging the event
+        //TODO - change this call after EELF Audit stuff merge
+        String msg = factory.getLogMessage();
+        AuditingLogFormatUtil.logAuditEvent(msg);
 
-	private void normalizeEmptyAuditStringValues(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
-		for (Entry<AuditingFieldsKeysEnum, Object> auditingEntry : auditingFields.entrySet()) {
-			if (auditingEntry.getKey().getValueClass().equals(String.class)) {
-				String auditingValue = (String) auditingEntry.getValue();
-				boolean isEmpty = false;
-				if (auditingValue != null) {
-					String trimmedValue = auditingValue.trim();
-					if ((trimmedValue.equals(Constants.EMPTY_STRING)) || trimmedValue.equals(Constants.NULL_STRING) || trimmedValue.equals(Constants.DOUBLE_NULL_STRING)) {
-						isEmpty = true;
-					}
-				} else {// is null
-					isEmpty = true;
-				}
-				// Normalizing to ""
-				if (isEmpty) {
-					auditingEntry.setValue(Constants.EMPTY_STRING);
-				}
-			}
-		}
-	}
+        //TODO - remove this method after we got rid of ES
+        saveEventToElasticSearch(factory, event);
+        saveEventToCassandra(event);
+        return msg;
+    }
+
+    private void saveEventToCassandra(AuditingGenericEvent event) {
+        CassandraOperationStatus result = cassandraDao.saveRecord(event);
+        if (!result.equals(CassandraOperationStatus.OK)) {
+            log.warn("Failed to persist to cassandra auditing event: {}", result.name());
+        }
+    }
+
+    private void saveEventToElasticSearch(AuditEventFactory factory, AuditingGenericEvent event) {
+        ActionStatus addRecordStatus = auditingDao.addRecord(event, factory.getAuditingEsType());
+        if (!addRecordStatus.equals(ActionStatus.OK)) {
+            log.warn("Failed to persist auditing event: {}", addRecordStatus.name());
+        }
+    }
+
+
+    private void formatUser(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
+        if (auditingFields.get(AuditingFieldsKeysEnum.AUDIT_USER_UID) != null) {
+            String userDetails = (String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_USER_UID);
+
+            String user = AuditingLogFormatUtil.getUser(userDetails);
+            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_UID, user);
+        }
+    }
+
+    private void formatModifier(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
+        String modifier = AuditingLogFormatUtil.getModifier((String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME), (String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID));
+        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier);
+        auditingFields.remove(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME);
+    }
+
+    private void normalizeEmptyAuditStringValues(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
+        for (Entry<AuditingFieldsKeysEnum, Object> auditingEntry : auditingFields.entrySet()) {
+            if (auditingEntry.getKey().getValueClass().equals(String.class)) {
+                String auditingValue = (String) auditingEntry.getValue();
+                boolean isEmpty = false;
+                if (auditingValue != null) {
+                    String trimmedValue = auditingValue.trim();
+                    if ((trimmedValue.equals(Constants.EMPTY_STRING)) || trimmedValue.equals(Constants.NULL_STRING) || trimmedValue.equals(Constants.DOUBLE_NULL_STRING)) {
+                        isEmpty = true;
+                    }
+                } else {// is null
+                    isEmpty = true;
+                }
+                // Normalizing to ""
+                if (isEmpty) {
+                    auditingEntry.setValue(Constants.EMPTY_STRING);
+                }
+            }
+        }
+    }
 }

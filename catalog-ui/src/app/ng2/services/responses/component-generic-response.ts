@@ -27,6 +27,7 @@ import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, Att
 import {CommonUtils} from "app/utils";
 import {Serializable} from "../utils/serializable";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
+import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 
 export class ComponentGenericResponse  implements Serializable<ComponentGenericResponse> {
 
@@ -43,6 +44,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public requirements:RequirementsGroup;
     public properties:Array<PropertyModel>;
     public attributes:Array<AttributeModel>;
+    public policies:Array<PolicyInstance>;
     public groups:Array<Module>;
     public interfaces:any;
     public additionalInformation:any;
@@ -91,6 +93,9 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         }
         if(response.groups) {
             this.groups = CommonUtils.initModules(response.groups);
+        }
+        if(response.policies) {
+            this.policies = CommonUtils.initPolicies(response.policies);
         }
         return this;
     }

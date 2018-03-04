@@ -20,15 +20,15 @@
 
 package org.openecomp.sdc.be.ui.model;
 
-import java.util.Map;
-
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
+import java.util.Map;
 public class UiServiceDataTransfer extends UiComponentDataTransfer {
 	
 
 	private Map<String, ArtifactDefinition> serviceApiArtifacts;
-
+	private Map<String, ForwardingPathDataDefinition> forwardingPaths;
 	private UiServiceMetadata metadata;
 	
 	public UiServiceMetadata getMetadata() {
@@ -45,5 +45,13 @@ public class UiServiceDataTransfer extends UiComponentDataTransfer {
 
 	public void setServiceApiArtifacts(Map<String, ArtifactDefinition> serviceApiArtifacts) {
 		this.serviceApiArtifacts = serviceApiArtifacts;
+	}
+
+	public java.util.Map<String, org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition> getForwardingPaths() {
+		return forwardingPaths;
+	}
+
+	public void setForwardingPaths(java.util.Map<String, org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition> forwardingPaths) {
+		this.forwardingPaths = forwardingPaths;
 	}
 }

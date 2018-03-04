@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -45,6 +44,7 @@ import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.HeatParametersOperation;
 import org.openecomp.sdc.be.resources.data.HeatParameterData;
 import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
 
@@ -103,7 +103,7 @@ public class HeatParametersOperationTest extends ModelTestBase {
 		Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 
 		when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
-		when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
+		when(titanGenericDao.createRelation(any(GraphNode.class), (GraphNode) any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
 
 		StorageOperationStatus result = heatParametersOperation.addPropertiesToGraph(parameters, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
 

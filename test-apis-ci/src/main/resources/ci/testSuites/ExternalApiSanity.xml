@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="CRUDArtifacts" configfailurepolicy="continue" verbose="2"  parallel="methods" thread-count="2" data-provider-thread-count="2">
+
+  <test name="Test">
+    <classes>
+      <class name="org.openecomp.sdc.externalApis.CRUDExternalAPI">
+   		<methods>
+			<include name="uploadArtifactOnVfcVlCpViaExternalAPI" invocation-numbers="0" />
+			<include name="uploadArtifactOnVFViaExternalAPI" invocation-numbers="0" />
+			<include name="uploadArtifactOnServiceViaExternalAPI" invocation-numbers="0" />
+			<include name="uploadArtifactOnRIViaExternalAPI" invocation-numbers="0" />
+			<include name="uploadArtifactOnVfcVlCpRIViaExternalAPI" invocation-numbers="0" />
+			<include name="updateArtifactForServiceViaExternalAPI" invocation-numbers="0" />
+			<include name="updateArtifactForVFViaExternalAPI" invocation-numbers="0" />
+			<include name="updateArtifactForVfcVlCpViaExternalAPI" invocation-numbers="0" />
+			<include name="updateArtifactOfVfcVlCpForVfciVliCpiViaExternalAPI" invocation-numbers="0" />
+			<include name="updateArtifactOnRIViaExternalAPI" invocation-numbers="0" />
+			<include name="updateArtifactOnVfcVlCpRIViaExternalAPI" invocation-numbers="0" />
+			<include name="deleteArtifactForServiceViaExternalAPI" invocation-numbers="0" />
+			<include name="deleteArtifactForVFViaExternalAPI" invocation-numbers="0" />
+			<include name="deleteArtifactOnRIViaExternalAPI" invocation-numbers="0" />
+			<include name="deleteArtifactOnVfcVlCpRIViaExternalAPI" invocation-numbers="0" />
+			<include name="deleteArtifactOnAssetWhichNotExist" />			
+		</methods>
+      </class>
+      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt">
+        <methods>
+            <include name="downloadArtifactOfComponentInstanceFromServiceViaExternalAPI"/>
+        </methods>
+      </class>
+      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+        <methods>
+            <include name="getResourceAssetBySpecifiedCategory"/>
+            <include name="getServiceAssetBySpecifiedCategory"/>
+        </methods>
+      </class>
+      <class name="org.openecomp.sdc.externalApis.SearchFilterCategoryExternalAPI">
+        <methods>
+            <include name="normativeResourceCategory" invocation-numbers="0"/>
+        </methods>
+      </class>      
+      <class name="org.openecomp.sdc.externalApis.GetCSARofVF">
+        <methods>
+            <include name="getServiceToscaModelCheckInState"/>
+            <include name="getRsourceToscaModelCertifyState"/>
+        </methods>
+      </class>
+      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+        <methods>
+            <include name="getResourceAssetBySpecifiedCategory"/>
+            <include name="getServiceAssetBySpecifiedCategory"/>
+        </methods>
+      </class>
+      <class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet">
+        <methods>
+            <include name="getResourceAssetMetadataSuccess"/>
+            <include name="getServiceAssetMetadataWithResourceInstancesSuccess"/>
+        </methods>
+      </class>
+      <class name="org.openecomp.sdc.externalApis.AssetLifeCycle">
+        <methods>
+            <include name="theFlow"/>
+        </methods>
+      </class>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->

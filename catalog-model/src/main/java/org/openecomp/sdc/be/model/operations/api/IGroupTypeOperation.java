@@ -35,6 +35,10 @@ public interface IGroupTypeOperation {
 	public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition);
 
 	public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition, boolean inTransaction);
+	
+	public Either<GroupTypeDefinition, StorageOperationStatus> upgradeGroupType(GroupTypeDefinition groupTypeDefinitionNew, GroupTypeDefinition groupTypeDefinitionOld);
+
+    public Either<GroupTypeDefinition, StorageOperationStatus> upgradeGroupType(GroupTypeDefinition groupTypeDefinitionNew, GroupTypeDefinition groupTypeDefinitionOld, boolean inTransaction);
 
 	/**
 	 * @param uniqueId

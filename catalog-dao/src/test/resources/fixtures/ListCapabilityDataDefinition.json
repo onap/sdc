@@ -1,0 +1,19 @@
+{
+  "org.openecomp.capabilities.Forwarder": [
+    {
+      "name": "forwarder",
+      "type": "org.openecomp.capabilities.Forwarder",
+      "uniqueId": "capability.deb142fd-95eb-48f7-99ae-81ab09466b1e.forwarder",
+      "ownerId": "deb142fd-95eb-48f7-99ae-81ab09466b1e",
+      "capabilitySources": [
+        "org.openecomp.resource.cp.nodes.network.Port",
+        "org.openecomp.resource.cp.v2.extCP",
+        "org.openecomp.resource.cp.v2.extContrailCP"
+      ],
+      "minOccurrences": "1",
+      "leftOccurrences": "UNBOUNDED",
+      "maxOccurrences": "UNBOUNDED",
+      "empty": false
+    }
+  ]
+}

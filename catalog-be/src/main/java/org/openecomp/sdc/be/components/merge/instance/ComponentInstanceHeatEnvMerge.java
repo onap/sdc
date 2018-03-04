@@ -1,8 +1,6 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.merge.heat.HeatEnvArtifactsMergeBusinessLogic;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -17,7 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chaya on 9/20/2017.
@@ -25,7 +24,7 @@ import fj.data.Either;
 @org.springframework.stereotype.Component("ComponentInstanceHeatEnvMerge")
 public class ComponentInstanceHeatEnvMerge implements ComponentInstanceMergeInterface {
 
-    private static Logger log = LoggerFactory.getLogger(ComponentInstanceHeatEnvMerge.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ComponentInstanceHeatEnvMerge.class);
 
     @Autowired
     private ArtifactsBusinessLogic artifactsBusinessLogic;
@@ -52,7 +51,7 @@ public class ComponentInstanceHeatEnvMerge implements ComponentInstanceMergeInte
             Map<String, Object> json = artifactsBusinessLogic.buildJsonForUpdateArtifact(artifactInfo, ArtifactGroupTypeEnum.DEPLOYMENT,  null);
 
             Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = artifactsBusinessLogic.updateResourceInstanceArtifactNoContent(newInstanceId, updatedContainerComponent, user, json,
-                    artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.Update), null);
+                    artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.UPDATE), null);
             if (uploadArtifactToService.isRight()) {
                 log.error("Failed to update artifact {} on resourceInstance {}", artifactInfo.getArtifactLabel(), newInstanceId);
                 return Either.right(uploadArtifactToService.right().value());

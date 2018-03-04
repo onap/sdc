@@ -27,14 +27,7 @@ public class ArtifactUUIDFixMenu {
         boolean isSuccessful = artifactUuidFix.doFix(fixServices, runMode);
         if (isSuccessful) {
             log.info("Fixing artifacts UUID for 1707  was finished successfully");
-           /* isSuccessful = artifactUuidFix.doFixTosca(fixTosca, fixServices, runMode);
-            if (isSuccessful) {
-                log.info("Fixing tosca artifacts  was finished successfully");
-                isSuccessful = artifactUuidFix.doFixTosca(fixTosca, fixServices, runMode);
-            } else{
-                log.info("Fixing tosca artifacts has failed");
-                System.exit(2);
-            }*/
+    
         } else{
             log.info("Fixing artifacts UUID for 1707  has failed");
             System.exit(2);

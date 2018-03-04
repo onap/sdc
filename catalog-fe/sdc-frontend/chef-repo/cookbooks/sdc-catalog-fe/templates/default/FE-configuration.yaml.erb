@@ -53,6 +53,12 @@ dcae:
     <% end -%>
     healthCheckUri: "/dcae/healthCheck"
 
+dcae:
+    protocol: http
+    host: localhost
+    port: 8181
+    healthCheckUri: "/dcae/healthCheck"
+
 identificationHeaderFields: 
    -
         - &HTTP_IV_USER HTTP_IV_USER
@@ -100,3 +106,8 @@ systemMonitoring:
 kibanaHost: <%= @kb_host_ip %>
 kibanaPort: 5601
 kibanaProtocol: http
+
+healthStatusExclude:
+   - DE
+   - ES
+   - DMAAP

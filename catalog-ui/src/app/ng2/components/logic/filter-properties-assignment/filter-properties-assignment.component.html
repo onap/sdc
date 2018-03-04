@@ -7,7 +7,7 @@
                 <checkbox [label]="'All'" [(checked)]="allSelected" (checkedChange)="selectAll()" data-tests-id="filter-checkbox-all"></checkbox>
             </div>
             <div *ngFor="let type of typesOptions">
-                <checkbox [label]="type" [(checked)]="selectedTypes[type]" (checkedChange)="onTypeSelected(type)"></checkbox>
+                <checkbox [label]="type" [(checked)]="selectedTypes[type]" (checkedChange)="onTypeSelected(type)" [attr.data-tests-id]="'filter-checkbox-' + type.toLowerCase()"></checkbox>
             </div>
         </div>
         <div class="field">

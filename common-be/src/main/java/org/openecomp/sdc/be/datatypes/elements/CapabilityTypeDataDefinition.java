@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.io.Serializable;
+import java.util.List;
 
 public class CapabilityTypeDataDefinition extends ToscaDataDefinition implements Serializable {
 

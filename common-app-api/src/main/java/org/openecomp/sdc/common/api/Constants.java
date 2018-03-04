@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.common.api;
 
-public interface Constants {
+public final class Constants {
 
 	public static final String APPLICATION_NAME = "application-name";
 	public static final String APPLICATION_VERSION = "application-version";
@@ -48,24 +48,20 @@ public interface Constants {
 	public static final String X_ECOMP_REQUEST_ID_HEADER = "X-ECOMP-RequestID";
 	public static final String X_ECOMP_INSTANCE_ID_HEADER = "X-ECOMP-InstanceID";
 	public static final String X_ECOMP_SERVICE_ID_HEADER = "X-ECOMP-ServiceID";
+	public static final String X_TRANSACTION_ID_HEADER = "X-TransactionId";
+	public static final String X_FROM_APP_ID = "X-FromAppId";
 	public static final String HTTP = "http";
 	public static final String HTTPS = "https";
 	public static final String HTTP_IV_USER = "HTTP_IV_USER";
 	public static final String A4C_CSAR_CONTEXT = "/rest/csars/";
 	public static final String WEB_APPLICATION_CONTEXT_WRAPPER_ATTR = "web-application-context-wrapper";
 	public static final String CATALOG_BE = "catalog-be";
-	public static final String HTTP_CSP_FIRSTNAME = "HTTP_CSP_FIRSTNAME";
-	public static final String HTTP_CSP_LASTNAME = "HTTP_CSP_LASTNAME";
-	public static final String HTTP_IV_REMOTE_ADDRESS = "HTTP_IV_REMOTE_ADDRESS";
-	public static final String HTTP_CSP_TYPE = "HTTP_CSP_WSTYPE";
 	public static final String RESOURCE_SUPPORTED_VERSION = "0.0.1";
 	public static final String ARTIFACT_ID_FORMAT = "%s:%s:%s"; // resourceName:resourceVersion:artifactName
 	public static final String SERVICE_ARTIFACT_ID_FORMAT = "%s:%s:%s:%s"; // serviceName:serviceVersion:nodeTemplateName:artifactName
 	public static final String CONTENT_DISPOSITION = "content-disposition";
 	public static final String DOWNLOAD_ARTIFACT_LOGIC_ATTR = "downloadArtifactLogic";
 	public static final String ASDC_RELEASE_VERSION_ATTR = "SDC-Version";
-	// public static final String AUDITING_MANAGER = "auditingManager";
-	// public static final String USER_ADMIN_MANAGER = "userAdminManager";
 	public static final String YEAR = "year";
 	public static final String MONTH = "month";
 	public static final String DAY = "day";
@@ -83,7 +79,6 @@ public interface Constants {
 	public static final String ACCEPT_HEADER = "Accept";
 	public static final String STANDARD_INTERFACE_TYPE = "standard";
 	public static final String MURANO_PKG_ARTIFACT_TYPE = "MURANO-PKG";
-	public static final String ARTIFACT_GROUP_TYPE_FIELD = "artifactGroupType";
 
 	// TOSCA
 	public static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
@@ -92,6 +87,8 @@ public interface Constants {
 
 	public static final String IS_BASE = "isBase";
 	public static final String HEAT_FILE_PROPS = "heat_file";
+	public static final String GROUP_POLICY_NAME_DELIMETER = "..";
+	public static final String POLICY_UID_POSTFIX = ".policy";
 	public static final String MODULE_NAME_FORMAT = "%s..%s..module-%s";
 	public static final String MODULE_DESC_PATTERN = "[\\_\\-\\.a-zA-Z0-9]+";
 	public static final String MODULE_OLD_NAME_PATTERN = "([\\w\\_\\-\\.\\s]+)(::module-)(\\d+)";
@@ -99,6 +96,7 @@ public interface Constants {
 	public static final String MODULE_NAME_DELIMITER = "module-";
 	public static final String IMPORT_STRUCTURE = "importStructure";
 	public static final String DEFAULT_GROUP_VF_MODULE = "org.openecomp.groups.VfModule";
+	public static final String GROUP_TOSCA_HEAT = "org.openecomp.groups.heat.HeatStack";
 
 	public static final String ARTIFACT_GROUP_TYPE = "artifactGroupType";
 	public static final String ARTIFACT_LABEL = "artifactLabel";
@@ -107,6 +105,7 @@ public interface Constants {
 	public static final String ARTIFACT_DESCRIPTION = "description";
 	public static final String ARTIFACT_TYPE = "artifactType";
 	public static final String ARTIFACT_NAME = "artifactName";
+	public static final String IS_FROM_CSAR = "isFromCsar";
 	public static final String ARTIFACT_ID = "uniqueId";
 	public static final String REQUIRED_ARTIFACTS = "requiredArtifacts";
 	public static final String ARTIFACT_HEAT_PARAMS = "heatParameters";
@@ -134,8 +133,10 @@ public interface Constants {
 	public static final String HC_COMPONENT_FE = "FE";
 	public static final String HC_COMPONENT_BE = "BE";
 	public static final String HC_COMPONENT_TITAN = "TITAN";
+	public static final String HC_COMPONENT_ES = "ES";
 	public static final String HC_COMPONENT_CASSANDRA = "CASSANDRA";
 	public static final String HC_COMPONENT_DISTRIBUTION_ENGINE = "DE";
+	public static final String HC_COMPONENT_DMAAP_ENGINE = "DMAPP";
 
 	//external HealthCheck components
 	public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";
@@ -143,4 +144,6 @@ public interface Constants {
 	
 	//Plugin BL
 	public static final String PLUGIN_BL_COMPONENT = "pluginStatusBL";
+	
+	private Constants(){}
 }

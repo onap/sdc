@@ -20,15 +20,13 @@
 
 package org.openecomp.sdc.be.user;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import java.util.List;
 
 /**
  * 
@@ -36,17 +34,17 @@ import fj.data.Either;
  *
  */
 public interface IUserBusinessLogic {
-	public Either<User, ActionStatus> getUser(String userId, boolean inTransaction);
+    public Either<User, ActionStatus> getUser(String userId, boolean inTransaction);
 
-	public Either<User, ResponseFormat> createUser(User modifier, User newUser);
+    public Either<User, ResponseFormat> createUser(User modifier, User newUser);
 
-	public Either<User, ResponseFormat> updateUserRole(User modifier, String userIdToUpdate, String userRole);
+    public Either<User, ResponseFormat> updateUserRole(User modifier, String userIdToUpdate, String userRole);
 
-	public Either<List<User>, ResponseFormat> getAllAdminUsers(ServletContext context);
+    public Either<List<User>, ResponseFormat> getAllAdminUsers(ServletContext context);
 
-	public Either<List<User>, ResponseFormat> getUsersList(String userId, List<String> roles, String rolesStr);
+    public Either<List<User>, ResponseFormat> getUsersList(String userId, List<String> roles, String rolesStr);
 
-	public Either<User, ResponseFormat> deActivateUser(User modifier, String userUniuqeIdToDeactive);
+    public Either<User, ResponseFormat> deActivateUser(User modifier, String userUniuqeIdToDeactive);
 
-	public Either<User, ResponseFormat> authorize(User authUser);
+    public Either<User, ResponseFormat> authorize(User authUser);
 }

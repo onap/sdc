@@ -72,11 +72,12 @@ import {CompositionGraphGeneralUtils} from "../directives/graphs-v2/composition-
 import {CompositionGraphLinkUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-links-utils";
 import {DeploymentGraphGeneralUtils} from "../directives/graphs-v2/deployment-graph/deployment-utils/deployment-graph-general-utils";
 import {CompositionGraphPaletteUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-palette-utils";
+import {CompositionGraphZoneUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-zone-utils";
 import {MatchCapabilitiesRequirementsUtils} from "../directives/graphs-v2/composition-graph/utils/match-capability-requierment-utils";
-import {AssetPopoverDirective} from "../directives/graphs-v2/asset-popover/asset-popover";
-import {downgradeComponent} from "@angular/upgrade/static";
 import {CapabilitiesListDirective} from "../directives/capabilities-and-requirements/capability/capabilities-list-directive";
 import {RequirementsListDirective} from "../directives/capabilities-and-requirements/requirement/requirements-list-directive";
+import {ServicePathGraphUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-service-path-utils";
+import {PaletteAnimationComponent} from './../ng2/components/ui/palette-animation/palette-animation.component';
 
 let moduleName:string = 'Sdc.Directives';
 let directiveModule:ng.IModule = angular.module(moduleName, []);
@@ -157,7 +158,10 @@ directiveModule.service('CompositionGraphNodesUtils', CompositionGraphNodesUtils
 directiveModule.service('CompositionGraphGeneralUtils', CompositionGraphGeneralUtils);
 directiveModule.service('CompositionGraphLinkUtils', CompositionGraphLinkUtils);
 directiveModule.service('CompositionGraphPaletteUtils', CompositionGraphPaletteUtils);
+directiveModule.service('CompositionGraphZoneUtils', CompositionGraphZoneUtils);
 directiveModule.service('MatchCapabilitiesRequirementsUtils', MatchCapabilitiesRequirementsUtils);
+directiveModule.service('ServicePathGraphUtils', ServicePathGraphUtils);
+
 //
 // //Deployment Graph Utils
 directiveModule.service('DeploymentGraphGeneralUtils', DeploymentGraphGeneralUtils);
@@ -169,15 +173,70 @@ directiveModule.directive('requirementsList', RequirementsListDirective.factory)
 
 
 // *** NG2 Components (downgraded) *** //
-import {MenuListNg2Component} from "../ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.component";
-import {TopNavComponent} from "../ng2/components/layout/top-nav/top-nav.component";
+import { downgradeComponent } from "@angular/upgrade/static";
+import { MenuListNg2Component } from "../ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.component";
+import { TopNavComponent } from "../ng2/components/layout/top-nav/top-nav.component";
+import { ZoneContainerComponent } from "../ng2/components/ui/canvas-zone/zone-container.component";
+import { ZoneInstanceComponent } from "../ng2/components/ui/canvas-zone/zone-instance/zone-instance.component";
+import { PropertiesAssignmentComponent } from "../ng2/pages/properties-assignment/properties-assignment.page.component";
+import { SearchWithAutoCompleteComponent } from "../ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
+import { PalettePopupPanelComponent } from "../ng2/components/ui/palette-popup-panel/palette-popup-panel.component";
+import { ServicePathComponent } from '../ng2/components/logic/service-path/service-path.component';
+import { ServicePathSelectorComponent } from '../ng2/components/logic/service-path-selector/service-path-selector.component';
 
 directiveModule.directive('menuListNg2', downgradeComponent({
     component: MenuListNg2Component,
     inputs: ['props']
 }) as angular.IDirectiveFactory);
+
 directiveModule.directive('topNav', downgradeComponent({
     component: TopNavComponent,
     inputs: ['version', 'menuModel', 'topLvlSelectedIndex', 'hideSearch', 'searchTerm', 'notificationIconCallback'],
     outputs: ['searchTermChange']
 }) as ng.IDirectiveFactory);
+
+directiveModule.directive('ng2ZoneContainer', downgradeComponent({
+    component: ZoneContainerComponent,
+        inputs: ['title', 'count', 'class', 'showZone', 'minifyZone'],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2ZoneInstance', downgradeComponent({
+    component: ZoneInstanceComponent,
+    inputs: ['config', 'isActive', 'activeInstanceMode', 'defaultIconText'],
+    outputs: ['modeChange']
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('propertiesAssignment', downgradeComponent({
+    component: PropertiesAssignmentComponent
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2SearchWithAutocomplete', downgradeComponent({
+    component: SearchWithAutoCompleteComponent,
+    inputs: ['searchPlaceholder', 'searchBarClass', 'autoCompleteValues'],
+    outputs: ['searchChanged', 'searchButtonClicked']
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2PaletteAnimation', downgradeComponent({
+        component: PaletteAnimationComponent,
+        inputs: ['from', 'to', 'icon' ],
+        outputs: []
+    }) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2PalettePopupPanel', downgradeComponent({
+    component: PalettePopupPanelComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2ServicePath', downgradeComponent({
+    component: ServicePathComponent,
+    inputs: ['onCreate', 'service'],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2ServicePathSelector', downgradeComponent({
+    component: ServicePathSelectorComponent,
+    inputs: ['drawPath', 'deletePaths', 'service', 'selectedPathId'],
+    outputs: []
+}) as angular.IDirectiveFactory);

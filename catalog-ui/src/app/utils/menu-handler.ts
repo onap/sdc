@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {WorkspaceMode, ComponentState} from "./constants";
 import {IAppConfigurtaion, IAppMenu, Component} from "../models";
 import {ComponentFactory} from "./component-factory";
@@ -92,36 +93,36 @@ export class MenuHandler {
     }
 
 
+    findBreadcrumbComponentIndex = (components:Array<Component>, selected:Component):number => {
+        let selectedItemIdx;
+
+        // Search the component in all components by uuid (and not uniqueid, gives access to an assets's minor versions).
+        selectedItemIdx = _.findIndex(components, (item:Component) => {
+            return item.uuid === selected.uuid;
+        });
+
+        // If not found search by invariantUUID
+        if (selectedItemIdx === -1) {
+            selectedItemIdx = _.findIndex(components, (item:Component) => {
+                //invariantUUID && Certified State matches between major versions
+                return item.invariantUUID === selected.invariantUUID && item.lifecycleState === ComponentState.CERTIFIED;
+            });
+        }
+
+        // If not found search by name (name is unique).
+        if (selectedItemIdx === -1) {
+            selectedItemIdx = _.findIndex(components, (item:Component) => {
+                return item.name === selected.name;
+            });
+        }
+
+        return selectedItemIdx;
+    };
+
     generateBreadcrumbsModelFromComponents = (components:Array<Component>, selected:Component):MenuItemGroup => {
         let result = new MenuItemGroup(0, [], false);
         if (components) {
-
-            // Search the component in all components by uuid (and not uniqueid, gives access to an assets's minor versions).
-            let selectedItem = _.find(components, (item:Component) => {
-                return item.uuid === selected.uuid;
-            });
-
-            // If not found search by invariantUUID
-            if (undefined == selectedItem) {
-                selectedItem = _.find(components, (item:Component) => {
-                    //invariantUUID && Certified State matches between major versions
-                    return item.invariantUUID === selected.invariantUUID && item.lifecycleState === ComponentState.CERTIFIED;
-                });
-            }
-
-            // If not found search by name (name is unique).
-            if (undefined == selectedItem) {
-                selectedItem = _.find(components, (item:Component) => {
-                    return item.name === selected.name;
-                });
-            }
-
-            if(!selectedItem){
-                result.selectedIndex = components.length;
-            }else{
-                result.selectedIndex = components.indexOf(selectedItem);
-            }
-            components[result.selectedIndex] = selected;
+            result.selectedIndex = this.findBreadcrumbComponentIndex(components, selected);
             let clickItemCallback = (component:Component):ng.IPromise<boolean> => {
                 this.$state.go('workspace.general', {
                     id: component.uniqueId,

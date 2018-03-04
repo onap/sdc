@@ -20,45 +20,22 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.awt.AWTException;
-import java.util.Arrays;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.CompositionScreenEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ServiceMetadataEnum;
-import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentPage;
-import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.InputsPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.CatalogUIUtilitis;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
+import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.utilities.*;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
@@ -68,11 +45,17 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
+import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class Service extends SetupCDTest {
 	
@@ -579,21 +562,35 @@ public class Service extends SetupCDTest {
 	}
 	
 	@Test
-	public void deploymentViewServiceTest() throws Exception{				
-		String fileName2 = "vSeGWNew.csar";
+	public void deploymentViewServiceTest() throws Exception{
 		
+		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		String fileName2 = "vSeGWNew.csar";
+
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
+		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+		List<GroupDefinition> groups = resource.getGroups();
+		for (GroupDefinition group : groups) {
+			if(group.getType().equals("org.openecomp.groups.VfModule")) {
+				for(PropertyDataDefinition property : group.getProperties()){
+					if(property.getName().equals("max_vf_module_instances")) {
+						property.setValue("100");
+						List<PropertyDataDefinition> propertyList = new ArrayList<>();
+						propertyList.add(property);
+						AtomicOperationUtils.updateGroupPropertyOnResource(propertyList, resource, group.getUniqueId(), user, true);
+						break;
+						}
+				}
+			}
+		}
+
 		ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
-		
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
-		
 		addResourceToServiceInCanvas(resourceMetaData);
-	
 		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
 		DeploymentArtifactPage.getLeftMenu().moveToDeploymentViewScreen();
-		
 		serviceMetadata.setVersion("0.1");
 		List<WebElement> instanceRowsFromTable = GeneralUIUtils.getElementsByCSS("div[data-tests-id^='hierarchy-instance'] span[class^='expand-collapse-title-text']");
 		for(WebElement instanceRow: instanceRowsFromTable){
@@ -602,14 +599,14 @@ public class Service extends SetupCDTest {
 			for (WebElement instanceModule: instanceModulesList){
 				String instanceModuleText = instanceModule.getText();
 				ResourceUIUtils.clickOnElementByText(instanceModuleText, "instance");
-								
 				ServiceVerificator.verifyDeploymentPageSubElements(instanceModuleText.split("\\.\\.")[2], new DeploymentViewVerificator(filePath + fileName2));
-				
 				ServiceVerificator.verifyDisabledServiceProperties();
-				String isBaseValue = ServiceVerificator.getVFModulePropertieValue(serviceMetadata, "isBase", instanceModuleText);
+				if(true){
+					throw new SkipException("Sent email to Edith Ronen, waiting for answer");
+				}
+				String isBaseValue = ServiceVerificator.getVFModulePropertyValue(serviceMetadata, "isBase", instanceModuleText);
 				if (isBaseValue.equals("false"))
 					ServiceVerificator.verifyEnabledServiceProperties();
-				
 				ResourceUIUtils.clickOnElementByText(instanceModuleText, "instance");
 			}												
 		}			

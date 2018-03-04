@@ -26,15 +26,17 @@ import java.util.Map;
 import org.yaml.snakeyaml.TypeDescription;
 
 //	spec page 102
+
 public class ToscaGroupsTopologyTemplateDefinition {
 
 	private String type; // required
 	private String description;
-	private Map<String, Object> properties;
+	//	private Map<String, String> properties;
+	private ToscaGroupPropertyDefinition properties;
 	private Map<String, String> targets; // required
 	private Map<String, Object> interfaces;
 	private List<String> members;
-//	private Map<String, String> metadata;
+	//	private Map<String, String> metadata;
 	private ToscaServiceGroupsMetadataDefinition metadata;
 
 	public ToscaGroupsTopologyTemplateDefinition() {
@@ -65,11 +67,19 @@ public class ToscaGroupsTopologyTemplateDefinition {
 		this.description = description;
 	}
 
-	public Map<String, Object> getProperties() {
+//	public Map<String, String> getProperties() {
+//		return properties;
+//	}
+//
+//	public void setProperties(Map<String, String> properties) {
+//		this.properties = properties;
+//	}
+
+	public ToscaGroupPropertyDefinition getProperties() {
 		return properties;
 	}
 
-	public void setProperties(Map<String, Object> properties) {
+	public void setProperties(ToscaGroupPropertyDefinition properties) {
 		this.properties = properties;
 	}
 
@@ -113,14 +123,15 @@ public class ToscaGroupsTopologyTemplateDefinition {
 
 	//gets Type description for Yaml snake
 	public static TypeDescription getTypeDescription(){
-        TypeDescription typeDescription = new TypeDescription(ToscaGroupsTopologyTemplateDefinition.class);
-        typeDescription.putMapPropertyType("properties", String.class, Object.class);
-        typeDescription.putMapPropertyType("interfaces", String.class, Object.class);
-        typeDescription.putMapPropertyType("targets", String.class, Object.class);
+		TypeDescription typeDescription = new TypeDescription(ToscaGroupsTopologyTemplateDefinition.class);
+//        typeDescription.putMapPropertyType("properties", String.class, Object.class);
+//		typeDescription.putListPropertyType("properties", ToscaGroupPropertyDefinition.class);
+		typeDescription.putMapPropertyType("interfaces", String.class, Object.class);
+		typeDescription.putMapPropertyType("targets", String.class, Object.class);
 //        typeDescription.putMapPropertyType("metadata", String.class, String.class);
-        typeDescription.putMapPropertyType("metadata", String.class, String.class);
-        typeDescription.putListPropertyType("members", String.class);
-    	return typeDescription;
+		typeDescription.putMapPropertyType("metadata", String.class, String.class);
+		typeDescription.putListPropertyType("members", String.class);
+		return typeDescription;
 	}
 
 }

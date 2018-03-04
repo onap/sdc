@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {VendorModel} from "app/view-models/workspace/tabs/management-workflow/management-workflow-view-model";
 import {ResourceType, ArtifactType} from "app/utils";

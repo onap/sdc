@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {Component, Inject, Input, Output, EventEmitter} from "@angular/core";
 import {IHostedApplication, IUserProperties} from "app/models";
 import {MenuItemGroup, MenuItem} from "app/utils";
@@ -142,9 +143,9 @@ export class TopNavComponent {
         }
     }
 
-    goToState(state:string, params:any):Promise<boolean> {
+    goToState(state:string, params:Array<any>):Promise<boolean> {
         return new Promise((resolve, reject) => {
-            this.$state.go(state, params || undefined);
+            this.$state.go(state, params && params.length > 0 ? [0] : undefined);
             resolve(true);
         });
     }

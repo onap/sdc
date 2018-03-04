@@ -22,6 +22,7 @@
  * Created by obarda on 1/27/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {ValidationUtils} from "app/utils";
 import { DataTypesService } from "app/services";
 import { DataTypePropertyModel } from "app/models/data-type-properties";

@@ -61,11 +61,19 @@ public class AutomationUtils extends BaseRestUtils {
 	
 	
 	
-	public static void createVersionsInfoFile(String filepath, String onboardVersion, String osVersion, String envData, String suiteName)
-			throws FileNotFoundException, IOException {
+	public static void createVersionsInfoFile(String filepath, String onboardVersion, String osVersion, String envData, String suiteName) throws IOException {
 		File myFoo = new File(filepath);
 		FileOutputStream fooStream = new FileOutputStream(myFoo, false); // true to append
-		String versions =  ("onboardVesrion=\""+ onboardVersion+ "\"\n" + "osVersion=\"" + osVersion + "\"\n" + "env=\""+ envData + "\"\n" + "suiteName=\""+ suiteName+ "\"\n");
+		String versions =  ("onboardVersion=\""+ onboardVersion+ "\"\n" + "osVersion=\"" + osVersion + "\"\n" + "env=\""+ envData + "\"\n" + "suiteName=\""+ suiteName+ "\"\n");
+		byte[] myBytes = versions.getBytes();
+		fooStream.write(myBytes);
+		fooStream.close();
+	}
+
+	public static void createVersionsInfoFile(String filepath, String onboardVersion, String osVersion, String envData, String suiteName, String reportStartTime) throws IOException {
+		File myFoo = new File(filepath);
+		FileOutputStream fooStream = new FileOutputStream(myFoo, false); // true to append
+		String versions =  ("onboardVersion=\""+ onboardVersion+ "\"\n" + "osVersion=\"" + osVersion + "\"\n" + "env=\""+ envData + "\"\n" + "suiteName=\""+ suiteName+ "\"\n" + "reportStartTime=\""+ reportStartTime+ "\"\n");
 		byte[] myBytes = versions.getBytes();
 		fooStream.write(myBytes);
 		fooStream.close();

@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
+import java.util.List;
 
 public class ListMapPropertiesDataDefinition extends ListDataDefinition<MapPropertiesDataDefinition> {
 	

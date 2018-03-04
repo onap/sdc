@@ -20,19 +20,19 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.util.List;
-
 import org.openecomp.sdc.generator.data.ArtifactType;
+
+import java.util.List;
 
 
 public class ArtifactTypes {
-	private List<ArtifactType> artifactTypes;
+    private List<ArtifactType> artifactTypes;
 
-	public List<ArtifactType> getArtifactTypes() {
-		return artifactTypes;
-	}
+    public List<ArtifactType> getArtifactTypes() {
+        return artifactTypes;
+    }
 
-	public void setArtifactTypes(List<ArtifactType> artifactTypes) {
-		this.artifactTypes = artifactTypes;
-	}
+    public void setArtifactTypes(List<ArtifactType> artifactTypes) {
+        this.artifactTypes = artifactTypes;
+    }
 }

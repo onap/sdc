@@ -20,21 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -49,179 +38,173 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/consumers")
 @Api(value = "Consumer Servlet", description = "Consumer Servlet")
 @Singleton
 public class ConsumerServlet extends BeGenericServlet {
 
-	private static Logger log = LoggerFactory.getLogger(ConsumerServlet.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ConsumerServlet.class);
 
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Consumer credentials", httpMethod = "POST", notes = "Returns created ONAP consumer credentials", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 201, message = "Consumer credentials created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-	public Response createConsumer(@ApiParam(value = "Consumer Object to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Consumer credentials", httpMethod = "POST", notes = "Returns created ECOMP consumer credentials", response = Response.class)
+    @ApiResponses(value = { @ApiResponse(code = 201, message = "Consumer credentials created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
+    public Response createConsumer(@ApiParam(value = "Consumer Object to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-		ServletContext context = request.getSession().getServletContext();
+        ServletContext context = request.getSession().getServletContext();
 
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
 
-		User modifier = new User();
-		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("modifier id is {}", userId);
 
-		try {
-			ConsumerBusinessLogic businessLogic = getConsumerBL(context);
+        try {
+            ConsumerBusinessLogic businessLogic = getConsumerBL(context);
 
-			Either<ConsumerDefinition, ResponseFormat> convertionResponse = convertJsonToObject(data, modifier, AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS);
+            Either<ConsumerDefinition, ResponseFormat> convertionResponse = convertJsonToObject(data, modifier, AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS);
 
-			if (convertionResponse.isRight()) {
-				log.debug("failed to create Consumer");
-				return buildErrorResponse(convertionResponse.right().value());
-			}
+            if (convertionResponse.isRight()) {
+                log.debug("failed to create Consumer");
+                return buildErrorResponse(convertionResponse.right().value());
+            }
 
-			ConsumerDefinition consumer = convertionResponse.left().value();
+            ConsumerDefinition consumer = convertionResponse.left().value();
 
-			Either<ConsumerDefinition, ResponseFormat> actionResult = businessLogic.createConsumer(modifier, consumer);
+            Either<ConsumerDefinition, ResponseFormat> actionResult = businessLogic.createConsumer(modifier, consumer);
 
-			if (actionResult.isRight()) {
-				log.debug("failed to create Consumer");
-				return buildErrorResponse(actionResult.right().value());
-			}
+            if (actionResult.isRight()) {
+                log.debug("failed to create Consumer");
+                return buildErrorResponse(actionResult.right().value());
+            }
 
-			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResult.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResult.left().value());
 
-		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Create consumer");
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create consumer");
-			log.debug("create consumer failed with exception", e);
-			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-			return buildErrorResponse(responseFormat);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create consumer");
+            log.debug("create consumer failed with exception", e);
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
+            return buildErrorResponse(responseFormat);
 
-		}
-	}
+        }
+    }
 
-	@GET
-	@Path("/{consumerId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Retrieve Consumer", httpMethod = "GET", notes = "Returns consumer according to ConsumerID", response = ConsumerDefinition.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Consumer found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Consumer not found") })
-	public Response getConsumer(@PathParam("consumerId") final String consumerId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @GET
+    @Path("/{consumerId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve Consumer", httpMethod = "GET", notes = "Returns consumer according to ConsumerID", response = ConsumerDefinition.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Consumer found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Consumer not found") })
+    public Response getConsumer(@PathParam("consumerId") final String consumerId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-		ServletContext context = request.getSession().getServletContext();
+        ServletContext context = request.getSession().getServletContext();
 
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
 
-		User modifier = new User();
-		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("modifier id is {}", userId);
 
-		Response response = null;
-		try {
-			ConsumerBusinessLogic businessLogic = getConsumerBL(context);
+        Response response = null;
+        try {
+            ConsumerBusinessLogic businessLogic = getConsumerBL(context);
 
-			Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.getConsumer(consumerId, modifier);
+            Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.getConsumer(consumerId, modifier);
 
-			if (actionResponse.isRight()) {
-				log.debug("failed to get consumer");
-				response = buildErrorResponse(actionResponse.right().value());
-				return response;
-			}
-			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+            if (actionResponse.isRight()) {
+                log.debug("failed to get consumer");
+                response = buildErrorResponse(actionResponse.right().value());
+                return response;
+            }
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 
-		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get Consumer");
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Consumer");
-			log.debug("get consumer failed with exception", e);
-			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Consumer");
+            log.debug("get consumer failed with exception", e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 
-		}
-	}
+        }
+    }
 
-	@DELETE
-	@Path("/{consumerId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Deletes Consumer", httpMethod = "DELETE", notes = "Returns deleted consumer according to ConsumerID", response = ConsumerDefinition.class)
-	@ApiResponses(value = { @ApiResponse(code = 204, message = "Consumer deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Consumer not found") })
-	public Response deleteConsumer(@PathParam("consumerId") final String consumerId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @DELETE
+    @Path("/{consumerId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Deletes Consumer", httpMethod = "DELETE", notes = "Returns deleted consumer according to ConsumerID", response = ConsumerDefinition.class)
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "Consumer deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Consumer not found") })
+    public Response deleteConsumer(@PathParam("consumerId") final String consumerId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-		ServletContext context = request.getSession().getServletContext();
+        ServletContext context = request.getSession().getServletContext();
 
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
 
-		User modifier = new User();
-		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("modifier id is {}", userId);
 
-		Response response = null;
-		try {
-			ConsumerBusinessLogic businessLogic = getConsumerBL(context);
+        Response response = null;
+        try {
+            ConsumerBusinessLogic businessLogic = getConsumerBL(context);
 
-			Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.deleteConsumer(consumerId, modifier);
+            Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.deleteConsumer(consumerId, modifier);
 
-			if (actionResponse.isRight()) {
-				log.debug("failed to delete consumer");
-				response = buildErrorResponse(actionResponse.right().value());
-				return response;
-			}
-			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+            if (actionResponse.isRight()) {
+                log.debug("failed to delete consumer");
+                response = buildErrorResponse(actionResponse.right().value());
+                return response;
+            }
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 
-		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get Consumer");
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Consumer");
-			log.debug("delete consumer failed with exception", e);
-			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Consumer");
+            log.debug("delete consumer failed with exception", e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 
-		}
-	}
+        }
+    }
 
-	private ConsumerBusinessLogic getConsumerBL(ServletContext context) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		ConsumerBusinessLogic consumerBL = webApplicationContext.getBean(ConsumerBusinessLogic.class);
+    private ConsumerBusinessLogic getConsumerBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        ConsumerBusinessLogic consumerBL = webApplicationContext.getBean(ConsumerBusinessLogic.class);
 
-		return consumerBL;
-	}
+        return consumerBL;
+    }
 
-	public Either<ConsumerDefinition, ResponseFormat> convertJsonToObject(String data, User user, AuditingActionEnum actionEnum) {
-		ConsumerDefinition consumer = null;
-		Gson gson = new Gson();
-		try {
-			log.trace("convert json to object. json=\n {}", data);
-			consumer = gson.fromJson(data, ConsumerDefinition.class);
-			if (consumer == null) {
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
-				BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-				log.debug("object is null after converting from json");
-				ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, actionEnum);
-				return Either.right(responseFormat);
-			}
-		} catch (Exception e) {
-			// INVALID JSON
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
-			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-			log.debug("failed to convert from json {}", data, e);
-			ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, actionEnum);
-			return Either.right(responseFormat);
-		}
-		return Either.left(consumer);
-	}
+    public Either<ConsumerDefinition, ResponseFormat> convertJsonToObject(String data, User user, AuditingActionEnum actionEnum) {
+        ConsumerDefinition consumer = null;
+        Gson gson = new Gson();
+        try {
+            log.trace("convert json to object. json=\n {}", data);
+            consumer = gson.fromJson(data, ConsumerDefinition.class);
+            if (consumer == null) {
+                BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+                log.debug("object is null after converting from json");
+                //TODO call correct audit event method!!! - consumer!!!
+                ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, "", actionEnum);
+                return Either.right(responseFormat);
+            }
+        } catch (Exception e) {
+            // INVALID JSON
+            BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+            log.debug("failed to convert from json {}", data, e);
+            //TODO call correct audit event method!!! - consumer!!!
+            ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, "", actionEnum);
+            return Either.right(responseFormat);
+        }
+        return Either.left(consumer);
+    }
 
 }

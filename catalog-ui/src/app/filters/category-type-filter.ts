@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {ComponentType} from "../utils/constants";
 import {CacheService} from "../services/cache-service";
 export class CategoryTypeFilter {

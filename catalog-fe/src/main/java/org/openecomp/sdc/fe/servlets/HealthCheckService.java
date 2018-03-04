@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,327 +20,326 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Response;
-
-import org.apache.http.HttpStatus;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-import org.openecomp.sdc.common.api.HealthCheckWrapper;
-import org.openecomp.sdc.common.config.EcompErrorName;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.util.HealthCheckUtil;
-import org.openecomp.sdc.fe.config.Configuration;
-import org.openecomp.sdc.fe.config.ConfigurationManager;
-import org.openecomp.sdc.fe.config.FeEcompErrorManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.openecomp.sdc.common.api.HealthCheckInfo;
+import org.openecomp.sdc.common.api.HealthCheckWrapper;
+import org.openecomp.sdc.common.config.EcompErrorEnum;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.common.http.config.HttpClientConfig;
+import org.openecomp.sdc.common.http.config.Timeouts;
+import org.openecomp.sdc.common.util.HealthCheckUtil;
+import org.openecomp.sdc.fe.config.Configuration;
+import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.openecomp.sdc.fe.config.FeEcompErrorManager;
+import org.slf4j.Logger;
+
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Arrays.asList;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.openecomp.sdc.common.api.Constants.*;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.*;
+import static org.openecomp.sdc.common.http.client.api.HttpRequest.get;
+import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class HealthCheckService {
 
-	private class HealthStatus {
-		public String body;
-		public int statusCode;
+    private static final String URL = "%s://%s:%s/sdc2/rest/healthCheck";
+    private static Logger healthLogger = getLogger("asdc.fe.healthcheck");
+    private static Logger log = getLogger(HealthCheckService.class.getName());
+    private final List<String> healthCheckFeComponents = asList(HC_COMPONENT_ON_BOARDING, HC_COMPONENT_DCAE);
+    private static final HealthCheckUtil healthCheckUtil = new HealthCheckUtil();
+    private static final String DEBUG_CONTEXT = "HEALTH_FE";
+    /**
+     * This executor will execute the health check task.
+     */
+    ScheduledExecutorService healthCheckExecutor = newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "FE-Health-Check-Thread"));
 
-		public HealthStatus(int code, String body) {
-			this.body = body;
-			this.statusCode = code;
-		}
-	}
+    public void setTask(HealthCheckScheduledTask task) {
+        this.task = task;
+    }
 
-	private static final String URL = "%s://%s:%s/sdc2/rest/healthCheck";
-	private static Logger healthLogger = LoggerFactory.getLogger("asdc.fe.healthcheck");
-	private static Logger log = LoggerFactory.getLogger(HealthCheckService.class.getName());
+    private HealthCheckScheduledTask task ;
+    private HealthStatus lastHealthStatus = new HealthStatus(500, "{}");
+    private ServletContext context;
 
-	private HealthStatus lastHealthStatus = new HealthStatus(500, "{}");
-	private final List<String> healthCheckFeComponents = Arrays.asList(Constants.HC_COMPONENT_ON_BOARDING, Constants.HC_COMPONENT_DCAE);
+    public HealthCheckService(ServletContext context) {
+        this.context = context;
+        this.task = new HealthCheckScheduledTask();
+    }
 
-	private class HealthCheckScheduledTask implements Runnable {
-		@Override
-		public void run() {
-			healthLogger.trace("Executing FE Health Check Task - Start");
-			HealthStatus currentHealth = checkHealth();
-			int currentHealthStatus = currentHealth.statusCode;
-			healthLogger.trace("Executing FE Health Check Task - Status = {}", currentHealthStatus);
+    public void start(int interval) {
+        this.healthCheckExecutor.scheduleAtFixedRate( getTask() , 0, interval, TimeUnit.SECONDS);
+    }
 
-			// In case health status was changed, issue alarm/recovery
-			if (currentHealthStatus != lastHealthStatus.statusCode) {
-				log.trace("FE Health State Changed to {}. Issuing alarm / recovery alarm...", currentHealthStatus);
-				logFeAlarm(currentHealthStatus);
-			}
+    /**
+     * To be used by the HealthCheckServlet
+     *
+     * @return
+     */
+    public Response getFeHealth() {
+        return this.buildResponse(lastHealthStatus.statusCode, lastHealthStatus.body);
+    }
 
-			// Anyway, update latest response
-			lastHealthStatus = currentHealth;
-		}
-	}
+    private Response buildResponse(int status, String jsonResponse) {
+        healthLogger.trace("FE and BE health check status: {}", jsonResponse);
+        return Response.status(status).entity(jsonResponse).build();
+    }
 
-	/**
-	 * This executor will execute the health check task.
-	 */
-	ScheduledExecutorService healthCheckExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-		@Override
-		public Thread newThread(Runnable r) {
-			return new Thread(r, "FE-Health-Check-Thread");
-		}
-	});
-	private ServletContext context;
+    public HealthStatus getLastHealthStatus() {
+        return lastHealthStatus;
+    }
+    public HealthCheckScheduledTask getTask() {
+        return task;
+    }
 
-	public HealthCheckService(ServletContext context) {
-		this.context = context;
-	}
+    //immutable
+    protected static class HealthStatus {
 
-	public void start(int interval) {
-		this.healthCheckExecutor.scheduleAtFixedRate(new HealthCheckScheduledTask(), 0, interval, TimeUnit.SECONDS);
-	}
+        private String body;
+        private int statusCode;
 
-	/**
-	 * To be used by the HealthCheckServlet
-	 * 
-	 * @return
-	 */
-	public Response getFeHealth() {
-		return this.buildResponse(lastHealthStatus.statusCode, lastHealthStatus.body);
-	}
+        public HealthStatus(int code, String body) {
+            this.body = body;
+            this.statusCode = code;
+        }
 
-	private HealthStatus checkHealth() {
-		CloseableHttpClient httpClient = null;
-		try {
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
-					.getConfiguration();
-			String redirectedUrl = String.format(URL, config.getBeProtocol(), config.getBeHost(),
-					config.getBeHttpPort());
-			httpClient = getHttpClient(config);
-			HttpGet httpGet = new HttpGet(redirectedUrl);
-			CloseableHttpResponse beResponse;
-			HealthCheckWrapper feAggHealthCheck;
-			try {
-				beResponse = httpClient.execute(httpGet);
-				log.debug("HC call to BE - status code is {}", beResponse.getStatusLine().getStatusCode());
-				String beJsonResponse = EntityUtils.toString(beResponse.getEntity());
-				feAggHealthCheck = getFeHealthCheckInfos(gson, beJsonResponse);
-			} catch (Exception e) {
-				log.debug("Health Check error when trying to connect to BE or external FE. Error: {}", e.getMessage());
-				log.error("Health Check error when trying to connect to BE or external FE.", e);
-				String beDowneResponse = gson.toJson(getBeDownCheckInfos());
-				return new HealthStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR, beDowneResponse);
-			}
-			
-			//Getting aggregate FE status
-			boolean aggregateFeStatus = HealthCheckUtil.getAggregateStatus(feAggHealthCheck.getComponentsInfo());
-			return new HealthStatus(aggregateFeStatus ? HttpStatus.SC_OK : HttpStatus.SC_INTERNAL_SERVER_ERROR, gson.toJson(feAggHealthCheck));
-		} catch (Exception e) {
-			FeEcompErrorManager.getInstance().processEcompError(EcompErrorName.FeHealthCheckGeneralError, "Unexpected FE Health check error");
-			FeEcompErrorManager.getInstance().logFeHealthCheckGeneralError("Unexpected FE Health check error");
-			log.error("Unexpected FE health check error {}", e.getMessage());
-			return new HealthStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-		} finally {
-			if (httpClient != null) {
-				try {
-					httpClient.close();
-				} catch (IOException e) {
-					log.error("Couldn't close HC HTTP Client: ", e);
-				}
-			}
-		}
-	}
+        public int getStatusCode() {
+            return statusCode;
+        }
 
+        public String getBody() {
+            return body;
+        }
+    }
 
+    protected class HealthCheckScheduledTask implements Runnable {
+        @Override
+        public void run() {
+            healthLogger.trace("Executing FE Health Check Task - Start");
+            HealthStatus currentHealth = checkHealth();
+            int currentHealthStatus = currentHealth.statusCode;
+            healthLogger.trace("Executing FE Health Check Task - Status = {}", currentHealthStatus);
 
+            // In case health status was changed, issue alarm/recovery
+            if (currentHealthStatus != lastHealthStatus.statusCode) {
+                log.trace("FE Health State Changed to {}. Issuing alarm / recovery alarm...", currentHealthStatus);
+                logFeAlarm(currentHealthStatus);
+            }
 
+            // Anyway, update latest response
+            lastHealthStatus = currentHealth;
+        }
 
-	private Response buildResponse(int status, String jsonResponse) {
-		healthLogger.trace("FE and BE health check status: {}", jsonResponse);
-		return Response.status(status).entity(jsonResponse).build();
-	}
+        private List<HealthCheckInfo> addHostedComponentsFeHealthCheck(String baseComponent) {
+            Configuration config = getConfig();
 
-	private void logFeAlarm(int lastFeStatus) {
+            String healthCheckUrl = null;
+            switch (baseComponent) {
+                case HC_COMPONENT_ON_BOARDING:
+                    healthCheckUrl = buildOnboardingHealthCheckUrl(config);
+                    break;
+                case HC_COMPONENT_DCAE:
+                    healthCheckUrl = buildDcaeHealthCheckUrl(config);
+                    break;
+                default:
+                    log.debug("Unsupported base component {}", baseComponent);
+            }
 
-		switch (lastFeStatus) {
-		case 200:
-			FeEcompErrorManager.getInstance().processEcompError(EcompErrorName.FeHealthCheckRecovery,
-					"FE Health Recovered");
-			FeEcompErrorManager.getInstance().logFeHealthCheckRecovery("FE Health Recovered");
-			break;
-		case 500:
-			FeEcompErrorManager.getInstance().processEcompError(EcompErrorName.FeHealthCheckConnectionError,
-					"Connection with ASDC-BE is probably down");
-			FeEcompErrorManager.getInstance().logFeHealthCheckError("Connection with ASDC-BE is probably down");
-			break;
-		default:
-			break;
-		}
+            StringBuilder description = new StringBuilder("");
+            int connectTimeoutMs = 3000;
+            int readTimeoutMs = config.getHealthCheckSocketTimeoutInMs(5000);
 
-	}
+            if (healthCheckUrl != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    HttpResponse<String> response = get(healthCheckUrl, new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs)));
+                    int beStatus = response.getStatusCode();
+                    if (beStatus == SC_OK || beStatus == SC_INTERNAL_SERVER_ERROR) {
+                        String beJsonResponse = response.getResponse();
+                        return convertResponse(beJsonResponse, mapper, baseComponent, description, beStatus);
+                    } else {
+                        description.append("Response code: " + beStatus);
+                        log.trace("{} Health Check Response code: {}", baseComponent, beStatus);
+                    }
+                } catch (Exception e) {
+                    log.error("{} Unexpected response ", baseComponent, e);
+                    description.append(baseComponent + " Unexpected response: " + e.getMessage());
+                }
+            } else {
+                description.append(baseComponent + " health check Configuration is missing");
+            }
 
-	private HealthCheckWrapper getFeHealthCheckInfos(Gson gson, String responseString) {
-		Type wrapperType = new TypeToken<HealthCheckWrapper>() {
-		}.getType();
-		HealthCheckWrapper healthCheckWrapper = gson.fromJson(responseString, wrapperType);
-		String appVersion = ExternalConfiguration.getAppVersion();
-		String description = "OK";
-		healthCheckWrapper.getComponentsInfo()
-				.add(new HealthCheckInfo(Constants.HC_COMPONENT_FE, HealthCheckStatus.UP, appVersion, description));
+            return asList(new HealthCheckInfo(HC_COMPONENT_FE, DOWN, null, description.toString()));
+        }
 
-		//add hosted components fe component
-		for (String component: healthCheckFeComponents) {
-			List<HealthCheckInfo> feComponentsInfo = addHostedComponentsFeHealthCheck(component);
-			HealthCheckInfo baseComponentHCInfo = healthCheckWrapper.getComponentsInfo().stream().filter(c -> c.getHealthCheckComponent().equals(component)).findFirst().orElse(null);
-			if (baseComponentHCInfo != null) {
-				if (baseComponentHCInfo.getComponentsInfo() == null) {
-					baseComponentHCInfo.setComponentsInfo(new ArrayList<>());
-				}
-				baseComponentHCInfo.getComponentsInfo().addAll(feComponentsInfo);
-				boolean status = HealthCheckUtil.getAggregateStatus(baseComponentHCInfo.getComponentsInfo());
-				baseComponentHCInfo.setHealthCheckStatus(status ? HealthCheckStatus.UP : HealthCheckStatus.DOWN);
+        private void logFeAlarm(int lastFeStatus) {
+            switch (lastFeStatus) {
+                case 200:
+                    FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckRecovery, "FE Health Recovered");
+                    FeEcompErrorManager.getInstance().logFeHealthCheckRecovery("FE Health Recovered");
+                    break;
+                case 500:
+                    FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckError, "Connection with ASDC-BE is probably down");
+                    FeEcompErrorManager.getInstance().logFeHealthCheckError("Connection with ASDC-BE is probably down");
+                    break;
+                default:
+                    break;
+            }
+        }
 
-				String componentsDesc = HealthCheckUtil.getAggregateDescription(baseComponentHCInfo.getComponentsInfo(), baseComponentHCInfo.getDescription());
-				if (componentsDesc.length() > 0) { //aggregated description contains all the internal components desc
-					baseComponentHCInfo.setDescription(componentsDesc);
-				}
-			} else {
-				log.error("{} not exists in HealthCheck info", component);
-			}
-		}
-		return healthCheckWrapper;
-	}
+        protected HealthStatus checkHealth() {
+            HttpResponse<String> response;
+            try {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Configuration config = getConfig();
+                String redirectedUrl = String.format(URL, config.getBeProtocol(), config.getBeHost(),
+                        HTTPS.equals(config.getBeProtocol()) ? config.getBeSslPort() : config.getBeHttpPort());
 
-	private List<HealthCheckInfo> addHostedComponentsFeHealthCheck(String baseComponent) {
-		Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
-				.getConfiguration();
+                int connectTimeoutMs = 3000;
+                int readTimeoutMs = config.getHealthCheckSocketTimeoutInMs(5000);
 
-		String healthCheckUrl = null;
-		switch(baseComponent) {
-			case Constants.HC_COMPONENT_ON_BOARDING:
-				healthCheckUrl = buildOnboardingHealthCheckUrl(config);
-				break;
-			case Constants.HC_COMPONENT_DCAE:
-				healthCheckUrl = buildDcaeHealthCheckUrl(config);
-				break;
-		}
+                HealthCheckWrapper feAggHealthCheck;
+                try {
+                    response = get(redirectedUrl, new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs)));
+                    log.debug("HC call to BE - status code is {}", response.getStatusCode());
+                    String beJsonResponse = response.getResponse();
+                    feAggHealthCheck = getFeHealthCheckInfos(gson, beJsonResponse);
+                } catch (Exception e) {
+                    log.debug("Health Check error when trying to connect to BE or external FE. Error: {}", e.getMessage());
+                    log.error("Health Check error when trying to connect to BE or external FE.", e);
+                    String beDowneResponse = gson.toJson(getBeDownCheckInfos());
+                    return new HealthStatus(SC_INTERNAL_SERVER_ERROR, beDowneResponse);
+                }
 
-		String description;
+                //Getting aggregate FE status
+                boolean aggregateFeStatus = (response != null && response.getStatusCode() == SC_INTERNAL_SERVER_ERROR) ? false : healthCheckUtil.getAggregateStatus(feAggHealthCheck.getComponentsInfo(), config.getHealthStatusExclude());
+                return new HealthStatus(aggregateFeStatus ? SC_OK : SC_INTERNAL_SERVER_ERROR, gson.toJson(feAggHealthCheck));
+            } catch (Exception e) {
+                FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT,EcompErrorEnum.FeHealthCheckGeneralError, "Unexpected FE Health check error");
+                FeEcompErrorManager.getInstance().logFeHealthCheckGeneralError("Unexpected FE Health check error");
+                log.error("Unexpected FE health check error {}", e.getMessage());
+                return new HealthStatus(SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+        }
 
-		if (healthCheckUrl != null) {
-			ObjectMapper mapper = new ObjectMapper();
-			CloseableHttpClient httpClient = getHttpClient(config);
-			HttpGet httpGet = new HttpGet(healthCheckUrl);
-			CloseableHttpResponse beResponse;
+        protected Configuration getConfig(){
+            return ((ConfigurationManager) context.getAttribute(CONFIGURATION_MANAGER_ATTR))
+                    .getConfiguration();
+        }
 
-			try {
-				beResponse = httpClient.execute(httpGet);
-				int beStatus = beResponse.getStatusLine().getStatusCode();
-				if (beStatus == HttpStatus.SC_OK || beStatus == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-					try {
-						String beJsonResponse = EntityUtils.toString(beResponse.getEntity());
+        protected HealthCheckWrapper getFeHealthCheckInfos(Gson gson, String responseString) {
+            Configuration config = getConfig();
+            Type wrapperType = new TypeToken<HealthCheckWrapper>() {
+            }.getType();
+            HealthCheckWrapper healthCheckWrapper = gson.fromJson(responseString, wrapperType);
+            String appVersion = getAppVersion();
+            String description = "OK";
+            healthCheckWrapper.getComponentsInfo()
+                    .add(new HealthCheckInfo(HC_COMPONENT_FE, UP, appVersion, description));
 
-						Map<String, Object> healthCheckMap = mapper.readValue(beJsonResponse, new TypeReference<Map<String, Object>>(){});
-						if (healthCheckMap.containsKey("componentsInfo")) {
-							List<HealthCheckInfo> componentsInfo = mapper.convertValue(healthCheckMap.get("componentsInfo"), new TypeReference<List<HealthCheckInfo>>() {});
-							return componentsInfo;
-						} else {
-							description = "Internal components are missing";
-						}
-					} catch (JsonSyntaxException e) {
-						log.error("{} Unexpected response body ", baseComponent, e);
-						description = baseComponent + " Unexpected response body. Response code: " + beStatus;
-					}
-				} else {
-					description = "Response code: " + beStatus;
-					log.trace("{} Health Check Response code: {}", baseComponent, beStatus);
-				}
-			} catch (Exception e) {
-				log.error("{} Unexpected response ", baseComponent, e);
-				description = baseComponent + " Unexpected response: " + e.getMessage();
-			}
-		} else {
-			description = baseComponent + " health check Configuration is missing";
-		}
+            //add hosted components fe component
+            for (String component : healthCheckFeComponents) {
+                List<HealthCheckInfo> feComponentsInfo = addHostedComponentsFeHealthCheck(component);
+                HealthCheckInfo baseComponentHCInfo = healthCheckWrapper.getComponentsInfo().stream().filter(c -> c.getHealthCheckComponent().equals(component)).findFirst().orElse(null);
+                if (baseComponentHCInfo != null) {
+                    if (baseComponentHCInfo.getComponentsInfo() == null) {
+                        baseComponentHCInfo.setComponentsInfo(new ArrayList<>());
+                    }
+                    baseComponentHCInfo.getComponentsInfo().addAll(feComponentsInfo);
+                    boolean status = healthCheckUtil.getAggregateStatus(baseComponentHCInfo.getComponentsInfo() ,config.getHealthStatusExclude());
+                    baseComponentHCInfo.setHealthCheckStatus(status ? UP : DOWN);
 
-		return Arrays.asList(new HealthCheckInfo(Constants.HC_COMPONENT_FE, HealthCheckStatus.DOWN, null, description));
-	}
+                    String componentsDesc = healthCheckUtil.getAggregateDescription(baseComponentHCInfo.getComponentsInfo(), baseComponentHCInfo.getDescription());
+                    if (componentsDesc.length() > 0) { //aggregated description contains all the internal components desc
+                        baseComponentHCInfo.setDescription(componentsDesc);
+                    }
+                } else {
+                    log.error("{} not exists in HealthCheck info", component);
+                }
+            }
+            return healthCheckWrapper;
+        }
 
-	private HealthCheckWrapper getBeDownCheckInfos() {
-		List<HealthCheckInfo> healthCheckInfos = new ArrayList<HealthCheckInfo>();
-		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_FE, HealthCheckStatus.UP,
-				ExternalConfiguration.getAppVersion(), "OK"));
-		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckStatus.DOWN, null, null));
-		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.UNKNOWN, null, null));
-		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_CASSANDRA, HealthCheckStatus.UNKNOWN, null, null));
-		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UNKNOWN, null, null));
-		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_ON_BOARDING, HealthCheckStatus.UNKNOWN, null, null));
-		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_DCAE, HealthCheckStatus.UNKNOWN, null, null));
-		HealthCheckWrapper hcWrapper = new HealthCheckWrapper(healthCheckInfos, "UNKNOWN", "UNKNOWN");
-		return hcWrapper;
-	}
+        private HealthCheckWrapper getBeDownCheckInfos() {
+            List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_FE, UP,
+                    getAppVersion(), "OK"));
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, null));
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_TITAN, UNKNOWN, null, null));
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, UNKNOWN, null, null));
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_DISTRIBUTION_ENGINE, UNKNOWN, null, null));
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_ON_BOARDING, UNKNOWN, null, null));
+            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_DCAE, UNKNOWN, null, null));
+            return new HealthCheckWrapper(healthCheckInfos, "UNKNOWN", "UNKNOWN");
+        }
 
-	private CloseableHttpClient getHttpClient(Configuration config) {
-		int timeout = 3000;
-		int socketTimeout = config.getHealthCheckSocketTimeoutInMs(5000);
-		RequestConfig.Builder requestBuilder = RequestConfig.custom();
-		requestBuilder.setConnectTimeout(timeout).setConnectionRequestTimeout(timeout).setSocketTimeout(socketTimeout);
+        private String buildOnboardingHealthCheckUrl(Configuration config) {
 
-		HttpClientBuilder builder = HttpClientBuilder.create();
-		builder.setDefaultRequestConfig(requestBuilder.build());
-		return builder.build();
-	}
+            Configuration.OnboardingConfig onboardingConfig = config.getOnboarding();
 
-	private String buildOnboardingHealthCheckUrl(Configuration config) {
+            if (onboardingConfig != null) {
+                String protocol = onboardingConfig.getProtocol();
+                String host = onboardingConfig.getHost();
+                Integer port = onboardingConfig.getPort();
+                String uri = onboardingConfig.getHealthCheckUri();
 
-		Configuration.OnboardingConfig onboardingConfig = config.getOnboarding();
+                return protocol + "://" + host + ":" + port + uri;
+            }
 
-		if (onboardingConfig != null) {
-			String protocol = onboardingConfig.getProtocol();
-			String host = onboardingConfig.getHost();
-			Integer port = onboardingConfig.getPort();
-			String uri = onboardingConfig.getHealthCheckUri();
+            log.error("onboarding health check configuration is missing.");
+            return null;
+        }
 
-			return protocol + "://" + host + ":" + port + uri;
-		}
+        private String buildDcaeHealthCheckUrl(Configuration config) {
 
-		log.error("onboarding health check configuration is missing.");
-		return null;
-	}
+            Configuration.DcaeConfig dcaeConfig = config.getDcae();
 
-	private String buildDcaeHealthCheckUrl(Configuration config) {
+            if (dcaeConfig != null) {
+                String protocol = dcaeConfig.getProtocol();
+                String host = dcaeConfig.getHost();
+                Integer port = dcaeConfig.getPort();
+                String uri = dcaeConfig.getHealthCheckUri();
 
-		Configuration.DcaeConfig dcaeConfig = config.getDcae();
+                return protocol + "://" + host + ":" + port + uri;
+            }
 
-		if (dcaeConfig != null) {
-			String protocol = dcaeConfig.getProtocol();
-			String host = dcaeConfig.getHost();
-			Integer port = dcaeConfig.getPort();
-			String uri = dcaeConfig.getHealthCheckUri();
+            log.error("dcae health check configuration is missing.");
+            return null;
+        }
 
-			return protocol + "://" + host + ":" + port + uri;
-		}
+        private List<HealthCheckInfo> convertResponse(String beJsonResponse, ObjectMapper mapper, String baseComponent, StringBuilder description, int beStatus) {
+            try {
+                Map<String, Object> healthCheckMap = mapper.readValue(beJsonResponse, new TypeReference<Map<String, Object>>() {
+                });
+                if (healthCheckMap.containsKey("componentsInfo")) {
+                    return mapper.convertValue(healthCheckMap.get("componentsInfo"), new TypeReference<List<HealthCheckInfo>>() {
+                    });
+                } else {
+                    description.append("Internal components are missing");
+                }
+            } catch (JsonSyntaxException | IOException e) {
+                log.error("{} Unexpected response body ", baseComponent, e);
+                description.append(baseComponent + " Unexpected response body. Response code: " + beStatus);
+            }
+            return new ArrayList<>();
+        }
+    }
 
-		log.error("dcae health check configuration is missing.");
-		return null;
-	}
 }

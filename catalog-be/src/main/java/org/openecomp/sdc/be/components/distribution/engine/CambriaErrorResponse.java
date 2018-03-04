@@ -20,67 +20,67 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
-
 public class CambriaErrorResponse {
 
-	public static final int HTTP_OK = 200;
+    public static final int HTTP_OK = 200;
 
-	public static final int HTTP_INTERNAL_SERVER_ERROR = 500;
+    public static final int HTTP_INTERNAL_SERVER_ERROR = 500;
 
-	CambriaOperationStatus operationStatus;
-	Integer httpCode;
-	List<String> variables = new ArrayList<String>();
+    CambriaOperationStatus operationStatus;
+    Integer httpCode;
+    List<String> variables = new ArrayList<String>();
 
-	public CambriaErrorResponse() {
-		super();
-	}
+    public CambriaErrorResponse() {
+        super();
+    }
 
-	public CambriaErrorResponse(CambriaOperationStatus operationStatus) {
-		super();
-		this.operationStatus = operationStatus;
-	}
+    public CambriaErrorResponse(CambriaOperationStatus operationStatus) {
+        super();
+        this.operationStatus = operationStatus;
+    }
 
-	public CambriaErrorResponse(CambriaOperationStatus operationStatus, Integer httpCode) {
-		super();
-		this.operationStatus = operationStatus;
-		this.httpCode = httpCode;
-	}
+    public CambriaErrorResponse(CambriaOperationStatus operationStatus, Integer httpCode) {
+        super();
+        this.operationStatus = operationStatus;
+        this.httpCode = httpCode;
+    }
 
-	public CambriaOperationStatus getOperationStatus() {
-		return operationStatus;
-	}
+    public CambriaOperationStatus getOperationStatus() {
+        return operationStatus;
+    }
 
-	public void setOperationStatus(CambriaOperationStatus operationStatus) {
-		this.operationStatus = operationStatus;
-	}
+    public void setOperationStatus(CambriaOperationStatus operationStatus) {
+        this.operationStatus = operationStatus;
+    }
 
-	public Integer getHttpCode() {
-		return httpCode;
-	}
+    public Integer getHttpCode() {
+        return httpCode;
+    }
 
-	public void setHttpCode(Integer httpCode) {
-		this.httpCode = httpCode;
-	}
+    public void setHttpCode(Integer httpCode) {
+        this.httpCode = httpCode;
+    }
 
-	public void addVariable(String variable) {
-		variables.add(variable);
-	}
+    public void addVariable(String variable) {
+        variables.add(variable);
+    }
 
-	public List<String> getVariables() {
-		return variables;
-	}
+    public List<String> getVariables() {
+        return variables;
+    }
 
-	public void setVariables(List<String> variables) {
-		this.variables = variables;
-	}
+    public void setVariables(List<String> variables) {
+        this.variables = variables;
+    }
 
-	@Override
-	public String toString() {
-		return "CambriaErrorResponse [operationStatus=" + operationStatus + ", httpCode=" + httpCode + ", variables=" + variables + "]";
-	}
+    @Override
+    public String toString() {
+        return "CambriaErrorResponse [operationStatus=" + operationStatus + ", httpCode=" + httpCode + ", variables=" + variables + "]";
+    }
 
 }

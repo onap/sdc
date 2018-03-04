@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {Activity} from "app/models";
 import {ActivityLogService} from "app/services";

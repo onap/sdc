@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {
     Requirement, CompositionCiLinkBase, CapabilitiesGroup, RequirementsGroup, Match,
     CompositionCiNodeBase, Component, Capability
@@ -142,7 +143,7 @@ export class MatchCapabilitiesRequirementsUtils {
 
         let requirementArray:Array<Requirement> = [];
         _.forEach(_.flatten(_.values(requirements)), (requirement:Requirement)=> {
-            if (requirement.name !== "dependency" && !MatchCapabilitiesRequirementsUtils.isRequirementFulfilled(fromNodeId, requirement, links)) {
+            if (requirement.name !== 'dependency' && requirement.parentName !== 'dependency' && !MatchCapabilitiesRequirementsUtils.isRequirementFulfilled(fromNodeId, requirement, links)) {
                 requirementArray.push(requirement);
             }
         });
