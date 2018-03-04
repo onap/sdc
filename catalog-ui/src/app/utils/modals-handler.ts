@@ -310,7 +310,7 @@ export class ModalsHandler implements IModalsHandler {
     };
 
 
-    openEditModulePropertyModal = (property:PropertyModel, component:Component, selectedModule:DisplayModule):ng.IPromise<any> => {
+    openEditModulePropertyModal = (property:PropertyModel, component:Component, selectedModule:DisplayModule, filteredProperties:Array<PropertyModel>):ng.IPromise<any> => {
         let deferred = this.$q.defer();
 
         let modalOptions:ng.ui.bootstrap.IModalSettings = {
@@ -328,6 +328,9 @@ export class ModalsHandler implements IModalsHandler {
                 },
                 selectedModule: ():DisplayModule => {
                     return selectedModule;
+                },
+                filteredProperties: ():Array<PropertyModel> => {
+                    return filteredProperties;
                 }
             }
         };

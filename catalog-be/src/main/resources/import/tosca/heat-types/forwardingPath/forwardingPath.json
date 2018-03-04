@@ -1,0 +1,21 @@
+{
+  "payloadName": "forwardingPath.yml",
+  "contactId": "jh0003",
+  "name": "Forwarding Path",
+  "description": "Forwarding Path configuration object",
+  "resourceIconPath": "defaulticon",
+  "resourceType": "ABSTRACT",
+  "categories": [
+    {
+      "name": "Generic",
+      "subcategories": [
+        {
+          "name": "Abstract"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "Forwarding Path"
+  ]
+}

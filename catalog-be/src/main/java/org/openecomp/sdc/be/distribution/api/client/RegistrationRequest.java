@@ -20,21 +20,43 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import java.util.List;
+
 public class RegistrationRequest {
-	String apiPublicKey;
-	String distrEnvName;
+    String apiPublicKey;
+    String distrEnvName;
+    Boolean isConsumerToSdcDistrStatusTopic;
+    List<String> distEnvEndPoints;
 
-	public RegistrationRequest(String apiPublicKey, String distrEnvName) {
-		this.apiPublicKey = apiPublicKey;
-		this.distrEnvName = distrEnvName;
-	}
+    public RegistrationRequest(String apiPublicKey, String distrEnvName, boolean isConsumerToSdcDistrStatusTopic) {
+        this.apiPublicKey = apiPublicKey;
+        this.distrEnvName = distrEnvName;
+        this.isConsumerToSdcDistrStatusTopic = isConsumerToSdcDistrStatusTopic;
+    }
+    public RegistrationRequest(String apiPublicKey, String distrEnvName, List<String> distEnvEndPoints, boolean isConsumerToSdcDistrStatusTopic){
+        this.apiPublicKey = apiPublicKey;
+        this.distrEnvName = distrEnvName;
+        this.distEnvEndPoints = distEnvEndPoints;
+        this.isConsumerToSdcDistrStatusTopic = isConsumerToSdcDistrStatusTopic;
+    }
 
-	public String getApiPublicKey() {
-		return apiPublicKey;
-	}
+    public String getApiPublicKey() {
+        return apiPublicKey;
+    }
 
-	public String getDistrEnvName() {
-		return distrEnvName;
-	}
+    public String getDistrEnvName() {
+        return distrEnvName;
+    }
+
+    public Boolean getIsConsumerToSdcDistrStatusTopic() {
+        return isConsumerToSdcDistrStatusTopic;
+    }
+    public List<String> getDistEnvEndPoints() {
+        return distEnvEndPoints;
+    }
+
+    public void setDistEnvEndPoints(List<String> distEnvEndPoints) {
+        this.distEnvEndPoints = distEnvEndPoints;
+    }
 
 }

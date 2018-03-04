@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ICompositionViewModelScope} from "../../composition-view-model";
 import {CapabilitiesGroup, Requirement, RequirementsGroup} from "app/models";
 import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";

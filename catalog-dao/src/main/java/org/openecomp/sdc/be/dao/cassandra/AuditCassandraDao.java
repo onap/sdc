@@ -106,10 +106,7 @@ public class AuditCassandraDao extends CassandraDao {
 			});
 			return Either.left(remainingElements);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get DistributionStatuses List");
-
 			logger.debug("failed to get distribution statuses for ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -133,10 +130,7 @@ public class AuditCassandraDao extends CassandraDao {
 
 			return Either.left(remainingElements);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution Deploy By Status");
-
 			logger.debug("failed to get distribution deploy by status for ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -158,10 +152,7 @@ public class AuditCassandraDao extends CassandraDao {
 			});
 			return Either.left(remainingElements);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution request");
-
 			logger.debug("failed to get distribution request for ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -184,10 +175,7 @@ public class AuditCassandraDao extends CassandraDao {
 
 			return Either.left(remainingElements);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution notify");
-
 			logger.debug("failed to get distribution notify for ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -209,10 +197,7 @@ public class AuditCassandraDao extends CassandraDao {
 			});
 			return Either.left(remainingElements);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution notify");
-
 			logger.debug("failed to get distribution notify for ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -241,8 +226,6 @@ public class AuditCassandraDao extends CassandraDao {
 			}
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get Service DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
 			logger.debug("failed to get  distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName(), e);
@@ -259,8 +242,6 @@ public class AuditCassandraDao extends CassandraDao {
 				});
 			}
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get Service DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
 			logger.debug("failed to get distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), e);
@@ -277,8 +258,6 @@ public class AuditCassandraDao extends CassandraDao {
 				});
 			}
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get Service DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
 			logger.debug("failed to get distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_NOTIFY.getName(), e);
@@ -307,10 +286,7 @@ public class AuditCassandraDao extends CassandraDao {
 			});
 			return Either.left(remainingElements);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"get Audit By ServiceId And PrevVersion");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("get Audit By ServiceId And PrevVersion");
-
 			logger.debug("failed to getAuditByServiceIdAndPrevVersion ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -335,8 +311,6 @@ public class AuditCassandraDao extends CassandraDao {
 			});
 			return Either.left(remainingElements);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"get Audit By ServiceId And CurrVersion");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("get Audit By ServiceId And CurrVersion");
 
 			logger.debug("failed to getAuditByServiceIdAndPrevVersion ", e);

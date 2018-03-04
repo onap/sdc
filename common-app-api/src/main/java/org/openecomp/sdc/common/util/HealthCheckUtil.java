@@ -1,21 +1,24 @@
 package org.openecomp.sdc.common.util;
 
-import java.util.List;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
+
 public class HealthCheckUtil {
 
     private static Logger log = LoggerFactory.getLogger(HealthCheckUtil.class.getName());
-
-    public static boolean getAggregateStatus(List<HealthCheckInfo> healthCheckInfos) {
-
+    public boolean getAggregateStatus(List<HealthCheckInfo> healthCheckInfos, Collection<String> excludes) {
         boolean status = true;
-
+        excludes = CollectionUtils.isEmpty(excludes) ? new ArrayList<>() : excludes;
         for (HealthCheckInfo healthCheckInfo : healthCheckInfos) {
-            if (healthCheckInfo.getHealthCheckStatus().equals(HealthCheckInfo.HealthCheckStatus.DOWN)) {
+            if (!excludes.contains(healthCheckInfo.getHealthCheckComponent()) && healthCheckInfo.getHealthCheckStatus().equals(DOWN)) {
                 log.debug("Component {} is reported as DOWN - Aggregated HC will be DOWN", healthCheckInfo.getHealthCheckComponent());
                 status = false;
                 break;
@@ -25,18 +28,16 @@ public class HealthCheckUtil {
         return status;
     }
 
-    public static String getAggregateDescription(List<HealthCheckInfo> healthCheckInfos, String parentDescription) {
+    public String getAggregateDescription(List<HealthCheckInfo> healthCheckInfos, String parentDescription) {
 
         StringBuilder sb = new StringBuilder();
         healthCheckInfos.forEach(x -> {
-            if (x.getHealthCheckStatus() == HealthCheckInfo.HealthCheckStatus.DOWN) {
+            if (x.getHealthCheckStatus() == DOWN) {
                 sb.append("Component ").append(x.getHealthCheckComponent()).append(" is Down, ");
             }
         });
 
         return sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
-
-//        return description;
     }
 
 }

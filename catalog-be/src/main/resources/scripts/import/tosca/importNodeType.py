@@ -16,7 +16,7 @@ def createZipFromYml(ymlFile, zipFile):
     	zip.write(ymlFile, os.path.basename(ymlFile)) 
 	zip.close()
 
-def createUserNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME):
+def createUserNormativeType(scheme, beHost, bePort, adminUser, fileDir, ELEMENT_NAME):
 	
 	try:
 		log("in create normative type ", ELEMENT_NAME)
@@ -26,7 +26,7 @@ def createUserNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME):
 		buffer = StringIO()
 		c = pycurl.Curl()
 
-		url = 'http://' + beHost + ':' + bePort + '/sdc2/rest/v1/catalog/upload/multipart'
+		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/catalog/upload/multipart'
 		c.setopt(c.URL, url)
 		c.setopt(c.POST, 1)		
 
@@ -55,6 +55,9 @@ def createUserNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME):
 		c.setopt(pycurl.HTTPPOST, send)		
 
 		c.setopt(c.WRITEFUNCTION, buffer.write)
+		if scheme == 'https':
+			c.setopt(c.SSL_VERIFYPEER, 0)
+
 		res = c.perform()
 	
 		#print("Before get response code")	
@@ -73,7 +76,7 @@ def createUserNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME):
 
 
 def usage():
-	print sys.argv[0], '[-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-l <directory base location> | --location=<directory base location>] [-e <element name> | --element=<element name>]'
+	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-l <directory base location> | --location=<directory base location>] [-e <element name> | --element=<element name>]'
 	print "----------------- Example -------------------"
 	print "python importNodeType.py -d false -l  /home/vagrant/catalog-be-1604.0.2.15.6-SNAPSHOT/scripts/import/tosca/../../../import/tosca/user-normative-types/ -e root1"
 
@@ -86,9 +89,10 @@ def main(argv):
 	debugf = None
 	location = None
 	element = None
+	scheme = 'http'
 
 	try:
-		opts, args = getopt.getopt(argv,"i:p:u:d:l:e:h",["ip=","port=","user=","location=","element=", "debug="])
+		opts, args = getopt.getopt(argv,"i:p:u:d:l:e:h:s:",["ip=","port=","user=","location=","element=", "debug=","scheme="])
 	except getopt.GetoptError:
 		usage()
 		errorAndExit(2, 'Invalid input')
@@ -108,11 +112,13 @@ def main(argv):
 			location = arg
 		elif opt in ("-e", "--element"):
 			element = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 		elif opt in ("-d", "--debug"):
                         print arg
                         debugf = bool(arg.lower() == "true" or arg.lower() == "yes")
 
-	print 'be host =',beHost,', be port =', bePort,', user =', adminUser
+	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', user =', adminUser
 	
 	if ( beHost == None ):
 		usage()
@@ -139,7 +145,7 @@ def main(argv):
 	
 	#normativeType = "root1"	
 
-	result = createUserNormativeType(beHost, bePort, adminUser, location, element)
+	result = createUserNormativeType(scheme, beHost, bePort, adminUser, location, element)
 	#result = createUserNormativeType(beHost, bePort, adminUser, fileDir, normativeType)
 	print "---------------------------------------"
 	print "{0:30} | {1:6}".format(result[0], result[1])

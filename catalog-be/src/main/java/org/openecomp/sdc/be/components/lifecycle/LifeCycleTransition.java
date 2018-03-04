@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -45,130 +42,129 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class LifeCycleTransition {
 
-	protected ConfigurationManager configurationManager;
-	@Autowired
-	protected ToscaElementLifecycleOperation lifeCycleOperation;
-	@Autowired
-	protected TitanDao titanDao;
-	protected ComponentsUtils componentUtils;
+    protected ConfigurationManager configurationManager;
+    @Autowired
+    protected ToscaElementLifecycleOperation lifeCycleOperation;
+    @Autowired
+    protected TitanDao titanDao;
+    protected ComponentsUtils componentUtils;
 
-	protected Map<ComponentTypeEnum, List<Role>> authorizedRoles;
-	protected Map<ResourceTypeEnum, List<Role>> resourceAuthorizedRoles;
-	
-	ToscaOperationFacade toscaOperationFacade;
+    protected Map<ComponentTypeEnum, List<Role>> authorizedRoles;
+    protected Map<ResourceTypeEnum, List<Role>> resourceAuthorizedRoles;
 
-	protected LifeCycleTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation2, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+    ToscaOperationFacade toscaOperationFacade;
 
-		this.configurationManager = ConfigurationManager.getConfigurationManager();
-		this.lifeCycleOperation = lifecycleOperation2;
-		this.componentUtils = componentUtils;
-		this.authorizedRoles = new HashMap<>();
-		this.resourceAuthorizedRoles = new HashMap<>();
-		this.toscaOperationFacade = toscaOperationFacade;
-		this.titanDao = titanDao;
-	}
+    protected LifeCycleTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation2, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
 
-	public abstract LifeCycleTransitionEnum getName();
+        this.configurationManager = ConfigurationManager.getConfigurationManager();
+        this.lifeCycleOperation = lifecycleOperation2;
+        this.componentUtils = componentUtils;
+        this.authorizedRoles = new HashMap<>();
+        this.resourceAuthorizedRoles = new HashMap<>();
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.titanDao = titanDao;
+    }
 
-	public abstract AuditingActionEnum getAuditingAction();
+    public abstract LifeCycleTransitionEnum getName();
 
-	public ConfigurationManager getConfigurationManager() {
-		return configurationManager;
-	}
+    public abstract AuditingActionEnum getAuditingAction();
 
-	public void setConfigurationManager(ConfigurationManager configurationManager) {
-		this.configurationManager = configurationManager;
-	}
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
+    }
 
-	public ToscaElementLifecycleOperation getLifeCycleOperation() {
-		return lifeCycleOperation;
-	}
+    public void setConfigurationManager(ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
+    }
 
-	public void setLifeCycleOperation(ToscaElementLifecycleOperation lifeCycleOperation) {
-		this.lifeCycleOperation = lifeCycleOperation;
-	}
+    public ToscaElementLifecycleOperation getLifeCycleOperation() {
+        return lifeCycleOperation;
+    }
 
-	public List<Role> getAuthorizedRoles(ComponentTypeEnum componentType) {
-		return authorizedRoles.get(componentType);
-	}
+    public void setLifeCycleOperation(ToscaElementLifecycleOperation lifeCycleOperation) {
+        this.lifeCycleOperation = lifeCycleOperation;
+    }
 
-	public void addAuthorizedRoles(ComponentTypeEnum componentType, List<Role> authorizedRoles) {
-		this.authorizedRoles.put(componentType, authorizedRoles);
-	}
-	
-	public List<Role> getResourceAuthorizedRoles(ResourceTypeEnum resourceType) {
-		return resourceAuthorizedRoles.get(resourceType);
-	}
+    public List<Role> getAuthorizedRoles(ComponentTypeEnum componentType) {
+        return authorizedRoles.get(componentType);
+    }
 
-	public void addResouceAuthorizedRoles(ResourceTypeEnum resourceType, List<Role> authorizedRoles) {
-		this.resourceAuthorizedRoles.put(resourceType, authorizedRoles);
-	}
+    public void addAuthorizedRoles(ComponentTypeEnum componentType, List<Role> authorizedRoles) {
+        this.authorizedRoles.put(componentType, authorizedRoles);
+    }
 
-	public abstract Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean needLock, boolean inTransaction);
+    public List<Role> getResourceAuthorizedRoles(ResourceTypeEnum resourceType) {
+        return resourceAuthorizedRoles.get(resourceType);
+    }
 
-	public abstract Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo);
+    public void addResouceAuthorizedRoles(ResourceTypeEnum resourceType, List<Role> authorizedRoles) {
+        this.resourceAuthorizedRoles.put(resourceType, authorizedRoles);
+    }
 
-	public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState) {
+    public abstract Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean needLock, boolean inTransaction);
 
-		return this.validateBeforeTransition(component, componentType, modifier, owner, oldState, null);
-	}
+    public abstract Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo);
 
-	/**
-	 * getComponentOwner
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	protected Either<User, ResponseFormat> getComponentOwner(Component component, ComponentTypeEnum componentType) {
+    public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState) {
 
-		return getComponentOwner(component, componentType, false);
-	}
+        return this.validateBeforeTransition(component, componentType, modifier, owner, oldState, null);
+    }
 
-	protected Either<User, ResponseFormat> getComponentOwner(Component component, ComponentTypeEnum componentType, boolean inTransaction) {
+    /**
+     * getComponentOwner
+     *
+     * @param resource
+     * @return
+     */
+    protected Either<User, ResponseFormat> getComponentOwner(Component component, ComponentTypeEnum componentType) {
 
-		Either<User, StorageOperationStatus> resourceOwnerResult = getLifeCycleOperation().getToscaElementOwner(component.getUniqueId());
-		if (resourceOwnerResult.isRight()) {
-			ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(componentUtils.convertFromStorageResponse(resourceOwnerResult.right().value()), component, componentType);
-			return Either.right(responseFormat);
-		}
-		return Either.left(resourceOwnerResult.left().value());
-	}
+        return getComponentOwner(component, componentType, false);
+    }
 
-	protected Either<Boolean, ResponseFormat> userRoleValidation(User modifier,Component component, ComponentTypeEnum componentType, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
+    protected Either<User, ResponseFormat> getComponentOwner(Component component, ComponentTypeEnum componentType, boolean inTransaction) {
 
-		// validate user
-		//first check the user for the component and then for the resource
-		if (getAuthorizedRoles(componentType).contains(Role.valueOf(modifier.getRole())) || userResourceRoleValidation(component,componentType,modifier)) {
-			return Either.left(true);
-		}
-		// this is only used in 2 cases
-		//1. when creating vfc/cp when import vf from csar - when we
-		// create resources from node type, we create need to change the state
-		// to certified
-		//2. certification flow upno upgrade migration
-		if (lifecycleChangeInfo != null && lifecycleChangeInfo.getAction() != null && (lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.CREATE_FROM_CSAR|| lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.UPGRADE_MIGRATION)) {
-			return Either.left(true);
-		}
+        Either<User, StorageOperationStatus> resourceOwnerResult = getLifeCycleOperation().getToscaElementOwner(component.getUniqueId());
+        if (resourceOwnerResult.isRight()) {
+            ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(componentUtils.convertFromStorageResponse(resourceOwnerResult.right().value()), component, componentType);
+            return Either.right(responseFormat);
+        }
+        return Either.left(resourceOwnerResult.left().value());
+    }
 
-		ResponseFormat responseFormat = componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-		return Either.right(responseFormat);
-	}
-	
-	protected boolean userResourceRoleValidation(Component component, ComponentTypeEnum componentType, User modifier) {
-		if (componentType.equals(ComponentTypeEnum.RESOURCE)){
-			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition)component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
-			if (getResourceAuthorizedRoles(resourceType)!=null && getResourceAuthorizedRoles(resourceType).contains(Role.valueOf(modifier.getRole()))) {
-				return true;
-			}
-		} else {
-			return false;
-		}
-		
-		return false;
-	}
+    protected Either<Boolean, ResponseFormat> userRoleValidation(User modifier,Component component, ComponentTypeEnum componentType, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
+
+        // validate user
+        //first check the user for the component and then for the resource
+        if (getAuthorizedRoles(componentType).contains(Role.valueOf(modifier.getRole())) || userResourceRoleValidation(component,componentType,modifier)) {
+            return Either.left(true);
+        }
+        // this is only used in 2 cases
+        //1. when creating vfc/cp when import vf from csar - when we
+        // create resources from node type, we create need to change the state
+        // to certified
+        //2. certification flow upno upgrade migration
+        if (lifecycleChangeInfo != null && lifecycleChangeInfo.getAction() != null && (lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.CREATE_FROM_CSAR|| lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.UPGRADE_MIGRATION)) {
+            return Either.left(true);
+        }
+
+        ResponseFormat responseFormat = componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
+        return Either.right(responseFormat);
+    }
+
+    protected boolean userResourceRoleValidation(Component component, ComponentTypeEnum componentType, User modifier) {
+        if (componentType.equals(ComponentTypeEnum.RESOURCE)){
+            ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition)component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
+            if (getResourceAuthorizedRoles(resourceType)!=null && getResourceAuthorizedRoles(resourceType).contains(Role.valueOf(modifier.getRole()))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

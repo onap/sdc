@@ -1257,6 +1257,7 @@ org.openecomp.datatypes.flavors.DeploymentFlavor:
       license_flavor:
         type: org.openecomp.datatypes.flavors.LicenseFlavor
         required: false
+
 org.openecomp.datatypes.ImageInfo:
   derived_from: tosca.datatypes.Root
   properties:
@@ -1271,7 +1272,7 @@ org.openecomp.datatypes.ImageInfo:
         type: string
         required: false
         default: md5
-#onap 
+#ONAP types 
 tosca.datatypes.nfv.VnfcConfigurableProperties:
   derived_from: tosca.datatypes.Root
   properties:

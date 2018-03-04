@@ -24,14 +24,14 @@ import java.util.List;
 
 public class DistributionStatusOfServiceListResponce {
 
-	private List<DistributionStatusOfServiceInfo> distribStatusOfServiceInfoList;
+    private List<DistributionStatusOfServiceInfo> distribStatusOfServiceInfoList;
 
-	public List<DistributionStatusOfServiceInfo> getDistributionStatusOfServiceList() {
-		return distribStatusOfServiceInfoList;
-	}
+    public List<DistributionStatusOfServiceInfo> getDistributionStatusOfServiceList() {
+        return distribStatusOfServiceInfoList;
+    }
 
-	public void setDistributionStatusOfServiceList(List<DistributionStatusOfServiceInfo> distribStatusOfServiceInfoList) {
-		this.distribStatusOfServiceInfoList = distribStatusOfServiceInfoList;
-	}
+    public void setDistributionStatusOfServiceList(List<DistributionStatusOfServiceInfo> distribStatusOfServiceInfoList) {
+        this.distribStatusOfServiceInfoList = distribStatusOfServiceInfoList;
+    }
 
 }

@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="uitests" configfailurepolicy="continue" parallel="methods" thread-count="2" data-provider-thread-count="2">
+<suite name="uitests" configfailurepolicy="continue" parallel="methods" thread-count="4" data-provider-thread-count="2">
  <parameter name="makeDistribution"  value="true"/>
 
   <test name="uiSanity">
     <classes>
     	
-    	<class name="org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders">
-   			  <methods>
-				<include name="OnbordingDataProviders"/>
-			  </methods>
-		</class>
-   		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Onboard">
+    	<class name="org.openecomp.sdc.ci.tests.execute.sanity.ToscaValidationTest"/>
+   		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI">
    			  <methods>
 				<exclude name="onboardVNFTestSanity"/>
 				<exclude name="onboardVNFShotFlow"/>
@@ -21,6 +17,7 @@
 		</class>
    		<class name="org.openecomp.sdc.ci.tests.execute.sanity.CatalogLeftPanelTest"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Vf"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.VfAPI"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Service"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.ImportVFCAsset"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.ImportDCAE"/>
@@ -37,7 +34,7 @@
         <class name="org.openecomp.sdc.ci.tests.US.MIBsArtifactsOnResourceInstance"/>
         <class name="org.openecomp.sdc.ci.tests.US.NewArtifactTypeGuide"/>
         <class name="org.openecomp.sdc.ci.tests.US.RemoveRestrictionOfDeploymentArtifacts"/>
-		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlows"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsThroughAPI"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PortMirroring"/>
         
         <!--  <class name="org.openecomp.sdc.ci.tests.US.AddComponentInstancesArtifactsInCsar"/> -->

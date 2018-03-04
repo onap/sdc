@@ -13,15 +13,24 @@
 /out/
 *.iml
 
+# Logs
+#------------------------------------------------------------
+*.log
+*/logs/*
+*/*/logs/*
+/utils/DmaapPublisher/logs/*
+
+
+#Excluded Script Folder
+xFolder
+
 # IntelliJ IDE
 #------------------------------------------------------------
 **/.idea/
 /out/
 *.iml
 
-!catalog-fe/src/main/webapp/META-INF/
-!catalog-fe/src/main/webapp/WEB-INF/
-# Eclipse
+
 # Maven
 #------------------------------------------------------------
 **/target/
@@ -29,7 +38,7 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 version.properties
-dependency-reduced-pom.xml
+*dependency-reduced-pom.xml
 
 ## sdc-os-chef
 *.class
@@ -40,27 +49,36 @@ dependency-reduced-pom.xml
 *.ear
 *.iml
 *.jar
+*.war
 #Gradle
-build.gradle
 .gradle/*
+
+#Gradle
+.gradle/*
+*/*.gradle
+*/settings.gradle
+*/gradlew.bat
+*/gradlew
+gradlew.bat
+gradlew
+settings.gradle
 
 /log
-#Gradle
-build.gradle
-.gradle/*
-
 /log
 *.kpf
 *.orig
-*.war
-.classpath
-.delivery
-.idea/*
 
 
 # catalog-ui
 #------------------------------------------------------------
-
+#------------------------------------------------------------
+catalog-ui/app/dist/*
+catalog-ui/package-lock.json
+catalog-ui/dist
+catalog-ui/*.tmp.txt
+catalog-ui/tests/Coverage/*
+catalog-ui/Chrome*
+catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
 
 catalog-ui/app/dist/*
 .metadata/
@@ -76,8 +94,6 @@ asdctool/tosca/*
 bin/
 catalog-be/.pydevproject
 catalog-be/.checkstyle
-catalog-be/.pydevproject
-catalog-be/bin/
 catalog-be/data/*
 catalog-be/src/main/java/META-INF/MANIFEST.MF
 catalog-be/test-output/*
@@ -101,16 +117,13 @@ catalog-ui/app/scripts/**/*.js.map
 catalog-ui/app/scripts/references.ts
 catalog-ui/app/scripts/tsconfig.json
 catalog-ui/app/tsconfig.json
-catalog-ui/bower_components/
 catalog-ui/package-lock.json
 catalog-ui/dist
 catalog-ui/*.tmp.txt
 catalog-ui/tests/Coverage/*
 catalog-ui/Chrome*
 catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
-catalog-ui/*.tmp.txt
 catalog-ui/tests/Coverage/*
-catalog-ui/Chrome*
 catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
 catalog-ui/node/*
 catalog-ui/node_modules/
@@ -152,6 +165,10 @@ distribution-ci/logs/wordnik.log.7
 distribution-ci/logs/wordnik.log.8
 distribution-ci/logs/wordnik.log.9
 dox-sequence-diagram-ui/node/*
+
+
+
+
 
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/Error.log
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/audit.log
@@ -224,3 +241,22 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 /openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/vsp_*
 
 
+sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
+
+utils/DmaapPublisher/logs/*
+
+
+sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
+
+utils/DmaapPublisher/logs/*
+
+*.xls
+
+
+sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
+
+
+/catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz

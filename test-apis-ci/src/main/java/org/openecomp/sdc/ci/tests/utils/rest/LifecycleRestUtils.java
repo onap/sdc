@@ -111,10 +111,10 @@ public class LifecycleRestUtils extends BaseRestUtils {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.POST_EXTERNAL_API_CHANGE_LIFE_CYCLE_OF_ASSET, config.getCatalogBeHost(), config.getCatalogBePort(), assetTypeEnum.getValue(), assetUUID, lifeCycleStatesEnum.getState());
 		
-		Map<String, String> additionalHeaders = new HashMap<String, String>();
+		Map<String, String> additionalHeaders = new HashMap<>();
 		
 		additionalHeaders.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		additionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		additionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		String jsonBody = "{\"userRemarks\": \"" + comment + "\"}";
 
@@ -361,7 +361,7 @@ public class LifecycleRestUtils extends BaseRestUtils {
 	}
 
 	private static Map<String, String> prepareHeadersMap(User sdncModifierDetails) {
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());

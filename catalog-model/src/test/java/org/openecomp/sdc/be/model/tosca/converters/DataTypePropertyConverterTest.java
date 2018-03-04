@@ -1,19 +1,19 @@
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gson.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
-import com.google.gson.JsonObject;
+import javax.json.Json;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class DataTypePropertyConverterTest {
 

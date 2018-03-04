@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.Constants;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class InputValueData extends GraphNode {
 	private String uniqueId;
@@ -68,6 +68,7 @@ public class InputValueData extends GraphNode {
 
 	}
 
+	@Override
 	public String getUniqueId() {
 		return uniqueId;
 	}

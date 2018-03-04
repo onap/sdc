@@ -1,6 +1,14 @@
 <div class="custom-modal {{input.size}}">
-    <div class="ng2-modal-content">
-        <div class="ng2-modal-header modal-type-{{input.type}}">
+    <div class="ng2-modal-content"
+        ngDraggable
+        [ngDraggable]="input.isMovable"
+        [handle]="ModalHandle"
+        [bounds]="ModalBounds"
+        [inBounds]="true"
+        [preventDefaultEvent]="false">
+        <div #ModalHandle
+            class="ng2-modal-header modal-type-{{input.type}}"
+            [ngClass]="{'movable': input.isMovable}">
             <span class="title">{{ input.title }}</span>
             <span class="close-button" (click)="close()"></span>
         </div>
@@ -18,4 +26,4 @@
         </div>
     </div>
 </div>
-<div class="modal-background"></div>
+<div #ModalBounds class="modal-background" [ngClass]="{'transparent': input.isMovable}"></div>

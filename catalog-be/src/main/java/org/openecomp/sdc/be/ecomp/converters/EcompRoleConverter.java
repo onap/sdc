@@ -27,26 +27,26 @@ import org.slf4j.LoggerFactory;
 
 public final class EcompRoleConverter {
 
-	private static Logger log = LoggerFactory.getLogger(EcompRoleConverter.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(EcompRoleConverter.class);
 
-	private EcompRoleConverter() {
-	}
+    private EcompRoleConverter() {
+    }
 
-	// TODO Add Either or Exception in case of convertation failure
-	public static String convertEcompRoleToRole(EcompRole ecompRole) {
+    // TODO Add Either or Exception in case of convertation failure
+    public static String convertEcompRoleToRole(EcompRole ecompRole) {
 
-		log.debug("converting role");
-		if (ecompRole == null) {
-			log.debug("recieved null for roles");
-			return null;
-		}
+        log.debug("converting role");
+        if (ecompRole == null) {
+            log.debug("recieved null for roles");
+            return null;
+        }
 
-		for (Role role : Role.values()) {
-			if (role.ordinal() == ecompRole.getId()) {
-				return role.name();
-			}
-		}
-		log.debug("no roles converted");
-		return null;
-	}
+        for (Role role : Role.values()) {
+            if (role.ordinal() == ecompRole.getId()) {
+                return role.name();
+            }
+        }
+        log.debug("no roles converted");
+        return null;
+    }
 }

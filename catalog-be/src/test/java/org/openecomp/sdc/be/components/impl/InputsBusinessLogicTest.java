@@ -20,33 +20,28 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 public class InputsBusinessLogicTest {
 
@@ -62,6 +57,9 @@ public class InputsBusinessLogicTest {
 
     @Mock
     private ToscaOperationFacade toscaOperationFacadeMock;
+
+    @Mock
+    private UserValidations userValidations;
 
     @InjectMocks
     private InputsBusinessLogic testInstance;
@@ -83,13 +81,13 @@ public class InputsBusinessLogicTest {
         instanceInputMap.put(COMPONENT_INSTANCE_ID, Collections.singletonList(componentInstanceInput));
         instanceInputMap.put("someInputId", Collections.singletonList(new ComponentInstanceInput()));
         service.setComponentInstancesInputs(instanceInputMap);
-
-        Mockito.when(userAdminMock.getUser(USER_ID, false)).thenReturn(Either.left(new User()));
+        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(Either.left(new User()));
+        when(userAdminMock.getUser(USER_ID, false)).thenReturn(Either.left(new User()));
     }
 
     @Test
     public void getComponentInstanceInputs_ComponentInstanceNotExist() throws Exception {
-        Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, "nonExisting");
         assertTrue(componentInstanceInputs.isRight());
         Mockito.verify(componentsUtilsMock).getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
@@ -115,13 +113,13 @@ public class InputsBusinessLogicTest {
 
     @Test
     public void getComponentInstanceInputs() throws Exception {
-        Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, COMPONENT_INSTANCE_ID);
         assertEquals("inputId", componentInstanceInputs.left().value().get(0).getInputId());
     }
 
     private void getComponents_emptyInputs(Service service) {
-        Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, COMPONENT_INSTANCE_ID);
         assertEquals(Collections.emptyList(), componentInstanceInputs.left().value());
     }

@@ -20,30 +20,30 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.util.List;
-
 import org.apache.commons.lang3.tuple.Triple;
 import org.openecomp.sdc.be.model.Component;
 
+import java.util.List;
+
 public class ToscaRepresentation {
 
-	private String mainYaml;
-	private List<Triple<String, String, Component>> dependencies;
+    private String mainYaml;
+    private List<Triple<String, String, Component>> dependencies;
 
-	public String getMainYaml() {
-		return mainYaml;
-	}
+    public String getMainYaml() {
+        return mainYaml;
+    }
 
-	public void setMainYaml(String mainYaml) {
-		this.mainYaml = mainYaml;
-	}
+    public void setMainYaml(String mainYaml) {
+        this.mainYaml = mainYaml;
+    }
 
-	public List<Triple<String, String, Component>> getDependencies() {
-		return dependencies;
-	}
+    public List<Triple<String, String, Component>> getDependencies() {
+        return dependencies;
+    }
 
-	public void setDependencies(List<Triple<String, String, Component>> dependancies) {
-		this.dependencies = dependancies;
-	}
+    public void setDependencies(List<Triple<String, String, Component>> dependancies) {
+        this.dependencies = dependancies;
+    }
 
 }

@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ComponentInstanceFactory} from "app/utils";
 import {ComponentInstance} from "app/models";
 import {Requirement, Component, Capability} from "app/models";

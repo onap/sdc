@@ -55,15 +55,4 @@ public class PolicyTypeDataTest {
 		testSubject = createTestSubject();
 		result = testSubject.getPolicyTypeDataDefinition();
 	}
-
-	
-	@Test
-	public void testSetPolicyTypeDataDefinition() throws Exception {
-		PolicyTypeData testSubject;
-		PolicyTypeDataDefinition policyTypeDataDefinition = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setPolicyTypeDataDefinition(policyTypeDataDefinition);
-	}
 }

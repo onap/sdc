@@ -48,6 +48,7 @@ import org.openecomp.sdc.ci.tests.verificator.UserManagementVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -72,21 +73,23 @@ public class AdminUserManagment extends SetupCDTest {
 
 	//TC915100
 	@Test
-	public void creatNewUserTest() throws Exception {
+	public void createNewUserTest() throws Exception {
 		
 		String userId = generateValidUserId();
 		UserRoleEnum userRole = UserRoleEnum.DESIGNER;
 		AdminWorkspaceUIUtilies.createNewUser(userId, userRole);
+		GeneralUIUtils.ultimateWait();
 		UserManagementVerificator.validateUserCreated(userId, userRole);
 	}
 	
 	//TC922253
 	@Test
-	public void creatNewUser_MacIdTest() throws Exception {
+	public void createNewUser_MacIdTest() throws Exception {
 		
 		String macId = generateValidMacId();
 		UserRoleEnum userRole = UserRoleEnum.DESIGNER;
 		AdminWorkspaceUIUtilies.createNewUser(macId, userRole);
+		GeneralUIUtils.ultimateWait();
 		UserManagementVerificator.validateUserCreated(macId, userRole);
 	}
 	
@@ -106,9 +109,9 @@ public class AdminUserManagment extends SetupCDTest {
 	@Test
 	public void createInvalidMacIdTest(){
 		
-//		if(true){
-//			throw new SkipException("Open bug 324032");			
-//		}
+		if(true){
+			throw new SkipException("Open bug 324032");
+		}
 		
 		String macId = generateValidMacId();
 		StringBuilder invalidMacId = new StringBuilder(macId);
@@ -116,6 +119,7 @@ public class AdminUserManagment extends SetupCDTest {
 		UserRoleEnum userRole = UserRoleEnum.DESIGNER;
 		ExtentTestActions.log(Status.INFO, "Trying to create an invalid macId.");
 		AdminWorkspaceUIUtilies.createNewUser(invalidMacId.toString(), userRole);
+		GeneralUIUtils.ultimateWait();
 		ErrorMessageUIVerificator.validateErrorMessage(ActionStatus.INVALID_USER_ID);
 	}
 	

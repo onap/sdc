@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.openecomp.sdc.be.model.User;
@@ -44,6 +44,8 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.yaml.snakeyaml.Yaml;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ImportReqDetails extends ResourceReqDetails {
 

@@ -23,5 +23,5 @@ package org.openecomp.sdc.common.transaction.api;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 
 public interface ICommitHandler extends IDBType {
-	DBActionCodeEnum doCommit();
+    DBActionCodeEnum doCommit();
 }

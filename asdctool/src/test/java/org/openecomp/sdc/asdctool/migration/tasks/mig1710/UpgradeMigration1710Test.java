@@ -1,26 +1,17 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1710;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.google.common.collect.Lists;
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
+import org.openecomp.sdc.asdctool.migration.tasks.handlers.XlsOutputHandler;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -31,21 +22,19 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import com.google.common.collect.Lists;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import fj.data.Either;
-
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class UpgradeMigration1710Test {
 
@@ -53,7 +42,9 @@ public class UpgradeMigration1710Test {
     private final static String CONF_LEVEL =  "5.0";
 
     private final User user = new User();
-    private UpgradeMigration1710 migration;
+
+    @InjectMocks
+    private UpgradeMigration1710 migration = new UpgradeMigration1710();
     @Mock
     private IUserAdminOperation userAdminOperation;
     @Mock
@@ -66,6 +57,9 @@ public class UpgradeMigration1710Test {
     private ComponentsUtils componentUtils;
     @Mock
     private ConfigurationSource configurationSource;
+    @Mock
+    private XlsOutputHandler outputHandler;
+
     private static ConfigurationManager configurationManager;
     private static List<String> resources = Stream.of("org.openecomp.resource.cp.extCP").collect(Collectors.toList());
     private static Map<String, List<String>> resourcesForUpgrade;
@@ -78,12 +72,6 @@ public class UpgradeMigration1710Test {
 
     @Before
     public void setUp() {
-        migration = new UpgradeMigration1710();
-        migration.setUserAdminOperation(userAdminOperation);
-        migration.setTitanDao(titanDao);
-        migration.setTosckaOperationFacade(toscaOperationFacade);
-        migration.setLifecycleBusinessLogic(lifecycleBusinessLogic);
-
         user.setUserId(USER);
         configurationManager = new ConfigurationManager(configurationSource);
         configurationManager.setConfiguration(new Configuration());
@@ -106,11 +94,13 @@ public class UpgradeMigration1710Test {
         final boolean failOnVfUpgrade = true;
         final boolean upgradeServices = false;
         final boolean exceptionOnVfUpgrade = false;
-        final boolean upgradeFVC = false;
+        final boolean upgradeVFC = false;
         configurationManager.getConfiguration().setSkipUpgradeFailedVfs(false);
         resolveUserAndDefineUpgradeLevel();
-        upgradeRules(failOnVfUpgrade, exceptionOnVfUpgrade, upgradeServices, upgradeFVC);
+        upgradeRules(failOnVfUpgrade, exceptionOnVfUpgrade, upgradeServices, upgradeVFC);
         assertEquals(MigrationResult.MigrationStatus.FAILED, migration.migrate().getMigrationStatus());
+        verify(titanDao, times(1)).commit();
+        verify(titanDao, times(2)).rollback();
     }
 
     @Test
@@ -118,11 +108,13 @@ public class UpgradeMigration1710Test {
         final boolean failOnVfUpgrade = false;
         final boolean upgradeServices = false;
         final boolean exceptionOnVfUpgrade = true;
-        final boolean upgradeFVC = false;
+        final boolean upgradeVFC = false;
         configurationManager.getConfiguration().setSkipUpgradeFailedVfs(false);
         resolveUserAndDefineUpgradeLevel();
-        upgradeRules(failOnVfUpgrade, exceptionOnVfUpgrade, upgradeServices, upgradeFVC);
+        upgradeRules(failOnVfUpgrade, exceptionOnVfUpgrade, upgradeServices, upgradeVFC);
         assertEquals(MigrationResult.MigrationStatus.FAILED, migration.migrate().getMigrationStatus());
+        verify(titanDao, times(1)).commit();
+        verify(titanDao, times(2)).rollback();
     }
 
     @Test
@@ -130,11 +122,13 @@ public class UpgradeMigration1710Test {
         final boolean failOnVfUpgrade = false;
         final boolean upgradeServices = true;
         final boolean exceptionOnFvUpgrade = true;
-        final boolean upgradeFVC = false;
+        final boolean upgradeVFC = false;
         configurationManager.getConfiguration().setSkipUpgradeFailedVfs(true);
         resolveUserAndDefineUpgradeLevel();
-        upgradeRules(failOnVfUpgrade, exceptionOnFvUpgrade, upgradeServices, upgradeFVC);
+        upgradeRules(failOnVfUpgrade, exceptionOnFvUpgrade, upgradeServices, upgradeVFC);
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
+        verify(titanDao, times(2)).commit();
+        verify(titanDao, times(3)).rollback();
     }
 
 
@@ -143,10 +137,12 @@ public class UpgradeMigration1710Test {
         final boolean failOnVfUpgrade = false;
         final boolean upgradeServices = true;
         final boolean exceptionOnFvUpgrade = false;
-        final boolean upgradeFVC = false;
+        final boolean upgradeVFC = false;
         resolveUserAndDefineUpgradeLevel();
-        upgradeRules(failOnVfUpgrade, exceptionOnFvUpgrade, upgradeServices, upgradeFVC);
+        upgradeRules(failOnVfUpgrade, exceptionOnFvUpgrade, upgradeServices, upgradeVFC);
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
+        verify(titanDao, times(2)).commit();
+        verify(titanDao, times(3)).rollback();
     }
 
     @Test
@@ -154,11 +150,11 @@ public class UpgradeMigration1710Test {
         final boolean failOnVfUpgrade = false;
         final boolean upgradeServices = true;
         final boolean exceptionOnFvUpgrade = false;
-        final boolean upgradeFVC = true;
+        final boolean upgradeVFC = true;
         resolveUserAndDefineUpgradeLevel();
-        upgradeRules(failOnVfUpgrade, exceptionOnFvUpgrade, upgradeServices, upgradeFVC);
+        upgradeRules(failOnVfUpgrade, exceptionOnFvUpgrade, upgradeServices, upgradeVFC);
         configurationManager.getConfiguration().setSkipUpgradeVSPs(false);
-        migration.setComponentsUtils(componentUtils);
+//        migration.setComponentsUtils(componentUtils);
         assertEquals(MigrationResult.MigrationStatus.COMPLETED, migration.migrate().getMigrationStatus());
     }
 
@@ -187,7 +183,7 @@ public class UpgradeMigration1710Test {
 
         when(titanDao.getByCriteria(any(), any(), any(), any()))
                                                         .thenReturn(Either.left(components));
-        when(titanDao.getParentVertecies(any(), any(), any()))
+        when(titanDao.getParentVertecies(any(GraphVertex.class), any(), any()))
                                                         //1th node to upgrade
                                                         .thenReturn(Either.left(components))
                                                         //parent of the 1th node - stop recursion

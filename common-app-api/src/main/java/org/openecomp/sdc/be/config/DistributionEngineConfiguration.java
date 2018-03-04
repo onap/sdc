@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openecomp.sdc.common.api.BasicConfiguration;
+import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 
 public class DistributionEngineConfiguration extends BasicConfiguration {
 
@@ -44,10 +45,6 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 	private ComponentArtifactTypesConfig distribNotifResourceArtifactTypes;
 
-	// private List<String> distribNotifServiceInfoArtifactTypes;
-
-	// private List<String> distribNotifResourceLifecycleArtifactTypes;
-
 	private String uebPublicKey;
 
 	private String uebSecretKey;
@@ -63,13 +60,25 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 	private DistributionNotificationTopicConfig distributionNotificationTopic;
 
 	private Integer defaultArtifactInstallationTimeout = 60;
+	
+	private Integer currentArtifactInstallationTimeout = 120;
 
 	private boolean useHttpsWithDmaap;
 
+	private ExternalServiceConfig aaiConfig;
+
+	private ExternalServiceConfig msoConfig;
+	
+	private Integer opEnvRecoveryIntervalSec;
+	
+	private Integer allowedTimeBeforeStaleSec;
+	
 	public static class DistribNotifServiceArtifacts {
 
 		Map<String, Object> service;
 		Map<String, Object> resource;
+		
+		
 
 		public Map<String, Object> getService() {
 			return service;
@@ -118,7 +127,7 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 	}
 
-	public static enum ArtifcatTypeEnum {
+	public enum ArtifcatTypeEnum {
 
 		MURANO_PKG("MURANO-PKG"), HEAT("HEAT"), DG_XML("DG_XML");
 
@@ -204,10 +213,10 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 	public void setEnvironments(List<String> environments) {
 
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		if (environments != null) {
 			set.addAll(environments);
-			this.environments = new ArrayList<String>(set);
+			this.environments = new ArrayList<>(set);
 		} else {
 			this.environments = null;
 		}
@@ -260,6 +269,14 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 	public void setDefaultArtifactInstallationTimeout(int defaultArtifactInstallationTimeout) {
 		this.defaultArtifactInstallationTimeout = defaultArtifactInstallationTimeout;
+	}
+	
+	public int getCurrentArtifactInstallationTimeout() {
+		return currentArtifactInstallationTimeout;
+	}
+
+	public void setCurrentArtifactInstallationTimeout(int currentArtifactInstallationTimeout) {
+		this.currentArtifactInstallationTimeout = currentArtifactInstallationTimeout;
 	}
 
 	public boolean isUseHttpsWithDmaap() {
@@ -440,4 +457,35 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 	}
 
+	public Integer getOpEnvRecoveryIntervalSec() {
+		return opEnvRecoveryIntervalSec;
+	}
+
+	public void setOpEnvRecoveryIntervalSec(Integer opEnvRecoveryIntervalSec) {
+		this.opEnvRecoveryIntervalSec = opEnvRecoveryIntervalSec;
+	}
+
+	public Integer getAllowedTimeBeforeStaleSec() {
+		return allowedTimeBeforeStaleSec;
+	}
+
+	public void setAllowedTimeBeforeStaleSec(Integer allowedTimeBeforeStaleSec) {
+		this.allowedTimeBeforeStaleSec = allowedTimeBeforeStaleSec;
+	}
+
+    public ExternalServiceConfig getAaiConfig() {
+        return aaiConfig;
+    }
+
+    public void setAaiConfig(ExternalServiceConfig aaiConfig) {
+        this.aaiConfig = aaiConfig;
+    }
+
+    public ExternalServiceConfig getMsoConfig() {
+        return msoConfig;
+    }
+
+    public void setMsoConfig(ExternalServiceConfig msoConfig) {
+        this.msoConfig = msoConfig;
+    }
 }

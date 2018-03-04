@@ -1,6 +1,10 @@
 package org.openecomp.sdc.asdctool.migration.resolver;
 
 
+import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
+import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
+import org.openecomp.sdc.asdctool.migration.core.task.PostMigration;
+import org.openecomp.sdc.asdctool.migration.core.task.PostMigration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

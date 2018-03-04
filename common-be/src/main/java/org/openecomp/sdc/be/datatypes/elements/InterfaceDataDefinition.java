@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class InterfaceDataDefinition extends ToscaDataDefinition implements Serializable {
 

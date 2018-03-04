@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class PropertyRule extends ToscaDataDefinition implements Serializable {
 
