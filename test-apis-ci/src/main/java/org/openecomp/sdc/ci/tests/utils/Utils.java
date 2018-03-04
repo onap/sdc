@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -228,6 +229,15 @@ public final class Utils {
 		return config;
 	}
 
+	public static Config getConfigHandleException() {
+		Config config = null;
+		try{
+			config = Config.instance();
+		}catch (Exception e){
+			System.out.println("Configuration file not found. " + e);
+		}
+		return config;
+	}
 	// public void uploadNormativeTypes() throws IOException{
 	// Config config = getConfig();
 	// String[] normativeTypes = {"root", "compute", "blockStorage",
@@ -685,5 +695,13 @@ public final class Utils {
 	    java.util.Date date = df.parse(time);
 	    long epoch = date.getTime();
 	    return epoch;
+	}
+
+	public static Long getActionDuration(Runnable func) throws Exception{
+		long startTime = System.nanoTime();
+		func.run();
+		long estimateTime = System.nanoTime();
+		long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);
+		return duration;
 	}
 }

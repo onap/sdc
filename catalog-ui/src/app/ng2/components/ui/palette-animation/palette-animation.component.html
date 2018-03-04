@@ -1,0 +1,4 @@
+<div class="palette-animation-wrapper" [style.top]="from.y + 50 + 'px'" [style.left]="from.x + 'px'"  [style.transform]="transformStyle" [class.hidden]="!visible"
+      (transitionend)="animationComplete()">
+<div class="medium small sprite-resource-icons sprite-{{iconName}}-icons {{iconName}}" ></div>   
+</div>

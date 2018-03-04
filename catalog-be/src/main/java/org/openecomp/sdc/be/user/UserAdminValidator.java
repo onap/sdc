@@ -25,44 +25,44 @@ import java.util.regex.Pattern;
 
 public class UserAdminValidator {
 
-	private Pattern emailPat;
-	private Pattern userIdPat;
-	private Matcher matcher;
+    private Pattern emailPat;
+    private Pattern userIdPat;
+    private Matcher matcher;
 
-	private static UserAdminValidator userAdminValidator = null;
+    private static UserAdminValidator userAdminValidator = null;
 
-	public static synchronized UserAdminValidator getInstance() {
-		if (userAdminValidator == null) {
-			userAdminValidator = new UserAdminValidator();
-		}
-		return userAdminValidator;
-	}
+    public static synchronized UserAdminValidator getInstance() {
+        if (userAdminValidator == null) {
+            userAdminValidator = new UserAdminValidator();
+        }
+        return userAdminValidator;
+    }
 
-	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-	private static final String USER_ID_PATTERN = "\\w{1,25}";
+    private static final String USER_ID_PATTERN = "\\w{1,25}";
 
-	private UserAdminValidator() {
-		emailPat = Pattern.compile(EMAIL_PATTERN);
-		userIdPat = Pattern.compile(USER_ID_PATTERN);
-	}
+    private UserAdminValidator() {
+        emailPat = Pattern.compile(EMAIL_PATTERN);
+        userIdPat = Pattern.compile(USER_ID_PATTERN);
+    }
 
-	public boolean validateEmail(final String hex) {
-		matcher = emailPat.matcher(hex);
-		return matcher.matches();
-	}
+    public boolean validateEmail(final String hex) {
+        matcher = emailPat.matcher(hex);
+        return matcher.matches();
+    }
 
-	public boolean validateUserId(String userId) {
-		matcher = userIdPat.matcher(userId);
-		return matcher.matches();
-	}
+    public boolean validateUserId(String userId) {
+        matcher = userIdPat.matcher(userId);
+        return matcher.matches();
+    }
 
-	public boolean validateRole(String role) {
-		for (Role r : Role.values()) {
-			if (r.name().equals(role)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean validateRole(String role) {
+        for (Role r : Role.values()) {
+            if (r.name().equals(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

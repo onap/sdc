@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,67 +20,73 @@
 
 package org.openecomp.sdc.be.dao.jsongraph.utils;
 
-import java.io.IOException;
-import java.util.Map;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.type.JavaType;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.base.Strings;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class JsonParserUtils {
-	private static ObjectMapper mapper = new ObjectMapper();
-	private static Logger logger = LoggerFactory.getLogger(JsonParserUtils.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JsonParserUtils.class.getName());
+    private static final ObjectMapper mapper = buildObjectMapper();
 
-	
-	public static <T> String jsonToString(T elementToRepresent) throws IOException, JsonGenerationException, JsonMappingException {
+    private JsonParserUtils() {
+        // No instances allowed
+    }
 
-		
-		mapper.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
-		mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-		return mapper.writeValueAsString(elementToRepresent);
-	}
+    private static ObjectMapper buildObjectMapper() {
+        return new ObjectMapper()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
-	public static Map<String, Object> parseToJson(String json) {
-		Map<String, Object> object = null;
-		if (json == null || json.isEmpty()) {
-			return null;
-		}
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
-		mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-		TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {
-		};
+    public static <T> String toJson(T object) throws IOException {
+        return mapper.writer()
+                     .writeValueAsString(object);
+    }
 
-		try {
-			object = mapper.readValue(json, typeRef);
-		} catch (Exception e) {
-			logger.debug("Failed to parse json {}", json, e);
-		}
-		return object;
-	}
-	public static <T extends ToscaDataDefinition> Map<String, T> parseToJson(String json, Class <T> clazz) {
-		Map<String, T> object = null;
-		if (json == null || json.isEmpty()) {
-			return null;
-		}
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
-		mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-		JavaType type = mapper.getTypeFactory().constructMapType(Map.class, String.class, clazz);
+    public static Map<String, Object> toMap(String json) {
+        if (Strings.isNullOrEmpty(json)) {
+            return null;
+        }
 
-		try {
-			object = mapper.readValue(json, type);
-		} catch (Exception e) {
-			logger.debug("Failed to parse json {}", json, e);
-		}
-		return object;
-	}
+        Map<String, Object> object = null;
+        try {
+            TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {
+            };
+            object = mapper.readerFor(typeRef)
+                           .readValue(json);
+        }
+        catch (Exception e) {
+            log.debug("Failed to parse json {}", json, e);
+        }
+        return object;
+    }
+
+    public static <T extends ToscaDataDefinition> Map<String, T> toMap(String json, Class<T> clazz) {
+        if (Strings.isNullOrEmpty(json)) {
+            return null;
+        }
+
+        Map<String, T> object = null;
+        try {
+            JavaType type = mapper.getTypeFactory()
+                                  .constructMapType(Map.class, String.class, clazz);
+            object = mapper.readerFor(type)
+                           .readValue(json);
+        }
+        catch (Exception e) {
+            log.debug("Failed to parse json {}", json, e);
+        }
+        return object;
+    }
 }

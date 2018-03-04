@@ -37,7 +37,7 @@ export interface IHierarchyScope extends ng.IScope {
     onModuleNameChanged(module:DisplayModule):void;
     updateHeatName():void;
     loadInstanceModules(instance:ComponentInstance):ng.IPromise<boolean>;
-    openEditPropertyModal(property:PropertyModel):void;
+    openEditPropertyModal(property:PropertyModel, filteredProperties:Array<PropertyModel>):void;
 }
 
 export class HierarchyViewModel {
@@ -110,8 +110,8 @@ export class HierarchyViewModel {
             this.$scope.component.updateGroupMetadata(new DisplayModule(this.$scope.selectedModule)).then(onSuccess, onFailed);
         };
 
-        this.$scope.openEditPropertyModal = (property:PropertyModel):void => {
-            this.ModalsHandler.openEditModulePropertyModal(property, this.$scope.component, this.$scope.selectedModule).then(() => {
+        this.$scope.openEditPropertyModal = (property:PropertyModel, filteredProperties:Array<PropertyModel>):void => {
+            this.ModalsHandler.openEditModulePropertyModal(property, this.$scope.component, this.$scope.selectedModule, filteredProperties).then(() => {
             });
         }
     }

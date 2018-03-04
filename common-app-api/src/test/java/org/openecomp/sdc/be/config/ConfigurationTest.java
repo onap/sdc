@@ -1433,7 +1433,7 @@ public class ConfigurationTest {
 	@Test
 	public void testGetDefaultImports() throws Exception {
 		Configuration testSubject;
-		LinkedList<Map<String, Map<String, String>>> result;
+		List<Map<String, Map<String, String>>> result;
 
 		// default test
 		testSubject = createTestSubject();

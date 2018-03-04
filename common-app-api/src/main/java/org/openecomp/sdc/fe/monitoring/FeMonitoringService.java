@@ -20,25 +20,22 @@
 
 package org.openecomp.sdc.fe.monitoring;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContext;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.http.client.api.HttpRequest;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.common.http.config.HttpClientConfig;
+import org.openecomp.sdc.common.http.config.Timeouts;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
 import org.openecomp.sdc.common.monitoring.MonitoringMetricsFetcher;
 import org.openecomp.sdc.fe.config.Configuration;
@@ -93,48 +90,22 @@ public class FeMonitoringService {
 	}
 
 	private void processMonitoringEvent(MonitoringEvent monitoringMetrics) {
-		CloseableHttpClient httpClient = null;
 		try {
 			Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
 					.getConfiguration();
 			String redirectedUrl = String.format(URL, config.getBeProtocol(), config.getBeHost(),
-					config.getBeHttpPort());
-			httpClient = getHttpClient(config);
-			HttpPost httpPost = new HttpPost(redirectedUrl);
+			        Constants.HTTPS.equals(config.getBeProtocol()) ? config.getBeSslPort() : config.getBeHttpPort());
+
+			int timeout = 3000;
 			String monitoringMetricsJson = gson.toJson(monitoringMetrics);
-			HttpEntity myEntity = new StringEntity(monitoringMetricsJson);
-			httpPost.setEntity(myEntity);
-			httpPost.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-			int beResponseStatus;
-			CloseableHttpResponse beResponse;
-			try {
-				beResponse = httpClient.execute(httpPost);
-				beResponseStatus = beResponse.getStatusLine().getStatusCode();
-				if (beResponseStatus != HttpStatus.SC_OK) {
-					monitoringLogger.error("Unexpected HTTP response from BE : {}", beResponseStatus);
-				}
-			} catch (Exception e) {
-				monitoringLogger.error("Monitoring error when trying to connect to BE", e);
-			}
+			HttpEntity myEntity = new StringEntity(monitoringMetricsJson, ContentType.APPLICATION_JSON);
+			HttpResponse<String> resposne = HttpRequest.post(redirectedUrl, myEntity, new HttpClientConfig(new Timeouts(timeout, timeout)));
+            int beResponseStatus = resposne.getStatusCode();
+            if (beResponseStatus != HttpStatus.SC_OK) {
+                monitoringLogger.error("Unexpected HTTP response from BE : {}", beResponseStatus);
+            }
 		} catch (Exception e) {
-			monitoringLogger.error("Unexpected monitoring error", e);
-		} finally {
-			if (httpClient != null) {
-				try {
-					httpClient.close();
-				} catch (IOException e) {
-				}
-			}
+		    monitoringLogger.error("Monitoring BE failed with exception ", e);
 		}
-	}
-
-	private CloseableHttpClient getHttpClient(Configuration config) {
-		int timeout = 3000;
-		RequestConfig.Builder requestBuilder = RequestConfig.custom();
-		requestBuilder.setConnectTimeout(timeout).setConnectionRequestTimeout(timeout).setSocketTimeout(timeout);
-
-		HttpClientBuilder builder = HttpClientBuilder.create();
-		builder.setDefaultRequestConfig(requestBuilder.build());
-		return builder.build();
 	}
 }

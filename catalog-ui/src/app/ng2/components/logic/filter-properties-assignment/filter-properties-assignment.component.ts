@@ -21,6 +21,7 @@
 /**
  * Created by rc2122 on 5/16/2017.
  */
+import * as _ from "lodash";
 import {Component, Input, Output, EventEmitter, ViewChild} from '@angular/core';
 import {ButtonModel, ButtonsModelMap, FilterPropertiesAssignmentData} from "app/models";
 import * as sdcConfig from "../../../../../../configurations/dev"

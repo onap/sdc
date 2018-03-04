@@ -171,7 +171,7 @@ public class UserRestUtils extends BaseRestUtils {
 
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());
@@ -189,7 +189,7 @@ public class UserRestUtils extends BaseRestUtils {
 
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());

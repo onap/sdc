@@ -1,0 +1,8 @@
+<div class="zone-child mode-{{config.mode}}" [class.locked]="activeInstanceMode > MODE.HOVER" 
+     (mouseenter)="setMode(MODE.HOVER)" (mouseleave)="setMode(MODE.NONE)" (click)="setMode(MODE.SELECTED)">
+        <div class="zone-child__handle" (click)="setMode(MODE.TAG, $event)">+</div>
+        <div class="zone-child__body">
+            <div class="zone-child__body-content">{{config.count || defaultIconText}}</div>
+        </div>
+        <div class="zone-child__name">{{config.name}}</div>
+</div>

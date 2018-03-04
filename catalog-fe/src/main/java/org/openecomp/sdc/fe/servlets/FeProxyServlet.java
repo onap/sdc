@@ -50,7 +50,6 @@ public class FeProxyServlet extends SSLProxyServlet {
 		try {
 			logFeRequest(request);
 		} catch (Exception e) {
-			FeEcompErrorManager.getInstance().processEcompError(EcompErrorName.FeHttpLoggingError, "FE Request");
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Request");
 			log.error("Unexpected FE request logging error :", e);
 		}
@@ -67,7 +66,6 @@ public class FeProxyServlet extends SSLProxyServlet {
 		try {
 			logFeResponse(request, proxyResponse);
 		} catch (Exception e) {
-			FeEcompErrorManager.getInstance().processEcompError(EcompErrorName.FeHttpLoggingError, "FE Response");
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
 			log.error("Unexpected FE response logging error :", e);
 		}

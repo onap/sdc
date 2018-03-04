@@ -21,11 +21,9 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -153,7 +151,7 @@ public class AuthEvent extends AuditingGenericEvent {
 		this.requestId = requestId;
 	}
 
-	public AuthEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public AuthEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_AUTH_URL);
@@ -189,6 +187,18 @@ public class AuthEvent extends AuditingGenericEvent {
 			setStatus((String) value);
 		}
 
+	}
+
+	public AuthEvent(String action, CommonAuditData commonAuditData, String user, String authUrl, String realm, String authStatus) {
+		this();
+        this.action = action;
+        this.requestId = commonAuditData.getRequestId();
+		this.desc = commonAuditData.getDescription();
+		this.status = commonAuditData.getStatus();
+		this.authStatus = authStatus;
+		this.url = authUrl;
+		this.realm = realm;
+		this.user = user;
 	}
 
 	@Override

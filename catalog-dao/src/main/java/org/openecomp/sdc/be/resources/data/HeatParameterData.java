@@ -20,15 +20,15 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.Constants;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HeatParameterData extends GraphNode {
 
@@ -134,7 +134,7 @@ public class HeatParameterData extends GraphNode {
 	}
 
 	@Override
-	public Object getUniqueId() {
+	public String getUniqueId() {
 		return heatDataDefinition.getUniqueId();
 	}
 

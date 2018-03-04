@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.common.util;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -36,7 +30,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.safety.Whitelist;
 
-import com.google.common.base.CharMatcher;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class ValidationUtils {
 	public final static Integer COMPONENT_NAME_MAX_LENGTH = 1024;
@@ -126,6 +125,12 @@ public class ValidationUtils {
 
 	public final static Integer PRODUCT_FULL_NAME_MIN_LENGTH = 4;
 	public final static Integer PRODUCT_FULL_NAME_MAX_LENGTH = 100;
+	public static final Integer FORWARDING_PATH_NAME_MAX_LENGTH = 100;
+	public final static Pattern FORWARDING_PATH_NAME_PATTERN = Pattern.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (FORWARDING_PATH_NAME_MAX_LENGTH-1) + "}$");
+	
+	public final static Integer POLICY_MAX_LENGTH = 1024;
+	public final static Pattern POLICY_NAME_PATTERN = Pattern
+			.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (POLICY_MAX_LENGTH-1) + "}$");
 
 	public static boolean validateArtifactLabel(String label) {
 		return ARTIFACT_LABEL_PATTERN.matcher(label).matches();
@@ -367,7 +372,7 @@ public class ValidationUtils {
 	}
 
 	public static String normalizeComponentInstanceName(String name) {
-		String[] split = splitComponentInctanceName(name);
+		String[] split = splitComponentInstanceName(name);
 		StringBuffer sb = new StringBuffer();
 		for (String splitElement : split) {
 			sb.append(splitElement);
@@ -383,7 +388,7 @@ public class ValidationUtils {
 		return split;
 	}
 
-	private static String[] splitComponentInctanceName(String name) {
+	private static String[] splitComponentInstanceName(String name) {
 		String normalizedName = name.toLowerCase();
 		normalizedName = COMPONENT_INCTANCE_NAME_DELIMETER_PATTERN.matcher(normalizedName).replaceAll(" ");
 		String[] split = normalizedName.split(" ");
@@ -527,5 +532,8 @@ public class ValidationUtils {
 		String stripped = HtmlCleaner.stripHtml(htmlText, false);
 		return stripped;
 	}
-	
+
+	public static boolean validateForwardingPathNamePattern(String forwardingPathName) {
+		return FORWARDING_PATH_NAME_PATTERN.matcher(forwardingPathName).matches();
+	}
 }

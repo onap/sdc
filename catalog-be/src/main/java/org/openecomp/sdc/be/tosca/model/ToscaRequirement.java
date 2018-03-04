@@ -25,21 +25,21 @@ import java.util.Map;
 
 public class ToscaRequirement extends ToscaTemplateRequirement {
 
-	private List<Object> occurrences;
+    private List<Object> occurrences;
 
-	public ToscaRequirement() {
-	}
+    public ToscaRequirement() {
+    }
 
-	public List<Object> getOccurrences() {
-		return occurrences;
-	}
+    public List<Object> getOccurrences() {
+        return occurrences;
+    }
 
-	public void setOccurrences(List<Object> occurrences) {
-		this.occurrences = occurrences;
-	}
+    public void setOccurrences(List<Object> occurrences) {
+        this.occurrences = occurrences;
+    }
 
-	public Map<String, Object> toMap() throws IllegalArgumentException, IllegalAccessException {
-		return super.toMap();
-	}
+    public Map<String, Object> toMap() throws IllegalArgumentException, IllegalAccessException {
+        return super.toMap();
+    }
 
 }

@@ -39,7 +39,7 @@ export class PropertiesTableComponent {
     @Input() hasDeclareOption:boolean;
     @Input() hidePropertyType:boolean;
     
-    @Output() valueChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareOption
 
@@ -49,8 +49,8 @@ export class PropertiesTableComponent {
     ngOnInit() {
     }
 
-    propValueChanged = (property) => {
-        this.valueChanged.emit(property);
+    onPropertyChanged = (property) => {
+        this.emitter.emit(property);
     };
 
     // Click on main row (row of propertyFEModel)

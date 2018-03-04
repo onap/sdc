@@ -22,62 +22,62 @@ package org.openecomp.sdc.be.tosca.model;
 
 public class ToscaProperty {
 
-	private String type;
-	private Object _defaultp_;
-	private String description;
-	private Boolean required;
-	private EntrySchema entry_schema;
-	private String status;
+    private String type;
+    private Object _defaultp_;
+    private String description;
+    private Boolean required;
+    private EntrySchema entry_schema;
+    private String status;
 
-	public EntrySchema getEntry_schema() {
-		return entry_schema;
-	}
+    public EntrySchema getEntry_schema() {
+        return entry_schema;
+    }
 
-	public void setEntry_schema(EntrySchema entry_schema) {
-		this.entry_schema = entry_schema;
-	}
+    public void setEntry_schema(EntrySchema entry_schema) {
+        this.entry_schema = entry_schema;
+    }
 
-	public ToscaProperty() {
-	}
+    public ToscaProperty() {
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public Object getDefaultp() {
-		return _defaultp_;
-	}
+    public Object getDefaultp() {
+        return _defaultp_;
+    }
 
-	public void setDefaultp(Object defaultp) {
-		this._defaultp_ = defaultp;
-	}
+    public void setDefaultp(Object defaultp) {
+        this._defaultp_ = defaultp;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public Boolean getRequired() {
-		return required;
-	}
+    public Boolean getRequired() {
+        return required;
+    }
 
-	public void setRequired(Boolean required) {
-		this.required = required;
-	}
+    public void setRequired(Boolean required) {
+        this.required = required;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
 }

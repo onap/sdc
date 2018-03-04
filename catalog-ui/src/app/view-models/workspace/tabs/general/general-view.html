@@ -28,7 +28,6 @@
                                        name="componentName"
                                        data-ng-init="isCreateMode() && validateName(true)"
 	                               data-ng-maxlength="50"
-                                       maxlength="50"
                                        data-ng-model="component.name"
                                        type="text"
                                        data-required
@@ -117,7 +116,6 @@
                           data-ng-model="component.description"
                           data-ng-model-options="{ debounce: 500 }"
                           data-ng-pattern="validation.commentValidationPattern"
-                          maxlength="1024"
                           data-tests-id="description"></textarea>
                     <!-- placeholder="Description here..." -->
 
@@ -178,10 +176,11 @@
                                data-ng-pattern="validation.contactIdValidationPattern"
                                data-ng-model-options="{ debounce: 500 }"
                                data-tests-id="contactId"
-                               maxlength="50"
+                               data-ng-maxlength="50"
                         />
 
                         <div class="input-error" data-ng-show="validateField(editForm.contactId)">
+                            <span ng-show="editForm.contactId.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
                             <span ng-show="editForm.contactId.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_CONTACT_REQUIRED"></span>
                             <span ng-show="editForm.contactId.$error.pattern" translate="NEW_SERVICE_RESOURCE_ERROR_CONTACT_NOT_VALID"></span>
                         </div>
@@ -196,7 +195,7 @@
                                data-ng-model="component.projectCode"
                                data-ng-class="{'view-mode': isViewMode()}"
                                data-ng-model-options="{ debounce: 500 }"
-                               maxlength="50"
+                               data-ng-maxlength="50"
                                data-required
                                name="projectCode"
                                data-ng-pattern="validation.projectCodeValidationPattern"
@@ -204,6 +203,7 @@
                         />
 
                         <div class="input-error" data-ng-show="validateField(editForm.projectCode)">
+                            <span ng-show="editForm.contactId.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
                             <span ng-show="editForm.projectCode.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_REQUIRED"></span>
                             <span ng-show="editForm.projectCode.$error.pattern" translate="NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_NOT_VALID"></span>
                         </div>
@@ -222,7 +222,6 @@
                            name="vendorName"
                            data-ng-change="onVendorNameChange(oldValue)"
                            data-ng-pattern="validation.VendorNameValidationPattern"
-                           maxlength="60"
                            data-ng-disabled="component.isAlreadyCertified() || (component.isCsarComponent() && component.vendorName && component.vendorName!=='')"
                            data-tests-id="vendorName"
                     />
@@ -250,7 +249,6 @@
                            data-required
                            name="vendorRelease"
                            data-ng-pattern="validation.VendorReleaseValidationPattern"
-                           maxlength="25"
                            data-ng-disabled="component.isCsarComponent() && component.vendorRelease && component.vendorRelease!==''"
                            data-tests-id="vendorRelease"
                     />
@@ -275,7 +273,6 @@
                            data-ng-maxlength="65"
                            name="resourceVendorModelNumber"
                            data-ng-pattern="validation.VendorModelNumberValidationPattern"
-                           maxlength="65"
                            data-tests-id="resourceVendorModelNumber"
                     />
 
@@ -312,10 +309,9 @@
                     <div ng-if="component.isService()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.namingPolicy)}">
                         <label class="i-sdc-form-label">Naming policy</label>
                         <input class="i-sdc-form-input"
-                               name="fullName"
+                               name="namingPolicy"
                                data-ng-class="{'view-mode': isViewMode() || !component.ecompGeneratedNaming}"
                                data-ng-maxlength="100"
-                               maxlength="100"
                                data-ng-model="component.namingPolicy"
                                type="text"
                                data-ng-model-options="{ debounce: 500 }"
@@ -345,10 +341,9 @@
                                data-tests-id="serviceType"
                                data-ng-maxlength="256"
                                data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
-                               maxlength="256"
                         />
                         <div class="input-error" data-ng-show="validateField(editForm.serviceType)">
-                            <span ng-show="editForm.serviceType.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '25' }"></span>
+                            <span ng-show="editForm.serviceType.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
                             <span ng-show="editForm.serviceType.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
                         </div>
                     </div>
@@ -367,10 +362,9 @@
                                data-tests-id="serviceRole"
                                data-ng-maxlength="256"
                                data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
-                               maxlength="256"
                         />
                         <div class="input-error" data-ng-show="validateField(editForm.serviceRole)">
-                            <span ng-show="editForm.serviceRole.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '25' }"></span>
+                            <span ng-show="editForm.serviceRole.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
                             <span ng-show="editForm.serviceRole.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
                         </div>
                     </div>

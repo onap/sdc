@@ -21,22 +21,22 @@
 package org.openecomp.sdc.be.distribution.api.client;
 
 public class TopicRegistrationResponse {
-	String distrNotificationTopicName;
-	String distrStatusTopicName;
+    String distrNotificationTopicName;
+    String distrStatusTopicName;
 
-	public void setDistrNotificationTopicName(String distrNotificationTopicName) {
-		this.distrNotificationTopicName = distrNotificationTopicName;
-	}
+    public void setDistrNotificationTopicName(String distrNotificationTopicName) {
+        this.distrNotificationTopicName = distrNotificationTopicName;
+    }
 
-	public void setDistrStatusTopicName(String distrStatusTopicName) {
-		this.distrStatusTopicName = distrStatusTopicName;
-	}
+    public void setDistrStatusTopicName(String distrStatusTopicName) {
+        this.distrStatusTopicName = distrStatusTopicName;
+    }
 
-	public String getDistrNotificationTopicName() {
-		return distrNotificationTopicName;
-	}
+    public String getDistrNotificationTopicName() {
+        return distrNotificationTopicName;
+    }
 
-	public String getDistrStatusTopicName() {
-		return distrStatusTopicName;
-	}
+    public String getDistrStatusTopicName() {
+        return distrStatusTopicName;
+    }
 }

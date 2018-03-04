@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.Constants;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HeatParameterValueData extends GraphNode {
 
@@ -52,7 +52,7 @@ public class HeatParameterValueData extends GraphNode {
 	private String value;
 
 	@Override
-	public Object getUniqueId() {
+	public String getUniqueId() {
 		return uniqueId;
 	}
 

@@ -25,52 +25,52 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 public class NodeTypeConvertUtils {
-	public static NodeTypeEnum getCategoryNodeTypeByComponentParam(ComponentTypeEnum componentTypeEnum, CategoryTypeEnum categoryType) {
-		NodeTypeEnum res = null;
-		if (componentTypeEnum != null) {
-			switch (componentTypeEnum) {
-			case SERVICE:
-				switch (categoryType) {
-				case CATEGORY:
-					res = NodeTypeEnum.ServiceNewCategory;
-					break;
+    public static NodeTypeEnum getCategoryNodeTypeByComponentParam(ComponentTypeEnum componentTypeEnum, CategoryTypeEnum categoryType) {
+        NodeTypeEnum res = null;
+        if (componentTypeEnum != null) {
+            switch (componentTypeEnum) {
+            case SERVICE:
+                switch (categoryType) {
+                case CATEGORY:
+                    res = NodeTypeEnum.ServiceNewCategory;
+                    break;
 
-				default:
-					// doesn't support subcategories or grouping
-					break;
-				}
-				break;
-			case RESOURCE:
-				switch (categoryType) {
-				case CATEGORY:
-					res = NodeTypeEnum.ResourceNewCategory;
-					break;
-				case SUBCATEGORY:
-					res = NodeTypeEnum.ResourceSubcategory;
-					break;
-				default:
-					// doesn't support grouping
-					break;
-				}
-				break;
-			case PRODUCT:
-				switch (categoryType) {
-				case CATEGORY:
-					res = NodeTypeEnum.ProductCategory;
-					break;
-				case SUBCATEGORY:
-					res = NodeTypeEnum.ProductSubcategory;
-					break;
-				case GROUPING:
-					res = NodeTypeEnum.ProductGrouping;
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		return res;
-	}
+                default:
+                    // doesn't support subcategories or grouping
+                    break;
+                }
+                break;
+            case RESOURCE:
+                switch (categoryType) {
+                case CATEGORY:
+                    res = NodeTypeEnum.ResourceNewCategory;
+                    break;
+                case SUBCATEGORY:
+                    res = NodeTypeEnum.ResourceSubcategory;
+                    break;
+                default:
+                    // doesn't support grouping
+                    break;
+                }
+                break;
+            case PRODUCT:
+                switch (categoryType) {
+                case CATEGORY:
+                    res = NodeTypeEnum.ProductCategory;
+                    break;
+                case SUBCATEGORY:
+                    res = NodeTypeEnum.ProductSubcategory;
+                    break;
+                case GROUPING:
+                    res = NodeTypeEnum.ProductGrouping;
+                    break;
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        return res;
+    }
 
 }

@@ -22,6 +22,7 @@
  * Created by obarda on 1/18/2017.
  */
 'use strict';
+import * as _ from "lodash";
 import {PropertyModel, DisplayModule, Component, Resource, Service, ComponentInstance} from "app/models";
 import {UNIQUE_GROUP_PROPERTIES_NAME} from "app/utils";
 import {IPropertyFormBaseViewScope, PropertyFormBaseView} from "../base-property-form/property-form-base-model";
@@ -102,7 +103,9 @@ export class ModulePropertyView extends PropertyFormBaseView {
             }
         } else {
             deferred.resolve(true);
-            this.$uibModalInstance.close();
+            if (isNeedToCloseModal === true) {
+                this.$uibModalInstance.close();
+            }
 
         }
         return deferred.promise;
@@ -146,6 +149,13 @@ export class ModulePropertyView extends PropertyFormBaseView {
     private initChildScope = ():void => {
 
         this.initValidation();
+
+        this.$scope.clearValidationError = ():void => {
+            this.$scope.forms.editForm.$valid = true;
+            this.$scope.forms.editForm.$invalid = false;
+            this.$scope.forms.editForm['value'].$error = {};
+            this.$scope.forms.editForm.$error = {};
+        }
 
         // put default value when instance value is empty
         this.$scope.onValueChange = ():void => {

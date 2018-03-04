@@ -3,6 +3,5 @@
                                   [selectedReqOrCapModel]="connectWizardService.selectedMatch && (connectWizardService.selectedMatch.isFromTo ? connectWizardService.selectedMatch.requirement : connectWizardService.selectedMatch.capability)"
                                   [currentComponent]="connectWizardService.currentComponent"
                                   [componentInstanceId]="connectWizardService.connectRelationModel.fromNode.componentInstance.uniqueId"
-                                  (updateSelectedReqOrCap)="updateSelectedReqOrCap($event)"
-                                  (updateCapabilityProperties)="onCapabilityPropertiesUpdate($event)">
+                                  (updateSelectedReqOrCap)="updateSelectedReqOrCap($event)">
 </select-requirement-or-capability>

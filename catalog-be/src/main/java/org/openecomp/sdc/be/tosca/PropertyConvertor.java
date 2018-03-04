@@ -49,59 +49,59 @@ import com.google.gson.stream.JsonReader;
 import fj.data.Either;
 
 public class PropertyConvertor {
-	private static PropertyConvertor instance;
-	private JsonParser jsonParser = new JsonParser();
-	private static Logger log = LoggerFactory.getLogger(PropertyConvertor.class.getName());
-	Gson gson = new Gson();
-	protected PropertyConvertor() {
+    private static PropertyConvertor instance;
+    private JsonParser jsonParser = new JsonParser();
+    private static final Logger log = LoggerFactory.getLogger(PropertyConvertor.class);
+    Gson gson = new Gson();
+    protected PropertyConvertor() {
 
-	}
+    }
 
-	public static synchronized PropertyConvertor getInstance() {
-		if (instance == null) {
-			instance = new PropertyConvertor();
-		}
-		return instance;
-	}
+    public static synchronized PropertyConvertor getInstance() {
+        if (instance == null) {
+            instance = new PropertyConvertor();
+        }
+        return instance;
+    }
 
-	public Either<ToscaNodeType, ToscaError> convertProperties(Component component, ToscaNodeType toscaNodeType, Map<String, DataTypeDefinition> dataTypes) {
+    public Either<ToscaNodeType, ToscaError> convertProperties(Component component, ToscaNodeType toscaNodeType, Map<String, DataTypeDefinition> dataTypes) {
 
-		if (component instanceof Resource) {
-			Resource resource = (Resource) component;
-			List<PropertyDefinition> props = resource.getProperties();
-			if (props != null) {
-				Map<String, ToscaProperty> properties = new HashMap<>();
+        if (component instanceof Resource) {
+            Resource resource = (Resource) component;
+            List<PropertyDefinition> props = resource.getProperties();
+            if (props != null) {
+                Map<String, ToscaProperty> properties = new HashMap<>();
 
-				// take only the properties of this resource
-				props.stream().filter(p -> p.getOwnerId() == null || p.getOwnerId().equals(component.getUniqueId())).forEach(property -> {
+                // take only the properties of this resource
+                props.stream().filter(p -> p.getOwnerId() == null || p.getOwnerId().equals(component.getUniqueId())).forEach(property -> {
                     properties.put(property.getName(), convertProperty(dataTypes, property, false));
- 				});
-				if (!properties.isEmpty()) {
-					toscaNodeType.setProperties(properties);
-				}
-			}
-		}
-		return Either.left(toscaNodeType);
-	}
+                 });
+                if (!properties.isEmpty()) {
+                    toscaNodeType.setProperties(properties);
+                }
+            }
+        }
+        return Either.left(toscaNodeType);
+    }
 
-	public ToscaProperty convertProperty(Map<String, DataTypeDefinition> dataTypes, PropertyDefinition property, boolean isCapabiltyProperty) {
-		ToscaProperty prop = new ToscaProperty();
+    public ToscaProperty convertProperty(Map<String, DataTypeDefinition> dataTypes, PropertyDefinition property, boolean isCapabiltyProperty) {
+        ToscaProperty prop = new ToscaProperty();
 
-		String innerType = null;
-		SchemaDefinition schema = property.getSchema();
-		if (schema != null && schema.getProperty() != null && schema.getProperty().getType() != null && !schema.getProperty().getType().isEmpty()) {
-			innerType = schema.getProperty().getType();
-			EntrySchema eschema = new EntrySchema();
-			eschema.setType(innerType);
-			eschema.setDescription(schema.getProperty().getDescription());
-			prop.setEntry_schema(eschema);
-		}
-		log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
+        String innerType = null;
+        SchemaDefinition schema = property.getSchema();
+        if (schema != null && schema.getProperty() != null && schema.getProperty().getType() != null && !schema.getProperty().getType().isEmpty()) {
+            innerType = schema.getProperty().getType();
+            EntrySchema eschema = new EntrySchema();
+            eschema.setType(innerType);
+            eschema.setDescription(schema.getProperty().getDescription());
+            prop.setEntry_schema(eschema);
+        }
+        log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
         Object convertedObj = convertToToscaObject(property.getType(), property.getDefaultValue(), innerType, dataTypes);
         if (convertedObj != null) {
             prop.setDefaultp(convertedObj);
         }
-		prop.setType(property.getType());
+        prop.setType(property.getType());
         prop.setDescription(property.getDescription());
         if (isCapabiltyProperty) {
             prop.setStatus(property.getStatus());
@@ -109,91 +109,91 @@ public class PropertyConvertor {
         }
         return prop;
 
-	}
+    }
 
-	public Object convertToToscaObject(String propertyType, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		log.trace("try to convert propertyType {} , value [{}], innerType {}", propertyType, value, innerType);
-		if (StringUtils.isEmpty(value)) {
-			value = DataTypePropertyConverter.getInstance().getDataTypePropertiesDefaultValuesRec(propertyType, dataTypes);
-			if(StringUtils.isEmpty(value)){
-				return null;
-			}
-		}
-		try {
-			ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();
-			ToscaValueConverter innerConverter = null;
-			Boolean isScalar = true;
-	
-			ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
-			if (type == null) {
-				log.trace("isn't prederfined type, get from all data types");
-				DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
-				if (innerType == null) {
-					innerType = propertyType;
-				}
-	
-				if ((type = mapConverterInst.isScalarType(dataTypeDefinition)) != null) {
-					log.trace("This is scalar type. get suitable converter for type {}", type);
-					innerConverter = type.getValueConverter();
-				} else {
-					isScalar = false;
-				}
-			} else {
-				ToscaPropertyType typeIfScalar = ToscaPropertyType.getTypeIfScalar(type.getType());
-				if (typeIfScalar == null) {
-					isScalar = false;
-				}
-	
-				innerConverter = type.getValueConverter();
-				if (ToscaPropertyType.STRING.equals(type) && valueStartsWithNonJsonChar(value)) {
-					return innerConverter.convertToToscaValue(value, innerType, dataTypes);
-				}
-			}
-			JsonElement jsonElement = null;
-		
-			StringReader reader = new StringReader(value);
-			JsonReader jsonReader = new JsonReader(reader);
-			jsonReader.setLenient(true);
+    public Object convertToToscaObject(String propertyType, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        log.trace("try to convert propertyType {} , value [{}], innerType {}", propertyType, value, innerType);
+        if (StringUtils.isEmpty(value)) {
+            value = DataTypePropertyConverter.getInstance().getDataTypePropertiesDefaultValuesRec(propertyType, dataTypes);
+            if(StringUtils.isEmpty(value)){
+                return null;
+            }
+        }
+        try {
+            ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();
+            ToscaValueConverter innerConverter = null;
+            Boolean isScalar = true;
 
-			jsonElement = jsonParser.parse(jsonReader);
+            ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
+            if (type == null) {
+                log.trace("isn't prederfined type, get from all data types");
+                DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
+                if (innerType == null) {
+                    innerType = propertyType;
+                }
 
-			if (value.equals("")) {
-				return value;
-			}
+                if ((type = mapConverterInst.isScalarType(dataTypeDefinition)) != null) {
+                    log.trace("This is scalar type. get suitable converter for type {}", type);
+                    innerConverter = type.getValueConverter();
+                } else {
+                    isScalar = false;
+                }
+            } else {
+                ToscaPropertyType typeIfScalar = ToscaPropertyType.getTypeIfScalar(type.getType());
+                if (typeIfScalar == null) {
+                    isScalar = false;
+                }
 
-			if (jsonElement.isJsonPrimitive() && isScalar) {
-				log.trace("It's well defined type. convert it");
-				ToscaValueConverter converter = type.getValueConverter();
-				return converter.convertToToscaValue(value, innerType, dataTypes);
-			} else {
-				log.trace("It's data type or inputs in primitive type. convert as map");
-				Object convertedValue;
-				if (innerConverter != null && (ToscaPropertyType.MAP.equals(type) || ToscaPropertyType.LIST.equals(type))) {
-					convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
-				} else {
-					if (isScalar) {
-						// complex json for scalar type
-						convertedValue = mapConverterInst.handleComplexJsonValue(jsonElement);
-					} else {
-						if (innerConverter != null) {
-							convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
-						} else {
-							convertedValue = mapConverterInst.convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement);
-						}
-					}
-				}
-				return convertedValue;
-			}
+                innerConverter = type.getValueConverter();
+                if (ToscaPropertyType.STRING.equals(type) && valueStartsWithNonJsonChar(value)) {
+                    return innerConverter.convertToToscaValue(value, innerType, dataTypes);
+                }
+            }
+            JsonElement jsonElement = null;
 
-		} catch (Exception e) {
-			log.debug("convertToToscaValue failed to parse json value :", e);
-			return null;
-		}
+            StringReader reader = new StringReader(value);
+            JsonReader jsonReader = new JsonReader(reader);
+            jsonReader.setLenient(true);
 
-	}
+            jsonElement = jsonParser.parse(jsonReader);
 
-	private boolean valueStartsWithNonJsonChar(String value) {
-		return value.startsWith("/") || value.startsWith(":");
-	}
+            if (value.equals("")) {
+                return value;
+            }
+
+            if (jsonElement.isJsonPrimitive() && isScalar) {
+                log.trace("It's well defined type. convert it");
+                ToscaValueConverter converter = type.getValueConverter();
+                return converter.convertToToscaValue(value, innerType, dataTypes);
+            } else {
+                log.trace("It's data type or inputs in primitive type. convert as map");
+                Object convertedValue;
+                if (innerConverter != null && (ToscaPropertyType.MAP.equals(type) || ToscaPropertyType.LIST.equals(type))) {
+                    convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
+                } else {
+                    if (isScalar) {
+                        // complex json for scalar type
+                        convertedValue = mapConverterInst.handleComplexJsonValue(jsonElement);
+                    } else {
+                        if (innerConverter != null) {
+                            convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
+                        } else {
+                            convertedValue = mapConverterInst.convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement);
+                        }
+                    }
+                }
+                return convertedValue;
+            }
+
+        } catch (Exception e) {
+            log.debug("convertToToscaValue failed to parse json value :", e);
+            return null;
+        }
+
+    }
+
+    private boolean valueStartsWithNonJsonChar(String value) {
+        return value.startsWith("/") || value.startsWith(":");
+    }
 
 }
