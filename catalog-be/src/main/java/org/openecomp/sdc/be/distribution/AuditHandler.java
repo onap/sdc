@@ -27,39 +27,34 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 
 public class AuditHandler {
-	ComponentsUtils componentsUtils;
-	String instanceID;
-	private RegistrationRequest registrationRequest;
+    ComponentsUtils componentsUtils;
+    String instanceID;
+    private RegistrationRequest registrationRequest;
 
-	public AuditHandler(ComponentsUtils componentsUtils, String instanceID, RegistrationRequest registrationRequest) {
-		super();
-		this.componentsUtils = componentsUtils;
-		this.instanceID = instanceID;
-		this.registrationRequest = registrationRequest;
-	}
+    public AuditHandler(ComponentsUtils componentsUtils, String instanceID, RegistrationRequest registrationRequest) {
+        super();
+        this.componentsUtils = componentsUtils;
+        this.instanceID = instanceID;
+        this.registrationRequest = registrationRequest;
+    }
 
-	public void auditRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole) {
 
-		String topicName = (subscriberRole == SubscriberTypeEnum.CONSUMER) ? DistributionBusinessLogic.getNotificationTopicName(registrationRequest.getDistrEnvName())
-				: DistributionBusinessLogic.getStatusTopicName(registrationRequest.getDistrEnvName());
-		componentsUtils.auditTopicACLKeys(AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL, registrationRequest.getDistrEnvName(), topicName, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
-	}
+    public void auditRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole , String topicName) {
+        componentsUtils.auditTopicACLKeys(AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL, registrationRequest.getDistrEnvName(), topicName, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
+    }
 
-	public void auditUnRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole) {
-		String topicName = (subscriberRole == SubscriberTypeEnum.CONSUMER) ? DistributionBusinessLogic.getNotificationTopicName(registrationRequest.getDistrEnvName())
-				: DistributionBusinessLogic.getStatusTopicName(registrationRequest.getDistrEnvName());
-		componentsUtils.auditTopicACLKeys(AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL, registrationRequest.getDistrEnvName(), topicName, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
+    public void auditUnRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole, String topicName) {
+        componentsUtils.auditTopicACLKeys(AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL, registrationRequest.getDistrEnvName(), topicName, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
+    }
 
-	}
+    public void auditRegisterRequest(CambriaErrorResponse registerResponse) {
+        componentsUtils.auditRegisterOrUnRegisterEvent(AuditingActionEnum.DISTRIBUTION_REGISTER, instanceID, registrationRequest.getApiPublicKey(), registrationRequest.getDistrEnvName(), String.valueOf(registerResponse.getHttpCode()),
+                registerResponse.getOperationStatus().name(), DistributionBusinessLogic.getNotificationTopicName(registrationRequest.getDistrEnvName()), DistributionBusinessLogic.getStatusTopicName(registrationRequest.getDistrEnvName()));
 
-	public void auditRegisterRequest(CambriaErrorResponse registerResponse) {
-		componentsUtils.auditRegisterOrUnRegisterEvent(AuditingActionEnum.DISTRIBUTION_REGISTER, instanceID, registrationRequest.getApiPublicKey(), registrationRequest.getDistrEnvName(), String.valueOf(registerResponse.getHttpCode()),
-				registerResponse.getOperationStatus().name(), DistributionBusinessLogic.getNotificationTopicName(registrationRequest.getDistrEnvName()), DistributionBusinessLogic.getStatusTopicName(registrationRequest.getDistrEnvName()));
+    }
 
-	}
-
-	public void auditUnRegisterRequest(CambriaErrorResponse registerResponse) {
-		componentsUtils.auditRegisterOrUnRegisterEvent(AuditingActionEnum.DISTRIBUTION_UN_REGISTER, instanceID, registrationRequest.getApiPublicKey(), registrationRequest.getDistrEnvName(), String.valueOf(registerResponse.getHttpCode()),
-				registerResponse.getOperationStatus().name(), DistributionBusinessLogic.getNotificationTopicName(registrationRequest.getDistrEnvName()), DistributionBusinessLogic.getStatusTopicName(registrationRequest.getDistrEnvName()));
-	}
+    public void auditUnRegisterRequest(CambriaErrorResponse registerResponse) {
+        componentsUtils.auditRegisterOrUnRegisterEvent(AuditingActionEnum.DISTRIBUTION_UN_REGISTER, instanceID, registrationRequest.getApiPublicKey(), registrationRequest.getDistrEnvName(), String.valueOf(registerResponse.getHttpCode()),
+                registerResponse.getOperationStatus().name(), DistributionBusinessLogic.getNotificationTopicName(registrationRequest.getDistrEnvName()), DistributionBusinessLogic.getStatusTopicName(registrationRequest.getDistrEnvName()));
+    }
 }

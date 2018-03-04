@@ -7,21 +7,21 @@ from importCommon import *
 from importNormativeTypes import createNormativeType
 import importCommon
 
-#################################################################################################################################################################################################
-#																																		       													#	
-# Upgrades the normative types																										   															#
-# 																																			   													#		
-# activation :																																   													#
-#       python upgradeNormative.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>] 		#
-#																																																#
-#																																		  	   													#			
-# shortest activation (be host = localhost, be port = 8080, user = jh0003): 																				   									#	#												       																																			#
-#		python upgradeNormative.py												 				           																						#
-#																																		       													#	
-#################################################################################################################################################################################################
+#################################################################################################################################################################################################################################
+#																																		       																					#
+# Upgrades the normative types																										   																							#
+# 																																			   																					#
+# activation :																																   																					#
+#       python upgradeNormative.py [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>]	#
+#																																																								#
+#																																		  	   																					#
+# shortest activation (be host = localhost, be port = 8080, user = jh0003): 																				   																	#
+#		python upgradeNormative.py												 				           																														#
+#																																		       																					#
+#################################################################################################################################################################################################################################
 
 def usage():
-	print sys.argv[0], '[-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>]'
+	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>]'
 
 def handleResults(results, updateversion):
 	printFrameLine()
@@ -42,9 +42,10 @@ def main(argv):
 	debugf = None
 	updateversion = 'true'
 	importCommon.debugFlag = False 
+	scheme = 'http'
 
 	try:
-		opts, args = getopt.getopt(argv,"i:p:u:d:h",["ip=","port=","user=","debug="])
+		opts, args = getopt.getopt(argv,"i:p:u:d:h:s:",["ip=","port=","user=","debug=","scheme="])
 	except getopt.GetoptError:
 		usage()
 		errorAndExit(2, 'Invalid input')
@@ -60,11 +61,13 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-u", "--user"):
 			adminUser = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 		elif opt in ("-d", "--debug"):
 			print arg
 			debugf = bool(arg.lower() == "true" or arg.lower() == "yes")
 
-	print 'be host =',beHost,', be port =', bePort,', user =', adminUser, ', debug =', debugf
+	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', user =', adminUser, ', debug =', debugf
 
 	if (debugf != None):
 		print 'set debug mode to ' + str(debugf)
@@ -88,35 +91,35 @@ def main(argv):
 
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailPort", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "contrailPort", updateversion)
 	results.append(result)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailV2VirtualMachineInterface", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "contrailV2VirtualMachineInterface", updateversion)
 	results.append(result)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "neutronPort", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "neutronPort", updateversion)
 	results.append(result)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailCompute", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "contrailCompute", updateversion)
 	results.append(result)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "novaServer", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "novaServer", updateversion)
 	results.append(result)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailV2VirtualNetwork", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "contrailV2VirtualNetwork", updateversion)
 	results.append(result)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailVirtualNetwork", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "contrailVirtualNetwork", updateversion)
 	results.append(result)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "neutronNet", updateversion)
+	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "neutronNet", updateversion)
 	results.append(result)
 
 

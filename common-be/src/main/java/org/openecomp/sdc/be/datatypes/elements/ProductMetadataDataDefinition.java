@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 
 public class ProductMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
 
@@ -122,5 +122,10 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		} else if (!isActive.equals(other.isActive))
 			return false;
 		return super.equals(obj);
+	}
+
+	@Override
+	public String getActualComponentType() {
+		return getComponentType().getValue();
 	}
 }

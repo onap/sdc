@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {
     Match,
     LinkMenu,
@@ -28,13 +29,15 @@ import {
     Relationship,
     PropertyModel,
     Component,
+    Service,
     ConnectRelationModel,
     CompositionCiNodeBase,
     CompositionCiNodeVl,
     ModalModel,
     ButtonModel,
     NodesFactory/*,
-    AssetPopoverObj*/
+    AssetPopoverObj*/,
+    Point
 } from "app/models";
 import {ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors} from "app/utils";
 import {EventListenerService, LoaderService} from "app/services";
@@ -60,13 +63,32 @@ import {ConnectionPropertiesViewComponent} from "../../../ng2/pages/connection-w
 import {ComponentInstanceServiceNg2} from "../../../ng2/services/component-instance-services/component-instance.service";
 import {EVENTS} from "../../../utils/constants";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
+import {ComponentType} from "app/utils";
+import {ForwardingPath} from "app/models/forwarding-path";
+import {ServicePathGraphUtils} from "./utils/composition-graph-service-path-utils";
+import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
+import { ZoneConfig, ZoneInstanceConfig, ZoneInstanceMode } from "app/models/graph/zones/zone-child";
+import { PoliciesService } from "app/ng2/services/policies.service";
+import { PaletteAnimationComponent } from "app/ng2/components/ui/palette-animation/palette-animation.component";
+import { CompositionGraphZoneUtils } from "./utils/composition-graph-zone-utils";
+import {LeftPaletteMetadataTypes} from "../../../models/components/displayComponent";
 
-interface ICompositionGraphScope extends ng.IScope {
+
+export interface ICompositionGraphScope extends ng.IScope {
 
     component:Component;
     isLoading: boolean;
     isViewOnly: boolean;
     withSidebar: boolean;
+
+    //zones
+    newZoneInstance;
+    zoneTagMode:string;
+    activeZoneInstance:ZoneInstanceConfig;
+    zones:any;
+    zoneInstanceModeChanged(newMode:ZoneInstanceMode, instance:ZoneInstanceConfig, zoneId:string);
+    clickOutsideZoneInstance():void;
+
     // Link menu - create link menu
     relationMenuDirectiveObj:ConnectRelationModel;
     isLinkMenuOpen:boolean;
@@ -76,6 +98,7 @@ interface ICompositionGraphScope extends ng.IScope {
     //modify link menu - for now only delete menu
     relationMenuTimeout:ng.IPromise<any>;
     linkMenuObject:LinkMenu;
+    isOnDrag: boolean;
 
     //left palette functions callbacks
     dropCallback(event:JQueryEventObject, ui:any):void;
@@ -95,7 +118,12 @@ interface ICompositionGraphScope extends ng.IScope {
     highlightSearchMatches(searchTerm: string): void;
 
     canvasMenuProps:any;
-    
+
+    createOrUpdateServicePath(data: any):void;
+    deletePathsOnCy():void;
+    drawPathOnCy(data: ForwardingPath):void;
+    selectedPathId: string;
+
     /*//asset popover menu
     assetPopoverObj:AssetPopoverObj;
     assetPopoverOpen:boolean;
@@ -124,10 +152,13 @@ export class CompositionGraph implements ng.IDirective {
                 private commonGraphUtils:CommonGraphUtils,
                 private matchCapabilitiesRequirementsUtils:MatchCapabilitiesRequirementsUtils,
                 private CompositionGraphPaletteUtils:CompositionGraphPaletteUtils,
+                private compositionGraphZoneUtils:CompositionGraphZoneUtils,
                 private ComponentServiceNg2: ComponentServiceNg2,
                 private ModalServiceNg2: ModalService,
                 private ConnectionWizardServiceNg2: ConnectionWizardService,
-                private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2) {
+                private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private servicePathGraphUtils: ServicePathGraphUtils,
+                private policiesService:PoliciesService) {
 
     }
 
@@ -140,7 +171,6 @@ export class CompositionGraph implements ng.IDirective {
     };
 
     link = (scope:ICompositionGraphScope, el:JQuery) => {
-
         this.loadGraph(scope, el);
 
         if(scope.component.componentInstances && scope.component.componentInstancesRelations) {
@@ -164,15 +194,16 @@ export class CompositionGraph implements ng.IDirective {
 
     private loadGraphData = (scope:ICompositionGraphScope) => {
         this.initGraphNodes(scope.component.componentInstances, scope.isViewOnly);
-        this.commonGraphUtils.initGraphLinks(this._cy, scope.component.componentInstancesRelations);
+        this.commonGraphUtils.initGraphLinks(this._cy, scope.component.componentInstancesRelations, scope.component.getRelationRequirementCapability.bind(scope.component));
         this.commonGraphUtils.initUcpeChildren(this._cy);
+        this.compositionGraphZoneUtils.initPolicyInstances(scope.zones.policy, scope.component.policies);
     }
 
     private loadGraph = (scope:ICompositionGraphScope, el:JQuery) => {
-
         let graphEl = el.find('.sdc-composition-graph-wrapper');
         this.initGraph(graphEl, scope.isViewOnly);
         this.initDropZone(scope);
+        this.initZones(scope);
         this.registerCytoscapeGraphEvents(scope);
         this.registerCustomEvents(scope, el);
         this.initViewMode(scope.isViewOnly);
@@ -210,6 +241,12 @@ export class CompositionGraph implements ng.IDirective {
     private registerCustomEvents(scope:ICompositionGraphScope, el:JQuery) {
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_IN, (leftPaletteComponent:LeftPaletteComponent) => {
+            if(scope.isOnDrag ||
+                leftPaletteComponent.categoryType === LeftPaletteMetadataTypes.Group ||
+                    leftPaletteComponent.categoryType === LeftPaletteMetadataTypes.Policy) {
+                return;
+            }
+
             this.$log.info(`composition-graph::registerEventServiceEvents:: palette hover on component: ${leftPaletteComponent.uniqueId}`);
 
             let nodesData = this.NodesGraphUtils.getAllNodesData(this._cy.nodes());
@@ -239,6 +276,33 @@ export class CompositionGraph implements ng.IDirective {
                     this.matchCapabilitiesRequirementsUtils.highlightMatchingComponents(filteredNodesData, this._cy)
                 });
         });
+
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_ADD_COMPONENT_INSTANCE_ZONE_START, (component:Component, paletteComponent:LeftPaletteComponent, startPosition:Point) => {
+            this.LoaderService.showLoader('composition-graph');
+
+            let zoneType:string = LeftPaletteMetadataTypes[paletteComponent.categoryType].toLowerCase();
+            scope.zones[zoneType].showZone = true;
+            if(scope.minifyZone) scope.minifyZone = false;
+
+            this.policiesService.createPolicyInstance(component.componentType, component.uniqueId, paletteComponent.type).subscribe((newInstance)=>{
+
+                this.LoaderService.hideLoader('composition-graph');
+                scope.newZoneInstance = newInstance;
+                this.compositionGraphZoneUtils.showAnimationToZone(startPosition, zoneType);
+            }, (error) => {
+                this.LoaderService.hideLoader('composition-graph');
+            });
+        });
+
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_FINISH_ANIMATION_ZONE, () => {
+            if(scope.newZoneInstance){
+                this.compositionGraphZoneUtils.addInstanceToZone(scope.zones['policy'], scope.newZoneInstance);
+            }
+        })
+
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_ZONE_SIZE_CHANGE, () => {
+            scope.minifyZone = true;
+        })
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_OUT, () => {
             this._cy.emit('hidehandles');
@@ -362,17 +426,11 @@ export class CompositionGraph implements ng.IDirective {
                         .updateInstanceCapabilityProperties(
                             scope.component,
                             this.ConnectionWizardServiceNg2.selectedMatch.toNode,
-                            this.ConnectionWizardServiceNg2.selectedMatch.capability.type,
-                            this.ConnectionWizardServiceNg2.selectedMatch.capability.name,
+                            this.ConnectionWizardServiceNg2.selectedMatch.capability,
                             capabilityPropertiesBE
                         )
                         .subscribe((response) => {
                             console.log("Update resource instance capability properties response: ", response);
-                            response.forEach((resProperty) => {
-                                this.ConnectionWizardServiceNg2.selectedMatch.capabilityProperties.find((property) => {
-                                    return property.uniqueId == resProperty.uniqueId;
-                                }).value = resProperty.value;
-                            });
                             this.ConnectionWizardServiceNg2.changedCapabilityProperties = [];
                             resolve(capabilityPropertiesBE);
                         });
@@ -400,6 +458,16 @@ export class CompositionGraph implements ng.IDirective {
             });
         };
 
+        scope.createOrUpdateServicePath = (data:any) => {
+            this.servicePathGraphUtils.createOrUpdateServicePath(scope, data);
+        };
+        scope.deletePathsOnCy = () => {
+            this.servicePathGraphUtils.deletePathsFromGraph(this._cy, <Service> scope.component);
+        };
+        scope.drawPathOnCy = (data: ForwardingPath) => {
+            this.servicePathGraphUtils.drawPath(this._cy, data, <Service> scope.component);
+        };
+
         scope.viewRelation = (link:Cy.CollectionEdges) => {
             scope.hideRelationMenu();
 
@@ -408,41 +476,9 @@ export class CompositionGraph implements ng.IDirective {
             const targetNode:CompositionCiNodeBase = link.target().data();
             const relationship:Relationship = linkData.relation.relationships[0];
 
-            let capability:Capability;
-            _.some(_.values(targetNode.componentInstance.capabilities), (capGroup) => {
-                //item.uniqueId + item.ownerId + item.name === (selectedReqOrCapModel.uniqueId + selectedReqOrCapModel.ownerId + selectedReqOrCapModel.name)
-                capability = _.find<Capability>(_.values<Capability>(capGroup), (cap:Capability) => (
-                    cap.uniqueId === relationship.relation.capabilityUid &&
-                    cap.ownerId === relationship.relation.capabilityOwnerId &&
-                    cap.name === relationship.relation.capability
-                ));
-                return capability;
-            });
-            let requirement:Requirement;
-            _.some(_.values(sourceNode.componentInstance.requirements), (reqGroup) => {
-                requirement = _.find<Requirement>(_.values<Requirement>(reqGroup), (req:Requirement) => (
-                    req.uniqueId === relationship.relation.requirementUid &&
-                    req.ownerId === relationship.relation.requirementOwnerId &&
-                    req.name === relationship.relation.requirement
-                ));
-                return requirement;
-            });
-
-            new Promise<{capability:Capability, requirement:Requirement}>((resolve, reject) => {
-                if (capability && requirement) {
-                    resolve({capability, requirement});
-                }
-                else {
-                    scope.component.fetchRelation(relationship.relation.id).then((fetchedRelation) => {
-                        resolve({
-                            capability: fetchedRelation.relationships[0].capability,
-                            requirement: fetchedRelation.relationships[0].requirement
-                        });
-                    }, reject);
-                }
-            }).then((objReqCap) => {
-                capability = objReqCap.capability;
-                requirement = objReqCap.requirement;
+            scope.component.getRelationRequirementCapability(relationship, sourceNode.componentInstance, targetNode.componentInstance).then((objReqCap) => {
+                const capability = objReqCap.capability;
+                const requirement = objReqCap.requirement;
 
                 this.ConnectionWizardServiceNg2.currentComponent = scope.component;
                 this.ConnectionWizardServiceNg2.connectRelationModel = new ConnectRelationModel(sourceNode, targetNode, []);
@@ -459,11 +495,19 @@ export class CompositionGraph implements ng.IDirective {
                 this.ModalServiceNg2.addDynamicContentToModal(modalInstance, ConnectionPropertiesViewComponent);
                 modalInstance.instance.open();
 
-                this.ComponentInstanceServiceNg2.getInstanceCapabilityProperties(scope.component, linkData.target, capability.type, capability.name)
-                    .subscribe((response: Array<PropertyModel>) => {
-                        this.ConnectionWizardServiceNg2.selectedMatch.capabilityProperties = response;
-                        this.ModalServiceNg2.addDynamicContentToModal(modalInstance, ConnectionPropertiesViewComponent);
-                    }, (error) => {});
+                new Promise((resolve) => {
+                    if (!this.ConnectionWizardServiceNg2.selectedMatch.capability.properties) {
+                        this.ComponentInstanceServiceNg2.getInstanceCapabilityProperties(scope.component, linkData.target, capability)
+                            .subscribe(() => {
+                                resolve();
+                            }, (error) => {});
+                    } else {
+                        resolve();
+                    }
+                }).then(() => {
+                    this.ModalServiceNg2.addDynamicContentToModal(modalInstance, ConnectionPropertiesViewComponent);
+                })
+
             }, (error) => {});
         };
 
@@ -504,7 +548,7 @@ export class CompositionGraph implements ng.IDirective {
                 this.ConnectionWizardServiceNg2.currentComponent = scope.component;
                 //TODO: init with the selected values
                 this.ConnectionWizardServiceNg2.selectedMatch = null;
-                
+
                 let steps:Array<StepModel> = [];
                 let fromNodeName:string = scope.relationMenuDirectiveObj.fromNode.componentInstance.name;
                 let toNodeName:string = scope.relationMenuDirectiveObj.toNode.componentInstance.name;
@@ -523,6 +567,7 @@ export class CompositionGraph implements ng.IDirective {
             }
         });
         this._cy.on('tapstart', 'node', (event:Cy.EventObject) => {
+            scope.isOnDrag = true;
             this._currentlyCLickedNodePosition = angular.copy(event.cyTarget[0].position()); //update node position on drag
             if (event.cyTarget.data().isUcpe) {
                 this._cy.nodes('.ucpe-cp').unlock();
@@ -592,7 +637,7 @@ export class CompositionGraph implements ng.IDirective {
 
 
         this._cy.on('tapend', (event:Cy.EventObject) => {
-
+            scope.isOnDrag = false;
             if (event.cyTarget === this._cy) { //On Background clicked
                 if (this._cy.$('node:selected').length === 0) { //if the background click but not dragged
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED);
@@ -603,6 +648,9 @@ export class CompositionGraph implements ng.IDirective {
             else if (event.cyTarget.isEdge()) { //On Edge clicked
                 if (scope.isViewOnly) return;
                 this.CompositionGraphLinkUtils.handleLinkClick(this._cy, event);
+                if (event.cyTarget.data().type === CompositionCiServicePathLink.LINK_TYPE) {
+                    return;
+                }
                 this.openModifyLinkMenu(scope, this.CompositionGraphLinkUtils.getModifyLinkMenu(event.cyTarget[0], event), 6000);
             }
 
@@ -640,13 +688,6 @@ export class CompositionGraph implements ng.IDirective {
         });
     }
 
-    /*
-    private showNodePopoverMenu = (scope:ICompositionGraphScope, node:Cy.CollectionNodes) => {
-
-        scope.assetPopoverObj = this.NodesGraphUtils.createAssetPopover(this._cy, node, scope.isViewOnly);
-        scope.assetPopoverOpen = true;
-
-    };*/
     private openModifyLinkMenu = (scope:ICompositionGraphScope, linkMenuObject:LinkMenu, timeOutInMilliseconds?:number) => {
         scope.hideRelationMenu();
         this.$timeout(() => {
@@ -732,6 +773,49 @@ export class CompositionGraph implements ng.IDirective {
         }
     }
 
+
+    private initZones = (scope:ICompositionGraphScope):void => {
+        scope.zones = this.compositionGraphZoneUtils.createCompositionZones();
+
+        scope.zoneInstanceModeChanged = (newMode:ZoneInstanceMode, instance:ZoneInstanceConfig, zoneId:string):void => {
+            if(scope.zoneTagMode) { //we're in tag mode.
+                if(instance == scope.activeZoneInstance && newMode == ZoneInstanceMode.TAG){ //we want to toggle tag mode off.
+                    scope.unsetActiveZoneInstance();
+                }
+            } else {
+                scope.setZoneInstanceMode(newMode, instance, zoneId);
+            }
+        };
+
+        scope.setZoneInstanceMode = (newMode:ZoneInstanceMode, instance:ZoneInstanceConfig, zoneId:string):void => {
+            instance.mode = newMode;
+            switch(newMode){
+                case ZoneInstanceMode.TAG: {
+                    scope.zoneTagMode = zoneId + "-tagging";
+                }
+                case ZoneInstanceMode.SELECTED: { //case TAG flows into here as well
+                    scope.activeZoneInstance = instance;
+                    break;
+                }
+            }
+        };
+
+        scope.unsetActiveZoneInstance = ():void => {
+            scope.activeZoneInstance.mode = ZoneInstanceMode.NONE;
+            scope.activeZoneInstance = null;
+            scope.zoneTagMode = null;
+        };
+
+        scope.clickOutsideZoneInstance = ():void => {
+            if(!scope.zoneTagMode)
+                scope.unsetActiveZoneInstance();
+        };
+
+    };
+
+
+
+
     public static factory = ($q,
                              $log,
                              $timeout,
@@ -746,10 +830,13 @@ export class CompositionGraph implements ng.IDirective {
                              CommonGraphUtils,
                              MatchCapabilitiesRequirementsUtils,
                              CompositionGraphPaletteUtils,
+                             CompositionGraphZoneUtils,
                              ComponentServiceNg2,
                              ModalService,
                              ConnectionWizardService,
-                             ComponentInstanceServiceNg2) => {
+                             ComponentInstanceServiceNg2,
+                             ServicePathGraphUtils,
+                             PoliciesService) => {
         return new CompositionGraph(
             $q,
             $log,
@@ -765,10 +852,13 @@ export class CompositionGraph implements ng.IDirective {
             CommonGraphUtils,
             MatchCapabilitiesRequirementsUtils,
             CompositionGraphPaletteUtils,
+            CompositionGraphZoneUtils,
             ComponentServiceNg2,
             ModalService,
             ConnectionWizardService,
-            ComponentInstanceServiceNg2);
+            ComponentInstanceServiceNg2,
+            ServicePathGraphUtils,
+            PoliciesService);
     }
 }
 
@@ -787,8 +877,11 @@ CompositionGraph.factory.$inject = [
     'CommonGraphUtils',
     'MatchCapabilitiesRequirementsUtils',
     'CompositionGraphPaletteUtils',
+    'CompositionGraphZoneUtils',
     'ComponentServiceNg2',
     'ModalServiceNg2',
     'ConnectionWizardServiceNg2',
-    'ComponentInstanceServiceNg2'
+    'ComponentInstanceServiceNg2',
+    'ServicePathGraphUtils',
+    'PoliciesServiceNg2'
 ];

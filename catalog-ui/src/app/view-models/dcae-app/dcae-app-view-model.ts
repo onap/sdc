@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {MenuItemGroup, MenuItem} from "app/utils";
 import {BreadcrumbsPath, BreadcrumbsMenu} from "../onboard-vendor/onboard-vendor-view-model";
 import {CacheService} from "app/services";

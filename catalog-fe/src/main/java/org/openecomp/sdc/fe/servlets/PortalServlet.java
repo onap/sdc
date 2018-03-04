@@ -67,7 +67,6 @@ public class PortalServlet extends HttpServlet {
 		try {
 			addRequestHeadersUsingWebseal(request, response);
 		} catch (Exception e) {
-			FeEcompErrorManager.getInstance().processEcompError(EcompErrorName.FePortalServletError, "Portal Servlet");
 			FeEcompErrorManager.getInstance().logFePortalServletError("Portal Servlet");
 			log.error("Error during getting portal page", e);
 		}

@@ -1,3 +1,33 @@
+    .i-sdc-designer-leftbar-section-popup-panel {
+        position: absolute;
+        display: inline-block;
+        background-color: white;
+        border: solid 1px #d2d2d2;
+        border-top: solid 3px #13a7df;
+        width: 140px;
+        height: 40px;
+        z-index: 10000;
+    }
+
+    .i-sdc-designer-leftbar-section-popup-panel-group {
+        padding-left: 8px;
+        padding-top: 8px;
+    }
+
+    .i-sdc-designer-leftbar-section-popup-panel-plus {
+        border-radius: 50%;
+        color: white;
+        background-color: #13a7df;
+        width: 20px;
+        text-align: center;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .i-sdc-designer-leftbar-section-popup-panel-title {
+        padding-left: 10px;
+        display: inline-block;
+    }
 
 .composition{
     .sdc-workspace-container{
@@ -791,7 +821,16 @@
         .g_1;
         line-height: 18px;
     }
-
+    
+    .service-path-buttons {
+       margin-top: 12px;
+       position: absolute;
+       right:  70px;
+       top: 53px;
+       &.with-sidebar {
+           right: 380px;
+       }
+    }
     //Canvas search menu
     .w-sdc-search-menu {
         position:absolute;
@@ -815,8 +854,8 @@
                 padding:2px 50px 2px 10px;
                 transition:all 0.4s;
             }
-            .clear-search-x {
-                top: 17px
+            .search-bar-container {
+                position:relative;
             }
 
             &:not(:hover):not(.autocomplete-visible):not(.active){

@@ -21,11 +21,9 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -82,7 +80,7 @@ public class DistributionStatusEvent extends AuditingGenericEvent {
 
 	}
 
-	public DistributionStatusEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public DistributionStatusEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
@@ -125,6 +123,21 @@ public class DistributionStatusEvent extends AuditingGenericEvent {
 		if (value != null) {
 			setStatusTime((String) value);
 		}
+ 	}
+
+	public DistributionStatusEvent(String action, CommonAuditData commonAuditData, String did, String consumerId, String topicName,
+                                   String resourceURL, String statusTime) {
+		this();
+		this.action = action;
+		this.requestId = commonAuditData.getRequestId();
+		this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+		this.status = commonAuditData.getStatus();
+		this.desc = commonAuditData.getDescription();
+		this.did = did;
+		this.consumerId = consumerId;
+		this.topicName = topicName;
+		this.resoureURL = resourceURL;
+		this.statusTime = statusTime;
 	}
 
 	@Override
@@ -243,7 +256,7 @@ public class DistributionStatusEvent extends AuditingGenericEvent {
 		this.statusTime = statusTime;
 	}
 
-	@Override
+ 	@Override
 	public String toString() {
 		return "DistributionStatusEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId="
 				+ requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status

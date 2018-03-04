@@ -22,32 +22,30 @@ package org.openecomp.sdc.be.info;
 
 public class ServiceVersionInfo {
 
-	// private String serviceName;
-	private String version;
-	private String url;
+    private String version;
+    private String url;
 
-	public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
-		super();
-		// this.serviceName = serviceName;
-		this.version = serviceVersion;
-		StringBuilder sb = new StringBuilder(context);
-		sb.append("services/").append(serviceName).append("/").append(serviceVersion);
-		url = sb.toString();
-	}
+    public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
+        super();
+        this.version = serviceVersion;
+        StringBuilder sb = new StringBuilder(context);
+        sb.append("services/").append(serviceName).append("/").append(serviceVersion);
+        url = sb.toString();
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String serviceVersion) {
-		this.version = serviceVersion;
-	}
+    public void setVersion(String serviceVersion) {
+        this.version = serviceVersion;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }

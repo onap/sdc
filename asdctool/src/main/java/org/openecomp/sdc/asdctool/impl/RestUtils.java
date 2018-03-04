@@ -20,13 +20,11 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import java.io.IOException;
+import java.util.Properties;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.HttpStatus;
+import org.openecomp.sdc.common.http.client.api.HttpRequest;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,48 +33,33 @@ import org.slf4j.LoggerFactory;
  */
 public class RestUtils {
 
-	final String DELETE_PRODUCT = "http://%s:%s/sdc2/rest/v1/catalog/products/%s";
-	final Integer DELETE_SUCCSES_RESPONSE = 200;
+	final static String DELETE_PRODUCT = "http://%s:%s/sdc2/rest/v1/catalog/products/%s";
 
 	private static Logger log = LoggerFactory.getLogger(RestUtils.class.getName());
-	CloseableHttpClient httpClient;
 
 	public RestUtils() {
-		this.httpClient = HttpClients.createDefault();
-	}
-
-	private CloseableHttpResponse exacuteRequest(HttpUriRequest httpRequest) throws IOException {
-		log.debug("received http request: {}", httpRequest.toString());
-		return httpClient.execute(httpRequest);
-	}
-
-	public void closeClient() {
-		log.debug("closing http client");
-		try {
-			this.httpClient.close();
-			log.debug("closed http client");
-		} catch (IOException e) {
-			log.debug("close http client failed", e);
-
-		}
 	}
 
 	public Integer deleteProduct(String productUid, String beHost, String bePort, String adminUser) {
 		String url = String.format(DELETE_PRODUCT, beHost, bePort, productUid);
-		HttpDelete deleteRequest = new HttpDelete(url);
-		deleteRequest.setHeader("USER_ID", adminUser);
-		try (CloseableHttpResponse response = this.httpClient.execute(deleteRequest)) {
-			int status = response.getStatusLine().getStatusCode();
-			if (DELETE_SUCCSES_RESPONSE.equals(status)) {
-				log.debug("Product uid:{} succsesfully deleted", productUid);
-			} else {
-				log.error("Product uid:{} delete failed status {}", productUid, status);
-			}
-			return status;
-		} catch (IOException e) {
-			log.error("Product uid:{} delete failed with exception",productUid, e);
+		
+		Properties headers = new Properties();
+		headers.put("USER_ID", adminUser);
+		try {
+		    HttpResponse<String> httpResponse = HttpRequest.delete(url, headers);
+            int status = httpResponse.getStatusCode();
+            if (status == HttpStatus.SC_OK) {
+                log.debug("Product uid:{} succsesfully deleted", productUid);
+            }
+            else {
+                log.error("Product uid:{} delete failed status {}", productUid, status);
+            }
+            return status;
 		}
-		return null;
+		catch(Exception e) {
+		    log.error("Product uid:{} delete failed with exception",productUid, e);
+		}
+		return null;		
 	}
 
 }

@@ -21,6 +21,7 @@
 /**
  * Created by obarda on 6/28/2016.
  */
+import * as _ from "lodash";
 import {GraphUIObjects} from "app/utils";
 import {LoaderService} from "app/services";
 import {
@@ -39,6 +40,7 @@ import {
 import {CommonGraphUtils} from "../../common/common-graph-utils";
 import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
 import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requierment-utils";
+import {CompositionCiServicePathLink} from "../../../../models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
 
 export class CompositionGraphLinkUtils {
 
@@ -86,7 +88,7 @@ export class CompositionGraphLinkUtils {
 
         let onSuccess:(response:RelationshipModel) => void = (relation:RelationshipModel) => {
             link.setRelation(relation);
-            this.commonGraphUtils.insertLinkToGraph(cy, link);
+            this.commonGraphUtils.insertLinkToGraph(cy, link, component.getRelationRequirementCapability.bind(component));
         };
 
         link.updateLinkDirection();
@@ -212,6 +214,28 @@ export class CompositionGraphLinkUtils {
         this.createLink(link, cy, component);
     };
 
+    private handlePathLink(cy:Cy.Instance, event:Cy.EventObject) {
+        let linkData = event.cyTarget.data();
+        let selectedPathId = linkData.pathId;
+        let pathEdges = cy.collection(`[pathId='${selectedPathId}']`);
+        if (pathEdges.length > 1) {
+            setTimeout(() => {
+                pathEdges.select();
+            }, 0);
+        }
+    }
+
+    private handleVLLink(event:Cy.EventObject) {
+        let vl:Cy.CollectionNodes = event.cyTarget[0].target('.vl-node');
+        let connectedEdges:Cy.CollectionEdges = vl.connectedEdges(`[type!="${CompositionCiServicePathLink.LINK_TYPE}"]`);
+        if (vl.length && connectedEdges.length > 1) {
+            setTimeout(() => {
+                vl.select();
+                connectedEdges.select();
+            }, 0);
+        }
+    }
+
 
     /**
      * Handles click event on links.
@@ -224,18 +248,13 @@ export class CompositionGraphLinkUtils {
         if (cy.$('edge:selected').length > 1 && event.cyTarget[0].selected()) {
             cy.$(':selected').unselect();
         } else {
-
-            let vl:Cy.CollectionNodes = event.cyTarget[0].target('.vl-node');
-            let connectedEdges:Cy.CollectionEdges = vl.connectedEdges();
-            if (vl.length && connectedEdges.length > 1) {
-
-                setTimeout(() => {
-                    vl.select();
-                    connectedEdges.select();
-                }, 0);
+            if (event.cyTarget[0].data().type === CompositionCiServicePathLink.LINK_TYPE) {
+                this.handlePathLink(cy, event);
+            }
+            else {
+                this.handleVLLink(event);
             }
         }
-
     }
 
 

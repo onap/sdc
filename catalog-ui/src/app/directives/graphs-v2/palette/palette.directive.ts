@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {Component, IAppMenu, LeftPanelModel, NodesFactory, LeftPaletteComponent, CompositionCiNodeBase, ComponentInstance} from "app/models";
+import * as _ from "lodash";
+import {Component, IAppMenu, LeftPanelModel, NodesFactory, LeftPaletteComponent, CompositionCiNodeBase, ComponentInstance, Point} from "app/models";
 import {CompositionGraphGeneralUtils} from "../composition-graph/utils/composition-graph-general-utils";
 import {EventListenerService} from "app/services";
 import {ResourceType, GRAPH_EVENTS, EVENTS, ComponentInstanceFactory, ModalsHandler} from "app/utils";
@@ -25,6 +26,8 @@ import 'sdc-angular-dragdrop';
 import {LeftPaletteLoaderService} from "../../../services/components/utils/composition-left-palette-service";
 import {Resource} from "app/models/components/resource";
 import {ComponentType} from "app/utils/constants";
+import {LeftPaletteMetadataTypes} from "../../../models/components/displayComponent";
+
 
 interface IPaletteScope {
     components:Array<LeftPaletteComponent>;
@@ -39,10 +42,15 @@ interface IPaletteScope {
         ui:any
     }
 
+    addInstanceClick: ()=>void; // added code
+    onPopupMouseOver: ()=>void  // added code
+    onPopupMouseOut: ()=>void   // added code
+
     sectionClick:(section:string)=>void;
     searchComponents:(searchText:string)=>void;
-    onMouseOver:(displayComponent:LeftPaletteComponent)=>void;
+    onMouseOver:(displayComponent:LeftPaletteComponent, elem: HTMLElement)=>void;
     onMouseOut:(displayComponent:LeftPaletteComponent)=>void;
+
     dragStartCallback:(event:JQueryEventObject, ui, displayComponent:LeftPaletteComponent)=>void;
     dragStopCallback:()=>void;
     onDragCallback:(event:JQueryEventObject) => void;
@@ -65,8 +73,8 @@ export class Palette implements ng.IDirective {
                 private CompositionGraphGeneralUtils:CompositionGraphGeneralUtils,
                 private EventListenerService:EventListenerService,
                 private sdcMenu:IAppMenu,
-                private ModalsHandler:ModalsHandler) {
-
+                private ModalsHandler:ModalsHandler
+            ) {
     }
 
     private fetchingComponentFromServer:boolean = false;
@@ -84,7 +92,6 @@ export class Palette implements ng.IDirective {
         this.nodeHtmlSubstitute = $('<div class="node-substitute"><span></span><img /></div>');
         el.append(this.nodeHtmlSubstitute);
         this.registerEventListenerForLeftPalette(scope);
-        // this.LeftPaletteLoaderService.loadLeftPanel(scope.currentComponent.componentType);
 
         this.initComponents(scope);
         this.initEvents(scope);
@@ -96,31 +103,15 @@ export class Palette implements ng.IDirective {
         });
     };
 
-    private getUpdateLeftPaletteEventName = (component:Component):string => {
-        switch (component.componentType) {
-            case ComponentType.SERVICE:
-                return EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT;
-            case ComponentType.RESOURCE:
-                if((<Resource>component).resourceType == ResourceType.PNF){
-                    return EVENTS.RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT;
-                }else{
-                    return EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT;
-                }
-            default:
-                console.log('ERROR: Component type '+ component.componentType + ' is not exists');
-        }
-    };
 
     private registerEventListenerForLeftPalette = (scope:IPaletteScope):void => {
-        let updateEventName:string = this.getUpdateLeftPaletteEventName(scope.currentComponent);
-        this.EventListenerService.registerObserverCallback(updateEventName, () => {
+        this.EventListenerService.registerObserverCallback(EVENTS.LEFT_PALETTE_UPDATE_EVENT, () => {
             this.updateLeftPanelDisplay(scope);
         });
     };
 
     private unRegisterEventListenerForLeftPalette = (scope:IPaletteScope):void => {
-        let updateEventName:string = this.getUpdateLeftPaletteEventName(scope.currentComponent);
-        this.EventListenerService.unRegisterObserver(updateEventName);
+        this.EventListenerService.unRegisterObserver(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
     };
 
     private leftPanelResourceFilter(resourcesNotAbstract:Array<LeftPaletteComponent>, resourceFilterTypes:Array<string>):Array<LeftPaletteComponent> {
@@ -132,7 +123,7 @@ export class Palette implements ng.IDirective {
 
     private initLeftPanel(leftPanelComponents:Array<LeftPaletteComponent>, resourceFilterTypes:Array<string>):LeftPanelModel {
         let leftPanelModel = new LeftPanelModel();
-       
+
         if (resourceFilterTypes && resourceFilterTypes.length) {
             leftPanelComponents = this.leftPanelResourceFilter(leftPanelComponents, resourceFilterTypes);
         }
@@ -151,10 +142,7 @@ export class Palette implements ng.IDirective {
 
 
     private initEvents(scope:IPaletteScope) {
-        /**
-         *
-         * @param section
-         */
+
         scope.sectionClick = (section:string) => {
             if (section === scope.expandedSection) {
                 scope.expandedSection = '';
@@ -163,20 +151,37 @@ export class Palette implements ng.IDirective {
             scope.expandedSection = section;
         };
 
-        scope.onMouseOver = (displayComponent:LeftPaletteComponent) => {
-            if (scope.isOnDrag) {
-                return;
+        scope.onMouseOver = (displayComponent:LeftPaletteComponent, sectionElem: HTMLElement) => {
+            if (this.isGroupOrPolicy(displayComponent)) {
+                this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL, scope.currentComponent, displayComponent, sectionElem);
+            } else {
+                if (scope.isOnDrag) {
+                    return;
+                }
+                scope.isOnDrag = true;
+                this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_IN, displayComponent);
+                this.$log.debug('palette::onMouseOver:: fired');
             }
-            scope.isOnDrag = true;
 
-            this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_IN, displayComponent);
-            this.$log.debug('palette::onMouseOver:: fired');
         };
 
-        scope.onMouseOut = () => {
-            scope.isOnDrag = false;
-            this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_OUT);
+        scope.onMouseOut = (displayComponent:LeftPaletteComponent) => {
+            if(this.isGroupOrPolicy(displayComponent)) {
+                this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL);
+            } else {
+                scope.isOnDrag = false;
+                this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_OUT);
+            }
+        };
+    }
+
+    private isGroupOrPolicy(component:LeftPaletteComponent): boolean {
+        if(component &&
+            (component.categoryType === LeftPaletteMetadataTypes.Group ||
+                component.categoryType === LeftPaletteMetadataTypes.Policy)) {
+            return true;
         }
+        return false;
     }
 
     private initComponents(scope:IPaletteScope) {
@@ -193,10 +198,10 @@ export class Palette implements ng.IDirective {
         let entityType:string = scope.currentComponent.componentType.toLowerCase();
         let resourceFilterTypes:Array<string> = this.sdcConfig.resourceTypesFilter[entityType];
          scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent);
-        //remove the container component  from the list 
+        //remove the container component  from the list
         let componentTempToDisplay = angular.copy(scope.components);
-        componentTempToDisplay = _.remove(componentTempToDisplay, function (component) {
-            return component.component.invariantUUID !== scope.currentComponent.invariantUUID;
+        componentTempToDisplay = _.remove(componentTempToDisplay, function (leftPalettecomponent) {
+            return leftPalettecomponent.invariantUUID !== scope.currentComponent.invariantUUID;
         });
         scope.model = this.initLeftPanel(componentTempToDisplay, resourceFilterTypes);
         scope.displaySortedCategories = angular.copy(scope.model.sortedCategories);
@@ -224,7 +229,7 @@ export class Palette implements ng.IDirective {
 
     private initDragEvents(scope:IPaletteScope) {
         scope.dragStartCallback = (event:IDragDropEvent, ui, displayComponent:LeftPaletteComponent):void => {
-            if (scope.isLoading || !scope.isDragable || scope.isViewOnly) {
+            if (scope.isLoading || !scope.isDragable || scope.isViewOnly || this.isGroupOrPolicy(displayComponent)) {
                 return;
             }
 
@@ -302,7 +307,8 @@ export class Palette implements ng.IDirective {
                              CompositionGraphGeneralUtils,
                              EventListenerService,
                              sdcMenu,
-                             ModalsHandler) => {
+                             ModalsHandler
+                            ) => {
         return new Palette($log,
             LeftPaletteLoaderService,
             sdcConfig,
@@ -312,7 +318,8 @@ export class Palette implements ng.IDirective {
             CompositionGraphGeneralUtils,
             EventListenerService,
             sdcMenu,
-            ModalsHandler);
+            ModalsHandler
+        );
     };
 }
 

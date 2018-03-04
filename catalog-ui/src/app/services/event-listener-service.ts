@@ -21,6 +21,7 @@
  * Created by obarda on 7/4/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {Dictionary} from "../utils/dictionary/dictionary";
 
 interface IEventListenerService {

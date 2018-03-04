@@ -22,6 +22,6 @@ package org.openecomp.sdc.be.datamodel.api;
 
 public enum HighestFilterEnum {
 
-	ALL, HIGHEST_ONLY, NON_HIGHEST_ONLY;
+    ALL, HIGHEST_ONLY, NON_HIGHEST_ONLY;
 
 }

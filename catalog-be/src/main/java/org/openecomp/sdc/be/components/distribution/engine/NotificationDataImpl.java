@@ -24,111 +24,111 @@ import java.util.List;
 
 public class NotificationDataImpl implements INotificationData {
 
-	private String distributionID;
-	private String serviceName;
-	private String serviceVersion;
-	private String serviceUUID;
-	private String serviceDescription;
-	private String serviceInvariantUUID;
-	private List<JsonContainerResourceInstance> resources;
-	private List<ArtifactInfoImpl> serviceArtifacts;
-	private String workloadContext;
+    private String distributionID;
+    private String serviceName;
+    private String serviceVersion;
+    private String serviceUUID;
+    private String serviceDescription;
+    private String serviceInvariantUUID;
+    private List<JsonContainerResourceInstance> resources;
+    private List<ArtifactInfoImpl> serviceArtifacts;
+    private String workloadContext;
 
-	@Override
-	public String getDistributionID() {
-		return distributionID;
-	}
+    @Override
+    public String getDistributionID() {
+        return distributionID;
+    }
 
-	@Override
-	public String getServiceName() {
-		return serviceName;
-	}
+    @Override
+    public String getServiceName() {
+        return serviceName;
+    }
 
-	@Override
-	public String getServiceVersion() {
-		return serviceVersion;
-	}
+    @Override
+    public String getServiceVersion() {
+        return serviceVersion;
+    }
 
-	@Override
-	public String getServiceUUID() {
-		return serviceUUID;
-	}
+    @Override
+    public String getServiceUUID() {
+        return serviceUUID;
+    }
 
-	public void setDistributionID(String distributionID) {
-		this.distributionID = distributionID;
-	}
+    public void setDistributionID(String distributionID) {
+        this.distributionID = distributionID;
+    }
 
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
-	public void setServiceVersion(String serviceVersion) {
-		this.serviceVersion = serviceVersion;
-	}
+    public void setServiceVersion(String serviceVersion) {
+        this.serviceVersion = serviceVersion;
+    }
 
-	public void setServiceUUID(String serviceUUID) {
-		this.serviceUUID = serviceUUID;
-	}
+    public void setServiceUUID(String serviceUUID) {
+        this.serviceUUID = serviceUUID;
+    }
 
-	public String getServiceDescription() {
-		return serviceDescription;
-	}
+    public String getServiceDescription() {
+        return serviceDescription;
+    }
 
-	public void setServiceDescription(String serviceDescription) {
-		this.serviceDescription = serviceDescription;
-	}
-	@Override
-	public String getWorkloadContext() { return workloadContext; }
+    public void setServiceDescription(String serviceDescription) {
+        this.serviceDescription = serviceDescription;
+    }
+    @Override
+    public String getWorkloadContext() { return workloadContext; }
 
-	@Override
-	public void setWorkloadContext(String workloadContext) { this.workloadContext = workloadContext;	}
+    @Override
+    public void setWorkloadContext(String workloadContext) { this.workloadContext = workloadContext;    }
 
-	@Override
-	public String toString() {
-		return "NotificationDataImpl{" +
-				"distributionID='" + distributionID + '\'' +
-				", serviceName='" + serviceName + '\'' +
-				", serviceVersion='" + serviceVersion + '\'' +
-				", serviceUUID='" + serviceUUID + '\'' +
-				", serviceDescription='" + serviceDescription + '\'' +
-				", serviceInvariantUUID='" + serviceInvariantUUID + '\'' +
-				", resources=" + resources +
-				", serviceArtifacts=" + serviceArtifacts +
-				", workloadContext='" + workloadContext + '\'' +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "NotificationDataImpl{" +
+                "distributionID='" + distributionID + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                ", serviceVersion='" + serviceVersion + '\'' +
+                ", serviceUUID='" + serviceUUID + '\'' +
+                ", serviceDescription='" + serviceDescription + '\'' +
+                ", serviceInvariantUUID='" + serviceInvariantUUID + '\'' +
+                ", resources=" + resources +
+                ", serviceArtifacts=" + serviceArtifacts +
+                ", workloadContext='" + workloadContext + '\'' +
+                '}';
+    }
 
-	@Override
-	public List<JsonContainerResourceInstance> getResources() {
-		return resources;
-	}
+    @Override
+    public List<JsonContainerResourceInstance> getResources() {
+        return resources;
+    }
 
-	@Override
-	public void setResources(List<JsonContainerResourceInstance> resources) {
-		this.resources = resources;
+    @Override
+    public void setResources(List<JsonContainerResourceInstance> resources) {
+        this.resources = resources;
 
-	}
+    }
 
-	@Override
-	public List<ArtifactInfoImpl> getServiceArtifacts() {
-		// TODO Auto-generated method stub
-		return serviceArtifacts;
-	}
+    @Override
+    public List<ArtifactInfoImpl> getServiceArtifacts() {
+        // TODO Auto-generated method stub
+        return serviceArtifacts;
+    }
 
-	@Override
-	public void setServiceArtifacts(List<ArtifactInfoImpl> serviceArtifacts) {
-		this.serviceArtifacts = serviceArtifacts;
+    @Override
+    public void setServiceArtifacts(List<ArtifactInfoImpl> serviceArtifacts) {
+        this.serviceArtifacts = serviceArtifacts;
 
-	}
+    }
 
-	@Override
-	public String getServiceInvariantUUID() {
-		return serviceInvariantUUID;
-	}
+    @Override
+    public String getServiceInvariantUUID() {
+        return serviceInvariantUUID;
+    }
 
-	@Override
-	public void setServiceInvariantUUID(String serviceInvariantUUID) {
-		this.serviceInvariantUUID = serviceInvariantUUID;
-	}
+    @Override
+    public void setServiceInvariantUUID(String serviceInvariantUUID) {
+        this.serviceInvariantUUID = serviceInvariantUUID;
+    }
 
 }

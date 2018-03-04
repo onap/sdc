@@ -5,6 +5,7 @@ import {FormElementsModule} from "../../ui/form-components/form-elements.module"
 import {CommonModule} from "@angular/common";
 import {GlobalPipesModule} from "app/ng2/pipes/global-pipes.module";
 import {PropertyTableModule} from "../properties-table/property-table.module";
+import {UiElementsModule} from "../../ui/ui-elements.module";
 
 @NgModule({
     declarations: [
@@ -15,7 +16,9 @@ import {PropertyTableModule} from "../properties-table/property-table.module";
         FormsModule,
         FormElementsModule,
         GlobalPipesModule,
-        PropertyTableModule],
+        UiElementsModule,
+        PropertyTableModule
+    ],
 
     exports: [SelectRequirementOrCapabilityComponent],
     providers: []

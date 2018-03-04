@@ -24,39 +24,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum DistributionStatus {
-	DEPLOYED("Deployed", "DEPLOYED");
+    DEPLOYED("Deployed", "DEPLOYED");
 
-	private String name;
-	private String auditingStatus;
+    private String name;
+    private String auditingStatus;
 
-	private static Logger log = LoggerFactory.getLogger(DistributionStatus.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(DistributionStatus.class);
 
-	DistributionStatus(String name, String auditingStatus) {
-		this.name = name;
-		this.auditingStatus = auditingStatus;
-	}
+    DistributionStatus(String name, String auditingStatus) {
+        this.name = name;
+        this.auditingStatus = auditingStatus;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getAuditingStatus() {
-		return auditingStatus;
-	}
+    public String getAuditingStatus() {
+        return auditingStatus;
+    }
 
-	public static DistributionStatus getStatusByAuditingStatusName(String auditingStatus) {
-		DistributionStatus res = null;
-		DistributionStatus[] values = values();
-		for (DistributionStatus value : values) {
-			if (value.getAuditingStatus().equals(auditingStatus)) {
-				res = value;
-				break;
-			}
-		}
-		if (res == null) {
-			log.debug("No DistributionStatus  is mapped to name {}", auditingStatus);
-		}
-		return res;
-	}
+    public static DistributionStatus getStatusByAuditingStatusName(String auditingStatus) {
+        DistributionStatus res = null;
+        DistributionStatus[] values = values();
+        for (DistributionStatus value : values) {
+            if (value.getAuditingStatus().equals(auditingStatus)) {
+                res = value;
+                break;
+            }
+        }
+        if (res == null) {
+            log.debug("No DistributionStatus  is mapped to name {}", auditingStatus);
+        }
+        return res;
+    }
 
 }

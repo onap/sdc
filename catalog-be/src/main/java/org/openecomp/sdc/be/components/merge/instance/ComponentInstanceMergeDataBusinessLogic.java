@@ -1,7 +1,6 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
@@ -15,14 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.List;
 /**
  * Created by chaya on 9/12/2017.
  */
 @org.springframework.stereotype.Component("componentInstanceMergeDataBusinessLogic")
 public class ComponentInstanceMergeDataBusinessLogic {
 
-    private static Logger log = LoggerFactory.getLogger(ComponentInstanceMergeDataBusinessLogic.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ComponentInstanceMergeDataBusinessLogic.class);
 
     @Autowired
     private List<ComponentInstanceMergeInterface> componentInstancesMergeBLs;
@@ -60,7 +59,7 @@ public class ComponentInstanceMergeDataBusinessLogic {
      */
     public Either<Component, ResponseFormat> mergeComponentUserOrigData(User user, DataForMergeHolder dataHolder, org.openecomp.sdc.be.model.Component containerComponent, String newContainerComponentId, String newInstanceId) {
 
-        Either<Component, StorageOperationStatus> componentWithInstancesInputsAndProperties = getComponentWithInstancesInputsAndProperties(newContainerComponentId);
+        Either<Component, StorageOperationStatus> componentWithInstancesInputsAndProperties = getComponentWithInstancesMergeEntities(newContainerComponentId);
         if (componentWithInstancesInputsAndProperties.isRight()) {
             log.error("Component with id {} was not found", newContainerComponentId);
             StorageOperationStatus storageOperationStatus = componentWithInstancesInputsAndProperties.right().value();
@@ -79,12 +78,15 @@ public class ComponentInstanceMergeDataBusinessLogic {
         return Either.left(updatedContainerComponent);
     }
 
-    private Either<Component, StorageOperationStatus> getComponentWithInstancesInputsAndProperties(String containerComponentId) {
+    private Either<Component, StorageOperationStatus> getComponentWithInstancesMergeEntities(String containerComponentId) {
         ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnoreComponentInstances(false);
         filter.setIgnoreComponentInstancesInputs(false);
         filter.setIgnoreComponentInstancesProperties(false);
+        filter.setIgnoreCapabilities(false);
+        filter.setIgnoreCapabiltyProperties(false);
         filter.setIgnoreArtifacts(false);
+        filter.setIgnoreForwardingPath(false);
         return toscaOperationFacade.getToscaElement(containerComponentId, filter);
     }
 }

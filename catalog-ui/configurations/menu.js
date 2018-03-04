@@ -203,8 +203,9 @@ const SDC_MENU_CONFIG = {
     "alertMessages": {
         "lifecycleState/UNDOCHECKOUT": {"title": "Delete Version Confirmation", "message": "Are you sure you want to delete this version?"},
         "exitWithoutSaving": {"title": "Exit Without Saving Confirmation", "message": "All unsaved changes will be lost. Are you sure you want to exit this page?"},
-        "deleteInstance": {"title": "Delete Confirmation", "message": "Are you sure you would like to delete %1 ?"},
-        "deleteInput": {"title": "Delete Confirmation", "message": "Are you sure you would like to delete %1 ?"}
+        "upgradeInstance": {"title": "Switch Versions", "message": "Switching versions will erase service paths: %1. Are you sure you want to proceed?"},
+        "deleteInstance": {"title": "Delete Confirmation", "message": "Are you sure you would like to delete %1?"},
+        "deleteInput": {"title": "Delete Confirmation", "message": "Are you sure you would like to delete %1?"}
     },
     "statuses": {
         "inDesign": {
@@ -340,6 +341,15 @@ const SDC_MENU_CONFIG = {
         ],
         "PNF":[
             {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
+            {"text":"Information Artifact", "action":"onMenuItemPressed", "state": "workspace.information_artifacts"},
+            {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
+            {"text":"Composition", "action":"onMenuItemPressed", "state": "workspace.composition.details"},
+            {"text":"Activity Log", "action":"onMenuItemPressed", "state": "workspace.activity_log"},
+            {"text":"Properties Assignment", "action":"onMenuItemPressed", "state": "workspace.properties_assignment"}
+        ],
+        "CR":[
+            {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
+            {"text":"Deployment Artifact", "action":"onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text":"Information Artifact", "action":"onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text":"Composition", "action":"onMenuItemPressed", "state": "workspace.composition.details"},

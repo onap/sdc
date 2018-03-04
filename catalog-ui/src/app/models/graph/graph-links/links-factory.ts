@@ -21,6 +21,7 @@
  * Created by obarda on 5/1/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {RelationshipModel, Relationship, CompositionCiLinkBase, CompositionCiNodeBase, LinkUcpeHost, CompositionCiUcpeLink,
     CompositionCiVlUcpeLink, CompositionCiSimpleLink, ModuleCiLinkBase, ModuleCiVlLink, CompositionCiVLink} from "../../../models";
 

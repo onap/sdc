@@ -40,6 +40,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
@@ -51,11 +52,13 @@ import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -70,6 +73,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -82,6 +86,7 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ProductMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
@@ -125,9 +130,10 @@ public class ModelConverter {
 	}
 	
 	public static boolean isAtomicComponent(ResourceTypeEnum resourceType) {
-		if (resourceType == null || resourceType == ResourceTypeEnum.VF || resourceType == ResourceTypeEnum.PNF || resourceType == ResourceTypeEnum.CVFC)
+		if (resourceType == null) {
 			return false;
-		return true;
+		}
+		return resourceType.isAtomicType();
 	}
 
 	// **********************************************************
@@ -165,12 +171,24 @@ public class ModelConverter {
 		convertComponentInstances(topologyTemplate, service);
 
 		convertInputs(topologyTemplate, service);
+		
+		convertPolicies(topologyTemplate, service);
+
+		convertGroups(topologyTemplate, service);
+
+		convertPolicies(topologyTemplate, service);
+
+		convertGroups(topologyTemplate, service);
+
+		convertPolicies(topologyTemplate, service);
 
 		convertRelations(topologyTemplate, service);
 
 		convertArtifacts(topologyTemplate, service);
 
 		convertServiceApiArtifacts(topologyTemplate, service);
+
+		convertServicePaths(topologyTemplate, service);
 
 		return service;
 	}
@@ -210,6 +228,7 @@ public class ModelConverter {
 			convertRelations(topologyTemplate, resource);
 			convertInputs(topologyTemplate, resource);
 			convertGroups(topologyTemplate, resource);
+			convertPolicies(topologyTemplate, resource);
 		}
 		convertArtifacts(toscaElement, resource);
 		convertAdditionalInformation(toscaElement, resource);
@@ -505,19 +524,19 @@ public class ModelConverter {
 			resource.setVendorRelease((String) toscaElement.getMetadataValue(JsonPresentationFields.VENDOR_RELEASE));
 			// field isn't mandatory , but shouldn't be null(should be an empty string instead)
 			if (((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER)) != null){
-				resource.setResourceVendorModelNumber(((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER)));
+				resource.setResourceVendorModelNumber((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER));
 			} else {
 				resource.setResourceVendorModelNumber("");
 			}
 		} else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
 			Service service = (Service) component;
 			if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)) != null){
-				service.setServiceType(((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)));
+				service.setServiceType((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE));
 			} else {
 				service.setServiceType("");
 			}
 			if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_ROLE)) != null){
-				service.setServiceRole(((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_ROLE)));
+				service.setServiceRole((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_ROLE));
 			} else {
 				service.setServiceRole("");
 			}
@@ -632,6 +651,17 @@ public class ModelConverter {
 			copy = new HashMap<>();
 		}
 		service.setServiceApiArtifacts(copy);
+	}
+	private static void convertServicePaths(TopologyTemplate topologyTemplate, Service service) {
+		Map<String, ForwardingPathDataDefinition> servicePaths = topologyTemplate.getForwardingPaths();
+		Map<String, ForwardingPathDataDefinition> copy;
+		if (servicePaths != null) {
+			copy = servicePaths.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ForwardingPathDataDefinition(e.getValue())));
+
+		} else {
+			copy = new HashMap<>();
+		}
+		service.setForwardingPaths(copy);
 	}
 
 	private static void convertArtifacts(Component component, ToscaElement toscaElement) {
@@ -801,16 +831,33 @@ public class ModelConverter {
 		}
 		component.setGroups(groupDefinitions);
 	}
+	
+	private static void convertPolicies(TopologyTemplate toscaElement, Component component) {
+		Map<String, PolicyDataDefinition> policies = toscaElement.getPolicies();
+		Map<String, PolicyDefinition> policyDefinitions = null;
+		if (MapUtils.isNotEmpty(policies)) {
+			policyDefinitions = policies.values().stream().map(p -> new PolicyDefinition(p)).collect(Collectors.toMap(p->p.getUniqueId(), p->p));
+		}
+		component.setPolicies(policyDefinitions);
+	}
 
 	private static void convertGroups(Component component, TopologyTemplate toscaElement) {
 		List<GroupDefinition> groupDefinitions = component.getGroups();
 		Map<String, GroupDataDefinition> groups = new HashMap<>();
 
 		if (groupDefinitions != null && groups.isEmpty()) {
-			groups = groupDefinitions.stream().collect((Collectors.toMap(pr -> pr.getName(), pr -> new GroupDataDefinition(pr))));
+			groups = groupDefinitions.stream().collect(Collectors.toMap(pr -> pr.getName(), pr -> new GroupDataDefinition(pr)));
 		}
 		toscaElement.setGroups(groups);
-
+	}
+	
+	private static void convertPolicies(Component component, TopologyTemplate toscaElement) {
+		Map<String, PolicyDefinition> policyDefinitions = component.getPolicies();
+		Map<String, PolicyDataDefinition> policies = new HashMap<>();
+		if (MapUtils.isNotEmpty(policyDefinitions)) {
+			policies = policyDefinitions.values().stream().collect((Collectors.toMap(p -> p.getUniqueId(), p -> new PolicyDataDefinition(p))));
+		}
+		toscaElement.setPolicies(policies);
 	}
 
 	private static void convertRequirements(NodeType toscaElement, Component component) {
@@ -863,6 +910,7 @@ public class ModelConverter {
 		convertInputs(component, topologyTemplate);
 		convertCapabilities(component, topologyTemplate);
 		convertGroups(component, topologyTemplate);
+		convertPolicies(component, topologyTemplate);
 		convertRequirements(component, topologyTemplate);
 		convertRelationsToComposition(component, topologyTemplate);
 
@@ -872,6 +920,15 @@ public class ModelConverter {
 	private static void convertServiceSpecificEntities(Service service, TopologyTemplate topologyTemplate) {
 		convertServiceMetaData(service, topologyTemplate);
 		convertServiceApiArtifacts(service, topologyTemplate);
+		convertServicePaths(service,topologyTemplate);
+	}
+
+	private static void convertServicePaths(Service service, TopologyTemplate topologyTemplate) {
+		Map<String, ForwardingPathDataDefinition> servicePaths = service.getForwardingPaths();
+		if (servicePaths != null && !servicePaths.isEmpty()) {
+			Map<String, ForwardingPathDataDefinition> copy = servicePaths.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ForwardingPathDataDefinition(e.getValue())));
+			topologyTemplate.setForwardingPaths(copy);
+		}
 	}
 
 	private static void convertServiceMetaData(Service service, TopologyTemplate topologyTemplate) {

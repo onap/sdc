@@ -21,5 +21,5 @@
 package org.openecomp.sdc.common.transaction.api;
 
 public interface IDBAction {
-	<T> T doAction();
+    <T> T doAction();
 }

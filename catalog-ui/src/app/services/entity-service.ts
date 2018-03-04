@@ -54,13 +54,13 @@ export class EntityService implements IEntityService {
                 let followedResponse: IComponentsArray =  response.data;
                 let componentsList:Array<Component> = new Array();
 
-                followedResponse.services.forEach((serviceResponse:Service) => {
+                followedResponse.services && followedResponse.services.forEach((serviceResponse:Service) => {
                     let component:Service = this.ComponentFactory.createService(serviceResponse); // new Service(serviceResponse);
                     componentsList.push(component);
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
 
-                followedResponse.resources.forEach((resourceResponse:Resource) => {
+                followedResponse.resources && followedResponse.resources.forEach((resourceResponse:Resource) => {
                     let component:Resource = this.ComponentFactory.createResource(resourceResponse);
                     componentsList.push(component);
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);

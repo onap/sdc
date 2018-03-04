@@ -22,37 +22,37 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 public class ResourceArtifactInfoImpl extends ArtifactInfoImpl implements IResourceArtifactInfo {
 
-	private String resourceName;
-	private String resourceVersion;
-	private String resourceUUID;
+    private String resourceName;
+    private String resourceVersion;
+    private String resourceUUID;
 
-	public String getResourceName() {
-		return resourceName;
-	}
+    public String getResourceName() {
+        return resourceName;
+    }
 
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
 
-	public String getResourceVersion() {
-		return resourceVersion;
-	}
+    public String getResourceVersion() {
+        return resourceVersion;
+    }
 
-	public void setResourceVersion(String resourceVersion) {
-		this.resourceVersion = resourceVersion;
-	}
+    public void setResourceVersion(String resourceVersion) {
+        this.resourceVersion = resourceVersion;
+    }
 
-	public String getResourceUUID() {
-		return resourceUUID;
-	}
+    public String getResourceUUID() {
+        return resourceUUID;
+    }
 
-	public void setResourceUUID(String resourceUUID) {
-		this.resourceUUID = resourceUUID;
-	}
+    public void setResourceUUID(String resourceUUID) {
+        this.resourceUUID = resourceUUID;
+    }
 
-	@Override
-	public String toString() {
-		return "ResourceArtifactInfoImpl [resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resourceUUID=" + resourceUUID + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "ResourceArtifactInfoImpl [resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resourceUUID=" + resourceUUID + super.toString() + "]";
+    }
 
 }

@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {SchemaPropertyGroupModel, SchemaProperty} from "./aschema-property";
 import {InputPropertyBase} from "./input-property-base";
 import {PropertyBEModel} from "./properties-inputs/property-be-model";

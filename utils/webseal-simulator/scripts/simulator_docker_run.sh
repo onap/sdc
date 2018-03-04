@@ -8,7 +8,7 @@ function usage {
 
 function cleanup {
 	echo "performing old dockers cleanup"
-	docker_ids=`docker ps -a | egrep "openecomp/sdc-simulator|Exit" | awk '{print $1}'`
+	docker_ids=`docker ps -a | egrep "onap/sdc-simulator|Exit" | awk '{print $1}'`
 	for X in ${docker_ids}
 	do
 	   docker rm -f ${X}
@@ -61,9 +61,9 @@ cleanup
 
 
 export IP=`ifconfig eth0 | awk -F: '/inet addr/ {gsub(/ .*/,"",$2); print $2}'`
-export PREFIX=${NEXUS_DOCKER_REPO}'/openecomp'
+export PREFIX=${NEXUS_DOCKER_REPO}'/onap'
 
-PREFIX='openecomp'
+PREFIX='onap'
 
 echo ""
 echo "${PREFIX}"

@@ -1,10 +1,5 @@
 package org.openecomp.sdc.be.components.merge;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
@@ -14,14 +9,23 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 
+import java.util.Arrays;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class RelationsComparatorTest {
 
     public static final String INSTANCE1 = "instance1";
     public static final String INSTANCE2 = "instance2";
     RelationsComparator testInstance;
 
-    private RequirementCapabilityRelDef relation1, relation2, relation3, relation4;
-    private ComponentInstance componentInstance1, componentInstance2;
+    private RequirementCapabilityRelDef relation1;
+    private RequirementCapabilityRelDef relation2;
+    private RequirementCapabilityRelDef relation3;
+    private RequirementCapabilityRelDef relation4;
+    private ComponentInstance componentInstance1;
+    private ComponentInstance componentInstance2;
 
     @Before
     public void setUp() {
@@ -59,21 +63,21 @@ public class RelationsComparatorTest {
     @Test
     public void isRelationsChanged_notSameType() throws Exception {
         RequirementCapabilityRelDef relation2DifType = buildRelation("2", INSTANCE1);
-        relation2DifType.getSingleRelationship().getRelation().getRelationship().setType("someDiffType");
+        relation2DifType.resolveSingleRelationship().getRelation().getRelationship().setType("someDiffType");
         isRelationsChangedTest(relation2DifType);
     }
 
     @Test
     public void isRelationsChanged_notSameCapability() throws Exception {
         RequirementCapabilityRelDef relation2DifType = buildRelation("2", INSTANCE1);
-        relation2DifType.getSingleRelationship().getRelation().setCapabilityUid("someDiffUid");
+        relation2DifType.resolveSingleRelationship().getRelation().setCapabilityUid("someDiffUid");
         isRelationsChangedTest(relation2DifType);
     }
 
     @Test
     public void isRelationsChanged_notSameReqName() throws Exception {
         RequirementCapabilityRelDef relation2DifType = buildRelation("2", INSTANCE1);
-        relation2DifType.getSingleRelationship().getRelation().setRequirement("someDiffReq");
+        relation2DifType.resolveSingleRelationship().getRelation().setRequirement("someDiffReq");
         isRelationsChangedTest(relation2DifType);
     }
 
