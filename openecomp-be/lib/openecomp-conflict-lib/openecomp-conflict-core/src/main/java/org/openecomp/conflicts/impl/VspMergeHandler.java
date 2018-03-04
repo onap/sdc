@@ -61,13 +61,13 @@ public class VspMergeHandler implements ItemMergeHandler {
 
   @Override
   public boolean isConflicted(String itemId, Version version) {
-    return vspMergeDao.isVspModelConflicted(itemId, version);
+    return vspMergeDao.isConflicted(itemId, version);
   }
 
   @Override
   public void finalizeMerge(String itemId, Version version) {
     if (!conflictsDao.isConflicted(itemId, version)) {
-      vspMergeDao.applyVspModelConflictResolution(itemId, version);
+      vspMergeDao.applyConflictResolution(itemId, version);
     }
   }
 
@@ -88,7 +88,7 @@ public class VspMergeHandler implements ItemMergeHandler {
       }
     }
 
-    if (!vspModelConflicted && vspMergeDao.isVspModelConflicted(itemId, version)) {
+    if (!vspModelConflicted && vspMergeDao.isConflicted(itemId, version)) {
       elementConflicts
           .add(new ConflictInfo(VSP_MODEL_CONFLICT_ID, NetworkPackage, NetworkPackage.name()));
     }
@@ -127,7 +127,7 @@ public class VspMergeHandler implements ItemMergeHandler {
   public boolean resolveConflict(String itemId, Version version, String conflictId,
                                  ConflictResolution resolution) {
     if (VSP_MODEL_CONFLICT_ID.equals(conflictId)) {
-      vspMergeDao.updateVspModelConflictResolution(itemId, version,
+      vspMergeDao.updateConflictResolution(itemId, version,
           com.amdocs.zusammen.datatypes.item.Resolution.valueOf(resolution.getResolution().name()));
       return true;
     }
@@ -136,7 +136,7 @@ public class VspMergeHandler implements ItemMergeHandler {
       throw getConflictNotExistException(itemId, version, conflictId);
     }
     if (conflict.getType() == VspModel) {
-      vspMergeDao.updateVspModelConflictResolution(itemId, version,
+      vspMergeDao.updateConflictResolution(itemId, version,
           com.amdocs.zusammen.datatypes.item.Resolution.valueOf(resolution.getResolution().name()));
 
       conflictsDao.resolveConflict(itemId, version, conflictId, new ConflictResolution(

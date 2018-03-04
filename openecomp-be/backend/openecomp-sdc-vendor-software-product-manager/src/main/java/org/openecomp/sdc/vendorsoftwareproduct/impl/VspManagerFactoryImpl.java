@@ -24,20 +24,13 @@ import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory;
 
 public class VspManagerFactoryImpl extends VspManagerFactory {
   private static final VendorSoftwareProductManager INSTANCE =
       new VendorSoftwareProductManagerImpl(
+          VspMergeDaoFactory.getInstance().createInterface(),
           OrchestrationTemplateDaoFactory.getInstance().createInterface(),
           OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface(),
           VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(),

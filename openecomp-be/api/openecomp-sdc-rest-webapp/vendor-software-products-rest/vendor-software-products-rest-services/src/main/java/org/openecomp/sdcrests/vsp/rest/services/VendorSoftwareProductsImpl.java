@@ -16,28 +16,6 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -107,6 +85,29 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+
 @Named
 @Service("vendorSoftwareProducts")
 @Scope(value = "prototype")
@@ -120,7 +121,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   private static ItemCreationDto validationVsp;
 
-  private final AsdcItemManager asdcItemManager = AsdcItemManagerFactory.getInstance()
+  private final AsdcItemManager itemManager = AsdcItemManagerFactory.getInstance()
       .createInterface();
   private final ItemPermissionsManager permissionsManager =
       ItemPermissionsManagerFactory.getInstance().createInterface();
@@ -151,7 +152,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       itemCreationDto = getItemCreationDto(vspRequestDto, user, onboardingMethod);
 
     } else {
-      throwUnknownOnboardingMethodException(new IllegalArgumentException("Wrong parameter Onboarding Method"));
+      throwUnknownOnboardingMethodException(
+          new IllegalArgumentException("Wrong parameter Onboarding Method"));
     }
 
     return Response.ok(itemCreationDto).build();
@@ -167,7 +169,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
 
     uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
-    item = asdcItemManager.create(item);
+    item = itemManager.create(item);
     uniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
 
     Version version = versioningManager.create(item.getId(), new Version(), null);
@@ -192,7 +194,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private void throwUnknownOnboardingMethodException(IllegalArgumentException e) {
     ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
         .getInvalidOnboardingMethodErrorBuilder();
-    throw new CoreException(onboardingMethodUpdateErrorCode,e);
+    throw new CoreException(onboardingMethodUpdateErrorCode, e);
   }
 
   @Override
@@ -213,7 +215,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
     MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
-    asdcItemManager.list(itemPredicate).stream()
+    itemManager.list(itemPredicate).stream()
         .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
         .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
 
@@ -282,17 +284,19 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   @Override
   public Response deleteVsp(String vspId, String user) {
-    Item vsp = asdcItemManager.get(vspId);
+    Item vsp = itemManager.get(vspId);
 
-    if(!vsp.getType().equals(ItemType.vsp.name())){
+    if (!vsp.getType().equals(ItemType.vsp.name())) {
       throw new CoreException((new ErrorCode.ErrorCodeBuilder()
-              .withMessage(String.format("Vsp with id %s does not exist.",
-                      vspId)).build()));
+          .withMessage(String.format("Vsp with id %s does not exist.",
+              vspId)).build()));
     }
 
     Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
     if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
-      asdcItemManager.delete(vsp);
+      versioningManager.list(vspId)
+          .forEach(version -> vendorSoftwareProductManager.deleteVsp(vspId, version));
+      itemManager.delete(vsp);
       permissionsManager.deleteItemPermissions(vspId);
       uniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
       notifyUsers(vspId, vsp.getName(), null, "VSP was deleted", user,
@@ -352,7 +356,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     } catch (CoreException validationVspAlreadyExistException) {
       // find validationVsp
-      String validationVspId = asdcItemManager.list(item ->
+      String validationVspId = itemManager.list(item ->
           ItemType.vsp.name().equals(item.getType()) && VALIDATION_VSP_NAME.equals(item.getName()))
           .stream().findFirst().orElseThrow(() -> new IllegalStateException("Vsp with name %s "
               + "does not exist even though the name exists according to unique value util"))
@@ -510,7 +514,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private void notifyUsers(String itemId, String itemName, Version version, String message,
                            String userName, NotificationEventTypes eventType) {
     Map<String, Object> eventProperties = new HashMap<>();
-    eventProperties.put(ITEM_NAME, itemName == null ? asdcItemManager.get(itemId).getName() : itemName);
+    eventProperties
+        .put(ITEM_NAME, itemName == null ? itemManager.get(itemId).getName() : itemName);
     eventProperties.put(ITEM_ID, itemId);
 
     if (version != null) {

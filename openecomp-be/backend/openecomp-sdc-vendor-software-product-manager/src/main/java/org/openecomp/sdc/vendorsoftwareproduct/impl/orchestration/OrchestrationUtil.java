@@ -324,7 +324,7 @@ public class OrchestrationUtil {
     orchestrationTemplateDataDao.update(vspDetails.getId(), vspDetails.getVersion(), uploadData);
 
     VspMergeDaoFactory.getInstance().createInterface()
-        .updateVspModelId(vspDetails.getId(), vspDetails.getVersion());
+        .updateHint(vspDetails.getId(), vspDetails.getVersion());
   }
 
   public void saveServiceModel(String vspId, Version version,

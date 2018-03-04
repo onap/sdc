@@ -38,7 +38,7 @@ public class VspMergeDaoImpl implements VspMergeDao {
   }
 
   @Override
-  public boolean isVspModelConflicted(String vspId, Version version) {
+  public boolean isConflicted(String vspId, Version version) {
     SessionContext context = createSessionContext();
     ElementContext elementContext = new ElementContext(new Id(vspId), new Id(version.getId()));
 
@@ -46,7 +46,7 @@ public class VspMergeDaoImpl implements VspMergeDao {
   }
 
   @Override
-  public void updateVspModelId(String vspId, Version version) {
+  public void updateHint(String vspId, Version version) {
     SessionContext context = createSessionContext();
     ElementContext elementContext = new ElementContext(new Id(vspId), new Id(version.getId()));
 
@@ -60,13 +60,18 @@ public class VspMergeDaoImpl implements VspMergeDao {
   }
 
   @Override
-  public void updateVspModelConflictResolution(String vspId, Version version,
-                                               Resolution resolution) {
+  public void deleteHint(String vspId, Version version) {
+    accessor.delete(getUser(),vspId,version.getId());
+  }
+
+  @Override
+  public void updateConflictResolution(String vspId, Version version,
+                                       Resolution resolution) {
     accessor.updateModelResolution(resolution, getUser(), vspId, version.getId());
   }
 
   @Override
-  public void applyVspModelConflictResolution(String vspId, Version version) {
+  public void applyConflictResolution(String vspId, Version version) {
     //called only when no conflicts
 
     SessionContext context = createSessionContext();
@@ -83,7 +88,7 @@ public class VspMergeDaoImpl implements VspMergeDao {
     }
 
     String user = getUser();
-    Row row = accessor.getModelMergeHint(user, vspId, version.getId()).one();
+    Row row = accessor.get(user, vspId, version.getId()).one();
     if (row == null) {
       throw new IllegalStateException(
           "Vsp model id must exists if its conflict is being resolved");
@@ -99,7 +104,7 @@ public class VspMergeDaoImpl implements VspMergeDao {
     String chosenModelId =
         keepOnlyChosenVspModel(context, elementContext, vspModels, resolution, localModelId);
 
-    accessor.updateModelMergeHint(chosenModelId, null, user, vspId, version.getId());
+    accessor.update(chosenModelId, null, user, vspId, version.getId());
   }
 
   private String keepOnlyChosenVspModel(SessionContext context, ElementContext elementContext,
@@ -130,7 +135,7 @@ public class VspMergeDaoImpl implements VspMergeDao {
   }
 
   private void updateVspModelId(String vspId, Version version, String vspModelId) {
-    accessor.updateModelMergeHint(vspModelId, null, getUser(), vspId, version.getId());
+    accessor.update(vspModelId, null, getUser(), vspId, version.getId());
   }
 
   private String getUser() {
@@ -141,18 +146,21 @@ public class VspMergeDaoImpl implements VspMergeDao {
   @Accessor
   interface VspMergeHintAccessor {
 
+    @Query("SELECT model_id, model_resolution FROM vsp_merge_hint " +
+        "WHERE space=? AND item_id=? AND version_id=?")
+    ResultSet get(String space, String itemId, String versionId);
+
     @Query("UPDATE vsp_merge_hint SET model_id=?, model_resolution=? " +
         "WHERE space=? AND item_id=? AND version_id=?")
-    void updateModelMergeHint(String vspModelId, Resolution modelResolution, String space,
-                              String itemId, String versionId);
+    void update(String vspModelId, Resolution modelResolution, String space,
+                String itemId, String versionId);
 
     @Query(
         "UPDATE vsp_merge_hint SET model_resolution=? WHERE space=? AND item_id=? AND version_id=?")
     void updateModelResolution(Resolution modelResolution, String space, String itemId,
                                String versionId);
 
-    @Query("SELECT model_id, model_resolution FROM vsp_merge_hint " +
-        "WHERE space=? AND item_id=? AND version_id=?")
-    ResultSet getModelMergeHint(String space, String itemId, String versionId);
+    @Query("DELETE from vsp_merge_hint WHERE space=? AND item_id=? AND version_id=?")
+    void delete(String space, String itemId, String versionId);
   }
 }
