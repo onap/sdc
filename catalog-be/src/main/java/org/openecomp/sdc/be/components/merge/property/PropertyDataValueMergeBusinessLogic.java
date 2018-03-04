@@ -1,15 +1,7 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.openecomp.sdc.be.components.impl.ImportUtils;
+import com.google.gson.Gson;
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -22,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class PropertyDataValueMergeBusinessLogic {
@@ -86,39 +78,6 @@ public class PropertyDataValueMergeBusinessLogic {
             String propertyType = propertyDataDefinition.getType();
             String innerType = propertyDataDefinition.getSchemaType();
             return propertyConvertor.convertToToscaObject(propertyType, propValue, innerType, dataTypes);
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private Object removeUnwantedGetInputValues(Object val, List<String> getInputNamesToMerge) {
-        if (val instanceof  Map) {
-            return removeUnwantedGetInputValues((Map<String, Object>) val, getInputNamesToMerge);
-        }
-        if (val instanceof List) {
-            return removeUnwantedGetInputValues((List<Object>)val, getInputNamesToMerge);
-        }
-        return val;
-    }
-
-    private List<Object> removeUnwantedGetInputValues(List<Object> listVal, List<String> getInputNamesToMerge) {
-        return listVal.stream().map(val -> removeUnwantedGetInputValues(val, getInputNamesToMerge)).collect(Collectors.toList());
-    }
-
-    private Map<String, Object> removeUnwantedGetInputValues(Map<String, Object> val, List<String> getInputNamesToMerge) {
-        return val.entrySet().stream().filter(entry -> !isGetInputEntry(entry) || isGetInputToMerge(getInputNamesToMerge, entry))
-                               .collect(Collectors.toMap(Map.Entry::getKey, entry -> removeUnwantedGetInputValues(entry.getValue(), getInputNamesToMerge)));
-    }
-
-    private boolean isGetInputToMerge(List<String> getInputNamesToMerge, Map.Entry<String, Object> entry) {
-        return getInputNamesToMerge.contains(retrieveGetInputInputName(entry.getValue()));
-    }
-
-    private String retrieveGetInputInputName(Object getInputValue) {
-        return getInputValue instanceof List ? (String)((List) getInputValue).get(0) : (String)getInputValue;
-    }
-
-    private boolean isGetInputEntry(Map.Entry<String, Object> oldValEntry) {
-        return oldValEntry.getKey().equals(ImportUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
     }
 
     private boolean isEmptyValue(Object val) {

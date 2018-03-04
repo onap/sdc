@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
+import * as _ from "lodash";
 import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, IValidate, RelationshipModel, PropertyModel, Component, ComponentInstance,
     AttributeModel, IAppConfigurtaion, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
@@ -39,6 +40,7 @@ export interface IComponentService {
     updateAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
     deleteProperty(componentId:string, propertyId:string):ng.IPromise<PropertyModel>;
     deleteAttribute(componentId:string, attributeId:string):ng.IPromise<AttributeModel>;
+    checkResourceInstanceVersionChange(componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<any>;
     changeResourceInstanceVersion(componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<ComponentInstance>;
     updateInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
     addInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
@@ -54,7 +56,7 @@ export interface IComponentService {
     deleteRelation(componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel>;
     fetchRelation(componentId:string, linkId:string):ng.IPromise<RelationshipModel>;
     getRequirementsCapabilities(componentId:string):ng.IPromise<any>;
-    updateInstanceProperty(componentId:string, property:PropertyModel):ng.IPromise<PropertyModel>;
+    updateInstanceProperties(componentId:string, componentInstanceId:string, properties:PropertyModel[]):ng.IPromise<PropertyModel[]>;
     updateInstanceAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
     getComponentInstancesFilteredByInputsAndProperties(componentId:string, searchText:string):ng.IPromise<Array<ComponentInstance>>
     getComponentInstanceInputs(componentId:string, instanceId:string, originComponentUid):ng.IPromise<Array<InputModel>>;
@@ -408,6 +410,16 @@ export class ComponentService implements IComponentService {
         return deferred.promise;
     };
 
+    public checkResourceInstanceVersionChange = (componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<ComponentInstance> => {
+        let deferred = this.$q.defer();
+        this.restangular.one(componentId).one("resourceInstance").one(componentInstanceId).one(componentUid).one("checkForwardingPathOnVersionChange").get().then((response:any) => {
+            deferred.resolve(response);
+        }, err => {
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    };
+
     public changeResourceInstanceVersion = (componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<ComponentInstance> => {
         let deferred = this.$q.defer();
         this.restangular.one(componentId).one("resourceInstance").one(componentInstanceId).one("changeVersion").customPOST({'componentUid': componentUid}).then((response:any) => {
@@ -484,14 +496,16 @@ export class ComponentService implements IComponentService {
         return deferred.promise;
     };
 
-    public updateInstanceProperty = (componentId:string, property:PropertyModel):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer();
-        let instanceId = property.resourceInstanceUniqueId;
-        this.restangular.one(componentId).one("resourceInstance").one(instanceId).one("property").customPOST(JSON.stringify(property)).then((response:any) => {
-            let newProperty = new PropertyModel(response);
-            newProperty.readonly = true;
-            newProperty.resourceInstanceUniqueId = instanceId;
-            deferred.resolve(newProperty);
+    public updateInstanceProperties = (componentId:string, componentInstanceId:string, properties:PropertyModel[]):ng.IPromise<PropertyModel[]> => {
+        let deferred = this.$q.defer<PropertyModel[]>();
+        this.restangular.one(componentId).one("resourceInstance").one(componentInstanceId).one("properties").customPOST(JSON.stringify(properties)).then((response:any) => {
+            const newProperties = response.map((res) => {
+                const newProperty = new PropertyModel(res);
+                newProperty.readonly = true;
+                newProperty.resourceInstanceUniqueId = componentInstanceId;
+                return newProperty;
+            });
+            deferred.resolve(newProperties);
         }, (err)=> {
             deferred.reject(err);
         });

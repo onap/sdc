@@ -20,42 +20,41 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Application;
-
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.mockito.Mockito;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
+
 public class ApplicationConfig extends Application {
 
-	public Set<Class<?>> getClasses() {
-		final Set<Class<?>> resources = new HashSet<Class<?>>();
+    public Set<Class<?>> getClasses() {
+        final Set<Class<?>> resources = new HashSet<Class<?>>();
 
-		// Add your resources.
-		resources.add(ResourceUploadServlet.class);
-		resources.add(MultiPart.class);
-		resources.add(FormDataContentDisposition.class);
+        // Add your resources.
+        resources.add(ResourceUploadServlet.class);
+        resources.add(MultiPart.class);
+        resources.add(FormDataContentDisposition.class);
 
-		final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
-		ResourceConfig resourceConfig = ResourceConfig.forApplication(this);
+        ResourceConfig resourceConfig = ResourceConfig.forApplication(this);
 
-		resourceConfig.register(new AbstractBinder() {
+        resourceConfig.register(new AbstractBinder() {
 
-			@Override
-			protected void configure() {
-				// TODO Auto-generated method stub
-				bind(request).to(HttpServletRequest.class);
-			}
-		});
+            @Override
+            protected void configure() {
+                // TODO Auto-generated method stub
+                bind(request).to(HttpServletRequest.class);
+            }
+        });
 
-		return resources;
-	}
+        return resources;
+    }
 
 }

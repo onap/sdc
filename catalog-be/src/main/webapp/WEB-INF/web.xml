@@ -12,10 +12,16 @@
 		</init-param>
 		<init-param>
 			<param-name>jersey.config.server.provider.classnames</param-name>
-			<param-value>io.swagger.jersey.listing.ApiListingResourceJSON, 
-			org.glassfish.jersey.media.multipart.MultiPartFeature,
-			org.openecomp.sdc.be.filters.BeServletFilter, 
-			org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter</param-value>
+			<param-value>io.swagger.jersey.listing.ApiListingResourceJSON,
+                org.glassfish.jersey.media.multipart.MultiPartFeature,
+                org.openecomp.sdc.be.filters.BeServletFilter,
+                org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
+				org.openecomp.sdc.be.servlets.DefaultExceptionMapper,
+                org.openecomp.sdc.be.servlets.ComponentExceptionMapper,
+				org.openecomp.sdc.be.servlets.StorageExceptionMapper,
+                org.openecomp.sdc.be.view.MixinModelWriter
+            </param-value>
+
 		</init-param>
 		<init-param>
 			<param-name>swagger.scanner.id</param-name>

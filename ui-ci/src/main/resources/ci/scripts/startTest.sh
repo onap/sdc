@@ -22,7 +22,7 @@ function isBoolean ()
 	VALUE=$2
 	if [[ ${VALUE} != "true" ]] && [[ ${VALUE} != "false" ]]; then
 		echo "Valid parameter" ${PARAM_NAME} "values are: true/false"
-	        help_usage
+	    help_usage
 	fi	
 }
 
@@ -32,6 +32,27 @@ function prepareFailedXmlFile ()
 	PATTERN=`grep -w "test name=" ${FULL_PATH}/${TEST_SUITES}/$2 | awk -F'"' '{print $2}'`
 	sed '/<test name="'${PATTERN}'"/,/<!-- '${PATTERN}' --/d' $1 > ${FULL_PATH}/${TEST_SUITES}/${fileName}
     sed -i 's/thread-count="[0-9]\+"/thread-count="1"/g' ${FULL_PATH}/${TEST_SUITES}/${fileName}
+    if [ -s "ExtentReport/ShortReport.csv" ]
+    then
+        SKIP_TESTS_LIST=$(cat ExtentReport/ShortReport.csv  |awk  -F, '{print  $2}' | sed 's/&.*//g' | uniq)
+        for SKIP_TEST in ${SKIP_TESTS_LIST}; do
+            sed -i "s/.*\"${SKIP_TEST}\".*//g" ${FULL_PATH}/${TEST_SUITES}/${fileName};
+        done;
+    fi
+}
+
+function setUpdatedTimeToReport ()
+{
+	LINE_NUMBER_OF_START_REPORT_DATE=`grep -A1 -nw "Start" ExtentReport/SDC_UI_Extent_Report.html | tail -1 | awk '{print $1}' | tr -d -`
+    END_REPORT_DATE=`grep -A1 -nw "End" ExtentReport/SDC_UI_Extent_Report.html | tail -1 | awk -F'[>|<]' '{print $3}'`
+    EPOCH_START_REPORT_DATE=`date --date="${1}" +%s`
+    EPOCH_END_REPORT_DATE=`date --date="${END_REPORT_DATE}" +%s`
+    let DIFF_EPOCH_TIME=${EPOCH_END_REPORT_DATE}-${EPOCH_START_REPORT_DATE}
+    TAKEN_TIME_IN_MINUTES=`echo $((${DIFF_EPOCH_TIME}/60))`
+    LINE_NUMBER_OF_TAKEN_REPORT_TIME=`grep -A1 -nw "Time Taken" ExtentReport/SDC_UI_Extent_Report.html | tail -1 | awk '{print $1}' | tr -d -`
+    PATTERN="div class='panel-lead'>";
+    sed -i "${LINE_NUMBER_OF_START_REPORT_DATE}s/${PATTERN}.*\</${PATTERN}$1\<\//1" ExtentReport/SDC_UI_Extent_Report.html
+    sed -i "${LINE_NUMBER_OF_TAKEN_REPORT_TIME}s/${PATTERN}.*\</${PATTERN}${TAKEN_TIME_IN_MINUTES} min\<\//1" ExtentReport/SDC_UI_Extent_Report.html
 }
 
 #main
@@ -92,7 +113,7 @@ ADD_USERS_SCRIPT="addUsersFromList_new.sh"
 USER_LIST="conf/userList.txt"
 chmod +x ${ADD_USERS_SCRIPT}
 echo "add users..."
-`./${ADD_USERS_SCRIPT} -ip ${BE_IP} -f ${USER_LIST}`
+./${ADD_USERS_SCRIPT} -ip ${BE_IP} -f ${USER_LIST}
 
 
 
@@ -117,7 +138,7 @@ if [ ${RERUN} == "true" ]; then
         echo "Prepare" ${TARGET_DIR}/${fileName} "file to rerun all failed tests ...";
         prepareFailedXmlFile ${TARGET_DIR}/${fileName} $SUITE_FILE;
         SUITE_FILE=${fileName};
-	cmd="java -Xmx2048m -Xms1024m $JAVA_OPTION -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -DfilePath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
+    	cmd="java -Xmx2048m -Xms1024m $JAVA_OPTION -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -DfilePath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
         $cmd;
     fi
 fi
@@ -128,6 +149,11 @@ source ExtentReport/versions.info
 now=$(date +'%Y-%m-%d_%H_%M')
 REPORT_NAME=${now}
 VERSION=${osVersion}
+REPORT_START_DATE=${reportStartTime}
+
+if [ ${RERUN} == "true" ]; then
+    setUpdatedTimeToReport "${REPORT_START_DATE}";
+fi
 
 if [[ $env == *"DEV20"* ]]
 then
@@ -139,7 +165,7 @@ fi
 COPY_REPORT_SCRIPT="copyToStorage.sh"
 chmod +x ${COPY_REPORT_SCRIPT}
 echo "copy report to storage..."
-sh ./${COPY_REPORT_SCRIPT} ${REPORT_NAME} ${VERSION} ${MYENV}
+( ./${COPY_REPORT_SCRIPT} ${REPORT_NAME} ${VERSION} ${MYENV} )
 
 
 MAILING_SCRIPT_NAME="sendMail.sh"

@@ -23,5 +23,5 @@ package org.openecomp.sdc.common.transaction.api;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
 
 public interface IDBType {
-	DBTypeEnum getDBType();
+    DBTypeEnum getDBType();
 }

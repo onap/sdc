@@ -31,6 +31,7 @@ import org.openecomp.sdc.be.resources.data.ResourceCategoryData;
 import org.openecomp.sdc.be.resources.data.ServiceCategoryData;
 import org.openecomp.sdc.be.resources.data.TagData;
 import org.openecomp.sdc.be.resources.data.UserData;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
 public class UniqueIdBuilder {
@@ -133,6 +134,11 @@ public class UniqueIdBuilder {
 	public static String buildArtifactByInterfaceUniqueId(String resourceId, String interfaceName, String operation, String artifactLabel) {
 
 		return resourceId + DOT + interfaceName + DOT + operation + DOT + artifactLabel;
+	}
+	
+	public static String buildInstanceArtifactUniqueId(String parentId, String instanceId, String artifactLabel) {
+
+		return parentId + DOT + instanceId + DOT + artifactLabel;
 	}
 
 	// public static String
@@ -239,6 +245,10 @@ public class UniqueIdBuilder {
 
 	public static String buildGroupUniqueId(String componentId, String name) {
 		return componentId + DOT + name + DOT + "group";
+	}
+	
+	public static String buildPolicyUniqueId(String componentId, String name) {
+		return componentId + DOT + name + Constants.POLICY_UID_POSTFIX;
 	}
 
 	public static String buildGroupPropertyValueUid(String groupUniqueId, Integer index) {

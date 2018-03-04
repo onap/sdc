@@ -18,14 +18,18 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import { SchemaPropertyGroupModel, SchemaProperty } from '../aschema-property';
-import { DerivedPropertyType, PropertyBEModel } from '../../models';
+import { DerivedPropertyType, PropertyBEModel, PropertyFEModel } from '../../models';
 import { PROPERTY_TYPES } from 'app/utils';
 import { UUID } from "angular2-uuid";
 
 
 export class DerivedFEProperty extends PropertyBEModel {
-    valueObj: any; 
+    valueObj: any;
+    valueObjIsValid: boolean;
+    valueObjOrig: any;
+    valueObjIsChanged: boolean;
     parentName: string;
     propertiesName: string; //"network_assignments#ipv4_subnet#use_ipv4 =  parentPath + name
     derivedDataType: DerivedPropertyType;
@@ -36,6 +40,7 @@ export class DerivedFEProperty extends PropertyBEModel {
     isChildOfListOrMap: boolean;
     canBeDeclared: boolean;
     mapKey: string;
+    mapKeyError: string;
 
     constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?:string, value?:any) {
         if (!createChildOfListOrMap) { //creating a standard derived prop
@@ -54,17 +59,44 @@ export class DerivedFEProperty extends PropertyBEModel {
             
             if (property.type == PROPERTY_TYPES.LIST) {
                 this.mapKey = property.schema.property.type.split('.').pop();
+                this.mapKeyError = null;
                 this.type = property.schema.property.type;
             } else { //map
-                this.mapKey = key || "";
+                if (key) {
+                    this.mapKey = key;
+                    this.mapKeyError = null;
+                } else {
+                    this.mapKey = '';
+                    this.mapKeyError = 'Key cannot be empty.';
+                }
                 this.type = property.type;
             }
             this.valueObj = (this.type == PROPERTY_TYPES.JSON && typeof value == 'object') ? JSON.stringify(value) : value;
             this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
+            this.updateValueObjOrig();
         }
+        this.valueObjIsValid = true;
         this.derivedDataType = this.getDerivedPropertyType();
     }
-    
+
+    public getActualMapKey() {
+        return (this.mapKeyError) ? this.name : this.mapKey;
+    }
+
+    public updateValueObj(valueObj:any, isValid:boolean) {
+        this.valueObj = PropertyFEModel.cleanValueObj(valueObj);
+        this.valueObjIsValid = isValid;
+        this.valueObjIsChanged = this.hasValueObjChanged();
+    }
+
+    public updateValueObjOrig() {
+        this.valueObjOrig = _.cloneDeep(this.valueObj);
+        this.valueObjIsChanged = false;
+    }
+
+    public hasValueObjChanged() {
+        return !_.isEqual(this.valueObj, this.valueObjOrig);
+    }
 }
 export class DerivedFEPropertyMap {
     [parentPath: string]: Array<DerivedFEProperty>;

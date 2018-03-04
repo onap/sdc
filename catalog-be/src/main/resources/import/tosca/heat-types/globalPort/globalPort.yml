@@ -73,6 +73,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder:
+        type: org.openecomp.capabilities.Forwarder
       network.outgoing.bytes:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.

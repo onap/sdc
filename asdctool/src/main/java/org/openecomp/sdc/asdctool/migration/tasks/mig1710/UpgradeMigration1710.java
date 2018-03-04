@@ -1,20 +1,15 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1710;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Lists;
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.asdctool.migration.core.task.PostMigration;
 import org.openecomp.sdc.asdctool.migration.tasks.handlers.XlsOutputHandler;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ServiceComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
@@ -33,6 +28,8 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
@@ -49,11 +46,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-@Component
+//@Component
 public class UpgradeMigration1710 implements PostMigration {
-
+	
+	private static final String SERVICE_UUID_RPOPERTY = "providing_service_uuid";
+	
+	private static final String SERVICE_INVARIANT_UUID_RPOPERTY = "providing_service_invariant_uuid";
+	
     private static final String UNKNOWN = "UNKNOWN";
 
     private static final String CHECKOUT_MESSAGE = "checkout upon upgrade migration";
@@ -70,52 +78,47 @@ public class UpgradeMigration1710 implements PostMigration {
 
     @Autowired
     private TitanDao titanDao;
-    
+
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
-    
+
     @Autowired
     private LifecycleBusinessLogic lifecycleBusinessLogic;
-    
+
     @Autowired
     private IUserAdminOperation userAdminOperation;
 
     @Autowired
     private ResourceBusinessLogic resourceBusinessLogic;
-    
+
     @Autowired
     private CsarOperation csarOperation;
-    
+
     @Autowired
-    private ServiceComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     @Autowired
     private ComponentsUtils componentsUtils;
 
-    private final XlsOutputHandler outputHandler = new XlsOutputHandler("COMPONENT TYPE", "COMPONENT NAME", "COMPONENT UUID", "COMPONENT UNIQUE_ID", "UPGRADE STATUS", "DESCRIPTION");
+    private XlsOutputHandler outputHandler = new XlsOutputHandler("COMPONENT TYPE", "COMPONENT NAME", "COMPONENT UUID", "COMPONENT UNIQUE_ID", "UPGRADE STATUS", "DESCRIPTION");
 
     private User user = null;
 
-    private final LifecycleChangeInfoWithAction changeInfo = new  LifecycleChangeInfoWithAction(CHECKOUT_MESSAGE, LifecycleChanceActionEnum.UPGRADE_MIGRATION);
+    private final LifecycleChangeInfoWithAction changeInfo = new LifecycleChangeInfoWithAction(CHECKOUT_MESSAGE, LifecycleChanceActionEnum.UPGRADE_MIGRATION);
 
-    private final Map<String,GraphVertex> latestGenericTypes = new HashMap<>();
+    private final Map<String, GraphVertex> latestGenericTypes = new HashMap<>();
+
+    private final Map<String, String> latestOriginResourceVersions = new HashMap<>();
+    
+    private final List<String> proxyServiceContainers = new ArrayList<>();
+    
+    private final List<String> vfAllottedResources = new ArrayList<>();
+    
+    private final List<String> allottedVfContainers = new ArrayList<>();
 
     private boolean isVfcUpgradeRequired = false;
 
     private boolean skipIfUpgradeVfFailed = true;
-
-    /** below methods is defined on package level for testing
-     * where Spring object injection is not used  **/
-    void setUserAdminOperation(IUserAdminOperation userAdminOperation) { this.userAdminOperation = userAdminOperation; }
-
-    void setTitanDao(TitanDao titanDao) { this.titanDao = titanDao; }
-
-    void setTosckaOperationFacade(ToscaOperationFacade toscaOperationFacade) { this.toscaOperationFacade = toscaOperationFacade; }
-
-    void setLifecycleBusinessLogic(LifecycleBusinessLogic lifecycleBusinessLogic) { this.lifecycleBusinessLogic = lifecycleBusinessLogic; }
-
-    void setComponentsUtils(ComponentsUtils componentsUtils) { this.componentsUtils = componentsUtils; }
-
 
     /***********************************************/
 
@@ -124,7 +127,7 @@ public class UpgradeMigration1710 implements PostMigration {
         return "Upgrade migration 1710 - post migration task, which is dedicated to upgrade all latest certified (and not checked out) Node types, VFs and Services. ";
     }
 
-    private enum UpgradeStatus{
+    private enum UpgradeStatus {
         UPGRADED,
         NOT_UPGRADED
     }
@@ -134,9 +137,8 @@ public class UpgradeMigration1710 implements PostMigration {
         LOGGER.info("Starting upgrade migration 1710 process. ");
         MigrationResult migrationResult = new MigrationResult();
 
-        try{
-            boolean result = true;
-
+        boolean result = true;
+        try {
             isVfcUpgradeRequired = !ConfigurationManager.getConfigurationManager().getConfiguration().getSkipUpgradeVSPsFlag();
             skipIfUpgradeVfFailed = ConfigurationManager.getConfigurationManager().getConfiguration().getSkipUpgradeFailedVfs();
             final String userId = ConfigurationManager.getConfigurationManager().getConfiguration().getAutoHealingOwner();
@@ -144,23 +146,34 @@ public class UpgradeMigration1710 implements PostMigration {
             Either<User, ActionStatus> userReq = userAdminOperation.getUserData(userId, false);
             if (userReq.isRight()) {
                 result = false;
-                LOGGER.error("Upgrade migration was failed. User {} resolve failed: {} ", userId, userReq.right().value());
-            }
-            else {
+                LOGGER.error("Upgrade migration failed. User {} resolve failed: {} ", userId, userReq.right().value());
+            } else {
                 user = userReq.left().value();
-                LOGGER.info("User {} will perform upgrade operation", user.toString());
+                LOGGER.info("User {} will perform upgrade operation", user.getUserId());
             }
-
-            if(result){
+            if (result) {
                 result = upgradeNodeTypes();
             }
-            if(result){
+            if (result) {
                 result = upgradeVFs();
             }
-            if(result){
+            if (result) {
                 upgradeServices();
             }
             if(result){
+                upgradeProxyServiceContainers();
+            }
+            if(result){
+            	upgradeAllottedVFs();
+            }
+            if(result){
+                upgradeAllottedVfContainers();
+            }
+        } catch (Exception e) {
+            result = false;
+            LOGGER.error("Error occurred {}. ", e);
+        } finally {
+            if (result) {
                 LOGGER.info("Upgrade migration 1710 has been successfully finished. ");
                 titanDao.commit();
                 migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.COMPLETED);
@@ -169,43 +182,56 @@ public class UpgradeMigration1710 implements PostMigration {
                 titanDao.rollback();
                 migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.FAILED);
             }
-        } catch(Exception e){
-            LOGGER.error("Upgrade migration 1710 was failed. ", e);
-            titanDao.rollback();
-            migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.FAILED);
-        } finally {
             outputHandler.writeOutput();
         }
         return migrationResult;
     }
 
-    private StorageOperationStatus upgradeServices() {
+    private void upgradeAllottedVfContainers() {
+        LOGGER.info("Starting upgrade proxy {} service containers upon upgrade migration 1710 process. ", allottedVfContainers.size());
+        for(String currUid : allottedVfContainers){
+        	upgradeServiceAndCommitIfNeeded(currUid,  component -> true);
+        }
+	}
+
+	private StorageOperationStatus upgradeServices() {
         LOGGER.info("Starting upgrade services upon upgrade migration 1710 process. ");
-        Map<String, String> latestOriginResourceVersions = new HashMap<>();
         Either<List<String>, TitanOperationStatus> getServicesRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.TOPOLOGY_TEMPLATE, ComponentTypeEnum.SERVICE);
-        if(getServicesRes.isRight()){
+        if (getServicesRes.isRight()) {
             return StorageOperationStatus.GENERAL_ERROR;
         }
-        for(String currUid : getServicesRes.left().value()){
-            try{
-                if(handleService(currUid, latestOriginResourceVersions)){
-                    titanDao.commit();
-                } else {
-                    processComponentUpgradeFailure(ComponentTypeEnum.SERVICE.name(), currUid, "");
-                }
-            } catch(Exception e){
-                processComponentUpgradeFailure(ComponentTypeEnum.SERVICE.name(), currUid, e.getMessage());
-            }
+        for (String currUid : getServicesRes.left().value()) {
+            upgradeServiceAndCommitIfNeeded(currUid, this::shouldUpgrade);
         }
         return StorageOperationStatus.OK;
     }
 
-    private void processComponentUpgradeFailure(final String name, final String currUid, final String reason) {
-        LOGGER.error("Failed to upgrade {} with uniqueId {} due to a reason {}. ", name, currUid, reason);
-        titanDao.rollback();
+    private void upgradeServiceAndCommitIfNeeded(String currUid, Predicate<org.openecomp.sdc.be.model.Component> shouldUpgrade) {
+        boolean result = true;
+        try {
+            result = handleService(currUid, shouldUpgrade);
+        } catch (Exception e) {
+            result = false;
+            LOGGER.error("Failed to upgrade Service with uniqueId {} due to a reason {}. ", currUid, e);
+        }
+        finally {
+            if (result) {
+                titanDao.commit();
+            }
+            else {
+                titanDao.rollback();
+            }
+        }
     }
+    
+    private void upgradeProxyServiceContainers() {
+        LOGGER.info("Starting upgrade proxy service containers upon upgrade migration 1710 process. ");
+        for(String currUid : proxyServiceContainers){
+        	upgradeServiceAndCommitIfNeeded(currUid,  component -> true);
+        }
+	}
 
-    private boolean handleService(String uniqueId, Map<String, String> latestOriginResourceVersions) {
+    private boolean handleService(String uniqueId, Predicate<org.openecomp.sdc.be.model.Component> shouldUpgrade) {
         LOGGER.info("Starting upgrade Service with uniqueId {} upon upgrade migration 1710 process. ", uniqueId);
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getServiceRes = toscaOperationFacade.getToscaElement(uniqueId);
         if(getServiceRes.isRight()){
@@ -231,43 +257,53 @@ public class UpgradeMigration1710 implements PostMigration {
         if(latestVersionExists(latestGenericTypes.get(derivedFromGenericType), getServiceRes.left().value().getDerivedFromGenericVersion())){
             return upgradeService(getServiceRes.left().value());
         }
-        if(!collectLatestOriginResourceVersions(getServiceRes.left().value(), latestOriginResourceVersions)){
+        if(!collectLatestOriginResourceVersions(getServiceRes.left().value())){
             return false;
         }
-        if(shouldUpgrade(getServiceRes.left().value(), latestOriginResourceVersions)){
+        if(shouldUpgrade.test(getServiceRes.left().value())){
             return upgradeService(getServiceRes.left().value());
         }
         outputHandler.addRecord(getServiceRes.left().value().getComponentType().name(), getServiceRes.left().value().getName(), getServiceRes.left().value().getInvariantUUID(), getServiceRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.COMPLETED.name(), UpgradeStatus.NOT_UPGRADED);
         return true;
     }
 
-    private boolean collectLatestOriginResourceVersions(org.openecomp.sdc.be.model.Component component,	Map<String, String> latestOriginResourceVersions) {
-        if(CollectionUtils.isNotEmpty(component.getComponentInstances())){
-            for(ComponentInstance instance : component.getComponentInstances()){
-                if(instance.getOriginType() != OriginTypeEnum.ServiceProxy && !latestOriginResourceVersions.containsKey(instance.getToscaComponentName())){
-                    VertexTypeEnum vertexType = ModelConverter.getVertexType(instance.getOriginType().name());
-                    Either<Resource, StorageOperationStatus> getOriginRes = toscaOperationFacade.getLatestCertifiedByToscaResourceName(instance.getToscaComponentName(), vertexType, JsonParseFlagEnum.ParseMetadata);
-                    if(getOriginRes.isRight()){
-                        LOGGER.error(FAILED_TO_UPGRADE_COMPONENT, component.getComponentType().getValue(), component.getName(), component.getInvariantUUID(), component.getVersion(), "toscaOperationFacade.getLatestCertifiedByToscaResourceName", getOriginRes.right().value());
-                        outputHandler.addRecord( component.getComponentType().name(), component.getName(), component.getInvariantUUID(), component.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), getOriginRes.right().value());
-                        return false;
-                    }
-                    latestOriginResourceVersions.put(instance.getToscaComponentName(), getOriginRes.left().value().getVersion());
+    private boolean collectLatestOriginResourceVersions(org.openecomp.sdc.be.model.Component component) {
+        if (CollectionUtils.isNotEmpty(component.getComponentInstances())) {
+            for (ComponentInstance instance : component.getComponentInstances()) {
+                if (instance.getOriginType() != OriginTypeEnum.ServiceProxy && !latestOriginResourceVersions.containsKey(instance.getToscaComponentName()) && !addComponent(component, instance)) {
+                    return false;
                 }
             }
         }
         return true;
     }
 
-    private boolean shouldUpgrade(org.openecomp.sdc.be.model.Component component, Map<String, String> latestOriginResources) {
+	private boolean addComponent(org.openecomp.sdc.be.model.Component component, ComponentInstance instance) {
+		VertexTypeEnum vertexType = ModelConverter.getVertexType(instance.getOriginType().name());
+		Either<Resource, StorageOperationStatus> getOriginRes = toscaOperationFacade.getLatestCertifiedByToscaResourceName(instance.getToscaComponentName(), vertexType, JsonParseFlagEnum.ParseMetadata);
+		if (getOriginRes.isRight()) {
+		    LOGGER.error(FAILED_TO_UPGRADE_COMPONENT, component.getComponentType().getValue(), component.getName(), component.getInvariantUUID(), component.getVersion(), "toscaOperationFacade.getLatestCertifiedByToscaResourceName", getOriginRes.right().value());
+		    outputHandler.addRecord(component.getComponentType().name(), component.getName(), component.getInvariantUUID(), component.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), getOriginRes.right().value());
+		    return false;
+		}
+		latestOriginResourceVersions.put(instance.getToscaComponentName(), getOriginRes.left().value().getVersion());
+		return true;
+	}
+
+    private boolean shouldUpgrade(org.openecomp.sdc.be.model.Component component) {
         boolean shouldUpgrade = false;
         if(CollectionUtils.isNotEmpty(component.getComponentInstances())){
             for(ComponentInstance instance : component.getComponentInstances()){
                 if(instance.getOriginType() == OriginTypeEnum.ServiceProxy){
-                    LOGGER.info("The service with name {}, invariantUUID {}, version {}, contains Service proxy instance {}, than the service should be upgraded. ", component.getName(), component.getInvariantUUID(), component.getVersion(), instance.getName());
-                    shouldUpgrade = true;
+                    LOGGER.info("The service with name {}, invariantUUID {}, version {}, contains Service proxy instance {}, than the service should be upgraded in the end of the upgrading proccess. ", component.getName(), component.getInvariantUUID(), component.getVersion(), instance.getName());
+                    proxyServiceContainers.add(component.getUniqueId());
+                    shouldUpgrade = false;
+                    break;
                 }
-                if(isGreater(latestOriginResources.get(instance.getToscaComponentName()), instance.getComponentVersion())){
+                if(isAllottedResource(instance.getActualComponentUid())){
+                	allottedVfContainers.add(component.getUniqueId());
+                }
+                if(isGreater(latestOriginResourceVersions.get(instance.getToscaComponentName()), instance.getComponentVersion())){
                     LOGGER.info("The service with name {}, invariantUUID {}, version {}, contains instance {} from outdated version of origin {} {} , than the service should be upgraded. ", component.getName(), component.getInvariantUUID(), component.getVersion(), instance.getName(), instance.getComponentName(), instance.getComponentVersion());
                     shouldUpgrade = true;
                 }
@@ -282,19 +318,19 @@ public class UpgradeMigration1710 implements PostMigration {
         LOGGER.info("Starting upgrade Service with name {}, invariantUUID {}, version {} upon upgrade migration 1710 process. ", serviceName, service.getInvariantUUID(), service.getVersion());
         LOGGER.info("Starting to perform check out of service {}. ", serviceName);
         Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> checkouRes = lifecycleBusinessLogic.changeComponentState(service.getComponentType(), service.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT, changeInfo, true, false);
-        if(checkouRes.isRight()){
+        if (checkouRes.isRight()) {
             LOGGER.error(FAILED_TO_UPGRADE_COMPONENT, service.getComponentType().getValue(), serviceName, service.getInvariantUUID(), service.getVersion(), "lifecycleBusinessLogic.changeComponentState", checkouRes.right().value().getFormattedMessage());
             outputHandler.addRecord(service.getComponentType().name(), serviceName, serviceUuid, service.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), checkouRes.right().value().getFormattedMessage());
             return false;
         }
-        Either<org.openecomp.sdc.be.model.Component, ResponseFormat>  updateCompositionRes = updateComposition(checkouRes.left().value());
-        if(updateCompositionRes.isRight()){
+        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> updateCompositionRes = updateComposition(checkouRes.left().value());
+        if (updateCompositionRes.isRight()) {
             LOGGER.error(FAILED_TO_UPGRADE_COMPONENT, service.getComponentType().getValue(), serviceName, service.getInvariantUUID(), service.getVersion(), "updateComposition", updateCompositionRes.right().value().getFormattedMessage());
             outputHandler.addRecord(checkouRes.left().value().getComponentType().name(), checkouRes.left().value().getName(), checkouRes.left().value().getUUID(), checkouRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), updateCompositionRes.right().value().getFormattedMessage());
             return false;
         }
-        Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat>  certifyRes = performFullCertification(checkouRes.left().value());
-        if(certifyRes.isRight()){
+        Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> certifyRes = performFullCertification(checkouRes.left().value());
+        if (certifyRes.isRight()) {
             LOGGER.error(FAILED_TO_UPGRADE_COMPONENT, service.getComponentType().getValue(), serviceName, service.getInvariantUUID(), service.getVersion(), "performFullCertification", certifyRes.right().value().getFormattedMessage());
             outputHandler.addRecord(checkouRes.left().value().getComponentType().name(), checkouRes.left().value().getName(), checkouRes.left().value().getInvariantUUID(), checkouRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), certifyRes.right().value().getFormattedMessage());
             return false;
@@ -305,9 +341,9 @@ public class UpgradeMigration1710 implements PostMigration {
 
     private Either<org.openecomp.sdc.be.model.Component, ResponseFormat> updateComposition(org.openecomp.sdc.be.model.Component component) {
         Either<ComponentInstance, ResponseFormat> upgradeInstanceRes;
-        for(ComponentInstance instance : component.getComponentInstances()){
+        for (ComponentInstance instance : component.getComponentInstances()) {
             upgradeInstanceRes = upgradeInstance(component, instance);
-            if(upgradeInstanceRes.isRight()) {
+            if (upgradeInstanceRes.isRight()) {
                 LOGGER.error(FAILED_TO_UPGRADE_COMPONENT, component.getComponentType().getValue(), component.getName(), component.getInvariantUUID(), component.getVersion(), "upgradeInstance", upgradeInstanceRes.right().value().getFormattedMessage());
                 outputHandler.addRecord(component.getComponentType().name(), component.getName(), component.getUUID(), component.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), upgradeInstanceRes.right().value().getFormattedMessage());
                 return Either.right(upgradeInstanceRes.right().value());
@@ -319,43 +355,94 @@ public class UpgradeMigration1710 implements PostMigration {
     private Either<ComponentInstance, ResponseFormat> upgradeInstance(org.openecomp.sdc.be.model.Component component, ComponentInstance instance) {
         LOGGER.info("Starting upgrade {} instance {} upon upgrade migration 1710 process. ", component.getComponentType().getValue(), instance.getName());
         ComponentInstance newComponentInstance = new ComponentInstance(instance);
-        if(instance.getOriginType() == OriginTypeEnum.ServiceProxy){
+        if (instance.getOriginType() == OriginTypeEnum.ServiceProxy) {
             return upgradeServiceProxyInstance(component, instance, newComponentInstance);
         }
         return upgradeResourceInstance(component, instance, newComponentInstance);
     }
 
-    private Either<ComponentInstance, ResponseFormat> upgradeResourceInstance(org.openecomp.sdc.be.model.Component component,
-                                                            ComponentInstance instance, ComponentInstance newComponentInstance) {
+    private Either<ComponentInstance, ResponseFormat> upgradeResourceInstance(org.openecomp.sdc.be.model.Component component, ComponentInstance instance, ComponentInstance newComponentInstance) {
+
         LOGGER.info("Starting upgrade {} instance {} upon upgrade migration 1710 process. ", component.getComponentType().getValue(), instance.getName());
+        Either<ComponentInstance, ResponseFormat> upgradeInstanceRes = null;
         VertexTypeEnum vertexType = ModelConverter.getVertexType(instance.getOriginType().name());
         Either<Resource, StorageOperationStatus> getOriginRes = toscaOperationFacade.getLatestCertifiedByToscaResourceName(instance.getToscaComponentName(), vertexType, JsonParseFlagEnum.ParseMetadata);
         if(getOriginRes.isRight()){
             LOGGER.info("Upgrade of {} instance {} upon upgrade migration 1710 process failed due to a reason {}. ",
                     component.getComponentType().getValue(), instance.getName(), getOriginRes.right().value());
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getOriginRes.right().value(), instance.getOriginType().getComponentType())));
+            upgradeInstanceRes = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getOriginRes.right().value(), instance.getOriginType().getComponentType())));
         }
-        newComponentInstance.setComponentName(getOriginRes.left().value().getName());
-        newComponentInstance.setComponentUid(getOriginRes.left().value().getUniqueId());
-        newComponentInstance.setComponentVersion(getOriginRes.left().value().getVersion());
-        newComponentInstance.setToscaComponentName(((Resource)getOriginRes.left().value()).getToscaResourceName());
-        if(isGreater(getOriginRes.left().value().getVersion(), instance.getComponentVersion())){
-            return changeAssetVersion(component, instance, newComponentInstance);
+        if(upgradeInstanceRes == null){
+        	newComponentInstance.setComponentName(getOriginRes.left().value().getName());
+        	newComponentInstance.setComponentUid(getOriginRes.left().value().getUniqueId());
+        	newComponentInstance.setComponentVersion(getOriginRes.left().value().getVersion());
+        	newComponentInstance.setToscaComponentName(((Resource)getOriginRes.left().value()).getToscaResourceName());
+        	if(isGreater(getOriginRes.left().value().getVersion(), instance.getComponentVersion())){
+        		upgradeInstanceRes = changeAssetVersion(component, instance, newComponentInstance);
+        	}
+        	if((upgradeInstanceRes == null || upgradeInstanceRes.isLeft()) && isAllottedResource(instance.getComponentUid()) && MapUtils.isNotEmpty(component.getComponentInstancesProperties())){
+        		ComponentInstance instanceToUpdate = upgradeInstanceRes == null ? instance : upgradeInstanceRes.left().value();
+        		upgradeInstanceRes = Either.left(updateServiceUuidProperty(component, instanceToUpdate, component.getComponentInstancesProperties().get(instance.getUniqueId())));
+        	}
         }
-
         //upgrade nodes contained by CVFC
-        if(isVfcUpgradeRequired && newComponentInstance.getOriginType() == OriginTypeEnum.CVFC &&
-                                                    !upgradeVf(getOriginRes.left().value().getUniqueId())) {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        if(upgradeInstanceRes == null && isVfcUpgradeRequired && newComponentInstance.getOriginType() == OriginTypeEnum.CVFC &&
+                                                    !upgradeVf(getOriginRes.left().value().getUniqueId(), false)) {
+        	upgradeInstanceRes = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        if(upgradeInstanceRes == null){
+        	upgradeInstanceRes = Either.left(instance);
         }
         LOGGER.info("Upgrade of {} instance {} upon upgrade migration 1710 process finished successfully. ",
-                                                                    component.getComponentType().getValue(), instance.getName());
-        return Either.left(instance);
+                            component.getComponentType().getValue(), instance.getName());
+        return upgradeInstanceRes;
     }
 
+    private ComponentInstance updateServiceUuidProperty(org.openecomp.sdc.be.model.Component component, ComponentInstance instance, List<ComponentInstanceProperty> instanceProperties){
+    	if(isAllottedResource(instance.getComponentUid()) && instanceProperties != null){
+	    	Optional<ComponentInstanceProperty> propertyUuid = 	instanceProperties.stream().filter(p->p.getName().equals(SERVICE_UUID_RPOPERTY)).findFirst();
+	    	Optional<ComponentInstanceProperty> propertyInvariantUuid = instanceProperties.stream().filter(p->p.getName().equals(SERVICE_INVARIANT_UUID_RPOPERTY)).findFirst();
+	    	if(propertyUuid.isPresent() && propertyInvariantUuid.isPresent()){
+	    		String serviceInvariantUUID = propertyInvariantUuid.get().getValue();
+	    		Either<List<GraphVertex>, TitanOperationStatus> getLatestOriginServiceRes = getLatestCertifiedService(serviceInvariantUUID);
+	            if (getLatestOriginServiceRes.isRight()) {
+	                return instance;
+	            }
+	            propertyUuid.get().setValue((String) getLatestOriginServiceRes.left().value().get(0).getJsonMetadataField(JsonPresentationFields.UUID));
+	    		componentInstanceBusinessLogic.createOrUpdatePropertiesValues(component.getComponentType(), component.getUniqueId(), instance.getUniqueId(), Lists.newArrayList(propertyUuid.get()), user.getUserId())
+	    		.right()
+	    		.forEach(e -> LOGGER.debug("Failed to update property {} of the instance {} of the component {}. ", SERVICE_UUID_RPOPERTY, instance.getUniqueId(), component.getName()));
+	    	}
+    	}
+    	return instance;
+   	}
+    
+    private boolean isAllottedResource(String uniqueId){
+    	ComponentParametersView filters = new ComponentParametersView(true);
+    	filters.setIgnoreCategories(false);
+    	Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getResourceRes = toscaOperationFacade.getToscaElement(uniqueId, filters);
+    	if(getResourceRes.isRight()){
+    		return false;
+    	}
+    	if(getResourceRes.left().value().getCategories() != null && getResourceRes.left().value().getCategories().get(0)!= null){
+    		return "Allotted Resource".equals(getResourceRes.left().value().getCategories().get(0).getName());
+    	}
+    	return false;
+    }
+    
+    private boolean isAllottedVf(org.openecomp.sdc.be.model.Component component){
+    	if(component.getComponentType() != ComponentTypeEnum.RESOURCE){
+    		return false;
+    	}
+    	if(((Resource)component).getResourceType() != ResourceTypeEnum.VF){
+    		return false;
+    	}
+    	return isAllottedResource(component.getUniqueId());
+    }
+    
     private Either<ComponentInstance, ResponseFormat> upgradeServiceProxyInstance(org.openecomp.sdc.be.model.Component component, ComponentInstance instance, ComponentInstance newComponentInstance) {
         Either<List<GraphVertex>, TitanOperationStatus> getLatestOriginServiceRes = getLatestCertifiedService(instance.getSourceModelInvariant());
-        if(getLatestOriginServiceRes.isRight()){
+        if (getLatestOriginServiceRes.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(getLatestOriginServiceRes.right().value()), instance.getOriginType().getComponentType())));
         }
         newComponentInstance.setComponentVersion((String) getLatestOriginServiceRes.left().value().get(0).getJsonMetadataField(JsonPresentationFields.VERSION));
@@ -385,18 +472,18 @@ public class UpgradeMigration1710 implements PostMigration {
         LOGGER.info("Starting upgrade node types upon upgrade migration 1710 process. ");
         String toscaConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
         Map<String, List<String>> resourcesForUpgrade = ConfigurationManager.getConfigurationManager().getConfiguration().getResourcesForUpgrade();
-        Map<String, org.openecomp.sdc.be.model.Component> upgradedNodeTypesMap = new HashMap<> ();
+        Map<String, org.openecomp.sdc.be.model.Component> upgradedNodeTypesMap = new HashMap<>();
         List<String> nodeTypes;
-        if(resourcesForUpgrade.containsKey(toscaConformanceLevel)){
-             nodeTypes = resourcesForUpgrade.get(toscaConformanceLevel);
-            if(nodeTypes !=null && !nodeTypes.isEmpty()){
+        if (resourcesForUpgrade.containsKey(toscaConformanceLevel)) {
+            nodeTypes = resourcesForUpgrade.get(toscaConformanceLevel);
+            if (nodeTypes != null && !nodeTypes.isEmpty()) {
                 Either<List<String>, TitanOperationStatus> getRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.NODE_TYPE, ComponentTypeEnum.RESOURCE);
-                if(getRes.isRight()){
+                if (getRes.isRight()) {
                     return false;
                 }
                 List<String> allNodeTypes = getRes.left().value();
 
-                for(String toscaResourceName: nodeTypes){
+                for (String toscaResourceName : nodeTypes) {
                     Either<List<GraphVertex>, StorageOperationStatus> status = getLatestByName(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
                     if (status.isRight()) {
                         LOGGER.error("Failed to find node type {} ", toscaResourceName);
@@ -416,27 +503,43 @@ public class UpgradeMigration1710 implements PostMigration {
     }
 
     private boolean upgradeVFs() {
+    	return upgradeVFs(false);
+    }
+    
+    private boolean upgradeAllottedVFs() {
+    	LOGGER.info("Starting upgrade {} allotted Vfs with upon upgrade migration 1710 process. ", vfAllottedResources.size());
+    	return upgradeVFs(true);
+    }
+    
+    private boolean upgradeVFs(boolean allottedVfsUpgrade) {
         LOGGER.info("Starting upgrade VFs upon upgrade migration 1710 process. ");
         Either<List<String>, TitanOperationStatus> getVfsRes = getAllLatestCertifiedComponentUids(VertexTypeEnum.TOPOLOGY_TEMPLATE, ComponentTypeEnum.RESOURCE);
-        if(getVfsRes.isRight()){
+        if (getVfsRes.isRight()) {
             LOGGER.info(UPGRADE_VFS_FAILED);
             return false;
         }
         for (String currUid : getVfsRes.left().value()) {
+            boolean result = true;
             try {
-                if (!upgradeVf(currUid)) {
-                    processComponentUpgradeFailure(ComponentTypeEnum.RESOURCE.name(), currUid, "");
-                    if (!skipIfUpgradeVfFailed) {
-                        LOGGER.info(UPGRADE_VFS_FAILED);
-                        return false;
-                    }
-                }
-                titanDao.commit();
-            } catch (Exception e) {
-                processComponentUpgradeFailure(ComponentTypeEnum.RESOURCE.name(), currUid, e.getMessage());
-                if (!skipIfUpgradeVfFailed) {
-                    LOGGER.info(UPGRADE_VFS_FAILED);
+                result = upgradeVf(currUid, allottedVfsUpgrade);
+                if (!result && !skipIfUpgradeVfFailed) {
                     return false;
+                }
+            } catch (Exception e) {
+            	LOGGER.error("The exception {} occured upon upgrade VFs. ", e);
+                result = false;
+                if (!skipIfUpgradeVfFailed) {
+                   return false;
+                }
+            }
+            finally {
+                if (!result) {
+                    LOGGER.error("Failed to upgrade RESOURCE with uniqueId {} ", currUid);
+                    titanDao.rollback();
+                }
+                else {
+                    LOGGER.info("RESOURCE upgrade finished successfully: uniqueId {} ", currUid);
+                    titanDao.commit();
                 }
             }
         }
@@ -444,27 +547,31 @@ public class UpgradeMigration1710 implements PostMigration {
         return true;
     }
 
-    private boolean upgradeVf(String uniqueId) {
+    private boolean upgradeVf(String uniqueId, boolean allottedVfsUpgrade) {
         LOGGER.info("Starting upgrade VF with uniqueId {} upon upgrade migration 1710 process. ", uniqueId);
         Either<String, StorageOperationStatus> latestVersionRes;
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getRes = toscaOperationFacade.getToscaElement(uniqueId);
-        if(getRes.isRight()){
+        if (getRes.isRight()) {
             LOGGER.debug("Failed to fetch VF with uniqueId {} upon upgrade migration 1710 process. ", uniqueId);
             outputHandler.addRecord(ComponentTypeEnum.RESOURCE.name(), UNKNOWN, UNKNOWN, uniqueId, MigrationResult.MigrationStatus.FAILED.name(), getRes.right().value());
             return false;
         }
-        if(StringUtils.isNotEmpty(getRes.left().value().getCsarUUID())){
+        if(!allottedVfsUpgrade && isAllottedVf(getRes.left().value())){
+        	vfAllottedResources.add(uniqueId);
+        	return true;
+        }
+        if (StringUtils.isNotEmpty(getRes.left().value().getCsarUUID())) {
             LOGGER.info("Going to fetch the latest version of VSP with csarUUID {} upon upgrade migration 1710 process. ", getRes.left().value().getCsarUUID());
             latestVersionRes = csarOperation.getCsarLatestVersion(getRes.left().value().getCsarUUID(), user);
-            if(latestVersionRes.isRight()){
+            if (latestVersionRes.isRight()) {
                 LOGGER.debug("Failed to fetch the latest version of VSP with csarUUID {} upon upgrade migration 1710 process. ", getRes.left().value().getCsarUUID());
-                outputHandler.addRecord(getRes.left().value().getComponentType().name(), getRes.left().value().getName(), getRes.left().value().getUUID(), getRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(),latestVersionRes.right().value());
+                outputHandler.addRecord(getRes.left().value().getComponentType().name(), getRes.left().value().getName(), getRes.left().value().getUUID(), getRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), latestVersionRes.right().value());
                 return false;
             }
-            if(isGreater(latestVersionRes.left().value(), getRes.left().value().getCsarVersion())){
+            if (isGreater(latestVersionRes.left().value(), getRes.left().value().getCsarVersion())) {
                 return upgradeVfWithLatestVsp(getRes.left().value(), latestVersionRes);
             }
-            if (!isVfcUpgradeRequired){
+            if (!isVfcUpgradeRequired) {
                 LOGGER.warn("Warning: No need to upgrade VF with name {}, invariantUUID {}, version {} and VSP version {}. No new version of VSP. ", getRes.left().value().getName(), getRes.left().value().getInvariantUUID(), getRes.left().value().getVersion(), getRes.left().value().getCsarVersion());
             }
         }
@@ -473,9 +580,9 @@ public class UpgradeMigration1710 implements PostMigration {
 
     private boolean upgradeVfWithLatestVsp(org.openecomp.sdc.be.model.Component vf, Either<String, StorageOperationStatus> latestVersionRes) {
         LOGGER.info("Starting upgrade vf with name {}, invariantUUID {}, version {} and latest VSP version {} upon upgrade migration 1710 process. ", vf.getName(), vf.getInvariantUUID(), vf.getVersion(), latestVersionRes.left().value());
-        LOGGER.info("Starting to perform check out of vf with name {}, invariantUUID {}, version {}. ", vf.getName(),vf.getInvariantUUID(), vf.getVersion());
+        LOGGER.info("Starting to perform check out of vf with name {}, invariantUUID {}, version {}. ", vf.getName(), vf.getInvariantUUID(), vf.getVersion());
         Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> checkouRes = lifecycleBusinessLogic.changeComponentState(vf.getComponentType(), vf.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT, changeInfo, true, false);
-        if(checkouRes.isRight()){
+        if (checkouRes.isRight()) {
             outputHandler.addRecord(vf.getComponentType().name(), vf.getName(), vf.getUUID(), vf.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), checkouRes.right().value().getFormattedMessage());
             return false;
         }
@@ -485,13 +592,13 @@ public class UpgradeMigration1710 implements PostMigration {
         resourceToUpdate.setDerivedFromGenericVersion(((Resource) checkouRes.left().value()).getDerivedFromGenericVersion());
         resourceToUpdate.setCsarVersion(Double.toString(Double.parseDouble(latestVersionRes.left().value())));
         Either<Resource, ResponseFormat> updateResourceFromCsarRes = resourceBusinessLogic.validateAndUpdateResourceFromCsar(resourceToUpdate, user, null, null, resourceToUpdate.getUniqueId());
-        if(updateResourceFromCsarRes.isRight()){
+        if (updateResourceFromCsarRes.isRight()) {
             outputHandler.addRecord(resourceToUpdate.getComponentType().name(), resourceToUpdate.getName(), resourceToUpdate.getUUID(), resourceToUpdate.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), updateResourceFromCsarRes.right().value().getFormattedMessage());
             LOGGER.info("Failed to update vf with name {}, invariantUUID {}, version {} and latest VSP {}. ", vf.getName(), vf.getInvariantUUID(), vf.getVersion(), latestVersionRes.left().value());
             return false;
         }
-        Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> certifyRes =  performFullCertification(checkouRes.left().value());
-        if(certifyRes.isRight()){
+        Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> certifyRes = performFullCertification(checkouRes.left().value());
+        if (certifyRes.isRight()) {
             LOGGER.info(FAILED_TO_CHANGE_STATE_OF_COMPONENT, checkouRes.left().value().getName(), checkouRes.left().value().getInvariantUUID(), checkouRes.left().value().getVersion(), LifeCycleTransitionEnum.CERTIFY);
             outputHandler.addRecord(checkouRes.left().value().getComponentType().name(), checkouRes.left().value().getName(), checkouRes.left().value().getInvariantUUID(), checkouRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), certifyRes.right().value().getFormattedMessage());
             return false;
@@ -502,55 +609,55 @@ public class UpgradeMigration1710 implements PostMigration {
     }
 
     private boolean upgradeComponentWithLatestGeneric(org.openecomp.sdc.be.model.Component component) {
-        String derivedFromGenericType =  component.getDerivedFromGenericType();
+        String derivedFromGenericType = component.getDerivedFromGenericType();
         String derivedFromGenericVersion = component.getDerivedFromGenericVersion();
         org.openecomp.sdc.be.model.Component updatedComponent = component;
-        if(StringUtils.isNotEmpty(derivedFromGenericType) && !latestGenericTypes.containsKey(derivedFromGenericType)){
+        if (StringUtils.isNotEmpty(derivedFromGenericType) && !latestGenericTypes.containsKey(derivedFromGenericType)) {
             LOGGER.info("Starting upgrade vf with name {}, invariantUUID {}, version {}, latest derived from generic type {}, latest derived from generic version {}. ", component.getName(), component.getInvariantUUID(), component.getVersion(), derivedFromGenericType, derivedFromGenericVersion);
             LOGGER.info("Starting to fetch latest generic node type {}. ", derivedFromGenericType);
             Either<List<GraphVertex>, TitanOperationStatus> getDerivedRes = findDerivedResources(derivedFromGenericType);
-            if(getDerivedRes.isRight()){
+            if (getDerivedRes.isRight()) {
                 outputHandler.addRecord(component.getComponentType().name(), component.getName(), component.getInvariantUUID(), component.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), getDerivedRes.right().value());
                 LOGGER.info("Failed to upgrade component with name {}, invariantUUID {}, version {} and latest generic. Status is {}. ", component.getName(), component.getInvariantUUID(), component.getVersion(), derivedFromGenericType);
                 return false;
             }
             latestGenericTypes.put(derivedFromGenericType, getDerivedRes.left().value().get(0));
         }
-        if(StringUtils.isEmpty(derivedFromGenericType) ||
+        if (StringUtils.isEmpty(derivedFromGenericType) ||
                 latestVersionExists(latestGenericTypes.get(derivedFromGenericType), derivedFromGenericVersion) ||
-                isVfcUpgradeRequired){
-            if(StringUtils.isNotEmpty(derivedFromGenericType))
+                isVfcUpgradeRequired) {
+            if (StringUtils.isNotEmpty(derivedFromGenericType))
                 LOGGER.info("Newer version {} of derived from generic type {} exists. ", latestGenericTypes.get(derivedFromGenericType).getJsonMetadataField(JsonPresentationFields.VERSION), derivedFromGenericType);
             else
                 LOGGER.info("The vf resource with name {}, invariantUUID {}, version {},  has an empty derivedFromGenericType field. ", component.getName(), component.getInvariantUUID(), component.getVersion());
 
             LOGGER.info("Starting to perform check out of vf with name {}, invariantUUID {}, version {}. ", component.getName(), component.getInvariantUUID(), component.getVersion());
             Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> checkouRes = lifecycleBusinessLogic.changeComponentState(component.getComponentType(), component.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT, changeInfo, true, false);
-            if(checkouRes.isRight()){
+            if (checkouRes.isRight()) {
                 LOGGER.info(FAILED_TO_CHANGE_STATE_OF_COMPONENT, component.getName(), component.getInvariantUUID(), component.getVersion(), LifeCycleTransitionEnum.CHECKOUT);
                 outputHandler.addRecord(component.getComponentType().name(), component.getName(), component.getInvariantUUID(), component.getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), checkouRes.right().value().getFormattedMessage());
                 return false;
             }
             //update included VFCs, if it is required as per configuration
-            if(isVfcUpgradeRequired && CollectionUtils.isNotEmpty(checkouRes.left().value().getComponentInstances())){
+            if (CollectionUtils.isNotEmpty(checkouRes.left().value().getComponentInstances())) {
                 LOGGER.info("VFC upgrade is required: updating components of vf with name {}, invariantUUID {}, version {}. ", component.getName(), component.getInvariantUUID(), component.getVersion());
-                Either<org.openecomp.sdc.be.model.Component, ResponseFormat>  updateCompositionRes =
-                                                updateComposition(checkouRes.left().value());
-                if(updateCompositionRes.isRight()){
+                Either<org.openecomp.sdc.be.model.Component, ResponseFormat> updateCompositionRes =
+                        updateComposition(checkouRes.left().value());
+                if (updateCompositionRes.isRight()) {
                     LOGGER.error(FAILED_TO_UPGRADE_COMPONENT, checkouRes.left().value().getComponentType().name(), checkouRes.left().value().getName(), checkouRes.left().value().getInvariantUUID(), checkouRes.left().value().getVersion(), "updateComposition", updateCompositionRes.right().value().getFormattedMessage());
                     outputHandler.addRecord(checkouRes.left().value().getComponentType().name(), checkouRes.left().value().getName(), checkouRes.left().value().getUUID(), checkouRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), updateCompositionRes.right().value().getFormattedMessage());
                     return false;
                 }
             }
             Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> certifyRes = performFullCertification(checkouRes.left().value());
-            if(certifyRes.isRight()){
+            if (certifyRes.isRight()) {
                 LOGGER.info(FAILED_TO_CHANGE_STATE_OF_COMPONENT, component.getName(), component.getInvariantUUID(), component.getVersion(), LifeCycleTransitionEnum.CERTIFY);
                 outputHandler.addRecord(checkouRes.left().value().getComponentType().name(), checkouRes.left().value().getName(), checkouRes.left().value().getInvariantUUID(), checkouRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), certifyRes.right().value().getFormattedMessage());
                 return false;
             }
             updatedComponent = certifyRes.left().value();
         } else {
-            LOGGER.info("The version {} of derived from generic type {} is up to date. No need to upgrade component with name {}, invariantUUID {} and version {}. ", latestGenericTypes.get(derivedFromGenericType), derivedFromGenericType,component.getName(), component.getInvariantUUID(), component.getVersion());
+            LOGGER.info("The version {} of derived from generic type {} is up to date. No need to upgrade component with name {}, invariantUUID {} and version {}. ", latestGenericTypes.get(derivedFromGenericType), derivedFromGenericType, component.getName(), component.getInvariantUUID(), component.getVersion());
         }
         LOGGER.info(UPGRADE_COMPONENT_SUCCEEDED, component.getComponentType().getValue(), component.getName(), component.getInvariantUUID(), component.getVersion());
         outputHandler.addRecord(updatedComponent.getComponentType().name(), updatedComponent.getName(), updatedComponent.getUUID(), updatedComponent.getUniqueId(), MigrationResult.MigrationStatus.COMPLETED.name(), updatedComponent.equals(component) ? UpgradeStatus.NOT_UPGRADED : UpgradeStatus.UPGRADED);
@@ -562,46 +669,46 @@ public class UpgradeMigration1710 implements PostMigration {
         LOGGER.info("Starting upgrade node type with name {}, invariantUUID {}, version{}. ", nodeTypeV.getMetadataProperty(GraphPropertyEnum.NAME), nodeTypeV.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID), nodeTypeV.getMetadataProperty(GraphPropertyEnum.VERSION));
         LOGGER.info("Starting to find derived to for node type with name {}, invariantUUID {}, version{}. ", nodeTypeV.getMetadataProperty(GraphPropertyEnum.NAME), nodeTypeV.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID), nodeTypeV.getMetadataProperty(GraphPropertyEnum.VERSION));
         Either<List<GraphVertex>, TitanOperationStatus> parentResourceRes = titanDao.getParentVertecies(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseMetadata);
-        if(parentResourceRes.isRight() && parentResourceRes.right().value() != TitanOperationStatus.NOT_FOUND ){
+        if (parentResourceRes.isRight() && parentResourceRes.right().value() != TitanOperationStatus.NOT_FOUND) {
             return DaoStatusConverter.convertTitanStatusToStorageStatus(parentResourceRes.right().value());
 
         }
         List<GraphVertex> derivedResourcesUid = new ArrayList<>();
-        if(parentResourceRes.isLeft()){
-            for(GraphVertex chV: parentResourceRes.left().value()){
-                Optional<String> op = allCertifiedUids.stream().filter(id -> id.equals((String)chV.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID))).findAny();
-                if(op.isPresent()){
+        if (parentResourceRes.isLeft()) {
+            for (GraphVertex chV : parentResourceRes.left().value()) {
+                Optional<String> op = allCertifiedUids.stream().filter(id -> id.equals((String) chV.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID))).findAny();
+                if (op.isPresent()) {
                     derivedResourcesUid.add(chV);
                 }
             }
         }
-        String uniqueId = (String)nodeTypeV.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID);
+        String uniqueId = (String) nodeTypeV.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID);
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getRes = toscaOperationFacade.getToscaElement(uniqueId);
-        if(getRes.isRight()){
+        if (getRes.isRight()) {
             LOGGER.info("failed to fetch element with uniqueId {} ", uniqueId);
             return getRes.right().value();
         }
 
-        org.openecomp.sdc.be.model.Resource nt = (Resource)getRes.left().value();
+        org.openecomp.sdc.be.model.Resource nt = (Resource) getRes.left().value();
         boolean isNeedToUpgrade = true;
-        if(upgradedNodeTypesMap.containsKey(nt.getToscaResourceName()) || nodeTypes.stream().filter( p -> p.equals(nt.getToscaResourceName())).findAny().isPresent()){
+        if (upgradedNodeTypesMap.containsKey(nt.getToscaResourceName()) || nodeTypes.stream().anyMatch(p -> p.equals(nt.getToscaResourceName()))) {
             isNeedToUpgrade = false;
         }
-        if(isNeedToUpgrade){
+        if (isNeedToUpgrade) {
             LOGGER.info("Starting to perform check out of node type with name {}, invariantUUID {}, version {}. ", nt.getName(), nt.getInvariantUUID(), nt.getVersion());
             Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> checkouRes = lifecycleBusinessLogic.changeComponentState(nt.getComponentType(), nt.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT, changeInfo, true, false);
-            if(checkouRes.isRight()){
+            if (checkouRes.isRight()) {
                 return StorageOperationStatus.GENERAL_ERROR;
             }
             org.openecomp.sdc.be.model.Component upgradetComp = checkouRes.left().value();
             boolean res = performFullCertification(upgradetComp).isLeft();
-            if(!res){
+            if (!res) {
                 return StorageOperationStatus.GENERAL_ERROR;
             }
             upgradedNodeTypesMap.put(nt.getToscaResourceName(), upgradetComp);
             titanDao.commit();
         }
-        for(GraphVertex chV: derivedResourcesUid){
+        for (GraphVertex chV : derivedResourcesUid) {
             result = upgradeNodeType(chV, upgradedNodeTypesMap, allCertifiedUids, nodeTypes);
             LOGGER.info("Upgrade node type with name {}, invariantUUID {}, version {} has been finished with the status {}", chV.getMetadataProperty(GraphPropertyEnum.NAME), chV.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID), chV.getMetadataProperty(GraphPropertyEnum.VERSION), result);
         }
@@ -610,23 +717,22 @@ public class UpgradeMigration1710 implements PostMigration {
 
     private Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> performFullCertification(org.openecomp.sdc.be.model.Component component) {
         LOGGER.info("Starting to perform full certification of {} with name {}, invariantUUID {}, version {}. ",
-                                            component.getComponentType().getValue(), component.getName(), component.getInvariantUUID(), component.getVersion());
+                component.getComponentType().getValue(), component.getName(), component.getInvariantUUID(), component.getVersion());
 
-        Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat>  changeStateEither = lifecycleBusinessLogic.changeComponentState(component.getComponentType(), component.getUniqueId(), user, LifeCycleTransitionEnum.CERTIFICATION_REQUEST, changeInfo, true, false);
-        if(changeStateEither.isRight()){
+        Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> changeStateEither = lifecycleBusinessLogic.changeComponentState(component.getComponentType(), component.getUniqueId(), user, LifeCycleTransitionEnum.CERTIFICATION_REQUEST, changeInfo, true, false);
+        if (changeStateEither.isRight()) {
             LOGGER.info(FAILED_TO_CHANGE_STATE_OF_COMPONENT, component.getName(), component.getInvariantUUID(), component.getVersion(), LifeCycleTransitionEnum.CERTIFICATION_REQUEST);
             return changeStateEither;
         }
         changeStateEither = lifecycleBusinessLogic.changeComponentState(component.getComponentType(), changeStateEither.left().value().getUniqueId(), user, LifeCycleTransitionEnum.START_CERTIFICATION, changeInfo, true, false);
-        if(changeStateEither.isRight()){
+        if (changeStateEither.isRight()) {
             LOGGER.info(FAILED_TO_CHANGE_STATE_OF_COMPONENT, component.getName(), component.getInvariantUUID(), component.getVersion(), LifeCycleTransitionEnum.START_CERTIFICATION);
             return changeStateEither;
         }
         changeStateEither = lifecycleBusinessLogic.changeComponentState(component.getComponentType(), changeStateEither.left().value().getUniqueId(), user, LifeCycleTransitionEnum.CERTIFY, changeInfo, true, false);
-        if(changeStateEither.isRight()){
+        if (changeStateEither.isRight()) {
             LOGGER.info(FAILED_TO_CHANGE_STATE_OF_COMPONENT, component.getName(), component.getInvariantUUID(), component.getVersion(), LifeCycleTransitionEnum.CERTIFY);
-        }
-        else {
+        } else {
             LOGGER.info("Full certification of {} with name {}, invariantUUID {}, version {} finished successfully",
                     changeStateEither.left().value().getComponentType().getValue(), changeStateEither.left().value().getName(),
                     changeStateEither.left().value().getInvariantUUID(), changeStateEither.left().value().getVersion());
@@ -645,13 +751,13 @@ public class UpgradeMigration1710 implements PostMigration {
     }
 
     private boolean latestVersionExists(GraphVertex latestDerivedFrom, String currentVersion) {
-        return isGreater((String)latestDerivedFrom.getJsonMetadataField(JsonPresentationFields.VERSION), currentVersion);
+        return isGreater((String) latestDerivedFrom.getJsonMetadataField(JsonPresentationFields.VERSION), currentVersion);
     }
 
     private boolean isGreater(String latestVersion, String currentVersion) {
-        if(latestVersion != null && currentVersion == null)
+        if (latestVersion != null && currentVersion == null)
             return true;
-        if(latestVersion == null)
+        if (latestVersion == null)
             return false;
         return Double.parseDouble(latestVersion) > Double.parseDouble(currentVersion);
     }
@@ -661,58 +767,58 @@ public class UpgradeMigration1710 implements PostMigration {
         Either<List<String>, TitanOperationStatus> result = null;
         Map<String, String> latestCertifiedMap = new HashMap<>();
         Map<String, String> latestNotCertifiedMap = new HashMap<>();
-        
+
         Either<List<GraphVertex>, TitanOperationStatus> getComponentsRes = getAllLatestCertifiedComponents(vertexType, componentType);
-        if(getComponentsRes.isRight() && getComponentsRes.right().value() != TitanOperationStatus.NOT_FOUND){
+        if (getComponentsRes.isRight() && getComponentsRes.right().value() != TitanOperationStatus.NOT_FOUND) {
             LOGGER.error("Failed to fetch all latest certified not checked out components with type {}. Status is {}. ", componentType, getComponentsRes.right().value());
             result = Either.right(getComponentsRes.right().value());
         }
-        if(getComponentsRes.isRight()){
+        if (getComponentsRes.isRight()) {
             result = Either.left(new ArrayList<>());
         }
-        if(result == null){
-            for(GraphVertex component : getComponentsRes.left().value()){
-                String invariantUUID = (String)component.getJsonMetadataField(JsonPresentationFields.INVARIANT_UUID);
-                if(((String)component.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE)).equals(LifecycleStateEnum.CERTIFIED.name())){
-                    latestCertifiedMap.put(invariantUUID, (String)component.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID));
+        if (result == null) {
+            for (GraphVertex component : getComponentsRes.left().value()) {
+                String invariantUUID = (String) component.getJsonMetadataField(JsonPresentationFields.INVARIANT_UUID);
+                if (((String) component.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE)).equals(LifecycleStateEnum.CERTIFIED.name())) {
+                    latestCertifiedMap.put(invariantUUID, (String) component.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID));
                 } else {
-                    latestNotCertifiedMap.put(invariantUUID, (String)component.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID));
+                    latestNotCertifiedMap.put(invariantUUID, (String) component.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID));
                 }
             }
-            result = Either.left(latestCertifiedMap.entrySet().stream().filter(e->!latestNotCertifiedMap.containsKey(e.getKey())).map(e->e.getValue()).collect(Collectors.toList()));
+            result = Either.left(latestCertifiedMap.entrySet().stream().filter(e -> !latestNotCertifiedMap.containsKey(e.getKey())).map(Map.Entry::getValue).collect(Collectors.toList()));
         }
         return result;
     }
 
-    private Either<List<GraphVertex>, TitanOperationStatus> getAllLatestCertifiedComponents(VertexTypeEnum vertexType, ComponentTypeEnum componentType){
+    private Either<List<GraphVertex>, TitanOperationStatus> getAllLatestCertifiedComponents(VertexTypeEnum vertexType, ComponentTypeEnum componentType) {
 
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        
+
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
-        if(vertexType == VertexTypeEnum.TOPOLOGY_TEMPLATE && componentType == ComponentTypeEnum.RESOURCE)
+        if (vertexType == VertexTypeEnum.TOPOLOGY_TEMPLATE && componentType == ComponentTypeEnum.RESOURCE)
             propertiesNotToMatch.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.CVFC.name());
         return titanDao.getByCriteria(vertexType, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
     }
 
     protected Either<List<String>, TitanOperationStatus> findResourcesPathRecursively(GraphVertex nodeTypeV, List<String> allCertifiedUids) {
         Either<List<GraphVertex>, TitanOperationStatus> parentResourceRes = titanDao.getParentVertecies(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseMetadata);
-        if(parentResourceRes.isRight()){
+        if (parentResourceRes.isRight()) {
             return Either.right(parentResourceRes.right().value());
         }
         List<GraphVertex> derivedResourcesUid = new ArrayList<>();
-        for(GraphVertex chV: parentResourceRes.left().value()){
-            Optional<String> op = allCertifiedUids.stream().filter(id -> id.equals((String)chV.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID))).findAny();
-            if(op.isPresent()){
+        for (GraphVertex chV : parentResourceRes.left().value()) {
+            Optional<String> op = allCertifiedUids.stream().filter(id -> id.equals((String) chV.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID))).findAny();
+            if (op.isPresent()) {
                 derivedResourcesUid.add(chV);
             }
         }
         return null;
     }
 
-    private  Either<List<GraphVertex>,  StorageOperationStatus> getLatestByName(GraphPropertyEnum property, String nodeName){
+    private Either<List<GraphVertex>, StorageOperationStatus> getLatestByName(GraphPropertyEnum property, String nodeName) {
 
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
@@ -728,8 +834,8 @@ public class UpgradeMigration1710 implements PostMigration {
         }
         List<GraphVertex> resources = highestResources.left().value();
         List<GraphVertex> result = new ArrayList<>();
-        for(GraphVertex component:resources){
-            if(((String)component.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE)).equals(LifecycleStateEnum.CERTIFIED.name())){
+        for (GraphVertex component : resources) {
+            if (((String) component.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE)).equals(LifecycleStateEnum.CERTIFIED.name())) {
                 result.add(component);
             }
         }

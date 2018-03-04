@@ -20,16 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.awt.AWTException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -40,6 +32,7 @@ import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.CompositionScreenEnum
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.StepsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.HeatWithParametersDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
@@ -47,11 +40,7 @@ import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.HomeUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
@@ -61,8 +50,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class VfArtifacts extends SetupCDTest{
 
@@ -115,10 +111,10 @@ public class VfArtifacts extends SetupCDTest{
 	@Test
 	public void uploadUpdatedHeatEnv() throws Exception{
 		
-		String vnfFile = VMSP_PXMC_30_1607_E2E_ZIP;
+		String vnfFile = VFW_FNAT_30_1607_E2E_ZIP;
 		File updateEnvFile = null;
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		String vspName = vsp.left;
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
 		Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
@@ -143,7 +139,7 @@ public class VfArtifacts extends SetupCDTest{
 		String vnfFile = VFW_FNAT_30_1607_E2E_ZIP;
 		File updateEnvFile = null;
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		String vspName = vsp.left;
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
 		Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
@@ -167,7 +163,7 @@ public class VfArtifacts extends SetupCDTest{
 		String vnfFile = VLANDSLIDE_LDST_30_1607_E2E_ZIP;
 		File updateEnvFile = null;
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		String vspName = vsp.left;
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
 		Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
@@ -196,7 +192,7 @@ public class VfArtifacts extends SetupCDTest{
 		String updatedVnfFile= VLANDSLIDE_LDSA_30_1607_E2E_ZIP;
 		String downloadDirPath=SetupCDTest.getConfig().getWindowsDownloadDirectory();
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, Map<String, String>> CreatedVsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> CreatedVsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		String vspName = CreatedVsp.left;
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
 		OnboardingUiUtils.updateVnfAndValidate(vnfsRepositoryPath, CreatedVsp, updatedVnfFile, getUser());
@@ -222,7 +218,7 @@ public class VfArtifacts extends SetupCDTest{
 		String vnfFile = VSAEGW_FDNT_30_1607_E2E_ZIP;
 		String downloadDirPath=SetupCDTest.getConfig().getWindowsDownloadDirectory();
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, Map<String, String>> vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String,VendorSoftwareProductObject> vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		Map<String, File> currentZipEnvfiles=ArtifactBusinessLogic.createEnvFilesListFromCsar(vsp.left,downloadDirPath);
 		GeneralUIUtils.findComponentAndClick(vsp.left);
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -246,7 +242,7 @@ public class VfArtifacts extends SetupCDTest{
 		String downloadDirPath=SetupCDTest.getConfig().getWindowsDownloadDirectory();
 		String vnfFile = VSAEGW_FDNT_30_1607_E2E_ZIP;
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, Map<String, String>> vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		Map<String, File> currentZipEnvfiles=ArtifactBusinessLogic.createEnvFilesListFromCsar(vsp.left,downloadDirPath);
 		GeneralUIUtils.findComponentAndClick(vsp.left);
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -271,7 +267,7 @@ public class VfArtifacts extends SetupCDTest{
 		String vnfFile = VFW_FCGI_30_1607_E2E_ZIP;
 		String downloadDirPath=SetupCDTest.getConfig().getWindowsDownloadDirectory();
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, Map<String, String>> CreatedVsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> CreatedVsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, CreatedVsp.left, "0.1");
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
         List<HeatWithParametersDefinition> envFilesList = ArtifactBusinessLogic.extractHeatWithParametersDefinition(deploymentArtifacts);
@@ -315,7 +311,7 @@ public class VfArtifacts extends SetupCDTest{
 	public void checkDefaultCreatedEnvArtifacts() throws Exception{
 		String vnfFile = VIXIA_IXLA_30_1607_E2E_ZIP;
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		String vspName = vsp.left;
 		Map<String, File> generatedEnvFileList = ArtifactBusinessLogic.createEnvFilesListFromCsar(vspName, filePath);
 		HomeUtils.findComponentAndClick(vspName);
@@ -337,7 +333,7 @@ public class VfArtifacts extends SetupCDTest{
 		String stringForLog = String.format("%s:%s:%s:%s", vnfFile, updatedVnfFile, expectedHeatVersion, expectedHeatEnvVersion);
 		setLog(stringForLog);
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		String vspName = vsp.left;
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
 		OnboardingUiUtils.updateVnfAndValidate(vnfsRepositoryPath, vsp, updatedVnfFile, getUser());
@@ -362,7 +358,7 @@ public class VfArtifacts extends SetupCDTest{
 		String vnfFile = VFW_FCGI_30_1607_E2E_ZIP;
 		String updatedVnfFile = VFW_FCGI_30_1607_E2E_ZIP;
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
 		String vspName = vsp.left;
 		
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();

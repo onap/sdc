@@ -24,12 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.StepsEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -54,7 +50,7 @@ public class Service_Tests_UI extends SetupCDTest{
 	public void declareVL_CP_InputsInServiceLevel() throws Exception {
 		String vnfFile = "FDNT.zip";
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
@@ -73,7 +69,7 @@ public class Service_Tests_UI extends SetupCDTest{
 	public void CreateServiceWithCpInstance() throws Exception {
 		String vnfFile = "FDNT.zip";
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String,Map<String,String>> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		Pair<String, VendorSoftwareProductObject> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);

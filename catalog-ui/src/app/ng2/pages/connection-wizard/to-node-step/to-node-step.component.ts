@@ -43,10 +43,6 @@ export class ToNodeStepComponent implements IStepComponent{
         return false;
     }
 
-    onCapabilityPropertiesUpdate(capabilityProperties:Array<PropertyModel>) {
-        this.connectWizardService.selectedMatch.capabilityProperties = capabilityProperties;
-    }
-
     private updateSelectedReqOrCap = (selected:Requirement|Capability):void => {
         if (!selected) {
             if (this.connectWizardService.selectedMatch.isFromTo) {

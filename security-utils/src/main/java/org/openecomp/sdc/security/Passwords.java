@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,8 +30,10 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 
+
 public class Passwords {
 
+	private static Logger log = LoggerFactory.getLogger( Passwords.class.getName());
 	private static final Random RANDOM = new SecureRandom();
 	private static final int SALT = 0;
 	private static final int HASH = 1;
@@ -47,13 +52,14 @@ public class Passwords {
 	 * @return a "salt:hash" value
 	 */
 	public static String hashPassword(String password) {
-		byte[] salt = getNextSalt();
-		byte byteData[] = hash(salt, password.getBytes());
-		if (byteData != null) {
-			return toHex(salt) + ":" + toHex(byteData);
+		if (password!=null){
+			byte[] salt = getNextSalt();
+			byte byteData[] = hash(salt, password.getBytes());
+			if (byteData != null) {
+				return toHex(salt) + ":" + toHex(byteData);
+			}
 		}
 		return null;
-
 	}
 
 	/**
@@ -64,6 +70,15 @@ public class Passwords {
 	 * @return
 	 */
 	public static boolean isExpectedPassword(String password, String expectedHash) {
+		if (password==null && expectedHash==null)
+			return true;
+		if (password==null || expectedHash==null)	//iff exactly 1 is null
+			return false;
+		if (!expectedHash.contains(":")){
+			log.error("invalid password expecting hash at the prefix of the password (ex. e0277df331f4ff8f74752ac4a8fbe03b:6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0)\n" +
+					"\t\t\t");
+			return false;
+		}
 		String[] params = expectedHash.split(":");
 		return isExpectedPassword(password, params[SALT], params[HASH]);
 	}
@@ -78,6 +93,15 @@ public class Passwords {
 	 * @return true if the password matched the hash
 	 */
 	public static boolean isExpectedPassword(String password, String salt, String hash) {
+		if ( password == null &&  hash == null )
+			return true;
+		if ( salt == null ){
+			log.error("salt must be initialized");
+			return false;
+		}
+		//unintialized params
+		if ( password == null ||  hash == null )
+			return false;
 		byte[] saltBytes = fromHex(salt);
 		byte[] hashBytes = fromHex(hash);
 
@@ -137,6 +161,8 @@ public class Passwords {
 	 * @return the hex string decoded into a byte array
 	 */
 	private static byte[] fromHex(String hex) {
+		if ( hex == null )
+			return null;
 		byte[] binary = new byte[hex.length() / 2];
 		for (int i = 0; i < binary.length; i++) {
 			binary[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);

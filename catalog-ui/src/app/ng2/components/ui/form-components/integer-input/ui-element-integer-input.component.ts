@@ -33,9 +33,8 @@ export class UiElementIntegerInputComponent extends UiElementBase implements UiE
         //this.pattern = this.validation.validationPatterns.comment;
     }
 
-    onSave() {
-        if (!this.control.invalid){
-            this.baseEmitter.emit(this.value ? JSON.parse(this.value) : this.value);
-        }
+    onChange() {
+        this.value = this.control.valid && this.value ? JSON.parse(this.value) : this.value;
+        super.onChange();
     }
 }

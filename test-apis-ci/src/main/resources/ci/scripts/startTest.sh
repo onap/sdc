@@ -91,7 +91,7 @@ ADD_USERS_SCRIPT="addUsersFromList_new.sh"
 USER_LIST="conf/userList.txt"
 chmod +x ${ADD_USERS_SCRIPT}
 echo "add users..."
-`./${ADD_USERS_SCRIPT} -ip ${BE_IP} -f ${USER_LIST}`
+./${ADD_USERS_SCRIPT} -ip ${BE_IP} -f ${USER_LIST}
 
 
 
@@ -137,7 +137,7 @@ fi
 COPY_REPORT_SCRIPT="copyToStorage.sh"
 chmod +x ${COPY_REPORT_SCRIPT}
 echo "copy report to storage..."
-sh ./${COPY_REPORT_SCRIPT} ${REPORT_NAME} ${VERSION} ${MYENV}
+( ./${COPY_REPORT_SCRIPT} ${REPORT_NAME} ${VERSION} ${MYENV} )
 
 
 MAILING_SCRIPT_NAME="sendMail.sh"

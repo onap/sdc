@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -23,6 +24,10 @@ public class DataForMergeHolder {
     private Map<String, ArtifactDefinition> origCompInstDeploymentArtifactsCreatedOnTheInstance;
     private Map<String, ArtifactDefinition> origCompInstInformationalArtifactsCreatedOnTheInstance;
     private List<ArtifactDefinition> origComponentInstanceHeatEnvArtifacts;
+    private VfRelationsMergeInfo vfRelationsMergeInfo;
+    private List<CapabilityDefinition> origInstanceCapabilities;
+    private Component origInstanceNode;
+    private String origComponentInstId;
 
     public DataForMergeHolder() {
         origComponentInstanceInputs = new ArrayList<>();
@@ -30,7 +35,7 @@ public class DataForMergeHolder {
         origComponentInputs = new ArrayList<>();
         origCompInstDeploymentArtifactsCreatedOnTheInstance = new HashMap<>();
         origCompInstDeploymentArtifactsCreatedOnTheInstance = new HashMap<>();
-
+        origInstanceCapabilities = new ArrayList<>();
     }
 
     public List<ArtifactDefinition> getOrigComponentInstanceHeatEnvArtifacts() {
@@ -109,6 +114,35 @@ public class DataForMergeHolder {
         origCompInstInformationalArtifactsCreatedOnTheInstance = origInformationalArtifacts;
     }
 
+    public void setVfRelationsInfo(VfRelationsMergeInfo vfRelationsMergeInfo) {
+        this.vfRelationsMergeInfo = vfRelationsMergeInfo;
+    }
 
+    public VfRelationsMergeInfo getVfRelationsMergeInfo() {
+        return vfRelationsMergeInfo;
+    }
 
+    public List<CapabilityDefinition> getOrigInstanceCapabilities() {
+        return origInstanceCapabilities;
+    }
+
+    public void setOrigInstanceCapabilities(List<CapabilityDefinition> origInstanceCapabilities) {
+        this.origInstanceCapabilities = origInstanceCapabilities;
+    }
+
+    public Component getOrigInstanceNode() {
+        return origInstanceNode;
+    }
+
+    public void setOrigInstanceNode(Component origInstanceNode) {
+        this.origInstanceNode = origInstanceNode;
+    }
+
+    public String getOrigComponentInstId() {
+        return origComponentInstId;
+    }
+
+    public void setOrigComponentInstId(String origComponentInstId) {
+        this.origComponentInstId = origComponentInstId;
+    }
 }

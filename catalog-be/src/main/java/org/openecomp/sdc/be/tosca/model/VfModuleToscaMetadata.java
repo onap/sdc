@@ -22,54 +22,54 @@ package org.openecomp.sdc.be.tosca.model;
 
 public class VfModuleToscaMetadata implements IToscaMetadata {
 
-	private String vfModuleModelName;
-	private String vfModuleModelInvariantUUID;
-	private String vfModuleModelUUID;
-	private String vfModuleModelVersion;
-	private String vfModuleModelCustomizationUUID;
+    private String vfModuleModelName;
+    private String vfModuleModelInvariantUUID;
+    private String vfModuleModelUUID;
+    private String vfModuleModelVersion;
+    private String vfModuleModelCustomizationUUID;
 
-	@Override
-	public void setName(String name) {
-		vfModuleModelName = name;
-	}
+    @Override
+    public void setName(String name) {
+        vfModuleModelName = name;
+    }
 
-	@Override
-	public void setInvariantUUID(String invariantUUID) {
-		vfModuleModelInvariantUUID = invariantUUID;
-	}
+    @Override
+    public void setInvariantUUID(String invariantUUID) {
+        vfModuleModelInvariantUUID = invariantUUID;
+    }
 
-	@Override
-	public void setUUID(String uUID) {
-		vfModuleModelUUID = uUID;
-	}
+    @Override
+    public void setUUID(String uUID) {
+        vfModuleModelUUID = uUID;
+    }
 
-	@Override
-	public void setVersion(String version) {
-		vfModuleModelVersion = version;
-	}
+    @Override
+    public void setVersion(String version) {
+        vfModuleModelVersion = version;
+    }
 
-	public String getVfModuleModelName() {
-		return vfModuleModelName;
-	}
+    public String getVfModuleModelName() {
+        return vfModuleModelName;
+    }
 
-	public String getVfModuleModelInvariantUUID() {
-		return vfModuleModelInvariantUUID;
-	}
+    public String getVfModuleModelInvariantUUID() {
+        return vfModuleModelInvariantUUID;
+    }
 
-	public String getVfModuleModelUUID() {
-		return vfModuleModelUUID;
-	}
+    public String getVfModuleModelUUID() {
+        return vfModuleModelUUID;
+    }
 
-	public String getVfModuleModelVersion() {
-		return vfModuleModelVersion;
-	}
+    public String getVfModuleModelVersion() {
+        return vfModuleModelVersion;
+    }
 
-	public String getVfModuleModelCustomizationUUID() {
-		return vfModuleModelCustomizationUUID;
-	}
+    public String getVfModuleModelCustomizationUUID() {
+        return vfModuleModelCustomizationUUID;
+    }
 
-	public void setCustomizationUUID(String customizationUUID) {
-		this.vfModuleModelCustomizationUUID = customizationUUID;
-	}
+    public void setCustomizationUUID(String customizationUUID) {
+        this.vfModuleModelCustomizationUUID = customizationUUID;
+    }
 
 }

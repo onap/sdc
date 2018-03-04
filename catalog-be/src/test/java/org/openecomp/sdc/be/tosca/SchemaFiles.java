@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,46 +31,46 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SchemaFiles {
-	
-	@Test
-	public void testValidateYamlNormativeFiles(){
-		String importToscaPath = "src/main/resources/import/tosca";
-		assertTrue(checkValidYamlInFileTree(importToscaPath));
-	}
-	
-	@Test
-	public void testRainyYamlNormativeFiles(){
-		String importToscaPathTest = "src/test/resources/yamlValidation";
-		assertFalse(checkValidYamlInFileTree(importToscaPathTest));
-	}
-	
-	private boolean checkValidYamlInFileTree(String fileTree)  {
-		
-		try {
-			List<Path> fileTreeYamlList = Files.walk(Paths.get(fileTree))
-			  .filter(path -> path.getFileName().toString().toLowerCase().endsWith(".yml"))
-			  .collect(Collectors.toList());
-			
-			for (Path yamlFile : fileTreeYamlList) {
-				try {
-					FileInputStream inputStream = new FileInputStream(yamlFile.toAbsolutePath().toString());
-			    	Yaml yaml = new Yaml();
-			    	Object content = yaml.load(inputStream);
-				} catch (Exception e) {	
-					System.out.println("Not valid yaml in file creation : " + yamlFile.toAbsolutePath().toString());
-					return false;
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Error in reading file from folder : " + fileTree);
-			return false;
-		}
-		return true;
-	}
-	
-	
+
+    @Test
+    public void testValidateYamlNormativeFiles(){
+        String importToscaPath = "src/main/resources/import/tosca";
+        assertTrue(checkValidYamlInFileTree(importToscaPath));
+    }
+
+    @Test
+    public void testRainyYamlNormativeFiles(){
+        String importToscaPathTest = "src/test/resources/yamlValidation";
+        assertFalse(checkValidYamlInFileTree(importToscaPathTest));
+    }
+
+    private boolean checkValidYamlInFileTree(String fileTree)  {
+
+        try {
+            List<Path> fileTreeYamlList = Files.walk(Paths.get(fileTree))
+              .filter(path -> path.getFileName().toString().toLowerCase().endsWith(".yml"))
+              .collect(Collectors.toList());
+
+            for (Path yamlFile : fileTreeYamlList) {
+                try {
+                    FileInputStream inputStream = new FileInputStream(yamlFile.toAbsolutePath().toString());
+                    Yaml yaml = new Yaml();
+                    Object content = yaml.load(inputStream);
+                } catch (Exception e) {
+                    System.out.println("Not valid yaml in file creation : " + yamlFile.toAbsolutePath().toString());
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error in reading file from folder : " + fileTree);
+            return false;
+        }
+        return true;
+    }
+
+
 }

@@ -23,31 +23,31 @@ package org.openecomp.sdc.be.externalapi.servlet.representation;
 import java.util.List;
 
 public class ServiceAssetDetailedMetadata extends ServiceAssetMetadata {
-	private String lastUpdaterFullName;
-	private List<ResourceInstanceMetadata> resources;
-	private List<ArtifactMetadata> artifacts;
+    private String lastUpdaterFullName;
+    private List<ResourceInstanceMetadata> resources;
+    private List<ArtifactMetadata> artifacts;
 
-	public String getLastUpdaterFullName() {
-		return lastUpdaterFullName;
-	}
+    public String getLastUpdaterFullName() {
+        return lastUpdaterFullName;
+    }
 
-	public void setLastUpdaterFullName(String lastUpdaterFullName) {
-		this.lastUpdaterFullName = lastUpdaterFullName;
-	}
+    public void setLastUpdaterFullName(String lastUpdaterFullName) {
+        this.lastUpdaterFullName = lastUpdaterFullName;
+    }
 
-	public List<ResourceInstanceMetadata> getResources() {
-		return resources;
-	}
+    public List<ResourceInstanceMetadata> getResources() {
+        return resources;
+    }
 
-	public void setResources(List<ResourceInstanceMetadata> resources) {
-		this.resources = resources;
-	}
+    public void setResources(List<ResourceInstanceMetadata> resources) {
+        this.resources = resources;
+    }
 
-	public List<ArtifactMetadata> getArtifacts() {
-		return artifacts;
-	}
+    public List<ArtifactMetadata> getArtifacts() {
+        return artifacts;
+    }
 
-	public void setArtifacts(List<ArtifactMetadata> artifacts) {
-		this.artifacts = artifacts;
-	}
+    public void setArtifacts(List<ArtifactMetadata> artifacts) {
+        this.artifacts = artifacts;
+    }
 }

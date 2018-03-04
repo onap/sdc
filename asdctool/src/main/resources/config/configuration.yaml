@@ -31,15 +31,12 @@ appVersion: 1.1.0
 artifactGeneratorConfig: Artifact-Generator.properties
 resourcesForUpgrade:
  5.0:
-  - org.openecomp.resource.cp.extCP
-  - tosca.nodes.network.Network
-  - tosca.nodes.network.Port
-  - org.openecomp.resource.cp.nodes.network.SubInterface
+  - tosca.nodes.Root
 skipUpgradeFailedVfs: true
 skipUpgradeVSPs: true
 autoHealingOwner: jh0003
 
-titanCfgFile: C:\Users\im453s\git\sdc\asdctool\src\main\resources\config\titan.properties
+titanCfgFile: src\main\resources\config\titan.properties
 titanMigrationKeySpaceCfgFile: src\main\resources\config\titan-migration.properties
 titanInMemoryGraph: false
 titanLockTimeout: 1800
@@ -206,7 +203,6 @@ toscaArtifacts:
       type: TOSCA_CSAR
       description: TOSCA definition package of the asset
 
-
 #Informational artifacts placeHolder
 excludeResourceCategory:
   - Generic
@@ -333,7 +329,7 @@ serviceDeploymentArtifacts:
             - xml
     AAI_VF_INSTANCE_MODEL:
         acceptedTypes:
-            - xml 
+            - xml
     OTHER:
         acceptedTypes:
 

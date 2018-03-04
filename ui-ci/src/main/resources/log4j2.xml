@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR" packages="com.epam.ta.reportportal.log4j.appender">
+    <properties>
+        <property name="pattern">[%d{HH:mm:ss,SSS}] %-5p (%F:%L) - %m%n</property>
+        <property name="report.pattern">%m%n</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern}"/>
+        </Console>
+        <ReportPortalLog4j2Appender name="ReportPortalAppender">
+            <PatternLayout pattern="${pattern}"/>
+        </ReportPortalLog4j2Appender>
+        <Console name="ConsoleReport" target="SYSTEM_OUT">
+            <PatternLayout pattern="${report.pattern}"/>
+        </Console>
+        <ReportPortalLog4j2Appender name="ReportPortalLogReport">
+            <PatternLayout pattern="${report.pattern}"/>
+        </ReportPortalLog4j2Appender>
+    </Appenders>
+    <Loggers>
+        <Root level="all">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ReportPortalAppender"/>
+        </Root>
+        <logger name="upload.file.to.reportportal" level="all" additivity="false">
+            <AppenderRef ref="ReportPortalAppender"/>
+        </logger>
+        <logger name="logger.report" level="all" additivity="false">
+<!--             <AppenderRef ref="ConsoleReport"/> -->
+            <AppenderRef ref="ReportPortalLogReport"/>
+        </logger>
+        <logger name="rp.org.apache.http" level="WARN"/>
+        <logger name="org.apache.http" level="WARN"/>
+        <logger name="com.epam.reportportal" level="WARN"/>
+        <logger name="CouchDbDataAdapter" level="WARN"/>
+    </Loggers>
+</Configuration>

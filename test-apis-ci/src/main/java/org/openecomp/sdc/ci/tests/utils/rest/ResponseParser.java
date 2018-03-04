@@ -20,22 +20,16 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -44,12 +38,13 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserialiser;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
@@ -57,11 +52,16 @@ import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.List;
+import java.util.Map;
 
 public class ResponseParser {
 
@@ -104,14 +104,23 @@ public class ResponseParser {
 
 	public static String getValueFromJsonResponse(String response, String fieldName) {
 		try {
-			JSONObject jsonResp = (JSONObject) JSONValue.parse(response);
-			Object fieldValue = jsonResp.get(fieldName);
-			return fieldValue.toString();
+//			JSONObject jsonResp = (JSONObject) JSONValue.parse(response);
+			String[] split = fieldName.split(":");
+			String fieldValue = response;
 
+			for(int i=0; i<split.length; i++) {
+				fieldValue = parser(fieldValue, split[i]);
+			}
+			return fieldValue;
 		} catch (Exception e) {
 			return null;
 		}
 
+	}
+
+	private static String parser(String response, String field){
+		JSONObject fieldValue = (JSONObject) JSONValue.parse(response);
+		return fieldValue.get(field).toString();
 	}
 
 	public static String getUniqueIdFromResponse(RestResponse response) {
@@ -152,7 +161,7 @@ public class ResponseParser {
 		JsonObject jObject = jElement.getAsJsonObject();
 		JsonArray arrayOfObjects = (JsonArray) jObject.get(resourceType);
 		Gson gson = new Gson();
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		ResourceRespJavaObject jsonToJavaObject = new ResourceRespJavaObject();
 
 		for (int counter = 0; counter < arrayOfObjects.size(); counter++) {
@@ -169,19 +178,19 @@ public class ResponseParser {
 
 	}
 
+	private static ObjectMapper newObjectMapper() {
+		SimpleModule module = new SimpleModule("customDeserializationModule");
+		module.addDeserializer(PropertyConstraint.class, new PropertyConstraintJacksonDeserializer());
+		return new ObjectMapper()
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+			.registerModule(module);
+	}
+
 	public static Resource convertResourceResponseToJavaObject(String response) {
-
-		ObjectMapper mapper = new ObjectMapper();
-		final SimpleModule module = new SimpleModule("customerSerializationModule",
-				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> deserializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, deserializer);
-
-		mapper.registerModule(module);
+		ObjectMapper mapper = newObjectMapper();
 		Resource resource = null;
 		try {
-//			TODO Andrey L. uncomment line below in case to ignore on unknown properties, not recommended  
-			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			resource = mapper.readValue(response, Resource.class);
 			
 			logger.debug(resource.toString());
@@ -199,21 +208,28 @@ public class ResponseParser {
 
 	public static ComponentInstanceProperty convertPropertyResponseToJavaObject(String response) {
 
-		ObjectMapper mapper = new ObjectMapper();
-		final SimpleModule module = new SimpleModule("customerSerializationModule",	new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
-
-		mapper.registerModule(module);
+		ObjectMapper mapper = newObjectMapper();
 		ComponentInstanceProperty propertyDefinition = null;
 		try {
-			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			propertyDefinition = mapper.readValue(response, ComponentInstanceProperty.class);
 			logger.debug(propertyDefinition.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return propertyDefinition;
+	}
+
+	public static GroupDefinition convertPropertyResponseToObject(String response) {
+
+		ObjectMapper mapper = newObjectMapper();
+		GroupDefinition groupDefinition = null;
+		try {
+			groupDefinition = mapper.readValue(response, GroupDefinition.class);
+			logger.debug(groupDefinition.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return groupDefinition;
 	}
 
 	public static String toJson(Object object) {
@@ -225,7 +241,7 @@ public class ResponseParser {
 		ObjectMapper mapper = new ObjectMapper();
 		ArtifactDefinition artifactDefinition = null;
 		try {
-			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			artifactDefinition = mapper.readValue(response, ArtifactDefinition.class);
 			logger.debug(artifactDefinition.toString());
 		} catch (IOException e) {
@@ -257,18 +273,10 @@ public class ResponseParser {
 
 	public static <T> T parseToObjectUsingMapper(String json, Class<T> clazz) {
 		// Generic convert
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = newObjectMapper();
 		T object = null;
-		final SimpleModule module = new SimpleModule("customerSerializationModule",
-				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
-		mapper.registerModule(module);
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try {
 			object = mapper.readValue(json, clazz);
-			// System.out.println("Class: "+clazz.getSimpleName()+", json:
-			// "+json);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -286,25 +294,11 @@ public class ResponseParser {
 		return artifactReqDetails;
 	}
 
-	public static <T> void addDeserializer(SimpleModule module, Class<T> clazz,
-			final JsonDeserializer<T> deserializer) {
-		module.addDeserializer(clazz, deserializer);
-	}
-
 	public static Service convertServiceResponseToJavaObject(String response) {
 
-		ObjectMapper mapper = new ObjectMapper();
-		final SimpleModule module = new SimpleModule("customerSerializationModule",
-				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> deserializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, deserializer);
-
-		mapper.registerModule(module);
+		ObjectMapper mapper = newObjectMapper();
 		Service service = null;
 		try {
-//			TODO Andrey L. uncomment line below in case to ignore on unknown properties, not recommended, added by Matvey 
-			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			
 			service = mapper.readValue(response, Service.class);
 			logger.debug(service.toString());
 		} catch (IOException e) {
@@ -316,18 +310,9 @@ public class ResponseParser {
 
 	public static Product convertProductResponseToJavaObject(String response) {
 
-		ObjectMapper mapper = new ObjectMapper();
-		
-		final SimpleModule module = new SimpleModule("customerSerializationModule",
-				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
-
-		mapper.registerModule(module);
-		
+		ObjectMapper mapper = newObjectMapper();
 		Product product = null;
 		try {
-			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			product = mapper.readValue(response, Product.class);
 			logger.debug(product.toString());
 		} catch (IOException e) {
@@ -339,16 +324,9 @@ public class ResponseParser {
 
 	public static ComponentInstance convertComponentInstanceResponseToJavaObject(String response) {
 
-		ObjectMapper mapper = new ObjectMapper();
-		final SimpleModule module = new SimpleModule("customerSerializationModule",
-				new Version(1, 0, 0, "static version"));
-		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
-		addDeserializer(module, PropertyConstraint.class, desrializer);
-
-		mapper.registerModule(module);
+		ObjectMapper mapper = newObjectMapper();
 		ComponentInstance componentInstance = null;
 		try {
-			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			componentInstance = mapper.readValue(response, ComponentInstance.class);
 			logger.debug(componentInstance.toString());
 		} catch (IOException e) {
@@ -360,7 +338,7 @@ public class ResponseParser {
 	}
 
 	public static List<String> getValuesFromJsonArray(RestResponse message) throws Exception {
-		List<String> artifactTypesArrayFromApi = new ArrayList<String>();
+		List<String> artifactTypesArrayFromApi = new ArrayList<>();
 
 		org.json.JSONObject responseObject = new org.json.JSONObject(message.getResponse());
 		JSONArray jArr = responseObject.getJSONArray("artifactTypes");
@@ -392,7 +370,7 @@ public class ResponseParser {
 	}
 
 	public static List<Map<String, Object>> getAuditFromMessage(Map<String, Object> auditingMessage) {
-		List<Map<String, Object>> auditList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> auditList = new ArrayList<>();
 		auditList.add(auditingMessage);
 		return auditList;
 	}
@@ -425,8 +403,8 @@ public class ResponseParser {
 	}
 
 	public static List<String> getDerivedListFromJson(RestResponse res) throws JSONException {
-		JSONArray listFromJson = getListFromJson(res, "derivedList");
-		List<String> lst = new ArrayList<String>();
+		JSONArray listFromJson = getListFromJson(res, "derivedFrom");
+		List<String> lst = new ArrayList<>();
 		for (int i = 0; i < listFromJson.length(); i++) {
 			lst.add(listFromJson.getString(i));
 		}
@@ -440,7 +418,7 @@ public class ResponseParser {
 	}
 
 	public static List<Map<String, Object>> getListOfMapsFromJson(RestResponse res, String field) throws Exception {
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> list = new ArrayList<>();
 		JSONArray listFromJson = getListFromJson(res, field);
 		for (int i = 0; i < listFromJson.length(); i++) {
 			Map<String, Object> convertStringToMap = convertStringToMap(listFromJson.getString(i));
@@ -472,7 +450,7 @@ public class ResponseParser {
 
 		// Map<String, ArrayList<Component>> map = new HashMap<String,
 		// ArrayList<Component>>();
-		Map<String, List<Component>> map = new HashMap<String, List<Component>>();
+		Map<String, List<Component>> map = new HashMap<>();
 
 		JsonElement jElement = new JsonParser().parse(response);
 		JsonObject jObject = jElement.getAsJsonObject();
@@ -531,7 +509,7 @@ public class ResponseParser {
 	
 	public static Map<Long, ServiceDistributionStatus> convertServiceDistributionStatusToObject(String response) throws ParseException {
 
-		Map<Long, ServiceDistributionStatus> serviceDistributionStatusMap = new HashMap<Long, ServiceDistributionStatus>();
+		Map<Long, ServiceDistributionStatus> serviceDistributionStatusMap = new HashMap<>();
 		ServiceDistributionStatus serviceDistributionStatusObject = null;
 		
 		JsonElement jElement = new JsonParser().parse(response);
@@ -551,7 +529,7 @@ public class ResponseParser {
 	
 	public static Map<String, String> getPropertiesNameType(RestResponse restResponse)
 			throws JSONException {
-		Map<String, String> propertiesMap = new HashMap<String, String>();
+		Map<String, String> propertiesMap = new HashMap<>();
 		JSONArray propertiesList = getListFromJson(restResponse, "properties");
 		for (int i = 0; i < propertiesList.length() ; i ++){
 			JSONObject  prop = (JSONObject) JSONValue.parse(propertiesList.get(i).toString());

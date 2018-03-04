@@ -21,36 +21,36 @@
 package org.openecomp.sdc.be.info;
 
 public class GroupTemplateInfo {
-	String groupName;
-	boolean isBase;
-	ArtifactTemplateInfo artifactTemplateInfo;
+    String groupName;
+    boolean isBase;
+    ArtifactTemplateInfo artifactTemplateInfo;
 
-	public GroupTemplateInfo() {
-		super();
-	}
+    public GroupTemplateInfo() {
+        super();
+    }
 
-	public String getGroupName() {
-		return groupName;
-	}
+    public String getGroupName() {
+        return groupName;
+    }
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
-	public boolean isBase() {
-		return isBase;
-	}
+    public boolean isBase() {
+        return isBase;
+    }
 
-	public void setBase(boolean isBase) {
-		this.isBase = isBase;
-	}
+    public void setBase(boolean isBase) {
+        this.isBase = isBase;
+    }
 
-	public ArtifactTemplateInfo getArtifactTemplateInfo() {
-		return artifactTemplateInfo;
-	}
+    public ArtifactTemplateInfo getArtifactTemplateInfo() {
+        return artifactTemplateInfo;
+    }
 
-	public void setArtifactTemplateInfo(ArtifactTemplateInfo artifactTemplateInfo) {
-		this.artifactTemplateInfo = artifactTemplateInfo;
-	}
+    public void setArtifactTemplateInfo(ArtifactTemplateInfo artifactTemplateInfo) {
+        this.artifactTemplateInfo = artifactTemplateInfo;
+    }
 
 }

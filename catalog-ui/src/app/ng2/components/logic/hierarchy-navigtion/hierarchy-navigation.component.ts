@@ -37,12 +37,10 @@ export class HierarchyNavigationComponent {
 
     onClick = ($event, item) => {
         $event.stopPropagation();
-        this.selectedItem = item;
         this.updateSelected.emit(item);
     };
 
     onSelectedUpdate = ($event) => {
-        this.selectedItem = $event;
         this.updateSelected.emit($event);
     }
 }

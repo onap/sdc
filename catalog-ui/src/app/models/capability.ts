@@ -22,6 +22,7 @@
  * Created by obarda on 4/20/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {PropertyModel} from "./properties";
 import {Requirement} from "./requirement";
 

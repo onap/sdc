@@ -1,0 +1,110 @@
+.zone-child {
+    position:relative;
+    width:76px;
+    margin:5px;
+
+    .zone-child__handle {
+        display:none;
+        position:absolute;
+        right:4px;
+        top:10px;
+        width:22px;
+        height:22px;
+        cursor:pointer;
+        border: solid white 1px;
+        border-radius: 2px;
+        text-align: center;
+        font-weight:bold;
+    }
+
+    .zone-child__body {
+        margin:0 auto;
+        width:43px;
+        height:43px;
+        display:flex;
+        padding:3px;
+
+    }
+
+    .zone-child__body-content {
+        border-radius: 2px;
+        flex:1;
+        color:white;
+        font-size:18px;
+        text-align:center;       
+        display:flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .zone-child__name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        text-align:center;
+    }
+    /* Dynamic classes below */
+
+    &.mode-1, &.mode-2, &.mode-3 { //hover, selected, tag
+        .zone-child__body {
+            border:solid 2px;
+            border-radius: 2px;
+            padding:2px;
+            cursor:pointer;
+        }
+        .zone-child__handle{
+            display:block;
+            cursor:pointer;
+        }
+    }
+
+    &.locked {
+        cursor: default;
+    }
+    
+    // &:not(.locked):hover .zone-child__handle{
+    //     display:block;
+    // }
+    .zone-child__body {
+        cursor: default;
+    }
+    &.mode-3 .zone-child__handle {
+        width:24px;
+        height:24px;
+        right:3px;
+        top:9px;
+        display:block;
+        background-image: linear-gradient(-140deg, #009E98 0%, #97D648 100%);
+        border: 2px solid #FFFFFF;
+        border-radius: 2px;
+        box-shadow: inset 2px -2px 3px 0 #007A3E;
+        cursor: pointer;
+    }
+
+}
+.sdc-canvas-zone.group-zone {
+    .zone-child__handle {
+        background-color:#009FDB;
+    }
+    .zone-child__body {
+        border-color:#009FDB;
+    }
+    .zone-child__body-content {
+        background: #009FDB;
+    }
+}
+
+.sdc-canvas-zone.policy-zone {
+    .zone-child__handle {
+        background-color:#0568AE;
+    }
+    .zone-child__body {
+        border-color:#1287D9;
+        .zone-child__body-content {
+            background: #1287D9;
+        }
+    }
+    .zone-child__body-content {
+        background: #0568AE;
+    }
+}

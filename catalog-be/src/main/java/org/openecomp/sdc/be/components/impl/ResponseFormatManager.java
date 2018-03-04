@@ -34,44 +34,44 @@ import org.slf4j.LoggerFactory;
 
 public class ResponseFormatManager {
 
-	private volatile static ResponseFormatManager instance;
-	private static ConfigurationManager configurationManager;
-	private static Logger log = LoggerFactory.getLogger(ResponseFormatManager.class.getName());
+    private volatile static ResponseFormatManager instance;
+    private static ConfigurationManager configurationManager;
+    private static final Logger log = LoggerFactory.getLogger(ResponseFormatManager.class);
 
-	public static ResponseFormatManager getInstance() {
-		if (instance == null) {
+    public static ResponseFormatManager getInstance() {
+        if (instance == null) {
 
-			instance = init();
-		}
-		return instance;
-	}
+            instance = init();
+        }
+        return instance;
+    }
 
-	private static synchronized ResponseFormatManager init() {
-		if (instance == null) {
-			instance = new ResponseFormatManager();
-			configurationManager = ConfigurationManager.getConfigurationManager();
-		}
-		return instance;
-	}
+    private static synchronized ResponseFormatManager init() {
+        if (instance == null) {
+            instance = new ResponseFormatManager();
+            configurationManager = ConfigurationManager.getConfigurationManager();
+        }
+        return instance;
+    }
 
-	public ResponseFormat getResponseFormat(ActionStatus responseEnum, String... variables) {
-		ErrorConfiguration errorConfiguration = configurationManager.getErrorConfiguration();
-		ErrorInfo errorInfo = errorConfiguration.getErrorInfo(responseEnum.name());
-		if (errorInfo == null) {
-			log.debug("failed to locate {} in error configuration", responseEnum.name());
-			errorInfo = errorConfiguration.getErrorInfo(ActionStatus.GENERAL_ERROR.name());
-		}
-		ResponseFormat errorResponseWrapper = new ResponseFormat(errorInfo.getCode());
-		String errorMessage = errorInfo.getMessage();
-		String errorMessageId = errorInfo.getMessageId();
-		ErrorInfoType errorInfoType = errorInfo.getErrorInfoType();
-		if (errorInfoType.equals(ErrorInfoType.SERVICE_EXCEPTION)) {
-			errorResponseWrapper.setServiceException(new ServiceException(errorMessageId, errorMessage, variables));
-		} else if (errorInfoType.equals(ErrorInfoType.POLICY_EXCEPTION)) {
-			errorResponseWrapper.setPolicyException(new PolicyException(errorMessageId, errorMessage, variables));
-		} else if (errorInfoType.equals(ErrorInfoType.OK)) {
-			errorResponseWrapper.setOkResponseInfo(new OkResponseInfo(errorMessageId, errorMessage, variables));
-		}
-		return errorResponseWrapper;
-	}
+    public ResponseFormat getResponseFormat(ActionStatus responseEnum, String... variables) {
+        ErrorConfiguration errorConfiguration = configurationManager.getErrorConfiguration();
+        ErrorInfo errorInfo = errorConfiguration.getErrorInfo(responseEnum.name());
+        if (errorInfo == null) {
+            log.debug("failed to locate {} in error configuration", responseEnum);
+            errorInfo = errorConfiguration.getErrorInfo(ActionStatus.GENERAL_ERROR.name());
+        }
+        ResponseFormat errorResponseWrapper = new ResponseFormat(errorInfo.getCode());
+        String errorMessage = errorInfo.getMessage();
+        String errorMessageId = errorInfo.getMessageId();
+        ErrorInfoType errorInfoType = errorInfo.getErrorInfoType();
+        if (errorInfoType.equals(ErrorInfoType.SERVICE_EXCEPTION)) {
+            errorResponseWrapper.setServiceException(new ServiceException(errorMessageId, errorMessage, variables));
+        } else if (errorInfoType.equals(ErrorInfoType.POLICY_EXCEPTION)) {
+            errorResponseWrapper.setPolicyException(new PolicyException(errorMessageId, errorMessage, variables));
+        } else if (errorInfoType.equals(ErrorInfoType.OK)) {
+            errorResponseWrapper.setOkResponseInfo(new OkResponseInfo(errorMessageId, errorMessage, variables));
+        }
+        return errorResponseWrapper;
+    }
 }
