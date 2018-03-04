@@ -20,24 +20,14 @@
 
 package org.openecomp.sdc.be.model.jsontitan.datamodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.collections.MapUtils;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TopologyTemplate extends ToscaElement{
 
@@ -50,8 +40,10 @@ public class TopologyTemplate extends ToscaElement{
 	private Map<String, MapPropertiesDataDefinition> instAttributes;
 	private Map<String, MapPropertiesDataDefinition> instProperties;
 	private Map<String, GroupDataDefinition> groups;
+	private Map<String, PolicyDataDefinition> policies;
 	private Map<String, MapGroupsDataDefinition> instGroups;
 	private Map<String, ArtifactDataDefinition> serviceApiArtifacts;
+	private Map<String, ForwardingPathDataDefinition> forwardingPaths;
 	private Map<String, CompositionDataDefinition> compositions; 
 
 	private Map<String, MapListCapabiltyDataDefinition> calculatedCapabilities;
@@ -64,7 +56,18 @@ public class TopologyTemplate extends ToscaElement{
 	private Map<String, MapArtifactDataDefinition> instDeploymentArtifacts;
 	private Map<String, MapArtifactDataDefinition> instanceArtifacts;
 
-	
+	//Component Instances External References (instanceId -> ExternalRefsMap)
+	//-----------------------------------------------------------------------
+	private Map<String, MapComponentInstanceExternalRefs> mapComponentInstancesExternalRefs;
+	public Map<String, MapComponentInstanceExternalRefs> getMapComponentInstancesExternalRefs() {
+		return this.mapComponentInstancesExternalRefs;
+	}
+	public void setComponentInstancesExternalRefs(Map<String, MapComponentInstanceExternalRefs> mapComponentInstancesExternalRefs) {
+		this.mapComponentInstancesExternalRefs = mapComponentInstancesExternalRefs;
+	}
+	//-----------------------------------------------------------------------
+
+
 	public Map<String, PropertyDataDefinition> getInputs() {
 		return inputs;
 	}
@@ -100,6 +103,12 @@ public class TopologyTemplate extends ToscaElement{
 	}
 	public void setGroups(Map<String, GroupDataDefinition> groups) {
 		this.groups = groups;
+	}
+	public Map<String, PolicyDataDefinition> getPolicies() {
+		return policies;
+	}
+	public void setPolicies(Map<String, PolicyDataDefinition> policies) {
+		this.policies = policies;
 	}
 	public Map<String, MapGroupsDataDefinition> getInstGroups() {
 		return instGroups;
@@ -164,6 +173,15 @@ public class TopologyTemplate extends ToscaElement{
 	public void setInstanceArtifacts(Map<String, MapArtifactDataDefinition> instanceArtifacts) {
 		this.instanceArtifacts = instanceArtifacts;
 	}
+
+	public Map<String, ForwardingPathDataDefinition> getForwardingPaths() {
+		return forwardingPaths;
+	}
+
+	public void setForwardingPaths(Map<String, ForwardingPathDataDefinition> forwardingPaths) {
+		this.forwardingPaths = forwardingPaths;
+	}
+
 	/**
 	 * Adds component instance to composition of topology template
 	 * Note that component instance will be overrided in case if the topology template already contains a component instance with the same name

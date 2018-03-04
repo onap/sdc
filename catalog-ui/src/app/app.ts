@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@
 
 //import 'restangular';
 //import 'angular-ui-router';
+import * as _ from "lodash";
 import "reflect-metadata";
 import 'ng-infinite-scroll';
 import './modules/filters.ts';
@@ -57,9 +58,7 @@ import {ComponentServiceNg2} from "./ng2/services/component-services/component.s
 import {ComponentMetadata} from "./models/component-metadata";
 import {Categories} from "./models/categories";
 import {IUserProperties} from "./models/user";
-import {SearchWithAutoCompleteComponent} from "./ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
 import {PluginFrameComponent} from "./ng2/components/ui/plugin/plugin-frame.component";
-
 
 let moduleName:string = 'sdcApp';
 let viewModelsModuleName:string = 'Sdc.ViewModels';
@@ -146,13 +145,6 @@ _.each(hostedApplications, (hostedApp)=> {
 // ===================== Hosted applications section ====================
 
 export const ng1appModule:ng.IModule = angular.module(moduleName, dependentModules);
-angular.module('sdcApp').directive('propertiesAssignment', downgradeComponent({component: PropertiesAssignmentComponent}) as angular.IDirectiveFactory);
-angular.module('sdcApp').directive('ng2SearchWithAutocomplete',
-    downgradeComponent({
-        component: SearchWithAutoCompleteComponent,
-        inputs: ['searchPlaceholder', 'searchBarClass', 'autoCompleteValues'],
-        outputs: ['searchChanged', 'searchButtonClicked']
-    }) as angular.IDirectiveFactory);
 angular.module('sdcApp').directive('pluginFrame', downgradeComponent( {component: PluginFrameComponent, inputs: ['plugin', 'queryParams'], outputs: ['onLoadingDone']} ) as angular.IDirectiveFactory);
 
 ng1appModule.config([
@@ -616,7 +608,6 @@ ng1appModule.value('TagValidationPattern', /^[\s\w_.-]{1,50}$/);
 ng1appModule.value('VendorReleaseValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
 ng1appModule.value('VendorNameValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/);
 ng1appModule.value('VendorModelNumberValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,65}$/);
-ng1appModule.value('ServiceTypeAndRoleValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,256}$/);
 ng1appModule.value('ContactIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('UserIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('ProjectCodeValidationPattern', /^[\s\w-]{5,50}$/);
@@ -669,7 +660,6 @@ ng1appModule.run([
      DataTypesService:DataTypesService,
      AngularJSBridge,
      $templateCache:ng.ITemplateCacheService):void => {
-        $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         //handle cache data - version
         let initAsdcVersion:Function = ():void => {

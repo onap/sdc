@@ -28,7 +28,8 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
 import {
     DataTypesServiceProvider, SharingServiceProvider, CookieServiceProvider, StateServiceFactory,
-    StateParamsServiceFactory, CacheServiceProvider, EventListenerServiceProvider, ScopeServiceFactory
+    StateParamsServiceFactory, CacheServiceProvider, EventListenerServiceProvider, ScopeServiceFactory,
+    NotificationServiceProvider
 } from "./utils/ng1-upgraded-provider";
 import {ConfigService} from "./services/config.service";
 import {HttpModule} from '@angular/http';
@@ -36,6 +37,7 @@ import {HttpService} from './services/http.service';
 import {AuthenticationService} from './services/authentication.service';
 import {Cookie2Service} from "./services/cookie.service";
 import {ComponentServiceNg2} from "./services/component-services/component.service";
+import {ComponentServiceFactoryNg2} from "./services/component-services/component.service.factory";
 import {ServiceServiceNg2} from "./services/component-services/service.service";
 import {ComponentInstanceServiceNg2} from "./services/component-instance-services/component-instance.service";
 import {ModalService} from "./services/modal.service";
@@ -43,12 +45,18 @@ import {UiElementsModule} from "./components/ui/ui-elements.module";
 import {ConnectionWizardModule} from "./pages/connection-wizard/connection-wizard.module";
 import {LayoutModule} from "./components/layout/layout.module";
 import {UserService} from "./services/user.service";
+import {PoliciesService} from "./services/policies.service";
+import {DynamicComponentService} from "./services/dynamic-component.service";
 import {SdcConfig} from "./config/sdc-config.config";
 import { TranslateModule } from "./shared/translator/translate.module";
 import { TranslationServiceConfig } from "./config/translation.service.config";
+import {ServicePathCreatorModule} from './pages/service-path-creator/service-path-creator.module';
+import {ServicePathsListModule} from './pages/service-paths-list/service-paths-list.module';
 import {PluginFrameModule} from "./components/ui/plugin/plugin-frame.module";
 import {PluginsService} from "./services/plugins.service";
 import {EventBusService} from "./services/event-bus.service";
+import {ServicePathModule} from 'app/ng2/components/logic/service-path/service-path.module';
+import {ServicePathSelectorModule} from 'app/ng2/components/logic/service-path-selector/service-path-selector.module';
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -76,7 +84,11 @@ export function configServiceFactory(config:ConfigService) {
         //We need to import them here since we use them in angular1
         ConnectionWizardModule,
         PropertiesAssignmentModule,
-        PluginFrameModule
+        PluginFrameModule,
+        ServicePathCreatorModule,
+        ServicePathsListModule,
+        ServicePathModule,
+        ServicePathSelectorModule
     ],
     exports: [],
     entryComponents: [],
@@ -85,18 +97,22 @@ export function configServiceFactory(config:ConfigService) {
         SharingServiceProvider,
         CookieServiceProvider,
         StateServiceFactory,
-        ScopeServiceFactory,
         StateParamsServiceFactory,
+        ScopeServiceFactory,
         CacheServiceProvider,
         EventListenerServiceProvider,
+        NotificationServiceProvider,
         AuthenticationService,
         Cookie2Service,
         ConfigService,
         ComponentServiceNg2,
+        ComponentServiceFactoryNg2,
         ModalService,
         ServiceServiceNg2,
         HttpService,
         UserService,
+        PoliciesService,
+        DynamicComponentService,
         SdcConfig,
         ComponentInstanceServiceNg2,
         TranslationServiceConfig,

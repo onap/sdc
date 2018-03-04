@@ -25,6 +25,8 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +60,9 @@ public class VfModuleVerificator {
 		int heatMetaGroupCount = 0;
 		int toscaDefinitionGroupCount = 0;
 		for (TypeHeatMetaDefinition typeHeatMetaDefinition : listTypeHeatMetaDefinition) {
-			heatMetaGroupCount = typeHeatMetaDefinition.getGroupHeatMetaDefinition().size();
+			if(!typeHeatMetaDefinition.getTypeName().equals("artifacts")) {
+				heatMetaGroupCount = typeHeatMetaDefinition.getGroupHeatMetaDefinition().size();
+			}
 		}
 		toscaDefinitionGroupCount = toscaDefinition.getTopology_template().getGroups().size();
 		assertEquals("Expected num of groups in HEAT.meta file is " + heatMetaGroupCount + ", but was in TOSCA yaml file " + toscaDefinitionGroupCount, heatMetaGroupCount, toscaDefinitionGroupCount);
@@ -127,8 +131,14 @@ public class VfModuleVerificator {
 		
 		for(String propertyType : PROPERTY_TYPES){
 			int numberOfTypes = (int) vfModules.stream().
-												filter(e -> e.getProperties().containsKey(propertyType)).
-												count();
+					                            // Get all declared fields from class ToscaGroupPropertyDefinition, collect them to List and check that current property exist and declared class 
+												filter(e -> Arrays.asList(e.getProperties().getClass().getDeclaredFields()).stream().
+	                                                        map(p -> p.getName()).
+	                                                        collect(Collectors.toList()).
+	                                                        contains(propertyType)
+                                                ).
+												collect(Collectors.toList()).
+												size();
 			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating VF property %s exist, Expected: %s, Actual: %s  ", propertyType, vfModules.size(), numberOfTypes));
 			assertTrue(numberOfTypes == vfModules.size());
 		}		

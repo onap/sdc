@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -111,11 +111,8 @@ public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 
 	private void logAlarm() {
 		if (lastHealthState == HealthCheckStatus.UP) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeHealthCheckRecovery,
-					ES_HEALTH_CHECK_STR);
 			BeEcompErrorManager.getInstance().logBeHealthCheckElasticSearchRecovery(ES_HEALTH_CHECK_STR);
 		} else {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeHealthCheckError, ES_HEALTH_CHECK_STR);
 			BeEcompErrorManager.getInstance().logBeHealthCheckElasticSearchError(ES_HEALTH_CHECK_STR);
 		}
 	}
@@ -148,8 +145,6 @@ public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 			resData = findById(getTypeFromClass(ESArtifactData.class), id, ESArtifactData.class);
 		} catch (Exception e) {
 			resData = null;
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get Artifact from database");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Artifact from database");
 			log.debug("ESCatalogDAO:getArtifact failed with exception ", e);
 			return Either.right(ResourceUploadStatus.ERROR);

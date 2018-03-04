@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {Component, IMainCategory, IGroup, IConfigStatuses, IAppMenu, IAppConfigurtaion, IUserProperties, ISubCategory} from "app/models";
 import {EntityService, CacheService} from "app/services";
 import {ComponentFactory, ResourceType, MenuHandler, ChangeLifecycleStateHandler} from "app/utils";
@@ -149,7 +150,7 @@ export class CatalogViewModel {
         // Checklist init
         this.$scope.checkboxes = <Checkboxes>{};
         this.$scope.checkboxes.componentTypes = ['Resource', 'Service'];
-        this.$scope.checkboxes.resourceSubTypes = ['VF', 'VFC', 'PNF', 'CP', 'VL'];
+        this.$scope.checkboxes.resourceSubTypes = ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'];
 
         // Checkboxes filter init
         this.$scope.checkboxesFilter = <CheckboxesFilter>{};

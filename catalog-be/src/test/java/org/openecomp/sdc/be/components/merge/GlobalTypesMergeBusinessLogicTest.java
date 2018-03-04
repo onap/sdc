@@ -1,13 +1,6 @@
 package org.openecomp.sdc.be.components.merge;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.components.utils.ObjectGenerator.buildResourceWithInputs;
-
-import java.util.Arrays;
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -18,7 +11,13 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.utils.ObjectGenerator.buildResourceWithInputs;
 
 public class GlobalTypesMergeBusinessLogicTest {
 

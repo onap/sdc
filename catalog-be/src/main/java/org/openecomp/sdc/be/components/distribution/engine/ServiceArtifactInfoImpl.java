@@ -22,9 +22,9 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 public class ServiceArtifactInfoImpl extends ArtifactInfoImpl implements IServiceArtifactInfo {
 
-	@Override
-	public String toString() {
-		return "ServiceArtifactInfoImpl [" + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "ServiceArtifactInfoImpl [" + super.toString() + "]";
+    }
 
 }

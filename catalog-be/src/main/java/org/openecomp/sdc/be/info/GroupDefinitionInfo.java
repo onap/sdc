@@ -20,157 +20,157 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupProperty;
 
+import java.util.List;
+
 public class GroupDefinitionInfo {
-	private String name;
+    private String name;
 
-	// the id is unique per group instance on graph.
-	private String uniqueId;
-	
-	// the id is unique per group instance on graph.
-	private String groupInstanceUniqueId;
+    // the id is unique per group instance on graph.
+    private String uniqueId;
 
-	// the group UUID should be changed when one of the artifacts/component
-	// instances has been changed.
-	private String groupUUID;
+    // the id is unique per group instance on graph.
+    private String groupInstanceUniqueId;
 
-	// version should be changed when there is a change to the group's metadata
-	// or to the groups members
-	// (not necessarily when the VF version is changed). This field cannot be
-	// updated by user
-	private String version;
+    // the group UUID should be changed when one of the artifacts/component
+    // instances has been changed.
+    private String groupUUID;
 
-	private String invariantUUID;
-	private String customizationUUID;
+    // version should be changed when there is a change to the group's metadata
+    // or to the groups members
+    // (not necessarily when the VF version is changed). This field cannot be
+    // updated by user
+    private String version;
 
-	Boolean isBase = null;
+    private String invariantUUID;
+    private String customizationUUID;
 
-	// artifacts - list of artifact uid. All artifacts in the group must already
-	// be uploaded to the VF
-	private List<ArtifactDefinitionInfo> artifacts;
-	
-	private List<? extends GroupProperty> properties;
+    Boolean isBase = null;
 
-	public GroupDefinitionInfo() {
-		super();
-	}
+    // artifacts - list of artifact uid. All artifacts in the group must already
+    // be uploaded to the VF
+    private List<ArtifactDefinitionInfo> artifacts;
 
-	public GroupDefinitionInfo(GroupDefinition other) {
-		this.setName(other.getName());
-		this.setUniqueId(other.getUniqueId());
-		this.setVersion(other.getVersion());
-		this.setGroupUUID(other.getGroupUUID());
-		this.setInvariantUUID(other.getInvariantUUID());
-		this.setProperties(other.convertToGroupProperties());
-		
+    private List<? extends GroupProperty> properties;
 
-	}
-	
-	public GroupDefinitionInfo(GroupInstance other) {
-		this.setName(other.getGroupName());
-		this.setUniqueId(other.getGroupUid());
-		this.setGroupInstanceUniqueId(other.getUniqueId());
-		this.setVersion(other.getVersion());
-		this.setGroupUUID(other.getGroupUUID());
-		this.setCustomizationUUID(other.getCustomizationUUID());
-		this.setInvariantUUID(other.getInvariantUUID());
-		this.setProperties(other.convertToGroupInstancesProperties());
-		
+    public GroupDefinitionInfo() {
+        super();
+    }
 
-	}
+    public GroupDefinitionInfo(GroupDefinition other) {
+        this.setName(other.getName());
+        this.setUniqueId(other.getUniqueId());
+        this.setVersion(other.getVersion());
+        this.setGroupUUID(other.getGroupUUID());
+        this.setInvariantUUID(other.getInvariantUUID());
+        this.setProperties(other.convertToGroupProperties());
 
-	public String getInvariantUUID() {
-		return invariantUUID;
-	}
 
-	public void setInvariantUUID(String invariantUUID) {
-		this.invariantUUID = invariantUUID;
-	}
+    }
 
-	public String getName() {
-		return name;
-	}
+    public GroupDefinitionInfo(GroupInstance other) {
+        this.setName(other.getGroupName());
+        this.setUniqueId(other.getGroupUid());
+        this.setGroupInstanceUniqueId(other.getUniqueId());
+        this.setVersion(other.getVersion());
+        this.setGroupUUID(other.getGroupUUID());
+        this.setCustomizationUUID(other.getCustomizationUUID());
+        this.setInvariantUUID(other.getInvariantUUID());
+        this.setProperties(other.convertToGroupInstancesProperties());
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+    }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+    public String getInvariantUUID() {
+        return invariantUUID;
+    }
 
-	public String getGroupUUID() {
-		return groupUUID;
-	}
+    public void setInvariantUUID(String invariantUUID) {
+        this.invariantUUID = invariantUUID;
+    }
 
-	public void setGroupUUID(String groupUUID) {
-		this.groupUUID = groupUUID;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	
+    public String getUniqueId() {
+        return uniqueId;
+    }
 
-	public String getCustomizationUUID() {
-		return customizationUUID;
-	}
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
-	public void setCustomizationUUID(String customizationUUID) {
-		this.customizationUUID = customizationUUID;
-	}
+    public String getGroupUUID() {
+        return groupUUID;
+    }
 
-	public Boolean getIsBase() {
-		return isBase;
-	}
+    public void setGroupUUID(String groupUUID) {
+        this.groupUUID = groupUUID;
+    }
 
-	public void setIsBase(Boolean isBase) {
-		this.isBase = isBase;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public List<ArtifactDefinitionInfo> getArtifacts() {
-		return artifacts;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public void setArtifacts(List<ArtifactDefinitionInfo> artifacts) {
-		this.artifacts = artifacts;
-	}
-	
-	public List<? extends GroupProperty> getProperties() {
-		return properties;
-	}
 
-	public void setProperties(List<? extends GroupProperty> properties) {
-		this.properties = properties;
-	}
-	
-	
+    public String getCustomizationUUID() {
+        return customizationUUID;
+    }
 
-	public String getGroupInstanceUniqueId() {
-		return groupInstanceUniqueId;
-	}
+    public void setCustomizationUUID(String customizationUUID) {
+        this.customizationUUID = customizationUUID;
+    }
 
-	public void setGroupInstanceUniqueId(String groupInstanceUniqueId) {
-		this.groupInstanceUniqueId = groupInstanceUniqueId;
-	}
+    public Boolean getIsBase() {
+        return isBase;
+    }
 
-	@Override
-	public String toString() {
-		return "GroupDefinitionInfo [" + super.toString() + ", isBase=" + isBase + ", artifacts=" + artifacts + "]";
-	}
-	
+    public void setIsBase(Boolean isBase) {
+        this.isBase = isBase;
+    }
+
+    public List<ArtifactDefinitionInfo> getArtifacts() {
+        return artifacts;
+    }
+
+    public void setArtifacts(List<ArtifactDefinitionInfo> artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public List<? extends GroupProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<? extends GroupProperty> properties) {
+        this.properties = properties;
+    }
+
+
+
+    public String getGroupInstanceUniqueId() {
+        return groupInstanceUniqueId;
+    }
+
+    public void setGroupInstanceUniqueId(String groupInstanceUniqueId) {
+        this.groupInstanceUniqueId = groupInstanceUniqueId;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupDefinitionInfo [" + super.toString() + ", isBase=" + isBase + ", artifacts=" + artifacts + "]";
+    }
+
 
 }

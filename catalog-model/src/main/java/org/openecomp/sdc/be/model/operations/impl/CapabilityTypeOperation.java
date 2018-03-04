@@ -32,6 +32,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -252,6 +253,21 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
 				titanGenericDao.commit();
 			}
 		}
+	}
+	
+	
+	public Either<CapabilityTypeData, TitanOperationStatus> getCapabilityTypeByType(String capabilityType) {
+		Either<CapabilityTypeData, TitanOperationStatus> capabilityTypesRes = titanGenericDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityType, CapabilityTypeData.class);
+
+		if (capabilityTypesRes.isRight()) {
+			TitanOperationStatus status = capabilityTypesRes.right().value();
+			log.debug("Capability type {} cannot be found in graph. status is {}", capabilityType, status);
+			
+			return Either.right(status);
+		}
+
+		CapabilityTypeData ctData = capabilityTypesRes.left().value();
+		return Either.left(ctData);
 	}
 
 	/**

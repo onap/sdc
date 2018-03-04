@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc;
 
-import java.io.IOException;
-
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
@@ -31,32 +29,34 @@ import org.openecomp.sdc.common.impl.ConfigFileChangeListener;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
+import java.io.IOException;
+
 public class TestExternalConfiguration<T extends Object> {
 
-	public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-		ExternalConfiguration.setAppName("catalog-server");
-		ExternalConfiguration.setConfigDir("C:\\Users\\esofer\\workspaceLuna\\catalog-server\\src\\test\\resources\\config");
-		ExternalConfiguration.listenForChanges();
+        ExternalConfiguration.setAppName("catalog-server");
+        ExternalConfiguration.setConfigDir("C:\\Users\\esofer\\workspaceLuna\\catalog-server\\src\\test\\resources\\config");
+        ExternalConfiguration.listenForChanges();
 
-		ConfigurationListener configurationListener = new ConfigurationListener(Configuration.class, new FileChangeCallback() {
+        ConfigurationListener configurationListener = new ConfigurationListener(Configuration.class, new FileChangeCallback() {
 
-			@Override
-			public void reconfigure(BasicConfiguration obj) {
-				// TODO Auto-generated method stub
+            @Override
+            public void reconfigure(BasicConfiguration obj) {
+                // TODO Auto-generated method stub
 
-			}
-		});
+            }
+        });
 
-		ConfigurationSource configurationSource1 = new FSConfigurationSource(new ConfigFileChangeListener(), ExternalConfiguration.getConfigDir());
-		configurationSource1.getAndWatchConfiguration(Configuration.class, configurationListener);
+        ConfigurationSource configurationSource1 = new FSConfigurationSource(new ConfigFileChangeListener(), ExternalConfiguration.getConfigDir());
+        configurationSource1.getAndWatchConfiguration(Configuration.class, configurationListener);
 
-		try {
-			Thread.currentThread().sleep(100 * 1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        try {
+            Thread.currentThread().sleep(100 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
 }

@@ -20,8 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import java.io.File;
-
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.aventstack.extentreports.reporter.ExtentXReporter;
+import com.aventstack.extentreports.reporter.configuration.Protocol;
+import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
@@ -29,11 +32,12 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.AutomationUtils;
 import org.testng.ITestContext;
 
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
-import com.aventstack.extentreports.reporter.ExtentXReporter;
-import com.aventstack.extentreports.reporter.configuration.Protocol;
-import com.aventstack.extentreports.reporter.configuration.Theme;
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class ExtentManager {
 	
@@ -70,9 +74,8 @@ public class ExtentManager {
 
     	if (extent == null) {
         	extentxReporter = new ExtentXReporter(dbIp, dbPort);
-    		extent = new ExtentReports();
-    		initAndSetExtentHtmlReporter(filePath, htmlFile, isAppend);
-			
+			extent = new ExtentReports();
+			initAndSetExtentHtmlReporter(filePath, htmlFile, isAppend);
     		if(extentxReporter.config().getReportObjectId() != null){
 				setExtentXReporter(isAppend);
 			}else{
@@ -88,7 +91,7 @@ public class ExtentManager {
     }
     
     public synchronized static void initAndSetExtentHtmlReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception{
-    	htmlReporter = new ExtentHtmlReporter(filePath + htmlFile);
+		htmlReporter = new ExtentHtmlReporter(filePath + htmlFile);
     	setConfiguration(htmlReporter);
 		htmlReporter.setAppendExisting(isAppend);
 		extent.attachReporter(htmlReporter);
@@ -105,11 +108,11 @@ public class ExtentManager {
 		Config config = Utils.getConfig();
 		String envData = config.getUrl();
 		String suiteName = getSuiteName(context);
-		
+		String reportStartDate = null;
 		if(suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())){
-			if (config.getUseBrowserMobProxy())
-			    setTrafficCaptue(config);
-			
+			if (config.getUseBrowserMobProxy()) {
+				setTrafficCaptue(config);
+			}
 			setReporter(filepath, htmlFile, true);
 			String suiteNameFromVersionInfoFile = FileHandling.getKeyByValueFromPropertyFormatFile(filepath + VERSIONS_INFO_FILE_NAME, "suiteName");
 			reporterDataDefinition(onboardVersion, osVersion, envData, suiteNameFromVersionInfoFile);
@@ -117,8 +120,11 @@ public class ExtentManager {
 			FileHandling.deleteDirectory(SetupCDTest.getReportFolder());
 			FileHandling.createDirectory(filepath);
 			setReporter(filepath, htmlFile, false);
+			Calendar calendar = new GregorianCalendar();
+			SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+			reportStartDate = formatter.format(calendar.getTime());
 			reporterDataDefinition(onboardVersion, osVersion, envData, suiteName);
-			AutomationUtils.createVersionsInfoFile(filepath + VERSIONS_INFO_FILE_NAME, onboardVersion, osVersion, envData, suiteName);
+			AutomationUtils.createVersionsInfoFile(filepath + VERSIONS_INFO_FILE_NAME, onboardVersion, osVersion, envData, suiteName, reportStartDate);
 		}
 		
 	}
@@ -152,6 +158,7 @@ public class ExtentManager {
     	htmlReporter.config().setReportName("SDC Automation Report");
     	htmlReporter.config().setChartVisibilityOnOpen(false);
     	htmlReporter.config().setJS(icon);
+    	htmlReporter.setStartTime(null);
     	return htmlReporter;
     }
 	

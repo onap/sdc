@@ -45,9 +45,6 @@ import com.google.gson.Gson;
 
 public class ServiceRestUtils extends BaseRestUtils {
 	private static Logger logger = LoggerFactory.getLogger(ServiceRestUtils.class.getName());
-	private final static String cacheControl = "no-cache";
-	private final static String contentTypeHeaderData = "application/json";
-	private final static String acceptHeaderDate = "application/json";
 	// ****** CREATE *******
 
 	private static Gson gson = new Gson();
@@ -68,8 +65,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 	public static RestResponse markServiceToDelete(String resourceId, String userId) throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(),
-				resourceId);
+		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId);
 		RestResponse sendDelete = sendDelete(url, userId);
 
 		return sendDelete;
@@ -79,8 +75,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 	public static RestResponse deleteServiceById(String serviceId, String userId) throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(),
-				serviceId);
+		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), serviceId);
 		RestResponse sendDelete = sendDelete(url, userId);
 		deleteMarkedServices(userId);
 		return sendDelete;
@@ -177,12 +172,12 @@ public class ServiceRestUtils extends BaseRestUtils {
 	}
 
 	public static Map<String, String> prepareHeadersMap(User sdncModifierDetails, boolean isCached) {
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 		if (isCached)
-			headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), cacheControl);
+			headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), BaseRestUtils.cacheControlHeader);
 
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());
 		return headersMap;
 	}
@@ -202,7 +197,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.REJECT_DISTRIBUTION, config.getCatalogBeHost(), config.getCatalogBePort(),
 				serviceId);
 		String userBodyJson = gson.toJson(comment);
-		return sendPost(url, userBodyJson, userId, acceptHeaderData);
+		return sendPost(url, userBodyJson, userId, BaseRestUtils.acceptHeaderData);
 
 	}
 
@@ -268,9 +263,9 @@ public class ServiceRestUtils extends BaseRestUtils {
 
 		String url = String.format(Urls.GET_FOLLWED_LIST, config.getCatalogBeHost(), config.getCatalogBePort());
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), user.getUserId());
 
 		RestResponse getResourceNotAbstarctResponse = httpRequest.httpSendGet(url, headersMap);

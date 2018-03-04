@@ -22,6 +22,7 @@
  * Created by rc2122 on 7/4/2017.
  */
 'use strict';
+import * as _ from "lodash";
 import {ComponentFactory} from "app/utils";
 import {AvailableIconsService} from "app/services";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";

@@ -13,7 +13,6 @@ import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
         SearchFilterPipe,
         SafeUrlSanitizerPipe
     ],
-
     exports: [
         ContentAfterLastDotPipe,
         GroupByPipe,

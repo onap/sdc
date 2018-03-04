@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {
     ArtifactModel,
     Service,
@@ -131,6 +132,7 @@ export class ResourceArtifactsViewModel {
             this.$scope.allowDeleteAndUpdateArtifactMap[artifact.artifactLabel] = this.allowDeleteAndUpdateArtifact(artifact);
         });
         this.$scope.isLoading = false;
+        this.$scope.preventMoveTab(false);
     };
 
 
@@ -213,6 +215,7 @@ export class ResourceArtifactsViewModel {
         };
 
         this.$scope.isLoading = true;
+        this.$scope.preventMoveTab(true);
         if (this.$scope.isComponentInstanceSelected()) {
             this.$scope.component.getComponentInstanceArtifactsByGroupType(this.$scope.component.selectedInstance.uniqueId, this.convertToArtifactUrl(this.$scope.artifactType)).then(onGetInstanceArtifactsSuccess, onError);
         } else {

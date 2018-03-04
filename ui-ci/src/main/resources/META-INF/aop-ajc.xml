@@ -1,0 +1,15 @@
+<aspectj>
+
+<aspects>
+<aspect name="com.att.automation.common.report_portal_integration.aspects.StepAspects"/>
+<aspect name="com.att.automation.common.report_portal_integration.aspects.WebDriverAspects"/>
+<aspect name="com.att.automation.common.report_portal_integration.aspects.AssertAspects"/>
+<aspect name="com.att.automation.common.report_portal_integration.aspects.ReportPortalAspects"/>
+</aspects>
+<weaver options="-Xset:weaveJavaxPackages=true -warn:none -Xlint:ignore">
+<include within="org.openecomp.sdc.ci.tests..*"/>
+<include within="com.att.automation..*"/>
+<include within="com.epam..*"/>
+<include within="org.testng.TestNG"/>
+</weaver>
+</aspectj>

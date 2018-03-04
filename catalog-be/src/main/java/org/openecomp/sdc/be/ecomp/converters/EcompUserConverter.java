@@ -20,91 +20,90 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import fj.data.Either;
 import org.openecomp.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 
-import fj.data.Either;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public final class EcompUserConverter {
 
-	private EcompUserConverter() {
-	}
+    private EcompUserConverter() {
+    }
 
-	public static Either<EcompUser, String> convertUserToEcompUser(User asdcUser) {
-		EcompUser convertedUser = new EcompUser();
+    public static Either<EcompUser, String> convertUserToEcompUser(User asdcUser) {
+        EcompUser convertedUser = new EcompUser();
 
-		if (asdcUser == null) {
-			return Either.right("User is null");
-		}
+        if (asdcUser == null) {
+            return Either.right("User is null");
+        }
 
-		convertedUser.setFirstName(asdcUser.getFirstName());
-		convertedUser.setLastName(asdcUser.getLastName());
-		convertedUser.setLoginId(asdcUser.getUserId());
-		convertedUser.setOrgUserId(asdcUser.getUserId());
-		convertedUser.setEmail(asdcUser.getEmail());
+        convertedUser.setFirstName(asdcUser.getFirstName());
+        convertedUser.setLastName(asdcUser.getLastName());
+        convertedUser.setLoginId(asdcUser.getUserId());
+        convertedUser.setOrgUserId(asdcUser.getUserId());
+        convertedUser.setEmail(asdcUser.getEmail());
 
-		if (asdcUser.getStatus().equals(UserStatusEnum.ACTIVE)) {
-			convertedUser.setActive(true);
-		} else if (asdcUser.getStatus().equals(UserStatusEnum.INACTIVE)) {
-			convertedUser.setActive(false);
-		}
+        if (asdcUser.getStatus().equals(UserStatusEnum.ACTIVE)) {
+            convertedUser.setActive(true);
+        } else if (asdcUser.getStatus().equals(UserStatusEnum.INACTIVE)) {
+            convertedUser.setActive(false);
+        }
 
-		EcompRole convertedRole = new EcompRole();
-		for (Role role : Role.values()) {
-			if (role.name().equals(asdcUser.getRole()) || role.toString().equals(asdcUser.getRole())) {
-				convertedRole.setName(role.name());
-				convertedRole.setId(new Long(role.ordinal()));
-				break;
-			}
-		}
+        EcompRole convertedRole = new EcompRole();
+        for (Role role : Role.values()) {
+            if (role.name().equals(asdcUser.getRole()) || role.toString().equals(asdcUser.getRole())) {
+                convertedRole.setName(role.name());
+                convertedRole.setId(new Long(role.ordinal()));
+                break;
+            }
+        }
 
-		Set<EcompRole> convertedRoleSet = new HashSet<>();
-		convertedRoleSet.add(convertedRole);
-		convertedUser.setRoles(convertedRoleSet);
+        Set<EcompRole> convertedRoleSet = new HashSet<>();
+        convertedRoleSet.add(convertedRole);
+        convertedUser.setRoles(convertedRoleSet);
 
-		return Either.left(convertedUser);
-	}
+        return Either.left(convertedUser);
+    }
 
-	public static Either<User, String> convertEcompUserToUser(EcompUser ecompUser) {
-		User convertedUser = new User();
+    public static Either<User, String> convertEcompUserToUser(EcompUser ecompUser) {
+        User convertedUser = new User();
 
-		if (ecompUser == null) {
-			return Either.right("EcompUser is null");
-		}
+        if (ecompUser == null) {
+            return Either.right("EcompUser is null");
+        }
 
-		convertedUser.setFirstName(ecompUser.getFirstName());
-		convertedUser.setLastName(ecompUser.getLastName());
+        convertedUser.setFirstName(ecompUser.getFirstName());
+        convertedUser.setLastName(ecompUser.getLastName());
 
-		if (!ecompUser.getLoginId().isEmpty()) {
-			convertedUser.setUserId(ecompUser.getLoginId());
-		} else {
-			convertedUser.setUserId(ecompUser.getOrgUserId());
-		}
+        if (!ecompUser.getLoginId().isEmpty()) {
+            convertedUser.setUserId(ecompUser.getLoginId());
+        } else {
+            convertedUser.setUserId(ecompUser.getOrgUserId());
+        }
 
-		convertedUser.setEmail(ecompUser.getEmail());
+        convertedUser.setEmail(ecompUser.getEmail());
 
-		if (ecompUser.getRoles() != null) {
-			Iterator<EcompRole> iter = ecompUser.getRoles().iterator();
+        if (ecompUser.getRoles() != null) {
+            Iterator<EcompRole> iter = ecompUser.getRoles().iterator();
 
-			if (iter.hasNext()) {
-				String updatedRole = EcompRoleConverter.convertEcompRoleToRole(iter.next());
-				convertedUser.setRole(updatedRole);
-			}
-		}
+            if (iter.hasNext()) {
+                String updatedRole = EcompRoleConverter.convertEcompRoleToRole(iter.next());
+                convertedUser.setRole(updatedRole);
+            }
+        }
 
-		if (ecompUser.isActive()) {
-			convertedUser.setStatus(UserStatusEnum.ACTIVE);
-		} else {
-			convertedUser.setStatus(UserStatusEnum.INACTIVE);
-		}
+        if (ecompUser.isActive()) {
+            convertedUser.setStatus(UserStatusEnum.ACTIVE);
+        } else {
+            convertedUser.setStatus(UserStatusEnum.INACTIVE);
+        }
 
-		return Either.left(convertedUser);
-	}
+        return Either.left(convertedUser);
+    }
 }

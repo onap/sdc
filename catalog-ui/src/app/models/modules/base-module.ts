@@ -25,9 +25,11 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {PropertyModel} from "../properties";
 import {ArtifactModel} from "../artifacts";
 import {CommonUtils} from "../../utils/common-utils";
+
 export class Module {
 
     public name:string;

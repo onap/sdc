@@ -113,15 +113,12 @@ public class ResourceRestUtils extends BaseRestUtils {
 		Gson gson = new Gson();
 		String resourceImportBodyJson = gson.toJson(importReqDetails);
 		HttpRequest http = new HttpRequest();
-		// System.out.println(url);
-		// System.out.println(resourceImportBodyJson);
 
 		Map<String, String> headersMap = prepareHeadersMap(userId);
 		if (additionalHeaders != null) {
 			headersMap.putAll(additionalHeaders);
 		} else {
-			headersMap.put(HttpHeaderEnum.Content_MD5.getValue(),
-					ArtifactRestUtils.calculateMD5(resourceImportBodyJson));
+			headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), ArtifactRestUtils.calculateMD5(resourceImportBodyJson));
 		}
 
 		RestResponse createResourceResponse = http.httpSendPost(url, resourceImportBodyJson, headersMap);
@@ -272,7 +269,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 		
 		Map<String, String> headersMap =  prepareHeadersMap(sdncModifierDetails.getUserId());
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		return sendGet(url, sdncModifierDetails.getUserId(), headersMap);
 
@@ -285,7 +282,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 		
 		Map<String, String> headersMap =  prepareHeadersMap(sdncModifierDetails.getUserId());
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		return sendGet(url, sdncModifierDetails.getUserId(), headersMap);
 
@@ -298,7 +295,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 		
 		Map<String, String> headersMap =  prepareHeadersMap(sdncModifierDetails.getUserId());
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		return sendGet(url, sdncModifierDetails.getUserId(), headersMap);
 
@@ -359,9 +356,9 @@ public class ResourceRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.GET_PROPERTY_SCOPES_LIST, config.getCatalogBeHost(), config.getCatalogBePort());
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), "cs0008");
 
 		return http.httpSendGet(url, headersMap);
@@ -374,10 +371,10 @@ public class ResourceRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.GET_ALL_ARTIFACTS, config.getCatalogBeHost(), config.getCatalogBePort());
 
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), acceptJsonHeader);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptJsonHeader);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), "cs0008");
 
 		return http.httpSendGet(url, headersMap);
@@ -390,9 +387,9 @@ public class ResourceRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.GET_CONFIGURATION, config.getCatalogBeHost(), config.getCatalogBePort());
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), acceptJsonHeader);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptJsonHeader);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), "cs0008");
 
 		return http.httpSendGet(url, headersMap);

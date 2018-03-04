@@ -20,73 +20,79 @@
 
 package org.openecomp.sdc.common.transaction.impl;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
+import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.transaction.api.RollbackHandler;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-
-import fj.data.Either;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ESRollbackHandler extends RollbackHandler {
 
-	public ESRollbackHandler(Integer transactionId, String userId, String actionType) {
-		super(transactionId, userId, actionType);
-	}
+    private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
 
-	public DBTypeEnum getDBType() {
-		return DBTypeEnum.ELASTIC_SEARCH;
-	}
+    public ESRollbackHandler(Integer transactionId, String userId, String actionType) {
+        super(transactionId, userId, actionType);
+    }
 
-	protected boolean isRollbackForPersistenceData() {
-		return true;
-	}
+    public DBTypeEnum getDBType() {
+        return DBTypeEnum.ELASTIC_SEARCH;
+    }
 
-	public boolean isRollbackResultValid(DBActionCodeEnum rollbackResult) {
-		return rollbackResult == DBActionCodeEnum.SUCCESS;
-	}
+    protected boolean isRollbackForPersistenceData() {
+        return true;
+    }
 
-	public Either<ESAction, MethodActivationStatusEnum> buildEsRollbackAction(ESCatalogDAO esCatalogDao, ESArtifactData artifactData, ESActionTypeEnum esActiontype) {
-		Either<ESAction, MethodActivationStatusEnum> result;
+    public boolean isRollbackResultValid(DBActionCodeEnum rollbackResult) {
+        return rollbackResult == DBActionCodeEnum.SUCCESS;
+    }
 
-		try {
-			ESAction esRollbackAction = null;
-			Either<ESArtifactData, ResourceUploadStatus> either = esCatalogDao.getArtifact(artifactData.getId());
+    public Either<ESAction, MethodActivationStatusEnum> buildEsRollbackAction(ESCatalogDAO esCatalogDao, ESArtifactData artifactData, ESActionTypeEnum esActiontype) {
+        Either<ESAction, MethodActivationStatusEnum> result;
 
-			switch (esActiontype) {
-			case ADD_ARTIFACT:
+        try {
+            ESAction esRollbackAction = null;
+            Either<ESArtifactData, ResourceUploadStatus> either = esCatalogDao.getArtifact(artifactData.getId());
 
-				if (either.isRight() && either.right().value() == ResourceUploadStatus.NOT_EXIST) {
-					esRollbackAction = new ESAction(esCatalogDao, artifactData, ESActionTypeEnum.REMOVE_ARTIFACT);
-				}
-				break;
-			case REMOVE_ARTIFACT:
-				if (either.isLeft()) {
-					esRollbackAction = new ESAction(esCatalogDao, artifactData, ESActionTypeEnum.ADD_ARTIFACT);
-				}
-				break;
-			case UPDATE_ARTIFACT:
+            switch (esActiontype) {
+            case ADD_ARTIFACT:
 
-				if (either.isLeft()) {
-					ESArtifactData originalArtifactData = either.left().value();
-					esRollbackAction = new ESAction(esCatalogDao, originalArtifactData, ESActionTypeEnum.UPDATE_ARTIFACT);
-				}
-				break;
+                if (either.isRight() && either.right().value() == ResourceUploadStatus.NOT_EXIST) {
+                    esRollbackAction = new ESAction(esCatalogDao, artifactData, ESActionTypeEnum.REMOVE_ARTIFACT);
+                }
+                break;
+            case REMOVE_ARTIFACT:
+                if (either.isLeft()) {
+                    esRollbackAction = new ESAction(esCatalogDao, artifactData, ESActionTypeEnum.ADD_ARTIFACT);
+                }
+                break;
+            case UPDATE_ARTIFACT:
 
-			}
-			if (esRollbackAction != null) {
-				result = Either.left(esRollbackAction);
-			} else {
-				result = Either.right(MethodActivationStatusEnum.FAILED);
-			}
-		} catch (Exception e) {
-			result = Either.right(MethodActivationStatusEnum.FAILED);
-		}
+                if (either.isLeft()) {
+                    ESArtifactData originalArtifactData = either.left().value();
+                    esRollbackAction = new ESAction(esCatalogDao, originalArtifactData, ESActionTypeEnum.UPDATE_ARTIFACT);
+                }
+                break;
 
-		return result;
-	}
+            }
+            if (esRollbackAction != null) {
+                result = Either.left(esRollbackAction);
+            } else {
+                result = Either.right(MethodActivationStatusEnum.FAILED);
+            }
+        } catch (Exception e) {
+            result = Either.right(MethodActivationStatusEnum.FAILED);
+            log.error("#buildEsRollbackAction - {}, es rollback failed with error: ", result, e);
+        }
+
+        return result;
+    }
 
 }

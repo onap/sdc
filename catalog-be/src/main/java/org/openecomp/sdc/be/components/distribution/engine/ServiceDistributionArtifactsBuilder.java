@@ -20,26 +20,16 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
-import javax.annotation.PostConstruct;
-
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IArtifactOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.slf4j.Logger;
@@ -47,279 +37,224 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("serviceDistributionArtifactsBuilder")
 public class ServiceDistributionArtifactsBuilder {
 
-	private int defaultArtifactInstallTimeout = 60;
+    private static final Logger logger = LoggerFactory.getLogger(ServiceDistributionArtifactsBuilder.class);
 
-	private static Logger logger = LoggerFactory.getLogger(ServiceDistributionArtifactsBuilder.class.getName());
+    static final String BASE_ARTIFACT_URL = "/sdc/v1/catalog/services/%s/%s/";
+    static final String RESOURCE_ARTIFACT_URL = BASE_ARTIFACT_URL + "resources/%s/%s/artifacts/%s";
+    static final String SERVICE_ARTIFACT_URL = BASE_ARTIFACT_URL + "artifacts/%s";
+    static final String RESOURCE_INSTANCE_ARTIFACT_URL = BASE_ARTIFACT_URL + "resourceInstances/%s/artifacts/%s";
 
-	final static String BASE_ARTIFACT_URL = "/sdc/v1/catalog/services/%s/%s/";
-	final static String RESOURCE_ARTIFACT_URL = BASE_ARTIFACT_URL + "resources/%s/%s/artifacts/%s";
-	final static String SERVICE_ARTIFACT_URL = BASE_ARTIFACT_URL + "artifacts/%s";
+    @javax.annotation.Resource
+    InterfaceLifecycleOperation interfaceLifecycleOperation;
 
-	final static String RESOURCE_INSTANCE_ARTIFACT_URL = BASE_ARTIFACT_URL + "resourceInstances/%s/artifacts/%s";
+    @javax.annotation.Resource
+    IArtifactOperation artifactOperation;
 
-	@javax.annotation.Resource
-	InterfaceLifecycleOperation interfaceLifecycleOperation;
+    @Autowired
+    ToscaOperationFacade toscaOperationFacade;
 
-	@javax.annotation.Resource
-	IArtifactOperation artifactOperation;
-	
-	@Autowired
-	ToscaOperationFacade toscaOperationFacade;
+    public InterfaceLifecycleOperation getInterfaceLifecycleOperation() {
+        return interfaceLifecycleOperation;
+    }
 
-	/*
-	 * @javax.annotation.Resource private
-	 * InformationDeployedArtifactsBusinessLogic
-	 * informationDeployedArtifactsBusinessLogic;
-	 */
+    public void setInterfaceLifecycleOperation(InterfaceLifecycleOperation interfaceLifecycleOperation) {
+        this.interfaceLifecycleOperation = interfaceLifecycleOperation;
+    }
 
-	@PostConstruct
-	private void init() {
-		defaultArtifactInstallTimeout = ConfigurationManager.getConfigurationManager().getConfiguration()
-				.getDefaultHeatArtifactTimeoutMinutes();
-	}
+    private String resolveWorkloadContext(String workloadContext) {
+        return workloadContext != null ? workloadContext :
+                ConfigurationManager.getConfigurationManager().getConfiguration().getWorkloadContext();
+    }
 
-	public InterfaceLifecycleOperation getInterfaceLifecycleOperation() {
-		return interfaceLifecycleOperation;
-	}
+    public INotificationData buildResourceInstanceForDistribution(Service service, String distributionId, String workloadContext) {
+        INotificationData notificationData = new NotificationDataImpl();
 
-	public void setInterfaceLifecycleOperation(InterfaceLifecycleOperation interfaceLifecycleOperation) {
-		this.interfaceLifecycleOperation = interfaceLifecycleOperation;
-	}
+        notificationData.setResources(convertRIsToJsonContanier(service));
+        notificationData.setServiceName(service.getName());
+        notificationData.setServiceVersion(service.getVersion());
+        notificationData.setDistributionID(distributionId);
+        notificationData.setServiceUUID(service.getUUID());
+        notificationData.setServiceDescription(service.getDescription());
+        notificationData.setServiceInvariantUUID(service.getInvariantUUID());
+        workloadContext = resolveWorkloadContext(workloadContext);
+        if (workloadContext!=null){
+            notificationData.setWorkloadContext(workloadContext);
+        }
+        logger.debug("Before returning notification data object {}", notificationData);
 
-	public INotificationData buildResourceInstanceForDistribution(Service service, String distributionId) {
-		INotificationData notificationData = new NotificationDataImpl();
+        return notificationData;
+    }
 
-		notificationData.setResources(convertRIToJsonContanier(service));
-		notificationData.setServiceName(service.getName());
-		notificationData.setServiceVersion(service.getVersion());
-		notificationData.setDistributionID(distributionId);
-		notificationData.setServiceUUID(service.getUUID());
-		notificationData.setServiceDescription(service.getDescription());
-		notificationData.setServiceInvariantUUID(service.getInvariantUUID());
-		String workloadContext= ConfigurationManager.getConfigurationManager().getConfiguration().getWorkloadContext();
-		if(workloadContext!=null){
-			notificationData.setWorkloadContext(workloadContext);
-		}
-		logger.debug("Before returning notification data object {}", notificationData);
+    public INotificationData buildServiceForDistribution(INotificationData notificationData, Service service) {
 
-		return notificationData;
+        notificationData.setServiceArtifacts(convertServiceArtifactsToArtifactInfo(service));
 
-	}
+        logger.debug("Before returning notification data object {}", notificationData);
 
-	public INotificationData buildServiceForDistribution(INotificationData notificationData, Service service) {
+        return notificationData;
+    }
 
-		notificationData.setServiceArtifacts(convertServiceArtifactsToArtifactInfo(service));
+    private List<ArtifactInfoImpl> convertServiceArtifactsToArtifactInfo(Service service) {
 
-		logger.debug("Before returning notification data object {}", notificationData);
+        Map<String, ArtifactDefinition> serviceArtifactsMap = service.getDeploymentArtifacts();
+        List<ArtifactDefinition> extractedServiceArtifacts = serviceArtifactsMap.values().stream()
+                //filters all artifacts with existing EsId
+                .filter(ArtifactDefinition::checkEsIdExist)
+                //collects all filtered artifacts with existing EsId to List
+                .collect(Collectors.toList());
 
-		return notificationData;
+        Optional<ArtifactDefinition> toscaTemplateArtifactOptl = exrtactToscaTemplateArtifact(service);
+        if(toscaTemplateArtifactOptl.isPresent()){
+            extractedServiceArtifacts.add(toscaTemplateArtifactOptl.get());
+        }
 
-	}
+        Optional<ArtifactDefinition> toscaCsarArtifactOptl = exrtactToscaCsarArtifact(service);
+        if(toscaCsarArtifactOptl.isPresent()){
+            extractedServiceArtifacts.add(toscaCsarArtifactOptl.get());
+        }
 
-	private List<ArtifactInfoImpl> convertServiceArtifactsToArtifactInfo(Service service) {
-		
-		Map<String, ArtifactDefinition> serviceArtifactsMap = service.getDeploymentArtifacts();
-		List<ArtifactDefinition> extractedServiceArtifacts = serviceArtifactsMap.values().stream()
-				//filters all artifacts with existing EsId
-				.filter(artifactDef -> artifactDef.checkEsIdExist())
-				//collects all filtered artifacts with existing EsId to List
-				.collect(Collectors.toList());
-		
-		Optional<ArtifactDefinition> toscaTemplateArtifactOptl = exrtactToscaTemplateArtifact(service);
-		if(toscaTemplateArtifactOptl.isPresent()){
-			extractedServiceArtifacts.add(toscaTemplateArtifactOptl.get());
-		}
-		
-		Optional<ArtifactDefinition> toscaCsarArtifactOptl = exrtactToscaCsarArtifact(service);
-		if(toscaCsarArtifactOptl.isPresent()){
-			extractedServiceArtifacts.add(toscaCsarArtifactOptl.get());
-		}
-		
-		List<ArtifactInfoImpl> artifacts = ArtifactInfoImpl.convertServiceArtifactToArtifactInfoImpl(service, extractedServiceArtifacts);
-		return artifacts;
-	}
+        return ArtifactInfoImpl.convertServiceArtifactToArtifactInfoImpl(service, extractedServiceArtifacts);
+    }
 
-	private Optional<ArtifactDefinition> exrtactToscaTemplateArtifact(Service service) {
-		return service.getToscaArtifacts().values().stream()
-				//filters TOSCA_TEMPLATE artifact
-				.filter(e -> e.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType())).findAny();
-	}
-	
-	private Optional<ArtifactDefinition> exrtactToscaCsarArtifact(Service service) {
-		return service.getToscaArtifacts().values().stream()
-				//filters TOSCA_CSAR artifact
-				.filter(e -> e.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny();
-	}
+    private Optional<ArtifactDefinition> exrtactToscaTemplateArtifact(Service service) {
+        return service.getToscaArtifacts().values().stream()
+                //filters TOSCA_TEMPLATE artifact
+                .filter(e -> e.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType())).findAny();
+    }
 
-	private List<JsonContainerResourceInstance> convertRIToJsonContanier(Service service) {
-		List<JsonContainerResourceInstance> ret = new ArrayList<JsonContainerResourceInstance>();
-		if (service.getComponentInstances() != null) {
-			for (ComponentInstance resourceInstance : service.getComponentInstances()) {
-				String resoucreType = resourceInstance.getOriginType().getValue();
-				List<ArtifactDefinition> artifactsDefList = getArtifactsWithPayload(resourceInstance);
-				List<ArtifactInfoImpl> artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(service, resourceInstance,
-						artifactsDefList);
+    private Optional<ArtifactDefinition> exrtactToscaCsarArtifact(Service service) {
+        return service.getToscaArtifacts().values().stream()
+                //filters TOSCA_CSAR artifact
+                .filter(e -> e.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny();
+    }
 
-				String resourceInvariantUUID = null;
-				String resourceCategory = null;
-				String resourceSubcategory = null;
+    private List<JsonContainerResourceInstance> convertRIsToJsonContanier(Service service) {
+        List<JsonContainerResourceInstance> ret = new ArrayList<>();
+        if (service.getComponentInstances() != null) {
+            for (ComponentInstance instance : service.getComponentInstances()) {
+                JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(instance, convertToArtifactsInfoImpl(service, instance));
+                ComponentParametersView filter = new ComponentParametersView();
+                filter.disableAll();
+                filter.setIgnoreCategories(false);
+                toscaOperationFacade.getToscaElement(instance.getComponentUid(), filter)
+                    .left()
+                    .bind(r->{fillJsonContainer(jsonContainer, (Resource) r); return Either.left(r);})
+                    .right()
+                    .forEach(r->logger.debug("Resource {} Invariant UUID & Categories retrieving failed", instance.getComponentUid()));
+                ret.add(jsonContainer);
+            }
+        }
+        return ret;
+    }
 
-				ComponentParametersView componentParametersView = new ComponentParametersView();
-				componentParametersView.disableAll();
-				componentParametersView.setIgnoreCategories(false);
-				Either<Resource, StorageOperationStatus> componentResponse = toscaOperationFacade
-						.getToscaElement(resourceInstance.getComponentUid(), componentParametersView);
+    private void fillJsonContainer(JsonContainerResourceInstance jsonContainer, Resource resource) {
+        jsonContainer.setResourceInvariantUUID(resource.getInvariantUUID());
+        setCategories(jsonContainer, resource.getCategories());
+    }
 
-				if (componentResponse.isRight()) {
-					logger.debug("Resource {} Invariant UUID & Categories retrieving failed", resourceInstance.getComponentUid());
-				} else {
-					Resource resource = componentResponse.left().value();
-					resourceInvariantUUID = resource.getInvariantUUID();
+    private List<ArtifactInfoImpl> convertToArtifactsInfoImpl(Service service, ComponentInstance resourceInstance) {
+        List<ArtifactInfoImpl> artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(service, resourceInstance, getArtifactsWithPayload(resourceInstance));
+        artifacts.stream().forEach(ArtifactInfoImpl::updateArtifactTimeout);
+        return artifacts;
+    }
 
-					List<CategoryDefinition> categories = resource.getCategories();
+    private void setCategories(JsonContainerResourceInstance jsonContainer, List<CategoryDefinition> categories) {
+        if (categories != null) {
+            CategoryDefinition categoryDefinition = categories.get(0);
 
-					if (categories != null) {
-						CategoryDefinition categoryDefinition = categories.get(0);
+            if (categoryDefinition != null) {
+                jsonContainer.setCategory(categoryDefinition.getName());
+                List<SubCategoryDefinition> subcategories = categoryDefinition.getSubcategories();
+                if (null != subcategories) {
+                    SubCategoryDefinition subCategoryDefinition = subcategories.get(0);
 
-						if (categoryDefinition != null) {
-							resourceCategory = categoryDefinition.getName();
-							List<SubCategoryDefinition> subcategories = categoryDefinition.getSubcategories();
-							if (null != subcategories) {
-								SubCategoryDefinition subCategoryDefinition = subcategories.get(0);
+                    if (subCategoryDefinition != null) {
+                        jsonContainer.setSubcategory(subCategoryDefinition.getName());
+                    }
+                }
+            }
+        }
+    }
 
-								if (subCategoryDefinition != null) {
-									resourceSubcategory = subCategoryDefinition.getName();
-								}
-							}
-						}
-					}
-				}
+    private List<ArtifactDefinition> getArtifactsWithPayload(ComponentInstance resourceInstance) {
+        List<ArtifactDefinition> ret = new ArrayList<>();
 
-				JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(resourceInstance, resoucreType,
-						rebuildArtifactswith120TimeoutInsteadOf60(artifacts)/*TODO used to send artifacts, the function is a fix to the short timeout bug in distribution*/);
-				jsonContainer.setResourceInvariantUUID(resourceInvariantUUID);
-				jsonContainer.setCategory(resourceCategory);
-				jsonContainer.setSubcategory(resourceSubcategory);
-				ret.add(jsonContainer);
-			}
-		}
-		return ret;
-	}
+        List<ArtifactDefinition> deployableArtifacts = new ArrayList<>();
+        if (resourceInstance.getDeploymentArtifacts() != null) {
+            deployableArtifacts.addAll(resourceInstance.getDeploymentArtifacts().values());
+        }
 
-	private List<ArtifactInfoImpl> rebuildArtifactswith120TimeoutInsteadOf60(List<ArtifactInfoImpl> artifacts) {
-		for(ArtifactInfoImpl artifact : artifacts){
-			if(artifact.getArtifactTimeout().equals(60)){
-				artifact.setArtifactTimeout(120);
-			}
-		}
-		return artifacts;
-	}
+        for (ArtifactDefinition artifactDef : deployableArtifacts) {
+            if (artifactDef.checkEsIdExist()) {
+                ret.add(artifactDef);
+            }
+        }
 
-	private List<ArtifactDefinition> getArtifactsWithPayload(ComponentInstance resourceInstance) {
-		List<ArtifactDefinition> ret = new ArrayList<ArtifactDefinition>();
+        return ret;
+    }
 
-		// List<ArtifactDefinition> informationDeployedArtifacts =
-		// informationDeployedArtifactsBusinessLogic.getInformationalDeployedArtifactsForResourceInstance(resourceInstance);
-		List<ArtifactDefinition> deployableArtifacts = new ArrayList<ArtifactDefinition>();
-		// deployableArtifacts.addAll(informationDeployedArtifacts);
-		if (resourceInstance.getDeploymentArtifacts() != null) {
-			deployableArtifacts.addAll(resourceInstance.getDeploymentArtifacts().values());
-		}
+    /**
+     * build the URL for resource instance artifact
+     *
+     * @param    service
+     * @param    resourceInstance
+     * @param    artifactName
+     * @return    URL string
+     */
+    public static String buildResourceInstanceArtifactUrl(Service service, ComponentInstance resourceInstance,
+            String artifactName) {
 
-		for (ArtifactDefinition artifactDef : deployableArtifacts) {
-			if (artifactDef.checkEsIdExist()) {
-				ret.add(artifactDef);
-			}
-		}
+        String url = String.format(RESOURCE_INSTANCE_ARTIFACT_URL, service.getSystemName(), service.getVersion(),
+                resourceInstance.getNormalizedName(), artifactName);
 
-		return ret;
-	}
+        logger.debug("After building artifact url {}", url);
 
-	/**
-	 * build the url for resource intance artifact
-	 * 
-	 * @param service
-	 * @param resourceData
-	 * @param artifactName
-	 * @return
-	 */
-	public static String buildResourceInstanceArtifactUrl(Service service, ComponentInstance resourceInstance,
-			String artifactName) {
+        return url;
+    }
 
-		String url = String.format(RESOURCE_INSTANCE_ARTIFACT_URL, service.getSystemName(), service.getVersion(),
-				resourceInstance.getNormalizedName(), artifactName);
+    /**
+     * build the URL for resource instance artifact
+     *
+     * @param    service
+     * @param    artifactName
+     * @return    URL string
+     */
+    public static String buildServiceArtifactUrl(Service service, String artifactName) {
 
-		logger.debug("After building artifact url {}", url);
+        String url = String.format(SERVICE_ARTIFACT_URL, service.getSystemName(), service.getVersion(), artifactName);
 
-		return url;
-	}
+        logger.debug("After building artifact url {}", url);
 
-	/**
-	 * build the url for resource intance artifact
-	 * 
-	 * @param service
-	 * @param resourceData
-	 * @param artifactName
-	 * @return
-	 */
-	public static String buildServiceArtifactUrl(Service service, String artifactName) {
+        return url;
 
-		String url = String.format(SERVICE_ARTIFACT_URL, service.getSystemName(), service.getVersion(), artifactName);
+    }
 
-		logger.debug("After building artifact url {}", url);
+    /**
+     * Verifies that the service or at least one of its instance contains deployment artifacts
+     *
+     * @param    the service
+     * @return    boolean
+     */
+    public boolean verifyServiceContainsDeploymentArtifacts(Service service) {
+        if (MapUtils.isNotEmpty(service.getDeploymentArtifacts())) {
+            return true;
+        }
+        boolean contains = false;
+        List<ComponentInstance> resourceInstances = service.getComponentInstances();
+        if (CollectionUtils.isNotEmpty(resourceInstances)) {
+            contains = resourceInstances.stream().anyMatch(i -> isContainsPayload(i.getDeploymentArtifacts()));
+        }
+        return contains;
+    }
 
-		return url;
-
-	}
-
-	/**
-	 * Retrieve all deployment artifacts of all resources under a given service
-	 * 
-	 * @param resourceArtifactsResult
-	 * @param service
-	 * @param deConfiguration
-	 * @return
-	 */
-	public Either<Boolean, StorageOperationStatus> isServiceContainsDeploymentArtifacts(Service service) {
-
-		Either<Boolean, StorageOperationStatus> result = Either.left(false);
-		Map<String, ArtifactDefinition> serviseArtifactsMap = service.getDeploymentArtifacts();
-		if (serviseArtifactsMap != null && !serviseArtifactsMap.isEmpty()) {
-			result = Either.left(true);
-			return result;
-		}
-
-		List<ComponentInstance> resourceInstances = service.getComponentInstances();
-
-		if (resourceInstances != null) {
-			for (ComponentInstance resourceInstance : resourceInstances) {
-
-				Map<String, ArtifactDefinition> deploymentArtifactsMapper = resourceInstance.getDeploymentArtifacts();
-				// List<ArtifactDefinition> informationDeployedArtifacts =
-				// informationDeployedArtifactsBusinessLogic.getInformationalDeployedArtifactsForResourceInstance(resourceInstance);
-
-				boolean isDeployableArtifactFound = isContainsPayload(deploymentArtifactsMapper.values());// ||
-																											// isContainsPayload(informationDeployedArtifacts);
-				if (isDeployableArtifactFound) {
-					result = Either.left(true);
-					break;
-				}
-
-			}
-
-		}
-
-		return result;
-	}
-
-	private boolean isContainsPayload(Collection<ArtifactDefinition> collection) {
-		boolean payLoadFound = collection != null && collection.stream().anyMatch(p -> p.checkEsIdExist());
-		return payLoadFound;
-	}
+    private boolean isContainsPayload(Map<String, ArtifactDefinition> deploymentArtifacts) {
+       return deploymentArtifacts != null && deploymentArtifacts.values().stream().anyMatch(ArtifactDefinition::checkEsIdExist);
+    }
 
 }

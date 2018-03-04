@@ -24,29 +24,29 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 
 public class CreateAndAssotiateInfo {
-	private ComponentInstance node;
-	private RequirementCapabilityRelDef associate;
+    private ComponentInstance node;
+    private RequirementCapabilityRelDef associate;
 
-	public CreateAndAssotiateInfo(ComponentInstance node, RequirementCapabilityRelDef associate) {
-		super();
-		this.node = node;
-		this.associate = associate;
-	}
+    public CreateAndAssotiateInfo(ComponentInstance node, RequirementCapabilityRelDef associate) {
+        super();
+        this.node = node;
+        this.associate = associate;
+    }
 
-	public ComponentInstance getNode() {
-		return node;
-	}
+    public ComponentInstance getNode() {
+        return node;
+    }
 
-	public void setNode(ComponentInstance node) {
-		this.node = node;
-	}
+    public void setNode(ComponentInstance node) {
+        this.node = node;
+    }
 
-	public RequirementCapabilityRelDef getAssociate() {
-		return associate;
-	}
+    public RequirementCapabilityRelDef getAssociate() {
+        return associate;
+    }
 
-	public void setAssociate(RequirementCapabilityRelDef associate) {
-		this.associate = associate;
-	}
+    public void setAssociate(RequirementCapabilityRelDef associate) {
+        this.associate = associate;
+    }
 
 }

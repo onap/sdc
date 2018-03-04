@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,30 +20,24 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Supplier;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.openecomp.sdc.be.components.clean.ComponentsCleanBusinessLogic;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import fj.data.Either;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ProductComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ServiceComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.VFComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
+import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.api.IElementDAO;
@@ -51,204 +45,244 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 public class BeGenericServlet extends BasicServlet {
 
-	@Context
-	protected HttpServletRequest servletRequest;
+    @Context
+    protected HttpServletRequest servletRequest;
 
-	private static Logger log = LoggerFactory.getLogger(BeGenericServlet.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(BeGenericServlet.class);
 
-	/******************** New error response mechanism 
-	 * @param additionalParams **************/
-	
-	protected Response buildErrorResponse(ResponseFormat requestErrorWrapper) {
-		return Response.status(requestErrorWrapper.getStatus()).entity(gson.toJson(requestErrorWrapper.getRequestError())).build();		
-	}
+    /******************** New error response mechanism
+     * @param requestErrorWrapper **************/
 
-	protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity) {
-		return buildOkResponse(errorResponseWrapper, entity, null);
-	}
+    protected Response buildErrorResponse(ResponseFormat requestErrorWrapper) {
+        return Response.status(requestErrorWrapper.getStatus()).entity(gson.toJson(requestErrorWrapper.getRequestError())).build();
+    }
 
-	protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity, Map<String, String> additionalHeaders) {
-		int status = errorResponseWrapper.getStatus();
-		ResponseBuilder responseBuilder = Response.status(status);
-		if (entity != null) {
-			if (log.isTraceEnabled())
-				log.trace("returned entity is {}", entity.toString());
-			responseBuilder = responseBuilder.entity(entity);
-		}
-		if (additionalHeaders != null) {
-			for (Entry<String, String> additionalHeader : additionalHeaders.entrySet()) {
-				String headerName = additionalHeader.getKey();
-				String headerValue = additionalHeader.getValue();
-				if (log.isTraceEnabled())
-					log.trace("Adding header {} with value {} to the response", headerName, headerValue);
-				responseBuilder.header(headerName, headerValue);
-			}
-		}
-		return responseBuilder.build();
-	}
+    protected Response buildGeneralErrorResponse() {
+        return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+    }
 
-	/*******************************************************************************************************/
-	protected Either<User, ResponseFormat> getUser(final HttpServletRequest request, String userId) {
-		Either<User, ActionStatus> eitherCreator = getUserAdminManager(request.getSession().getServletContext()).getUser(userId, false);
-		if (eitherCreator.isRight()) {
-			log.info("createResource method - user is not listed. userId= {}", userId);
-			ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_INFORMATION);
-			User user = new User("", "", userId, "", null, null);
+    protected Response buildOkResponse(Object entity) {
+        return buildOkResponseStatic(entity);
+    }
 
-			getComponentsUtils().auditResource(errorResponse, user, null, "", "", AuditingActionEnum.CHECKOUT_RESOURCE, null);
-			return Either.right(errorResponse);
-		}
-		return Either.left(eitherCreator.left().value());
+    static public Response buildOkResponseStatic(Object entity) {
+        return Response.status(Response.Status.OK)
+                .entity(entity)
+                .build();
+    }
 
-	}
+    protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity) {
+        return buildOkResponse(errorResponseWrapper, entity, null);
+    }
 
-	protected UserBusinessLogic getUserAdminManager(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
-	}
+    protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity, Map<String, String> additionalHeaders) {
+        int status = errorResponseWrapper.getStatus();
+        ResponseBuilder responseBuilder = Response.status(status);
+        if (entity != null) {
+            if (log.isTraceEnabled())
+                log.trace("returned entity is {}", entity.toString());
+            responseBuilder = responseBuilder.entity(entity);
+        }
+        if (additionalHeaders != null) {
+            for (Entry<String, String> additionalHeader : additionalHeaders.entrySet()) {
+                String headerName = additionalHeader.getKey();
+                String headerValue = additionalHeader.getValue();
+                if (log.isTraceEnabled())
+                    log.trace("Adding header {} with value {} to the response", headerName, headerValue);
+                responseBuilder.header(headerName, headerValue);
+            }
+        }
+        return responseBuilder.build();
+    }
 
-	protected ResourceBusinessLogic getResourceBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
-	}
+    /*******************************************************************************************************/
+    protected Either<User, ResponseFormat> getUser(final HttpServletRequest request, String userId) {
+        Either<User, ActionStatus> eitherCreator = getUserAdminManager(request.getSession().getServletContext()).getUser(userId, false);
+        if (eitherCreator.isRight()) {
+            log.info("createResource method - user is not listed. userId= {}", userId);
+            ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_INFORMATION);
+            User user = new User("", "", userId, "", null, null);
 
-	protected ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
-	}
+            getComponentsUtils().auditResource(errorResponse, user, "", AuditingActionEnum.CHECKOUT_RESOURCE);
+            return Either.right(errorResponse);
+        }
+        return Either.left(eitherCreator.left().value());
 
-	protected ServiceBusinessLogic getServiceBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> ServiceBusinessLogic.class);
-	}
+    }
 
-	protected ProductBusinessLogic getProductBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> ProductBusinessLogic.class);
-	}
+    protected PolicyTypeBusinessLogic getPolicyTypeBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> PolicyTypeBusinessLogic.class);
+    }
 
-	protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
-	}
+    protected UserBusinessLogic getUserAdminManager(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
+    }
 
-	protected ElementBusinessLogic getElementBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
-	}
+    protected ResourceBusinessLogic getResourceBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
+    }
 
-	protected MonitoringBusinessLogic getMonitoringBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> MonitoringBusinessLogic.class);
-	}
+    protected ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
+    }
 
-	protected AssetMetadataConverter getAssetUtils(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> AssetMetadataConverter.class);
-	}
-	
-	protected LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
-		return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
-	}
-	
-	protected <SomeClass> SomeClass getClassFromWebAppContext(ServletContext context, Supplier<Class<SomeClass>> businessLogicClassGen) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		SomeClass monitoringBusinessLogic = webApplicationContext.getBean(businessLogicClassGen.get());
-		return monitoringBusinessLogic;
-	}
+    protected ServiceBusinessLogic getServiceBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ServiceBusinessLogic.class);
+    }
 
-	protected GroupBusinessLogic getGroupBL(ServletContext context) {
+    protected ProductBusinessLogic getProductBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ProductBusinessLogic.class);
+    }
 
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		GroupBusinessLogic groupBusinessLogic = webApplicationContext.getBean(GroupBusinessLogic.class);
-		return groupBusinessLogic;
-	}
+    protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
+    }
 
-	protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context, ComponentTypeEnum containerComponentType) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		if (containerComponentType == ComponentTypeEnum.RESOURCE) {
-			return webApplicationContext.getBean(VFComponentInstanceBusinessLogic.class);
-		}
-		if (containerComponentType == ComponentTypeEnum.SERVICE) {
-			return webApplicationContext.getBean(ServiceComponentInstanceBusinessLogic.class);
-		}
-		if (containerComponentType == ComponentTypeEnum.PRODUCT) {
-			return webApplicationContext.getBean(ProductComponentInstanceBusinessLogic.class);
-		}
-		return null;
-	}
+    protected ElementBusinessLogic getElementBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
+    }
 
-	protected IElementDAO getElementDao(Class<? extends IElementDAO> clazz, ServletContext context) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+    protected MonitoringBusinessLogic getMonitoringBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> MonitoringBusinessLogic.class);
+    }
 
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+    protected AssetMetadataConverter getAssetUtils(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> AssetMetadataConverter.class);
+    }
 
-		return webApplicationContext.getBean(clazz);
-	}
+    protected LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
+    }
 
-	protected ComponentsUtils getComponentsUtils() {
-		ServletContext context = this.servletRequest.getSession().getServletContext();
+    protected PolicyBusinessLogic getPolicyBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> PolicyBusinessLogic.class);
+    }
 
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		ComponentsUtils componentsUtils = webApplicationContext.getBean(ComponentsUtils.class);
-		return componentsUtils;
-	}
+    protected <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(businessLogicClassGen.get());
+    }
 
-	/**
-	 * Used to support Unit Test.<br>
-	 * Header Params are not supported in Unit Tests
-	 * 
-	 * @return
-	 */
-	protected String initHeaderParam(String headerValue, HttpServletRequest request, String headerName) {
-		String retValue;
-		if (headerValue != null) {
-			retValue = headerValue;
-		} else {
-			retValue = request.getHeader(headerName);
-		}
-		return retValue;
-	}
+    protected GroupBusinessLogic getGroupBL(ServletContext context) {
 
-	protected String getContentDispositionValue(String artifactFileName) {
-		return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
-	}
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(GroupBusinessLogic.class);
+    }
 
-	protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
-		ComponentBusinessLogic businessLogic;
-		switch (componentTypeEnum) {
-		case RESOURCE: {
-			businessLogic = getResourceBL(context);
-			break;
-		}
-		case SERVICE: {
-			businessLogic = getServiceBL(context);
-			break;
-		}
-		case PRODUCT: {
-			businessLogic = getProductBL(context);
-			break;
-		}
-		case RESOURCE_INSTANCE: {
-			businessLogic = getResourceBL(context);
-			break;
-		}
-		default: {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeSystemError, "getComponentBL");
-			BeEcompErrorManager.getInstance().logBeSystemError("getComponentBL");
-			throw new IllegalArgumentException("Illegal component type:" + componentTypeEnum.getValue());
-		}
-		}
-		return businessLogic;
-	}
+    protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context, ComponentTypeEnum containerComponentType) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(ComponentInstanceBusinessLogic.class);
+    }
+
+    protected IElementDAO getElementDao(Class<? extends IElementDAO> clazz, ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+
+        return webApplicationContext.getBean(clazz);
+    }
+
+    protected ComponentsUtils getComponentsUtils() {
+        ServletContext context = this.servletRequest.getSession().getServletContext();
+
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(ComponentsUtils.class);
+    }
+
+    /**
+     * Used to support Unit Test.<br>
+     * Header Params are not supported in Unit Tests
+     *
+     * @return
+     */
+    protected String initHeaderParam(String headerValue, HttpServletRequest request, String headerName) {
+        String retValue;
+        if (headerValue != null) {
+            retValue = headerValue;
+        } else {
+            retValue = request.getHeader(headerName);
+        }
+        return retValue;
+    }
+
+    protected String getContentDispositionValue(String artifactFileName) {
+        return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
+    }
+
+    protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
+        ComponentBusinessLogic businessLogic;
+        switch (componentTypeEnum) {
+            case RESOURCE:
+                businessLogic = getResourceBL(context);
+                break;
+            case SERVICE:
+                businessLogic = getServiceBL(context);
+                break;
+            case PRODUCT:
+                businessLogic = getProductBL(context);
+                break;
+            case RESOURCE_INSTANCE:
+                businessLogic = getResourceBL(context);
+                break;
+            default:
+                BeEcompErrorManager.getInstance().logBeSystemError("getComponentBL");
+                throw new IllegalArgumentException("Illegal component type:" + componentTypeEnum.getValue());
+        }
+        return businessLogic;
+    }
+
+    protected <T> void convertJsonToObjectOfClass(String json, Wrapper<T> policyWrapper, Class<T> clazz, Wrapper<Response> errorWrapper) {
+        T object = null;
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        try {
+            log.trace("Starting to convert json to object. Json=\n{}", json);
+
+            SimpleModule module = new SimpleModule("customDeserializationModule");
+            module.addDeserializer(PropertyConstraint.class, new PropertyConstraintJacksonDeserializer());
+            mapper.registerModule(module);
+
+            object = mapper.readValue(json, clazz);
+            if (object != null) {
+                policyWrapper.setInnerElement(object);
+            } else {
+                BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+                log.debug("The object of class {} is null after converting from json. ", clazz);
+                errorWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
+            }
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+            log.debug("The exception {} occured upon json to object convertation. Json=\n{}", e, json);
+            errorWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
+        }
+    }
 }

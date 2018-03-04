@@ -86,7 +86,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 		// 2. Upload MIBs artifacts - SNMP_TRAP & SNMP_POLL.
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 		
-		List<ArtifactInfo> deploymentArtifactList = new ArrayList<ArtifactInfo>();
+		List<ArtifactInfo> deploymentArtifactList = new ArrayList<>();
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "SNMP_TRAP"));
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "sample-xml-alldata-1-1.xml", "cuku", "artifact2", "SNMP_POLL"));
 		for (ArtifactInfo deploymentArtifact : deploymentArtifactList) {
@@ -101,6 +101,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 			// Verify that uploaded correct file by download artifact via external api
 			RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE.toString());
 			File file = new File(deploymentArtifact.getFilepath() + deploymentArtifact.getFilename());
+
 			String readFileToString = FileUtils.readFileToString(file);
 			Assert.assertEquals(restResponse.getResponse(), readFileToString);
 			

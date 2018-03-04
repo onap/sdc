@@ -20,16 +20,16 @@
 
 package org.openecomp.sdc.be.impl;
 
-import javax.servlet.ServletContext;
-
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.ServletContext;
+
 public class WebAppContextWrapper {
 
-	public WebApplicationContext getWebAppContext(ServletContext context) {
+    public WebApplicationContext getWebAppContext(ServletContext context) {
 
-		return WebApplicationContextUtils.getWebApplicationContext(context);
-	}
+        return WebApplicationContextUtils.getWebApplicationContext(context);
+    }
 
 }

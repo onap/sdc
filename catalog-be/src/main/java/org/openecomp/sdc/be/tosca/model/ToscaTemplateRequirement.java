@@ -25,44 +25,44 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ToscaTemplateRequirement {
-	private String capability;
-	private String node;
-	private String relationship;
+    private String capability;
+    private String node;
+    private String relationship;
 
-	public ToscaTemplateRequirement() {
-	}
+    public ToscaTemplateRequirement() {
+    }
 
-	public String getCapability() {
-		return capability;
-	}
+    public String getCapability() {
+        return capability;
+    }
 
-	public void setCapability(String capability) {
-		this.capability = capability;
-	}
+    public void setCapability(String capability) {
+        this.capability = capability;
+    }
 
-	public String getNode() {
-		return node;
-	}
+    public String getNode() {
+        return node;
+    }
 
-	public void setNode(String node) {
-		this.node = node;
-	}
+    public void setNode(String node) {
+        this.node = node;
+    }
 
-	public String getRelationship() {
-		return relationship;
-	}
+    public String getRelationship() {
+        return relationship;
+    }
 
-	public void setRelationship(String relationship) {
-		this.relationship = relationship;
-	}
+    public void setRelationship(String relationship) {
+        this.relationship = relationship;
+    }
 
-	public Map<String, Object> toMap() throws IllegalArgumentException, IllegalAccessException {
-		Map<String, Object> map = new HashMap<>();
-		Field[] fields = this.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			field.setAccessible(true);
-			map.put(field.getName(), field.get(this));
-		}
-		return map;
-	}
+    public Map<String, Object> toMap() throws IllegalArgumentException, IllegalAccessException {
+        Map<String, Object> map = new HashMap<>();
+        Field[] fields = this.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            map.put(field.getName(), field.get(this));
+        }
+        return map;
+    }
 }

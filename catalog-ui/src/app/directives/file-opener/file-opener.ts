@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 
 export interface IFileOpenerScope extends ng.IScope {
     importFile:any;

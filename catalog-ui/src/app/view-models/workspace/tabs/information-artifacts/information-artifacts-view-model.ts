@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ModalsHandler} from "app/utils";
 import {SharingService} from "app/services";
 import {IAppConfigurtaion, ArtifactModel, IFileDownload} from "app/models";
