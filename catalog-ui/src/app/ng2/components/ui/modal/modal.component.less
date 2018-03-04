@@ -12,7 +12,7 @@
     bottom: 0;
     left: 0;
     z-index: 15007;
-    overflow: auto;
+    overflow: visible;
     margin: auto;
     display: flex;
     align-items: center;
@@ -22,6 +22,8 @@
         width: 100%;
         box-shadow: 0 5px 15px rgba(0,0,0,.5);
         border-radius: 4px;
+
+
         .ng2-modal-body{
             padding: 20px;
         }
@@ -29,19 +31,28 @@
         .ng2-modal-header{
             .m_18_r;
             font-weight: bold;
+
             -webkit-box-flex: 1;
             -ms-flex-positive: 1;
             flex-grow: 1;
+
             height: 50px;
             line-height: 50px;
+            margin: 0px 20px;
+
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
+
             text-align: left;
             -webkit-box-align: center;
             -ms-flex-align: center;
             align-items: center;
-            margin: 0px 20px;
+
+            &.ng-draggable {
+                cursor: move;
+                user-select: none;
+            }
 
             &.modal-type-standard {
                 border-bottom: solid 3px @main_color_a;
@@ -101,7 +112,12 @@
     background-color: #000;
     opacity: 0.5;
     z-index: 900;
+
+    &.transparent {
+        background-color: transparent;
+    }
 }
+
 
 
 .xl {

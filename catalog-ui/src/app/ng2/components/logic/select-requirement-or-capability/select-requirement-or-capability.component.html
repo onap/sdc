@@ -22,7 +22,8 @@
             </div>
         </div>
         <div class="inner-container properties-table-container" *ngIf="selectedReqOrCapOption == 'Capability'" [ngClass]="{'cap-selected':selectedReqOrCapModel}">
-            <properties-table *ngIf="selectedReqOrCapModel"
+            <loader [display]="loadingCapabilityProperties" size="medium" [relative]="true"></loader>
+            <properties-table *ngIf="selectedReqOrCapModel && !loadingCapabilityProperties"
                               class="properties-table"
                               [readonly]="true"
                               [fePropertiesMap]="capabilityProperties"

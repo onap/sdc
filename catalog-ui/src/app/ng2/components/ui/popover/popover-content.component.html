@@ -15,7 +15,8 @@
     <ng-content></ng-content>
     <div class="popover-footer">
         <button *ngFor="let buttonName of buttonsNames"
-                class="tlv-btn {{buttons[buttonName].cssClass}}"
+                class="tlv-btn {{buttons[buttonName].cssClass}}" 
+                [attr.data-tests-id]="'filter-' + buttons[buttonName].text.toLowerCase() + '-button'"
                 [disabled] = "buttons[buttonName].getDisabled && buttons[buttonName].getDisabled()"
                 (click) = "buttons[buttonName].callback()">{{buttons[buttonName].text}}</button>
     </div>

@@ -20,6 +20,7 @@
 
 //@require "./*.html"
 'use strict';
+import * as _ from "lodash";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {ArtifactModel, ArtifactGroupModel, Resource} from "app/models";
 import {ArtifactsUtils, ModalsHandler, ValidationUtils} from "app/utils";

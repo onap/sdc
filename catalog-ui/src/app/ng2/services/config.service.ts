@@ -37,8 +37,8 @@ export class ConfigService {
     public api:IApi;
 
     constructor(private http: Http, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
-        this.api = this.sdcConfig.api;
-        this.baseUrl = this.api.root + this.api.component_api_root;
+    	this.api = this.sdcConfig.api;
+        this.baseUrl = this.sdcConfig.api.root + this.sdcConfig.api.component_api_root;
     }
 
     loadValidationConfiguration(): Promise<ValidationConfiguration> {

@@ -20,102 +20,105 @@
 
 package org.openecomp.sdc.common.transaction.api;
 
-import java.util.Stack;
-
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.LogMessages;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Stack;
+
 public abstract class RollbackHandler implements IDBType {
-	private static Logger log = LoggerFactory.getLogger(RollbackHandler.class.getName());
-	private Stack<IDBAction> dbActionRollbacks;
 
-	private Integer transactionId;
-	private String userId, actionType;
+    // TODO test using slf4j-test and make this final
+    private static Logger log = LoggerFactory.getLogger(RollbackHandler.class);
+    private Stack<IDBAction> dbActionRollbacks;
 
-	protected RollbackHandler(Integer transactionId, String userId, String actionType) {
-		if (isRollbackForPersistenceData()) {
-			dbActionRollbacks = new Stack<>();
-		}
-		this.transactionId = transactionId;
-		this.userId = userId;
-		this.actionType = actionType;
-	}
+    private Integer transactionId;
+    private String userId, actionType;
 
-	public MethodActivationStatusEnum addRollbackAction(IDBAction rollbackAction) {
-		MethodActivationStatusEnum result = MethodActivationStatusEnum.SUCCESS;
-		if (isRollbackForPersistenceData()) {
-			dbActionRollbacks.push(rollbackAction);
-		} else {
-			result = MethodActivationStatusEnum.NOT_ALLOWED;
-		}
-		return result;
-	}
+    protected RollbackHandler(Integer transactionId, String userId, String actionType) {
+        if (isRollbackForPersistenceData()) {
+            dbActionRollbacks = new Stack<>();
+        }
+        this.transactionId = transactionId;
+        this.userId = userId;
+        this.actionType = actionType;
+    }
 
-	public DBActionCodeEnum doRollback() {
-		DBActionCodeEnum result;
+    public MethodActivationStatusEnum addRollbackAction(IDBAction rollbackAction) {
+        MethodActivationStatusEnum result = MethodActivationStatusEnum.SUCCESS;
+        if (isRollbackForPersistenceData()) {
+            dbActionRollbacks.push(rollbackAction);
+        } else {
+            result = MethodActivationStatusEnum.NOT_ALLOWED;
+        }
+        return result;
+    }
 
-		try {
-			if (isRollbackForPersistenceData()) {
-				result = doPersistenceDataRollback();
-			} else {
-				log.debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
-				log.debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
-				result = doNonPersistenceDataRollback();
-			}
-			if (result != DBActionCodeEnum.SUCCESS) {
-				log.error(LogMessages.ROLLBACK_FAILED_ON_DB, transactionId, getDBType().name(), userId, actionType);
-				log.error(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_FAILED_ON_DB, transactionId, getDBType().name(), userId, actionType);
-			}
+    public DBActionCodeEnum doRollback() {
+        DBActionCodeEnum result;
 
-		} catch (Exception e) {
-			result = DBActionCodeEnum.FAIL_GENERAL;
-			log.error(LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION, transactionId, getDBType().name(), e.getMessage(), userId, actionType);
-			log.debug(LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION, transactionId, getDBType().name(), e.getMessage(), userId, actionType, e);
-			log.error(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION, transactionId, getDBType().name(), e.getMessage(), userId, actionType);
-		}
+        try {
+            if (isRollbackForPersistenceData()) {
+                result = doPersistenceDataRollback();
+            } else {
+                log.debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
+                log.debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
+                result = doNonPersistenceDataRollback();
+            }
+            if (result != DBActionCodeEnum.SUCCESS) {
+                log.error(LogMessages.ROLLBACK_FAILED_ON_DB, transactionId, getDBType().name(), userId, actionType);
+                log.error(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_FAILED_ON_DB, transactionId, getDBType().name(), userId, actionType);
+            }
 
-		return result;
-	}
+        } catch (Exception e) {
+            result = DBActionCodeEnum.FAIL_GENERAL;
+            log.error(LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION, transactionId, getDBType().name(), e.getMessage(), userId, actionType);
+            log.debug(LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION, transactionId, getDBType().name(), e.getMessage(), userId, actionType, e);
+            log.error(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION, transactionId, getDBType().name(), e.getMessage(), userId, actionType);
+        }
 
-	private <T> DBActionCodeEnum doPersistenceDataRollback() {
-		DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
-		while (!dbActionRollbacks.empty()) {
-			log.debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
-			log.debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
-			IDBAction rollbackAction = dbActionRollbacks.pop();
-			T rollbackResult = rollbackAction.doAction();
-			if (!isRollbackResultValid(rollbackResult)) {
-				result = DBActionCodeEnum.FAIL_GENERAL;
-			}
-		}
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Override for specific logic
-	 * 
-	 * @param <T>
-	 */
-	public <T> boolean isRollbackResultValid(T rollbackResult) {
-		return true;
-	}
+    private <T> DBActionCodeEnum doPersistenceDataRollback() {
+        DBActionCodeEnum result = DBActionCodeEnum.SUCCESS;
+        while (!dbActionRollbacks.empty()) {
+            log.debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
+            log.debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
+            IDBAction rollbackAction = dbActionRollbacks.pop();
+            T rollbackResult = rollbackAction.doAction();
+            if (!isRollbackResultValid(rollbackResult)) {
+                result = DBActionCodeEnum.FAIL_GENERAL;
+            }
+        }
+        return result;
+    }
 
-	/**
-	 * Override for specific logic
-	 */
-	public DBActionCodeEnum doNonPersistenceDataRollback() {
-		return DBActionCodeEnum.SUCCESS;
-	}
+    /**
+     * Override for specific logic
+     *
+     * @param <T>
+     */
+    public <T> boolean isRollbackResultValid(T rollbackResult) {
+        return true;
+    }
 
-	protected abstract boolean isRollbackForPersistenceData();
+    /**
+     * Override for specific logic
+     */
+    public DBActionCodeEnum doNonPersistenceDataRollback() {
+        return DBActionCodeEnum.SUCCESS;
+    }
 
-	/**
-	 * Only Used for Unit Tests !
-	 */
-	public static void setLog(Logger log) {
-		RollbackHandler.log = log;
-	}
+    protected abstract boolean isRollbackForPersistenceData();
+
+    /**
+     * Only Used for Unit Tests !
+     */
+    // TODO test using slf4j-test and remove this
+    public static void setLog(Logger log) {
+        RollbackHandler.log = log;
+    }
 }

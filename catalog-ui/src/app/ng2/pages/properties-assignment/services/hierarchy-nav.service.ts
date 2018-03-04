@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import { Injectable } from '@angular/core';
 import { SimpleFlatProperty, PropertyFEModel, DerivedFEProperty } from 'app/models';
 

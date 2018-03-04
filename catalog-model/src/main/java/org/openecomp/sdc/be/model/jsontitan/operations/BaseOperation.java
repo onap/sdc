@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +55,8 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -549,6 +552,27 @@ public abstract class BaseOperation {
 		return statusRes;
 	}
 
+	StorageOperationStatus overrideToscaDataOfToscaElement(String toscaElementUid, EdgeLabelEnum edgeLabel, Map<String, ? extends ToscaDataDefinition> toscaData) {
+		return titanDao.getVertexById(toscaElementUid, JsonParseFlagEnum.NoParse)
+				.left()
+				.bind(graphVertex -> overrideToscaElementData(graphVertex, toscaData, edgeLabel))
+				.either(graphVertex -> StorageOperationStatus.OK,
+						DaoStatusConverter::convertTitanStatusToStorageStatus);
+	}
+
+	private Either<GraphVertex, TitanOperationStatus> overrideToscaElementData(GraphVertex toscaElement, Map<String, ? extends ToscaDataDefinition> toscaData, EdgeLabelEnum edgeLabelEnum) {
+		return titanDao.getChildVertex(toscaElement, edgeLabelEnum, JsonParseFlagEnum.ParseJson)
+				.left()
+				.bind(dataVertex -> overrideToscaElementData(dataVertex, toscaElement, toscaData, edgeLabelEnum))
+				.right()
+				.map(err -> logAndReturn(err, "failed to override tosca data for element {} of type {}. status: {}", toscaElement.getUniqueId(), edgeLabelEnum, err));
+	}
+
+	private Either<GraphVertex, TitanOperationStatus> overrideToscaElementData(GraphVertex dataElement, GraphVertex toscaElement, Map<String, ? extends ToscaDataDefinition> toscaData, EdgeLabelEnum edgeLabelEnum) {
+		dataElement.setJson(toscaData);
+		return updateOrCopyOnUpdate(dataElement, toscaElement, edgeLabelEnum);
+	}
+
 	/**
 	 * Adds list of tosca data deep elements to tosca element with specified uid according received labels
 	 * 
@@ -693,6 +717,36 @@ public abstract class BaseOperation {
 	}
 
 	/**
+	 *
+	 * @param toscaElementId the id of the tosca element data container
+	 * @param edgeLabel the edge label of the data type to update
+	 * @param toscaDataMap the data to update
+	 * @param key the key in the json object where the map object block resides
+	 * @return the status of the update operation
+	 */
+	public <T extends ToscaDataDefinition> StorageOperationStatus updateToscaDataDeepElementsBlockToToscaElement(String toscaElementId, EdgeLabelEnum edgeLabel, MapDataDefinition<T> toscaDataMap, String key) {
+		return titanDao.getVertexById(toscaElementId, JsonParseFlagEnum.NoParse)
+				.either(toscaElement -> updateToscaDataDeepElementsBlockToToscaElement(toscaElement, edgeLabel, toscaDataMap, key),
+						DaoStatusConverter::convertTitanStatusToStorageStatus);
+	}
+
+	private <T extends ToscaDataDefinition> StorageOperationStatus updateToscaDataDeepElementsBlockToToscaElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, MapDataDefinition<T> toscaDataMap, String key) {
+		return titanDao.getChildVertex(toscaElement, edgeLabel, JsonParseFlagEnum.ParseJson)
+				.left()
+				.bind(dataVertex -> updateToscaDataDeepElementsBlockToToscaElement(toscaElement, dataVertex, edgeLabel, toscaDataMap, key))
+				.either(updatedVertex -> StorageOperationStatus.OK,
+						DaoStatusConverter::convertTitanStatusToStorageStatus);
+	}
+
+	private <T extends ToscaDataDefinition> Either<GraphVertex, TitanOperationStatus> updateToscaDataDeepElementsBlockToToscaElement(GraphVertex toscaElement, GraphVertex dataElement, EdgeLabelEnum edgeLabel, MapDataDefinition<T> toscaDataMap, String key) {
+		Map<String, T> mapToscaDataDefinition = toscaDataMap.getMapToscaDataDefinition();
+		updateDeepElements(dataElement, mapToscaDataDefinition, Collections.singletonList(key));
+		return updateOrCopyOnUpdate(dataElement, toscaElement, edgeLabel)
+				.right()
+				.map(err -> logAndReturn(err, "failed while trying to update data vertex from tosca element {}, of type {} . status {}", toscaElement.getUniqueId(), edgeLabel, err));
+	}
+
+	/**
 	 * Updates tosca data element of tosca element by specified uid according received labels
 	 * 
 	 * @param toscaElementUid
@@ -833,7 +887,7 @@ public abstract class BaseOperation {
 				existingToscaDataMap = (Map<String, T>) toscaDataVertex.getJson();
 			}
 
-			validateRes = validateMergeToscaData(toscaElement, toscaDataList, mapKeyField, existingToscaDataMap, isUpdate);
+ 			validateRes = validateMergeToscaData(toscaElement, toscaDataList, mapKeyField, existingToscaDataMap, isUpdate);
 			if (validateRes.isRight()) {
 				result = validateRes.right().value();
 				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed validate tosca data upon adding to tosca element {}. Status is {}. ", toscaElement.getUniqueId(), edgeLabel, result);
@@ -1389,13 +1443,18 @@ public abstract class BaseOperation {
 	protected String buildGroupInstanceName(String instanceName, String groupName) {
 		return ValidationUtils.normalizeComponentInstanceName(instanceName) + ".." + groupName;
 	}
-	
+
 	protected String generateCustomizationUUID() {
 		return UUID.randomUUID().toString();
 	}
 	
 	protected void convertPropertiesToInstanceProperties(List<PropertyDataDefinition> properties){
 		properties.forEach(p -> p.convertPropertyDataToInstancePropertyData());
+	}
+
+	private TitanOperationStatus logAndReturn(TitanOperationStatus titanOperationStatus, String logMsg, Object ... logParams) {
+		logger.debug(logMsg, logParams);
+		return titanOperationStatus;
 	}
 
 }

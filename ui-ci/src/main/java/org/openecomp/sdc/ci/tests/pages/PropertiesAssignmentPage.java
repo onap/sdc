@@ -1,6 +1,8 @@
 package org.openecomp.sdc.ci.tests.pages;
 
 
+import java.util.List;
+
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.PropertiesAssignmentScreen;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -41,7 +43,7 @@ public class PropertiesAssignmentPage {
 	}
 	
 	public static void findSearchBoxAndClick(String resourceName) throws Exception {
-		SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + resourceName + " in homepage");
+		SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + resourceName + " in Properties");
 		WebElement searchTextbox = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.PropertiesAssignmentScreen.SEARCH_BOX.getValue());
 		try{
 			searchTextbox.clear();
@@ -55,7 +57,7 @@ public class PropertiesAssignmentPage {
 		
 		
 		try{
-			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on the %s component from home screen", resourceName));
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on the %s component in Properties", resourceName));
 			GeneralUIUtils.clickOnElementByTestId(resourceName);
 			GeneralUIUtils.ultimateWait();
 			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());
@@ -84,15 +86,11 @@ public class PropertiesAssignmentPage {
 		GeneralUIUtils.ultimateWait();		
 	}
 	
-	public static void clickOnFilterAll() {
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on property %s "));
-		GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_ALL.getValue());
-		GeneralUIUtils.ultimateWait();
-	}
+	
 	
 	public static void clickOnComponentInComposition(String resourceName) throws Exception{
 		try{
-			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on the %s component from properties composition", resourceName));
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on the %s component on Properties screen", resourceName));
 			GeneralUIUtils.clickOnElementByTestId(resourceName);
 			GeneralUIUtils.ultimateWait();
 			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());
@@ -104,7 +102,7 @@ public class PropertiesAssignmentPage {
 	}
 	
 	public static void findInput(String componentName, String resourceName) throws Exception {
-		SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + componentName + "_" + resourceName + " in homepage");
+		SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + componentName + "_" + resourceName + " on Inputs screen");
 		WebElement searchTextbox = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.PropertiesAssignmentScreen.SEARCH_BOX.getValue());
 		String searchPattern = componentName + "_" + resourceName;
 		try{
@@ -120,7 +118,7 @@ public class PropertiesAssignmentPage {
 	}
 	
 	public static void findProperty(String resourceName) throws Exception {
-		SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + resourceName + " in homepage");
+		SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + resourceName + " property on Properties screen");
 		WebElement searchTextbox = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.PropertiesAssignmentScreen.SEARCH_BOX.getValue());
 		
 		try{
@@ -144,6 +142,71 @@ public class PropertiesAssignmentPage {
 		return false;
 		
 	}
+	
+	
+	//Filter Actions
+		public static void clickOnFilterButton() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter button "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterAllCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter All Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_ALL.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterCPCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter CP Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_CP.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterVfcCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter VFC Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_VFC.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterVlCheckbox() {
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter VL Checkbox "));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CHECKBOX_VL.getValue());
+			GeneralUIUtils.ultimateWait();
+		}
+		
+		public static void clickOnFilterApplyButton(){
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter Apply Button"));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_APPLY_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();		
+		}
+		
+		public static void clickOnFilterCloseButton(){
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter Close Button"));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.FILTER_CLOSE_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();		
+		}
+		
+		public static void clickOnFilterClearAllButton(){
+			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Filter Clear All Button"));
+			GeneralUIUtils.clickOnElementByTestId(PropertiesAssignmentScreen.CLEAR_FILTER_BUTTON.getValue());
+			GeneralUIUtils.ultimateWait();		
+		}
+		
+		public static void findFilterBoxAndClick(String resourceName) throws Exception {
+			SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + resourceName + " property in Properties table");
+			WebElement searchTextbox = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.PropertiesAssignmentScreen.FILTER_BOX.getValue());
+			try{
+				searchTextbox.clear();
+				searchTextbox.sendKeys(resourceName);
+				GeneralUIUtils.ultimateWait();
+			}
+			catch(Exception e){
+				SetupCDTest.getExtendTest().log(Status.INFO, "Can't interact with search bar");
+				e.printStackTrace();
+			}
+
+		}
 	
 	
 }

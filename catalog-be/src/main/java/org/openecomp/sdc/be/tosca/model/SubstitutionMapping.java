@@ -23,36 +23,36 @@ package org.openecomp.sdc.be.tosca.model;
 import java.util.Map;
 
 public class SubstitutionMapping {
-	private String node_type;
-	private Map<String, String[]> capabilities;
-	private Map<String, String[]> requirements;
+    private String node_type;
+    private Map<String, String[]> capabilities;
+    private Map<String, String[]> requirements;
 
-	public SubstitutionMapping() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public SubstitutionMapping() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	public String getNode_type() {
-		return node_type;
-	}
+    public String getNode_type() {
+        return node_type;
+    }
 
-	public void setNode_type(String node_type) {
-		this.node_type = node_type;
-	}
+    public void setNode_type(String node_type) {
+        this.node_type = node_type;
+    }
 
-	public Map<String, String[]> getCapabilities() {
-		return capabilities;
-	}
+    public Map<String, String[]> getCapabilities() {
+        return capabilities;
+    }
 
-	public void setCapabilities(Map<String, String[]> capabilities) {
-		this.capabilities = capabilities;
-	}
+    public void setCapabilities(Map<String, String[]> capabilities) {
+        this.capabilities = capabilities;
+    }
 
-	public Map<String, String[]> getRequirements() {
-		return requirements;
-	}
+    public Map<String, String[]> getRequirements() {
+        return requirements;
+    }
 
-	public void setRequirements(Map<String, String[]> requirements) {
-		this.requirements = requirements;
-	}
+    public void setRequirements(Map<String, String[]> requirements) {
+        this.requirements = requirements;
+    }
 }

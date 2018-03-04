@@ -92,7 +92,17 @@ public class Config {
 	private String windowsDownloadDirectory;
 	private boolean captureTraffic;
 	private boolean useBrowserMobProxy;
-	
+	private String sdcHttpMethod;
+	private String localDataCenter;
+
+	public String getLocalDataCenter() {
+		return localDataCenter;
+	}
+
+	public void setLocalDataCenter(String localDataCenter) {
+		this.localDataCenter = localDataCenter;
+	}
+
 	private static Config configIt = null;
 
 	private static Yaml yaml = new Yaml();
@@ -149,6 +159,8 @@ public class Config {
 		String configFile = System.getProperty("config.resource");
 		if (configFile == null) {
 			if (System.getProperty("os.name").contains("Windows")) {
+				configFile = WINDOWS_CONFIG_FILE;
+			} else if (System.getProperty("os.name").contains("Mac")) {
 				configFile = WINDOWS_CONFIG_FILE;
 			} else {
 				throw new RuntimeException("Please Add Jvm Argument config.resource");
@@ -244,6 +256,14 @@ public class Config {
 
 	public void setSystemUnderDebug(boolean systemUnderDebug) {
 		this.systemUnderDebug = systemUnderDebug;
+	}
+
+	public String getSdcHttpMethod() {
+		return sdcHttpMethod;
+	}
+
+	public void setSdcHttpMethod(String sdcHttpMethod) {
+		this.sdcHttpMethod = sdcHttpMethod;
 	}
 
 	public boolean getRerun() {

@@ -12,7 +12,8 @@
     	org.openecomp.sdc.be.dao.jsongraph,
     	org.openecomp.sdc.be.model.cache,
 		org.openecomp.sdc.be.dao.titan,
-		org.openecomp.sdc.be.dao.cassandra">
+		org.openecomp.sdc.be.dao.cassandra,
+		org.openecomp.sdc.be.model.jsontitan.utils">
    
   </context:component-scan>
 

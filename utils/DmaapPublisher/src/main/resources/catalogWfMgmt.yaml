@@ -1,0 +1,6 @@
+publisherPropertiesFilePath: "resources/catalogWfMgmt.properties"
+topicMessages:
+  - "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"action\":\"Activate\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"action\":\"Rollback\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"action\":\"Activate\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"action\":\"Activate\"}"

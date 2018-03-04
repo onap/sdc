@@ -36,6 +36,7 @@ public class GroupTypeDefinition extends GroupTypeDataDefinition implements Seri
 	private static final long serialVersionUID = -1597773317924162703L;
 
 	private List<PropertyDefinition> properties;
+	private List<CapabilityTypeDefinition> capabilityTypes;
 
 	public List<PropertyDefinition> getProperties() {
 		return properties;
@@ -53,9 +54,17 @@ public class GroupTypeDefinition extends GroupTypeDataDefinition implements Seri
 		super(p);
 	}
 
+	public List<CapabilityTypeDefinition> getCapabilityTypes() {
+		return capabilityTypes;
+	}
+	
+	public void setCapabilityTypes(List<CapabilityTypeDefinition> capabilityTypes) {
+		this.capabilityTypes = capabilityTypes;
+	}
+
 	@Override
 	public String toString() {
-		return super.toString() + " [ properties=" + properties + " ]";
+		return super.toString() + " [properties=" + properties + ", capabilityTypes=" + capabilityTypes + "]";
 	}
 
 }

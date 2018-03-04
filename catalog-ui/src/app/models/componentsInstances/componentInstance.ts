@@ -22,6 +22,7 @@
  * Created by obarda on 2/4/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {ArtifactGroupModel, CapabilitiesGroup,RequirementsGroup, PropertyModel, InputModel, Module} from "../../models";
 import {ResourceType,ComponentType} from "../../utils/constants";
 import {Capability} from "../capability";
@@ -104,7 +105,7 @@ export class ComponentInstance {
     };
 
     public isComplex = () : boolean => {
-        return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC  ;
+        return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC || this.originType === ResourceType.CR ;
     }
 
     public isServiceProxy = () :boolean => {

@@ -21,200 +21,200 @@
 package org.openecomp.sdc.be.tosca.model;
 
 public class ToscaMetadata implements IToscaMetadata {
-	private String invariantUUID;
-	private String UUID;
-	private String customizationUUID;
-	private String version;
-	private String name;
-	private String description;
-	private String type;
-	private String category;
-	private String subcategory;
-	private String resourceVendor;
-	private String resourceVendorRelease;
-	private String resourceVendorModelNumber;
-	private String serviceType;
-	private String serviceRole;
-	private Boolean serviceEcompNaming;
-	private Boolean ecompGeneratedNaming;
-	private String namingPolicy;
-	private String sourceModelInvariant;
-	private String environmentContext;
-	private String sourceModelName;
-	private String sourceModelUuid;
-	
-	
-	public String getName() {
-		return name;
-	}
+    private String invariantUUID;
+    private String UUID;
+    private String customizationUUID;
+    private String version;
+    private String name;
+    private String description;
+    private String type;
+    private String category;
+    private String subcategory;
+    private String resourceVendor;
+    private String resourceVendorRelease;
+    private String resourceVendorModelNumber;
+    private String serviceType;
+    private String serviceRole;
+    private Boolean serviceEcompNaming;
+    private Boolean ecompGeneratedNaming;
+    private String namingPolicy;
+    private String sourceModelInvariant;
+    private String environmentContext;
+    private String sourceModelName;
+    private String sourceModelUuid;
 
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
 
-	public String getInvariantUUID() {
-		return invariantUUID;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public void setInvariantUUID(String invariantUUID) {
-		this.invariantUUID = invariantUUID;
-	}
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getUUID() {
-		return UUID;
-	}
+    public String getInvariantUUID() {
+        return invariantUUID;
+    }
 
-	@Override
-	public void setUUID(String uUID) {
-		UUID = uUID;
-	}
+    @Override
+    public void setInvariantUUID(String invariantUUID) {
+        this.invariantUUID = invariantUUID;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getUUID() {
+        return UUID;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @Override
+    public void setUUID(String uUID) {
+        UUID = uUID;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getCategory() {
-		return category;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getSubcategory() {
-		return subcategory;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public void setSubcategory(String subcategory) {
-		this.subcategory = subcategory;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public String getResourceVendor() {
-		return resourceVendor;
-	}
+    public String getSubcategory() {
+        return subcategory;
+    }
 
-	public void setResourceVendor(String resourceVendor) {
-		this.resourceVendor = resourceVendor;
-	}
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
 
-	public String getResourceVendorRelease() {
-		return resourceVendorRelease;
-	}
+    public String getResourceVendor() {
+        return resourceVendor;
+    }
 
-	public void setResourceVendorRelease(String resourceVendorRelease) {
-		this.resourceVendorRelease = resourceVendorRelease;
-	}
-	
-	public String getResourceVendorModelNumber() {
-		return resourceVendorModelNumber;
-	}
-	
-	public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-		this.resourceVendorModelNumber = resourceVendorModelNumber;
-	}
-	
-	public String getServiceType() {
-		return serviceType;
-	}
-	
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
-	
-	public String getServiceRole() {
-		return serviceRole;
-	}
-	
-	public void setServiceRole(String serviceRole) {
-		this.serviceRole = serviceRole;
-	}
+    public void setResourceVendor(String resourceVendor) {
+        this.resourceVendor = resourceVendor;
+    }
 
-	public Boolean isEcompGeneratedNaming() {
-		return ecompGeneratedNaming;
-	}
+    public String getResourceVendorRelease() {
+        return resourceVendorRelease;
+    }
 
-	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
-		this.ecompGeneratedNaming = ecompGeneratedNaming;
-	}
+    public void setResourceVendorRelease(String resourceVendorRelease) {
+        this.resourceVendorRelease = resourceVendorRelease;
+    }
 
-	public String isNamingPolicy() {
-		return namingPolicy;
-	}
+    public String getResourceVendorModelNumber() {
+        return resourceVendorModelNumber;
+    }
 
-	public void setNamingPolicy(String namingPolicy) {
-		this.namingPolicy = namingPolicy;
-	}
+    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
+        this.resourceVendorModelNumber = resourceVendorModelNumber;
+    }
 
-	public Boolean getServiceEcompNaming() {
-		return serviceEcompNaming;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public void setServiceEcompNaming(Boolean serviceEcompNaming) {
-		this.serviceEcompNaming = serviceEcompNaming;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getServiceRole() {
+        return serviceRole;
+    }
 
-	@Override
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setServiceRole(String serviceRole) {
+        this.serviceRole = serviceRole;
+    }
 
-	public String getCustomizationUUID() {
-		return customizationUUID;
-	}
+    public Boolean isEcompGeneratedNaming() {
+        return ecompGeneratedNaming;
+    }
 
-	public void setCustomizationUUID(String customizationUUID) {
-		this.customizationUUID = customizationUUID;
-	}
+    public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+        this.ecompGeneratedNaming = ecompGeneratedNaming;
+    }
 
-	public String getSourceModelInvariant() {
-		return sourceModelInvariant;
-	}
+    public String isNamingPolicy() {
+        return namingPolicy;
+    }
 
-	public void setSourceModelInvariant(String sourceModelInvariant) {
-		this.sourceModelInvariant = sourceModelInvariant;
-	}
+    public void setNamingPolicy(String namingPolicy) {
+        this.namingPolicy = namingPolicy;
+    }
 
-	public String getSourceModelName() {
-		return sourceModelName;
-	}
+    public Boolean getServiceEcompNaming() {
+        return serviceEcompNaming;
+    }
 
-	public void setSourceModelName(String sourceModelName) {
-		this.sourceModelName = sourceModelName;
-	}
+    public void setServiceEcompNaming(Boolean serviceEcompNaming) {
+        this.serviceEcompNaming = serviceEcompNaming;
+    }
 
-	public String getSourceModelUuid() {
-		return sourceModelUuid;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setSourceModelUuid(String sourceModelUuid) {
-		this.sourceModelUuid = sourceModelUuid;
-	}
-	
-	
+    @Override
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public String getEnvironmentContext() {
-		return environmentContext;
-	}
+    public String getCustomizationUUID() {
+        return customizationUUID;
+    }
 
-	public void setEnvironmentContext(String environmentContext) {
-		this.environmentContext = environmentContext;
-	}
+    public void setCustomizationUUID(String customizationUUID) {
+        this.customizationUUID = customizationUUID;
+    }
+
+    public String getSourceModelInvariant() {
+        return sourceModelInvariant;
+    }
+
+    public void setSourceModelInvariant(String sourceModelInvariant) {
+        this.sourceModelInvariant = sourceModelInvariant;
+    }
+
+    public String getSourceModelName() {
+        return sourceModelName;
+    }
+
+    public void setSourceModelName(String sourceModelName) {
+        this.sourceModelName = sourceModelName;
+    }
+
+    public String getSourceModelUuid() {
+        return sourceModelUuid;
+    }
+
+    public void setSourceModelUuid(String sourceModelUuid) {
+        this.sourceModelUuid = sourceModelUuid;
+    }
+
+
+
+    public String getEnvironmentContext() {
+        return environmentContext;
+    }
+
+    public void setEnvironmentContext(String environmentContext) {
+        this.environmentContext = environmentContext;
+    }
 }

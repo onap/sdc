@@ -1,11 +1,11 @@
 package org.openecomp.sdc.asdctool.configuration;
 
-import java.io.File;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+
+import java.io.File;
 
 public class ConfigurationUploader {
 

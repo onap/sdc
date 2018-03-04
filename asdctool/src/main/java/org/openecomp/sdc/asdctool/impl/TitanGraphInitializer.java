@@ -28,9 +28,12 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.slf4j.Logger;
@@ -50,7 +53,6 @@ public class TitanGraphInitializer {
 	private static Logger logger = LoggerFactory.getLogger(TitanGraphInitializer.class.getName());
 	private static TitanGraph graph;
 
-
 	public static boolean createGraph(String titanCfgFile) {
 		logger.info("** createGraph with {}", titanCfgFile);
 		try {
@@ -64,9 +66,9 @@ public class TitanGraphInitializer {
 			logger.info("createGraph : failed to open Titan graph with configuration file: {}", titanCfgFile, e);
 			return false;
 		}
-		
+
 		createIndexesAndDefaults();
-		
+
 		logger.info("** Titan graph created ");
 
 		return true;
@@ -100,13 +102,13 @@ public class TitanGraphInitializer {
 		checkedProperties.put(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
 		Map<String, Object> properties = null;
 		if (!isVertexExist(checkedProperties)) {
-            Vertex vertex = graph.addVertex();
-            vertex.property(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
-            properties = user.toGraphMap();
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                vertex.property(entry.getKey(), entry.getValue());
-            }
-        }
+			Vertex vertex = graph.addVertex();
+			vertex.property(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
+			properties = user.toGraphMap();
+			for (Map.Entry<String, Object> entry : properties.entrySet()) {
+				vertex.property(entry.getKey(), entry.getValue());
+			}
+		}
 	}
 
 	private static UserData getDefaultUserAdmin() {
@@ -122,7 +124,6 @@ public class TitanGraphInitializer {
 		userData.setLastLoginTime(0L);
 		return userData;
 	}
-
 
 	private static void createVertexIndixes() {
 		logger.info("** createVertexIndixes started");
@@ -186,5 +187,13 @@ public class TitanGraphInitializer {
 		createVertexIndixes();
 		createEdgeIndixes();
 		createDefaultAdminUser();
+		createRootCatalogVertex();
+	}
+
+	private static void createRootCatalogVertex() {
+		Vertex vertex = graph.addVertex();
+		vertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty(), IdBuilderUtils.generateUniqueId());
+		vertex.property(GraphPropertyEnum.LABEL.getProperty(), VertexTypeEnum.CATALOG_ROOT.getName());
+		graph.tx().commit();
 	}
 }

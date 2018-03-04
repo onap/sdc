@@ -21,11 +21,10 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -118,7 +117,33 @@ public class ResourceAdminEvent extends AuditingGenericEvent {
 		timebaseduuid = UUIDs.timeBased();
 	}
 
-	public ResourceAdminEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public ResourceAdminEvent(String action, CommonAuditData commonAuditData, ResourceAuditData prevParams, ResourceAuditData currParams, String resourceType,
+							  String resourceName, String invariantUuid, String modifier, String artifactData, String comment, String did, String toscaNodeType) {
+		this();
+		this.action = action;
+		this.requestId = commonAuditData.getRequestId();
+		this.desc = commonAuditData.getDescription();
+		this.status = commonAuditData.getStatus();
+		this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+		this.currState = currParams.getState();
+		this.currVersion = currParams.getVersion();
+		this.currArtifactUUID = currParams.getArtifactUuid();
+		this.prevState = prevParams.getState();
+		this.prevVersion = prevParams.getVersion();
+		this.prevArtifactUUID = prevParams.getArtifactUuid();
+		this.resourceName = resourceName;
+		this.resourceType = resourceType;
+		this.comment = comment;
+		this.dcurrStatus = currParams.getDistributionStatus();
+		this.dprevStatus = prevParams.getDistributionStatus();
+		this.artifactData = artifactData;
+		this.modifier = modifier;
+		this.invariantUUID = invariantUuid;
+		this.did = did;
+		this.toscaNodeType = toscaNodeType;
+	}
+
+	public ResourceAdminEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
@@ -208,6 +233,7 @@ public class ResourceAdminEvent extends AuditingGenericEvent {
 		}
 
 	}
+
 
 	@Override
 	public void fillFields() {

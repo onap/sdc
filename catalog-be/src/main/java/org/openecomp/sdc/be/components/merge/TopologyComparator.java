@@ -1,8 +1,6 @@
 package org.openecomp.sdc.be.components.merge;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.exception.SdcActionException;
@@ -15,7 +13,8 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Component
 public class TopologyComparator {

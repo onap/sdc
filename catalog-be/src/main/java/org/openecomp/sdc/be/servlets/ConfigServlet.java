@@ -20,6 +20,14 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import com.jcabi.aspects.Loggable;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.servlets.BasicServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -28,15 +36,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.servlets.BasicServlet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.jcabi.aspects.Loggable;
-
 /**
  * Root resource (exposed at "/" path)
  */
@@ -44,36 +43,36 @@ import com.jcabi.aspects.Loggable;
 @Path("/config")
 public class ConfigServlet extends BasicServlet {
 
-	private static Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ConfigServlet.class);
 
-	@GET
-	@Path("/get")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getConfig(@Context final HttpServletRequest request) {
+    @GET
+    @Path("/get")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getConfig(@Context final HttpServletRequest request) {
 
-		String result = null;
+        String result = null;
 
-		ServletContext context = request.getSession().getServletContext();
+        ServletContext context = request.getSession().getServletContext();
 
-		ConfigurationSource configurationSource = (ConfigurationSource) context.getAttribute(Constants.CONFIGURATION_SOURCE_ATTR);
-		if (configurationSource != null) {
-			Configuration configuration = configurationSource.getAndWatchConfiguration(Configuration.class, null);
+        ConfigurationSource configurationSource = (ConfigurationSource) context.getAttribute(Constants.CONFIGURATION_SOURCE_ATTR);
+        if (configurationSource != null) {
+            Configuration configuration = configurationSource.getAndWatchConfiguration(Configuration.class, null);
 
-			if (configuration == null) {
-				log.warn("Configuration of type {} was not found", Configuration.class);
-			}
-			log.debug("{}", configuration);
-			log.info("Info level ENABLED...");
-			log.info("The value returned from getConfig is {}", configuration);
+            if (configuration == null) {
+                log.warn("Configuration of type {} was not found", Configuration.class);
+            }
+            log.debug("{}", configuration);
+            log.info("Info level ENABLED...");
+            log.info("The value returned from getConfig is {}", configuration);
 
-			result = gson.toJson(configuration);
+            result = gson.toJson(configuration);
 
-		} else {
-			log.warn("Source Configuration object was not initialized in the context.");
-		}
+        } else {
+            log.warn("Source Configuration object was not initialized in the context.");
+        }
 
-		return result;
+        return result;
 
-	}
+    }
 
 }

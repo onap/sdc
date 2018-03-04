@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {ComponentInstance, Component, Match, CompositionCiLinkBase, CompositionCiNodeUcpeCp} from "app/models";
 import {QueueUtils, Dictionary, GraphUIObjects} from "app/utils";
 import {LoaderService} from "app/services";

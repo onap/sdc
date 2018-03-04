@@ -20,14 +20,11 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
@@ -35,139 +32,138 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CertificationChangeTransitionTest extends LifecycleTestBase {
 
-	private CertificationChangeTransition certifyTransitionObj = null;
-	private CertificationChangeTransition certificationCancelObj = null;
-	private CertificationChangeTransition certificationFailObj = null;
+    private CertificationChangeTransition certifyTransitionObj = null;
+    private CertificationChangeTransition certificationCancelObj = null;
+    private CertificationChangeTransition certificationFailObj = null;
 
-	private ComponentsUtils componentsUtils = new ComponentsUtils();
-	private User owner = null;
+    private User owner = null;
 
-	Resource resource;
+    Resource resource;
 
-	@SuppressWarnings("unchecked")
-	@Before
-	public void setup() {
+    @SuppressWarnings("unchecked")
+    @Before
+    public void setup() {
 
-		super.setup();
-		componentsUtils.Init();
-		// checkout transition object
-		certifyTransitionObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
-		certifyTransitionObj.setConfigurationManager(configurationManager);
-		certifyTransitionObj.setLifeCycleOperation(toscaElementLifecycleOperation);
-		
-		certificationCancelObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation,  toscaOperationFacade, titanDao);
-		certificationCancelObj.setConfigurationManager(configurationManager);
-		certificationCancelObj.setLifeCycleOperation(toscaElementLifecycleOperation);
-		
-		certificationFailObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
-		certificationFailObj.setConfigurationManager(configurationManager);
-		certificationFailObj.setLifeCycleOperation(toscaElementLifecycleOperation);
-		
-		owner = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
+        super.setup();
+        // checkout transition object
+        certifyTransitionObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
+        certifyTransitionObj.setConfigurationManager(configurationManager);
+        certifyTransitionObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 
-		resource = createResourceObject();
-	}
-	
-	@Test
-	public void testVFCMTStateValidation(){
-		Resource resource = createResourceVFCMTObject();
-				
-		User user = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
-				
-		Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		assertEquals(validateBeforeTransition.isLeft(), true);
-	}
+        certificationCancelObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation,  toscaOperationFacade, titanDao);
+        certificationCancelObj.setConfigurationManager(configurationManager);
+        certificationCancelObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 
-	@Test
-	public void testStateValidationSuccess() {
+        certificationFailObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
+        certificationFailObj.setConfigurationManager(configurationManager);
+        certificationFailObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 
-		Either<Boolean, ResponseFormat> changeStateResult = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		assertEquals(changeStateResult.isLeft(), true);
+        owner = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
 
-	}
+        resource = createResourceObject();
+    }
 
-	@Test
-	public void testStateValidationFail() {
+    @Test
+    public void testVFCMTStateValidation(){
+        Resource resource = createResourceVFCMTObject();
 
-		// checkout
-		Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        User user = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
 
-		assertValidationStateErrorResponse(validateBeforeTransition);
+        Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        assertEquals(validateBeforeTransition.isLeft(), true);
+    }
 
-		// checkin
-		validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		assertValidationStateErrorResponse(validateBeforeTransition);
+    @Test
+    public void testStateValidationSuccess() {
 
-		// rfc
-		validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-		assertValidationStateErrorResponse(validateBeforeTransition);
+        Either<Boolean, ResponseFormat> changeStateResult = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        assertEquals(changeStateResult.isLeft(), true);
 
-		// certified
-		validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFIED);
-		assertValidationStateErrorResponse(validateBeforeTransition);
+    }
 
-	}
+    @Test
+    public void testStateValidationFail() {
 
-	@Test
-	public void testRolesFail() {
-		Either<Resource, ResponseFormat> changeStateResult;
+        // checkout
+        Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 
-		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        assertValidationStateErrorResponse(validateBeforeTransition);
 
-		User modifier = new User();
-		modifier.setUserId("modifier");
-		modifier.setFirstName("Albert");
-		modifier.setLastName("Einstein");
-		modifier.setRole(Role.DESIGNER.name());
-		Either<User, ResponseFormat> ownerResponse = certifyTransitionObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
-		assertTrue(ownerResponse.isLeft());
-		User owner = ownerResponse.left().value();
+        // checkin
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        assertValidationStateErrorResponse(validateBeforeTransition);
 
-		Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		assertEquals(validateBeforeTransition.isRight(), true);
-		changeStateResult = Either.right(validateBeforeTransition.right().value());
-		assertResponse(changeStateResult, ActionStatus.RESTRICTED_OPERATION);
+        // rfc
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
+        assertValidationStateErrorResponse(validateBeforeTransition);
 
-		modifier.setRole(Role.TESTER.name());
-		validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		assertEquals(validateBeforeTransition.isRight(), true);
-		changeStateResult = Either.right(validateBeforeTransition.right().value());
-		assertResponse(changeStateResult, ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
+        // certified
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFIED);
+        assertValidationStateErrorResponse(validateBeforeTransition);
 
-	}
+    }
 
-	@Test
-	public void testRolesSuccess() {
+    @Test
+    public void testRolesFail() {
+        Either<Resource, ResponseFormat> changeStateResult;
 
-		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		Either<User, ResponseFormat> ownerResponse = certifyTransitionObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
-		assertTrue(ownerResponse.isLeft());
-		User owner = ownerResponse.left().value();
+        resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
-		Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, owner, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		assertEquals(true, validateBeforeTransition.isLeft());
+        User modifier = new User();
+        modifier.setUserId("modifier");
+        modifier.setFirstName("Albert");
+        modifier.setLastName("Einstein");
+        modifier.setRole(Role.DESIGNER.name());
+        Either<User, ResponseFormat> ownerResponse = certifyTransitionObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
+        assertTrue(ownerResponse.isLeft());
+        User owner = ownerResponse.left().value();
 
-		User modifier = new User();
-		modifier.setUserId("modifier");
-		modifier.setFirstName("Albert");
-		modifier.setLastName("Einstein");
-		modifier.setRole(Role.ADMIN.name());
-		validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		assertEquals(true, validateBeforeTransition.isLeft());
+        Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        assertEquals(validateBeforeTransition.isRight(), true);
+        changeStateResult = Either.right(validateBeforeTransition.right().value());
+        assertResponse(changeStateResult, ActionStatus.RESTRICTED_OPERATION);
 
-	}
+        modifier.setRole(Role.TESTER.name());
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        assertEquals(validateBeforeTransition.isRight(), true);
+        changeStateResult = Either.right(validateBeforeTransition.right().value());
+        assertResponse(changeStateResult, ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
-	private void assertValidationStateErrorResponse(Either<Boolean, ResponseFormat> validateBeforeTransition) {
-		assertEquals(validateBeforeTransition.isRight(), true);
-		ResponseFormat error = validateBeforeTransition.right().value();
-		Either<Resource, ResponseFormat> changeStateResult = Either.right(error);
-		assertEquals(changeStateResult.isRight(), true);
+    }
 
-		assertResponse(changeStateResult, ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-	}
+    @Test
+    public void testRolesSuccess() {
+
+        resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        Either<User, ResponseFormat> ownerResponse = certifyTransitionObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
+        assertTrue(ownerResponse.isLeft());
+        User owner = ownerResponse.left().value();
+
+        Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, owner, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        assertEquals(true, validateBeforeTransition.isLeft());
+
+        User modifier = new User();
+        modifier.setUserId("modifier");
+        modifier.setFirstName("Albert");
+        modifier.setLastName("Einstein");
+        modifier.setRole(Role.ADMIN.name());
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        assertEquals(true, validateBeforeTransition.isLeft());
+
+    }
+
+    private void assertValidationStateErrorResponse(Either<Boolean, ResponseFormat> validateBeforeTransition) {
+        assertEquals(validateBeforeTransition.isRight(), true);
+        ResponseFormat error = validateBeforeTransition.right().value();
+        Either<Resource, ResponseFormat> changeStateResult = Either.right(error);
+        assertEquals(changeStateResult.isRight(), true);
+
+        assertResponse(changeStateResult, ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
+    }
 
 }

@@ -6,24 +6,24 @@ import copy
 from importNormativeElements import createNormativeElement
 
 from importCommon import *
-################################################################################################################################################
-#																																		       #	
-# Import tosca data types																										   #
-# 																																			   #		
-# activation :																																   #
-#       python importDataTypes.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#																																		  	   #			
-# shortest activation (be host = localhost, be port = 8080): 																				   #																       #
-#		python importDataTypes.py [-f <input file> | --ifile=<input file> ]												 				           #
-#																																		       #	
-################################################################################################################################################
+#####################################################################################################################################################################################
+#																																		       										#
+# Import tosca data types																										   													#
+# 																																			   										#
+# activation :																																   										#
+#       python importDataTypes.py [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ] 	#
+#																																		  	   										#
+# shortest activation (be host = localhost, be port = 8080): 																				   										#
+#		python importDataTypes.py [-f <input file> | --ifile=<input file> ]												 				           									#
+#																																		       										#
+#####################################################################################################################################################################################
 
 def usage():
-	print sys.argv[0], '[-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ]'
+	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ]'
 
 
-def importDataTypes(beHost, bePort, adminUser, exitOnSuccess, fileDir):
-	result = createNormativeElement(beHost, bePort, adminUser, fileDir, "/sdc2/rest/v1/catalog/uploadType/datatypes", "dataTypes", "dataTypesZip")
+def importDataTypes(scheme, beHost, bePort, adminUser, exitOnSuccess, fileDir):
+	result = createNormativeElement(scheme, beHost, bePort, adminUser, fileDir, "/sdc2/rest/v1/catalog/uploadType/datatypes", "dataTypes", "dataTypesZip")
 
 	printFrameLine()
         printNameAndReturnCode(result[0], result[1])
@@ -41,9 +41,10 @@ def main(argv):
 	beHost = 'localhost' 
 	bePort = '8080'
 	adminUser = 'jh0003'
+	scheme = 'http'
 
 	try:
-		opts, args = getopt.getopt(argv,"i:p:u:h:",["ip=","port=","user="])
+		opts, args = getopt.getopt(argv,"i:p:u:h:s:",["ip=","port=","user=","scheme="])
 	except getopt.GetoptError:
 		usage()
 		errorAndExit(2, 'Invalid input')
@@ -59,14 +60,16 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-u", "--user"):
 			adminUser = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 
-	print 'be host =',beHost,', be port =', bePort,', user =', adminUser
+	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', user =', adminUser
 	
 	if ( beHost == None ):
 		usage()
 		sys.exit(3)
 
-	importDataTypes(beHost, bePort, adminUser, True, "../../../import/tosca/data-types/")
+	importDataTypes(scheme, beHost, bePort, adminUser, True, "../../../import/tosca/data-types/")
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {Module} from "app/models";
 /**
  * Created by obarda on 12/21/2016.

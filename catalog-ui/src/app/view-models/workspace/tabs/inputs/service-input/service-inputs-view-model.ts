@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {ComponentInstance, InstancesInputsOrPropertiesMapData, Service, IAppMenu, InputModel, PropertyModel, InputPropertyBase} from "app/models";
 import {DataTypesService} from "app/services";

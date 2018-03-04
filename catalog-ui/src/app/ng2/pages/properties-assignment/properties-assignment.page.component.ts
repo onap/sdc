@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, ViewChild, ElementRef, Renderer, Inject} from "@angular/core";
+import * as _ from "lodash";
+import {Component, ViewChild, Inject, TemplateRef} from "@angular/core";
 import { PropertiesService } from "../../services/properties.service";
-import { PropertyFEModel, InstanceFePropertiesMap, InstanceBePropertiesMap, InstancePropertiesAPIMap, Component as ComponentData, FilterPropertiesAssignmentData } from "app/models";
+import { PropertyFEModel, InstanceFePropertiesMap, InstanceBePropertiesMap, InstancePropertiesAPIMap, Component as ComponentData, FilterPropertiesAssignmentData, ModalModel, ButtonModel } from "app/models";
 import { ResourceType } from "app/utils";
-import property = require("lodash/property");
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
 import { InputBEModel, InputFEModel, ComponentInstance, PropertyBEModel, DerivedFEProperty, ResourceInstance, SimpleFlatProperty } from "app/models";
@@ -35,6 +35,9 @@ import {PropertyRowSelectedEvent} from "../../components/logic/properties-table/
 import {HierarchyNavService} from "./services/hierarchy-nav.service";
 import {PropertiesUtils} from "./services/properties.utils";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
+import {ModalService} from "../../services/modal.service";
+import {Tabs, Tab} from "../../components/ui/tabs/tabs.component";
+import {InputsUtils} from "./services/inputs.utils";
 
 @Component({
     templateUrl: './properties-assignment.page.component.html',
@@ -64,24 +67,36 @@ export class PropertiesAssignmentComponent {
     hierarchyInstancesDisplayOptions:HierarchyDisplayOptions = new HierarchyDisplayOptions('uniqueId', 'name');
     displayClearSearch = false;
     searchPropertyName:string;
-    isInpusTabSelected:boolean;
+    currentMainTab:Tab;
+    isInputsTabSelected:boolean;
+    isPropertiesTabSelected:boolean;
     isReadonly:boolean;
     loadingInstances:boolean = false;
     loadingInputs:boolean = false;
     loadingProperties:boolean = false;
+    changedData:Array<PropertyFEModel|InputFEModel>;
+    hasChangedData:boolean;
+    isValidChangedData:boolean;
+    savingChangedData:boolean;
+    stateChangeStartUnregister:Function;
 
-    @ViewChild('hierarchyNavTabs') hierarchyNavTabs: ElementRef;
-    @ViewChild('propertyInputTabs') propertyInputTabs: ElementRef;
+    @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
+    @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
     @ViewChild('advanceSearch') advanceSearch: FilterPropertiesAssignmentComponent;
+    @ViewChild('saveChangedDataModalContentTemplate') saveChangedDataModalContentTemplateRef: TemplateRef<void>;
 
     constructor(private propertiesService: PropertiesService,
                 private hierarchyNavService: HierarchyNavService,
                 private propertiesUtils:PropertiesUtils,
+                private inputsUtils:InputsUtils,
                 private componentServiceNg2:ComponentServiceNg2,
                 private componentInstanceServiceNg2:ComponentInstanceServiceNg2,
                 @Inject("$stateParams") _stateParams,
-                private renderer: Renderer,
+                @Inject("$scope") private $scope:ng.IScope,
+                @Inject("$state") private $state:ng.ui.IStateService,
+                @Inject("Notification") private Notification:any,
                 private componentModeService:ComponentModeService,
+                private ModalService:ModalService,
                 private EventListenerService:EventListenerService) {
 
         this.instanceFePropertiesMap = new InstanceFePropertiesMap();
@@ -91,6 +106,10 @@ export class PropertiesAssignmentComponent {
         this.component = _stateParams.component;
         this.EventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, this.onCheckout);
         this.updateViewMode();
+
+        this.changedData = [];
+        this.updateHasChangedData();
+        this.isValidChangedData = true;
     }
 
     ngOnInit() {
@@ -102,7 +121,9 @@ export class PropertiesAssignmentComponent {
             .getComponentInputs(this.component)
             .subscribe(response => {
                 _.forEach(response.inputs, (input: InputBEModel) => {
-                    this.inputs.push(new InputFEModel(input)); //only push items that were declared via SDC
+                    const newInput: InputFEModel = new InputFEModel(input);
+                    this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
+                    this.inputs.push(newInput); //only push items that were declared via SDC
                 });
                 this.loadingInputs = false;
 
@@ -123,10 +144,22 @@ export class PropertiesAssignmentComponent {
                 this.selectFirstInstanceByDefault();
             }, error => {}); //ignore error
 
+        this.stateChangeStartUnregister = this.$scope.$on('$stateChangeStart', (event, toState, toParams) => {
+            // stop if has changed properties
+            if (this.hasChangedData) {
+                event.preventDefault();
+                this.openChangedDataModal().then((proceed) => {
+                    if (proceed) {
+                        this.$state.go(toState, toParams);
+                    }
+                });
+            }
+        });
     };
 
     ngOnDestroy() {
         this.EventListenerService.unRegisterObserver(EVENTS.ON_CHECKOUT);
+        this.stateChangeStartUnregister();
     }
 
     selectFirstInstanceByDefault = () => {
@@ -147,12 +180,23 @@ export class PropertiesAssignmentComponent {
 
     onInstanceSelectedUpdate = (resourceInstance: ResourceInstance) => {
         console.log("==>" + this.constructor.name + ": onInstanceSelectedUpdate");
+
+        // stop if has changed properties
+        if (this.hasChangedData) {
+            this.openChangedDataModal().then((proceed) => {
+                if (proceed) {
+                    this.onInstanceSelectedUpdate(resourceInstance);
+                }
+            });
+            return;
+        }
+
         let instanceBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         this.selectedInstanceData = resourceInstance;
         this.selectedInstanceType = resourceInstance.originType;
 
         this.loadingProperties = true;
-        if(this.isInput(resourceInstance.originType)) {
+        if (this.isInput(resourceInstance.originType)) {
             this.componentInstanceServiceNg2
                 .getComponentInstanceInputs(this.component, resourceInstance)
                 .subscribe(response => {
@@ -160,7 +204,8 @@ export class PropertiesAssignmentComponent {
                     this.processInstancePropertiesResponse(instanceBePropertiesMap, true);
                     this.loadingProperties = false;
 
-                }, error => {}); //ignore error
+                }, error => {
+                }); //ignore error
         } else {
             this.componentInstanceServiceNg2
                 .getComponentInstanceProperties(this.component, resourceInstance.uniqueId)
@@ -168,14 +213,15 @@ export class PropertiesAssignmentComponent {
                     instanceBePropertiesMap[resourceInstance.uniqueId] = response;
                     this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
                     this.loadingProperties = false;
-                }, error => {}); //ignore error
+                }, error => {
+                }); //ignore error
         }
 
-        if(resourceInstance.componentName === "vnfConfiguration") {
+        if (resourceInstance.componentName === "vnfConfiguration") {
             this.isReadonly = true;
         }
 
-        if( this.searchPropertyName ){
+        if (this.searchPropertyName) {
             this.clearSearch();
         }
         //clear selected property from the navigation
@@ -193,41 +239,31 @@ export class PropertiesAssignmentComponent {
 
 
     /*** VALUE CHANGE EVENTS ***/
-    propertyValueChanged = (event: PropertyFEModel) => {
-        console.log("==>" + this.constructor.name + ": propertyValueChanged " + event);
-        // Copying the actual value from the object ref into the value if it's from a complex type
-        event.value = event.getJSONValue();
-
-        if (this.isInput(this.selectedInstanceData.originType)) {
-            console.log("I want to update input value on the resource instance");
-            let inputToUpdate = new PropertyBEModel(event);
-            this.componentInstanceServiceNg2
-                .updateInstanceInput(this.component, this.selectedInstanceData.uniqueId, inputToUpdate)
-                .subscribe(response => {
-                    console.log("Update resource instance input response: ", response);
-                }, error => {}); //ignore error
-        }
-        else {
-            let propertyBe = new PropertyBEModel(event);
-            this.componentInstanceServiceNg2
-                .updateInstanceProperty(this.component, this.selectedInstanceData.uniqueId, propertyBe)
-                .subscribe(response => {
-                    console.log("Update resource instance property response: ", response);
-                }, error => {}); //ignore error
-            console.log(event);
+    dataChanged = (item:PropertyFEModel|InputFEModel) => {
+        let itemHasChanged;
+        if (this.isPropertiesTabSelected && item instanceof PropertyFEModel) {
+            itemHasChanged = item.hasValueObjChanged();
+        } else if (this.isInputsTabSelected && item instanceof InputFEModel) {
+            itemHasChanged = item.hasDefaultValueChanged();
         }
 
-    };
+        const dataChangedIdx = this.changedData.findIndex((changedItem) => changedItem === item);
+        if (itemHasChanged) {
+            if (dataChangedIdx === -1) {
+                this.changedData.push(item);
+            }
+        } else {
+            if (dataChangedIdx !== -1) {
+                this.changedData.splice(dataChangedIdx, 1);
+            }
+        }
 
-    inputValueChanged = (event) => {
-        console.log("==>" + this.constructor.name + ": inputValueChanged");
-        let inputToUpdate = new PropertyBEModel(event);
-
-        this.componentServiceNg2
-            .updateComponentInput(this.component, inputToUpdate)
-            .subscribe(response => {
-                console.log("updated the component input and got this response: ", response);
-            }, error => {}); //ignore error
+        if (this.isPropertiesTabSelected) {
+            this.isValidChangedData = this.changedData.every((changedItem) => (<PropertyFEModel>changedItem).valueObjIsValid);
+        } else if (this.isInputsTabSelected) {
+            this.isValidChangedData = this.changedData.every((changedItem) => (<InputFEModel>changedItem).defaultValueObjIsValid);
+        }
+        this.updateHasChangedData();
     };
 
 
@@ -272,7 +308,7 @@ export class PropertiesAssignmentComponent {
 
         // Set selected property in table
         this.selectedFlatProperty = this.hierarchyNavService.createSimpleFlatProperty(property, instanceName);
-        this.renderer.invokeElementMethod(this.hierarchyNavTabs, 'triggerTabChange', ['Property Structure']);
+        this.hierarchyNavTabs.triggerTabChange('Property Structure');
     };
 
 
@@ -280,13 +316,27 @@ export class PropertiesAssignmentComponent {
         this.selectedInstanceData =  _.find(this.instancesNavigationData, (instance:ComponentInstance) => {
             return instance.name == $event;
         });
-        this.renderer.invokeElementMethod(
-            this.hierarchyNavTabs, 'triggerTabChange', ['Composition']);
+        this.hierarchyNavTabs.triggerTabChange('Composition');
     };
 
     tabChanged = (event) => {
+        // stop if has changed properties
+        if (this.hasChangedData) {
+            this.openChangedDataModal().then((proceed) => {
+                if (proceed) {
+                    this.propertyInputTabs.selectTab(this.propertyInputTabs.tabs.find((tab) => tab.title === event.title));
+                }
+            });
+
+            // return to show the current tab
+            this.propertyInputTabs.triggerTabChange(this.currentMainTab.title);
+            return;
+        }
+
         console.log("==>" + this.constructor.name + ": tabChanged " + event);
-        this.isInpusTabSelected = event.title === "Inputs";
+        this.currentMainTab = this.propertyInputTabs.tabs.find((tab) => tab.title === event.title);
+        this.isPropertiesTabSelected = this.currentMainTab.title === "Properties";
+        this.isInputsTabSelected = this.currentMainTab.title === "Inputs";
         this.propertyStructureHeader = null;
         this.searchQuery = '';
     };
@@ -320,12 +370,180 @@ export class PropertiesAssignmentComponent {
                 this.checkedPropertiesCount = 0;
                 _.forEach(response, (input: InputBEModel) => {
                     let newInput: InputFEModel = new InputFEModel(input);
+                    this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
                     this.inputs.push(newInput);
                     this.updatePropertyValueAfterDeclare(newInput);
                 });
             }, error => {}); //ignore error
     };
 
+    saveChangedData = ():Promise<(PropertyBEModel|InputBEModel)[]> => {
+        return new Promise((resolve, reject) => {
+            if (!this.isValidChangedData) {
+                reject('Changed data is invalid - cannot save!');
+                return;
+            }
+            if (!this.changedData.length) {
+                resolve([]);
+                return;
+            }
+
+            // make request and its handlers
+            let request;
+            let handleSuccess, handleError;
+            if (this.isPropertiesTabSelected) {
+                const changedProperties: PropertyBEModel[] = this.changedData.map((changedProp) => {
+                    changedProp = <PropertyFEModel>changedProp;
+                    const propBE = new PropertyBEModel(changedProp);
+                    propBE.value = changedProp.getJSONValue();
+                    return propBE;
+                });
+
+                if (this.isInput(this.selectedInstanceData.originType)) {
+                    request = this.componentInstanceServiceNg2
+                        .updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedProperties);
+                    handleSuccess = (response) => {
+                        // reset each changed property with new value and remove it from changed properties list
+                        response.forEach((resInput) => {
+                            const changedProp = <PropertyFEModel>this.changedData.shift();
+                            this.propertiesUtils.resetPropertyValue(changedProp, resInput.value);
+                        });
+                        console.log('updated instance inputs:', response);
+                    };
+                } else {
+                    request = this.componentInstanceServiceNg2
+                        .updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedProperties)
+                    handleSuccess = (response) => {
+                        // reset each changed property with new value and remove it from changed properties list
+                        response.forEach((resProp) => {
+                            const changedProp = <PropertyFEModel>this.changedData.shift();
+                            this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
+                        });
+                        resolve(response);
+                        console.log("updated instance properties: ", response);
+                    };
+                }
+            } else if (this.isInputsTabSelected) {
+                const changedInputs: InputBEModel[] = this.changedData.map((changedInput) => {
+                    changedInput = <InputFEModel>changedInput;
+                    const inputBE = new InputBEModel(changedInput);
+                    inputBE.defaultValue = changedInput.getJSONDefaultValue();
+                    return inputBE;
+                });
+                request = this.componentServiceNg2
+                    .updateComponentInputs(this.component, changedInputs);
+                handleSuccess = (response) => {
+                    // reset each changed property with new value and remove it from changed properties list
+                    response.forEach((resInput) => {
+                        const changedInput = <InputFEModel>this.changedData.shift();
+                        this.inputsUtils.resetInputDefaultValue(changedInput, resInput.defaultValue);
+                    });
+                    console.log("updated the component inputs and got this response: ", response);
+                }
+            }
+
+            this.savingChangedData = true;
+            request.subscribe(
+                (response) => {
+                    this.savingChangedData = false;
+                    handleSuccess && handleSuccess(response);
+                    this.updateHasChangedData();
+                    resolve(response);
+                },
+                (error) => {
+                    this.savingChangedData = false;
+                    handleError && handleError(error);
+                    this.updateHasChangedData();
+                    reject(error);
+                }
+            );
+        });
+    };
+
+    reverseChangedData = ():void => {
+        // make reverse item handler
+        let handleReverseItem;
+        if (this.isPropertiesTabSelected) {
+            handleReverseItem = (changedItem) => {
+                changedItem = <PropertyFEModel>changedItem;
+                this.propertiesUtils.resetPropertyValue(changedItem, changedItem.value);
+            };
+        } else if (this.isInputsTabSelected) {
+            handleReverseItem = (changedItem) => {
+                changedItem = <InputFEModel>changedItem;
+                this.inputsUtils.resetInputDefaultValue(changedItem, changedItem.defaultValue);
+            };
+        }
+
+        this.changedData.forEach(handleReverseItem);
+        this.changedData = [];
+        this.updateHasChangedData();
+    };
+
+    updateHasChangedData = ():boolean => {
+        const curHasChangedData:boolean = (this.changedData.length > 0);
+        if (curHasChangedData !== this.hasChangedData) {
+            this.hasChangedData = curHasChangedData;
+            this.$scope.$emit('setWorkspaceTopBarActive', !this.hasChangedData);
+        }
+        return this.hasChangedData;
+    };
+
+    doSaveChangedData = ():void => {
+        this.saveChangedData().then(
+            () => {
+                this.Notification.success({
+                    message: 'Successfully saved changes',
+                    title: 'Saved'
+                });
+            },
+            () => {
+                this.Notification.error({
+                    message: 'Failed to save changes!',
+                    title: 'Failure'
+                });
+            }
+        );
+    };
+
+    openChangedDataModal = ():Promise<boolean> => {
+        let modalTitle;
+        if (this.isPropertiesTabSelected) {
+            modalTitle = `Unsaved properties for ${this.selectedInstanceData.name}`;
+        } else if (this.isInputsTabSelected) {
+            modalTitle = `Unsaved inputs for ${this.component.name}`;
+        }
+
+        return new Promise<boolean>((resolve) => {
+            const modal = this.ModalService.createCustomModal(new ModalModel(
+                'sm',
+                modalTitle,
+                null,
+                [
+                    new ButtonModel('Cancel', 'outline grey', () => {
+                        modal.instance.close();
+                        resolve(false);
+                    }),
+                    new ButtonModel('Discard', 'outline blue', () => {
+                        this.reverseChangedData();
+                        modal.instance.close();
+                        resolve(true);
+                    }),
+                    new ButtonModel('Save', 'blue', () => {
+                        this.saveChangedData().then(() => {
+                            modal.instance.close();
+                            resolve(true);
+                        }, () => {
+                            modal.instance.close();
+                            resolve(false);
+                        });
+                    }, () => !this.isValidChangedData)
+                ]
+            ));
+            this.ModalService.addDynamicTemplateToModal(modal, this.saveChangedDataModalContentTemplateRef);
+            modal.instance.open();
+        });
+    };
 
     updatePropertyValueAfterDeclare = (input: InputFEModel) => {
         if (this.instanceFePropertiesMap[input.instanceUniqueId]) {
@@ -346,12 +564,12 @@ export class PropertiesAssignmentComponent {
     };
 
     setInputTabIndication = (numInputs: number): void => {
-        this.renderer.invokeElementMethod(this.propertyInputTabs, 'setTabIndication', ['Inputs', numInputs]);
+        this.propertyInputTabs.setTabIndication('Inputs', numInputs);
     };
 
     deleteInput = (input: InputFEModel) => {
         console.log("==>" + this.constructor.name + ": deleteInput");
-        let inputToDelete = new PropertyBEModel(input);
+        let inputToDelete = new InputBEModel(input);
 
         this.componentServiceNg2
             .deleteInput(this.component, inputToDelete)
@@ -389,7 +607,7 @@ export class PropertiesAssignmentComponent {
                 this.processInstancePropertiesResponse(response, false);
                 this.hierarchyPropertiesDisplayOptions.searchText = filterData.propertyName;//mark results in tree
                 this.searchPropertyName = filterData.propertyName;//mark in table
-                this.renderer.invokeElementMethod(this.hierarchyNavTabs, 'triggerTabChange', ['Composition']);
+                this.hierarchyNavTabs.triggerTabChange('Composition');
                 this.propertiesNavigationData = [];
                 this.displayClearSearch = true;
             }, error => {}); //ignore error
@@ -408,12 +626,11 @@ export class PropertiesAssignmentComponent {
     clickOnClearSearch = () => {
         this.clearSearch();
         this.selectFirstInstanceByDefault();
-        this.renderer.invokeElementMethod(
-            this.hierarchyNavTabs, 'triggerTabChange', ['Composition']);
+        this.hierarchyNavTabs.triggerTabChange('Composition');
     };
 
     private isInput = (instanceType:string):boolean =>{
-        return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC;
+        return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
 
 }

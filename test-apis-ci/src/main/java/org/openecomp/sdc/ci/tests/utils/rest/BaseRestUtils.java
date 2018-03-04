@@ -45,10 +45,13 @@ public class BaseRestUtils extends BaseValidationUtils {
 	public static final String acceptHeaderData = "application/json";
 	public static final String acceptJsonHeader = "application/json";
 	public static final String acceptOctetHeader = "application/octet-stream";
+	public static final String acceptMultipartHeader = "application/octet-stream";
 	public static final String authorizationHeader = "Basic " + Base64.encodeBase64String("ci:123456".getBytes());
 	public static final String acceptOctetStream = "application/octet-stream";
 	public static final String ecomp = "ecomp";
 	public static final String authorizationPrefixString = "Basic ";
+	public static final String xEcompInstanceId = "a1bd39f6-d55e-45b2-9207-156216af5cb5";
+	public static final String cacheControlHeader = "no-cache";
 
 	public static final String RESOURCE_COMPONENT_TYPE = "resources";
 	public static final String PRODUCT_COMPONENT_TYPE = "products";
@@ -86,7 +89,7 @@ public class BaseRestUtils extends BaseValidationUtils {
 	}
 
 	protected static Map<String, String> prepareHeadersMap(String userId, String accept) {
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 		if (contentTypeHeaderData != null) {
 			headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		}
@@ -257,7 +260,7 @@ public class BaseRestUtils extends BaseValidationUtils {
 		String userCredentials = userName + ":" + password;
 		encodeBase64 = Base64.encodeBase64(userCredentials.getBytes());
 		String encodedUserCredentials = authorizationPrefixString + new String(encodeBase64);
-		Map<String, String> authorizationHeader = new HashMap<String, String>();
+		Map<String, String> authorizationHeader = new HashMap<>();
 		authorizationHeader.put(HttpHeaderEnum.AUTHORIZATION.getValue(), encodedUserCredentials);
 		return authorizationHeader;
 	}

@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
+import * as _ from "lodash";
 import {RelationshipModel, Component, ComponentInstance} from "app/models";
 import {Dictionary} from "app/utils";
 

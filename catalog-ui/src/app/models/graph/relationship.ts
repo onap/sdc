@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
+import * as _ from "lodash";
 import {Capability} from "../capability";
 import {Requirement} from "../requirement";
 

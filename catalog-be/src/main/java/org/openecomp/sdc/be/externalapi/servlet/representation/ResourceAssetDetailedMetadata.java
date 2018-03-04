@@ -24,50 +24,50 @@ import java.util.List;
 
 public class ResourceAssetDetailedMetadata extends ResourceAssetMetadata {
 
-	private String lastUpdaterFullName;
-	private String toscaResourceName;
-	private List<ResourceInstanceMetadata> resources;
-	private List<ArtifactMetadata> artifacts;
-	private String description;
+    private String lastUpdaterFullName;
+    private String toscaResourceName;
+    private List<ResourceInstanceMetadata> resources;
+    private List<ArtifactMetadata> artifacts;
+    private String description;
 
-	public String getLastUpdaterFullName() {
-		return lastUpdaterFullName;
-	}
+    public String getLastUpdaterFullName() {
+        return lastUpdaterFullName;
+    }
 
-	public void setLastUpdaterFullName(String lastUpdaterFullName) {
-		this.lastUpdaterFullName = lastUpdaterFullName;
-	}
+    public void setLastUpdaterFullName(String lastUpdaterFullName) {
+        this.lastUpdaterFullName = lastUpdaterFullName;
+    }
 
-	public String getToscaResourceName() {
-		return toscaResourceName;
-	}
+    public String getToscaResourceName() {
+        return toscaResourceName;
+    }
 
-	public void setToscaResourceName(String toscaResourceName) {
-		this.toscaResourceName = toscaResourceName;
-	}
+    public void setToscaResourceName(String toscaResourceName) {
+        this.toscaResourceName = toscaResourceName;
+    }
 
-	public List<ResourceInstanceMetadata> getResources() {
-		return resources;
-	}
+    public List<ResourceInstanceMetadata> getResources() {
+        return resources;
+    }
 
-	public void setResources(List<ResourceInstanceMetadata> resources) {
-		this.resources = resources;
-	}
+    public void setResources(List<ResourceInstanceMetadata> resources) {
+        this.resources = resources;
+    }
 
-	public List<ArtifactMetadata> getArtifacts() {
-		return artifacts;
-	}
+    public List<ArtifactMetadata> getArtifacts() {
+        return artifacts;
+    }
 
-	public void setArtifacts(List<ArtifactMetadata> artifactMetaList) {
-		this.artifacts = artifactMetaList;
-	}
+    public void setArtifacts(List<ArtifactMetadata> artifactMetaList) {
+        this.artifacts = artifactMetaList;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

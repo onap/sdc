@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,14 +22,23 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ComponentType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
+import {PolicyMetadata} from "../policy-metadata";
+import {GroupMetadata} from "../group-metadata";
 import {RequirementsGroup} from "../requirement";
 import {CapabilitiesGroup} from "../capability";
 
-export class LeftPaletteComponent {
+export enum LeftPaletteMetadataTypes {
+    Component,
+    Group,
+    Policy
+}
 
+export class LeftPaletteComponent {
     uniqueId:string;
+    type:string;
     displayName:string;
     version:string;
     mainCategory:string;
@@ -48,10 +57,33 @@ export class LeftPaletteComponent {
     componentType:string;
     systemName:string;
 
+    invariantUUID:string;
+
     capabilities:CapabilitiesGroup;
     requirements:RequirementsGroup;
 
-    constructor(public component:ComponentMetadata) {
+    categoryType:LeftPaletteMetadataTypes;
+
+    constructor(metadataType: LeftPaletteMetadataTypes, item: ComponentMetadata | PolicyMetadata) {
+        if (metadataType === LeftPaletteMetadataTypes.Policy) {
+            this.initPolicy(item as PolicyMetadata);
+            return;
+        }
+
+        if (metadataType === LeftPaletteMetadataTypes.Group) {
+            this.initGroup(item as GroupMetadata);
+            return;
+        }
+
+        if (metadataType === LeftPaletteMetadataTypes.Component) {
+            this.initComponent(item as ComponentMetadata);
+            return;
+        }
+    }
+
+    private initComponent(component:ComponentMetadata): void {
+        this.categoryType = LeftPaletteMetadataTypes.Component;
+
         this.icon = component.icon;
         this.version = component.version;
         this.uniqueId = component.uniqueId;
@@ -61,6 +93,7 @@ export class LeftPaletteComponent {
         this.allVersions = component.allVersions;
         this.componentType = component.componentType;
         this.systemName = component.systemName;
+        this.invariantUUID = component.invariantUUID;
 
         if (component.categories && component.categories[0] && component.categories[0].subcategories && component.categories[0].subcategories[0]) {
             this.mainCategory = component.categories[0].name;
@@ -71,6 +104,7 @@ export class LeftPaletteComponent {
         }
 
         this.componentSubType = component.resourceType ? component.resourceType: 'SERVICE';
+
         this.initDisplayName(component.name);
         this.searchFilterTerms = (this.displayName + ' ' + component.description + ' ' + component.tags.join(' ')).toLowerCase() + ' ' + component.version;
         this.initIconSprite(component.icon);
@@ -78,6 +112,38 @@ export class LeftPaletteComponent {
         if (component.icon === 'vl' || component.icon === 'cp') {
             this.certifiedIconClass = this.certifiedIconClass + " " + 'smaller-icon';
         }
+    }
+
+    private initGroup(group:GroupMetadata): void {
+        this.categoryType = LeftPaletteMetadataTypes.Group;
+
+        this.uniqueId = group.uniqueId;
+        this.displayName = group.type;
+        this.mainCategory = "Groups";
+        this.subCategory = "Groups";
+        this.iconClass = "sprite-group-icons group";
+        this.version = group.version;
+
+        this.type = group.type;
+        this.componentSubType = 'GROUP';
+
+        this.searchFilterTerms = this.displayName + ' ' + group.description + ' ' + group.version;
+    }
+
+    private initPolicy(policy:PolicyMetadata): void {
+        this.categoryType = LeftPaletteMetadataTypes.Policy;
+
+        this.uniqueId = policy.uniqueId;
+        this.displayName = policy.type;
+        this.mainCategory = "Policies";
+        this.subCategory = "Policies";
+        this.iconClass = "sprite-policy-icons policy";
+        this.version = policy.version;
+
+        this.type = policy.type;
+        this.componentSubType = 'POLICY';
+
+        this.searchFilterTerms = this.displayName + ' ' + policy.description + ' ' + policy.version;
     }
 
     public initDisplayName = (name:string):void => {

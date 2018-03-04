@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.be.resources.data.category;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SubCategoryData extends GraphNode {
 
@@ -67,7 +66,7 @@ public class SubCategoryData extends GraphNode {
 	}
 
 	@Override
-	public Object getUniqueId() {
+	public String getUniqueId() {
 		return subCategoryDataDefinition.getUniqueId();
 	}
 

@@ -44,8 +44,9 @@ public enum EcompErrorCode {
 													"Connection problem towards U-EB server. Cannot reach host %s",
 													"Please check that that parameter uebServers in distribution-configuration.yaml points to a valid UEB Cluster."), E_212(
 															"Couldn't resolve hostIP. Desciption: %s"), E_213(
-																	"Site switch over was done. Site is now in %s mode"), E_299(
-																			"Internal Connection problem. Description: %s"),
+																	"Site switch over was done. Site is now in %s mode"), E_214(
+																				"Dmaap Connection problem."), E_299(
+																								"Internal Connection problem. Description: %s"),
 
 	// [resource/service/product]
 	E_300("Mandatory %s Component %s cannot be found in repository"),
