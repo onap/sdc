@@ -21,11 +21,9 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -37,51 +35,51 @@ import com.datastax.driver.mapping.annotations.Table;
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE)
 public class DistributionDeployEvent extends AuditingGenericEvent {
 
-	private static String DISTRIBUTION_DEPLOY_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
-			+ "resourceName=\"%s\" resourceType=\"%s\" currVersion=\"%s\" "
-			+ "modifierName=\"%s\" modifierUid=\"%s\" did=\"%s\" " + "status=\"%s\" desc=\"%s\"";
+    private static String DISTRIBUTION_DEPLOY_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
+            + "resourceName=\"%s\" resourceType=\"%s\" currVersion=\"%s\" "
+            + "modifierName=\"%s\" modifierUid=\"%s\" did=\"%s\" " + "status=\"%s\" desc=\"%s\"";
 
-	@PartitionKey
-	protected UUID timebaseduuid;
+    @PartitionKey
+    protected UUID timebaseduuid;
 
-	@ClusteringColumn
-	protected Date timestamp1;
+    @ClusteringColumn
+    protected Date timestamp1;
 
-	@Column(name = "request_id")
-	protected String requestId;
+    @Column(name = "request_id")
+    protected String requestId;
 
-	@Column(name = "service_instance_id")
-	protected String serviceInstanceId;
-	@Column
-	protected String action;
-	@Column
-	protected String status;
+    @Column(name = "service_instance_id")
+    protected String serviceInstanceId;
+    @Column
+    protected String action;
+    @Column
+    protected String status;
 
-	@Column(name = "description")
-	protected String desc;
+    @Column(name = "description")
+    protected String desc;
 
-	@Column(name = "resource_name")
-	private String resourceName;
+    @Column(name = "resource_name")
+    private String resourceName;
 
-	@Column(name = "resource_type")
-	private String resourceType;
+    @Column(name = "resource_type")
+    private String resourceType;
 
-	@Column(name = "curr_version")
-	private String currVersion;
+    @Column(name = "curr_version")
+    private String currVersion;
 
-	@Column
-	private String modifier;
+    @Column
+    private String modifier;
 
-	@Column
-	private String did;
+    @Column
+    private String did;
 
-	public DistributionDeployEvent() {
+   	public DistributionDeployEvent() {
 		super();
 		timestamp1 = new Date();
 		timebaseduuid = UUIDs.timeBased();
 	}
 
-	public DistributionDeployEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public DistributionDeployEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
@@ -124,19 +122,33 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
 		if (value != null) {
 			setResourceType((String) value);
 		}
+    }
 
-	}
 
-	@Override
+    public DistributionDeployEvent(String action, CommonAuditData commonAuditData, String did, String modifier,
+                                   String currVersion, String resourceName, String resourceType) {
+        this();
+        this.action = action;
+        this.requestId = commonAuditData.getRequestId();
+        this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+        this.status = commonAuditData.getStatus();
+        this.desc = commonAuditData.getDescription();
+        this.did = did;
+        this.modifier = modifier;
+        this.currVersion = currVersion;
+        this.resourceName = resourceName;
+        this.resourceType = resourceType;
+    }
+
+    @Override
 	public void fillFields() {
 		fields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-
 		fields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
 
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID.getDisplayName(), getDid());
+        fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID.getDisplayName(), getDid());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION.getDisplayName(), getCurrVersion());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME.getDisplayName(), getResourceName());
@@ -146,103 +158,103 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
 		fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
 	}
 
-	public String getResourceName() {
-		return resourceName;
-	}
+    public String getResourceName() {
+        return resourceName;
+    }
 
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
 
-	public String getResourceType() {
-		return resourceType;
-	}
+    public String getResourceType() {
+        return resourceType;
+    }
 
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
-	}
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
+    }
 
-	public String getCurrVersion() {
-		return currVersion;
-	}
+    public String getCurrVersion() {
+        return currVersion;
+    }
 
-	public void setCurrVersion(String currVersion) {
-		this.currVersion = currVersion;
-	}
+    public void setCurrVersion(String currVersion) {
+        this.currVersion = currVersion;
+    }
 
-	public UUID getTimebaseduuid() {
-		return timebaseduuid;
-	}
+    public UUID getTimebaseduuid() {
+        return timebaseduuid;
+    }
 
-	public void setTimebaseduuid(UUID timebaseduuid) {
-		this.timebaseduuid = timebaseduuid;
-	}
+    public void setTimebaseduuid(UUID timebaseduuid) {
+        this.timebaseduuid = timebaseduuid;
+    }
 
-	public Date getTimestamp1() {
-		return timestamp1;
-	}
+    public Date getTimestamp1() {
+        return timestamp1;
+    }
 
-	public void setTimestamp1(Date timestamp1) {
-		this.timestamp1 = timestamp1;
-	}
+    public void setTimestamp1(Date timestamp1) {
+        this.timestamp1 = timestamp1;
+    }
 
-	public String getRequestId() {
-		return requestId;
-	}
+    public String getRequestId() {
+        return requestId;
+    }
 
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
-	public String getServiceInstanceId() {
-		return serviceInstanceId;
-	}
+    public String getServiceInstanceId() {
+        return serviceInstanceId;
+    }
 
-	public void setServiceInstanceId(String serviceInstanceId) {
-		this.serviceInstanceId = serviceInstanceId;
-	}
+    public void setServiceInstanceId(String serviceInstanceId) {
+        this.serviceInstanceId = serviceInstanceId;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public String getDesc() {
+        return desc;
+    }
 
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
-	public String getModifier() {
-		return modifier;
-	}
+    public String getModifier() {
+        return modifier;
+    }
 
-	public void setModifier(String modifier) {
-		this.modifier = modifier;
-	}
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
 
-	public String getDid() {
-		return did;
-	}
+    public String getDid() {
+        return did;
+    }
 
-	public void setDid(String did) {
-		this.did = did;
-	}
+    public void setDid(String did) {
+        this.did = did;
+    }
 
-	@Override
+    @Override
 	public String toString() {
 		return "DistributionDeployEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId="
 				+ requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status

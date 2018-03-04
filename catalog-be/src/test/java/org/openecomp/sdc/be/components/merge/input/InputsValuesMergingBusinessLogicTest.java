@@ -1,25 +1,23 @@
 package org.openecomp.sdc.be.components.merge.input;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class InputsValuesMergingBusinessLogicTest {
 
@@ -132,55 +130,5 @@ public class InputsValuesMergingBusinessLogicTest {
         InputDefinition inputDef = createInputDefinition(name, value);
         inputDef.setOwnerId("owner");
         return inputDef;
-    }
-
-    private void addInstanceProperty(Resource resource, ComponentInstanceProperty prop, String instanceId) {
-        addInstancePropDefinition(resource.getComponentInstancesProperties(), prop, instanceId);
-    }
-
-    private void addInstanceInput(Resource resource, ComponentInstanceInput prop, String instanceId) {
-        addInstancePropDefinition(resource.getComponentInstancesInputs(), prop, instanceId);
-    }
-
-    private <T extends PropertyDataDefinition> void addInstancePropDefinition(Map<String, List<T>> propsDefinitions, T propDef, String instanceId) {
-        propsDefinitions.computeIfAbsent(instanceId, id -> new ArrayList<>()).add(propDef);
-    }
-
-    private Resource createResourceWithInputs(String ... inputsIds) {
-        Resource resource = new Resource();
-        List<InputDefinition> inputs = new ArrayList<>();
-        for (String inputId : inputsIds) {
-            InputDefinition inputDefinition = new InputDefinition();
-            inputDefinition.setOwnerId("cs0008");
-            inputDefinition.setUniqueId(inputId);
-            inputs.add(inputDefinition);
-        }
-        resource.setInputs(inputs);
-        return resource;
-    }
-
-
-    private ComponentInstanceProperty createGetInputComponentProperty(String ... declaredToInputId) {
-        ComponentInstanceProperty prevDeclaredProperty = new ComponentInstanceProperty();
-        for (String inputId : declaredToInputId) {
-            addGetInputValueOnProp(inputId, prevDeclaredProperty);
-        }
-
-        return prevDeclaredProperty;
-    }
-
-    private void addGetInputValueOnProp(String declaredToInputId, PropertyDataDefinition declaredProperty) {
-        GetInputValueDataDefinition getInputDef = new GetInputValueDataDefinition();
-        getInputDef.setInputId(declaredToInputId);
-        if (declaredProperty.getGetInputValues() == null) {
-            declaredProperty.setGetInputValues(new ArrayList<>());
-        }
-        declaredProperty.getGetInputValues().add(getInputDef);
-    }
-
-    private ComponentInstanceInput createGetInputComponentInstanceInput(String declaredToInputId) {
-        ComponentInstanceInput prevDeclaredProp = new ComponentInstanceInput();
-        addGetInputValueOnProp(declaredToInputId, prevDeclaredProp);
-        return prevDeclaredProp;
     }
 }

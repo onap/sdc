@@ -92,6 +92,13 @@ public class AuditingDao extends ESTimeBasedDao {
 		return write(type, auditingGenericEvent);
 	}
 
+	public ActionStatus addRecord(AuditingGenericEvent auditEvent, String type) {
+
+		log.debug("Auditing: Persisting object of type {}, fields: {}", type, auditEvent.getAction());
+//		auditEvent.fillFields();
+		return write(type, auditEvent);
+	}
+
 	public Either<List<ESTimeBasedEvent>, ActionStatus> getListOfDistributionStatuses(String did) {
 
 		QueryBuilder componentNameMatch = QueryBuilders.matchQuery(DISTRIBUTION_ID_FIELD, did);
@@ -104,10 +111,7 @@ public class AuditingDao extends ESTimeBasedDao {
 			remainingElements = customFindEvent(AuditingTypesConstants.DISTRIBUTION_STATUS_EVENT_TYPE,
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get DistributionStatuses List");
-
 			log.debug("failed to get distribution statuses for ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -134,8 +138,6 @@ public class AuditingDao extends ESTimeBasedDao {
 			remainingElements = customFindEvent(AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE,
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get Service DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
 			log.debug("failed to get  distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName(), e);
@@ -153,8 +155,6 @@ public class AuditingDao extends ESTimeBasedDao {
 			dResultElements = customFindEvent(AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE,
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get Service DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
 			log.debug("failed to get distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), e);
@@ -172,8 +172,6 @@ public class AuditingDao extends ESTimeBasedDao {
 			dNotifyElements = customFindEvent(AuditingTypesConstants.DISTRIBUTION_NOTIFICATION_EVENT_TYPE,
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get Service DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
 			log.debug("failed to get distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_NOTIFY.getName(), e);
@@ -229,8 +227,6 @@ public class AuditingDao extends ESTimeBasedDao {
 			remainingElements = customFindEvent(clazz.getSimpleName().toLowerCase(), remainingElementQueryBuilder,
 					null);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError,
-					"Get DistributionStatuses List");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get DistributionStatuses List");
 			log.debug("failed to get distribution statuses for action {}", actionType, e);
 			return Either.right(ActionStatus.GENERAL_ERROR);

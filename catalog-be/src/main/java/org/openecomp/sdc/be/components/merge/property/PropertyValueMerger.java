@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.components.merge.property;
 
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.components.impl.ImportUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang.StringUtils;
-import org.openecomp.sdc.be.components.impl.ImportUtils;
 
 public abstract class PropertyValueMerger {
 

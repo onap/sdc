@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {SchemaPropertyGroupModel, SchemaProperty} from '../aschema-property';
 import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
 import { FilterPropertiesAssignmentData, PropertyBEModel, DerivedPropertyType, DerivedFEPropertyMap, DerivedFEProperty } from 'app/models';
@@ -34,6 +35,10 @@ export class PropertyFEModel extends PropertyBEModel {
     propertiesName: string;
     uniqueId: string;
     valueObj: any; //this is the only value we relate to in the html templates
+    valueObjValidation: any;
+    valueObjIsValid: boolean;
+    valueObjOrig: any; //this is valueObj representation as saved in server
+    valueObjIsChanged: boolean;
     derivedDataType: DerivedPropertyType;
 
     constructor(property: PropertyBEModel){
@@ -44,19 +49,50 @@ export class PropertyFEModel extends PropertyBEModel {
         this.derivedDataType = this.getDerivedPropertyType();
         this.flattenedChildren = [];
         this.propertiesName = this.name;
+        this.valueObj = null;
+        this.updateValueObjOrig();
+        this.resetValueObjValidation();
     }
 
 
-    public getJSONValue = (): string => {
-        //If type is JSON, need to try parsing it before we stringify it so that it appears property in TOSCA - change per Bracha due to AMDOCS
-        //TODO: handle this.derivedDataType == DerivedPropertyType.MAP
-        if (this.derivedDataType == DerivedPropertyType.LIST && this.schema.property.type == PROPERTY_TYPES.JSON) {
-            try {
-                return JSON.stringify(this.valueObj.map(item => (typeof item == 'string')? JSON.parse(item) : item));
-            } catch (e){}
-        }
+    public updateValueObj(valueObj:any, isValid:boolean) {
+        this.valueObj = PropertyFEModel.cleanValueObj(valueObj);
+        this.valueObjValidation = this.valueObjIsValid = isValid;
+        this.valueObjIsChanged = this.hasValueObjChanged();
+    }
 
-        return (this.derivedDataType == DerivedPropertyType.SIMPLE) ? this.valueObj : JSON.stringify(this.valueObj);
+    public updateValueObjOrig() {
+        this.valueObjOrig = _.cloneDeep(this.valueObj);
+        this.valueObjIsChanged = false;
+    }
+
+    public calculateValueObjIsValid(valueObjValidation?: any) {
+        valueObjValidation = (valueObjValidation !== undefined) ? valueObjValidation : this.valueObjValidation;
+        if (valueObjValidation instanceof Array) {
+            return valueObjValidation.every((v) => this.calculateValueObjIsValid(v));
+        } else if (valueObjValidation instanceof Object) {
+            return Object.keys(valueObjValidation).every((k) => this.calculateValueObjIsValid(valueObjValidation[k]));
+        }
+        return Boolean(valueObjValidation);
+    }
+
+    public resetValueObjValidation() {
+        if (this.derivedDataType === DerivedPropertyType.SIMPLE) {
+            this.valueObjValidation = null;
+        } else if (this.derivedDataType === DerivedPropertyType.LIST) {
+            this.valueObjValidation = [];
+        } else {
+            this.valueObjValidation = {};
+        }
+        this.valueObjIsValid = true;
+    }
+
+    public getJSONValue = (): string => {
+        return PropertyFEModel.stringifyValueObj(this.valueObj, this.schema.property.type, this.derivedDataType);
+    }
+
+    public getValueObj = (): any => {
+        return PropertyFEModel.parseValueObj(this.value, this.type, this.derivedDataType, this.defaultValue);
     }
 
     public setNonDeclared = (childPath?: string): void => {
@@ -106,12 +142,94 @@ export class PropertyFEModel extends PropertyBEModel {
     public childPropUpdated = (childProp: DerivedFEProperty): void => {
         let parentNames = this.getParentNamesArray(childProp.propertiesName, []);
         if (parentNames.length) {
-            _.set(this.valueObj, parentNames.join('.'), childProp.valueObj);
+            const childPropName = parentNames.join('.');
+            // unset value only if is null and valid, and not in a list
+            if (childProp.valueObj === null && childProp.valueObjIsValid) {
+                const parentChildProp = this.flattenedChildren.find((ch) => ch.propertiesName === childProp.parentName) || this;
+                if (parentChildProp.derivedDataType !== DerivedPropertyType.LIST) {
+                    _.unset(this.valueObj, childPropName);
+                    this.valueObj = PropertyFEModel.cleanValueObj(this.valueObj);
+                } else {
+                    _.set(this.valueObj, childPropName, null);
+                }
+            } else {
+                _.set(this.valueObj, childPropName, childProp.valueObj);
+            }
+            if (childProp.valueObjIsChanged) {
+                _.set(this.valueObjValidation, childPropName, childProp.valueObjIsValid);
+                this.valueObjIsValid = childProp.valueObjIsValid && this.calculateValueObjIsValid();
+                this.valueObjIsChanged = true;
+            } else {
+                _.unset(this.valueObjValidation, childPropName);
+                this.valueObjIsValid = this.calculateValueObjIsValid();
+                this.valueObjIsChanged = this.hasValueObjChanged();
+            }
+        }
+    };
+
+    childPropMapKeyUpdated = (childProp: DerivedFEProperty, newMapKey: string, forceValidate: boolean = false) => {
+        if (!childProp.isChildOfListOrMap || childProp.derivedDataType !== DerivedPropertyType.MAP) {
+            return;
+        }
+
+        const childParentNames = this.getParentNamesArray(childProp.parentName);
+        const oldActualMapKey = childProp.getActualMapKey();
+
+        childProp.mapKey = newMapKey;
+        if (childProp.mapKey === null) {  // null -> remove map key
+            childProp.mapKeyError = null;
+        } else if (!childProp.mapKey) {
+            childProp.mapKeyError = 'Key cannot be empty.';
+        } else if (this.flattenedChildren
+                .filter((fch) => fch !== childProp && fch.parentName === childProp.parentName)  // filter sibling child props
+                .map((fch) => fch.mapKey)
+                .indexOf(childProp.mapKey) !== -1) {
+            childProp.mapKeyError = 'This key already exists.';
+        } else {
+            childProp.mapKeyError = null;
+        }
+        const newActualMapKey = childProp.getActualMapKey();
+        const newMapKeyIsValid = !childProp.mapKeyError;
+
+        // if mapKey was changed, then replace the old key with the new one
+        if (newActualMapKey !== oldActualMapKey) {
+            const oldChildPropNames = childParentNames.concat([oldActualMapKey]);
+            const newChildPropNames = (newActualMapKey) ? childParentNames.concat([newActualMapKey]) : null;
+
+            // add map key to valueObj and valueObjValidation
+            if (newChildPropNames) {
+                const newChildVal = _.get(this.valueObj, oldChildPropNames);
+                if (newChildVal !== undefined) {
+                    _.set(this.valueObj, newChildPropNames, newChildVal);
+                    _.set(this.valueObjValidation, newChildPropNames, _.get(this.valueObjValidation, oldChildPropNames, childProp.valueObjIsValid));
+                }
+            }
+
+            // remove map key from valueObj and valueObjValidation
+            _.unset(this.valueObj, oldChildPropNames);
+            _.unset(this.valueObjValidation, oldChildPropNames);
+
+            // force validate after map key change
+            forceValidate = true;
+        }
+
+        if (forceValidate) {
+            // add custom entry for map key validation:
+            const childMapKeyNames = childParentNames.concat(`%%KEY:${childProp.name}%%`);
+            if (newActualMapKey) {
+                _.set(this.valueObjValidation, childMapKeyNames, newMapKeyIsValid);
+            } else {
+                _.unset(this.valueObjValidation, childMapKeyNames);
+            }
+
+            this.valueObjIsValid = newMapKeyIsValid && this.calculateValueObjIsValid();
+            this.valueObjIsChanged = this.hasValueObjChanged();
         }
     };
 
     /* Returns array of individual parents for given prop path, with list/map UUIDs replaced with index/mapkey */
     public getParentNamesArray = (parentPropName: string, parentNames?: Array<string>): Array<string> => {
+        parentNames = parentNames || [];
         if (parentPropName.indexOf("#") == -1) { return parentNames; } //finished recursing parents. return
 
         let parentProp: DerivedFEProperty = this.flattenedChildren.find(prop => prop.propertiesName === parentPropName);
@@ -119,7 +237,7 @@ export class PropertyFEModel extends PropertyBEModel {
 
         if (parentProp.isChildOfListOrMap) {
             if (parentProp.derivedDataType == DerivedPropertyType.MAP) {
-                nameToInsert = parentProp.mapKey;
+                nameToInsert = parentProp.getActualMapKey();
             } else { //LIST
                 let siblingProps = this.flattenedChildren.filter(prop => prop.parentName == parentProp.parentName).map(prop => prop.propertiesName);
                 nameToInsert = siblingProps.indexOf(parentProp.propertiesName).toString();
@@ -130,5 +248,72 @@ export class PropertyFEModel extends PropertyBEModel {
         return this.getParentNamesArray(parentProp.parentName, parentNames); //continue recursing
     }
 
+    public hasValueObjChanged() {
+        return !_.isEqual(this.valueObj, this.valueObjOrig);
+    }
 
+    static stringifyValueObj(valueObj: any, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType): string {
+        // if valueObj is null, return null
+        if (valueObj === null || valueObj === undefined) {
+            return null;
+        }
+
+        //If type is JSON, need to try parsing it before we stringify it so that it appears property in TOSCA - change per Bracha due to AMDOCS
+        //TODO: handle this.derivedDataType == DerivedPropertyType.MAP
+        if (propertyDerivedType == DerivedPropertyType.LIST && propertyType == PROPERTY_TYPES.JSON) {
+            try {
+                return JSON.stringify(valueObj.map(item => (typeof item == 'string') ? JSON.parse(item) : item));
+            } catch (e){}
+        }
+
+        // if type is anything but string, then stringify valueObj
+        if ((typeof valueObj) !== 'string') {
+            return JSON.stringify(valueObj);
+        }
+
+        // return string value as is
+        return valueObj;
+    }
+
+    static parseValueObj(value: string, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType, defaultValue?: string): any {
+        let valueObj;
+        if (propertyDerivedType === DerivedPropertyType.SIMPLE) {
+            valueObj = value || defaultValue || null;  // use null for empty value object
+            if (valueObj &&
+                propertyType !== PROPERTY_TYPES.STRING &&
+                propertyType !== PROPERTY_TYPES.JSON &&
+                PROPERTY_DATA.SCALAR_TYPES.indexOf(<string>propertyType) == -1) {
+                valueObj = JSON.parse(value);  // the value object contains the real value ans not the value as string
+            }
+        } else if (propertyDerivedType == DerivedPropertyType.LIST) {
+            valueObj = _.merge([], JSON.parse(defaultValue || '[]'), JSON.parse(value || '[]'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+        } else {
+            valueObj = _.merge({}, JSON.parse(defaultValue || '{}'), JSON.parse(value || '{}'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+        }
+        return valueObj;
+    };
+
+    static cleanValueObj(valueObj: any, unsetEmpty?: boolean): any {
+        // By default - unsetEmpty undefined - will make valueObj cleaned (no null or empty objects, but array will keep null or empty objects).
+        if (valueObj === undefined || valueObj === null || valueObj === '') {
+            return null;
+        }
+        if (valueObj instanceof Array) {
+            const cleanArr = valueObj.map((v) => PropertyFEModel.cleanValueObj(v)).filter((v) => v !== null);
+            valueObj.splice(0, valueObj.length, ...cleanArr)
+        } else if (valueObj instanceof Object) {
+            Object.keys(valueObj).forEach((k) => {
+                // clean each item in the valueObj (by default, unset empty objects)
+                valueObj[k] = PropertyFEModel.cleanValueObj(valueObj[k], unsetEmpty !== undefined ? unsetEmpty : true);
+                if (valueObj[k] === null) {
+                    delete valueObj[k];
+                }
+            });
+            // if unsetEmpty flag is true and valueObj is empty
+            if (unsetEmpty && !Object.keys(valueObj).length) {
+                return null;
+            }
+        }
+        return valueObj;
+    }
 }

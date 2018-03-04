@@ -23,50 +23,50 @@ package org.openecomp.sdc.be.externalapi.servlet.representation;
 import java.util.List;
 
 public class ProductAssetMetadata extends AssetMetadata {
-	private String lifecycleState;
-	private String lastUpdaterUserId;
-	private boolean isActive;
-	private List<String> contacts;
-	private List<ProductCategoryGroupMetadata> productGroupings;
+    private String lifecycleState;
+    private String lastUpdaterUserId;
+    private boolean isActive;
+    private List<String> contacts;
+    private List<ProductCategoryGroupMetadata> productGroupings;
 
-	public String getLifecycleState() {
-		return lifecycleState;
-	}
+    public String getLifecycleState() {
+        return lifecycleState;
+    }
 
-	public void setLifecycleState(String lifecycleState) {
-		this.lifecycleState = lifecycleState;
-	}
+    public void setLifecycleState(String lifecycleState) {
+        this.lifecycleState = lifecycleState;
+    }
 
-	public String getLastUpdaterUserId() {
-		return lastUpdaterUserId;
-	}
+    public String getLastUpdaterUserId() {
+        return lastUpdaterUserId;
+    }
 
-	public void setLastUpdaterUserId(String lastUpdaterUserId) {
-		this.lastUpdaterUserId = lastUpdaterUserId;
-	}
+    public void setLastUpdaterUserId(String lastUpdaterUserId) {
+        this.lastUpdaterUserId = lastUpdaterUserId;
+    }
 
-	public boolean isActive() {
-		return isActive;
-	}
+    public boolean isActive() {
+        return isActive;
+    }
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public List<String> getContacts() {
-		return contacts;
-	}
+    public List<String> getContacts() {
+        return contacts;
+    }
 
-	public void setContacts(List<String> contacts) {
-		this.contacts = contacts;
-	}
+    public void setContacts(List<String> contacts) {
+        this.contacts = contacts;
+    }
 
-	public List<ProductCategoryGroupMetadata> getProductGroupings() {
-		return productGroupings;
-	}
+    public List<ProductCategoryGroupMetadata> getProductGroupings() {
+        return productGroupings;
+    }
 
-	public void setProductGroupings(List<ProductCategoryGroupMetadata> productGroupings) {
-		this.productGroupings = productGroupings;
-	}
+    public void setProductGroupings(List<ProductCategoryGroupMetadata> productGroupings) {
+        this.productGroupings = productGroupings;
+    }
 
 }

@@ -9,18 +9,18 @@ import importCommon
 import json
 
 
-################################################################################################################################################
-#																																		       #
-# Upgrades all Heat and Normative types confiugred in "typesToUpgrade.json" file																										   #
-# 																																			   #
-# activation :																																   #
-#       python upgradeHeatAndNormativeTypes.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#																																		  	   #
-# shortest activation (be host = localhost, be port = 8080): 																				   #
-#		python upgradeHeatAndNormativeTypes.py [-f <input file> | --ifile=<input file> ]												 				           #
-#																																		       #
-################################################################################################################################################
-def upgradeTypesPerConfigFile(beHost, bePort, adminUser, baseDir, updateversion):
+################################################################################################################################################################################################
+#																																		                                                       #
+# Upgrades all Heat and Normative types confiugred in "typesToUpgrade.json" file																										       #
+# 																																			                                                   #
+# activation                                                                                                                                                                                   #
+#       python upgradeHeatAndNormativeTypes.py [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ] #
+#																																		  	                                                   #
+# shortest activation (be host = localhost, be port = 8080): 																				                                                   #
+#		python upgradeHeatAndNormativeTypes.py [-f <input file> | --ifile=<input file> ]												 				                                       #
+#																																		                                                       #
+################################################################################################################################################################################################
+def upgradeTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseDir, updateversion):
     responseCodes = [200, 201]
     if (updateversion == 'false'):
         responseCodes = [200, 201, 409]
@@ -37,12 +37,12 @@ def upgradeTypesPerConfigFile(beHost, bePort, adminUser, baseDir, updateversion)
             debug(normativeFileDir)
             results = []
             for heatType in heatTypes:
-                result = createNormativeType(beHost, bePort, adminUser, heatFileDir, heatType.encode('ascii', 'ignore'), updateversion)
+                result = createNormativeType(scheme, beHost, bePort, adminUser, heatFileDir, heatType.encode('ascii', 'ignore'), updateversion)
                 results.append(result)
                 if (result[1] == None or result[1] not in responseCodes):
                     print "Failed creating heat type " + heatType + ". " + str(result[1])
             for normativeType in normativeTypes:
-                result = createNormativeType(beHost, bePort, adminUser, normativeFileDir, normativeType.encode('ascii', 'ignore'), updateversion)
+                result = createNormativeType(scheme, beHost, bePort, adminUser, normativeFileDir, normativeType.encode('ascii', 'ignore'), updateversion)
                 results.append(result)
                 if (result[1] == None or result[1] not in responseCodes):
                     print "Failed creating normative type " + normativeType + ". " + str(result[1])
@@ -59,9 +59,10 @@ def main(argv):
     bePort = '8080'
     adminUser = 'jh0003'
     updateversion = 'true'
+    scheme = 'http'
 
     try:
-        opts, args = getopt.getopt(argv, "i:p:u:v:h:", ["ip=", "port=", "user=", "updateversion="])
+        opts, args = getopt.getopt(argv, "i:p:u:v:h:s:", ["ip=", "port=", "user=", "updateversion=","scheme="])
     except getopt.GetoptError:
         usage()
         errorAndExit(2, 'Invalid input')
@@ -77,17 +78,19 @@ def main(argv):
             bePort = arg
         elif opt in ("-u", "--user"):
             adminUser = arg
+        elif opt in ("-s", "--scheme"):
+            scheme = arg
         elif opt in ("-v", "--updateversion"):
             if (arg.lower() == "false" or arg.lower() == "no"):
                 updateversion = 'false'
 
-    print 'be host =', beHost, ', be port =', bePort, ', user =', adminUser
+    print 'scheme =',scheme,', be host =',beHost, ', be port =', bePort, ', user =', adminUser
 
     if (beHost == None):
         usage()
         sys.exit(3)
 
-    results = upgradeTypesPerConfigFile(beHost, bePort, adminUser, "../../../import/tosca/", updateversion)
+    results = upgradeTypesPerConfigFile(scheme, beHost, bePort, adminUser, "../../../import/tosca/", updateversion)
 
     print "-----------------------------"
     for result in results:

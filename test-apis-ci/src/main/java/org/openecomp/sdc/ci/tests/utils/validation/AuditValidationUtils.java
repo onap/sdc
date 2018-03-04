@@ -48,7 +48,6 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.AuditEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.AuditJsonKeysEnum;
@@ -66,7 +65,6 @@ import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedUserCRUDAudit;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.run.StartTest;
-import org.openecomp.sdc.ci.tests.utils.ArtifactUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
@@ -129,41 +127,18 @@ public class AuditValidationUtils {
 
 	public static void validateAuditDownloadExternalAPI(ExpectedResourceAuditJavaObject resourceAuditJavaObject,
 			String action, String body, boolean checkAllFields) throws Exception {
-		Map<String, Object> actualAuditRecords = new HashMap<String, Object>();
-		// Andrey's comment
-		// actualAuditRecords = parseAuditResourceByAction(action, body);
-		actualAuditRecords = parseAuditResourceByAction(action, null);
-
-		// List<Map<String, Object>> actualAuditRecords = new
-		// ArrayList<Map<String, Object>>();
-		// actualAuditRecords = parseAuditResourceByActionToList(action, body);
+		Map<String, Object> actualAuditRecords = parseAuditResourceByAction(action, null);
 
 		validateField(actualAuditRecords, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceName());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-
-		validateField(actualAuditRecords, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getStatus());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getDesc());
-
-		// validateField(actualAuditRecords,
-		// AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(),
-		// resourceAuditJavaObject.getCONSUMER_ID());
-		// validateField(actualAuditRecords,
-		// AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(),
-		// resourceAuditJavaObject.getRESOURCE_URL());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceName());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getStatus());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), resourceAuditJavaObject.getDesc());
 
 	}
 
-	public static void validateAudit(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action,
-			String body, boolean checkAllFields) throws Exception {
-		Map<String, Object> actualAuditRecords = new HashMap<String, Object>();
-		// Andrey's comment
-		// actualAuditRecords = parseAuditResourceByAction(action, body);
-		actualAuditRecords = parseAuditResourceByAction(action, null);
+	public static void validateAudit(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action, String body, boolean checkAllFields) throws Exception {
+		Map<String, Object> actualAuditRecords = parseAuditResourceByAction(action, null);
 
 		if ((resourceAuditJavaObject.getModifierName() != null) && (resourceAuditJavaObject.getModifierUid() != null)) {
 			resourceAuditJavaObject.setModifierUid(getModifierString(resourceAuditJavaObject.getModifierName(),
@@ -171,77 +146,45 @@ public class AuditValidationUtils {
 		}
 
 		validateField(actualAuditRecords, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceName());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getPrevVersion());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrVersion());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceName());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(),	resourceAuditJavaObject.getPrevVersion());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),	resourceAuditJavaObject.getCurrVersion());
 
-		validateField(actualAuditRecords, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getModifierUid());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getPrevState());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrState());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getStatus());
-		// validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-		// Double.parseDouble(resourceAuditJavaObject.getStatus()));
-		validateField(actualAuditRecords, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getDesc());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.COMMENT.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getComment());
-		// validateField(map2,
-		// AuditJsonKeysEnum.ARTIFACT_DATA.getAuditJsonKeyName(),
-		// resourceAuditJavaObject.getArtifactData());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.TOSCA_NODE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getToscaNodeType());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.CURR_ARTIFACT_UUID.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrArtifactUuid());
-		validateField(actualAuditRecords, AuditJsonKeysEnum.PREV_ARTIFACT_UUID.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getPrevArtifactUuid());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), resourceAuditJavaObject.getModifierUid());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getPrevState());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrState());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getStatus());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), resourceAuditJavaObject.getDesc());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.COMMENT.getAuditJsonKeyName(), resourceAuditJavaObject.getComment());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.TOSCA_NODE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getToscaNodeType());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.CURR_ARTIFACT_UUID.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrArtifactUuid());
+		validateField(actualAuditRecords, AuditJsonKeysEnum.PREV_ARTIFACT_UUID.getAuditJsonKeyName(), resourceAuditJavaObject.getPrevArtifactUuid());
 
-		validateAtifactDataField(actualAuditRecords, AuditJsonKeysEnum.ARTIFACT_DATA.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getArtifactData(), checkAllFields);
+		validateAtifactDataField(actualAuditRecords, AuditJsonKeysEnum.ARTIFACT_DATA.getAuditJsonKeyName(), resourceAuditJavaObject.getArtifactData(), checkAllFields);
 	}
 
-	public static void validateExternalAudit(ExpectedExternalAudit externalAuditObject, String action,
-			Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+	public static void validateExternalAudit(ExpectedExternalAudit externalAuditObject, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
 
-		Map<String, Object> actualAuditRecord = new HashMap<String, Object>();
-		actualAuditRecord = parseAuditResourceByAction(action, body);
+		Map<String, Object> actualAuditRecord = parseAuditResourceByAction(action, body);
 
 		validateField(actualAuditRecord, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(actualAuditRecord, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(),
-				externalAuditObject.getCONSUMER_ID());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(), externalAuditObject.getCONSUMER_ID());
 		// TODO
-		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(),
-				externalAuditObject.getRESOURCE_URL());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(), externalAuditObject.getRESOURCE_URL());
 		//TODO
-		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				externalAuditObject.getRESOURCE_NAME());
-		validateField(actualAuditRecord, AuditJsonKeysEnum.SERVICE_INSTANCE_ID.getAuditJsonKeyName(),
-				externalAuditObject.getSERVICE_INSTANCE_ID());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), externalAuditObject.getRESOURCE_NAME());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.SERVICE_INSTANCE_ID.getAuditJsonKeyName(), externalAuditObject.getSERVICE_INSTANCE_ID());
 		//TODO
-		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				externalAuditObject.getRESOURCE_TYPE());
-		validateField(actualAuditRecord, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-				externalAuditObject.getSTATUS());
-		validateField(actualAuditRecord, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(),
-				externalAuditObject.getDESC());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), externalAuditObject.getRESOURCE_TYPE());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), externalAuditObject.getSTATUS());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), externalAuditObject.getDESC());
 		//TODO
-//		validateField(actualAuditRecord, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-//				externalAuditObject.getMODIFIER());
-		validateField(actualAuditRecord, AuditJsonKeysEnum.PREV_ARTIFACT_UUID.getAuditJsonKeyName(),
-				externalAuditObject.getPREV_ARTIFACT_UUID());
-		validateField(actualAuditRecord, AuditJsonKeysEnum.CURR_ARTIFACT_UUID.getAuditJsonKeyName(),
-				externalAuditObject.getCURR_ARTIFACT_UUID());
+//		validateField(actualAuditRecord, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), externalAuditObject.getMODIFIER());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.PREV_ARTIFACT_UUID.getAuditJsonKeyName(), externalAuditObject.getPREV_ARTIFACT_UUID());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.CURR_ARTIFACT_UUID.getAuditJsonKeyName(), externalAuditObject.getCURR_ARTIFACT_UUID());
 		//TODO
-		validateField(actualAuditRecord, AuditJsonKeysEnum.ARTIFACT_DATA.getAuditJsonKeyName(),
-				externalAuditObject.getARTIFACT_DATA());
+		validateField(actualAuditRecord, AuditJsonKeysEnum.ARTIFACT_DATA.getAuditJsonKeyName(), externalAuditObject.getARTIFACT_DATA());
 
 	}
 
@@ -288,26 +231,19 @@ public class AuditValidationUtils {
 	}
 
 	// //Benny
-	public static void validateEcompConsumerAudit(ExpectedEcomConsumerAudit ecompConsumerAuditJavaObject, String action)
-			throws Exception {
+	public static void validateEcompConsumerAudit(ExpectedEcomConsumerAudit ecompConsumerAuditJavaObject, String action) throws Exception {
 
 		String fixedAction = BaseRestUtils.encodeUrlForDownload(action);
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(fixedAction, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(fixedAction, null);
 
-		validateField(map2, EcompConsumerAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-				ecompConsumerAuditJavaObject.getModifier());
-		validateField(map2, EcompConsumerAuditJsonKeysEnum.ECOMP_USER.getAuditJsonKeyName(),
-				ecompConsumerAuditJavaObject.getEcomUser());
-		validateField(map2, EcompConsumerAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-				ecompConsumerAuditJavaObject.getStatus());
-		validateField(map2, EcompConsumerAuditJsonKeysEnum.DESC.getAuditJsonKeyName(),
-				ecompConsumerAuditJavaObject.getDesc());
+		validateField(map2, EcompConsumerAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), ecompConsumerAuditJavaObject.getModifier());
+		validateField(map2, EcompConsumerAuditJsonKeysEnum.ECOMP_USER.getAuditJsonKeyName(), ecompConsumerAuditJavaObject.getEcomUser());
+		validateField(map2, EcompConsumerAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), ecompConsumerAuditJavaObject.getStatus());
+		validateField(map2, EcompConsumerAuditJsonKeysEnum.DESC.getAuditJsonKeyName(), ecompConsumerAuditJavaObject.getDesc());
 		validateField(map2, EcompConsumerAuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
 	}
 
-	public static void ecompConsumerAuditSuccess(String action, ConsumerDataDefinition consumerDataDefinition,
-			User user, int status) throws Exception {
+	public static void ecompConsumerAuditSuccess(String action, ConsumerDataDefinition consumerDataDefinition, User user, int status) throws Exception {
 		ExpectedEcomConsumerAudit expectedEcomConsumerAuditJavaObject = new ExpectedEcomConsumerAudit();
 		expectedEcomConsumerAuditJavaObject.setAction(action);
 		expectedEcomConsumerAuditJavaObject.setEcomUser(
@@ -384,34 +320,24 @@ public class AuditValidationUtils {
 	public static void validateAuditGetListOfUsersByRoles(ExpectedGetUserListAudit GetListOfUsersAuditJavaObject,
 			String action) throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, null);
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), GetListOfUsersAuditJavaObject.getStatus());
-		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-				GetListOfUsersAuditJavaObject.getModifier());
-		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(),
-				GetListOfUsersAuditJavaObject.getDesc());
-		validateField(map2, AuditJsonKeysEnum.DETAILS.getAuditJsonKeyName(),
-				GetListOfUsersAuditJavaObject.getDetails());
+		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), GetListOfUsersAuditJavaObject.getModifier());
+		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), GetListOfUsersAuditJavaObject.getDesc());
+		validateField(map2, AuditJsonKeysEnum.DETAILS.getAuditJsonKeyName(), GetListOfUsersAuditJavaObject.getDetails());
 	}
 
-	public static void validateAuditImport(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action)
-			throws Exception {
+	public static void validateAuditImport(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action) throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, null);
 
-		resourceAuditJavaObject.setModifierUid(
-				getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
+		resourceAuditJavaObject.setModifierUid(getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getPrevVersion());
-		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getPrevVersion());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrVersion());
 		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), resourceAuditJavaObject.getModifierUid());
 		validateField(map2, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getPrevState());
 		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrState());
@@ -420,28 +346,20 @@ public class AuditValidationUtils {
 
 	}
 
-	public static void validateAuditDistribution(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action)
-			throws Exception {
+	public static void validateAuditDistribution(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action) throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, null);
 
-		resourceAuditJavaObject.setModifierUid(
-				getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
+		resourceAuditJavaObject.setModifierUid(getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceName());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceName());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrVersion());
 		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), resourceAuditJavaObject.getModifierUid());
 		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrState());
-		validateField(map2, AuditJsonKeysEnum.DPREV_STATUS.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getDprevStatus());
-		validateField(map2, AuditJsonKeysEnum.DCURR_STATUS.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getDcurrStatus());
+		validateField(map2, AuditJsonKeysEnum.DPREV_STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getDprevStatus());
+		validateField(map2, AuditJsonKeysEnum.DCURR_STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getDcurrStatus());
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getStatus());
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), resourceAuditJavaObject.getDesc());
 		validateField(map2, AuditJsonKeysEnum.COMMENT.getAuditJsonKeyName(), resourceAuditJavaObject.getComment());
@@ -450,46 +368,34 @@ public class AuditValidationUtils {
 	}
 
 	// Benny
-	public static void validateAudit_Distribution(ExpectedResourceAuditJavaObject resourceAuditJavaObject,
-			String action) throws Exception {
+	public static void validateAudit_Distribution(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action) throws Exception {
 
 		List<Map<String, Object>> actionToList = getAuditListByAction(resourceAuditJavaObject.getAction(), 1);
 		Map<String, Object> map2 = actionToList.get(0);
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceName());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceName());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrVersion());
 		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), resourceAuditJavaObject.getMODIFIER());
 		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrState());
-		validateField(map2, AuditJsonKeysEnum.DPREV_STATUS.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getDprevStatus());
-		validateField(map2, AuditJsonKeysEnum.DCURR_STATUS.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getDcurrStatus());
+		validateField(map2, AuditJsonKeysEnum.DPREV_STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getDprevStatus());
+		validateField(map2, AuditJsonKeysEnum.DCURR_STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getDcurrStatus());
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getStatus());
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), resourceAuditJavaObject.getDesc());
 		validateField(map2, AuditJsonKeysEnum.COMMENT.getAuditJsonKeyName(), resourceAuditJavaObject.getComment());
 
 	}
 
-	public void validateAuditNotification(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action)
-			throws Exception {
+	public void validateAuditNotification(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action) throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, null);
 
-		resourceAuditJavaObject.setModifierUid(
-				getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
+		resourceAuditJavaObject.setModifierUid(getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceName());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceName());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrVersion());
 		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrState());
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getStatus());
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), resourceAuditJavaObject.getDesc());
@@ -498,39 +404,31 @@ public class AuditValidationUtils {
 
 	}
 
-	public static void validateAudit(ExpectedDistDownloadAudit expectedDistDownloadAudit, String action)
-			throws Exception {
+	public static void validateAudit(ExpectedDistDownloadAudit expectedDistDownloadAudit, String action) throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, null);
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedDistDownloadAudit.getStatus());
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedDistDownloadAudit.getDesc());
-		validateField(map2, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(),
-				expectedDistDownloadAudit.getConsumerId());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(),
-				expectedDistDownloadAudit.getResourceUrl());
+		validateField(map2, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(), expectedDistDownloadAudit.getConsumerId());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(), expectedDistDownloadAudit.getResourceUrl());
 	}
 	
 	public static void validateAuditExternalSearchAPI(ExpectedExternalAudit expectedDistDownloadAudit, String action, Map<AuditingFieldsKeysEnum, String> body)
 			throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, body);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, body);
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedDistDownloadAudit.getSTATUS());
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedDistDownloadAudit.getDESC());
-		validateField(map2, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(),
-				expectedDistDownloadAudit.getCONSUMER_ID());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(),
-				expectedDistDownloadAudit.getRESOURCE_URL());
+		validateField(map2, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(), expectedDistDownloadAudit.getCONSUMER_ID());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(), expectedDistDownloadAudit.getRESOURCE_URL());
 	}
 	
 	public static void validateAuditExternalCreateResource(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
-	Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, body);
+	Map<String, Object>	map2 = parseAuditResourceByAction(action, body);
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
 		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), expectedExternalAudit.getResourceName());
@@ -549,8 +447,7 @@ public class AuditValidationUtils {
 	}
 	
 	public static void validateAuditExternalChangeAssetLifeCycle(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, body);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, body);
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedExternalAudit.getDesc());
@@ -566,28 +463,20 @@ public class AuditValidationUtils {
 		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), expectedExternalAudit.getCurrVersion());
 		validateField(map2, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(), expectedExternalAudit.getPrevState());
 		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), expectedExternalAudit.getCurrState());
-		
-		
-		// TODO: Remove comment
-//		validateField(map2, AuditJsonKeysEnum.INVARIANT_UUID.getAuditJsonKeyName(), expectedExternalAudit.getINVARIANT_UUID());
+
 	}
 
 	public void validateAuditDeploy(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action)
 			throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, null);
 
-		resourceAuditJavaObject.setModifierUid(
-				getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
+		resourceAuditJavaObject.setModifierUid(getModifierString(resourceAuditJavaObject.getModifierName(), resourceAuditJavaObject.getModifierUid()));
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceName());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceName());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrVersion());
 		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), resourceAuditJavaObject.getModifierUid());
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), resourceAuditJavaObject.getStatus());
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), resourceAuditJavaObject.getDesc());
@@ -598,25 +487,19 @@ public class AuditValidationUtils {
 	public static void validateAuditProduct(ExpectedProductAudit productExpectedAudit, String action,
 			AuditJsonKeysEnum... additionalFields) throws Exception {
 
-		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2 = parseAuditResourceByAction(action, null);
+		Map<String, Object> map2 = parseAuditResourceByAction(action, null);
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				productExpectedAudit.getRESOURCE_NAME());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				productExpectedAudit.getRESOURCE_TYPE());
-		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(),
-				productExpectedAudit.getPREV_VERSION());
-		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				productExpectedAudit.getCURR_VERSION());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), productExpectedAudit.getRESOURCE_NAME());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), productExpectedAudit.getRESOURCE_TYPE());
+		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(), productExpectedAudit.getPREV_VERSION());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), productExpectedAudit.getCURR_VERSION());
 		validateField(map2, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(), productExpectedAudit.getPREV_STATE());
 		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), productExpectedAudit.getCURR_STATE());
 		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), productExpectedAudit.getMODIFIER());
 		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), productExpectedAudit.getSTATUS());
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), productExpectedAudit.getDESC());
-		validateField(map2, AuditJsonKeysEnum.SERVICE_INSTANCE_ID.getAuditJsonKeyName(),
-				productExpectedAudit.getSERVICE_INSTANCE_ID());
+		validateField(map2, AuditJsonKeysEnum.SERVICE_INSTANCE_ID.getAuditJsonKeyName(), productExpectedAudit.getSERVICE_INSTANCE_ID());
 		if (additionalFields != null) {
 			List<AuditJsonKeysEnum> fieldsList = Arrays.asList(additionalFields);
 			if (fieldsList.contains(AuditJsonKeysEnum.COMMENT)) {
@@ -837,76 +720,6 @@ public class AuditValidationUtils {
 		return resultsMap;
 	}
 
-	// public static Map retrieveAuditMessagesByPattern(String pattern) throws
-	// IOException {
-	//
-	//// Config config = Utils.getConfig();
-	//// HttpRequest getAuditingMessage = new HttpRequest();
-	//// String url = String.format(Urls.GET_SEARCH_DATA_FROM_ES,
-	// config.getEsHost(), config.getEsPort(), pattern);
-	//// RestResponse restResponse = getAuditingMessage.httpSendGet(url, null);
-	//
-	//// get cassandra table name by action
-	// String esType =
-	// AuditingActionEnum.getActionByName(pattern).getAuditingEsType();
-	//// AuditingActionEnum actionByName =
-	// AuditingActionEnum.getActionByName(pattern);
-	//
-	//// Map<AuditingFieldsKeysEnum, String> myFields= new
-	// HashMap<AuditingFieldsKeysEnum, String>();
-	//// myFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION , pattern);
-	//
-	// List<Pair<AuditingFieldsKeysEnum, String>> myFields = new
-	// ArrayList<Pair<AuditingFieldsKeysEnum, String>>();
-	// Pair<AuditingFieldsKeysEnum, String> myPair = new
-	// Pair<AuditingFieldsKeysEnum, String>(AuditingFieldsKeysEnum.AUDIT_ACTION
-	// , pattern);
-	// myFields.add(0, myPair);
-	//
-	//
-	// List<Row> fetchFromTable = CassandraUtils.fetchFromTable("sdcaudit",
-	// esType, myFields);
-	// Row row = fetchFromTable.get(0);
-	//
-	//
-	// ColumnDefinitions columnDefinitions = row.getColumnDefinitions();
-	//// String string = row.getString(columnDefinitions.getName(1));
-	//
-	//// String metaData = row.getColumnDefinitions().toString();
-	//// metaData =metaData.replaceAll("\\((.*?)\\)|\\[|\\]|Columns", "");
-	//// List<String> metaDataList = new
-	// ArrayList<String>(Arrays.asList(metaData.split(", ")));
-	//
-	//
-	//
-	// Map<String, String> resultsMap = new HashMap<String, String>();
-	//
-	//
-	// for (int i=0 ; i < columnDefinitions.size() ; i++){
-	// resultsMap.put(columnDefinitions.getName(i) ,
-	// row.getObject(columnDefinitions.getName(i)) == null ? "null" :
-	// row.getObject(columnDefinitions.getName(i)).toString());
-	// }
-	//// for (String string : metaDataList) {
-	//// resultsMap.put(string , row.getString(string));
-	//// }
-	////
-	//
-	//// String dataString = fetchFromTable.toString();
-	//// dataString = dataString.replaceAll("\\[|\\]|Row", "");
-	//// List<String> dataArray = new
-	// ArrayList<String>(Arrays.asList(dataString.split(", ")));
-	////
-	////
-	//// Map<String, String> resultsMap = new HashMap<String, String>();
-	//// for (int i=0 ; i<metaDataList.size() ; i++) {
-	//// resultsMap.put(metaDataList.get(i), dataArray.get(i));
-	//// }
-	////
-	//// return restResponse.getResponse();
-	// return resultsMap;
-	// }
-
 	public static void categoryAuditSuccess(String action, CategoryDefinition categoryDefinition, User user, int status,
 			String resourceType) throws Exception {
 		categoryAuditSuccessInternal(action, categoryDefinition, null, null, user, status, resourceType);
@@ -955,8 +768,7 @@ public class AuditValidationUtils {
 		expectedCatrgoryAuditJavaObject.setAction(action);
 		expectedCatrgoryAuditJavaObject.setModifier(user.getFullName() + "(" + user.getUserId() + ")");
 		expectedCatrgoryAuditJavaObject.setCategoryName(categoryDataDefinition.getName());
-		String subCategoryName = (subCategoryDefinition != null ? subCategoryDefinition.getName()
-				: Constants.EMPTY_STRING);
+		String subCategoryName = (subCategoryDefinition != null ? subCategoryDefinition.getName() : Constants.EMPTY_STRING);
 		expectedCatrgoryAuditJavaObject.setSubCategoryName(subCategoryName);
 		String groupingName = (groupingDefinition != null ? groupingDefinition.getName() : Constants.EMPTY_STRING);
 		expectedCatrgoryAuditJavaObject.setGroupingName(groupingName);
@@ -989,8 +801,7 @@ public class AuditValidationUtils {
 	///////////////////////////
 	///// BENNNNNNNNY
 	public enum UserAuditJsonKeysEnum {
-		ACTION("ACTION"), MODIFIER("MODIFIER"), STATUS("STATUS"), DESC("DESCRIPTION"), USER_AFTER(
-				"USER_AFTER"), USER_BEFORE("USER_BEFORE");
+		ACTION("ACTION"), MODIFIER("MODIFIER"), STATUS("STATUS"), DESC("DESCRIPTION"), USER_AFTER("USER_AFTER"), USER_BEFORE("USER_BEFORE");
 		private String auditJsonKeyName;
 
 		private UserAuditJsonKeysEnum(String auditJsonKeyName) {
@@ -1002,20 +813,15 @@ public class AuditValidationUtils {
 		}
 	}
 
-	public static void validateAddUserAudit(ExpectedUserCRUDAudit expectedAddUserAuditJavaObject, String action)
-			throws Exception {
+	public static void validateAddUserAudit(ExpectedUserCRUDAudit expectedAddUserAuditJavaObject, String action) throws Exception {
 
 		List<Map<String, Object>> actionToList = getAuditListByAction(expectedAddUserAuditJavaObject.getAction(), 1);
 		Map<String, Object> map = actionToList.get(0);
 		validateField(map, UserAuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map, UserAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-				expectedAddUserAuditJavaObject.getModifier());
-		validateField(map, UserAuditJsonKeysEnum.USER_AFTER.getAuditJsonKeyName(),
-				expectedAddUserAuditJavaObject.getUserAfter());
-		validateField(map, UserAuditJsonKeysEnum.USER_BEFORE.getAuditJsonKeyName(),
-				expectedAddUserAuditJavaObject.getUserBefore());
-		validateField(map, UserAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-				expectedAddUserAuditJavaObject.getStatus());
+		validateField(map, UserAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), expectedAddUserAuditJavaObject.getModifier());
+		validateField(map, UserAuditJsonKeysEnum.USER_AFTER.getAuditJsonKeyName(), expectedAddUserAuditJavaObject.getUserAfter());
+		validateField(map, UserAuditJsonKeysEnum.USER_BEFORE.getAuditJsonKeyName(), expectedAddUserAuditJavaObject.getUserBefore());
+		validateField(map, UserAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedAddUserAuditJavaObject.getStatus());
 		validateField(map, UserAuditJsonKeysEnum.DESC.getAuditJsonKeyName(), expectedAddUserAuditJavaObject.getDesc());
 
 	}
@@ -1029,8 +835,7 @@ public class AuditValidationUtils {
 		expectedCatrgoryAuditJavaObject.setAction(action);
 		expectedCatrgoryAuditJavaObject.setModifier(user.getFullName() + "(" + user.getUserId() + ")");
 		expectedCatrgoryAuditJavaObject.setCategoryName(categoryDataDefinition.getName());
-		String subCategoryName = (subCategoryDefinition != null ? subCategoryDefinition.getName()
-				: Constants.EMPTY_STRING);
+		String subCategoryName = (subCategoryDefinition != null ? subCategoryDefinition.getName() : Constants.EMPTY_STRING);
 		expectedCatrgoryAuditJavaObject.setSubCategoryName(subCategoryName);
 		String groupingName = (groupingDefinition != null ? groupingDefinition.getName() : Constants.EMPTY_STRING);
 		expectedCatrgoryAuditJavaObject.setGroupingName(groupingName);
@@ -1049,14 +854,10 @@ public class AuditValidationUtils {
 		expectedCatrgoryAuditJavaObject.setModifier(getModifierString(expectedCatrgoryAuditJavaObject.getModifierName(),
 				expectedCatrgoryAuditJavaObject.getModifierUid()));
 		validateField(map, CategoryAuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map, CategoryAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getModifier());
-		validateField(map, CategoryAuditJsonKeysEnum.DETAILS.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getDetails());
-		validateField(map, CategoryAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getStatus());
-		validateField(map, CategoryAuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getDesc());
+		validateField(map, CategoryAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getModifier());
+		validateField(map, CategoryAuditJsonKeysEnum.DETAILS.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getDetails());
+		validateField(map, CategoryAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getStatus());
+		validateField(map, CategoryAuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getDesc());
 
 	}
 
@@ -1066,20 +867,13 @@ public class AuditValidationUtils {
 		List<Map<String, Object>> actionToList = getAuditListByAction(expectedCatrgoryAuditJavaObject.getAction(), 1);
 		Map<String, Object> map = actionToList.get(0);
 		validateField(map, CategoryAuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map, CategoryAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getModifier());
-		validateField(map, CategoryAuditJsonKeysEnum.CATEGORY_NAME.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getCategoryName());
-		validateField(map, CategoryAuditJsonKeysEnum.SUB_CATEGORY_NAME.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getSubCategoryName());
-		validateField(map, CategoryAuditJsonKeysEnum.GROUPING_NAME.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getGroupingName());
-		validateField(map, CategoryAuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getResourceType());
-		validateField(map, CategoryAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getStatus());
-		validateField(map, CategoryAuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(),
-				expectedCatrgoryAuditJavaObject.getDesc());
+		validateField(map, CategoryAuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getModifier());
+		validateField(map, CategoryAuditJsonKeysEnum.CATEGORY_NAME.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getCategoryName());
+		validateField(map, CategoryAuditJsonKeysEnum.SUB_CATEGORY_NAME.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getSubCategoryName());
+		validateField(map, CategoryAuditJsonKeysEnum.GROUPING_NAME.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getGroupingName());
+		validateField(map, CategoryAuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getResourceType());
+		validateField(map, CategoryAuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getStatus());
+		validateField(map, CategoryAuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedCatrgoryAuditJavaObject.getDesc());
 	}
 
 	public static void GetCategoryHierarchyAuditSuccess(String action, String componentType, User user, int status)
@@ -1122,60 +916,6 @@ public class AuditValidationUtils {
 		return sb.toString();
 	}
 
-	public static ExpectedResourceAuditJavaObject expectedMissingInformationAuditObject(String Action,
-			String resourceUid, ComponentType resourceType) throws FileNotFoundException {
-		ExpectedResourceAuditJavaObject expectedAudit = new ExpectedResourceAuditJavaObject();
-		expectedAudit.setAction(Action);
-		expectedAudit.setResourceName(resourceUid);
-		expectedAudit.setResourceType(resourceType.getValue());
-		expectedAudit.setPrevVersion("");
-		expectedAudit.setCurrVersion("");
-		expectedAudit.setModifierName("");
-		expectedAudit.setModifierUid("");
-		expectedAudit.setPrevState("");
-		expectedAudit.setCurrState("");
-		expectedAudit.setPrevArtifactUuid("");
-		expectedAudit.setCurrArtifactUuid("");
-		expectedAudit.setArtifactData("");
-		expectedAudit.setStatus("403");
-		expectedAudit.setDesc(buildAuditDescription(
-				new ErrorValidationUtils().parseErrorConfigYaml(ActionStatus.MISSING_INFORMATION.name()),
-				new ArrayList<String>()));
-		return expectedAudit;
-	}
-
-	public static ExpectedResourceAuditJavaObject expectedComponentNotFoundAuditObject(String Action,
-			String resourceUid, ComponentType resourceType, String artifactUid, User user,
-			ArrayList<String> notFoundComponent) throws FileNotFoundException {
-		String desc = null;
-
-		ExpectedResourceAuditJavaObject expectedAudit = new ExpectedResourceAuditJavaObject();
-		expectedAudit.setAction(Action);
-		expectedAudit.setResourceName(resourceUid);
-		expectedAudit.setResourceType(resourceType.getValue());
-		expectedAudit.setPrevVersion("");
-		expectedAudit.setCurrVersion("");
-		expectedAudit.setModifierName(user.getFirstName() + " " + user.getLastName());
-		expectedAudit.setModifierUid(user.getUserId());
-		expectedAudit.setPrevState("");
-		expectedAudit.setCurrState("");
-		expectedAudit.setPrevArtifactUuid("");
-		expectedAudit.setCurrArtifactUuid(artifactUid);
-		expectedAudit.setArtifactData("");
-		expectedAudit.setStatus("404");
-
-		if (resourceType.getValue() == ComponentType.SERVICE.getValue()) {
-			desc = buildAuditDescription(
-					new ErrorValidationUtils().parseErrorConfigYaml(ActionStatus.SERVICE_NOT_FOUND.name()),
-					notFoundComponent);
-		} else if (resourceType.getValue() == ComponentType.RESOURCE.getValue())
-			desc = buildAuditDescription(
-					new ErrorValidationUtils().parseErrorConfigYaml(ActionStatus.RESOURCE_NOT_FOUND.name()),
-					notFoundComponent);
-
-		expectedAudit.setDesc(desc);
-		return expectedAudit;
-	}
 
 	public static ExpectedResourceAuditJavaObject expectedArtifactNotFoundAuditObject(String Action, String resourceUid,
 			ComponentType resourceType, String artifactUid, User user, String currState, String currVersion)
@@ -1205,144 +945,27 @@ public class AuditValidationUtils {
 		return expectedAudit;
 	}
 
-	public static ExpectedResourceAuditJavaObject expectedArtifactNotFoundAuditObject(String Action,
-			String resourceName, ComponentType resourceType, String artifactUid, LifecycleStateEnum lifecycle,
-			User user, String currVersion) throws FileNotFoundException {
-		String desc = null;
-
-		ExpectedResourceAuditJavaObject expectedAudit = new ExpectedResourceAuditJavaObject();
-		expectedAudit.setAction(Action);
-		expectedAudit.setResourceName(resourceName);
-		expectedAudit.setResourceType(resourceType.getValue());
-		expectedAudit.setPrevVersion("");
-		expectedAudit.setCurrVersion(currVersion);
-		expectedAudit.setModifierName(user.getFirstName() + " " + user.getLastName());
-		expectedAudit.setModifierUid(user.getUserId());
-		expectedAudit.setPrevState("");
-		expectedAudit.setCurrState(lifecycle.name());
-		expectedAudit.setPrevArtifactUuid("");
-		expectedAudit.setCurrArtifactUuid(artifactUid);
-		expectedAudit.setArtifactData("");
-		expectedAudit.setStatus("404");
-
-		desc = buildAuditDescription(
-				new ErrorValidationUtils().parseErrorConfigYaml(ActionStatus.ARTIFACT_NOT_FOUND.name()),
-				new ArrayList<String>());
-
-		expectedAudit.setDesc(desc);
-		return expectedAudit;
-	}
-
-	public static ExpectedResourceAuditJavaObject expectedRestrictedOperationAuditObject(String Action,
-			String resourceNameOrUid, ComponentType resourceType, String artifactUid, User user, String currVersion,
-			String currState) throws FileNotFoundException {
-		String desc = null;
-
-		ExpectedResourceAuditJavaObject expectedAudit = new ExpectedResourceAuditJavaObject();
-		expectedAudit.setAction(Action);
-		expectedAudit.setResourceName(resourceNameOrUid);
-		expectedAudit.setResourceType(resourceType.getValue());
-		expectedAudit.setPrevVersion("");
-		expectedAudit.setCurrVersion(currVersion);
-		expectedAudit.setModifierName(user.getFirstName() + " " + user.getLastName());
-		expectedAudit.setModifierUid(user.getUserId());
-		expectedAudit.setPrevState("");
-		expectedAudit.setCurrState(currState);
-		expectedAudit.setPrevArtifactUuid("");
-		expectedAudit.setCurrArtifactUuid(artifactUid);
-		expectedAudit.setArtifactData("");
-		expectedAudit.setStatus("409");
-
-		desc = buildAuditDescription(
-				new ErrorValidationUtils().parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name()),
-				new ArrayList<String>());
-
-		expectedAudit.setDesc(desc);
-		return expectedAudit;
-	}
-
-	public static ExpectedResourceAuditJavaObject expectedInvalidContentAuditObject(String Action, String resourceName,
-			ComponentType resourceType, String artifactUid, User user, String currVersion, String currState,
-			ArrayList<String> invalidContentList) throws FileNotFoundException {
-		return expectedInvalidContentAuditObject(ActionStatus.INVALID_CONTENT, Action, resourceName, resourceType,
-				artifactUid, user, currVersion, currState, invalidContentList);
-	}
-
-	public static ExpectedResourceAuditJavaObject expectedInvalidContentAuditObject(ActionStatus actionStatus,
-			String Action, String resourceName, ComponentType resourceType, String artifactUid, User user,
-			String currVersion, String currState, ArrayList<String> invalidContentList) throws FileNotFoundException {
-		String desc = null;
-
-		ExpectedResourceAuditJavaObject expectedAudit = new ExpectedResourceAuditJavaObject();
-		expectedAudit.setAction(Action);
-		expectedAudit.setResourceName(resourceName);
-		expectedAudit.setResourceType(resourceType.getValue());
-		expectedAudit.setPrevVersion("");
-		expectedAudit.setCurrVersion(currVersion);
-		expectedAudit.setModifierName(user.getFirstName() + " " + user.getLastName());
-		expectedAudit.setModifierUid(user.getUserId());
-		expectedAudit.setPrevState("");
-		expectedAudit.setCurrState(currState);
-		expectedAudit.setPrevArtifactUuid("");
-		expectedAudit.setCurrArtifactUuid(artifactUid);
-		expectedAudit.setArtifactData("");
-		expectedAudit.setStatus("400");
-
-		desc = buildAuditDescription(new ErrorValidationUtils().parseErrorConfigYaml(actionStatus.name()),
-				invalidContentList);
-
-		expectedAudit.setDesc(desc);
-		return expectedAudit;
-	}
-
-	public static ExpectedResourceAuditJavaObject expectedSuccessAuditObject(String Action, String resourceName,
-			ComponentType resourceType, ArtifactReqDetails artifactReq, User user, String currVersion, String currState,
-			String prevArtifactUuid) throws FileNotFoundException {
-		ExpectedResourceAuditJavaObject expectedAudit = new ExpectedResourceAuditJavaObject();
-		expectedAudit.setAction(Action);
-		expectedAudit.setResourceName(resourceName);
-		expectedAudit.setResourceType(resourceType.getValue());
-		expectedAudit.setPrevVersion("");
-		expectedAudit.setCurrVersion(currVersion);
-		expectedAudit.setModifierName(user.getFirstName() + " " + user.getLastName());
-		expectedAudit.setModifierUid(user.getUserId());
-		expectedAudit.setPrevState("");
-		expectedAudit.setCurrState(currState);
-		expectedAudit.setPrevArtifactUuid(prevArtifactUuid);
-		expectedAudit.setCurrArtifactUuid(artifactReq.getUniqueId());
-		expectedAudit
-				.setArtifactData(buildArtifactDataAudit(ArtifactUtils.convertArtifactReqToDefinition(artifactReq)));
-		expectedAudit.setStatus("200");
-		expectedAudit.setDesc("OK");
-		return expectedAudit;
-	}
-
 	public static JSONObject filterAuditByUuid(String action, String uuid) throws Exception {
-		Map<String, String> actionMap = new HashMap<String, String>();
+		Map<String, String> actionMap = new HashMap<>();
 		actionMap.put("ACTION", action);
 		JSONObject actionJsonObject = new JSONObject(actionMap);
-		Map<String, String> uuidMap = new HashMap<String, String>();
+		Map<String, String> uuidMap = new HashMap<>();
 		uuidMap.put("SERVICE_INSTANCE_ID", uuid);
 		JSONObject uuidJsonObject = new JSONObject(uuidMap);
 
-		List<JSONObject> filters = new ArrayList<JSONObject>(Arrays.asList(actionJsonObject, uuidJsonObject));
+		List<JSONObject> filters = new ArrayList<>(Arrays.asList(actionJsonObject, uuidJsonObject));
 		JSONObject body = buildElasticQueryBody(filters);
 		return body;
 	}
 
-	public static void validateAudit(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action)
-			throws Exception {
+	public static void validateAudit(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action) throws Exception {
 		List<Map<String, Object>> actionToList = getAuditListByAction(resourceAuditJavaObject.getAction(), 1);
 		Map<String, Object> map2 = actionToList.get(0);
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceName());
-		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getResourceType());
-		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getPrevVersion());
-		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(),
-				resourceAuditJavaObject.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceName());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), resourceAuditJavaObject.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getPrevVersion());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrVersion());
 		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), resourceAuditJavaObject.getMODIFIER());
 		validateField(map2, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getPrevState());
 		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), resourceAuditJavaObject.getCurrState());

@@ -17,7 +17,7 @@ function cleanup {
     echo "performing old dockers cleanup"
 
 	if [ "$1" == "all" ] ; then
-		docker_ids=`docker ps -a | egrep -v "openecomp/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
+		docker_ids=`docker ps -a | egrep -v "onap/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
 		for X in ${docker_ids}
 		do
 			docker rm -f ${X}
@@ -106,6 +106,7 @@ if [ -n "$MATCH" ]; then
    match_result=true
 fi
 }
+
 function monitor_docker {
 
     echo monitor $1 Docker
@@ -232,7 +233,9 @@ echo ""
 
 function sdc-es {
 
-# Elastic-Search
+#Elastic-Search
+function sdc-es {
+dir_perms
 echo "docker run sdc-elasticsearch..."
 if [ ${LOCAL} = false ]; then
 	echo "pulling code"
@@ -245,7 +248,9 @@ monitor_docker sdc-es
 }
 
 function sdc-init-es {
-# Init-Elastic-Search
+#Init-Elastic-Search
+function sdc-init-es {
+dir_perms
 echo "docker run sdc-init-elasticsearch..."
 if [ ${LOCAL} = false ]; then
 	echo "pulling code"
@@ -259,7 +264,9 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
 function sdc-cs {
-# Cassandra
+#Cassandra
+function sdc-cs {
+dir_perms
 echo "docker run sdc-cassandra..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
@@ -283,21 +290,34 @@ docker_logs sdc-cs-init
 if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
+#Cassandra-init
+function sdc-cs-init {
+dir_perms
+echo "docker run sdc-cassandra-init..."
+if [ ${LOCAL} = false ]; then
+        docker pull ${PREFIX}/sdc-cassandra-init:${RELEASE}
+fi
+docker run --name sdc-cs-init --env RELEASE="${RELEASE}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE} > /dev/null 2>&1
+rc=$?
+docker_logs sdc-cs-init
+if [[ $rc != 0 ]]; then exit $rc; fi
+}
+
+#Kibana
 function sdc-kbn {
-# kibana
+dir_perms
 echo "docker run sdc-kibana..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-kibana:${RELEASE}
 docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
 fi
+}
 
 }
 
-
+#Back-End
 function sdc-BE {
-
 dir_perms
-# Back-End
 echo "docker run sdc-backend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-backend:${RELEASE}
@@ -310,7 +330,18 @@ echo "please wait while BE is starting..."
 monitor_docker sdc-BE
 }
 
+# Back-End-Init
 function sdc-BE-init {
+dir_perms
+echo "docker run sdc-backend-init..."
+if [ ${LOCAL} = false ]; then
+	docker pull ${PREFIX}/sdc-backend-init:${RELEASE}
+fi
+docker run --name sdc-BE-init --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
+rc=$?
+docker_logs sdc-BE-init
+if [[ $rc != 0 ]]; then exit $rc; fi
+}
 
 dir_perms
 # Back-End-Init
@@ -327,6 +358,8 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 function sdc-FE {
 dir_perms
 # Front-End
+function sdc-FE {
+dir_perms
 echo "docker run sdc-frontend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-frontend:${RELEASE}
@@ -337,10 +370,9 @@ echo "please wait while FE is starting....."
 monitor_docker sdc-FE
 }
 
-
-
 function sdc-sanity {
 # sanityDocker
+function sdc-sanity {
 if [[ (${RUNTESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
     echo "docker run sdc-sanity..."
     echo "Triger sanity docker, please wait..."

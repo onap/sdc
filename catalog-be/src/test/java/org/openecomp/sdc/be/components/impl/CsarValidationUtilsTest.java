@@ -20,18 +20,18 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CsarValidationUtilsTest {
-	private String[] invalidExtensions = { null, ".bla", ".yaml", ".yml", ".txt", ".zip" };
-	private String[] validExtensions = { ".csar", ".cSAr", ".Csar", ".CSAR" };
+import java.util.Arrays;
 
-	@Test
-	public void testIsCsarPayloadName() {
-		Arrays.stream(invalidExtensions).forEach(e -> Assert.assertFalse(CsarValidationUtils.isCsarPayloadName(e)));
-		Arrays.stream(validExtensions).forEach(e -> Assert.assertTrue(CsarValidationUtils.isCsarPayloadName(e)));
-	}
+public class CsarValidationUtilsTest {
+    private String[] invalidExtensions = { null, ".bla", ".yaml", ".yml", ".txt", ".zip" };
+    private String[] validExtensions = { ".csar", ".cSAr", ".Csar", ".CSAR" };
+
+    @Test
+    public void testIsCsarPayloadName() {
+        Arrays.stream(invalidExtensions).forEach(e -> Assert.assertFalse(CsarValidationUtils.isCsarPayloadName(e)));
+        Arrays.stream(validExtensions).forEach(e -> Assert.assertTrue(CsarValidationUtils.isCsarPayloadName(e)));
+    }
 }

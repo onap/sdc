@@ -68,7 +68,7 @@ public class ArtifactsOperations extends BaseOperation {
 	public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, String instanceId) {
 
 		String artifactId = artifactInfo.getUniqueId();
-		if (artifactId == null && artifactInfo.getEsId()!=null) {
+		if (artifactId == null && artifactInfo.getEsId() != null) {
 			artifactId = artifactInfo.getEsId();
 		}
 		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(parentId, artifactInfo, type, artifactId, instanceId, false, false);
@@ -186,8 +186,7 @@ public class ArtifactsOperations extends BaseOperation {
 	}
 
 	/**
-	 *
-	 * @param parentId the id of the instance container
+	 * @param parentId   the id of the instance container
 	 * @param instanceId the id of the instance of which to return its artifacts
 	 * @return instance and instance deployment artifacts mapped by artifact label name
 	 */
@@ -267,27 +266,27 @@ public class ArtifactsOperations extends BaseOperation {
 		if (isUpdate) {
 			ArtifactTypeEnum type = ArtifactTypeEnum.findType(artifactData.getArtifactType());
 			switch (type) {
-			case HEAT_ENV:
-				if (edgeLabel == EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS) {
+				case HEAT_ENV:
+					if (edgeLabel == EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS) {
+						generateUUID(artifactData, oldVesrion);
+					} else {
+						updateVersionAndDate(artifactData, oldVesrion);
+					}
+					break;
+				case HEAT:
+				case HEAT_NET:
+				case HEAT_VOL:
 					generateUUID(artifactData, oldVesrion);
-				} else {
-					updateVersionAndDate(artifactData, oldVesrion);
-				}
-				break;
-			case HEAT:
-			case HEAT_NET:
-			case HEAT_VOL:
-				generateUUID(artifactData, oldVesrion);
-				break;
-			default:
-				if (oldChecksum == null || oldChecksum.isEmpty()) {
-					if (currentChecksum != null) {
+					break;
+				default:
+					if (oldChecksum == null || oldChecksum.isEmpty()) {
+						if (currentChecksum != null) {
+							generateUUID(artifactData, oldVesrion);
+						}
+					} else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
 						generateUUID(artifactData, oldVesrion);
 					}
-				} else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
-					generateUUID(artifactData, oldVesrion);
-				}
-				break;
+					break;
 			}
 		} else {
 			if (oldChecksum == null || oldChecksum.isEmpty()) {
@@ -315,11 +314,11 @@ public class ArtifactsOperations extends BaseOperation {
 		String id = heatEnv.getGeneratedFromId();
 		ComponentTypeEnum compType;
 		switch (parentType) {
-		case ResourceInstance:
-			compType = ComponentTypeEnum.RESOURCE_INSTANCE;
-			break;
-		default:
-			compType = componentType;
+			case ResourceInstance:
+				compType = ComponentTypeEnum.RESOURCE_INSTANCE;
+				break;
+			default:
+				compType = componentType;
 		}
 		return getArtifactById(parentId, id, compType, containerId);
 	}
@@ -430,7 +429,7 @@ public class ArtifactsOperations extends BaseOperation {
 		return artMap;
 	}
 
-	private Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus>  getInstanceArtifactsByLabel(String parentId, String instanceId, EdgeLabelEnum edgeLabelEnum) {
+	private Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> getInstanceArtifactsByLabel(String parentId, String instanceId, EdgeLabelEnum edgeLabelEnum) {
 		Either<Map<String, MapArtifactDataDefinition>, TitanOperationStatus> resultEither = getDataFromGraph(parentId, edgeLabelEnum);
 		if (resultEither.isRight()) {
 			log.debug("failed to fetch {} for tosca element with id {}, error {}", edgeLabelEnum, parentId, resultEither.right().value());
@@ -449,34 +448,34 @@ public class ArtifactsOperations extends BaseOperation {
 		 * if (nodeType == NodeTypeEnum.ResourceInstance) { edgeLabelEnum = EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS; vertexTypeEnum = VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS; isDeepElement = true; } else {
 		 */
 		switch (groupType) {
-		case TOSCA:
-			edgeLabelEnum = EdgeLabelEnum.TOSCA_ARTIFACTS;
-			vertexTypeEnum = VertexTypeEnum.TOSCA_ARTIFACTS;
-			break;
-		case DEPLOYMENT:
-			if (nodeType == NodeTypeEnum.ResourceInstance) {
-				edgeLabelEnum = EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS;
-				vertexTypeEnum = VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS;
-				isDeepElement = true;
-			} else {
-				edgeLabelEnum = EdgeLabelEnum.DEPLOYMENT_ARTIFACTS;
-				vertexTypeEnum = VertexTypeEnum.DEPLOYMENT_ARTIFACTS;
-			}
-			break;
-		case SERVICE_API:
-			edgeLabelEnum = EdgeLabelEnum.SERVICE_API_ARTIFACTS;
-			vertexTypeEnum = VertexTypeEnum.SERVICE_API_ARTIFACTS;
-			break;
-		default:
-			if (nodeType == NodeTypeEnum.ResourceInstance) {
-				edgeLabelEnum = EdgeLabelEnum.INSTANCE_ARTIFACTS;
-				vertexTypeEnum = VertexTypeEnum.INSTANCE_ARTIFACTS;
-				isDeepElement = true;
-			} else {
-				edgeLabelEnum = EdgeLabelEnum.ARTIFACTS;
-				vertexTypeEnum = VertexTypeEnum.ARTIFACTS;
-			}
-			break;
+			case TOSCA:
+				edgeLabelEnum = EdgeLabelEnum.TOSCA_ARTIFACTS;
+				vertexTypeEnum = VertexTypeEnum.TOSCA_ARTIFACTS;
+				break;
+			case DEPLOYMENT:
+				if (nodeType == NodeTypeEnum.ResourceInstance) {
+					edgeLabelEnum = EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS;
+					vertexTypeEnum = VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS;
+					isDeepElement = true;
+				} else {
+					edgeLabelEnum = EdgeLabelEnum.DEPLOYMENT_ARTIFACTS;
+					vertexTypeEnum = VertexTypeEnum.DEPLOYMENT_ARTIFACTS;
+				}
+				break;
+			case SERVICE_API:
+				edgeLabelEnum = EdgeLabelEnum.SERVICE_API_ARTIFACTS;
+				vertexTypeEnum = VertexTypeEnum.SERVICE_API_ARTIFACTS;
+				break;
+			default:
+				if (nodeType == NodeTypeEnum.ResourceInstance) {
+					edgeLabelEnum = EdgeLabelEnum.INSTANCE_ARTIFACTS;
+					vertexTypeEnum = VertexTypeEnum.INSTANCE_ARTIFACTS;
+					isDeepElement = true;
+				} else {
+					edgeLabelEnum = EdgeLabelEnum.ARTIFACTS;
+					vertexTypeEnum = VertexTypeEnum.ARTIFACTS;
+				}
+				break;
 		}
 		// }
 		return new ImmutableTriple<EdgeLabelEnum, Boolean, VertexTypeEnum>(edgeLabelEnum, isDeepElement, vertexTypeEnum);
@@ -505,10 +504,10 @@ public class ArtifactsOperations extends BaseOperation {
 			if (edgeLabelEnum != EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS && edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
 				uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, artifactToUpdate.getArtifactLabel());
 			} else {
-				uniqueId = UniqueIdBuilder.buildPropertyUniqueId(instanceId, artifactToUpdate.getArtifactLabel());
+				uniqueId = UniqueIdBuilder.buildInstanceArtifactUniqueId(componentId, instanceId, artifactToUpdate.getArtifactLabel());
 			}
 			artifactToUpdate.setUniqueId(uniqueId);
-			if(!isDeletePlaceholder)
+			if (!isDeletePlaceholder)
 				artifactToUpdate.setEsId(uniqueId);
 		} else
 			artifactToUpdate.setUniqueId(artifactId);
@@ -547,15 +546,19 @@ public class ArtifactsOperations extends BaseOperation {
 			oldVersion = oldArtifactData.getArtifactVersion();
 			//duplicated flag didn't receive from UI, take from DB 
 			artifactToUpdate.setDuplicated(oldArtifactData.getDuplicated());
-			
+
 			if (isNeedToClone)
 				artifactToUpdate.setDuplicated(Boolean.FALSE);
 			else {
 				if (artifactToUpdate.getDuplicated()) {
-					String id = type != NodeTypeEnum.ResourceInstance ? componentId : instanceId;
-					String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(id, artifactToUpdate.getArtifactLabel());
+					String uniqueId = "";
+					if(type != NodeTypeEnum.ResourceInstance)
+						uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, artifactToUpdate.getArtifactLabel());
+					else
+						uniqueId = UniqueIdBuilder.buildInstanceArtifactUniqueId(componentId, instanceId, artifactToUpdate.getArtifactLabel());
+					
 					artifactToUpdate.setUniqueId(uniqueId);
-					if(!isDeletePlaceholder)
+					if (!isDeletePlaceholder)
 						artifactToUpdate.setEsId(uniqueId);
 					artifactToUpdate.setDuplicated(Boolean.FALSE);
 				}
@@ -594,12 +597,12 @@ public class ArtifactsOperations extends BaseOperation {
 					artifacts.put(artifactToUpdate.getArtifactLabel(), artifactToUpdate);
 				}
 
-				for ( Entry<String, MapArtifactDataDefinition> e : artifactInst.entrySet() ) {
+				for (Entry<String, MapArtifactDataDefinition> e : artifactInst.entrySet()) {
 					List<ArtifactDataDefinition> toscaDataListPerInst = e.getValue().getMapToscaDataDefinition().values().stream().collect(Collectors.toList());
 					List<String> pathKeysPerInst = new ArrayList<>();
 					pathKeysPerInst.add(e.getKey());
 					status = updateToscaDataDeepElementsOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataListPerInst, pathKeysPerInst, JsonPresentationFields.ARTIFACT_LABEL);
-					if ( status != StorageOperationStatus.OK) {
+					if (status != StorageOperationStatus.OK) {
 						log.debug("Failed to update atifacts group for instance {} in component {} edge type {} error {}", instanceId, componentId, edgeLabelEnum, status);
 						res = Either.right(status);
 						break;
@@ -637,14 +640,14 @@ public class ArtifactsOperations extends BaseOperation {
 	private boolean validateParentType(NodeTypeEnum type) {
 		boolean isValid = false;
 		switch (type) {
-		case Resource:
-		case InterfaceOperation:
-		case Service:
-		case ResourceInstance:
-			isValid = true;
-			break;
-		default:
-			log.debug("Not supported node type for artifact relation : {} ", type);
+			case Resource:
+			case InterfaceOperation:
+			case Service:
+			case ResourceInstance:
+				isValid = true;
+				break;
+			default:
+				log.debug("Not supported node type for artifact relation : {} ", type);
 		}
 		return isValid;
 	}
@@ -727,4 +730,5 @@ public class ArtifactsOperations extends BaseOperation {
 		}
 		return result;
 	}
+
 }

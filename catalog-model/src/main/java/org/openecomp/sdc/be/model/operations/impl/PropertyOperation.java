@@ -20,34 +20,29 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.ObjectCodec;
-import org.codehaus.jackson.map.DeserializationContext;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -62,6 +57,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -83,26 +79,30 @@ import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Component("property-operation")
 public class PropertyOperation extends AbstractOperation implements IPropertyOperation {
 
 	private TitanGenericDao titanGenericDao;
+	private DerivedFromOperation derivedFromOperation;
 	
 	public static void main(String[] args) {
 
@@ -119,9 +119,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	}
 
-	public PropertyOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
-		super();
+	public PropertyOperation(TitanGenericDao titanGenericDao, DerivedFromOperation derivedFromOperation) {
 		this.titanGenericDao = titanGenericDao;
+		this.derivedFromOperation = derivedFromOperation;
 	}
 
 	private static Logger log = LoggerFactory.getLogger(PropertyOperation.class.getName());
@@ -790,6 +790,12 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return Either.left(resourceProps);
 	}
 
+    public Either<Map<String, PropertyDefinition>, StorageOperationStatus> deletePropertiesAssociatedToNode(NodeTypeEnum nodeType, String uniqueId) {
+	    return deleteAllPropertiesAssociatedToNode(nodeType, uniqueId)
+                .right()
+                .bind(err -> err == StorageOperationStatus.OK ? Either.left(Collections.emptyMap()) : Either.right(err));
+    }
+
 	public Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllPropertiesAssociatedToNode(NodeTypeEnum nodeType, String uniqueId) {
 
 		Either<Map<String, PropertyDefinition>, TitanOperationStatus> propertiesOfNodeRes = findPropertiesOfNode(nodeType, uniqueId);
@@ -820,18 +826,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		log.debug("The properties deleted from node {} are {}", uniqueId, value);
 		return Either.left(value);
-	}
-
-	/**
-	 * fetch all properties under a given resource(includes its parents' resources)
-	 * 
-	 * @param resourceId
-	 * @param properties
-	 * @return
-	 */
-	public TitanOperationStatus findAllResourcePropertiesRecursively(String resourceId, List<PropertyDefinition> properties) {
-		final NodeElementFetcher<PropertyDefinition> singleNodeFetcher = (resourceIdParam, attributesParam) -> findPropertiesOfNode(NodeTypeEnum.Resource, resourceIdParam, attributesParam);
-		return findAllResourceElementsDefinitionRecursively(resourceId, properties, singleNodeFetcher);
 	}
 
 	/**
@@ -1323,11 +1317,11 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return instanceProperty;
 	}
 
-	public static class PropertyConstraintJacksonDeserialiser extends org.codehaus.jackson.map.JsonDeserializer<PropertyConstraint> {
+
+	public static class PropertyConstraintJacksonDeserializer extends com.fasterxml.jackson.databind.JsonDeserializer<PropertyConstraint> {
 
 		@Override
-		public PropertyConstraint deserialize(org.codehaus.jackson.JsonParser json, DeserializationContext context) throws IOException, JsonProcessingException {
-
+		public PropertyConstraint deserialize(com.fasterxml.jackson.core.JsonParser json, DeserializationContext context) throws IOException {
 			ObjectCodec oc = json.getCodec();
 			JsonNode node = oc.readTree(json);
 			return null;
@@ -2147,13 +2141,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return Either.left(dataTypeDefinition);
 	}
 
-	public Either<DataTypeDefinition, TitanOperationStatus> getDataTypeByNameWithoutDerivedDataTypes(String name) {
-
-		String uid = UniqueIdBuilder.buildDataTypeUid(name);
-		return getDataTypeByUidWithoutDerivedDataTypes(uid);
-
-	}
-
 	/**
 	 * 
 	 * convert between graph Node object to Java object
@@ -2271,7 +2258,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * @param uniqueId
 	 * @return
 	 */
-	public Either<DataTypeDefinition, TitanOperationStatus> getAndAddDataTypeByUid(String uniqueId, Map<String, DataTypeDefinition> allDataTypes) {
+	private Either<DataTypeDefinition, TitanOperationStatus> getAndAddDataTypeByUid(String uniqueId, Map<String, DataTypeDefinition> allDataTypes) {
 
 		Either<DataTypeDefinition, TitanOperationStatus> result = null;
 
@@ -2339,13 +2326,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return result;
 	}
 
-	public Either<DataTypeDefinition, TitanOperationStatus> getDataTypeUsingName(String name) {
-
+	private Either<DataTypeDefinition, TitanOperationStatus> getDataTypeUsingName(String name) {
 		String uid = UniqueIdBuilder.buildDataTypeUid(name);
-
-		Either<DataTypeDefinition, TitanOperationStatus> dataTypeByUid = getDataTypeByUid(uid);
-
-		return dataTypeByUid;
+		return getDataTypeByUid(uid);
 	}
 
 	public Either<String, TitanOperationStatus> checkInnerType(PropertyDataDefinition propDataDef) {
@@ -2354,9 +2337,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
 
-		Either<String, TitanOperationStatus> result = getInnerType(type, () -> propDataDef.getSchema());
-
-		return result;
+		return getInnerType(type, () -> propDataDef.getSchema());
 	}
 
 	public Either<List<DataTypeData>, TitanOperationStatus> getAllDataTypeNodes() {
@@ -2380,7 +2361,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			if (type == null) {
 				DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
 				ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
-				if (validateResult.right.booleanValue() == false) {
+				if (Boolean.FALSE.equals(validateResult.right)) {
 					log.debug("The value {} of property from type {} is invalid", value, propertyType);
 					return Either.right(false);
 				}
@@ -2390,13 +2371,13 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			}
 			log.trace("before validating property type {}", propertyType);
 			boolean isValidProperty = isValidValue(type, value, innerType, dataTypes);
-			if (false == isValidProperty) {
+			if (!isValidProperty) {
 				log.debug("The value {} of property from type {} is invalid", value, type);
 				return Either.right(false);
 			}
 		}
 		Object convertedValue = value;
-		if (false == isEmptyValue(value) && isValidate) {
+		if (!isEmptyValue(value) && isValidate) {
 			PropertyValueConverter converter = type.getConverter();
 			convertedValue = converter.convert(value, innerType, dataTypes);
 		}
@@ -2407,11 +2388,46 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return validateAndUpdatePropertyValue(propertyType, value, true, innerType, dataTypes);
 	}
 
+	public <T extends GraphNode> Either<List<PropertyDefinition>, StorageOperationStatus> getAllPropertiesRec(String uniqueId, NodeTypeEnum nodeType, Class<T> clazz) {
+		return this.findPropertiesOfNode(nodeType, uniqueId)
+				.right()
+				.bind(this::handleNotFoundProperties)
+				.left()
+				.bind(props -> getAllDerivedFromChainProperties(uniqueId, nodeType, clazz, props.values()));
+	}
+
+	private Either<Map<String, PropertyDefinition>, StorageOperationStatus> handleNotFoundProperties(TitanOperationStatus titanOperationStatus) {
+		if (titanOperationStatus == TitanOperationStatus.NOT_FOUND) {
+			return Either.left(new HashMap<>());
+		}
+		return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
+	}
+
+	private <T extends GraphNode> Either<List<PropertyDefinition>, StorageOperationStatus> getAllDerivedFromChainProperties(String uniqueId, NodeTypeEnum nodeType, Class<T> clazz, Collection<PropertyDefinition> nodeProps) {
+		List<PropertyDefinition> accumulatedProps = new ArrayList<>(nodeProps);
+		String currentNodeUid = uniqueId;
+		Either<T, StorageOperationStatus> derivedFrom;
+		while ((derivedFrom = derivedFromOperation.getDerivedFromChild(currentNodeUid, nodeType, clazz)).isLeft()) {
+			currentNodeUid = derivedFrom.left().value().getUniqueId();
+			TitanOperationStatus titanOperationStatus = fillProperties(currentNodeUid, nodeType, accumulatedProps::addAll);
+			if (titanOperationStatus != TitanOperationStatus.OK) {
+				log.debug("failed to fetch properties for type {} with id {}", nodeType, currentNodeUid);
+				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
+			}
+		}
+		StorageOperationStatus getDerivedResult = derivedFrom.right().value();
+		return isReachedEndOfDerivedFromChain(getDerivedResult) ? Either.left(accumulatedProps) : Either.right(getDerivedResult);
+	}
+
+	private boolean isReachedEndOfDerivedFromChain(StorageOperationStatus getDerivedResult) {
+		return getDerivedResult == StorageOperationStatus.NOT_FOUND;
+	}
+
 	/*
 	 * @Override public PropertyOperation getPropertyOperation() { return this; }
 	 */
-	protected TitanOperationStatus fillProperties(String uniqueId, Consumer<List<PropertyDefinition>> propertySetter) {
-		Either<Map<String, PropertyDefinition>, TitanOperationStatus> findPropertiesOfNode = this.findPropertiesOfNode(NodeTypeEnum.GroupType, uniqueId);
+	protected TitanOperationStatus fillProperties(String uniqueId, NodeTypeEnum nodeType, Consumer<List<PropertyDefinition>> propertySetter) {
+		Either<Map<String, PropertyDefinition>, TitanOperationStatus> findPropertiesOfNode = this.findPropertiesOfNode(nodeType, uniqueId);
 		if (findPropertiesOfNode.isRight()) {
 			TitanOperationStatus titanOperationStatus = findPropertiesOfNode.right().value();
 			log.debug("After looking for properties of vertex {}. status is {}", uniqueId, titanOperationStatus);
@@ -2496,17 +2512,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			propMap = properties.stream().collect(Collectors.toMap(propDef -> propDef.getName(), propDef -> propDef));
 		}
 		return addPropertiesToElementType(uniqueId, elementType, propMap);
-	}
-
-	public TitanOperationStatus addPropertiesToElementType(TitanVertex elementVertex, String uniqueId, NodeTypeEnum elementType, List<PropertyDefinition> properties) {
-
-		Map<String, PropertyDefinition> propMap;
-		if (properties == null) {
-			propMap = null;
-		} else {
-			propMap = properties.stream().collect(Collectors.toMap(propDef -> propDef.getName(), propDef -> propDef));
-		}
-		return addPropertiesToElementType(uniqueId, elementType, propMap, elementVertex);
 	}
 
 	@Override

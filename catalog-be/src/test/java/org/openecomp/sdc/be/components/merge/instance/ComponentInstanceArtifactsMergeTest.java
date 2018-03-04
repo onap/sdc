@@ -1,10 +1,5 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import static junit.framework.TestCase.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,6 +8,11 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static groovy.util.GroovyTestCase.assertEquals;
 
 
 public class ComponentInstanceArtifactsMergeTest {

@@ -29,7 +29,11 @@ public class ResourceReqDetails extends ComponentReqDetails {
 	List<String> derivedFrom;
 	String vendorName;
 	String vendorRelease;
+	String componentType = "RESOURCE";
 
+	public String getComponentType() {
+		return componentType;
+	}
 	// Unsettable/unupdatable fields
 
 	Boolean isAbstract;

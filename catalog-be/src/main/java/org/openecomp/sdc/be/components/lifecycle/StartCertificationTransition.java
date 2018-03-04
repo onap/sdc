@@ -48,97 +48,97 @@ import fj.data.Either;
 
 public class StartCertificationTransition extends LifeCycleTransition {
 
-	private static Logger log = LoggerFactory.getLogger(StartCertificationTransition.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(StartCertificationTransition.class);
 
-	public StartCertificationTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
-		super(componentUtils, lifecycleOperation, toscaOperationFacade,  titanDao);
+    public StartCertificationTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+        super(componentUtils, lifecycleOperation, toscaOperationFacade,  titanDao);
 
-		// authorized roles
-		Role[] rsrcServiceStartCertificationRoles = { Role.ADMIN, Role.TESTER };
-		addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(rsrcServiceStartCertificationRoles));
-		addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(rsrcServiceStartCertificationRoles));
-		// TODO to be later defined for product
-		
-		//additional authorized roles for resource type
-		Role[] resourceRoles = { Role.DESIGNER};
-		addResouceAuthorizedRoles(ResourceTypeEnum.VFCMT, Arrays.asList(resourceRoles));
-	}
+        // authorized roles
+        Role[] rsrcServiceStartCertificationRoles = { Role.ADMIN, Role.TESTER };
+        addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(rsrcServiceStartCertificationRoles));
+        addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(rsrcServiceStartCertificationRoles));
+        // TODO to be later defined for product
 
-	@Override
-	public LifeCycleTransitionEnum getName() {
-		return LifeCycleTransitionEnum.START_CERTIFICATION;
-	}
+        //additional authorized roles for resource type
+        Role[] resourceRoles = { Role.DESIGNER};
+        addResouceAuthorizedRoles(ResourceTypeEnum.VFCMT, Arrays.asList(resourceRoles));
+    }
 
-	@Override
-	public AuditingActionEnum getAuditingAction() {
-		return AuditingActionEnum.START_CERTIFICATION_RESOURCE;
-	}
+    @Override
+    public LifeCycleTransitionEnum getName() {
+        return LifeCycleTransitionEnum.START_CERTIFICATION;
+    }
 
-	@Override
-	public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
+    @Override
+    public AuditingActionEnum getAuditingAction() {
+        return AuditingActionEnum.START_CERTIFICATION_RESOURCE;
+    }
 
-		log.debug("start performing certification test for resource {}", component.getUniqueId());
-		Either<? extends Component, ResponseFormat> result = null;
-		try{
-			Either<ToscaElement, StorageOperationStatus> stateChangeResult = lifeCycleOperation.startCertificationToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
-			if (stateChangeResult.isRight()) {
-				log.debug("start certification failed on graph");
-				StorageOperationStatus response = stateChangeResult.right().value();
-				ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
-	
-				if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
-					actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
-				}
-				ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-				result =  Either.right(responseFormat);
-			}
-			else {
-				result =  Either.left(ModelConverter.convertFromToscaElement(stateChangeResult.left().value()));
-			}
-		} finally {
-			if (result == null || result.isRight()) {
-				BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
-				if (inTransaction == false) {
-					log.debug("operation failed. do rollback");
-					titanDao.rollback();
-				}
-			} else {
-				if (inTransaction == false) {
-					log.debug("operation success. do commit");
-					titanDao.commit();
-				}
-			}
-		}
-		return result;
-	}
+    @Override
+    public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
 
-	@Override
-	public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
-		String componentName = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
-		log.debug("validate before start certification test. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
+        log.debug("start performing certification test for resource {}", component.getUniqueId());
+        Either<? extends Component, ResponseFormat> result = null;
+        try{
+            Either<ToscaElement, StorageOperationStatus> stateChangeResult = lifeCycleOperation.startCertificationToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
+            if (stateChangeResult.isRight()) {
+                log.debug("start certification failed on graph");
+                StorageOperationStatus response = stateChangeResult.right().value();
+                ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
 
-		// validate user
-		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
-		if (userValidationResponse.isRight()) {
-			return userValidationResponse;
-		}
-		
-		if (oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN) || oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
-			ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase());
-			return Either.right(error);
-		}
+                if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
+                    actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
+                }
+                ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
+                result =  Either.right(responseFormat);
+            }
+            else {
+                result =  Either.left(ModelConverter.convertFromToscaElement(stateChangeResult.left().value()));
+            }
+        } finally {
+            if (result == null || result.isRight()) {
+                BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
+                if (inTransaction == false) {
+                    log.debug("operation failed. do rollback");
+                    titanDao.rollback();
+                }
+            } else {
+                if (inTransaction == false) {
+                    log.debug("operation success. do commit");
+                    titanDao.commit();
+                }
+            }
+        }
+        return result;
+    }
 
-		if (oldState.equals(LifecycleStateEnum.CERTIFIED)) {
-			ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_ALREADY_CERTIFIED, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-			return Either.right(error);
-		}
+    @Override
+    public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
+        String componentName = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
+        log.debug("validate before start certification test. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
 
-		if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)) {
-			ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-			return Either.right(error);
-		}
+        // validate user
+        Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
+        if (userValidationResponse.isRight()) {
+            return userValidationResponse;
+        }
 
-		return Either.left(true);
-	}
+        if (oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN) || oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
+            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase());
+            return Either.right(error);
+        }
+
+        if (oldState.equals(LifecycleStateEnum.CERTIFIED)) {
+            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_ALREADY_CERTIFIED, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+            return Either.right(error);
+        }
+
+        if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)) {
+            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+            return Either.right(error);
+        }
+
+        return Either.left(true);
+    }
 
 }

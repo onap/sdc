@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -69,22 +69,7 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
@@ -539,6 +524,7 @@ public class NodeTemplateOperation extends BaseOperation {
 						}
 					}
 				}
+				return updateAllAndCalculatedCapReqOnGraph(container.getUniqueId(), containerV, capResult, capFullResult, reqResult, reqFullResult);
 			}
 		}
 		return StorageOperationStatus.OK;
@@ -1000,35 +986,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			dataDefinition.setToscaComponentName((String) originToscaElement.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
 		if (dataDefinition.getOriginType() == null && originToscaElement != null) {
 			ResourceTypeEnum resourceType = originToscaElement.getResourceType();
-			OriginTypeEnum originType = null;
-			switch (resourceType) {
-			case VF:
-				originType = OriginTypeEnum.VF;
-				break;
-			case VFC:
-				originType = OriginTypeEnum.VFC;
-				break;
-			case CVFC:
-				originType = OriginTypeEnum.CVFC;
-				break;
-			case VL:
-				originType = OriginTypeEnum.VL;
-				break;
-			case CP:
-				originType = OriginTypeEnum.CP;
-				break;
-			case PNF:
-				originType = OriginTypeEnum.PNF;
-				break;
-			case ServiceProxy:
-				originType = OriginTypeEnum.ServiceProxy;
-				break;
-			case Configuration:
-				originType = OriginTypeEnum.Configuration;
-				break;
-			default:
-				break;
-			}
+			OriginTypeEnum originType = OriginTypeEnum.findByValue(resourceType.name());
 			dataDefinition.setOriginType(originType);
 		}
 		if(dataDefinition.getOriginType()  == OriginTypeEnum.ServiceProxy)
@@ -1340,7 +1298,7 @@ public class NodeTemplateOperation extends BaseOperation {
 		Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult = null;
 		MapListRequirementDataDefinition reqMapOfLists = null;
 		Optional<RequirementDataDefinition> foundRequirement;
-		RelationshipInfo relationshipInfo = foundRelation.getSingleRelationship().getRelation();
+		RelationshipInfo relationshipInfo = foundRelation.resolveSingleRelationship().getRelation();
 		Either<GraphVertex, TitanOperationStatus> containerVEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.ParseAll);
 		if (containerVEither.isRight()) {
 			TitanOperationStatus error = containerVEither.right().value();
@@ -1387,7 +1345,7 @@ public class NodeTemplateOperation extends BaseOperation {
 		MapListCapabiltyDataDefinition capMapOfLists = null;
 		Optional<CapabilityDataDefinition> foundRequirement;
 		
-		RelationshipInfo relationshipInfo = foundRelation.getSingleRelationship().getRelation();
+		RelationshipInfo relationshipInfo = foundRelation.resolveSingleRelationship().getRelation();
 		Either<GraphVertex, TitanOperationStatus> containerVEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.ParseAll);
 		if (containerVEither.isRight()) {
 			TitanOperationStatus error = containerVEither.right().value();
@@ -1526,7 +1484,8 @@ public class NodeTemplateOperation extends BaseOperation {
 					mapListCapaDataDef.put(hereIsTheKey, findByKey);
 				}
 				findByKey.add(cap);
-				relationship.setCapability(cap);
+				if(relationship!= null)
+					relationship.setCapability(cap);
 				break;
 			}
 		}
@@ -1574,7 +1533,8 @@ public class NodeTemplateOperation extends BaseOperation {
 					mapListReqDataDef.put(hereIsTheKey, findByKey);
 				}
 				findByKey.add(req);
-				relationship.setRequirement(req);
+				if(relationship!= null)
+					relationship.setRequirement(req);
 				break;
 			}
 		}
@@ -1770,8 +1730,12 @@ public class NodeTemplateOperation extends BaseOperation {
 				}
 			}
 		}
+		if (requirementForRelation == null) {
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch requirement for type {} for instance {} in container {}.", type, toInstId, containerId);
+			return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
+		}
 		if (!capabilityForRelation.getType().equals(requirementForRelation.getCapability())) {
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "No math for capability from type {} and requirement {} from {} to {} in container {}.", capabilityForRelation.getType(), requirementForRelation.getCapability(), fromInstId,
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "No macth for capability from type {} and requirement {} from {} to {} in container {}.", capabilityForRelation.getType(), requirementForRelation.getCapability(), fromInstId,
 					toInstId, containerId);
 			return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
 		}
@@ -1983,6 +1947,10 @@ public class NodeTemplateOperation extends BaseOperation {
 		pathKeys.add(componentInstanceId);
 		pathKeys.add(capabilityUniqueId);
 		return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
+	}
+
+	public StorageOperationStatus overrideComponentCapabilitiesProperties(Component containerComponent, Map<String, MapCapabiltyProperty> capabilityPropertyMap) {
+		return overrideToscaDataOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilityPropertyMap);
 	}
 
 	public StorageOperationStatus addComponentInstanceProperty(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property) {

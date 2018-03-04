@@ -1,9 +1,6 @@
 package org.openecomp.sdc.be.components.impl.generic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -20,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 public class GenericTypeBusinessLogic {
@@ -81,6 +80,9 @@ public class GenericTypeBusinessLogic {
     }
 
     private <T extends Component> String getGenericTypeToscaName(T component) {
+        if(component.getDerivedFromGenericType() != null && !component.getDerivedFromGenericType().isEmpty()){
+            return component.getDerivedFromGenericType();
+        }
         return isCvfcHasDerivedFrom(component) ? ((Resource)component).getDerivedFrom().get(0) : component.fetchGenericTypeToscaNameFromConfig();
     }
 

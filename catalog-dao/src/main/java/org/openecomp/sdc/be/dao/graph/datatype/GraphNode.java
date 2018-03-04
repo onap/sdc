@@ -20,14 +20,13 @@
 
 package org.openecomp.sdc.be.dao.graph.datatype;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import com.google.gson.Gson;
+import java.util.List;
+import java.util.Map;
 
 public abstract class GraphNode extends GraphElement {
 
@@ -67,7 +66,7 @@ public abstract class GraphNode extends GraphElement {
 		return GraphPropertiesDictionary.UNIQUE_ID.getProperty();
 	}
 
-	public abstract Object getUniqueId();
+	public abstract String getUniqueId();
 
 	@Override
 	public String toString() {

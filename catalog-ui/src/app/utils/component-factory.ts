@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
 import {ServiceService, CacheService, ResourceService} from "app/services";
 import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
@@ -150,6 +151,7 @@ export class ComponentFactory {
             case ResourceType.VL:
             case ResourceType.VFC:
             case ResourceType.CP:
+            case ResourceType.CR:
             case ResourceType.PNF:
             case ResourceType.CVFC:
             case ResourceType.CONFIGURATION:

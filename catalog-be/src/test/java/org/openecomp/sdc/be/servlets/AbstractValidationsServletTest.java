@@ -46,59 +46,56 @@ import org.slf4j.Logger;
 import fj.data.Either;
 
 public class AbstractValidationsServletTest {
-	private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {
-	};
+    private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {};
 
-	private static final String BASIC_TOSCA_TEMPLATE = "tosca_definitions_version: tosca_simple_yaml_%s";
+    private static final String BASIC_TOSCA_TEMPLATE = "tosca_definitions_version: tosca_simple_yaml_%s";
 
-	@Before
-	public void setUp() throws Exception {
-		servlet.initLog(mock(Logger.class));
-	}
+    @Before
+    public void setUp() throws Exception {
+        servlet.initLog(mock(Logger.class));
+    }
 
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetScarFromPayload() {
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetScarFromPayload() {
 
-		String payloadName = "valid_vf.csar";
-		String rootPath = System.getProperty("user.dir");
-		Path path = null;
-		byte[] data = null;
-		String payloadData = null;
-		Either<Map<String, byte[]>, ResponseFormat> returnValue = null;
-		try {
-			path = Paths.get(rootPath + "/src/test/resources/valid_vf.csar");
-			data = Files.readAllBytes(path);
-			payloadData = Base64.encodeBase64String(data);
-			UploadResourceInfo resourceInfo = new UploadResourceInfo();
-			resourceInfo.setPayloadName(payloadName);
-			resourceInfo.setPayloadData(payloadData);
-			Method privateMethod = null;
-			privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getScarFromPayload",
-					UploadResourceInfo.class);
-			privateMethod.setAccessible(true);
-			returnValue = (Either<Map<String, byte[]>, ResponseFormat>) privateMethod.invoke(servlet, resourceInfo);
-		} catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		assertTrue(returnValue.isLeft());
-		Map<String, byte[]> csar = returnValue.left().value();
-		assertTrue(csar != null);
-	}
+        String payloadName = "valid_vf.csar";
+        String rootPath = System.getProperty("user.dir");
+        Path path = null;
+        byte[] data = null;
+        String payloadData = null;
+        Either<Map<String, byte[]>, ResponseFormat> returnValue = null;
+        try {
+            path = Paths.get(rootPath + "/src/test/resources/valid_vf.csar");
+            data = Files.readAllBytes(path);
+            payloadData = Base64.encodeBase64String(data);
+            UploadResourceInfo resourceInfo = new UploadResourceInfo();
+            resourceInfo.setPayloadName(payloadName);
+            resourceInfo.setPayloadData(payloadData);
+            Method privateMethod = null;
+            privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getScarFromPayload", UploadResourceInfo.class);
+            privateMethod.setAccessible(true);
+            returnValue = (Either<Map<String, byte[]>, ResponseFormat>) privateMethod.invoke(servlet, resourceInfo);
+        } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        assertTrue(returnValue.isLeft());
+        Map<String, byte[]> csar = returnValue.left().value();
+        assertTrue(csar != null);
+    }
 
-	@Test
-	public void testValidToscaVersion() throws Exception {
-		Stream.of("1_0", "1_0_0", "1_1", "1_1_0").forEach(this::testValidToscaVersion);
-	}
+    @Test
+    public void testValidToscaVersion() throws Exception {
+        Stream.of("1_0", "1_0_0", "1_1", "1_1_0").forEach(this::testValidToscaVersion);
+    }
 
-	private void testValidToscaVersion(String version) {
-		Wrapper<Response> responseWrapper = new Wrapper<>();
-		servlet.validatePayloadIsTosca(responseWrapper, new UploadResourceInfo(), new User(),
-				String.format(BASIC_TOSCA_TEMPLATE, version));
-		assertTrue(responseWrapper.isEmpty());
-	}
 
-	
+    private void testValidToscaVersion(String version)  {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        servlet.validatePayloadIsTosca(responseWrapper, new UploadResourceInfo(), new User(), String.format(BASIC_TOSCA_TEMPLATE, version));
+        assertTrue(responseWrapper.isEmpty());
+    }
+
+
+
 }

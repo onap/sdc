@@ -75,10 +75,15 @@ public class ServiceVerificator {
 		} else if (component instanceof ResourceReqDetails) {
 			responseAfterDrag = RestCDUtils.getResource((ResourceReqDetails) component, user).getResponse();
 		}
+		int size = 0;
 		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
-		int size = ((JSONArray) jsonResource.get("componentInstances")).size();
-		assertTrue(size == numOfVFC, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
-		ExtentTestActions.log(Status.INFO, "The number of components on the canvas was verified.");
+		if(jsonResource.get("componentInstances")!= null){
+		 	size = ((JSONArray) jsonResource.get("componentInstances")).size();
+			assertTrue(size == numOfVFC, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
+			ExtentTestActions.log(Status.INFO, "The number of components on the canvas was verified.");
+		}else{
+			assertTrue(false, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
+		}
 	}
 	
 	public static void verifyServiceUpdatedInUI(ServiceReqDetails service) {
@@ -190,7 +195,7 @@ public class ServiceVerificator {
 		return customizationUUIDList;
 	}
 	
-	public static String getVFModulePropertieValue(ServiceReqDetails service, String propertyName, String moduleName) throws Exception {
+	public static String getVFModulePropertyValue(ServiceReqDetails service, String propertyName, String moduleName) throws Exception {
 		Service serviceObj = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service.getName(), service.getVersion());	
 		List<GroupInstance> groupInstances = serviceObj.getComponentInstances().get(0).getGroupInstances();		
 		List<GroupInstanceProperty> groupInstancesProperties = groupInstances.stream().
@@ -198,12 +203,12 @@ public class ServiceVerificator {
 				                                                              findFirst().
 				                                                              get().
 				                                                              convertToGroupInstancesProperties();		
-		String propertieValue = groupInstancesProperties.stream().
+		String propertyValue = groupInstancesProperties.stream().
 				                                         filter(e -> e.getName().equals(propertyName)).
 				                                         findFirst().
 				                                         get().
 				                                         getValue();
-		return propertieValue;
+		return propertyValue;
 	}
 	
 	public static boolean isEqualCustomizationUUIDsAfterChanges(List<String> listBefore, List<String> listAfter){

@@ -1,3 +1,8 @@
+tosca.groups.Root:
+  description: The TOSCA Group Type all other TOSCA Group Types derive from
+  interfaces: 
+    Standard:
+      type: tosca.interfaces.node.lifecycle.Standard
 org.openecomp.groups.heat.HeatStack:
   derived_from: tosca.groups.Root
   description: Grouped all heat resources which are in the same heat stack
@@ -77,9 +82,51 @@ org.openecomp.groups.VfModule:
       required: false
       description: >
         Identifies the set of VM types and their count included in the VF-Module
-tosca.groups.Root:
-  description: The TOSCA Group Type all other TOSCA Group Types derive from
-  interfaces: 
-    Standard:
-      type: tosca.interfaces.node.lifecycle.Standard
-
+org.openecomp.groups.NetworkCollection:
+  derived_from: tosca.groups.Root
+  description: groups l3-networks in network collection
+  properties:
+    network_collection_type: 
+      type: string
+      required: true
+      description: network collection type, defined with default value
+      default: l3-network
+    network_collection_subtype: 
+      type: string
+      required: true
+      description: network collection subtype, defined with default value
+      default: sub-interface
+    network_collection_role:
+      type: string
+      required: true
+      description: network collection role
+    network_collection_description: 
+      type: string
+      required: true
+      description: network collection description, free format text
+org.openecomp.groups.VfcInstanceGroup:
+  derived_from: tosca.groups.Root
+  description: groups VFCs with same parent port role
+  properties:
+    vfc_instance_group_role:
+      type: string
+      required: true
+      description: role of this VFC group
+    vfc_parent_port_role:
+      type: string
+      required: true
+      description: common role of parent ports of VFCs in this group
+    network_collection_role:
+      type: string
+      required: true
+      description: network collection role assigned to this group
+    subinterface_role:
+      type: string
+      required: true
+      description: common role of subinterfaces of VFCs in this group, criteria the group is created
+  capabilities:
+    vlan_assignment:
+      type: org.openecomp.capabilities.VLANAssignment
+      properties:
+        vfc_instance_group_reference:
+          type: string
