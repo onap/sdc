@@ -57,6 +57,7 @@ import org.openecomp.sdc.ci.tests.verificator.PropertyVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VFCverificator;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -360,9 +361,11 @@ public class ImportVFCAsset extends SetupCDTest {
 				ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());		
 		ResourceUIUtils.fillMaxValueResourceGeneralInformationPage(atomicResourceMetaData);
-		GeneralPageElements.clickUpdateButton();
-		VFCverificator.verifyVFCUpdatedInUI(atomicResourceMetaData);
-		GeneralPageElements.clickDeleteVersionButton();
+//		GeneralPageElements.clickUpdateButton();
+//		VFCverificator.verifyVFCUpdatedInUI(atomicResourceMetaData);
+//		GeneralPageElements.clickDeleteVersionButton();
+		// Validate that button disabled 
+		assertTrue(GeneralUIUtils.checkForDisabledAttribute(DataTestIdEnum.GeneralElementsEnum.CREATE_BUTTON.getValue()));
 	}	
 	
 	

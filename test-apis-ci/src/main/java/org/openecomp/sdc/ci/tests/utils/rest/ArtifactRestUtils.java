@@ -50,15 +50,12 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 public class ArtifactRestUtils extends BaseRestUtils {
 	private static Logger logger = LoggerFactory.getLogger(ArtifactRestUtils.class.getName());
@@ -68,7 +65,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Delete Artifact on rI of the asset 
 	public static RestResponse externalAPIDeleteArtifactOfComponentInstanceOnAsset(Component component, User user, ComponentInstance resourceInstance, String artifactUUID) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		String resourceInstanceName = resourceInstance.getNormalizedName();
 		
@@ -88,7 +85,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Delete Artifact of the asset 
 	public static RestResponse externalAPIDeleteArtifactOfTheAsset(Component component, User user, String artifactUUID) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		
 		System.out.println(component.getComponentType());
@@ -110,7 +107,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Update Artifact on rI of the asset 
 	public static RestResponse externalAPIUpdateArtifactOfComponentInstanceOnAsset(Component component, User user, ArtifactReqDetails artifactReqDetails, ComponentInstance resourceInstance, String artifactUUID) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		String resourceInstanceName = resourceInstance.getNormalizedName();
 		
@@ -130,7 +127,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Update Artifact of the asset 
 	public static RestResponse externalAPIUpdateArtifactOfTheAsset(Component component, User user, ArtifactReqDetails artifactReqDetails, String artifactUUID) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		
 		System.out.println(component.getComponentType());
@@ -150,7 +147,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Upload Artifact on rI of the asset 
 	public static RestResponse externalAPIUploadArtifactOfComponentInstanceOnAsset(Component component, User user, ArtifactReqDetails artifactReqDetails, ComponentInstance resourceInstance) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		String resourceInstanceName = resourceInstance.getNormalizedName();
 		
@@ -170,7 +167,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Upload Artifact of the asset 
 	public static RestResponse externalAPIUploadArtifactOfTheAsset(Component component, User user, ArtifactReqDetails artifactReqDetails) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		
 		System.out.println(component.getComponentType());
@@ -190,7 +187,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Upload Artifact of the asset with invalid checksum
 	public static RestResponse externalAPIUploadArtifactWithInvalidCheckSumOfComponentInstanceOnAsset(Component component, User user, ArtifactReqDetails artifactReqDetails, ComponentInstance resourceInstance) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		String resourceInstanceName = resourceInstance.getNormalizedName();
 		
@@ -210,7 +207,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	// Upload Artifact of the asset with invalid checksum
 	public static RestResponse externalAPIUploadArtifactWithInvalidCheckSumOfTheAsset(Component component, User user, ArtifactReqDetails artifactReqDetails) throws IOException {
 		Config config = Utils.getConfig();
-		String resourceType = null;
+		String resourceType;
 		String resourceUUID = component.getUUID();
 		
 		System.out.println(component.getComponentType());
@@ -232,7 +229,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	//
 	public static RestResponse getResourceDeploymentArtifactExternalAPI(String resourceUUID, String artifactUUID,User sdncModifierDetails, String resourceType) throws IOException {
 		Config config = Utils.getConfig();
-		String url = null;
+		String url;
 		
 		if (resourceType.toUpperCase().equals("SERVICE")) {
 			url = String.format(Urls.GET_DOWNLOAD_SERVICE_ARTIFACT_OF_ASSET, config.getCatalogBeHost(), config.getCatalogBePort(), resourceUUID, artifactUUID);
@@ -241,11 +238,12 @@ public class ArtifactRestUtils extends BaseRestUtils {
 			url = String.format(Urls.GET_DOWNLOAD_RESOURCE_ARTIFACT_OF_ASSET, config.getCatalogBeHost(), config.getCatalogBePort(), resourceUUID, artifactUUID);
 		}
 		
-		Map<String, String> headersMap = new HashMap<String,String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(),acceptMultipartHeader);
 		
 		HttpRequest http = new HttpRequest();
 
@@ -265,7 +263,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	
 	public static RestResponse getComponentInstanceDeploymentArtifactExternalAPI(String resourceUUID, String componentNormalizedName, String artifactUUID,User sdncModifierDetails, String resourceType) throws IOException {
 		Config config = Utils.getConfig();
-		String url = null;
+		String url;
 		
 		if (resourceType.toLowerCase().equals("service")) {
 			url = String.format(Urls.GET_DOWNLOAD_SERVICE_ARTIFACT_OF_COMPONENT_INSTANCE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceUUID, componentNormalizedName, artifactUUID);
@@ -274,11 +272,12 @@ public class ArtifactRestUtils extends BaseRestUtils {
 			url = String.format(Urls.GET_DOWNLOAD_RESOURCE_ARTIFACT_OF_COMPONENT_INSTANCE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceUUID, componentNormalizedName, artifactUUID);
 		}
 		
-		Map<String, String> headersMap = new HashMap<String,String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(),acceptMultipartHeader);
 		
 		HttpRequest http = new HttpRequest();
 
@@ -443,7 +442,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	
 	
 	public static Map<String, String> getHeadersMap(User sdncModifierDetails) {
-		Map<String, String> headersMap = new HashMap<String,String>();	
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptJsonHeader);
 		
@@ -602,9 +601,9 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	
 	public static RestResponse uploadDeploymentArtifact(ArtifactReqDetails artifactDetails, Component component, User sdncModifierDetails) throws IOException {
 		Config config = Utils.getConfig();
-		Map<String, String> additionalHeaders = null;
+		Map<String, String> additionalHeaders;
 		String checksum = ResponseParser.calculateMD5Header(artifactDetails);
-		additionalHeaders = new HashMap<String, String>();
+		additionalHeaders = new HashMap<>();
 		additionalHeaders.put(HttpHeaderEnum.Content_MD5.getValue(), checksum);
 		
 		ComponentTypeEnum componentType = component.getComponentType();
@@ -614,26 +613,26 @@ public class ArtifactRestUtils extends BaseRestUtils {
 		switch (componentType){
 
 		case RESOURCE:
-		{
-			url = String.format(Urls.UPDATE_OR_DELETE_ARTIFACT_OF_SERVICE, config.getCatalogBeHost(),config.getCatalogBePort(), component.getUniqueId(), artifactDetails.getUniqueId());
-			
-			break;
-		}
-		case SERVICE: {
-			
-			break;
-		}
-		
-		case PRODUCT: {
-			
-			break;
-		}
-		
-		default: {//dummy
-			assertTrue("failed on enum selection", false);
-			
-			break;
-		}
+			{
+				url = String.format(Urls.UPDATE_OR_DELETE_ARTIFACT_OF_SERVICE, config.getCatalogBeHost(),config.getCatalogBePort(), component.getUniqueId(), artifactDetails.getUniqueId());
+
+				break;
+			}
+			case SERVICE: {
+
+				break;
+			}
+
+			case PRODUCT: {
+
+				break;
+			}
+
+			default: {//dummy
+				assertTrue("failed on enum selection", false);
+
+				break;
+			}
 		}
 		
 		
@@ -654,9 +653,9 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	public static RestResponse uploadArtifact(ArtifactReqDetails artifactDetails, Component component, User sdncModifierDetails) throws IOException {
 		Config config = Utils.getConfig();
 		List<String> placeHolderlst = Utils.getListOfResPlaceHoldersDepArtTypes();
-		Map<String, String> additionalHeaders = null;
-		String checksum = null;	
-		String url= null;
+		Map<String, String> additionalHeaders;
+		String checksum;
+		String url;
 //
 //		
 //		if (artifactDetails.getArtifactGroupType() != null
@@ -676,7 +675,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 //
 //		else {
 			checksum = ResponseParser.calculateMD5Header(artifactDetails);
-			additionalHeaders = new HashMap<String, String>();
+			additionalHeaders = new HashMap<>();
 			additionalHeaders.put(HttpHeaderEnum.Content_MD5.getValue(), checksum);
 			url = String.format(Urls.UPLOAD_DELETE_ARTIFACT_OF_COMPONENT, config.getCatalogBeHost(),
 					config.getCatalogBePort(), ComponentTypeEnum.findParamByType(component.getComponentType()),
@@ -700,13 +699,13 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	
 	//*************** PRIVATE **************
 	private static RestResponse deleteInformationalArtifact(User sdncModifierDetails, String url) throws IOException {
-		Map<String, String> additionalHeaders = null;
+		Map<String, String> additionalHeaders;
 
-			additionalHeaders = new HashMap<String, String>();
+			additionalHeaders = new HashMap<>();
 		
 		
 		additionalHeaders.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		additionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		additionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 		
 		return sendDelete(url, sdncModifierDetails.getUserId(), additionalHeaders);
 
@@ -729,12 +728,12 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	private static RestResponse uploadInformationalArtifact(ArtifactReqDetails artifactDetails, User sdncModifierDetails, String checksum, String url) throws IOException {
 		Map<String, String> additionalHeaders = null;
 		if (checksum != null && !checksum.isEmpty()) {
-			additionalHeaders = new HashMap<String, String>();
+			additionalHeaders = new HashMap<>();
 			additionalHeaders.put(HttpHeaderEnum.Content_MD5.getValue(), checksum);
 		}
 		
 		additionalHeaders.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
-		additionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		additionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 
 		Gson gson = new Gson();
 //		System.out.println("ArtifactDetails: "+ jsonBody);
@@ -749,10 +748,10 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	}
 	
 	private static RestResponse addArtifactToInstance(ArtifactReqDetails artifactDetails, User sdncModifierDetails, String checksum, String url) throws IOException {
-		Map<String, String> additionalHeaders = null;
-		additionalHeaders = new HashMap<String, String>();
+		Map<String, String> additionalHeaders;
+		additionalHeaders = new HashMap<>();
 		if (checksum != null && !checksum.isEmpty()) {
-			additionalHeaders = new HashMap<String, String>();
+			additionalHeaders = new HashMap<>();
 			additionalHeaders.put(HttpHeaderEnum.Content_MD5.getValue(), checksum);
 		}
 		additionalHeaders.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json, text/plain, */*");
@@ -769,8 +768,8 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	}
 	
 	private static RestResponse updateDeploymentArtifact(ArtifactDefinition artifactDefinition, User sdncModifierDetails, String url) throws IOException {
-		Map<String, String> additionalHeaders = null;
-		additionalHeaders = new HashMap<String, String>();
+		Map<String, String> additionalHeaders;
+		additionalHeaders = new HashMap<>();
 		additionalHeaders.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json, text/plain, */*");
 		additionalHeaders.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json;charset=UTF-8");
 		
@@ -782,9 +781,9 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	}
 	
 	private static RestResponse updateDeploymentArtifact(ArtifactReqDetails artifactDetails, User sdncModifierDetails, String url) throws IOException {
-		Map<String, String> additionalHeaders = null;
+		Map<String, String> additionalHeaders;
 		
-			additionalHeaders = new HashMap<String, String>();
+			additionalHeaders = new HashMap<>();
 			additionalHeaders.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json, text/plain, */*");
 			additionalHeaders.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json;charset=UTF-8");
 //			additionalHeaders.put(HttpHeaderEnum..getValue(), "application/json;charset=UTF-8");
@@ -805,7 +804,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	private static RestResponse downloadArtifact(String url, User user, Map<String, String> addionalHeaders,boolean addEcompHeader) throws IOException
 	{	
 		if(addEcompHeader){
-			addionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), ecomp);
+			addionalHeaders.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 		}
 		return downloadArtifact(url, user, addionalHeaders, acceptOctetStream);
 	}
@@ -906,29 +905,5 @@ public class ArtifactRestUtils extends BaseRestUtils {
 
 	}
 
-	
-	public static ArtifactDefinition getArtifactDataFromJson(String json) {
-		Gson gson = new Gson();
-		JsonObject jsonElement = new JsonObject();
-		jsonElement = gson.fromJson(json, jsonElement.getClass());
-		ArtifactDefinition artifact = new ArtifactDefinition(); 
-		String payload = null;
-		JsonElement artifactPayload = jsonElement.get(Constants.ARTIFACT_PAYLOAD_DATA);
-		if (artifactPayload != null && !artifactPayload.isJsonNull()) {
-			payload = artifactPayload.getAsString();
-		}
-		jsonElement.remove(Constants.ARTIFACT_PAYLOAD_DATA);
-		artifact = gson.fromJson(jsonElement, ArtifactDefinition.class);
-		artifact.setPayloadData(payload);
-		
-		/*atifact.setArtifactName(UPLOAD_ARTIFACT_NAME);
-artifact.setArtifactDisplayName("configure");
-artifact.setArtifactType("SHELL");
-artifact.setMandatory(false);
-artifact.setDescription("ff");
-artifact.setPayloadData(UPLOAD_ARTIFACT_PAYLOAD);
-artifact.setArtifactLabel("configure");*/
-		return artifact;
-	}
 
 }

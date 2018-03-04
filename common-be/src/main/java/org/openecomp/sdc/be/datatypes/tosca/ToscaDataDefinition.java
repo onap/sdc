@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.tosca;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import fj.data.Either;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,18 +32,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-
-import fj.data.Either;
-
 public abstract class ToscaDataDefinition {
 
 	protected Map<String, Object> toscaPresentation;
 
 	public ToscaDataDefinition() {
-		toscaPresentation = new HashMap<String, Object>();
+		toscaPresentation = new HashMap<>();
 	}
 
 	@JsonCreator

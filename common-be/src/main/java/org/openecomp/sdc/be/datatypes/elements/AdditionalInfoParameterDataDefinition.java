@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition implements Serializable {
 

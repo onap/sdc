@@ -1,10 +1,10 @@
 /**
  * Created by rc2122 on 9/4/2017.
  */
+import * as _ from "lodash";
 import {Component, EventEmitter, Input, OnInit, Output, SimpleChanges} from '@angular/core';
-import {RadioButtonModel, Match, PropertyModel, InstanceFePropertiesMap, Component as ComponentModel} from "app/models";
+import {RadioButtonModel, PropertyModel, InstanceFePropertiesMap, Component as ComponentModel} from "app/models";
 import {Dictionary} from "lodash";
-import {DropdownValue} from "../../ui/form-components/dropdown/ui-element-dropdown.component";
 import {ComponentInstanceServiceNg2} from "../../../services/component-instance-services/component-instance.service";
 import {PropertiesUtils} from "app/ng2/pages/properties-assignment/services/properties.utils";
 import {Requirement} from "../../../../models/requirement";
@@ -33,7 +33,6 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
     @Input() selectedReqOrCapModel:RequirementCapabilityModel;
 
     @Output() updateSelectedReqOrCap:EventEmitter<RequirementCapabilityModel> = new EventEmitter<RequirementCapabilityModel>();
-    @Output() updateCapabilityProperties:EventEmitter<Array<PropertyModel>> = new EventEmitter<Array<PropertyModel>>();
 
     types:Array<string> = [];
     selectedType:string;
@@ -47,10 +46,14 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
     displayCapReqListFilterByType:RequirementCapabilityModel[];
 
     capabilityProperties:InstanceFePropertiesMap;
+    loadingCapabilityProperties:boolean;
+
+    private _loadingCapabilityProperties: Array<Capability>;
 
     constructor(private componentInstanceServiceNg2:ComponentInstanceServiceNg2,
                 private propertiesUtils:PropertiesUtils) {
         this.selectOptions = [new RadioButtonModel(REQUIREMENT, REQUIREMENT), new RadioButtonModel(CAPABILITY, CAPABILITY)];
+        this._loadingCapabilityProperties = [];
     }
 
     private initDefaultReqOrCapSelection = (): void => {
@@ -87,14 +90,17 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
     initCapabilityPropertiesTable = ():void => {
         if(this.selectedReqOrCapModel instanceof Capability ) {
             let selectedCapability = <Capability>this.selectedReqOrCapModel;
-            if(selectedCapability.properties){
+            if (selectedCapability.properties && selectedCapability.properties.length) {
                 this.capabilityProperties = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({ CAPABILITY : selectedCapability.properties}, false);
+            } else {
+                this.capabilityProperties = null;
             }
         }
     }
 
     ngOnChanges(changes:SimpleChanges) {
         if (changes.selectedReqOrCapModel) {
+            this.capabilityProperties = null;
             if (this.selectedReqOrCapModel && this.selectedReqOrCapOption === CAPABILITY) {
                 this.setCapabilityProperties();
             }
@@ -168,15 +174,27 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
 
     private setCapabilityProperties = ():void => {
         let selectedCapability = <Capability>this.selectedReqOrCapModel;
-        if (selectedCapability.properties === undefined) {
-            this.componentInstanceServiceNg2.getInstanceCapabilityProperties(this.currentComponent, this.componentInstanceId, selectedCapability.type, selectedCapability.name)
-                .subscribe((response:Array<PropertyModel>) => {
-                    this.capabilityProperties = (response && response.length) ? this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({CAPABILITY : response}, false) : null;
-                    this.updateCapabilityProperties.emit(response);
-                }, error => {});
-        }else{
-            this.capabilityProperties = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({CAPABILITY : selectedCapability.properties}, false);
-            this.updateCapabilityProperties.emit(selectedCapability.properties);
+        if (!selectedCapability.properties) {
+            this.loadingCapabilityProperties = true;
+            if (this._loadingCapabilityProperties.indexOf(selectedCapability) == -1) {
+                this._loadingCapabilityProperties.push(selectedCapability);
+                this.componentInstanceServiceNg2.getInstanceCapabilityProperties(this.currentComponent, this.componentInstanceId, selectedCapability)
+                    .subscribe((response: Array<PropertyModel>) => {
+                        if (this.selectedReqOrCapModel === selectedCapability) {
+                            delete this.loadingCapabilityProperties;
+                        }
+                        this.initCapabilityPropertiesTable();
+                    }, (error) => {
+                        if (this.selectedReqOrCapModel === selectedCapability) {
+                            delete this.loadingCapabilityProperties;
+                        }
+                    }, () => {
+                        this._loadingCapabilityProperties.splice(this._loadingCapabilityProperties.indexOf(selectedCapability), 1);
+                    });
+            }
+        } else {
+            delete this.loadingCapabilityProperties;
+            this.initCapabilityPropertiesTable();
         }
     }
 }

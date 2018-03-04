@@ -18,9 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
 import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel} from "../models";
 import {ComponentInstanceFactory} from "./component-instance-factory";
 import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
+import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 
 export class CommonUtils {
 
@@ -112,5 +114,17 @@ export class CommonUtils {
             return componentInstancesRelations;
         }
     };
+
+    static initPolicies = (policiesObj: Array<PolicyInstance>):Array<PolicyInstance> => {
+        let policies = new Array<PolicyInstance>();
+
+        if (policiesObj) {
+            _.forEach(policiesObj, (policy: PolicyInstance): void => {
+                policies.push(new PolicyInstance(policy));
+            })
+        }
+
+        return policies;
+    }
 }
 

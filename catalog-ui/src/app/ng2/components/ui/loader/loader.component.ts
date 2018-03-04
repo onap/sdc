@@ -74,10 +74,10 @@ export class LoaderComponent {
         if (this.relative === true) {
             let parentElement = this.viewContainerRef.element.nativeElement.parentElement;
             this.offset = {
-                left: (parentElement.offsetLeft) ? parentElement.offsetLeft + "px" : undefined,
-                top: (parentElement.offsetTop) ? parentElement.offsetTop + "px" : undefined,
-                width: (parentElement.offsetWidth) ? parentElement.offsetWidth + "px" : undefined,
-                height: (parentElement.offsetHeight) ? parentElement.offsetHeight + "px" : undefined
+                left: (parentElement.offsetLeft !== undefined) ? parentElement.offsetLeft + "px" : undefined,
+                top: (parentElement.offsetTop !== undefined) ? parentElement.offsetTop + "px" : undefined,
+                width: (parentElement.offsetWidth !== undefined) ? parentElement.offsetWidth + "px" : undefined,
+                height: (parentElement.offsetHeight !== undefined) ? parentElement.offsetHeight + "px" : undefined
             };
         }
         this.isVisible = true;

@@ -271,6 +271,7 @@ public class YamlToObjectConverter {
 			Iterable<Object> mappedToscaTemplateIt =  defaultYaml.loadAll(new ByteArrayInputStream(fileContents));
 			
 			 for (Object o : mappedToscaTemplateIt) {
+	                System.out.println("Loaded object type:" + o.getClass());
 	                Map<String, Object> map = (Map<String, Object>) o;
 			 }
 			

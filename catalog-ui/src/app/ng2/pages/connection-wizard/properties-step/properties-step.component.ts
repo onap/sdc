@@ -25,7 +25,7 @@ export class PropertiesStepComponent implements IStepComponent{
 
     constructor(@Inject(forwardRef(() => ConnectionWizardService)) public connectWizardService: ConnectionWizardService, private componentInstanceServiceNg2:ComponentInstanceServiceNg2, private propertiesUtils:PropertiesUtils) {
 
-        this.capabilityPropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({'capability' : connectWizardService.selectedMatch.capabilityProperties}, false);
+        this.capabilityPropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren({'capability' : connectWizardService.selectedMatch.capability.properties}, false);
     }
 
     ngOnInit() {
@@ -42,7 +42,8 @@ export class PropertiesStepComponent implements IStepComponent{
     propertyValueChanged = (property: PropertyFEModel) => {
         if (!property.isDeclared) {
             const propChangedIdx = this.connectWizardService.changedCapabilityProperties.indexOf(property);
-            if (this.componentInstanceServiceNg2.hasPropertyChanged(property)) {
+            if (property.hasValueObjChanged()) {
+            // if (this.componentInstanceServiceNg2.hasPropertyChanged(property)) {
                 console.log("==>" + this.constructor.name + ": propertyValueChanged " + property);
                 if (propChangedIdx === -1) {
                     this.connectWizardService.changedCapabilityProperties.push(property);

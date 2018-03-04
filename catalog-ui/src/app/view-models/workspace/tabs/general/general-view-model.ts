@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
     ResourceType, ComponentState} from "app/utils";
 import {CacheService, EventListenerService, ProgressService, OnboardingService} from "app/services";

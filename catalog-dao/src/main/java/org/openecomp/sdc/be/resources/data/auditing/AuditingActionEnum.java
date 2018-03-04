@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.resources.data.auditing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//TODO rename to AuditAction
 public enum AuditingActionEnum {
 
 	// User admininstration
@@ -53,6 +54,7 @@ public enum AuditingActionEnum {
 	DOWNLOAD_ARTIFACT("DownloadArtifact",AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
 	CREATE_RESOURCE_BY_API("CreateResourceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE), 
 	CHANGE_LIFECYCLE_BY_API("ChangeLifecycleByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+	ACTIVATE_SERVICE_BY_API("ActivateServiceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
 	
 	
 	ARTIFACT_PAYLOAD_UPDATE("ArtifactPayloadUpdate", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
@@ -76,7 +78,14 @@ public enum AuditingActionEnum {
 	DISTRIBUTION_DEPLOY("DResult",AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE), 
 	GET_UEB_CLUSTER("GetUebCluster", AuditingTypesConstants.DISTRIBUTION_GET_UEB_CLUSTER_EVENT_TYPE), 
 	GET_VALID_ARTIFACT_TYPES("GetValidArtifactTypes", AuditingTypesConstants.DISTRIBUTION_GET_VALID_ARTIFACT_TYPES_EVENT_TYPE),
-	// ....
+
+	//Environment
+    CREATE_ENVIRONMENT("CreateEnvironment", AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE),
+    UPDATE_ENVIRONMENT("UpdateEnvironment", AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE),
+    DELETE_ENVIRONMENT("DeleteEnvironment", AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE),
+    UNKNOWN_ENVIRONMENT_NOTIFICATION("UnknownEnvironmentNotification", AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE),
+    UNSUPPORTED_ENVIRONMENT_TYPE("UnsupportedEnvironmentType", AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE),
+    // ....
 	AUTH_REQUEST("HttpAuthentication", AuditingTypesConstants.AUTH_EVENT_TYPE), 
 	ADD_ECOMP_USER_CREDENTIALS("AddECOMPUserCredentials", AuditingTypesConstants.CONSUMER_EVENT_TYPE), 
 	GET_ECOMP_USER_CREDENTIALS("GetECOMPUserCredentials", AuditingTypesConstants.CONSUMER_EVENT_TYPE), 

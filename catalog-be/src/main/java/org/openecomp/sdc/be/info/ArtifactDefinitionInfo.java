@@ -24,60 +24,60 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 
 public class ArtifactDefinitionInfo {
 
-	private String uniqueId;
-	/** Specifies the display name of the artifact. */
-	private String artifactName;
-	private String artifactDisplayName;
-	private String artifactVersion;
-	private String artifactUUID;
+    private String uniqueId;
+    /** Specifies the display name of the artifact. */
+    private String artifactName;
+    private String artifactDisplayName;
+    private String artifactVersion;
+    private String artifactUUID;
 
-	public ArtifactDefinitionInfo(ArtifactDefinition artifactDefinition) {
-		uniqueId = artifactDefinition.getUniqueId();
-		artifactName = artifactDefinition.getArtifactName();
-		artifactDisplayName = artifactDefinition.getArtifactDisplayName();
-		artifactVersion = artifactDefinition.getArtifactVersion();
-		artifactUUID = artifactDefinition.getArtifactUUID();
+    public ArtifactDefinitionInfo(ArtifactDefinition artifactDefinition) {
+        uniqueId = artifactDefinition.getUniqueId();
+        artifactName = artifactDefinition.getArtifactName();
+        artifactDisplayName = artifactDefinition.getArtifactDisplayName();
+        artifactVersion = artifactDefinition.getArtifactVersion();
+        artifactUUID = artifactDefinition.getArtifactUUID();
 
-	}
+    }
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+    public String getUniqueId() {
+        return uniqueId;
+    }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
-	public String getArtifactName() {
-		return artifactName;
-	}
+    public String getArtifactName() {
+        return artifactName;
+    }
 
-	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
-	}
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
 
-	public String getArtifactDisplayName() {
-		return artifactDisplayName;
-	}
+    public String getArtifactDisplayName() {
+        return artifactDisplayName;
+    }
 
-	public void setArtifactDisplayName(String artifactDisplayName) {
-		this.artifactDisplayName = artifactDisplayName;
-	}
+    public void setArtifactDisplayName(String artifactDisplayName) {
+        this.artifactDisplayName = artifactDisplayName;
+    }
 
-	public String getArtifactVersion() {
-		return artifactVersion;
-	}
+    public String getArtifactVersion() {
+        return artifactVersion;
+    }
 
-	public void setArtifactVersion(String artifactVersion) {
-		this.artifactVersion = artifactVersion;
-	}
+    public void setArtifactVersion(String artifactVersion) {
+        this.artifactVersion = artifactVersion;
+    }
 
-	public String getArtifactUUID() {
-		return artifactUUID;
-	}
+    public String getArtifactUUID() {
+        return artifactUUID;
+    }
 
-	public void setArtifactUUID(String artifactUUID) {
-		this.artifactUUID = artifactUUID;
-	}
+    public void setArtifactUUID(String artifactUUID) {
+        this.artifactUUID = artifactUUID;
+    }
 
 }

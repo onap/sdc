@@ -17,11 +17,6 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
                 -Dlogback.configurationFile=${JETTY_BASE}/config/sdc-simulator/logback.xml \
                 -Djetty.logging.dir=${JETTY_BASE}/logs"
 
-echo "---------------------------------------------"
-echo $TMPDIR
-echo $JAVA_OPTIONS
-echo $JETTY_BASE
-echo "---------------------------------------------"
 
 cd /var/lib/jetty
 /docker-entrypoint.sh 

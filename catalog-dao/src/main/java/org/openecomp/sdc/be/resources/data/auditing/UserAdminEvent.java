@@ -21,11 +21,9 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -76,10 +74,9 @@ public class UserAdminEvent extends AuditingGenericEvent {
 		super();
 		timestamp1 = new Date();
 		timebaseduuid = UUIDs.timeBased();
-
 	}
 
-	public UserAdminEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public UserAdminEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		this();
 		Object value;
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
@@ -115,6 +112,18 @@ public class UserAdminEvent extends AuditingGenericEvent {
 			setUserAfter((String) value);
 		}
 
+	}
+
+	public UserAdminEvent(String action, CommonAuditData commonAuditData, String modifier, String userBefore, String userAfter) {
+		this();
+		this.action = action;
+		this.requestId = commonAuditData.getRequestId();
+		this.status = commonAuditData.getStatus();
+		this.modifier = modifier;
+		this.serviceInstanceId = commonAuditData.getServiceInstanceId();
+		this.desc = commonAuditData.getDescription();
+		this.userBefore = userBefore;
+		this.userAfter = userAfter;
 	}
 
 	@Override

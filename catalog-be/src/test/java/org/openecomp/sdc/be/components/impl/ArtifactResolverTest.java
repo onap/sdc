@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.Collections;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -34,12 +28,21 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
+import java.util.Collections;
+import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 public class ArtifactResolverTest {
 
     private ArtifactResolverImpl testInstance = new ArtifactResolverImpl();
-    private Service service, noArtifactsService;
-    private Resource resource, noArtifactsResource;
-    private ComponentInstance componentInstance, noArtifactsInstance;
+    private Service service;
+    private Service noArtifactsService;
+    private Resource resource;
+    private Resource noArtifactsResource;
+    private ComponentInstance componentInstance;
+    private ComponentInstance noArtifactsInstance;
 
     @Before
     public void setUp() throws Exception {

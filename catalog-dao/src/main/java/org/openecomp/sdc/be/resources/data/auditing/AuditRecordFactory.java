@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.EnumMap;
+import java.util.Map;
 
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 public final class AuditRecordFactory {
-	public static AuditingGenericEvent createAuditRecord(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
+	public static AuditingGenericEvent createAuditRecord(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
 		AuditingActionEnum actionEnum = AuditingActionEnum
 				.getActionByName((String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION));
 		String tableName = actionEnum.getAuditingEsType();
@@ -76,9 +76,12 @@ public final class AuditRecordFactory {
 		case AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE:
 			event = new ExternalApiEvent(auditingFields);
 			break;
+		case AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE:
+			event = new EcompOperationalEnvironmentEvent(auditingFields);
+			break;
 		}
 
-		return event;
-	}
+        return event;
+    }
 
 }

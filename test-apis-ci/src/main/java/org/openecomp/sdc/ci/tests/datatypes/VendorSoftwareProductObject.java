@@ -16,8 +16,8 @@ public class VendorSoftwareProductObject extends VendorSoftwareProductObjectReqD
 		this.version = version;
 	}
 
-	public VendorSoftwareProductObject(String name, String description, String category, String subCategory, String vendorId, String vendorName, LicensingVersion licensingVersion, LicensingData licensingData, String onboardingMethod, String networkPackageName, String onboardingOrigin, String vspId, String componentId, String attContact, String version) {
-		super(name, description, category, subCategory, vendorId, vendorName, licensingVersion, licensingData, onboardingMethod, networkPackageName, onboardingOrigin);
+	public VendorSoftwareProductObject(String name, String description, String category, String subCategory, String vendorId, String vendorName, String licensingVersion, LicensingData licensingData, String onboardingMethod, String networkPackageName, String onboardingOrigin, String icon, String vspId, String componentId, String attContact, String version) {
+		super(name, description, category, subCategory, vendorId, vendorName, licensingVersion, licensingData, onboardingMethod, networkPackageName, onboardingOrigin, icon);
 		this.vspId = vspId;
 		this.componentId = componentId;
 		this.attContact = attContact;

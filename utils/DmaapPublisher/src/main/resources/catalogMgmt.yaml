@@ -1,0 +1,7 @@
+publisherPropertiesFilePath: "catalogMgmt.properties"
+topicMessages:
+  - "{\"operationalEnvironmentId\": \"1234\",\"operationalEnvironmentName\":\"Op Env Name\",\"operationalEnvironmentType\":\"ECOMP\",\"tenantContext\":\"Test\",\"workloadContext\":\"VNF_E2E-IST\",\"action\":\"CREATE\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"product\"],\"republish\":\"No\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"logo\"],\"republish\":\"No\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"availabilitymatrix\"],\"republish\":\"No\"}"
+  #- "{\"transactionId\": \"221e8cbe-493d-4848-b46c-a552b8928075\",\"notificationReason\":[\"product\",\"availabilitymatrix\"],\"republish\":\"No\"}"

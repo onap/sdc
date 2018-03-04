@@ -88,3 +88,10 @@ systemMonitoring:
 kibanaHost: localhost
 kibanaPort: 5601
 kibanaProtocol: http
+
+healthStatusExclude:
+   - DE
+   - ES
+   - DMAPP
+
+   

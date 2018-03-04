@@ -20,22 +20,24 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+
+import java.util.stream.Collectors;
+import static java.util.Collections.emptyList;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Component implements Serializable {
 
@@ -48,27 +50,17 @@ public abstract class Component implements Serializable {
 	private Map<String, ArtifactDefinition> artifacts;
 	private Map<String, ArtifactDefinition> deploymentArtifacts;
 	private Map<String, ArtifactDefinition> toscaArtifacts;
-
 	private List<CategoryDefinition> categories;
-
 	private List<ComponentInstance> componentInstances;
-
 	private List<RequirementCapabilityRelDef> componentInstancesRelations;
-
 	private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
-
 	private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
-
 	private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
-
 	private Map<String, List<CapabilityDefinition>> capabilities;
-
 	private Map<String, List<RequirementDefinition>> requirements;
-
 	private List<InputDefinition> inputs;
-
 	private List<GroupDefinition> groups;
-	
+	private Map<String, PolicyDefinition> policies;
 	private String derivedFromGenericType;
 	private String derivedFromGenericVersion;
 	private String toscaType;
@@ -344,16 +336,22 @@ public abstract class Component implements Serializable {
 		return componentInstances;
 	}
 
+	public Optional<ComponentInstance> fetchInstanceById(String instanceId) {
+		return Optional.ofNullable(MapUtil.toMap(componentInstances, ComponentInstance::getUniqueId).get(instanceId));
+	}
+
+	@SuppressWarnings("unchecked")
 	public Map<String, ArtifactDefinition> safeGetComponentInstanceDeploymentArtifacts(String componentInstanceId) {
 		Optional<ComponentInstance> componentInstanceById = getComponentInstanceById(componentInstanceId);
 		Map<String, ArtifactDefinition> instanceDeploymentArtifacts = componentInstanceById.get().safeGetDeploymentArtifacts();
-		return instanceDeploymentArtifacts != null ? instanceDeploymentArtifacts : Collections.EMPTY_MAP;
+		return instanceDeploymentArtifacts != null ? instanceDeploymentArtifacts : Collections.emptyMap();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<String, ArtifactDefinition> safeGetComponentInstanceInformationalArtifacts(String componentInstanceId) {
 		Optional<ComponentInstance> componentInstanceById = getComponentInstanceById(componentInstanceId);
 		Map<String, ArtifactDefinition> instanceInformationalArtifacts = componentInstanceById.get().safeGetInformationalArtifacts();
-		return instanceInformationalArtifacts != null ? instanceInformationalArtifacts : Collections.EMPTY_MAP;
+		return instanceInformationalArtifacts != null ? instanceInformationalArtifacts : Collections.emptyMap();
 	}
 
 	public List<ArtifactDefinition> safeGetComponentInstanceHeatArtifacts(String componentInstanceId) {
@@ -362,7 +360,7 @@ public abstract class Component implements Serializable {
 				.stream()
 				.filter(artifact -> artifact.getArtifactType() != null && artifact.getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.name()))
 				.collect(Collectors.toList());
-		return instanceHeatEnvArtifacts == null ? Collections.EMPTY_LIST : instanceHeatEnvArtifacts;
+		return instanceHeatEnvArtifacts == null ? emptyList() : instanceHeatEnvArtifacts;
 	}
 
 	public void setComponentInstances(List<ComponentInstance> resourceInstances) {
@@ -443,15 +441,30 @@ public abstract class Component implements Serializable {
 	}
 
 	public Optional<ComponentInstance> getComponentInstanceById(String id) {
+		if (componentInstances == null) {
+			return Optional.empty();
+		}
 		return componentInstances.stream().filter(instance -> id.equals(instance.getUniqueId())).findFirst();
 	}
 
 	public List<GroupDefinition> getGroups() {
 		return groups;
 	}
+	public Optional<GroupDefinition> getGroupById(String id){
+		return groups.stream().filter(g -> g.getUniqueId().equals(id)).findAny();
+
+	}
 
 	public void setGroups(List<GroupDefinition> groups) {
 		this.groups = groups;
+	}
+	
+	public Map<String, PolicyDefinition> getPolicies() {
+		return policies;
+	}
+
+	public void setPolicies(Map<String, PolicyDefinition> policies) {
+		this.policies = policies;
 	}
 
 	@Override
@@ -476,6 +489,7 @@ public abstract class Component implements Serializable {
 		result = prime * result + ((componentInstancesInputs == null) ? 0 : componentInstancesInputs.hashCode());
 		result = prime * result + ((componentInstancesRelations == null) ? 0 : componentInstancesRelations.hashCode());
 		result = prime * result + ((groups == null) ? 0 : groups.hashCode());
+		result = prime * result + ((policies == null) ? 0 : policies.hashCode());
 		result = prime * result + ((derivedFromGenericType == null) ? 0 : derivedFromGenericType.hashCode());
 		result = prime * result + ((derivedFromGenericVersion == null) ? 0 : derivedFromGenericVersion.hashCode());
 		return result;
@@ -566,6 +580,11 @@ public abstract class Component implements Serializable {
 			if (other.groups != null)
 				return false;
 		} else if (!groups.equals(other.groups))
+			return false;
+		if (policies == null) {
+			if (other.policies != null)
+				return false;
+		} else if (!policies.equals(other.policies))
 			return false;
 		if (derivedFromGenericType == null) {
 			if (other.derivedFromGenericType != null)
@@ -668,7 +687,7 @@ public abstract class Component implements Serializable {
 	}
 
 	public List<ComponentInstanceInput> safeGetComponentInstanceInputsByName(String cmptInstanceName) {
-		List<ComponentInstanceInput> emptyPropsList = Collections.emptyList();
+		List<ComponentInstanceInput> emptyPropsList = emptyList();
 		if (this.componentInstancesInputs == null) {
 			return emptyPropsList;
 		}
@@ -681,7 +700,7 @@ public abstract class Component implements Serializable {
 	}
 
 	private <T> List<T> safeGetComponentInstanceEntity(String cmptInstanceId, Map<String, List<T>> instanceEntities) {
-		List<T> emptyPropsList = Collections.emptyList();
+		List<T> emptyPropsList = emptyList();
 		if (instanceEntities == null) {
 			return emptyPropsList;
 		}
@@ -728,6 +747,10 @@ public abstract class Component implements Serializable {
 		derivedFromGenericVersion = genericType.getVersion();
 	}
 
+	public boolean isTopologyTemplate() {
+		return ToscaElementTypeEnum.TopologyTemplate.getValue().equals(toscaType);
+	}
+
 	public String getToscaType() {
 		return toscaType;
 	}
@@ -735,6 +758,7 @@ public abstract class Component implements Serializable {
 	public void setToscaType(String toscaType) {
 		this.toscaType = toscaType;
 	}
+
 	public List<AdditionalInformationDefinition> getAdditionalInformation() {
 		return additionalInformation;
 	}
@@ -742,5 +766,34 @@ public abstract class Component implements Serializable {
 	public void setAdditionalInformation(List<AdditionalInformationDefinition> additionalInformation) {
 		this.additionalInformation = additionalInformation;
 	}
-	
+
+	public PolicyDefinition getPolicyById(String id) {
+		return policies != null ? policies.get(id) : null;
+	}
+
+	public List<PolicyDefinition> resolvePoliciesList() {
+		if (policies == null) {
+			return emptyList();
+		}
+		return new ArrayList<>(policies.values());
+	}
+
+	public List<PolicyDefinition> resolvePoliciesByComponentInstanceTarget(String instanceId) {
+		if (policies == null) {
+			return emptyList();
+		}
+		return policies.values().stream()
+				.filter(policy -> policy.containsCmptInstanceAsTarget(instanceId))
+                .collect(Collectors.toList());
+	}
+
+	public List<GroupDefinition> resolveGroupsByMember(String instanceId) {
+		if (groups == null) {
+			return emptyList();
+		}
+		return groups.stream()
+				     .filter(group -> group.containsInstanceAsMember(instanceId))
+				     .collect(Collectors.toList());
+	}
+
 }

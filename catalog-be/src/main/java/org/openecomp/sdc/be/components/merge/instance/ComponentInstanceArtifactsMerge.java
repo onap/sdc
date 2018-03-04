@@ -1,10 +1,6 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -16,7 +12,10 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by chaya on 9/20/2017.
@@ -81,7 +80,7 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
             Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService =
                     artifactsBusinessLogic.updateResourceInstanceArtifactNoContent(newInstanceId, updatedContainerComponent,
                             user, jsonForUpdateArtifact, artifactsBusinessLogic.new ArtifactOperationInfo(
-                                    false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.Link), currentArtifactDefinition.getValue());
+                                    false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.LINK), currentArtifactDefinition.getValue());
             if (uploadArtifactToService.isRight()) {
                 return Either.right(uploadArtifactToService.right().value());
             }

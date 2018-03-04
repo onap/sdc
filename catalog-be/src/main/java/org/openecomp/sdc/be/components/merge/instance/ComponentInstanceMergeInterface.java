@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import fj.data.Either;
 
 /**
  * Created by chaya on 9/20/2017.

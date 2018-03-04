@@ -43,7 +43,7 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import com.google.gson.Gson;
 
 public class ComponentInstanceRestUtils extends BaseRestUtils {
-	public static String acceptHeaderDate = "application/json";
+//	public static String acceptHeaderDate = "application/json";
 	static Config config = Config.instance();
 	public static Gson gson = new Gson();
 
@@ -87,7 +87,7 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), user.getUserId());
@@ -207,7 +207,7 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
+		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), user.getUserId());

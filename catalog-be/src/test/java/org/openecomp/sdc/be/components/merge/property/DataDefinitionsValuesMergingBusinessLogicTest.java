@@ -1,20 +1,21 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import static org.mockito.Mockito.verify;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionAbstractBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.verify;
 
 public class DataDefinitionsValuesMergingBusinessLogicTest {
 
@@ -110,9 +111,10 @@ public class DataDefinitionsValuesMergingBusinessLogicTest {
     }
 
     private PropertyDataDefinition createGetInputPropertyDataDefinition(String name, String ... inputsNames) {
-        PropertyDataDefinitionBuilder propertyBuilder = new PropertyDataDefinitionBuilder()
+        PropertyDataDefinitionAbstractBuilder propertyBuilder = new PropertyDataDefinitionBuilder()
                 .setName(name)
                 .setType(DEFAULT_PROP_TYPE);
+
         for (String inputName : inputsNames) {
             propertyBuilder.addGetInputValue(inputName);
         }

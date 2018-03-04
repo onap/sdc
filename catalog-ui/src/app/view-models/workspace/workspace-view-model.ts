@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@
  * Created by obarda on 3/30/2016.
  */
 'use strict';
+import * as _ from "lodash";
 import {IUserProperties, IAppMenu, Resource, Component, Plugin, PluginsConfiguration, PluginDisplayOptions} from "app/models";
 import {
     WorkspaceMode, ComponentFactory, ChangeLifecycleStateHandler, Role, ComponentState, MenuItemGroup, MenuHandler,
@@ -50,6 +51,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     isNew:boolean;
     isFromImport:boolean;
     isValidForm:boolean;
+    isActiveTopBar:boolean;
     mode:WorkspaceMode;
     breadcrumbsModel:Array<MenuItemGroup>;
     sdcMenu:IAppMenu;
@@ -197,6 +199,7 @@ export class WorkspaceViewModel {
         this.$scope.isComposition = (this.$state.current.name.indexOf(States.WORKSPACE_COMPOSITION) > -1);
         this.$scope.isDeployment = this.$state.current.name == States.WORKSPACE_DEPLOYMENT;
         this.$scope.progressService = this.progressService;
+        this.$scope.isActiveTopBar = true;
 
         this.$scope.getComponent = ():Component => {
             return this.$scope.component;
@@ -267,7 +270,7 @@ export class WorkspaceViewModel {
         this.$scope.onVersionChanged = (selectedId:string):void => {
             if (this.$state.current.data && this.$state.current.data.unsavedChanges) {
                 this.$scope.changeVersion.selectedVersion = _.find(this.$scope.versionsList, (versionObj)=> {
-                   return versionObj.versionId === this.$scope.component.uniqueId;
+                    return versionObj.versionId === this.$scope.component.uniqueId;
                 });
             }
             this.$scope.isLoading = true;
@@ -323,13 +326,15 @@ export class WorkspaceViewModel {
 
                 this.showSuccessNotificationMessage();
                 this.progressService.deleteProgressValue(this.$scope.component.uniqueId);
-                //update components for breadcrumbs
+
+                // Update the components list for breadcrumbs
                 this.components.unshift(component);
+
                 this.$state.go(States.WORKSPACE_GENERAL, {
                     id: component.uniqueId,
                     type: component.componentType.toLowerCase(),
                     components: this.components
-                });
+                }, { inherit: false });
 
                 deferred.resolve(true);
             };
@@ -347,16 +352,19 @@ export class WorkspaceViewModel {
                     return item === component.name
                 });
 
-                // Update the components
+                // Update the components list for breadcrumbs
+                const bcIdx = this.MenuHandler.findBreadcrumbComponentIndex(this.components, component);
+                if (bcIdx !== -1) {
+                    this.components[bcIdx] = component;
+                    this.initBreadcrumbs();  // re-calculate breadcrumbs
+                }
+
+                // Update the component
                 this.$scope.component = component;
                 this.$scope.originComponent = this.ComponentFactory.createComponent(this.$scope.component);
 
-                //update components for breadcrumbs
-                this.components.unshift(component);
-
                 // Enable left tags
                 this.$scope.enabledTabs();
-
 
                 if (this.$state.current.data) {
                     this.$state.current.data.unsavedChanges = false;
@@ -469,11 +477,11 @@ export class WorkspaceViewModel {
                         }
 
                         //when checking out a minor version uuid remains
-                        let bcComponent:Component = _.find(this.components, (item) => {
+                        const bcIdx = _.findIndex(this.components, (item) => {
                             return item.uuid === component.uuid;
                         });
-                        if (bcComponent) {
-                            this.components[this.components.indexOf(bcComponent)] = component;
+                        if (bcIdx !== -1) {
+                            this.components[bcIdx] = component;
                         } else {
                             //when checking out a major(certified) version
                             this.components.unshift(component);
@@ -681,7 +689,7 @@ export class WorkspaceViewModel {
         });
 
         this.$scope.getTabTitle = ():string => {
-            return this.$scope.leftBarTabs.menuItems.find((menuItem:MenuItem)=>{
+            return this.$scope.leftBarTabs.menuItems.find((menuItem:MenuItem) => {
                 return menuItem.state == this.$scope.$state.current.name;
             }).text;
         };
@@ -689,6 +697,10 @@ export class WorkspaceViewModel {
         this.$scope.reload = (component:Component):void => {
             this.$state.go(this.$state.current.name,{id:component.uniqueId},{reload:true});
         };
+
+        this.$scope.$on('setWorkspaceTopBarActive', (event:ng.IAngularEvent, isActive:boolean) => {
+            this.$scope.isActiveTopBar = isActive;
+        });
 
     };
 
@@ -718,9 +730,9 @@ export class WorkspaceViewModel {
         return new MenuItem(text, null, States.WORKSPACE_GENERAL, 'goToState', [this.$state.params]);
     };
 
-    private updateMenuItemByRole = (menuItems:Array<any>, role:string) : Array<any> => {
-        let tempMenuItems:Array<any> = new Array<any>();
-        menuItems.forEach((item:any) => {
+    private updateMenuItemByRole = (menuItems:Array<MenuItem>, role:string) => {
+        let tempMenuItems:Array<MenuItem> = new Array<MenuItem>();
+        menuItems.forEach((item:MenuItem) => {
             //remove item if role is disabled
             if (!(item.disabledRoles && item.disabledRoles.indexOf(role) > -1)) {
                 tempMenuItems.push(item);
@@ -811,5 +823,3 @@ export class WorkspaceViewModel {
     };
 
 }
-
-

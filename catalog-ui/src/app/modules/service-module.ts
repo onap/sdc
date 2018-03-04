@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,11 +48,14 @@ import {downgradeInjectable} from "@angular/upgrade/static";
 import {ModalService} from "../ng2/services/modal.service";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ServiceServiceNg2} from "../ng2/services/component-services/service.service";
+import {ComponentServiceFactoryNg2} from "../ng2/services/component-services/component.service.factory";
 import {ConnectionWizardService} from "../ng2/pages/connection-wizard/connection-wizard.service";
 import {ComponentInstanceServiceNg2} from "../ng2/services/component-instance-services/component-instance.service";
 import {UserService as UserServiceNg2} from "../ng2/services/user.service";
 import {PluginsService} from "../ng2/services/plugins.service";
 import {EventBusService} from "../ng2/services/event-bus.service";
+import {PoliciesService as PoliciesServiceNg2} from "../ng2/services/policies.service";
+import {DynamicComponentService} from "app/ng2/services/dynamic-component.service";
 
 let moduleName:string = 'Sdc.Services';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
@@ -92,6 +95,7 @@ serviceModule.factory('Sdc.Services.CategoryResourceService', CategoryResourceSe
 
 // Angular2 upgraded services - This is in order to use the service in angular1 till we finish remove all angular1 code
 serviceModule.factory('ComponentServiceNg2', downgradeInjectable(ComponentServiceNg2));
+serviceModule.factory('ComponentServiceFactoryNg2', downgradeInjectable(ComponentServiceFactoryNg2));
 serviceModule.factory('ServiceServiceNg2', downgradeInjectable(ServiceServiceNg2));
 serviceModule.factory('ModalServiceNg2', downgradeInjectable(ModalService));
 serviceModule.factory('ConnectionWizardServiceNg2', downgradeInjectable(ConnectionWizardService));
@@ -99,3 +103,5 @@ serviceModule.factory('ComponentInstanceServiceNg2', downgradeInjectable(Compone
 serviceModule.factory('UserServiceNg2', downgradeInjectable(UserServiceNg2));
 serviceModule.factory('PluginsService', downgradeInjectable(PluginsService));
 serviceModule.factory('EventBusService', downgradeInjectable(EventBusService));
+serviceModule.factory('PoliciesServiceNg2', downgradeInjectable(PoliciesServiceNg2));
+serviceModule.factory('DynamicComponentService', downgradeInjectable(DynamicComponentService));
