@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7f1467e8",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-types/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T11:30:40Z",
+      "side": 1,
+      "message": "Please declare this under \u003cdependencyManagement\u003e of the root pom of SDC onboarding, refer to it here.",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 38,
+        "endChar": 25
+      },
+      "revId": "3f88961c7c6ccb65684156f8e0234fb29a4c735e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3fda5f4c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-types/src/main/java/org/openecomp/sdcrests/vendorsoftwareproducts/types/ComponentDependencyModelRequestDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T11:30:40Z",
+      "side": 1,
+      "message": "Should we remove it, too?",
+      "range": {
+        "startLine": 12,
+        "startChar": 1,
+        "endLine": 13,
+        "endChar": 37
+      },
+      "revId": "3f88961c7c6ccb65684156f8e0234fb29a4c735e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9fea93d9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-types/src/main/java/org/openecomp/sdcrests/vendorsoftwareproducts/types/ComputeDescription.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T11:30:40Z",
+      "side": 1,
+      "message": "Please document. My guess is that the default constructor is used by reflection.",
+      "revId": "3f88961c7c6ccb65684156f8e0234fb29a4c735e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bfe50f0a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-types/src/main/java/org/openecomp/sdcrests/vendorsoftwareproducts/types/ComputeDetailsDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T11:30:40Z",
+      "side": 1,
+      "message": "Please delete. This is redundant as there are no other constructors.",
+      "range": {
+        "startLine": 15,
+        "startChar": 1,
+        "endLine": 16,
+        "endChar": 3
+      },
+      "revId": "3f88961c7c6ccb65684156f8e0234fb29a4c735e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ff08bc8",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-types/src/main/java/org/openecomp/sdcrests/vendorsoftwareproducts/types/FileDataStructureDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T11:30:40Z",
+      "side": 1,
+      "message": "Check if these must be initialized. If yes, consider new ArrayList(0) of size 0, or Collections.emptyList() - keep in mind that it\u0027s immutable.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 52
+      },
+      "revId": "3f88961c7c6ccb65684156f8e0234fb29a4c735e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7feb07dc",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-types/src/main/java/org/openecomp/sdcrests/vendorsoftwareproducts/types/ImageRequestDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T11:30:40Z",
+      "side": 1,
+      "message": "Please delete.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 32
+      },
+      "revId": "3f88961c7c6ccb65684156f8e0234fb29a4c735e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
