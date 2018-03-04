@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3fa25ffd",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/VirtualMachineInterfaceGuidelineValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T07:01:01Z",
+      "side": 1,
+      "message": "Why these double braces? Is something missing here?",
+      "range": {
+        "startLine": 67,
+        "startChar": 115,
+        "endLine": 68,
+        "endChar": 5
+      },
+      "revId": "734cd03c5650279be9e21482af52d3431f501758",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
