@@ -59,11 +59,14 @@ const SDC_CONFIG = {
 		"GET_resource_artifact_types": "/v1/artifactTypes",
 		"GET_onboarding": "/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/packages",
 		"GET_component_from_csar_uuid": "/v1/catalog/resources/csar/:csar_uuid",
-		"kibana": "/sdc1/kibanaProxy/"
+		"kibana": "/sdc1/kibanaProxy/",
+		"services_api_root": "/v1/catalog/services/",
+		"create_policy_instance":"/v1/catalog/:entityType/:entityId/policies/:policyId",
+		"CRUD_policy":"/v1/catalog/:entityType/policies/:policyId",
 	},
 	"resourceTypesFilter":{
-        "resource":["CP","VFC","VL"],
-        "service":["CP","VF","VL", "PNF","CVFC","SERVICE","Configuration"]
+        "resource":["CP","VFC","VL","CVFC","GROUP","POLICY"],
+        "service":["CP","VF","VL", "PNF","CR","CVFC","SERVICE","Configuration","GROUP","POLICY"]
 	},
 	"logConfig": {
 		"minLogLevel": "debug",

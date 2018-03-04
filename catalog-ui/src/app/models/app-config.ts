@@ -84,6 +84,7 @@ export interface IApi {
     GET_onboarding:string;
     GET_component_from_csar_uuid:string;
     kibana:string;
+    services_api_root:string;
 }
 
 export interface ILogConfig {

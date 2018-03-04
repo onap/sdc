@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -38,228 +35,230 @@ import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.CategoryData;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ElementOperationMock implements IElementOperation {
 
-	CategoryDefinition resourceCategory;
-	CategoryDefinition serviceCategory;
-	CategoryDefinition productCategory;
+    CategoryDefinition resourceCategory;
+    CategoryDefinition serviceCategory;
+    CategoryDefinition productCategory;
 
-	Category oldService;
+    Category oldService;
 
-	public ElementOperationMock() {
-		resourceCategory = new CategoryDefinition();
-		resourceCategory.setName("Network Layer 2-3");
-		SubCategoryDefinition subCategoryDefinition = new SubCategoryDefinition();
-		subCategoryDefinition.setName("Router");
-		SubCategoryDefinition subCategoryDefinition1 = new SubCategoryDefinition();
-		subCategoryDefinition1.setName("Gateway");
+    public ElementOperationMock() {
+        resourceCategory = new CategoryDefinition();
+        resourceCategory.setName("Network Layer 2-3");
+        SubCategoryDefinition subCategoryDefinition = new SubCategoryDefinition();
+        subCategoryDefinition.setName("Router");
+        SubCategoryDefinition subCategoryDefinition1 = new SubCategoryDefinition();
+        subCategoryDefinition1.setName("Gateway");
 
-		resourceCategory.addSubCategory(subCategoryDefinition);
-		resourceCategory.addSubCategory(subCategoryDefinition1);
+        resourceCategory.addSubCategory(subCategoryDefinition);
+        resourceCategory.addSubCategory(subCategoryDefinition1);
 
-		serviceCategory = new CategoryDefinition();
-		serviceCategory.setName("Mobility");
-		oldService = new Category();
-		oldService.setName("Mobility");
+        serviceCategory = new CategoryDefinition();
+        serviceCategory.setName("Mobility");
+        oldService = new Category();
+        oldService.setName("Mobility");
 
-		productCategory = new CategoryDefinition();
-		productCategory.setName("Network Layer 2-31");
-		SubCategoryDefinition subCategoryDefinition11 = new SubCategoryDefinition();
-		subCategoryDefinition11.setName("Router1");
-		GroupingDefinition group = new GroupingDefinition();
-		group.setName("group1");
-		subCategoryDefinition11.addGrouping(group);
-		productCategory.addSubCategory(subCategoryDefinition11);
+        productCategory = new CategoryDefinition();
+        productCategory.setName("Network Layer 2-31");
+        SubCategoryDefinition subCategoryDefinition11 = new SubCategoryDefinition();
+        subCategoryDefinition11.setName("Router1");
+        GroupingDefinition group = new GroupingDefinition();
+        group.setName("group1");
+        subCategoryDefinition11.addGrouping(group);
+        productCategory.addSubCategory(subCategoryDefinition11);
 
-	}
+    }
 
-	@Override
-	public Either<List<CategoryDefinition>, ActionStatus> getAllResourceCategories() {
+    @Override
+    public Either<List<CategoryDefinition>, ActionStatus> getAllResourceCategories() {
 
-		List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
-		categories.add(resourceCategory);
-		return Either.left(categories);
+        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        categories.add(resourceCategory);
+        return Either.left(categories);
 
-	}
+    }
 
-	@Override
-	public Either<List<CategoryDefinition>, ActionStatus> getAllServiceCategories() {
+    @Override
+    public Either<List<CategoryDefinition>, ActionStatus> getAllServiceCategories() {
 
-		List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
-		categories.add(serviceCategory);
-		return Either.left(categories);
+        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        categories.add(serviceCategory);
+        return Either.left(categories);
 
-	}
+    }
 
-	/*
-	 * @Override public Either<Category, ActionStatus> getCategory(String name) { if (name.equals(resourceCategory.getName())){ return Either.left(resourceCategory); } else { return Either.right(ActionStatus.CATEGORY_NOT_FOUND); } }
-	 */
+    /*
+     * @Override public Either<Category, ActionStatus> getCategory(String name) { if (name.equals(resourceCategory.getName())){ return Either.left(resourceCategory); } else { return Either.right(ActionStatus.CATEGORY_NOT_FOUND); } }
+     */
 
-	@Override
-	public Either<List<Tag>, ActionStatus> getAllTags() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<List<Tag>, ActionStatus> getAllTags() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<List<PropertyScope>, ActionStatus> getAllPropertyScopes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<List<PropertyScope>, ActionStatus> getAllPropertyScopes() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<Integer, ActionStatus> getDefaultHeatTimeout() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<Integer, ActionStatus> getDefaultHeatTimeout() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<CategoryDefinition, ActionStatus> deleteCategory(NodeTypeEnum nodeType, String categoryId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<CategoryDefinition, ActionStatus> deleteCategory(NodeTypeEnum nodeType, String categoryId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<Boolean, ActionStatus> isCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<Boolean, ActionStatus> isCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction) {
+    @Override
+    public Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction) {
 
-		List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
-		switch (nodeType) {
-		case ResourceNewCategory:
-			categories.add(resourceCategory);
-			break;
-		case ProductCategory:
-			categories.add(productCategory);
-			break;
-		case ServiceNewCategory:
-			categories.add(serviceCategory);
-			break;
-		default:
-			break;
-		}
-		return Either.left(categories);
-	}
+        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        switch (nodeType) {
+        case ResourceNewCategory:
+            categories.add(resourceCategory);
+            break;
+        case ProductCategory:
+            categories.add(productCategory);
+            break;
+        case ServiceNewCategory:
+            categories.add(serviceCategory);
+            break;
+        default:
+            break;
+        }
+        return Either.left(categories);
+    }
 
-	@Override
-	public Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<SubCategoryDefinition, ActionStatus> getSubCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> getSubCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<Boolean, ActionStatus> isSubCategoryUniqueForCategory(NodeTypeEnum nodeType, String subCategoryNormName, String parentCategoryId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<Boolean, ActionStatus> isSubCategoryUniqueForCategory(NodeTypeEnum nodeType, String subCategoryNormName, String parentCategoryId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<SubCategoryDefinition, ActionStatus> deleteSubCategory(NodeTypeEnum nodeType, String subCategoryId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> deleteSubCategory(NodeTypeEnum nodeType, String subCategoryId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<GroupingDefinition, ActionStatus> createGrouping(String subCategoryId, GroupingDefinition grouping, NodeTypeEnum nodeType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<GroupingDefinition, ActionStatus> createGrouping(String subCategoryId, GroupingDefinition grouping, NodeTypeEnum nodeType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<GroupingDefinition, ActionStatus> deleteGrouping(NodeTypeEnum nodeType, String groupingId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<GroupingDefinition, ActionStatus> deleteGrouping(NodeTypeEnum nodeType, String groupingId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<SubCategoryDefinition, ActionStatus> getSubCategory(NodeTypeEnum nodeType, String subCategoryId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> getSubCategory(NodeTypeEnum nodeType, String subCategoryId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<Boolean, ActionStatus> isGroupingUniqueForSubCategory(NodeTypeEnum nodeType, String groupingNormName, String parentSubCategoryId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<Boolean, ActionStatus> isGroupingUniqueForSubCategory(NodeTypeEnum nodeType, String groupingNormName, String parentSubCategoryId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<GroupingDefinition, ActionStatus> getGroupingUniqueForType(NodeTypeEnum nodeType, String groupingNormalizedName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<GroupingDefinition, ActionStatus> getGroupingUniqueForType(NodeTypeEnum nodeType, String groupingNormalizedName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<Map<String, String>, ActionStatus> getResourceTypesMap() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<Map<String, String>, ActionStatus> getResourceTypesMap() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name, NodeTypeEnum type, Class<T> clazz) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name, NodeTypeEnum type, Class<T> clazz) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<List<CategoryDefinition>, ActionStatus> getAllProductCategories() {
-		List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
-		categories.add(productCategory);
-		return Either.left(categories);
-	}
+    @Override
+    public Either<List<CategoryDefinition>, ActionStatus> getAllProductCategories() {
+        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        categories.add(productCategory);
+        return Either.left(categories);
+    }
 
-	@Override
-	public Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

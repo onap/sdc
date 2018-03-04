@@ -44,7 +44,9 @@ public enum ComponentFieldsEnum {
 	SERVICE_API_ARTIFACTS("serviceApiArtifacts"),
 	METADATA("metadata"),
 	CATEGORIES("categories"),
-	INSTANCE_CAPABILTY_PROPERTIES("instanceCapabiltyProperties"); 
+	INSTANCE_CAPABILTY_PROPERTIES("instanceCapabiltyProperties"),
+	FORWARDING_PATHS("forwardingPaths"),
+	POLICIES("policies");
 	
 	
 	private String value;

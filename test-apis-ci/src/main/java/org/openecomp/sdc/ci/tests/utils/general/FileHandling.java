@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
+import com.aventstack.extentreports.Status;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.BufferedOutputStream;
@@ -51,6 +52,15 @@ import org.openecomp.sdc.common.util.GeneralUtility;
 import org.yaml.snakeyaml.Yaml;
 
 import com.aventstack.extentreports.Status;
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class FileHandling {
 
@@ -94,7 +104,6 @@ public class FileHandling {
 		return dataTypesMap;
 	}
 //	-------------------------------------------------------------------------------------------------
-	
 
 	/**
 	 * @param folder, folder name under "Files" folder
@@ -154,7 +163,7 @@ public class FileHandling {
 	public static String getVnfRepositoryPath() {
 		return getFilePath("VNFs");
 	}
-	
+
 	public static String getPortMirroringRepositoryPath() {
 		return getFilePath("PortMirroring");
 	}

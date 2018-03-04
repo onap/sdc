@@ -8,6 +8,10 @@ errors:
         code: 201,
         message: "OK"
     }
+    ACCEPTED: {
+        code: 202,
+        message: "Accepted"
+    }
     NO_CONTENT: {
         code: 204,
         message: "No Content"
@@ -411,7 +415,6 @@ errors:
         message: "Error: Invalid Content. Missing Capability Type '%1'.",
         messageId: "SVC4115"
     }
-#-----------SVC4116---------------------------
     RESOURCE_INSTANCE_BAD_REQUEST: {
         code: 400,
         message: "Error: Invalid Content.",
@@ -595,7 +598,7 @@ errors:
     }
 #---------SVC4301------------------------------
     RESTRICTED_OPERATION: {
-        code: 409,
+        code: 403,
         message: "Error: Restricted operation.",
         messageId: "SVC4301"
     }
@@ -1188,6 +1191,7 @@ errors:
         messageId: "SVC4585"
     }
 #---------SVC4586------------------------------
+#---------SVC4586------------------------------
     INVALID_SERVICE_API_URL: {
         code: 400,
         message: 'Error: Invalid Service API URL. Please check whether your URL has a valid domain extension and does not contain the following characters - #?&@%+;,=$<>~^`\[]{}|"*!',
@@ -1658,7 +1662,7 @@ errors:
 # %1 - "groupName"
     INVALID_VF_MODULE_NAME: {
         code: 400,
-        message: "Error: Invalid Content. VF Module name '%1' contains invalid characters",
+        message: "Error: Invalid Content. Group name '%1' contains invalid characters",
         messageId: "SVC4646"
     }
 
@@ -1878,3 +1882,153 @@ errors:
         message: "Error: Requested relation %1 was not found on the container %2.",
         messageId: "SVC4674"
     }
+
+
+#---------SVC4675------------------------------
+    INVALID_SERVICE_STATE: {
+        code: 409,
+        message: "Service state is invalid for this action",
+        messageId: "SVC4675"
+    }
+
+#---------SVC4676------------------------------
+    INVALID_RESPONSE_FROM_PROXY: {
+        code: 502,
+        message: "Error: The server was acting as a gateway or proxy and received an invalid response from the upstream server",
+        messageId: "SVC4676"
+    }
+
+#---------SVC4677------------------------------
+    API_RESOURCE_NOT_FOUND: {
+        code: 404,
+        message: "Error: Requested '%1' was not found.",
+        messageId: "SVC4677"
+    }
+
+#---------SVC4678------------------------------
+    BAD_REQUEST_MISSING_RESOURCE: {
+        code: 400,
+        message: "Error: The required resource name/id  is missing in the request",
+        messageId: "SVC4678"
+    }
+#---------SVC4679------------------------------
+# %1 forwarding path name maximum length
+    FORWARDING_PATH_NAME_MAXIMUM_LENGTH: {
+        code: 400,
+        message: "Forwarding path name too long, , maximum allowed 200 characters : '%1'.",
+        messageId: "SVC4679"
+    }
+#---------SVC4680------------------------------
+# %1 Forwarding path name already in use
+    FORWARDING_PATH_NAME_ALREADY_IN_USE: {
+        code: 400,
+        message: "Forwarding path name already in use : '%1'.",
+        messageId: "SVC4680"
+    }
+#---------SVC4681------------------------------
+# %1 Forwarding path name empty
+    FORWARDING_PATH_NAME_EMPTY: {
+        code: 400,
+        message: "Forwarding Path Name can't be empty .",
+        messageId: "SVC4681"
+    }
+#---------SVC4682------------------------------
+# %1 - resource uniqueId
+# %2 - resource component type
+    RESOURCE_CANNOT_CONTAIN_POLICIES: {
+        code: 400,
+        message: "Error: The resource %1 type of %2 cannot contain policies.",
+        messageId: "SVC4682"
+    }
+#---------SVC4683------------------------------
+# %1 - policy uniqueId
+# %2 - component uniqueId
+    POLICY_NOT_FOUND_ON_CONTAINER: {
+        code: 404,
+        message: "Error: Requested policy %1 was not found on the container %2.",
+        messageId: "SVC4683"
+}
+#---------SVC4684------------------------------
+# %1 - policy name
+    INVALID_POLICY_NAME: {
+        code: 400,
+        message: "Error: Invalid policy name %1 received.",
+        messageId: "SVC4684"
+    }
+#---------SVC4685------------------------------
+# %1 - policy name
+    POLICY_NAME_ALREADY_EXIST: {
+        code: 409,
+        message: "Error: The policy with the name %1 already exists.",
+        messageId: "SVC4685"
+    }
+#---------SVC4686------------------------------
+# %1 - policy name
+    POLICY_TARGET_DOES_NOT_EXIST: {
+        code: 400,
+        message: "Error: The targets %1 are not valid, all targets have to be on the topologyTemplate.",
+        messageId: "SVC4686"
+    }
+#---------SVC4687------------------------------
+# %1 - policy type
+# %2 - component type
+    EXCLUDED_POLICY_TYPE: {
+        code: 400,
+        message: "Error: The policy of the type %1 excluded to add to a component of the type %2.",
+        messageId: "SVC4687"
+    }
+    #---------SVC4688------------------------------
+# %1 - group type
+# %2 - component type
+    GROUP_TYPE_ILLEGAL_PER_COMPONENT: {
+        code: 400,
+        message: "Error: group type %1 not permitted in component of type %2",
+        messageId: "SVC4688"
+    }
+    #---------SVC4689------------------------------
+# %1 - group type
+# %2 - component type
+    POLICY_TARGET_TYPE_DOES_NOT_EXIST: {
+        code: 400,
+        message: "Error: The target types %1 are not valid.",
+        messageId: "SVC4689"
+    }
+
+#---------SVC4690------------------------------
+# %1 forwarding path protocol maximum length
+    FORWARDING_PATH_PROTOCOL_MAXIMUM_LENGTH: {
+        code: 400,
+        message: "Forwarding path protocol too long, , maximum allowed 200 characters : '%1'.",
+        messageId: "SVC4690"
+    }
+
+#---------SVC4691------------------------------
+# %1 forwarding path destination port maximum length
+    FORWARDING_PATH_DESTINATION_PORT_MAXIMUM_LENGTH: {
+        code: 400,
+        message: "Forwarding path destination port too long, , maximum allowed 200 characters : '%1'.",
+        messageId: "SVC4691"
+    }
+
+#---------POL4692------------------------------
+    MISSING_OLD_COMPONENT_INSTANCE: {
+        code: 400  ,
+        message: "Error: Missing 'componentInstanceId' HTTP param.",
+        messageId: "POL4692"
+    }
+
+#---------POL4693------------------------------
+    MISSING_NEW_COMPONENT_INSTANCE: {
+        code: 400  ,
+        message: "Error: Missing 'newComponentInstanceId' HTTP param.",
+        messageId: "POL4693"
+    }
+
+#---------SVC4694------------------------------
+# %1 External Reference Value
+    EXT_REF_NOT_FOUND: {
+        code: 404,
+        message: "Error: External Reference '%1' was not found.",
+        messageId: "SVC4694"
+    }
+

@@ -28,8 +28,10 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.WorkflowOperationDataDefinition;
+import static java.util.stream.Collectors.groupingBy;
 public class Resource extends Component implements Serializable {
 
 	private static final long serialVersionUID = -6811540567661368482L;
@@ -306,7 +308,7 @@ public class Resource extends Component implements Serializable {
 	@Override
 	public boolean shouldGenerateInputs(){
 		//TODO add complex VFC condition when supported
-		return ResourceTypeEnum.VF == this.getResourceType() || ResourceTypeEnum.CVFC == this.getResourceType() || ResourceTypeEnum.PNF == this.getResourceType();
+		return !(this.getResourceType().isAtomicType());
 	}
 	
 	@Override

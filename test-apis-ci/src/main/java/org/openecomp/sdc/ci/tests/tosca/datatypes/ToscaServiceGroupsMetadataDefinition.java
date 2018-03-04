@@ -22,11 +22,11 @@ package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
 public class ToscaServiceGroupsMetadataDefinition {
 
-	private String vfModuleModelName;
-	private String vfModuleModelInvariantUUID;
-	private String vfModuleModelCustomizationUUID;
-	private String vfModuleModelUUID;
-	private String vfModuleModelVersion;
+	public String vfModuleModelName;
+	public String vfModuleModelInvariantUUID;
+	public String vfModuleModelCustomizationUUID;
+	public String vfModuleModelUUID;
+	public String vfModuleModelVersion;
 	
 	public ToscaServiceGroupsMetadataDefinition() {
 		super();

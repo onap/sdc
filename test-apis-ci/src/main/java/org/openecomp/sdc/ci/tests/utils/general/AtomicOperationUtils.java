@@ -38,7 +38,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONException;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -46,10 +48,12 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -75,6 +79,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.CsarToscaTester;
 import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
@@ -118,7 +123,7 @@ public final class AtomicOperationUtils {
 	public static Either<Resource, RestResponse> importResource(String filePath, String fileName) {
 		try {
 			User designer = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-			ImportReqDetails importReqDetails = ElementFactory.getDefaultImportResource("ciTmpVFC");
+			ImportReqDetails importReqDetails = ElementFactory.getDefaultImportResource(ElementFactory.getResourcePrefix());
 			importReqDetails = ImportUtils.getImportResourceDetailsByPathAndName(importReqDetails, filePath, fileName);
 			RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, designer, null);
 			return buildResourceFromResponse(importResourceResponse);
@@ -127,6 +132,26 @@ public final class AtomicOperationUtils {
 		}
 	}
 
+	public static Either<Resource, RestResponse> importResource(ImportReqDetails importReqDetails, String filePath, String fileName, User userRole, Boolean validateState) {
+		try {
+			importReqDetails = ImportUtils.getImportResourceDetailsByPathAndName(importReqDetails, filePath, fileName);
+			RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, userRole, null);
+
+			if (validateState) {
+				assertTrue("Import resource failed with error: " + importResourceResponse.getResponse(),importResourceResponse.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+			}
+
+			if (importResourceResponse.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
+				Resource resourceResponseObject = ResponseParser.convertResourceResponseToJavaObject(importResourceResponse.getResponse());
+				return Either.left(resourceResponseObject);
+			}
+			return Either.right(importResourceResponse);
+		} catch (Exception e) {
+			throw new AtomicOperationException(e);
+		}
+	}
+
+
 	public static Either<Resource, RestResponse> createResourceByType(ResourceTypeEnum resourceType, UserRoleEnum userRole, Boolean validateState) {
 		try {
 			User defaultUser = ElementFactory.getDefaultUser(userRole);
@@ -134,7 +159,7 @@ public final class AtomicOperationUtils {
 			RestResponse resourceResp = ResourceRestUtils.createResource(defaultResource, defaultUser);
 
 			if (validateState) {
-				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+				assertTrue("Create resource failed with error: " + resourceResp.getResponse(),resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
 			}
 
 			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -153,7 +178,7 @@ public final class AtomicOperationUtils {
 			RestResponse resourceResp = ResourceRestUtils.createResource(resourceDetails, defaultUser);
 
 			if (validateState) {
-				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+				assertTrue("Create resource failed with error: " + resourceResp.getResponse(),resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
 			}
 
 			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -192,7 +217,7 @@ public final class AtomicOperationUtils {
 		RestResponse resourceResp = ResourceRestUtils.createResource(defaultResource, defaultUser);
 
 		if (validateState) {
-			assertTrue("actual result: " + resourceResp.getResponseMessage(), resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create resource failed with error: " + resourceResp.getResponse(), resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -210,7 +235,7 @@ public final class AtomicOperationUtils {
 			RestResponse resourceResp = ResourceRestUtils.updateResource(resourceReqDetails, defaultUser, resourceReqDetails.getUniqueId());
 
 			if (validateState) {
-				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
+				assertTrue("Update resource failed with error: " + resourceResp.getResponse(),resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
 			}
 
 			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS) {
@@ -231,7 +256,7 @@ public final class AtomicOperationUtils {
 		RestResponse createServiceResp = ServiceRestUtils.createService(serviceDetails, defaultUser);
 
 		if (validateState) {
-			assertTrue(createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create service failed with error: " + createServiceResp.getResponse(),createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (createServiceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -247,7 +272,7 @@ public final class AtomicOperationUtils {
 		RestResponse createServiceResp = ServiceRestUtils.createService(serviceDetails, defaultUser);
 
 		if (validateState) {
-			assertTrue(createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create service failed with error: " + createServiceResp.getResponse(),createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (createServiceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -262,7 +287,7 @@ public final class AtomicOperationUtils {
 		RestResponse createServiceResp = ServiceRestUtils.createService(serviceDetails, defaultUser);
 
 		if (validateState) {
-			assertTrue(createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+			assertTrue("Create service failed with error: " + createServiceResp.getResponse(),createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 		}
 
 		if (createServiceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
@@ -329,10 +354,8 @@ public final class AtomicOperationUtils {
 			component = getComponentObject(component, userRole);
 			return Pair.of(component, null);
 		}
-		// List<LifeCycleStatesEnum> lifeCycleStatesEnumOrigList = new
-		// ArrayList<LifeCycleStatesEnum>(EnumSet.allOf(LifeCycleStatesEnum.class));
 
-		ArrayList<String> lifeCycleStatesEnumList = new ArrayList<String>();
+		ArrayList<String> lifeCycleStatesEnumList = new ArrayList<>();
 		if (curentCompState.equals(LifeCycleStatesEnum.CHECKIN) && targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
 			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
 			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
@@ -395,16 +418,14 @@ public final class AtomicOperationUtils {
 		}
 
 		if (validateState) {
-			assertTrue(approveDistribution.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
-			assertTrue(distributionService.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
+			assertTrue("Distribution approve failed with error: " + approveDistribution.getResponse(),approveDistribution.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
+			assertTrue("Distribute service failed with error: " + distributionService.getResponse(),distributionService.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
 			return distributionService;
 		}
 
 		return distributionService;
-
 	}
-
-
+	
 	public static void toscaValidation(Component component, String vnfFile) throws Exception {
 
 		ISdcCsarHelper fdntCsarHelper;
@@ -463,6 +484,34 @@ public final class AtomicOperationUtils {
 				}
 				else{
 				assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " + ServiceRestUtils.STATUS_CODE_CREATED, createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+				}
+			}
+
+			if (createComponentInstance.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
+				ComponentInstance componentInstance = ResponseParser.convertComponentInstanceResponseToJavaObject(createComponentInstance.getResponse());
+				return Either.left(componentInstance);
+			}
+			return Either.right(createComponentInstance);
+		} catch (Exception e) {
+			throw new AtomicOperationException(e);
+		}
+	}
+
+	public static Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer(Component compInstParent, Component compContainer, UserRoleEnum userRole, Boolean validateState, String positionX, String positionY) {
+		try {
+			User defaultUser = ElementFactory.getDefaultUser(userRole);
+			ComponentInstanceReqDetails componentInstanceDetails = ElementFactory.getComponentInstance(compInstParent);
+			componentInstanceDetails.setPosX(positionX);
+			componentInstanceDetails.setPosY(positionY);
+			RestResponse createComponentInstance = ComponentInstanceRestUtils.createComponentInstance(componentInstanceDetails, defaultUser, compContainer);
+
+			if (validateState) {
+				if (createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_NOT_FOUND)
+				{
+					throw new SkipException("Open bug DE262001");
+				}
+				else{
+					assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " + ServiceRestUtils.STATUS_CODE_CREATED, createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 				}
 			}
 
@@ -619,7 +668,7 @@ public final class AtomicOperationUtils {
 	public static Either<ComponentInstanceProperty, RestResponse> addCustomPropertyToResource(PropertyReqDetails propDetails, Resource resourceDetails, UserRoleEnum userRole, Boolean validateState) throws Exception {
 
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
-		Map<String, PropertyReqDetails> propertyToSend = new HashMap<String, PropertyReqDetails>();
+		Map<String, PropertyReqDetails> propertyToSend = new HashMap<>();
 		propertyToSend.put(propDetails.getName(), propDetails);
 		Gson gson = new Gson();
 		RestResponse addPropertyResponse = PropertyRestUtils.createProperty(resourceDetails.getUniqueId(), gson.toJson(propertyToSend), defaultUser);
@@ -641,7 +690,7 @@ public final class AtomicOperationUtils {
 	public static Either<ComponentInstanceProperty, RestResponse> updatePropertyOfResource(PropertyReqDetails propDetails, Resource resourceDetails, String propertyUniqueId, UserRoleEnum userRole, Boolean validateState) throws Exception {
 
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
-		Map<String, PropertyReqDetails> propertyToSend = new HashMap<String, PropertyReqDetails>();
+		Map<String, PropertyReqDetails> propertyToSend = new HashMap<>();
 		propertyToSend.put(propDetails.getName(), propDetails);
 		Gson gson = new Gson();
 		RestResponse addPropertyResponse = PropertyRestUtils.updateProperty(resourceDetails.getUniqueId(), propertyUniqueId, gson.toJson(propertyToSend), defaultUser);
@@ -668,7 +717,7 @@ public final class AtomicOperationUtils {
 
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 		PropertyReqDetails propDetails = ElementFactory.getPropertyDetails(propertyType);
-		Map<String, PropertyReqDetails> propertyToSend = new HashMap<String, PropertyReqDetails>();
+		Map<String, PropertyReqDetails> propertyToSend = new HashMap<>();
 		propertyToSend.put(propDetails.getName(), propDetails);
 		Gson gson = new Gson();
 		RestResponse addPropertyResponse = PropertyRestUtils.createProperty(resourceDetails.getUniqueId(), gson.toJson(propertyToSend), defaultUser);
@@ -686,6 +735,23 @@ public final class AtomicOperationUtils {
 		}
 		return Either.right(addPropertyResponse);
 	}
+
+	public static Either<GroupDefinition, RestResponse> updateGroupPropertyOnResource(List<PropertyDataDefinition> propertyObject, Resource resource, String groupId, User user, Boolean validateState) throws Exception {
+
+		Gson gson = new Gson();
+		RestResponse updateGroupPropertyResponse = PropertyRestUtils.updateGroupProperty(resource, groupId, gson.toJson(propertyObject), user);
+
+		if (validateState) {
+			assertTrue("update group property to resource failed: " + updateGroupPropertyResponse.getResponseMessage(), updateGroupPropertyResponse.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+		}
+
+		if (updateGroupPropertyResponse.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS) {
+			GroupDefinition responseGroupDefinition = ResponseParser.convertPropertyResponseToObject(updateGroupPropertyResponse.getResponse());
+			return Either.left(responseGroupDefinition);
+		}
+		return Either.right(updateGroupPropertyResponse);
+	}
+
 
 	public static RestResponse createDefaultConsumer(Boolean validateState) {
 		try {
@@ -725,7 +791,7 @@ public final class AtomicOperationUtils {
 		}
 
 		private static final long serialVersionUID = 1L;
-	};
+	}
 	
 	/**
 	 * Import resource from CSAR
@@ -801,11 +867,11 @@ public final class AtomicOperationUtils {
 			url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), component.getUniqueId(), component.getToscaArtifacts().get(artifactType).getUniqueId());
 		}
 		String userId = component.getLastUpdaterUserId();
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
-		headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), "no-cache");
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), BaseRestUtils.cacheControlHeader);
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
-		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), BaseRestUtils.xEcompInstanceId);
 		if (userId != null) {
 			headersMap.put(HttpHeaderEnum.USER_ID.getValue(), userId);
 		}
@@ -818,7 +884,7 @@ public final class AtomicOperationUtils {
 
 	}
 
-	public static RestResponse getDistributionStatusByDistributionId(String distributionId ,Boolean validateState) {
+	public static RestResponse getDistributionStatusByDistributionId(String distributionId, Boolean validateState) {
 
 		try {
 			User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.OPS);
@@ -834,12 +900,11 @@ public final class AtomicOperationUtils {
 		}
 	}
 	
-	public static Either <RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service ,Boolean validateState) {
+	public static Either <RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service, Boolean validateState) {
 		
 		try {
 			ServiceDistributionStatus serviceDistributionObject = DistributionUtils.getLatestServiceDistributionObject(service);
 			RestResponse response = getDistributionStatusByDistributionId(serviceDistributionObject.getDistributionID(), true);
-
 			if(validateState) {
 				assertTrue(response.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
 			}
@@ -863,36 +928,39 @@ public final class AtomicOperationUtils {
 	 * @throws Exception
 	 */
 	public static Boolean distributeAndValidateService(Service service, int pollingCount, int pollingInterval) throws Exception {
-
+        int firstPollingInterval = 30000; //this value define first be polling topic time, should change if DC configuration changed  
 		Boolean statusFlag = true;
 		AtomicOperationUtils.distributeService(service,  true);
-		TimeUnit.MILLISECONDS.sleep(pollingInterval);
+		TimeUnit.MILLISECONDS.sleep(firstPollingInterval);
 		int timeOut = pollingCount * pollingInterval;
+		com.clearspring.analytics.util.Pair<Boolean,Map<String,List<String>>> verifyDistributionStatus = null;
+		
 		while (timeOut > 0) {
 			Map<String,List<DistributionMonitorObject>> sortedDistributionStatusMap = AtomicOperationUtils.getSortedDistributionStatusMap(service, true).right().value();
-			com.clearspring.analytics.util.Pair<Boolean,Map<String,List<String>>> verifyDistributionStatus = DistributionUtils.verifyDistributionStatus(sortedDistributionStatusMap);
+			verifyDistributionStatus = DistributionUtils.verifyDistributionStatus(sortedDistributionStatusMap);
 			if(verifyDistributionStatus.left.equals(false)){
-				if((verifyDistributionStatus.right != null && ! verifyDistributionStatus.right.isEmpty()) && timeOut == 0){
-					for(Entry<String, List<String>> entry : verifyDistributionStatus.right.entrySet()){
-						if(ComponentBaseTest.getExtendTest() != null){
-							ComponentBaseTest.getExtendTest().log(Status.INFO, "Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
-							statusFlag = false;
-						}else{
-							System.out.println("Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
-						}
-					}
-				}
 				TimeUnit.MILLISECONDS.sleep(pollingInterval);
 				timeOut-=pollingInterval;
 			}else {
 				timeOut = 0;
 			}
 		}
+		
+		if((verifyDistributionStatus.right != null && ! verifyDistributionStatus.right.isEmpty())){
+			for(Entry<String, List<String>> entry : verifyDistributionStatus.right.entrySet()){
+				if(ComponentBaseTest.getExtendTest() != null){
+					ComponentBaseTest.getExtendTest().log(Status.INFO, "Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
+				}else{
+					System.out.println("Consumer: [" + entry.getKey() + "] failed on following: "+ entry.getValue());
+				}
+			}
+			statusFlag = false;
+		}
 		return statusFlag;
 	}
 	
 	public static Boolean distributeAndValidateService(Service service) throws Exception {
-		return distributeAndValidateService(service, 6, 10000);
+		return distributeAndValidateService(service, 10, 10000);
 	}
 
 }

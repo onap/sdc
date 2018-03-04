@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.be.dao.titan;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
+import com.thinkaurelius.titan.core.PropertyKey;
+import com.thinkaurelius.titan.core.TitanEdge;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanGraphQuery;
+import com.thinkaurelius.titan.core.TitanVertex;
+import com.thinkaurelius.titan.core.TitanVertexQuery;
+import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -52,15 +51,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
-import com.thinkaurelius.titan.core.TitanVertex;
-import com.thinkaurelius.titan.core.TitanVertexQuery;
-import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
-
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 @Component("titan-generic-dao")
 public class TitanGenericDao {
 
@@ -908,7 +906,7 @@ public class TitanGenericDao {
 		return true;
 	}
 
-	public <T extends GraphNode> Either<List<T>, TitanOperationStatus> getByCriteriaWithPradicat(NodeTypeEnum type, Map<String, Entry<TitanPredicate, Object>> props, Class<T> clazz) {
+	public <T extends GraphNode> Either<List<T>, TitanOperationStatus> getByCriteriaWithPredicate(NodeTypeEnum type, Map<String, Entry<TitanPredicate, Object>> props, Class<T> clazz) {
 		Either<TitanGraph, TitanOperationStatus> graph = titanClient.getGraph();
 		if (graph.isLeft()) {
 			try {
@@ -1109,6 +1107,14 @@ public class TitanGenericDao {
 
 		return deleteEdge(relation.getType(), fromKeyId, toKeyId, from.getLabel().getName(), to.getLabel().getName());
 
+	}
+
+	public Either<Boolean, TitanOperationStatus> isRelationExist(GraphNode from, GraphNode to, GraphEdgeLabels edgeLabel) {
+		return getEdgeByNodes(from, to, edgeLabel)
+				.left()
+				.map(edge -> true)
+				.right()
+				.bind(err -> err == TitanOperationStatus.NOT_FOUND ? Either.left(false): Either.right(err));
 	}
 
 	public Either<GraphRelation, TitanOperationStatus> deleteRelation(GraphNode from, GraphNode to, GraphEdgeLabels label) {

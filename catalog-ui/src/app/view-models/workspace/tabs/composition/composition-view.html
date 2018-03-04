@@ -5,6 +5,8 @@
                  is-view-only="isViewOnly"
                  is-loading="isLoading"></palette>
 
+        <ng2-palette-popup-panel></ng2-palette-popup-panel>
+
         <composition-graph component="currentComponent" data-tests-id="canvas"
                            is-view-only="isViewOnly" with-sidebar="displayDesignerRightSidebar"></composition-graph>
     </div>
@@ -46,7 +48,8 @@
             <button class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"
                     data-ui-sref="workspace.composition.details"
                     tooltips tooltip-class="tooltip-custom tab-tooltip" tooltip-content="Information"
-                    data-tests-id="information-tab">
+                    data-tests-id="information-tab"
+                    data-ng-class="{'disabled': disabledTabs}">
                 <div class="i-sdc-designer-sidebar-tab-icon sprite-new info"></div>
             </button>
             <!--<button class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"-->
@@ -58,32 +61,38 @@
                     data-ui-sref="workspace.composition.deployment"
                     tooltips tooltip-class="tooltip-custom tab-tooltip" tooltip-content="Deployment Artifacts"
                     data-tests-id="deployment-artifact-tab"
-                    data-ng-if="!isPNF() && !isConfiguration() && !(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())">
+                    data-ng-if="!isPNF() && !isConfiguration() && !(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())"
+                    data-ng-class="{'disabled': disabledTabs}">
                 <div class="i-sdc-designer-sidebar-tab-icon sprite-new deployment-artifacts"></div>
             </button>
             <button tooltips tooltip-class="tooltip-custom tab-tooltip"
                     tooltip-content="{{selectedComponent.isResource() || (isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy()) ? 'Properties and Attributes': 'Inputs'}}"
                     class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"
                     data-ui-sref="workspace.composition.properties"
-                    data-tests-id="properties-and-attributes-tab">
+                    data-tests-id="properties-and-attributes-tab"
+                    data-ng-class="{'disabled': disabledTabs}">
                 <div class="i-sdc-designer-sidebar-tab-icon sprite-new"
                      ng-class="selectedComponent.isResource() || (isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy()) ? 'properties': 'inputs'"></div>
             </button>
             <button class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"
                     data-ui-sref="workspace.composition.artifacts"
                     data-ng-if="!isConfiguration() && !(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())"
-                    tooltips tooltip-class="tooltip-custom tab-tooltip" tooltip-content="Information Artifacts">
+                    tooltips tooltip-class="tooltip-custom tab-tooltip" tooltip-content="Information Artifacts"
+                    data-ng-class="{'disabled': disabledTabs}">
                 <div class="i-sdc-designer-sidebar-tab-icon sprite-new information-artifacts"></div>
             </button>
             <button data-ng-if="!selectedComponent.isService() || (isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())" class="i-sdc-designer-sidebar-tab"
                     data-ui-sref-active="active" ui-sref="workspace.composition.relations"
                     tooltips tooltip-class="tooltip-custom tab-tooltip  tooltip-rightside"
-                    tooltip-content="Requirements and Capabilities">
+                    data-tests-id="requirements-and-capabilities"
+                    tooltip-content="Requirements and Capabilities"
+                    data-ng-class="{'disabled': disabledTabs}">
                 <div class="i-sdc-designer-sidebar-tab-icon sprite-new relations"></div>
             </button>
             <button data-ng-if="selectedComponent.isService() && !(isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy())" class="i-sdc-designer-sidebar-tab"
                     data-ui-sref-active="active" ui-sref="workspace.composition.api" data-tests-id="tab-api"
-                    tooltips tooltip-class="tooltip-custom tab-tooltip tooltip-rightside" tooltip-content="API">
+                    tooltips tooltip-class="tooltip-custom tab-tooltip tooltip-rightside" tooltip-content="API"
+                    data-ng-class="{'disabled': disabledTabs}">
                 <div class="i-sdc-designer-sidebar-tab-icon sprite-new api"></div>
             </button>
 

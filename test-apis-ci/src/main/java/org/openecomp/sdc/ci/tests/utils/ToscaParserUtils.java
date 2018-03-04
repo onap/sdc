@@ -43,7 +43,7 @@ import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinitio
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
-import org.openecomp.sdc.common.rest.api.RestResponseAsByteArray;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,8 +193,8 @@ public class ToscaParserUtils {
 	
 	public static String getCsarPayload(String csarName, String yamlFileLocation) throws Exception {
 
-		RestResponseAsByteArray csar = ImportRestUtils.getCsar(csarName, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
-		assertTrue("Return response code different from 200", csar.getHttpStatusCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+	    HttpResponse<byte []> csar = ImportRestUtils.getCsar(csarName, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		assertTrue("Return response code different from 200", csar.getStatusCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		byte[] data = csar.getResponse();
 		return getDataFromZipFileByBytes(yamlFileLocation, data);
 

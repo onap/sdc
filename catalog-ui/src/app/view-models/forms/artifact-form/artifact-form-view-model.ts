@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {ArtifactModel, Resource, Component} from "app/models";
 import {ArtifactsUtils, FormState, ValidationUtils, ArtifactType} from "app/utils";
 import {CacheService} from "app/services";

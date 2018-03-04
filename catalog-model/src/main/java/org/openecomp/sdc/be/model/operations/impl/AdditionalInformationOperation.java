@@ -116,7 +116,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
 		if (updateNode.isRight()) {
 			TitanOperationStatus status = updateNode.right().value();
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedUpdateNodeError, "UpdateAdditionalInformationParameter", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("UpdateAdditionalInformationParameter", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			return Either.right(status);
 		}
@@ -168,7 +167,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
 		if (updateNode.isRight()) {
 			TitanOperationStatus status = updateNode.right().value();
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedUpdateNodeError, "UpdateAdditionalInformationParameter", "additional information of resource " + componentId, String.valueOf(status));
 			BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("UpdateAdditionalInformationParameter", "additional information of resource " + componentId, String.valueOf(status));
 			return Either.right(status);
 		}
@@ -213,7 +211,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
 		if (updateNode.isRight()) {
 			TitanOperationStatus status = updateNode.right().value();
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedUpdateNodeError, "DeleteAdditionalInformationParameter", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("DeleteAdditionalInformationParameter", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			return Either.right(status);
 		}
@@ -266,7 +263,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 		Either<AdditionalInfoParameterData, TitanOperationStatus> createNode = titanGenericDao.createNode(additionalInfoParameterData, AdditionalInfoParameterData.class);
 		if (createNode.isRight()) {
 			TitanOperationStatus status = createNode.right().value();
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedCreateNodeError, "AddAdditionalInformationNode", "additional information to " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("AddAdditionalInformationNode", uniqueId, String.valueOf(status));
 			return Either.right(status);
 		}
@@ -294,7 +290,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 		Either<TitanVertex, TitanOperationStatus> createNode = titanGenericDao.createNode(additionalInfoParameterData);
 		if (createNode.isRight()) {
 			TitanOperationStatus status = createNode.right().value();
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedCreateNodeError, "AddAdditionalInformationNode", "additional information to " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("AddAdditionalInformationNode", uniqueId, String.valueOf(status));
 			return Either.right(status);
 		}
@@ -498,7 +493,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 			if (either.isRight()) {
 				TitanOperationStatus status = either.right().value();
 				log.debug("Failed to add additional information property {} to component {}. Status is {}", key, resourceId, status);
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedUpdateNodeError, "additional information of " + nodeType.getName() + " " + resourceId, String.valueOf(status));
 				BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("CreateAdditionalInformationParameter", "additional information of " + nodeType.getName() + " " + resourceId, String.valueOf(status));
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 			} else {
@@ -654,7 +648,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 		if (updateNode.isRight()) {
 			TitanOperationStatus status = updateNode.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedRetrieveNodeError, "GetAdditionnalInformationParameter", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 				BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("GetAdditionnalInformationParameter", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			}
 			return Either.right(status);
@@ -682,7 +675,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 		if (getResult.isRight()) {
 			TitanOperationStatus status = getResult.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedRetrieveNodeError, "GetAdditionnalInformationParameters", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 				BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("GetAdditionnalInformationParameters", "additional information of " + nodeType.getName() + " " + componentId, String.valueOf(status));
 			}
 			return Either.right(status);
@@ -789,7 +781,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 				if (status == TitanOperationStatus.NOT_FOUND) {
 					return Either.right(StorageOperationStatus.OK);
 				} else {
-					BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedDeleteNodeError, "DeleteAdditionalInformationNode", "additional information of " + nodeType.getName() + " " + resourceId, String.valueOf(status));
 					BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("DeleteAdditionalInformationNode", "additional information of " + nodeType.getName() + " " + resourceId, String.valueOf(status));
 					result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				}
@@ -802,7 +793,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 			Either<AdditionalInfoParameterData, TitanOperationStatus> deleteNodeRes = titanGenericDao.deleteNode(parameterData, AdditionalInfoParameterData.class);
 			if (deleteNodeRes.isRight()) {
 				TitanOperationStatus status = getResult.right().value();
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedDeleteNodeError, "DeleteAdditionalInformationNode", (String) parameterData.getUniqueId(), String.valueOf(status));
 				BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("DeleteAdditionalInformationNode", (String) parameterData.getUniqueId(), String.valueOf(status));
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;

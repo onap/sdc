@@ -20,20 +20,9 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
-import javax.annotation.Resource;
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.AuditHandler;
@@ -56,17 +45,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ResponseHeader;
+import javax.annotation.Resource;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * This Servlet serves external users for distribution purposes.
@@ -81,321 +67,315 @@ import io.swagger.annotations.ResponseHeader;
 @Singleton
 public class DistributionServlet extends BeGenericServlet {
 
-	private static Logger log = LoggerFactory.getLogger(DistributionServlet.class.getName());
-	@Resource
-	private DistributionBusinessLogic distributionLogic;
-	@Context
-	private HttpServletRequest request;
-	
-	/**
-	 * 
-	 * @param requestId
-	 * @param instanceId
-	 * @param accept
-	 * @param authorization
-	 * @return
-	 */
-	@GET
-	@Path("/distributionUebCluster")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "UEB Server List", httpMethod = "GET", notes = "return the available UEB Server List",
-	//TODO Tal G fix response headers
-	responseHeaders = {
-			@ResponseHeader(name = Constants.CONTENT_TYPE_HEADER, description = "Determines the format of the response body", response = String.class), 
-			@ResponseHeader(name = "Content-Length", description = "Length of  the response body", response = String.class)})
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Cambria API server’s FQDNs is returned", response = ServerListResponse.class),
-			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"),
-			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
-	public Response getUebServerList( 
-			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
-			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization) {
-		
-		init(request);
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		Response response = null;
-		ResponseFormat responseFormat = null;
-		
-		if (instanceId == null) {
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			response = buildErrorResponse(responseFormat);
-			getComponentsUtils().auditMissingInstanceId(AuditingActionEnum.GET_UEB_CLUSTER, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
-			return response;
-		}
-		
-		try {
-			Either<ServerListResponse, ResponseFormat> actionResponse = distributionLogic.getUebServerList();
+    private static final Logger log = LoggerFactory.getLogger(DistributionServlet.class);
+    @Resource
+    private DistributionBusinessLogic distributionLogic;
+    @Context
+    private HttpServletRequest request;
 
-			if (actionResponse.isRight()) {
-				responseFormat = actionResponse.right().value();
-				response = buildErrorResponse(responseFormat);
-			} else {
-				responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-				response = buildOkResponse(responseFormat, actionResponse.left().value());
-			}
+    /**
+     *
+     * @param requestId
+     * @param instanceId
+     * @param accept
+     * @param authorization
+     * @return
+     */
+    @GET
+    @Path("/distributionUebCluster")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "UEB Server List", httpMethod = "GET", notes = "return the available UEB Server List",
+    //TODO Tal G fix response headers
+    responseHeaders = {
+            @ResponseHeader(name = Constants.CONTENT_TYPE_HEADER, description = "Determines the format of the response body", response = String.class),
+            @ResponseHeader(name = "Content-Length", description = "Length of  the response body", response = String.class)})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Cambria API server’s FQDNs is returned", response = ServerListResponse.class),
+            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"),
+            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+            @ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    public Response getUebServerList(
+            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization) {
 
-			getComponentsUtils().auditGetUebCluster(AuditingActionEnum.GET_UEB_CLUSTER, instanceId, null, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
-			return response;
+        init(request);
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
+        Response response = null;
+        ResponseFormat responseFormat = null;
 
-		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "failed to get ueb serbver list from cofiguration");
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("failed to get ueb serbver list from cofiguration");
-			log.debug("failed to get ueb serbver list from cofiguration", e);
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-			getComponentsUtils().auditGetUebCluster(AuditingActionEnum.GET_UEB_CLUSTER, instanceId, null, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
-			response = buildErrorResponse(responseFormat);
-			return response;
-		}
+        if (instanceId == null) {
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
+            response = buildErrorResponse(responseFormat);
+            getComponentsUtils().auditMissingInstanceId(AuditingActionEnum.GET_UEB_CLUSTER, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+            return response;
+        }
 
-	}
-	
-	/**
-	 * 
-	 * @param requestId
-	 * @param instanceId
-	 * @param accept
-	 * @param contenType
-	 * @param contenLength
-	 * @param authorization
-	 * @param requestJson
-	 * @return
-	 */
-	@POST
-	@Path("/registerForDistribution")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Subscribes for distribution notifications")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "ECOMP component is successfully registered for distribution", response = TopicRegistrationResponse.class),
-			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-			@ApiResponse(code = 400, message = "Missing  Body - POL4500"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - POL4502"),
-			@ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
-			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"),
-			@ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-	//TODO Tal G fix response headers and to check missing header validations with Michael L
-			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")
-	public Response registerForDistribution(
-			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
-			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
-			@ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
-			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-			String requestJson) {
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		init(request);
+        try {
+            Either<ServerListResponse, ResponseFormat> actionResponse = distributionLogic.getUebServerList();
 
-		Wrapper<Response> responseWrapper = new Wrapper<>();
-		Wrapper<RegistrationRequest> registrationRequestWrapper = new Wrapper<>();
+            if (actionResponse.isRight()) {
+                responseFormat = actionResponse.right().value();
+                response = buildErrorResponse(responseFormat);
+            } else {
+                responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+                response = buildOkResponse(responseFormat, actionResponse.left().value());
+            }
 
-		validateHeaders(responseWrapper, request, AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL);
+            getComponentsUtils().auditGetUebCluster(AuditingActionEnum.GET_UEB_CLUSTER, instanceId, null, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+            return response;
 
-		if (responseWrapper.isEmpty()) {
-			validateJson(responseWrapper, registrationRequestWrapper, requestJson);
-		}
-		if (responseWrapper.isEmpty()) {
-			validateEnv(responseWrapper, registrationRequestWrapper.getInnerElement().getDistrEnvName());
-		}
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("failed to get ueb serbver list from cofiguration");
+            log.debug("failed to get ueb serbver list from cofiguration", e);
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
+            getComponentsUtils().auditGetUebCluster(AuditingActionEnum.GET_UEB_CLUSTER, instanceId, null, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+            response = buildErrorResponse(responseFormat);
+            return response;
+        }
 
-		if (responseWrapper.isEmpty()) {
-			distributionLogic.handleRegistration(responseWrapper, registrationRequestWrapper.getInnerElement(), buildAuditHandler(request, registrationRequestWrapper.getInnerElement()));
-		} else {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDistributionEngineSystemError, DistributionBusinessLogic.REGISTER_IN_DISTRIBUTION_ENGINE, "registration validation failed");
-			BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(DistributionBusinessLogic.REGISTER_IN_DISTRIBUTION_ENGINE, "registration validation failed");
-		}
+    }
 
-		return responseWrapper.getInnerElement();
-	}
-	
-	/**
-	 * Returns list of valid artifact types for validation done in the distribution client.<br>
-	 * The list is the representation of the values of the enum ArtifactTypeEnum.
-	 * 
-	 * @param requestId
-	 * @param instanceId
-	 * @param authorization
-	 * @param accept
-	 * @return
-	 */
-	@GET
-	@Path("/artifactTypes")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Artifact types list", httpMethod = "GET", notes = "Fetches available artifact types list")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Artifact types list fetched successfully", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
-			@ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-	public Response getValidArtifactTypes(
-			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
-			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization, 
-			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
-		init(request);
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		Response response = null;
+    /**
+     *
+     * @param requestId
+     * @param instanceId
+     * @param accept
+     * @param contenType
+     * @param contenLength
+     * @param authorization
+     * @param requestJson
+     * @return
+     */
+    @POST
+    @Path("/registerForDistribution")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Subscribes for distribution notifications")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "ECOMP component is successfully registered for distribution", response = TopicRegistrationResponse.class),
+            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(code = 400, message = "Missing  Body - POL4500"),
+            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
+            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - POL4502"),
+            @ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
+            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"),
+            @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
+    //TODO Tal G fix response headers and to check missing header validations with Michael L
+    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    public Response registerForDistribution(
+            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
+            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            String requestJson) {
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
+        init(request);
 
-		Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<RegistrationRequest> registrationRequestWrapper = new Wrapper<>();
 
-		validateHeaders(responseWrapper, request, AuditingActionEnum.GET_VALID_ARTIFACT_TYPES);
-		if (responseWrapper.isEmpty()) {
-			response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), ArtifactTypeEnum.values());
-		} else {
-			response = responseWrapper.getInnerElement();
-		}
-		return response;
-	}
-	
-	/**
-	 * Removes from subscription for distribution notifications
-	 * 
-	 * @param requestId
-	 * @param instanceId
-	 * @param accept
-	 * @param contenType
-	 * @param contenLength
-	 * @param authorization
-	 * @param requestJson
-	 * @return
-	 */
-	@POST
-	@Path("/unRegisterForDistribution")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Removes from subscription for distribution notifications")
-	//TODO Edit the responses
-	@ApiResponses(value = {
-			@ApiResponse(code = 204, message = "ECOMP component is successfully unregistered", response = TopicUnregistrationResponse.class),
-			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-			@ApiResponse(code = 400, message = "Missing  Body - POL4500"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - SVC4506"),
-			@ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
-			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
-			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),
-			@ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")
-	public Response unRegisterForDistribution( 
-			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
-			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
-			@ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
-			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-			String requestJson) {
-		
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		init(request);
+        validateHeaders(responseWrapper, request, AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL);
 
-		Wrapper<Response> responseWrapper = new Wrapper<>();
-		Wrapper<RegistrationRequest> unRegistrationRequestWrapper = new Wrapper<>();
+        if (responseWrapper.isEmpty()) {
+            validateJson(responseWrapper, registrationRequestWrapper, requestJson);
+        }
+        if (responseWrapper.isEmpty()) {
+            validateEnv(responseWrapper, registrationRequestWrapper.getInnerElement().getDistrEnvName());
+        }
 
-		validateHeaders(responseWrapper, request, AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL);
+        if (responseWrapper.isEmpty()) {
+            distributionLogic.handleRegistration(responseWrapper, registrationRequestWrapper.getInnerElement(), buildAuditHandler(request, registrationRequestWrapper.getInnerElement()));
+        } else {
+            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(DistributionBusinessLogic.REGISTER_IN_DISTRIBUTION_ENGINE, "registration validation failed");
+        }
 
-		if (responseWrapper.isEmpty()) {
-			validateJson(responseWrapper, unRegistrationRequestWrapper, requestJson);
-		}
-		if (responseWrapper.isEmpty()) {
-			validateEnv(responseWrapper, unRegistrationRequestWrapper.getInnerElement().getDistrEnvName());
-		}
-		if (responseWrapper.isEmpty()) {
-			distributionLogic.handleUnRegistration(responseWrapper, unRegistrationRequestWrapper.getInnerElement(), buildAuditHandler(request, unRegistrationRequestWrapper.getInnerElement()));
-		} else {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDistributionEngineSystemError, DistributionBusinessLogic.UN_REGISTER_IN_DISTRIBUTION_ENGINE, "unregistration validation failed");
-			BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(DistributionBusinessLogic.UN_REGISTER_IN_DISTRIBUTION_ENGINE, "unregistration validation failed");
-		}
+        return responseWrapper.getInnerElement();
+    }
 
-		return responseWrapper.getInnerElement();
-	}
+    /**
+     * Returns list of valid artifact types for validation done in the distribution client.<br>
+     * The list is the representation of the values of the enum ArtifactTypeEnum.
+     *
+     * @param requestId
+     * @param instanceId
+     * @param authorization
+     * @param accept
+     * @return
+     */
+    @GET
+    @Path("/artifactTypes")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Artifact types list", httpMethod = "GET", notes = "Fetches available artifact types list")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Artifact types list fetched successfully", response = String.class),
+            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
+            @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
+    public Response getValidArtifactTypes(
+            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
+        init(request);
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
+        Response response = null;
 
-	private void validateEnv(Wrapper<Response> responseWrapper, String distrEnvName) {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
 
-		// DE194021
-		StorageOperationStatus environmentStatus = distributionLogic.getDistributionEngine().isEnvironmentAvailable();
-		// DE194021
-		// StorageOperationStatus environmentStatus =
-		// distributionLogic.getDistributionEngine().isEnvironmentAvailable(distrEnvName);
-		if (environmentStatus != StorageOperationStatus.OK) {
-			if (environmentStatus == StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND) {
-				Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.DISTRIBUTION_ENV_DOES_NOT_EXIST));
-				responseWrapper.setInnerElement(missingHeaderResponse);
-			} else {
-				Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.GENERAL_ERROR));
-				responseWrapper.setInnerElement(missingHeaderResponse);
-			}
-		}
+        validateHeaders(responseWrapper, request, AuditingActionEnum.GET_VALID_ARTIFACT_TYPES);
+        if (responseWrapper.isEmpty()) {
+            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), ArtifactTypeEnum.values());
+        } else {
+            response = responseWrapper.getInnerElement();
+        }
+        return response;
+    }
 
-	}
+    /**
+     * Removes from subscription for distribution notifications
+     *
+     * @param requestId
+     * @param instanceId
+     * @param accept
+     * @param contenType
+     * @param contenLength
+     * @param authorization
+     * @param requestJson
+     * @return
+     */
+    @POST
+    @Path("/unRegisterForDistribution")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Removes from subscription for distribution notifications")
+    //TODO Edit the responses
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "ECOMP component is successfully unregistered", response = TopicUnregistrationResponse.class),
+            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(code = 400, message = "Missing  Body - POL4500"),
+            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
+            @ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - SVC4506"),
+            @ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
+            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),
+            @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
+    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    public Response unRegisterForDistribution(
+            @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
+            @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+            @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
+            @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            String requestJson) {
 
-	private void init(HttpServletRequest request) {
-		if (distributionLogic == null) {
-			distributionLogic = getDistributionBL(request.getSession().getServletContext());
-		}
-	}
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
+        init(request);
 
-	private void validateHeaders(Wrapper<Response> responseWrapper, HttpServletRequest request, AuditingActionEnum auditingAction) {
-		if (request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER) == null) {
-			Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID));
-			responseWrapper.setInnerElement(missingHeaderResponse);
-			// Audit
-			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditMissingInstanceId(auditingAction, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<RegistrationRequest> unRegistrationRequestWrapper = new Wrapper<>();
 
-		}
+        validateHeaders(responseWrapper, request, AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL);
 
-	}
+        if (responseWrapper.isEmpty()) {
+            validateJson(responseWrapper, unRegistrationRequestWrapper, requestJson);
+        }
+        if (responseWrapper.isEmpty()) {
+            validateEnv(responseWrapper, unRegistrationRequestWrapper.getInnerElement().getDistrEnvName());
+        }
+        if (responseWrapper.isEmpty()) {
+            distributionLogic.handleUnRegistration(responseWrapper, unRegistrationRequestWrapper.getInnerElement(), buildAuditHandler(request, unRegistrationRequestWrapper.getInnerElement()));
+        } else {
+            BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(DistributionBusinessLogic.UN_REGISTER_IN_DISTRIBUTION_ENGINE, "unregistration validation failed");
+        }
 
-	private void validateJson(Wrapper<Response> responseWrapper, Wrapper<RegistrationRequest> registrationRequestWrapper, String requestJson) {
-		if (requestJson == null || requestJson.isEmpty()) {
-			Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_BODY));
-			responseWrapper.setInnerElement(missingBodyResponse);
-		} else {
-			Either<RegistrationRequest, Exception> eitherRegistration = HttpUtil.convertJsonStringToObject(requestJson, RegistrationRequest.class);
-			if (eitherRegistration.isLeft()) {
-				RegistrationRequest registrationRequest = eitherRegistration.left().value();
-				if (registrationRequest.getApiPublicKey() == null) {
-					Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_PUBLIC_KEY));
-					responseWrapper.setInnerElement(missingBodyResponse);
+        return responseWrapper.getInnerElement();
+    }
 
-				} else if (registrationRequest.getDistrEnvName() == null) {
-					Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_ENV_NAME));
-					responseWrapper.setInnerElement(missingBodyResponse);
-				} else {
-					registrationRequestWrapper.setInnerElement(registrationRequest);
-				}
-			} else {
-				Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_BODY));
-				responseWrapper.setInnerElement(missingBodyResponse);
-			}
-		}
+    private void validateEnv(Wrapper<Response> responseWrapper, String distrEnvName) {
 
-	}
+        // DE194021
+        StorageOperationStatus environmentStatus = distributionLogic.getDistributionEngine().isEnvironmentAvailable();
+        if (environmentStatus != StorageOperationStatus.OK) {
+            if (environmentStatus == StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND) {
+                Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.DISTRIBUTION_ENV_DOES_NOT_EXIST));
+                responseWrapper.setInnerElement(missingHeaderResponse);
+            } else {
+                Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.GENERAL_ERROR));
+                responseWrapper.setInnerElement(missingHeaderResponse);
+            }
+        }
 
-	private DistributionBusinessLogic getDistributionBL(ServletContext context) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		return webApplicationContext.getBean(DistributionBusinessLogic.class);
-	}
+    }
 
-	private AuditHandler buildAuditHandler(HttpServletRequest request, RegistrationRequest registrationRequest) {
-		return new AuditHandler(getComponentsUtils(), request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER), registrationRequest);
-	}
+    private void init(HttpServletRequest request) {
+        if (distributionLogic == null) {
+            distributionLogic = getDistributionBL(request.getSession().getServletContext());
+        }
+    }
+
+    private void validateHeaders(Wrapper<Response> responseWrapper, HttpServletRequest request, AuditingActionEnum auditingAction) {
+        if (request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER) == null) {
+            Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID));
+            responseWrapper.setInnerElement(missingHeaderResponse);
+            // Audit
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
+            getComponentsUtils().auditMissingInstanceId(auditingAction, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+
+        }
+
+    }
+
+    private void validateJson(Wrapper<Response> responseWrapper, Wrapper<RegistrationRequest> registrationRequestWrapper, String requestJson) {
+        if (requestJson == null || requestJson.isEmpty()) {
+            Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_BODY));
+            responseWrapper.setInnerElement(missingBodyResponse);
+        } else {
+            Either<RegistrationRequest, Exception> eitherRegistration = HttpUtil.convertJsonStringToObject(requestJson, RegistrationRequest.class);
+            if (eitherRegistration.isLeft()) {
+                RegistrationRequest registrationRequest = eitherRegistration.left().value();
+                if (registrationRequest.getApiPublicKey() == null) {
+                    Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_PUBLIC_KEY));
+                    responseWrapper.setInnerElement(missingBodyResponse);
+
+                } else if (registrationRequest.getDistrEnvName() == null) {
+                    Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_ENV_NAME));
+                    responseWrapper.setInnerElement(missingBodyResponse);
+                } else {
+                    registrationRequestWrapper.setInnerElement(registrationRequest);
+                }
+            } else {
+                Response missingBodyResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_BODY));
+                responseWrapper.setInnerElement(missingBodyResponse);
+            }
+        }
+
+    }
+
+    private DistributionBusinessLogic getDistributionBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(DistributionBusinessLogic.class);
+    }
+
+    private AuditHandler buildAuditHandler(HttpServletRequest request, RegistrationRequest registrationRequest) {
+        return new AuditHandler(getComponentsUtils(), request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER), registrationRequest);
+    }
 }

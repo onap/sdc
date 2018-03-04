@@ -5,22 +5,22 @@ import json
 import copy
 import yaml
 
-########################################################################################################################################################
-#																																				       #	
-# Import all users from a given YAML file																											   #
-# 																																					   #		
-# activation :																																		   #
-#       python importUsersFromYaml.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]     #
-#																																				  	   #			
-# shortest activation (be host = localhost, be port = 8080): 																						   #																       #
-#		python importUsersFromYaml.py [-f <input file> | --ifile=<input file> ]												 				           #
-#									    																											   #	
-#   PyYAML module shall be added to python.																											   #	
-#   pip install PyYAML>=3.1.0 --proxy=http://one.proxy.att.com:8080														                               #	
-########################################################################################################################################################
+#########################################################################################################################################################################################
+#																																				       									#
+# Import all users from a given YAML file																											   									#
+# 																																					   									#
+# activation :																																		   									#
+#       python importUsersFromYaml.py [-s <scheme> | --scheme=<scheme> ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]	#
+#																																				  	   									#
+# shortest activation (be host = localhost, be port = 8080): 																						   									#
+#		python importUsersFromYaml.py [-f <input file> | --ifile=<input file> ]												 				           									#
+#									    																											   									#
+#   PyYAML module shall be added to python.																											   									#
+#   pip install PyYAML>=3.1.0 --proxy=http://one.proxy.att.com:8080														                               									#
+#########################################################################################################################################################################################
 
 
-def importUsers(beHost, bePort, users, adminUser):
+def importUsers(scheme, beHost, bePort, users, adminUser):
 	
 	result = []	
 
@@ -28,12 +28,12 @@ def importUsers(beHost, bePort, users, adminUser):
 			
 		#print("Going to add user " + user['userId'])
 	
-		getRes = getUser(beHost, bePort, user)	
+		getRes = getUser(scheme, beHost, bePort, user)	
 		userId = getRes[0]
 		error = getRes[1]
 		#print error
 		if ( error != None and error == 404 ):
-			res = createUser(beHost, bePort, user ,adminUser)			
+			res = createUser(scheme, beHost, bePort, user ,adminUser)			
 			result.append(res)			
 		else:
 			if ( error == 200 ):
@@ -45,7 +45,7 @@ def importUsers(beHost, bePort, users, adminUser):
 	return result				
 
 
-def getUser(beHost, bePort, user):
+def getUser(scheme, beHost, bePort, user):
 
 	if (user.get('userId') == None):
                 print "Ignoring record", user
@@ -56,8 +56,11 @@ def getUser(beHost, bePort, user):
 		c = pycurl.Curl()
 
 		#print type(userId)
-		url = 'http://' + beHost + ':' + bePort + '/sdc2/rest/v1/user/' + str(userId)
+		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user/' + str(userId)
 		c.setopt(c.URL, url)
+
+		if scheme == 'https':
+			c.setopt(c.SSL_VERIFYPEER, 0)
 
 		#adminHeader = 'USER_ID: ' + adminUser
 		c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json'])
@@ -81,7 +84,7 @@ def getUser(beHost, bePort, user):
 
 		
 
-def createUser(beHost, bePort, user, adminUser):
+def createUser(scheme, beHost, bePort, user, adminUser):
 	
 	if (user.get('userId') == None):
 		print "Ignoring record", user
@@ -92,7 +95,7 @@ def createUser(beHost, bePort, user, adminUser):
 		buffer = StringIO()
 		c = pycurl.Curl()
 
-		url = 'http://' + beHost + ':' + bePort + '/sdc2/rest/v1/user'
+		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user'
 		c.setopt(c.URL, url)
 		c.setopt(c.POST, 1)		
 
@@ -100,7 +103,10 @@ def createUser(beHost, bePort, user, adminUser):
 		c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', adminHeader])
 
 		data = json.dumps(user)
-		c.setopt(c.POSTFIELDS, data)	
+		c.setopt(c.POSTFIELDS, data)
+
+		if scheme == 'https':
+			c.setopt(c.SSL_VERIFYPEER, 0)
 
 		c.setopt(c.WRITEFUNCTION, lambda x: None)
 		#print("before perform")	
@@ -131,7 +137,7 @@ def errorAndExit(errorCode, errorDesc):
 	sys.exit(errorCode)
 	
 def usage():
-	print sys.argv[0], '[-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]'
+	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]'
 
 def main(argv):
 	print 'Number of arguments:', len(sys.argv), 'arguments.'
@@ -141,9 +147,10 @@ def main(argv):
 	inputfile = None 
 
 	adminUser = 'jh0003'
+	scheme ='http'
 
 	try:
-		opts, args = getopt.getopt(argv,"i:p:f:h:",["ip=","port=","ifile="])
+		opts, args = getopt.getopt(argv,"i:p:f:h:s:",["ip=","port=","ifile=","scheme="])
 	except getopt.GetoptError:
 		usage()
 		errorAndExit(2, 'Invalid input')
@@ -159,8 +166,10 @@ def main(argv):
 			bePort = arg
 		elif opt in ("-f", "--ifile"):
 			inputfile = arg
+		elif opt in ("-s", "--scheme"):
+			scheme = arg
 
-	print 'be host =',beHost,', be port =', bePort,', users file =',inputfile
+	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', users file =',inputfile
 	
 	if ( inputfile == None ):
 		usage()
@@ -187,7 +196,7 @@ def main(argv):
 
 	#activeUsers = filter(lambda x: x.get('status') == None or x['status'] == 'ACTIVE', cloneUsers)
 
-	resultTable = importUsers(beHost, bePort, cloneUsers, adminUser)
+	resultTable = importUsers(scheme, beHost, bePort, cloneUsers, adminUser)
 
 	g = lambda x: x[1] != 201 and x[1] != 409
 

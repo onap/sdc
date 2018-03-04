@@ -20,21 +20,20 @@
 
 package org.openecomp.sdc.common.transaction.api;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionCodeEnum;
 
-import fj.data.Either;
-
 public interface ITransactionSdnc {
-	TransactionCodeEnum finishTransaction();
+    TransactionCodeEnum finishTransaction();
 
-	Either<DBActionCodeEnum, TransactionCodeEnum> invokeESAction(boolean isLastAction, ESActionTypeEnum esActiontype, ESArtifactData artifactData);
+    Either<DBActionCodeEnum, TransactionCodeEnum> invokeESAction(boolean isLastAction, ESActionTypeEnum esActiontype, ESArtifactData artifactData);
 
-	<T> Either<T, TransactionCodeEnum> invokeGeneralDBAction(boolean isLastAction, DBTypeEnum dbType, IDBAction dbAction, IDBAction dbRollbackAction);
+    <T> Either<T, TransactionCodeEnum> invokeGeneralDBAction(boolean isLastAction, DBTypeEnum dbType, IDBAction dbAction, IDBAction dbRollbackAction);
 
-	<T> Either<T, TransactionCodeEnum> invokeTitanAction(boolean isLastAction, IDBAction dbAction);
+    <T> Either<T, TransactionCodeEnum> invokeTitanAction(boolean isLastAction, IDBAction dbAction);
 
 }

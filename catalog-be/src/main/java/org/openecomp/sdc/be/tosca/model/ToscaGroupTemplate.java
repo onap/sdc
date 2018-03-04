@@ -24,46 +24,46 @@ import java.util.List;
 import java.util.Map;
 
 public class ToscaGroupTemplate {
-	private String type;
-	List<String> members;
-	private IToscaMetadata metadata;
-	private Map<String, Object> properties;
+    private String type;
+    List<String> members;
+    private IToscaMetadata metadata;
+    private Map<String, Object> properties;
 
-	public ToscaGroupTemplate() {
-		super();
+    public ToscaGroupTemplate() {
+        super();
 
-	}
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public List<String> getMembers() {
-		return members;
-	}
+    public List<String> getMembers() {
+        return members;
+    }
 
-	public void setMembers(List<String> members) {
-		this.members = members;
-	}
+    public void setMembers(List<String> members) {
+        this.members = members;
+    }
 
-	public IToscaMetadata getMetadata() {
-		return metadata;
-	}
+    public IToscaMetadata getMetadata() {
+        return metadata;
+    }
 
-	public void setMetadata(IToscaMetadata metadata) {
-		this.metadata = metadata;
-	}
+    public void setMetadata(IToscaMetadata metadata) {
+        this.metadata = metadata;
+    }
 
-	public Map<String, Object> getProperties() {
-		return properties;
-	}
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, Object> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
 
 }

@@ -42,6 +42,8 @@ cassandraAuditKeySpace: sdcaudit
 cassandraArtifactKeySpace: sdcartifact
 url: http://localhost:8181/sdc1/proxy-designer1#/dashboard
 
+sdcHttpMethod: https
+localDataCenter: DC-Automate01
 
 stopOnClassFailure: false
 

@@ -21,17 +21,18 @@
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum OriginTypeEnum {
-	PRODUCT("Product", "Product", "product instance", ComponentTypeEnum.PRODUCT), 
-	SERVICE("Service", "Service", "service instance", ComponentTypeEnum.SERVICE), 
-	VF("VF", "VF (Virtual Function)", "resource instance", ComponentTypeEnum.RESOURCE),
-	VFC("VFC", "VFC (Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE),
-	CP("CP", "CP (Connection Point)", "resource instance", ComponentTypeEnum.RESOURCE), 
-	VL("VL", "VL (Virtual Link)", "resource instance", ComponentTypeEnum.RESOURCE),
-	Configuration("Configuration", "Configuration ()", "resource instance", ComponentTypeEnum.RESOURCE),
-	VFCMT("VFCMT", "VFCMT (VFC Monitoring Template)", "resource instance", ComponentTypeEnum.RESOURCE),
-	CVFC("CVFC", "CVFC (Complex Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE),
-	PNF("PNF", "PNF (Physical Network Function)", "resource instance", ComponentTypeEnum.RESOURCE),
-	ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE)
+	PRODUCT("Product", "Product", "product instance", ComponentTypeEnum.PRODUCT, false),
+	SERVICE("Service", "Service", "service instance", ComponentTypeEnum.SERVICE, false),
+	VF("VF", "VF (Virtual Function)", "resource instance", ComponentTypeEnum.RESOURCE, false),
+	VFC("VFC", "VFC (Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE, true),
+	CP("CP", "CP (Connection Point)", "resource instance", ComponentTypeEnum.RESOURCE, true),
+	VL("VL", "VL (Virtual Link)", "resource instance", ComponentTypeEnum.RESOURCE, true),
+	Configuration("Configuration", "Configuration ()", "resource instance", ComponentTypeEnum.RESOURCE, true),
+	VFCMT("VFCMT", "VFCMT (VFC Monitoring Template)", "resource instance", ComponentTypeEnum.RESOURCE, true),
+	CVFC("CVFC", "CVFC (Complex Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE, false),
+	PNF("PNF", "PNF (Physical Network Function)", "resource instance", ComponentTypeEnum.RESOURCE, false),
+	CR("CR", "CR (Complex Resource)", "resource instance", ComponentTypeEnum.RESOURCE, false),
+	ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE, false)
 	;
 
 	private String value;
@@ -39,7 +40,7 @@ public enum OriginTypeEnum {
 	private String instanceType;
 	private ComponentTypeEnum componentType;
 
-	private OriginTypeEnum(String value, String displayValue, String instanceType, ComponentTypeEnum componentType) {
+	private OriginTypeEnum(String value, String displayValue, String instanceType, ComponentTypeEnum componentType, boolean isAtomicType) {
 		this.value = value;
 		this.displayValue = displayValue;
 		this.instanceType = instanceType;

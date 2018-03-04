@@ -100,6 +100,12 @@ errors:
         message: "Error: Invalid USER_ID '%1'.",
         messageId: "SVC4008"
     }
+#---------SVC    ------------------------------
+    INVALID_SERVICE_STATE: {
+        code: 409,
+        message: "Error: Invalid service state. Expected state: %1, actual state: %2",
+        messageId: ""
+    }
 #---------SVC4049------------------------------ 
 # %1 - service/resource
     COMPONENT_MISSING_CONTACT: {
@@ -593,7 +599,7 @@ errors:
     }
 #---------SVC4301------------------------------ 
     RESTRICTED_OPERATION: {
-        code: 409,
+        code: 403,
         message: "Error: Restricted operation.",
         messageId: "SVC4301"
     }
@@ -1667,5 +1673,20 @@ errors:
         code: 400,
         message: "Error: Invalid VF Module name modification, can not modify '%1'",
         messageId: "SVC4647"
+    }
+
+
+#---------SVC4673------------------------------
+    INVALID_SERVICE_STATE: {
+        code: 409,
+        message: "Error: Invalid service state. Expected state: %1, actual state: %2",
+        messageId: "SVC4673"
+    }
+
+#---------SVC4674------------------------------
+    INVALID_RESPONSE_FROM_PROXY: {
+        code: 502,
+        message: "Error: The server was acting as a gateway or proxy and received an invalid response from the upstream server",
+        messageId: "SVC4674"
     }
 

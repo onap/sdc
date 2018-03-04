@@ -21,25 +21,28 @@
  * Created by obarda on 3/13/2016.
  */
 'use strict';
-import {LeftPaletteComponent} from "../../../models/components/displayComponent";
-import {Component} from "../../../models/components/component";
+import * as _ from "lodash";
+import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/displayComponent";
+import {Component} from "app/models/components/component";
 import {EventListenerService} from "../../event-listener-service";
 import {ComponentFactory} from "../../../utils/component-factory";
-import {IAppConfigurtaion} from "../../../models/app-config";
+import {IAppConfigurtaion} from "app/models/app-config";
 import {ResourceType, ComponentType, EVENTS} from "../../../utils/constants";
-import {ComponentMetadata} from "../../../models/component-metadata";
+import {ComponentMetadata} from "app/models/component-metadata";
+import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
+import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
 import {Resource} from "app/models/components/resource";
 
-export class LeftPaletteDataObject {
-    displayLeftPanelComponents:Array<LeftPaletteComponent>;
-    onFinishLoadingEvent:string;
+// export class LeftPaletteDataObject {
+//     displayLeftPanelComponents:Array<LeftPaletteComponent>;
+//     onFinishLoadingEvent:string;
 
-    constructor(onFinishEventListener:string) {
+//     constructor(onFinishEventListener:string) {
 
-        this.displayLeftPanelComponents = new Array<LeftPaletteComponent>();
-        this.onFinishLoadingEvent = onFinishEventListener;
-    }
-}
+//         this.displayLeftPanelComponents = new Array<LeftPaletteComponent>();
+//         this.onFinishLoadingEvent = onFinishEventListener;
+//     }
+// }
 
 export class LeftPaletteLoaderService {
 
@@ -62,55 +65,72 @@ export class LeftPaletteLoaderService {
 
     }
 
-    private serviceLeftPaletteData:LeftPaletteDataObject;
-    private resourceLeftPaletteData:LeftPaletteDataObject;
-    private resourcePNFLeftPaletteData:LeftPaletteDataObject;
-    private vlData:LeftPaletteDataObject;
+    // private serviceLeftPaletteData:LeftPaletteDataObject;
+    // private resourceLeftPaletteData:LeftPaletteDataObject;
+    // private resourcePNFLeftPaletteData:LeftPaletteDataObject;
+    // private vlData:LeftPaletteDataObject;
+    leftPanelComponents:Array<LeftPaletteComponent>;
 
     public loadLeftPanel = (component:Component):void => {
-        this.serviceLeftPaletteData = new LeftPaletteDataObject(EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT);
-        this.resourceLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT);
-        this.resourcePNFLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT);
-        this.updateComponentLeftPalette(component);
+        // this.serviceLeftPaletteData = new LeftPaletteDataObject(EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT);
+        // this.resourceLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT);
+        // this.resourcePNFLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT);
+        this.leftPanelComponents = [];
+        this.updateLeftPaletteForTopologyTemplate(component);
     }
 
-    private getResourceLeftPaletteDataByResourceType = (resourceType:string):LeftPaletteDataObject => {
-        if(resourceType == ResourceType.PNF) {
-            return this.resourcePNFLeftPaletteData;
-        }
-        return this.resourceLeftPaletteData;
-    }
+    // private getResourceLeftPaletteDataByResourceType = (resourceType:string):LeftPaletteDataObject => {
+    //     if(resourceType == ResourceType.PNF) {
+    //         return this.resourcePNFLeftPaletteData;
+    //     }
+    //     return this.resourceLeftPaletteData;
+    // }
 
-    private onFinishLoading = (componentType:string, leftPaletteData:LeftPaletteDataObject):void => {
-        this.EventListenerService.notifyObservers(leftPaletteData.onFinishLoadingEvent);
-    };
+    private updateLeftPalette = (componentInternalType:string):void => {
 
-    private updateLeftPalette = (componentType, componentInternalType:string, leftPaletteData:LeftPaletteDataObject):void => {
-
+        /* add components */
         this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
             _.forEach(leftPaletteComponentMetadata, (componentMetadata:ComponentMetadata) => {
-                leftPaletteData.displayLeftPanelComponents.push(new LeftPaletteComponent(componentMetadata));
+                this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
             });
-            this.onFinishLoading(componentType, leftPaletteData);
+            this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
         });
-    };
+
+        /* add groups */
+        //TODO: In backend implement like this:
+        //this.restangular.one("groups").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
+        this.restangular.one('/groupTypes').get().then((leftPaletteGroupTypes:GroupTpes) => {
+            _.forEach(leftPaletteGroupTypes.groupTypes, (groupMetadata: GroupMetadata) => {
+                this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Group, groupMetadata));
+            });
+            this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+        });
+
+        /* add policies */
+        //TODO: In backend implement like this:
+        //this.restangular.one("policies").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
+         this.restangular.one('/policyTypes').get().then((leftPalettePolicyTypes:PolicyTpes) => {
+            _.forEach(leftPalettePolicyTypes.policyTypes, (policyMetadata: PolicyMetadata) => {
+                this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
+            });
+            this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+        });
+    }
 
     public getLeftPanelComponentsForDisplay = (component:Component):Array<LeftPaletteComponent> => {
-        switch (component.componentType) {
-            case ComponentType.SERVICE:
-                return this.serviceLeftPaletteData.displayLeftPanelComponents;
-            default://resource
-                return this.getResourceLeftPaletteDataByResourceType((<Resource>component).resourceType).displayLeftPanelComponents;
-        }
+        return this.leftPanelComponents;
     };
 
-    public updateComponentLeftPalette = (component:Component):void => {
+    /**
+     * Update left palete items according to current topology templates we are in.
+     */
+    public updateLeftPaletteForTopologyTemplate = (component:Component):void => {
         switch (component.componentType) {
             case ComponentType.SERVICE:
-                this.updateLeftPalette(ComponentType.SERVICE, ComponentType.SERVICE, this.serviceLeftPaletteData);
+                this.updateLeftPalette(ComponentType.SERVICE);
                 break;
             case ComponentType.RESOURCE:
-                this.updateLeftPalette(ComponentType.RESOURCE, (<Resource>component).resourceType, this.getResourceLeftPaletteDataByResourceType((<Resource>component).resourceType));
+                this.updateLeftPalette((<Resource>component).resourceType);
                 break;
             default:
                 console.log('ERROR: Component type '+ component.componentType + ' is not exists');

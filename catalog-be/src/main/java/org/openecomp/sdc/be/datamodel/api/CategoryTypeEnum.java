@@ -24,16 +24,16 @@ import java.io.Serializable;
 
 public enum CategoryTypeEnum implements Serializable {
 
-	CATEGORY("category"), SUBCATEGORY("subcategory"), GROUPING("grouping");
+    CATEGORY("category"), SUBCATEGORY("subcategory"), GROUPING("grouping");
 
-	private String value;
+    private String value;
 
-	CategoryTypeEnum(String value) {
-		this.value = value;
-	}
+    CategoryTypeEnum(String value) {
+        this.value = value;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
 }

@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import {
     AttributeModel,
     AttributesGroup,

@@ -18,6 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
+import * as _ from "lodash";
+
 class basePattern {
     pattern:RegExp;
     base:number;

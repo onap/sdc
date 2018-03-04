@@ -35,17 +35,10 @@ export class UiElementPopoverInputComponent extends UiElementBase implements UiE
     saveButton: ButtonModel;
     buttonsArray: ButtonsModelMap;
 
-    onSave = ():void => {
-        if (!this.control.invalid){
-            this.baseEmitter.emit(this.value);
-            this.popoverContentComponent.hide();
-        }
-    }
-
     constructor() {
         super();
         // Create Save button and insert to buttons map
-        this.saveButton = new ButtonModel('save', 'blue', this.onSave);
+        this.saveButton = new ButtonModel('save', 'blue', this.onChange);
         this.buttonsArray = { 'test': this.saveButton };
 
         // Define the regex pattern for this controller

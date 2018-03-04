@@ -19,6 +19,8 @@
  */
 
 import {Component, Resource} from "../models";
+import {ComponentType} from "../utils/constants";
+
 export class EntityFilter {
 
     constructor() {
@@ -56,11 +58,14 @@ export class EntityFilter {
             if (filter.selectedCategoriesModel && filter.selectedCategoriesModel.length > 0) {
                 let filteredCategories = [];
                 angular.forEach(filteredComponents, (component:Component):void => {
-                    if (component.categories && filter.selectedCategoriesModel.indexOf(component.categories[0].uniqueId) !== -1) {
-                        filteredCategories.push(component);
-                    } else if (component.categories && component.categories[0].subcategories && filter.selectedCategoriesModel.indexOf(component.categories[0].subcategories[0].uniqueId) !== -1) {
-                        filteredCategories.push(component);
-                    } else if (component.categories && component.categories[0].subcategories && component.categories[0].subcategories[0].groupings && filter.selectedCategoriesModel.indexOf(component.categories[0].subcategories[0].groupings[0].uniqueId) !== -1) {
+                    let componentCategory = component.categoryNormalizedName +
+                        ((component.subCategoryNormalizedName) ? '.' + component.subCategoryNormalizedName : '');
+                    if (component.componentType === ComponentType.RESOURCE) {
+                        componentCategory = 'resourceNewCategory.' + componentCategory;
+                    } else if (component.componentType === ComponentType.SERVICE) {
+                        componentCategory = 'serviceNewCategory.' + componentCategory;
+                    }
+                    if (filter.selectedCategoriesModel.indexOf(componentCategory) !== -1) {
                         filteredCategories.push(component);
                     }
                 });

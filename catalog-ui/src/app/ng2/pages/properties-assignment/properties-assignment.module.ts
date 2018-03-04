@@ -32,6 +32,7 @@ import {DataTypeService} from "../../services/data-type.service";
 import {PropertiesAssignmentComponent} from "./properties-assignment.page.component";
 import {HierarchyNavService} from "./services/hierarchy-nav.service";
 import {PropertiesUtils} from "./services/properties.utils";
+import {InputsUtils} from "./services/inputs.utils";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
 
 @NgModule({
@@ -53,7 +54,7 @@ import {ComponentModeService} from "../../services/component-services/component-
     exports: [
         PropertiesAssignmentComponent
     ],
-    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService, ComponentModeService]
+    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, DataTypeService, ComponentModeService]
 })
 export class PropertiesAssignmentModule {
 

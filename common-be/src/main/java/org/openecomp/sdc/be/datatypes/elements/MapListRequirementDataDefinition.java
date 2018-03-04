@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+
+
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
 
 public class MapListRequirementDataDefinition extends MapDataDefinition<ListRequirementDataDefinition> {
 

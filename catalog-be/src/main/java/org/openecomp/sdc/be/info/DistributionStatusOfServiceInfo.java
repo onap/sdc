@@ -21,54 +21,54 @@
 package org.openecomp.sdc.be.info;
 
 public class DistributionStatusOfServiceInfo {
-	String distributionID;
-	String timestamp;
-	String userId;
-	String deployementStatus;
+    String distributionID;
+    String timestamp;
+    String userId;
+    String deployementStatus;
 
-	public DistributionStatusOfServiceInfo() {
-		super();
+    public DistributionStatusOfServiceInfo() {
+        super();
 
-	}
+    }
 
-	public DistributionStatusOfServiceInfo(String distributionID, String timestamp, String userId, String deployementStatus) {
-		super();
-		this.distributionID = distributionID;
-		this.timestamp = timestamp;
-		this.userId = userId;
-		this.deployementStatus = deployementStatus;
-	}
+    public DistributionStatusOfServiceInfo(String distributionID, String timestamp, String userId, String deployementStatus) {
+        super();
+        this.distributionID = distributionID;
+        this.timestamp = timestamp;
+        this.userId = userId;
+        this.deployementStatus = deployementStatus;
+    }
 
-	public String getDistributionID() {
-		return distributionID;
-	}
+    public String getDistributionID() {
+        return distributionID;
+    }
 
-	public void setDistributionID(String distributionID) {
-		this.distributionID = distributionID;
-	}
+    public void setDistributionID(String distributionID) {
+        this.distributionID = distributionID;
+    }
 
-	public String getTimestamp() {
-		return timestamp;
-	}
+    public String getTimestamp() {
+        return timestamp;
+    }
 
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public String getUserId() {
-		return userId;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	public String getDeployementStatus() {
-		return deployementStatus;
-	}
+    public String getDeployementStatus() {
+        return deployementStatus;
+    }
 
-	public void setDeployementStatus(String deployementStatus) {
-		this.deployementStatus = deployementStatus;
-	}
+    public void setDeployementStatus(String deployementStatus) {
+        this.deployementStatus = deployementStatus;
+    }
 
 }

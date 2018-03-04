@@ -44,8 +44,6 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	static Gson gson = new Gson();
 
 	static Logger logger = LoggerFactory.getLogger(EcompUserRestUtils.class.getName());
-	static String contentTypeHeaderData = "application/json";
-	static String acceptHeaderDate = "application/json";
 	static String ecompUsername = "12345";
 	static String ecompPassword = "12345";
 
@@ -58,9 +56,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	public static RestResponse pushUser(EcompUser ecompUser) throws IOException {
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.ECOMP_USERNAME.getValue(), ecompUsername);
 		headersMap.put(HttpHeaderEnum.ECOMP_PASSWORD.getValue(), ecompPassword);
 
@@ -84,9 +82,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	public static RestResponse editUser(String loginId, EcompUser ecompUser) throws IOException {
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.ECOMP_USERNAME.getValue(), ecompUsername);
 		headersMap.put(HttpHeaderEnum.ECOMP_PASSWORD.getValue(), ecompPassword);
 
@@ -110,9 +108,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	public static RestResponse getUser(String loginId) throws IOException {
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.ECOMP_USERNAME.getValue(), ecompUsername);
 		headersMap.put(HttpHeaderEnum.ECOMP_PASSWORD.getValue(), ecompPassword);
 
@@ -130,9 +128,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	public static RestResponse getAllUsers() throws IOException {
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.ECOMP_USERNAME.getValue(), ecompUsername);
 		headersMap.put(HttpHeaderEnum.ECOMP_PASSWORD.getValue(), ecompPassword);
 
@@ -150,9 +148,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	public static RestResponse getAllAvailableRoles() throws IOException {
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.ECOMP_USERNAME.getValue(), ecompUsername);
 		headersMap.put(HttpHeaderEnum.ECOMP_PASSWORD.getValue(), ecompPassword);
 
@@ -174,9 +172,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	public static RestResponse pushUserRoles(String loginId, List<EcompRole> roles) throws IOException {
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.ECOMP_USERNAME.getValue(), ecompUsername);
 		headersMap.put(HttpHeaderEnum.ECOMP_PASSWORD.getValue(), ecompPassword);
 
@@ -204,9 +202,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	public static RestResponse getUserRoles(String loginId) throws IOException {
 		Config config = Utils.getConfig();
 
-		Map<String, String> headersMap = new HashMap<String, String>();
-		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
-		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), BaseRestUtils.contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), BaseRestUtils.acceptHeaderData);
 		headersMap.put(HttpHeaderEnum.ECOMP_USERNAME.getValue(), ecompUsername);
 		headersMap.put(HttpHeaderEnum.ECOMP_PASSWORD.getValue(), ecompPassword);
 

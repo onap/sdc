@@ -24,17 +24,17 @@ import java.util.List;
 
 public class ArtifactAccessList {
 
-	public ArtifactAccessList(List<ArtifactAccessInfo> artifacts) {
-		this.artifacts = artifacts;
-	}
+    public ArtifactAccessList(List<ArtifactAccessInfo> artifacts) {
+        this.artifacts = artifacts;
+    }
 
-	private List<ArtifactAccessInfo> artifacts;
+    private List<ArtifactAccessInfo> artifacts;
 
-	public List<ArtifactAccessInfo> getArtifacts() {
-		return artifacts;
-	}
+    public List<ArtifactAccessInfo> getArtifacts() {
+        return artifacts;
+    }
 
-	public void setArtifacts(List<ArtifactAccessInfo> artifacts) {
-		this.artifacts = artifacts;
-	}
+    public void setArtifacts(List<ArtifactAccessInfo> artifacts) {
+        this.artifacts = artifacts;
+    }
 }
