@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7f4f8734",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/VirtualMachineInterfaceGuidelineValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T10:00:23Z",
+      "side": 1,
+      "message": "It could be a one-liner using streams.",
+      "range": {
+        "startLine": 122,
+        "startChar": 1,
+        "endLine": 127,
+        "endChar": 17
+      },
+      "revId": "4adc524ca26a62a900946a56d66de384507ed212",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5f6bab84",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/VirtualMachineInterfaceGuidelineValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-04T10:00:23Z",
+      "side": 1,
+      "message": "You don\u0027t need the keys here - iterate directly over the values. Also, with Java 8 streams it could be much cleaner.\nresources. Compare:\n\nString contrailResource \u003d CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource();\nreturn resources.values().stream().filter(r -\u003e r.getType().equals(contrailResource)).count();",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 28
+      },
+      "revId": "4adc524ca26a62a900946a56d66de384507ed212",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
