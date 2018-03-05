@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6ec35638",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "This should be a local variable, as it gives the same result for all iterations.",
+      "range": {
+        "startLine": 303,
+        "startChar": 22,
+        "endLine": 303,
+        "endChar": 34
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8ebee2ac",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "There are plenty of frameworks methods that do it.",
+      "range": {
+        "startLine": 321,
+        "startChar": 0,
+        "endLine": 328,
+        "endChar": 42
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0eead2ab",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/test/java/org/openecomp/core/utilities/file/FileUtilsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "You could have saved time writing this, as well as unnecessary test in build time, if you had used a framework method.",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 107,
+        "endChar": 5
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8e4342ae",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "There are formatting issues in this file",
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2e2f8ef8",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "Why do you create a new HashMap if it will be replaced anyway? Didn\u0027t static analysis complain about it? I guess a better way would be just return the result:\n\ntry {\n    //...\n    return processToscaYamls(filePaths);\n} finally {\n\n}",
+      "range": {
+        "startLine": 68,
+        "startChar": 6,
+        "endLine": 68,
+        "endChar": 43
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0e017269",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "Why is it done every time? What happens if this is updated concurrently with different values? Can you overwrite somebody else\u0027s configuration by accident?",
+      "range": {
+        "startLine": 81,
+        "startChar": 1,
+        "endLine": 83,
+        "endChar": 71
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4e321a60",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "I\u0027d combine the two filters using \u0026\u0026",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 113,
+        "endChar": 51
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0e38923b",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T13:01:25Z",
+      "side": 1,
+      "message": "new BufferedInputStream(new FileInputStream(...)) may work better here.",
+      "range": {
+        "startLine": 120,
+        "startChar": 33,
+        "endLine": 120,
+        "endChar": 48
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
