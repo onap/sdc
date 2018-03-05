@@ -28,13 +28,7 @@ import org.slf4j.MDC;
  */
 public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
 
-    public static final String PREFIX = "";
     private static final String KEY_CANNOT_BE_NULL = "Key cannot be null";
-    private static final String REQUEST_ID = PREFIX + "RequestId";
-    private static final String SERVICE_NAME = PREFIX + "ServiceName";
-    private static final String PARTNER_NAME = PREFIX + "PartnerName";
-
-    private static final String[] ALL_FIELDS = { REQUEST_ID, SERVICE_NAME, PARTNER_NAME };
 
     @Override
     public Logger getLogger(String className) {
@@ -74,14 +68,12 @@ public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
     @Override
     public Runnable copyToRunnable(Runnable runnable) {
         Objects.requireNonNull(runnable, "Runnable cannot be null");
-        // TODO: Copy only the fields this service is responsible for
         return new MDCRunnableWrapper(runnable);
     }
 
     @Override
     public <V> Callable<V> copyToCallable(Callable<V> callable) {
         Objects.requireNonNull(callable, "Runnable cannot be null");
-        // TODO: Copy only the fields this service is responsible for
         return new MDCCallableWrapper<>(callable);
     }
 
