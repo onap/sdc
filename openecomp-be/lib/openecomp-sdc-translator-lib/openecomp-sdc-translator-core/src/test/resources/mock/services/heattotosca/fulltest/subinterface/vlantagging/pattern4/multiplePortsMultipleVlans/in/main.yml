@@ -1,0 +1,35 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  vnf_name:
+      type: string
+      description: Unique name for this VF instance
+  vf_module_name:
+      type: string
+      description: Unique name for this VF Module instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+  tdcore_zone_0_count:
+      type: number
+      description: >
+        Number of TD Core VMs to be deployed zone 0.
+        This parameter is used to scale the TD Core instances.
+      constraints:
+          - range: { min: 0, max: 8 }
+
+resources:
+  tdcore_zone_0_RRG:
+      type: OS::Heat::ResourceGroup
+      properties:
+        count: { get_param: tdcore_zone_0_count }
+        index_var: $INDEX
+        resource_def:
+          type: nested_pattern4.yml
+          properties:
+            vnf_name: { get_param: vnf_name }
+            vf_module_id: {get_param: vf_module_id}
+            vf_module_name: {get_param: vf_module_name}

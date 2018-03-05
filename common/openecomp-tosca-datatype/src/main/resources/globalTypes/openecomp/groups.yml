@@ -70,3 +70,24 @@ group_types:
         type: boolean
         default: false
         required: true
+
+  org.openecomp.groups.VfcInstanceGroup:
+    derived_from: tosca.groups.Root
+    description: groups VFCs with same parent port role
+    properties:
+      vfc_instance_group_function:
+        type: string
+        required: true
+        description: role of this VFC group
+      vfc_parent_port_role:
+        type: string
+        required: true
+        description: common role of parent ports of VFCs in this group
+      network_collection_function:
+        type: string
+        required: true
+        description: network collection role assigned to this group
+      subinterface_role:
+        type: string
+        required: true
+        description: common role of subinterfaces of VFCs in this group, criteria the group is created

@@ -1,0 +1,615 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested_pattern4
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.vdbe:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF module inst
+    fabric_int_net_rpf:
+      hidden: false
+      immutable: false
+      type: string
+      description: Reverse Path Filtering enable or disable for the fabric virtual network
+    control_int_net_rpf:
+      hidden: false
+      immutable: false
+      type: string
+      description: Reverse Path Filtering enable or disable for the control virtual network
+    control_int_net_forwarding_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: forwarding mode of the control virtual network
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF instance
+    vdbe_untrusted_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV4 address of the secondary vDBE VM on the VAN untrusted network
+    vdbe_aap_untrusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix length for the primary vDBE VM on the VAN untrusted network
+    untrusted_num_vn:
+      hidden: false
+      immutable: false
+      type: float
+      description: Number of vDBE subinterface virtual Networks
+      constraints:
+      - in_range:
+        - 1
+        - 77
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique Name for this VF module inst
+    aap_address_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: Address mode for the vDBE cluster IP
+    control_int_net_shared:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: control virtual network shared
+    vdbe_untrusted_v6_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 address of the secondary vDBE VM on the VAN untrusted network
+    vdbe_untrusted_vmac_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual MAC of the primary vDBE VM on the VAN untrusted network
+    control_int_net_flood_unknown_unicast:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: forwarding mode of the control virtual network
+    port_vdbe_untr_1_port_network_role:
+      type: string
+      required: true
+    vdbe_aap_sec_untrusted_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF inst
+    vdbe_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM Name for this vdbe node 1
+    port_vdbe_untr_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The availability zone of secondary node1 vDBE vm in the local HA pair.
+    untrusted_vn_networks:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of subinterface virtual networks
+      entry_schema:
+        type: string
+    vdbe_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to use for vDBE
+    oam_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of NSDNet network from which the management IP addresses will be allocated
+    vdbe_aap_sec_untrusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
+    port_vdbe_untr_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vdbe_untr_1_port_order:
+      type: integer
+      required: true
+    vdbe_aap_untrusted_v6_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
+    vdbe_aap_untrusted_v6_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
+    fabric_int_net_flood_unknown_unicast:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: forwarding mode of the fabric virtual network
+    untrusted_vlan_tags:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of subinterface vlan tags
+      entry_schema:
+        type: string
+    vdbe_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for vDBE
+    port_vdbe_untr_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    counter:
+      hidden: false
+      immutable: false
+      type: float
+      description: Counter.
+    port_vdbe_untr_1_port_subnetpoolid:
+      type: string
+      required: true
+    fabric_int_net_forwarding_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: forwarding mode of the fabric virtual network
+    fabric_int_net_shared:
+      hidden: false
+      immutable: false
+      description: fabric virtual network shared
+    vdbe_hw_untr_mac_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Secondary MAC address of the secondary vDBE VM on the VAN untrusted network
+    untrusted_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of public untrusted network into which this vDBE HA cluster is deployed
+    port_vdbe_untr_1_port_network_role_tag:
+      type: string
+      required: true
+    vdbe_device_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: VDBE device Name for this vdbe VNF
+    port_vdbe_untr_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    vdbe_aap_untrusted_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix for primary vDBE VM on the VAN untrusted network
+  node_templates:
+    vdbe_node_1:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.vdbe
+      properties:
+        flavor:
+          get_input: vdbe_flavor_name
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: vdbe_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        name:
+          get_input: vdbe_name_1
+    fabric_int_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_name:
+          str_replace:
+            template:
+              get_attribute:
+              - vdbe_untr_1_subports
+              - vlan_tag_list
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+    vdbe_untr_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        ip_requirements:
+          get_input: port_vdbe_untr_1_port_ip_requirements
+        network_role:
+          get_input: port_vdbe_untr_1_port_network_role
+        subnetpoolid:
+          get_input: port_vdbe_untr_1_port_subnetpoolid
+        mac_requirements:
+          get_input: port_vdbe_untr_1_port_mac_requirements
+        name:
+          str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        exCP_naming:
+          get_input: port_vdbe_untr_1_port_exCP_naming
+        virtual_network_refs:
+        - fabric_int_net
+        vlan_requirements:
+          get_input: port_vdbe_untr_1_port_vlan_requirements
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode:
+              get_input: aap_address_mode
+            ip:
+              ip_prefix:
+                get_input: vdbe_aap_untrusted_ip_prefix
+              ip_prefix_len:
+                get_input: vdbe_aap_untrusted_ip_prefix_len
+            mac:
+              get_input: vdbe_untrusted_vmac_address
+          - address_mode:
+              get_input: aap_address_mode
+            ip:
+              ip_prefix:
+                get_input: vdbe_aap_sec_untrusted_ip_prefix
+              ip_prefix_len:
+                get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+            mac:
+              get_input: vdbe_hw_untr_mac_1
+          - address_mode:
+              get_input: aap_address_mode
+            ip:
+              ip_prefix:
+                get_input: vdbe_aap_untrusted_v6_ip_prefix
+              ip_prefix_len:
+                get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+            mac:
+              get_input: vdbe_untrusted_vmac_address
+        network_role_tag:
+          get_input: port_vdbe_untr_1_port_network_role_tag
+        virtual_machine_interface_mac_addresses:
+        - get_input: vdbe_hw_untr_mac_1
+        order:
+          get_input: port_vdbe_untr_1_port_order
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_int_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe_node_1
+          relationship: tosca.relationships.network.BindsTo
+    vdbe_untr_1_subports:
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested_vlan
+      directives:
+      - substitutable
+      properties:
+        aap_untrusted_ip_prefix:
+          get_input: vdbe_aap_untrusted_ip_prefix
+        aap_sec_untrusted_ip_prefix:
+          get_input: vdbe_aap_sec_untrusted_ip_prefix
+        vdbe_subport_network: control_int_net
+        ip_v6_address:
+          get_input: vdbe_untrusted_v6_ip_1
+        counter:
+          get_input: counter
+        ip_address:
+          get_input: vdbe_untrusted_ip_1
+        subinterfaces_name_prefix:
+          str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        aap_address_mode:
+          get_input: aap_address_mode
+        service_template_filter:
+          substitute_service_template: nested_vlanServiceTemplate.yaml
+          count:
+            get_input: untrusted_num_vn
+          mandatory: false
+        aap_untrusted_v6_ip_prefix:
+          get_input: vdbe_aap_untrusted_v6_ip_prefix
+        parent_interface: vdbe_untr_1_port
+        mac_address:
+          get_input: vdbe_hw_untr_mac_1
+        vlan_tag_list:
+          get_input: untrusted_vlan_tags
+        aap_sec_untrusted_ip_prefix_len:
+          get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+        vmac_address:
+          get_attribute:
+          - control_int_net
+          - fq_name
+        aap_untrusted_v6_ip_prefix_len:
+          get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        aap_untrusted_ip_prefix_len:
+          get_input: vdbe_aap_untrusted_ip_prefix_len
+      requirements:
+      - link_vdbe_untr_x_subport:
+          capability: tosca.capabilities.network.Linkable
+          node: control_int_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding_vdbe_untr_x_subport:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe_untr_1_port
+          relationship: tosca.relationships.network.BindsTo
+    control_int_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_name:
+          str_replace:
+            template: VNF_NAME_control_net
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+  groups:
+    nested_pattern4_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested_pattern4.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - vdbe_node_1
+      - fabric_int_net
+      - vdbe_untr_1_port
+      - vdbe_untr_1_subports
+      - control_int_net
+  outputs:
+    out1:
+      description: output param connectivity
+      value:
+        get_attribute:
+        - vdbe_untr_1_subports
+        - aap_address_mode
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.vdbe
+    capabilities:
+      disk.latency_vdbe_node_1:
+      - vdbe_node_1
+      - disk.latency
+      binding_vdbe_node_1:
+      - vdbe_node_1
+      - binding
+      network.outgoing.bytes.rate_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.outgoing.bytes.rate
+      instance_vdbe_node_1:
+      - vdbe_node_1
+      - instance
+      forwarder_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - forwarder
+      disk.device.read.requests_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.read.requests
+      end_point_fabric_int_net:
+      - fabric_int_net
+      - end_point
+      disk.device.usage_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.usage
+      attachment_fabric_int_net:
+      - fabric_int_net
+      - attachment
+      disk.write.bytes_vdbe_node_1:
+      - vdbe_node_1
+      - disk.write.bytes
+      disk.device.write.bytes_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.write.bytes
+      disk.allocation_vdbe_node_1:
+      - vdbe_node_1
+      - disk.allocation
+      memory_vdbe_node_1:
+      - vdbe_node_1
+      - memory
+      cpu_util_vdbe_node_1:
+      - vdbe_node_1
+      - cpu_util
+      network.incoming.packets.rate_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.incoming.packets.rate
+      disk.device.read.bytes_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.read.bytes
+      disk.device.read.bytes.rate_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.read.bytes.rate
+      disk.device.allocation_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.allocation
+      disk.write.requests.rate_vdbe_node_1:
+      - vdbe_node_1
+      - disk.write.requests.rate
+      disk.root.size_vdbe_node_1:
+      - vdbe_node_1
+      - disk.root.size
+      disk.device.iops_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.iops
+      disk.device.write.requests_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.write.requests
+      disk.write.requests_vdbe_node_1:
+      - vdbe_node_1
+      - disk.write.requests
+      network.incoming.bytes.rate_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.incoming.bytes.rate
+      vcpus_vdbe_node_1:
+      - vdbe_node_1
+      - vcpus
+      binding_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - binding
+      disk.ephemeral.size_vdbe_node_1:
+      - vdbe_node_1
+      - disk.ephemeral.size
+      network.outgoing.bytes_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.outgoing.bytes
+      feature_vdbe_untr_1_subports:
+      - vdbe_untr_1_subports
+      - feature
+      disk.device.latency_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.latency
+      disk.capacity_vdbe_node_1:
+      - vdbe_node_1
+      - disk.capacity
+      disk.device.capacity_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.capacity
+      feature_fabric_int_net:
+      - fabric_int_net
+      - feature
+      link_control_int_net:
+      - control_int_net
+      - link
+      network.incoming.bytes_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.incoming.bytes
+      end_point_control_int_net:
+      - control_int_net
+      - end_point
+      disk.usage_vdbe_node_1:
+      - vdbe_node_1
+      - disk.usage
+      disk.read.bytes_vdbe_node_1:
+      - vdbe_node_1
+      - disk.read.bytes
+      feature_vdbe_untr_x_subport_vdbe_untr_1_subports:
+      - vdbe_untr_1_subports
+      - feature_vdbe_untr_x_subport
+      disk.device.read.requests.rate_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.read.requests.rate
+      host_vdbe_node_1:
+      - vdbe_node_1
+      - host
+      feature_control_int_net:
+      - control_int_net
+      - feature
+      cpu.delta_vdbe_node_1:
+      - vdbe_node_1
+      - cpu.delta
+      network.incoming.packets_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.incoming.packets
+      scalable_vdbe_node_1:
+      - vdbe_node_1
+      - scalable
+      link_fabric_int_net:
+      - fabric_int_net
+      - link
+      disk.iops_vdbe_node_1:
+      - vdbe_node_1
+      - disk.iops
+      feature_vdbe_node_1:
+      - vdbe_node_1
+      - feature
+      memory.resident_vdbe_node_1:
+      - vdbe_node_1
+      - memory.resident
+      endpoint_vdbe_node_1:
+      - vdbe_node_1
+      - endpoint
+      network.outgoing.packets.rate_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.outgoing.packets.rate
+      os_vdbe_node_1:
+      - vdbe_node_1
+      - os
+      network.outpoing.packets_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - network.outpoing.packets
+      disk.read.bytes.rate_vdbe_node_1:
+      - vdbe_node_1
+      - disk.read.bytes.rate
+      disk.device.write.bytes.rate_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.write.bytes.rate
+      attachment_control_int_net:
+      - control_int_net
+      - attachment
+      cpu_vdbe_node_1:
+      - vdbe_node_1
+      - cpu
+      disk.device.write.requests.rate_vdbe_node_1:
+      - vdbe_node_1
+      - disk.device.write.requests.rate
+      disk.read.requests_vdbe_node_1:
+      - vdbe_node_1
+      - disk.read.requests
+      disk.write.bytes.rate_vdbe_node_1:
+      - vdbe_node_1
+      - disk.write.bytes.rate
+      feature_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - feature
+      memory.usage_vdbe_node_1:
+      - vdbe_node_1
+      - memory.usage
+    requirements:
+      dependency_vdbe_untr_x_subport_vdbe_untr_1_subports:
+      - vdbe_untr_1_subports
+      - dependency_vdbe_untr_x_subport
+      dependency_vdbe_node_1:
+      - vdbe_node_1
+      - dependency
+      local_storage_vdbe_node_1:
+      - vdbe_node_1
+      - local_storage
+      dependency_vdbe_untr_1_port:
+      - vdbe_untr_1_port
+      - dependency
+      dependency_control_int_net:
+      - control_int_net
+      - dependency
+      dependency_fabric_int_net:
+      - fabric_int_net
+      - dependency
+      dependency_vdbe_untr_1_subports:
+      - vdbe_untr_1_subports
+      - dependency
