@@ -29,6 +29,8 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1b/";
   private static final String PATTERN_1C1_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1c1/";
+  private static final String PATTERN_4_BASE_DIRECTORY =
+      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern4/";
 
   @Test
   public void testSubInterfaceComputePortNetwork() throws IOException {
@@ -242,5 +244,90 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 5. All connectivities including dependency, get attribute from nodes and output param
      */
     testTranslationWithInit(PATTERN_1C1_BASE_DIRECTORY + "allConnectivities");
+  }
+
+  //Pattern 4 Test Cases
+  @Test
+  public void testSubInterfaceComputePortNetworkPattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, one port and one subinterface resource group with only
+     * port connected to network
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY +
+        "computePortNetworkSubInterface");
+  }
+
+  @Test
+  public void testSubInterfaceMultiplePortsMultipleVlansPattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, two ports and two subinterface resource groups with
+     * 1. Port connected to network
+     * 2. Sub-interfaces each with different nested files
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "multiplePortsMultipleVlans");
+  }
+
+  @Test
+  public void testSubInterfaceMultipleVlanDiffFilePattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, one port and two subinterface resource groups with
+     * 1. Port connected to network
+     * 2. Sub-interfaces with different nested files
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "multipleVlanDiffFile");
+  }
+
+  @Test
+  public void testSubInterfaceMultipleVlanSameFilePattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, one port and two subinterface resource groups with
+     * 1. Port connected to network
+     * 2. Sub-interfaces with same nested files
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "multipleVlanSameFile");
+  }
+
+  @Test
+  public void testSubInterfaceRegularNestedPattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, one port and one subinterface resource represented
+     * through a regular nested resource and not using a resource group
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "regularNestedSubInterface");
+  }
+
+  @Test
+  public void testSubInterfaceGetAttrInOutPattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, one port and one subinterface resource group with
+     * 1. Port connected to network
+     * 2. Sub-interface connected to different network
+     * 3. Sub-interface has get attribute (in) connectivity from network resource
+     * 4. Sub-interface has get attribute (out) connectivity to second network resource
+     * 5. Sub-interface has get attribute (in) connectivity from output param
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "subInterfaceGetAttrInOut");
+  }
+
+  @Test
+  public void testSubInterfaceNodesConnectedInPattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, one port and one subinterface resource group with
+     * 1. Port connected to network
+     * 2. Sub-interface connected to different network
+     * 3. Sub-interface has depends on (in) connectivity from network resource
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "subInterfaceNodesConnectedIn");
+  }
+
+  @Test
+  public void testSubInterfaceNodesConnectedOutPattern4() throws IOException {
+    /**
+     * Nested Heat file with one compute, one port and one subinterface resource group with
+     * 1. Port connected to network
+     * 2. Sub-interface connected to same network
+     * 3. Sub-interface has depends on (out) connectivity with network resource
+     */
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "subInterfaceNodesConnectedOut");
   }
 }

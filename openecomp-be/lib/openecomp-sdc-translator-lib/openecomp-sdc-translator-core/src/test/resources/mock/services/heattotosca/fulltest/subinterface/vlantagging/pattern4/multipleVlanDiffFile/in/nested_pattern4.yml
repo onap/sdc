@@ -1,0 +1,282 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  aap_address_mode:
+    description: "Address mode for the vDBE cluster IP"
+    type: string
+  control_int_net_forwarding_mode:
+    description: "forwarding mode of the control virtual network"
+    type: string
+  control_int_net_rpf:
+    description: "Reverse Path Filtering enable or disable for the control virtual network"
+    type: string
+  control_int_net_shared:
+    description: "control virtual network shared"
+    type: boolean
+  control_int_net_flood_unknown_unicast:
+    description: "forwarding mode of the control virtual network"
+    type: boolean
+  oam_net_name:
+    description: "Name of NSDNet network from which the management IP addresses will be allocated"
+    type: string
+  untrusted_net_name:
+    description: "Name of public untrusted network into which this vDBE HA cluster is deployed"
+    type: string
+  untrusted_num_vn:
+    constraints:
+      -
+        range:
+          max: 77
+          min: 1
+    description: "Number of vDBE subinterface virtual Networks"
+    type: number
+  untrusted_vlan_tags:
+    description: "List of subinterface vlan tags"
+    type: comma_delimited_list
+  untrusted_vn_networks:
+    description: "List of subinterface virtual networks"
+    type: comma_delimited_list
+  vdbe_aap_sec_untrusted_ip_prefix:
+    description: "ip prefix for secondary vDBE VM aap on the VAN untrusted network"
+    type: string
+  vdbe_aap_sec_untrusted_ip_prefix_len:
+    description: "ip prefix length for the secondary DBE VM aap on the VAN untrusted network"
+    type: string
+  vdbe_aap_untrusted_ip_prefix:
+    description: "ip prefix for primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_aap_untrusted_ip_prefix_len:
+    description: "ip prefix length for the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_aap_untrusted_v6_ip_prefix:
+    description: "ipv6 prefix for the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_aap_untrusted_v6_ip_prefix_len:
+    description: "ipv6 prefix length for the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_device_name:
+    description: "VDBE device Name for this vdbe VNF"
+    type: string
+  vdbe_hw_untr_mac_1:
+    description: "Secondary MAC address of the secondary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_name_1:
+    description: "VM Name for this vdbe node 1"
+    type: string
+  vdbe_untrusted_ip_1:
+    description: "IPV4 address of the secondary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_untrusted_v6_ip_1:
+    description: "IPV6 address of the secondary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_untrusted_vmac_address:
+    description: "Virtual MAC of the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_flavor_name:
+    description: "Flavor to use for vDBE"
+    type: string
+  vdbe_image_name:
+    description: "Image to use for vDBE"
+    type: string
+  vnf_id:
+    description: "Unique ID for this VF inst"
+    type: string
+  vnf_name:
+    description: "Unique name for this VF instance"
+    type: string
+  vf_module_id:
+    description: "Unique ID for this VF module inst"
+    type: string
+  vf_module_name:
+        type: string
+        description: "Unique name for this VF Module instance"
+  availability_zone_1:
+    description: "The availability zone of secondary node1 vDBE vm in the local HA pair."
+    type: string
+  counter:
+    description: "Counter."
+    type: number
+resources:
+  vdbe_node_1:
+    type: OS::Nova::Server
+    properties:
+      availability_zone:
+        get_param: availability_zone_1
+      flavor:
+        get_param: vdbe_flavor_name
+      image:
+        get_param: vdbe_image_name
+      metadata:
+        vf_module_id:
+          get_param: vf_module_id
+        vnf_id:
+          get_param: vnf_id
+        vnf_name:
+          get_param: vnf_name
+      name:
+        get_param: vdbe_name_1
+      networks:
+        - port: {get_resource: vdbe_untr_1_port}
+  vdbe_untr_1_port:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          params:
+            DBE:
+              get_param: vdbe_device_name
+            VM_NAME:
+              get_param: vdbe_name_1
+          template: VM_NAMEDBE001p1n004
+      virtual_machine_interface_allowed_address_pairs:
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          -
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode:
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix:
+                get_param: vdbe_aap_untrusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len:
+                get_param: vdbe_aap_untrusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac:
+              get_param: vdbe_untrusted_vmac_address
+          -
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode:
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix:
+                get_param: vdbe_aap_sec_untrusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len:
+                get_param: vdbe_aap_sec_untrusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac:
+              get_param: vdbe_hw_untr_mac_1
+          -
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode:
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix:
+                get_param: vdbe_aap_untrusted_v6_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len:
+                get_param: vdbe_aap_untrusted_v6_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac:
+              get_param: vdbe_untrusted_vmac_address
+      virtual_machine_interface_mac_addresses:
+        virtual_machine_interface_mac_addresses_mac_address:
+          -
+            get_param: vdbe_hw_untr_mac_1
+      virtual_network_refs:
+        -
+          get_resource: control_int_net
+
+  vdbe_untr_1_subports:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count:
+        get_param: untrusted_num_vn
+      resource_def:
+        type: vlan1.yml
+        properties:
+          aap_address_mode:
+            get_param: aap_address_mode
+          aap_sec_untrusted_ip_prefix:
+            get_param: vdbe_aap_sec_untrusted_ip_prefix
+          aap_sec_untrusted_ip_prefix_len:
+            get_param: vdbe_aap_sec_untrusted_ip_prefix_len
+          aap_untrusted_ip_prefix:
+            get_param: vdbe_aap_untrusted_ip_prefix
+          aap_untrusted_ip_prefix_len:
+            get_param: vdbe_aap_untrusted_ip_prefix_len
+          aap_untrusted_v6_ip_prefix:
+            get_param: vdbe_aap_untrusted_v6_ip_prefix
+          aap_untrusted_v6_ip_prefix_len:
+            get_param: vdbe_aap_untrusted_v6_ip_prefix_len
+          counter:
+            get_param: counter
+          ip_address:
+            get_param: vdbe_untrusted_ip_1
+          ip_v6_address:
+            get_param: vdbe_untrusted_v6_ip_1
+          mac_address:
+            get_param: vdbe_hw_untr_mac_1
+          parent_interface:
+            get_resource: vdbe_untr_1_port
+          subinterfaces_name_prefix:
+            str_replace:
+              params:
+                DBE:
+                  get_param: vdbe_device_name
+                VM_NAME:
+                  get_param: vdbe_name_1
+              template: VM_NAMEDBE001p1n004
+          vlan_tag_list:
+            get_param: untrusted_vlan_tags
+          vmac_address:
+            get_param: vdbe_untrusted_vmac_address
+          vn_network_list:
+             get_param: untrusted_vn_networks
+  vdbe_untr_2_subports:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 5
+      resource_def:
+        type: vlan2.yml
+        properties:
+          aap_address_mode:
+            get_param: aap_address_mode
+          aap_sec_untrusted_ip_prefix:
+            get_param: vdbe_aap_sec_untrusted_ip_prefix
+          aap_sec_untrusted_ip_prefix_len:
+            get_param: vdbe_aap_sec_untrusted_ip_prefix_len
+          aap_untrusted_ip_prefix:
+            get_param: vdbe_aap_untrusted_ip_prefix
+          aap_untrusted_ip_prefix_len:
+            get_param: vdbe_aap_untrusted_ip_prefix_len
+          aap_untrusted_v6_ip_prefix:
+            get_param: vdbe_aap_untrusted_v6_ip_prefix
+          aap_untrusted_v6_ip_prefix_len:
+            get_param: vdbe_aap_untrusted_v6_ip_prefix_len
+          counter:
+            get_param: counter
+          ip_address:
+            get_param: vdbe_untrusted_ip_1
+          ip_v6_address:
+            get_param: vdbe_untrusted_v6_ip_1
+          mac_address:
+            get_param: vdbe_hw_untr_mac_1
+          parent_interface:
+            get_resource: vdbe_untr_1_port
+          subinterfaces_name_prefix:
+            str_replace:
+              params:
+                DBE:
+                  get_param: vdbe_device_name
+                VM_NAME:
+                  get_param: vdbe_name_1
+              template: VM_NAMEDBE001p1n004
+          vlan_tag_list:
+            get_param: untrusted_vlan_tags
+          vmac_address:
+            get_param: vdbe_untrusted_vmac_address
+          vn_network_list:
+             get_param: untrusted_vn_networks
+  control_int_net:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      flood_unknown_unicast:
+        get_param: control_int_net_flood_unknown_unicast
+      is_shared:
+        get_param: control_int_net_shared
+      name:
+        str_replace:
+          params:
+            VNF_NAME:
+              get_param: vnf_name
+          template: VNF_NAME_control_net
+      virtual_network_properties:
+        virtual_network_properties_forwarding_mode:
+          get_param: control_int_net_forwarding_mode
+        virtual_network_properties_rpf:
+          get_param: control_int_net_rpf

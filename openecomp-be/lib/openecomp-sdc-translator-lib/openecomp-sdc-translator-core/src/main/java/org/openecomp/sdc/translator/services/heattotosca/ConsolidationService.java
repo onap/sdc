@@ -18,10 +18,13 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
@@ -856,7 +859,7 @@ public class ConsolidationService {
         && isNumberOfComputeTypesLegal(fileComputeConsolidationData)
         && isNumberOfComputeConsolidationDataPerTypeLegal(
         fileComputeConsolidationData.getAllTypeComputeConsolidationData().iterator().next())
-        && !isThereMoreThanOneNestedLevel(nestedServiceTemplate, context.getConsolidationData());
+        && !isThereMoreThanOneNestedLevel(nestedServiceTemplate, context);
   }
 
   private boolean isNumberOfComputeTypesLegal(
@@ -870,21 +873,73 @@ public class ConsolidationService {
   }
 
   private boolean isThereMoreThanOneNestedLevel(ServiceTemplate nestedServiceTemplate,
-                                                ConsolidationData consolidationData) {
+                                                TranslationContext context) {
     String nestedServiceTemplateName = ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate);
     if (Objects.isNull(nestedServiceTemplateName)) {
       return false;
     }
 
     FileNestedConsolidationData fileNestedConsolidationData =
-        consolidationData.getNestedConsolidationData() == null ? new FileNestedConsolidationData()
-            : consolidationData.getNestedConsolidationData()
-                .getFileNestedConsolidationData(nestedServiceTemplateName);
+        (context.getConsolidationData().getNestedConsolidationData() != null) ?
+            context.getConsolidationData().getNestedConsolidationData()
+                .getFileNestedConsolidationData(nestedServiceTemplateName) :
+            new FileNestedConsolidationData();
 
     return Objects.nonNull(fileNestedConsolidationData)
-        && !CollectionUtils.isEmpty(fileNestedConsolidationData.getAllNestedNodeTemplateIds());
+        && CollectionUtils.isNotEmpty(fileNestedConsolidationData.getAllNestedNodeTemplateIds())
+        && ifNestedFileContainsOnlySubInterface(fileNestedConsolidationData
+        .getAllNestedNodeTemplateIds(), nestedServiceTemplate, context);
   }
 
+  private boolean ifNestedFileContainsOnlySubInterface(Set<String> nestedResourceList,
+                                                       ServiceTemplate serviceTemplate,
+                                                       TranslationContext context) {
+    boolean isNestedWithoutOtherResourceType = true;
+    if (CollectionUtils.isNotEmpty(nestedResourceList)
+        && Objects.nonNull(serviceTemplate.getTopology_template())
+        && Objects.nonNull(serviceTemplate.getTopology_template().getNode_templates())) {
+      List<NodeTemplate> nestedNodeTemplates =
+          nestedResourceList.stream()
+              .map(serviceTemplate.getTopology_template().getNode_templates()::get)
+              .collect(Collectors.toList());
+
+      Set<Object> nestedHeatFileNames = nestedNodeTemplates.stream()
+          .filter(nestedNode -> Objects.nonNull(nestedNode.getDirectives())
+              && (nestedNode.getDirectives().contains(
+              ToscaConstants.NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE)))
+          .filter(nestedNode -> Objects.nonNull(nestedNode.getProperties())
+              && Objects.nonNull(nestedNode.getProperties()
+              .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)))
+          .map(nestedNode -> ((Map) nestedNode.getProperties()
+              .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME))
+              .get(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME))
+          .collect(Collectors.toSet());
+
+      for (Object fileName : nestedHeatFileNames) {
+        if (!(fileName instanceof String)) {
+          return isNestedWithoutOtherResourceType;
+        }
+
+        String heatFileName = context.getNestedHeatFileName().get(String.valueOf(fileName));
+
+        isNestedWithoutOtherResourceType = ifAnyResourceIsNotSubInterface(
+            context.getTranslatedServiceTemplates().get(heatFileName)
+                .getTopology_template().getNode_templates().values());
+
+        if (isNestedWithoutOtherResourceType) {
+          break;
+        }
+      }
+    }
+
+    return isNestedWithoutOtherResourceType;
+  }
+
+  // Method returns true if any of the resource are not sub interface
+  private boolean ifAnyResourceIsNotSubInterface(Collection<NodeTemplate> nodeTemplates) {
+    return nodeTemplates.stream().anyMatch(nodeTemplate ->
+        !ToscaNodeType.CONTRAILV2_VLAN_SUB_INTERFACE.equals(nodeTemplate.getType()));
+  }
 
   private List<UnifiedCompositionData> createUnifiedCompositionDataList(
       ServiceTemplate serviceTemplate,
