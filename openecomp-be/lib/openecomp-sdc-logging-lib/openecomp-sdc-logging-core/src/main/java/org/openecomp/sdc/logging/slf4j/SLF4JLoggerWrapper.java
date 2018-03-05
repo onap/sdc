@@ -16,15 +16,12 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.PREFIX;
 
 /**
  * @author EVITALIY
@@ -32,24 +29,37 @@ import static org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.PREFIX
  */
 class SLF4JLoggerWrapper implements Logger {
 
-    private static final String BEGIN_TIMESTAMP = PREFIX + "BeginTimestamp";
-    private static final String END_TIMESTAMP = PREFIX + "EndTimestamp";
-    private static final String ELAPSED_TIME = PREFIX + "ElapsedTime";
-    private static final String STATUS_CODE = PREFIX + "StatusCode";
-    private static final String RESPONSE_CODE = PREFIX + "ResponseCode";
-    private static final String RESPONSE_DESCRIPTION = PREFIX + "ResponsDescription";
-    private static final String CLIENT_IP_ADDRESS = PREFIX + "ClientIpAddress";
-
     //The specified format presents time in UTC formatted per ISO 8601, as required by ONAP logging guidelines
-    private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    private static final String PREFIX = "";
+
+    static final String BEGIN_TIMESTAMP = PREFIX + "BeginTimestamp";
+    static final String END_TIMESTAMP = PREFIX + "EndTimestamp";
+    static final String ELAPSED_TIME = PREFIX + "ElapsedTime";
+    static final String STATUS_CODE = PREFIX + "StatusCode";
+    static final String RESPONSE_CODE = PREFIX + "ResponseCode";
+    static final String RESPONSE_DESCRIPTION = PREFIX + "ResponseDescription";
+    static final String CLIENT_IP_ADDRESS = PREFIX + "ClientIpAddress";
+
+    private static final String[] ALL_MDC_FIELDS = {
+        BEGIN_TIMESTAMP, END_TIMESTAMP, ELAPSED_TIME, STATUS_CODE,
+        RESPONSE_CODE, RESPONSE_DESCRIPTION, CLIENT_IP_ADDRESS
+    };
+
     private final org.slf4j.Logger logger;
 
+    SLF4JLoggerWrapper(org.slf4j.Logger delegate) {
+        this.logger = delegate;
+    }
+
+    // May cause http://www.slf4j.org/codes.html#loggerNameMismatch
     SLF4JLoggerWrapper(Class<?> clazz) {
-        logger = LoggerFactory.getLogger(clazz);
+        this(LoggerFactory.getLogger(clazz));
     }
 
     SLF4JLoggerWrapper(String className) {
-        logger = LoggerFactory.getLogger(className);
+        this(LoggerFactory.getLogger(className));
     }
 
     @Override
@@ -96,40 +106,39 @@ class SLF4JLoggerWrapper implements Logger {
     public void audit(AuditData data) {
 
         if (data == null) {
-            return;
+            return; // not failing if null
         }
 
-        MDC.put(BEGIN_TIMESTAMP, DATE_FORMAT.format(new Date(data.getStartTime())));
-        MDC.put(END_TIMESTAMP,   DATE_FORMAT.format(new Date(data.getEndTime())));
-        MDC.put(ELAPSED_TIME,    String.valueOf(data.getEndTime() - data.getStartTime()));
+        putTimes(data);
+        putIfNotNull(RESPONSE_CODE, data.getResponseCode());
+        putIfNotNull(RESPONSE_DESCRIPTION, data.getResponseDescription());
+        putIfNotNull(CLIENT_IP_ADDRESS, data.getClientIpAddress());
 
         if (data.getStatusCode() != null) {
-            MDC.put(STATUS_CODE, data.getStatusCode() == AuditData.StatusCode.COMPLETE ? "COMPLETE" : "ERROR");
-        }
-
-        if (data.getResponseCode() != null) {
-            MDC.put(RESPONSE_CODE, data.getResponseCode());
-        }
-
-        if (data.getResponseDescription() != null) {
-            MDC.put(RESPONSE_DESCRIPTION, data.getResponseDescription());
-        }
-
-        if (data.getClientIpAddress() != null) {
-            MDC.put(CLIENT_IP_ADDRESS, data.getClientIpAddress());
+            MDC.put(STATUS_CODE, data.getStatusCode().name());
         }
 
         try {
             logger.info(Markers.AUDIT, "");
         } finally {
-            MDC.remove(BEGIN_TIMESTAMP);
-            MDC.remove(END_TIMESTAMP);
-            MDC.remove(ELAPSED_TIME);
-            MDC.remove(STATUS_CODE);
-            MDC.remove(RESPONSE_CODE);
-            MDC.remove(RESPONSE_DESCRIPTION);
-            MDC.remove(CLIENT_IP_ADDRESS);
+            for (String k : ALL_MDC_FIELDS) {
+                MDC.remove(k);
+            }
         }
+    }
+
+    private void putIfNotNull(String key, String value) {
+        if (value != null) {
+            MDC.put(key, value);
+        }
+    }
+
+    private void putTimes(AuditData data) {
+        // SimpleDateFormat is not thread-safe and cannot be a constant
+        Format dateTimeFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
+        MDC.put(BEGIN_TIMESTAMP, dateTimeFormat.format(data.getStartTime()));
+        MDC.put(END_TIMESTAMP, dateTimeFormat.format(data.getEndTime()));
+        MDC.put(ELAPSED_TIME, String.valueOf(data.getEndTime() - data.getStartTime()));
     }
 
     @Override
