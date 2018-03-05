@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a4d17f24",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 884,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T20:32:25Z",
+      "side": 1,
+      "message": "Why do you need to retrieve twice the same data? Store the result in a local variable, check it for null and then reuse. Better yet, move this logic to the class that holds nested consolidation data and let it process its data instead of doing it outside.",
+      "range": {
+        "startLine": 883,
+        "startChar": 0,
+        "endLine": 884,
+        "endChar": 71
+      },
+      "revId": "0f5ddbc4d8f14b0d2b7f6379e6bf289bbb338b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_64c7f764",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T20:32:25Z",
+      "side": 1,
+      "message": "What does it do? A method with a meaningful name would help.",
+      "range": {
+        "startLine": 888,
+        "startChar": 1,
+        "endLine": 892,
+        "endChar": 1
+      },
+      "revId": "0f5ddbc4d8f14b0d2b7f6379e6bf289bbb338b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_44a8bb8c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 913,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T20:32:25Z",
+      "side": 1,
+      "message": "You don\u0027t need multiple filters where a simple \u0026\u0026 condition could have done.",
+      "range": {
+        "startLine": 907,
+        "startChar": 1,
+        "endLine": 913,
+        "endChar": 2
+      },
+      "revId": "0f5ddbc4d8f14b0d2b7f6379e6bf289bbb338b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_04ae3398",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 914,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T20:32:25Z",
+      "side": 1,
+      "message": "Again, it looks like you\u0027re doing the same get() several times. If you can\u0027t fit it into Java 8 functional code - just use the old good for loops.",
+      "range": {
+        "startLine": 914,
+        "startChar": 15,
+        "endLine": 914,
+        "endChar": 72
+      },
+      "revId": "0f5ddbc4d8f14b0d2b7f6379e6bf289bbb338b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c4936b59",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T20:32:25Z",
+      "side": 1,
+      "message": "Why not just return here instead of exiting the loop and returning the result right after that?",
+      "range": {
+        "startLine": 929,
+        "startChar": 1,
+        "endLine": 931,
+        "endChar": 9
+      },
+      "revId": "0f5ddbc4d8f14b0d2b7f6379e6bf289bbb338b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_84c24351",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 933,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-05T20:32:25Z",
+      "side": 1,
+      "message": "This method is too long and to complicated to understand.",
+      "range": {
+        "startLine": 897,
+        "startChar": 1,
+        "endLine": 933,
+        "endChar": 5
+      },
+      "revId": "0f5ddbc4d8f14b0d2b7f6379e6bf289bbb338b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
