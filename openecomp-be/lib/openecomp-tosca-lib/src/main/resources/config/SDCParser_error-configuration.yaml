@@ -1,0 +1,22 @@
+# Errors
+errors:
+    FILE_NOT_FOUND: {
+        code: TP0001,
+        failOnError: true,
+        message: "Error: CSAR file not found."
+    }
+    BAD_FORMAT: {
+        code: TP0002,
+        failOnError: true,
+        message: "Error: CSAR file bad format. Check the log for details."
+    }
+    CONFORMANCE_LEVEL_ERROR: {
+        code: TP0003,
+        failOnError: false,
+        message: "Error: CSAR version is unsupported. Parser supports versions %s to %s." 
+    }
+    GENERAL_ERROR: {
+        code: TP0004,
+        failOnError: true,
+        message: "Error: an unexpected internal error occured."
+    }
