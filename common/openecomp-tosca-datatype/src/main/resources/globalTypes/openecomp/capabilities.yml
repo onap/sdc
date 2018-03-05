@@ -108,3 +108,12 @@ capability_types:
       connection_point:
         type: org.openecomp.datatypes.PortMirroringConnectionPointDescription
         required: true
+
+  org.openecomp.capabilities.VLANAssignment:
+    derived_from: tosca.capabilities.Root
+    description: ability to expose routing information of the internal network
+    properties:
+       vfc_instance_group_reference:
+          type: string
+          description: ability to recognize capability per vfc instance group on vnf instance
+          required: true
