@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,20 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.zip.ZipEntry;
@@ -276,5 +283,45 @@ public class FileUtils {
     }
   }
 
+
+  /**
+   * Write files and folders map to disk in the given path
+   *
+   * @param fileContentHandler the file content handler
+   * @param dir                the dir
+   * @return a map containing file names and their absolute paths
+   * @throws IOException the io exception
+   */
+  public static Map<String, String> writeFilesFromFileContentHandler(FileContentHandler
+                                                                         fileContentHandler,
+                                                                     Path dir)
+      throws IOException {
+
+    File file;
+    File dirFile = dir.toFile();
+    Map<String, String> filePaths = new HashMap<>();
+    for (Map.Entry<String, byte[]> fileEntry : fileContentHandler.getFiles().entrySet()) {
+      file = new File(dirFile, fileEntry.getKey());
+      file.getParentFile().mkdirs();
+      filePaths.put(fileEntry.getKey(), file.getAbsolutePath());
+      try (FileOutputStream fop = new FileOutputStream(file.getAbsolutePath());) {
+        fop.write(fileEntry.getValue());
+        fop.flush();
+      }
+    }
+
+    return filePaths;
+  }
+
+  /**
+   * Verify whether the provided extension is valid Yaml/Yml extension or not.
+   *
+   * @param fileExtension the file extension
+   * @return the boolean
+   */
+  public static boolean isValidYamlExtension(String fileExtension){
+    return fileExtension.equalsIgnoreCase(FileExtension.YML.getDisplayName()) ||
+        fileExtension.equalsIgnoreCase(FileExtension.YAML.getDisplayName());
+  }
 
 }
