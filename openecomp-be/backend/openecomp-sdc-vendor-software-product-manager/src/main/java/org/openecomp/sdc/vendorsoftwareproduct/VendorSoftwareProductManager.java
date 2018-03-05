@@ -41,7 +41,7 @@ public interface VendorSoftwareProductManager {
 
   VspDetails getVsp(String vspId, Version version);
 
-  void deleteVsp(String vspIdToDelete);
+  void deleteVsp(String vspId, Version version);
 
   ValidationResponse validate(String vspId, Version version) throws IOException;
 

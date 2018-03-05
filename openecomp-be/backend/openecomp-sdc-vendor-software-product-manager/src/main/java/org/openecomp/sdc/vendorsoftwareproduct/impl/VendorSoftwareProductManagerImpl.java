@@ -57,6 +57,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.errors.VendorSoftwareProductNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
@@ -125,6 +126,7 @@ import java.util.zip.ZipOutputStream;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
 
+  private final VspMergeDao vspMergeDao;
   private final OrchestrationTemplateDao orchestrationTemplateDao;
   private final OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
   private final VendorSoftwareProductInfoDao vspInfoDao;
@@ -144,6 +146,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private final UniqueValueUtil uniqueValueUtil;
 
   public VendorSoftwareProductManagerImpl(
+      VspMergeDao vspMergeDao,
       OrchestrationTemplateDao orchestrationTemplateDataDao,
       OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager,
       VendorSoftwareProductInfoDao vspInfoDao,
@@ -161,6 +164,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       ImageDao imageDao,
       ManualVspToscaManager manualVspToscaManager,
       UniqueValueDao uniqueValueDao) {
+    this.vspMergeDao = vspMergeDao;
     this.orchestrationTemplateDao = orchestrationTemplateDataDao;
     this.orchestrationTemplateCandidateManager = orchestrationTemplateCandidateManager;
     this.vspInfoDao = vspInfoDao;
@@ -210,8 +214,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           orchestrationTemplateDao.get(vspId, version);
       ToscaServiceModel serviceModel =
           serviceModelDao.getServiceModel(vspId, vspDetails.getVersion());
-      if (!isOrchestrationTemplateExist(orchestrationTemplate)
-          || !isServiceModelExist(serviceModel)) {
+      if (isOrchestrationTemplateMissing(orchestrationTemplate)
+          || isServiceModelMissing(serviceModel)) {
         vspErrors.add(VendorSoftwareProductInvalidErrorBuilder
             .vendorSoftwareProductMissingServiceModelErrorBuilder(vspDetails.getId(),
                 vspDetails.getVersion()));
@@ -299,7 +303,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             .generateToscaModel(manualVspToscaManager.gatherVspInformation(vspId, version))
             : serviceModelDao.getServiceModel(vspId, version);
 
-      return compile(vspId, version, serviceModel);
+    return compile(vspId, version, serviceModel);
   }
 
   private boolean validateComponentDependencies(
@@ -320,28 +324,28 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if (!CollectionUtils.isEmpty(deploymentFlavors)) {
       deploymentFlavors.forEach(deploymentFlavor -> {
         DeploymentFlavorEntity deployment = deploymentFlavorDao.get(deploymentFlavor);
-        DeploymentFlavor deploymentlocalFlavor = deployment.getDeploymentFlavorCompositionData();
-        if (deploymentlocalFlavor != null) {
-          if (deploymentlocalFlavor.getFeatureGroupId() == null) {
+        DeploymentFlavor deploymentLocalFlavor = deployment.getDeploymentFlavorCompositionData();
+        if (deploymentLocalFlavor != null) {
+          if (deploymentLocalFlavor.getFeatureGroupId() == null) {
             ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder.
-                getFeatureGroupMandatoryErrorBuilder(deploymentlocalFlavor.getModel());
+                getFeatureGroupMandatoryErrorBuilder(deploymentLocalFlavor.getModel());
             errorCodeList.add(deploymentFlavorErrorBuilder);
           }
-          validateComponetComputeAssociations(errorCodeList, deploymentFlavor,
-                  deployment, deploymentlocalFlavor);
+          validateComponentComputeAssociations(errorCodeList, deploymentFlavor,
+              deployment, deploymentLocalFlavor);
         }
       });
     }
     return errorCodeList;
   }
 
-  private void validateComponetComputeAssociations(Collection<ErrorCode> errorCodeList,
-                                                   DeploymentFlavorEntity deploymentFlavor,
-                                                   DeploymentFlavorEntity deployment,
-                                                   DeploymentFlavor deploymentlocalFlavor) {
-    List<ComponentComputeAssociation> componetComputeAssociations =
+  private void validateComponentComputeAssociations(Collection<ErrorCode> errorCodeList,
+                                                    DeploymentFlavorEntity deploymentFlavor,
+                                                    DeploymentFlavorEntity deployment,
+                                                    DeploymentFlavor deploymentlocalFlavor) {
+    List<ComponentComputeAssociation> componentComputeAssociations =
         deploymentlocalFlavor.getComponentComputeAssociations();
-    if (CollectionUtils.isEmpty(componetComputeAssociations)) {
+    if (CollectionUtils.isEmpty(componentComputeAssociations)) {
       CompositionEntityValidationData compositionEntityValidationData = new
           CompositionEntityValidationData(CompositionEntityType.deployment, deploymentFlavor
           .getId());
@@ -353,10 +357,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
       errorCodeList.add(deploymentFlavorErrorBuilder);
     } else {
-      componetComputeAssociations.forEach(componetComputeAssociation -> {
-        if (componetComputeAssociation == null
-            || !(componetComputeAssociation.getComponentId() != null
-            && componetComputeAssociation.getComputeFlavorId() != null)) {
+      componentComputeAssociations.forEach(componentComputeAssociation -> {
+        if (componentComputeAssociation == null
+            || !(componentComputeAssociation.getComponentId() != null
+            && componentComputeAssociation.getComputeFlavorId() != null)) {
           CompositionEntityValidationData compositionEntityValidationData = new
               CompositionEntityValidationData(CompositionEntityType.deployment,
               deploymentFlavor.getId());
@@ -473,7 +477,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private Map<String, List<ErrorMessage>> compile(String vendorSoftwareProductId, Version version,
                                                   ToscaServiceModel serviceModel) {
-    if (!isServiceModelExist(serviceModel)) {
+    if (isServiceModelMissing(serviceModel)) {
       return null;
     }
 
@@ -515,8 +519,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     VspDetails retrieved = vspInfoDao.get(vspDetails);
     if (retrieved == null) {
       throw new CoreException((new ErrorCode.ErrorCodeBuilder()
-              .withMessage(String.format("Vsp with id %s and version %s does not exist.",
-                      vspDetails.getId(), vspDetails.getVersion().getId()))).build());
+          .withMessage(String.format("Vsp with id %s and version %s does not exist.",
+              vspDetails.getId(), vspDetails.getVersion().getId()))).build());
     }
     vspDetails.setOnboardingMethod(retrieved.getOnboardingMethod());
 
@@ -559,7 +563,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   @Override
   public VspDetails getVsp(String vspId, Version version) {
-      return getValidatedVsp(vspId, version);
+    return getValidatedVsp(vspId, version);
   }
 
   private VspDetails getValidatedVsp(String vspId, Version version) {
@@ -571,9 +575,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   @Override
-  public void deleteVsp(String vspId) {
-    throw new UnsupportedOperationException(
-        VendorSoftwareProductConstants.UNSUPPORTED_OPERATION_ERROR);
+  public void deleteVsp(String vspId, Version version) {
+    vspMergeDao.deleteHint(vspId, version);
   }
 
   @Override
@@ -605,7 +608,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   @Override
-
   public byte[] getOrchestrationTemplateFile(String vspId, Version version) {
     OrchestrationTemplateEntity uploadData = orchestrationTemplateDao.get(vspId, version);
     ByteBuffer contentData = uploadData.getContentData();
@@ -714,7 +716,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private Map<String, List<ErrorMessage>> validateOrchestrationTemplate(
       OrchestrationTemplateEntity orchestrationTemplate) throws IOException {
 
-    if (!isOrchestrationTemplateExist(orchestrationTemplate)) {
+    if (isOrchestrationTemplateMissing(orchestrationTemplate)) {
       return null;
     }
     Map<String, List<ErrorMessage>> validationErrors = new HashMap<>();
@@ -826,15 +828,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     return computeDao.listByVsp(vspId, version);
   }
 
-  private boolean isOrchestrationTemplateExist(OrchestrationTemplateEntity orchestrationTemplate) {
-    return orchestrationTemplate != null
-        && orchestrationTemplate.getContentData() != null
-        && orchestrationTemplate.getFileSuffix() != null
-        && orchestrationTemplate.getFileName() != null;
+  private boolean isOrchestrationTemplateMissing(OrchestrationTemplateEntity orchestrationTemplate) {
+    return orchestrationTemplate == null
+            || orchestrationTemplate.getContentData() == null
+            || orchestrationTemplate.getFileSuffix() == null
+            || orchestrationTemplate.getFileName() == null;
   }
 
-  private boolean isServiceModelExist(ToscaServiceModel serviceModel) {
-    return serviceModel != null && serviceModel.getEntryDefinitionServiceTemplate() != null;
+  private boolean isServiceModelMissing(ToscaServiceModel serviceModel) {
+    return serviceModel == null || serviceModel.getEntryDefinitionServiceTemplate() == null;
   }
 
 }
