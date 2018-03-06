@@ -113,7 +113,8 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
   public void testGetNetworkRoleFromResourceUtil_Port() throws Exception {
     inputFilesPath = INPUT_FILE_PATH_FOR_PORT_NETWORK_ROLE;
     initTranslatorAndTranslate();
-    List<String> validNeutronPortTemplateIds = Arrays.asList("vdbe_0_oam_port_1", "vdbe_oam_port", "vdbe_oam_port_2");
+    List<String> validNeutronPortTemplateIds = Arrays.asList("vdbe_0_oam_port_1", "vdbe_oam_port", "vdbe_oam_port_2",
+        "vdbe_0_int_oam_port_1", "vdbe_int_oam_port", "vdbe_int_oam_port_2");
     validatePortNetworkRole(validNeutronPortTemplateIds, "oam");
 
     List<String> validVmiPortTemplateIds = Arrays.asList("vdbe_0_untr_vmi_0", "vdbe_untr_vmi");

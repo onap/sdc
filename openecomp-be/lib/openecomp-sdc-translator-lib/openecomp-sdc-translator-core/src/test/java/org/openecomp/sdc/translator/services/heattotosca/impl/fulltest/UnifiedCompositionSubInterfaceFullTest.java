@@ -29,9 +29,11 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1b/";
   private static final String PATTERN_1C1_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1c1/";
+  private static final String VFC_INSTANCE_GROUP_BASE_DIRECTORY =
+      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/vfcInstanceGroup/";
 
   @Test
-  public void testSubInterfaceComputePortNetwork() throws IOException {
+  public void testSubInterfaceComputePortNetworkWithGroup() throws IOException {
     /**
      * Heat file with one compute, one port and one subinterface resource group with only port
      * connected to network
@@ -195,7 +197,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   }
 
   @Test
-  public void testSubInterfaceScalingMultiplePortsMultipleVlans() throws IOException {
+  public void testSubInterfaceScalingMultiplePortsMultipleVlansWithGroup() throws IOException {
     /**
      * Heat file with two computes of different type, four ports of two types each and four subinterface resource groups
      * of two types each
@@ -242,5 +244,22 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 5. All connectivities including dependency, get attribute from nodes and output param
      */
     testTranslationWithInit(PATTERN_1C1_BASE_DIRECTORY + "allConnectivities");
+  }
+
+  //****************** VFC Instance Group Tests ***************************
+
+  @Test
+  public void testGroupingOneSubInterfaceTypeOneAbstractNode() throws IOException {
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "oneSubInterfaceNetworkRole");
+  }
+
+  @Test
+  public void testGroupingOneSubInterfaceTypeAndTwoAbstractNodes() throws IOException {
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "oneSubInterfaceNetworkRoleAndTwoAbstractNodes");
+  }
+
+  @Test
+  public void testGroupingTwoSubInterfaceTypeAndTwoAbstractNodes() throws IOException {
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "twoSubInterfaceNetworkRoleAndTwoAbstractNodes");
   }
 }

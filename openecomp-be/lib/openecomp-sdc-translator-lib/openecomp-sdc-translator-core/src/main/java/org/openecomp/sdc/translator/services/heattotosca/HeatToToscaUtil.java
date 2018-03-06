@@ -86,7 +86,6 @@ import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatT
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,6 +94,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -1478,7 +1479,7 @@ public class HeatToToscaUtil {
   //Method evaluate the  network role from sub interface node template id, designed considering
   // only single sub interface present in nested file else it will return null
   public static Optional<String> getNetworkRoleFromResource(Resource resource,
-                                                  TranslationContext translationContext) {
+                                                            TranslationContext translationContext) {
     Optional<String> networkRole = Optional.empty();
     Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
 
@@ -1493,35 +1494,63 @@ public class HeatToToscaUtil {
     if (MapUtils.isNotEmpty(nestedHeatOrchestrationTemplate.getResources())) {
       ContrailV2VirtualMachineInterfaceHelper contrailV2VirtualMachineInterfaceHelper =
           new ContrailV2VirtualMachineInterfaceHelper();
-      Optional<Map.Entry<String, Resource>> vlanSubinterfaceResource = nestedHeatOrchestrationTemplate
+      Optional<Map.Entry<String, Resource>> vlanSubInterfaceResource = nestedHeatOrchestrationTemplate
           .getResources().entrySet().stream()
           .filter(resourceEntry -> contrailV2VirtualMachineInterfaceHelper
               .isVlanSubInterfaceResource(resourceEntry.getValue()))
           .findFirst();
-      if (vlanSubinterfaceResource.isPresent()) {
-        Map.Entry<String, Resource> vlanSubinterfaceResourceEntry = vlanSubinterfaceResource.get();
-        networkRole = evaluateNetworkRoleFromResourceId(vlanSubinterfaceResourceEntry.getKey(),
-            vlanSubinterfaceResourceEntry.getValue().getType());
+      if (vlanSubInterfaceResource.isPresent()) {
+        Map.Entry<String, Resource> vlanSubInterfaceResourceEntry = vlanSubInterfaceResource.get();
+        networkRole = evaluateNetworkRoleFromResourceId(vlanSubInterfaceResourceEntry.getKey(),
+            vlanSubInterfaceResourceEntry.getValue().getType());
       }
     }
     return networkRole;
   }
 
   public static Optional<String> evaluateNetworkRoleFromResourceId(String resourceId, String resourceType) {
-    String[] splitStr = resourceId.toLowerCase().split(UNDERSCORE);
-    List<String> splitList = Arrays.asList(splitStr);
-
     if (resourceType.equals(HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
-      if (splitList.contains(VMI)) {
-        return Optional.of(splitList.get(splitList.indexOf(VMI) - 1));
-      }
+      return Optional.ofNullable(extractNetworkRoleFromContrailPortId(resourceId));
     }
 
     if (resourceType.equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
-      if (splitList.contains(NEUTRON_PORT_IDENTIFIER)) {
-        return Optional.of(splitList.get(splitList.indexOf(NEUTRON_PORT_IDENTIFIER) - 1));
-      }
+      return Optional.ofNullable(extractNetworkRoleFromNeutronPortId(resourceId));
     }
     return Optional.empty();
   }
+
+  private static String extractNetworkRoleFromContrailPortId(String portResourceId) {
+    String vmiResourceIdRegex = "(\\w+)(_\\d+){0,1}_(\\w+)_vmi(_\\d+){0,1}";
+    String vmiIntResourceIdRegex = "(\\w+)(_\\d+){0,1}_int_(\\w+)_vmi(_\\d+){0,1}";
+
+    String portNetworkRole = getPortNetworkRole(portResourceId, vmiResourceIdRegex);
+    String portIntNetworkRole = getPortNetworkRole(portResourceId, vmiIntResourceIdRegex);
+
+    return Objects.nonNull(portNetworkRole) ? portNetworkRole : portIntNetworkRole;
+  }
+
+
+  private static String extractNetworkRoleFromNeutronPortId(String portResourceId) {
+    String portResourceIdRegex = "(\\w+)(_\\d+){0,1}_(\\w+)_port(_\\d+){0,1}";
+    String portIntResourceIdRegex = "(\\w+)(_\\d+){0,1}_int_(\\w+)_port(_\\d+){0,1}";
+
+    String portNetworkRole = getPortNetworkRole(portResourceId, portResourceIdRegex);
+    String portIntNetworkRole = getPortNetworkRole(portResourceId, portIntResourceIdRegex);
+
+    return Objects.nonNull(portNetworkRole) ? portNetworkRole : portIntNetworkRole;
+  }
+
+  private static String getPortNetworkRole(String portResourceId, String portIdRegex) {
+    Pattern pattern = Pattern.compile(portIdRegex);
+    Matcher matcher = pattern.matcher(portResourceId);
+    if (matcher.matches()) {
+      String networkRole = matcher.group(3);
+      //Assuming network role will not contain ONLY digits
+      if (!networkRole.matches("\\d+")) {
+        return matcher.group(3);
+      }
+    }
+    return null;
+  }
+
 }

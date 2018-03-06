@@ -26,11 +26,14 @@ public class Constants {
   public static final String NAME_PROPERTY_NAME = "name";
   public static final String SECURITY_GROUPS_PROPERTY_NAME = "security_groups";
   public static final String PORT_PROPERTY_NAME = "port";
+  static final String VFC_PARENT_PORT_ROLE = "vfc_parent_port_role";
+  static final String SUB_INTERFACE_ROLE = "subinterface_role";
   //General
   public static final String PROP = "properties";
   public static final String ATTR = "attributes";
   public static final String SERVICE_INSTANCE_PORT_PREFIX = "port_";
   public static final String SERVICE_INSTANCE_LINK_PREFIX = "link_";
+  static final String GROUP = "group";
   //Unified model
   static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX = "vm_";
   static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX = "_name";

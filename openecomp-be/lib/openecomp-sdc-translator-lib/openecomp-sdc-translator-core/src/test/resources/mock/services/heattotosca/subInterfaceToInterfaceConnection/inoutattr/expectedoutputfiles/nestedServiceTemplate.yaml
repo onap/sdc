@@ -91,7 +91,7 @@ topology_template:
       type: string
       description: ip prefix length for the primary vDBE VM on the VAN untrusted network
   node_templates:
-    vdbe_untr_vmi_subport:
+    vdbe_0_subint_untr_vmi_0:
       type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
       properties:
         virtual_machine_interface_refs:
@@ -152,20 +152,20 @@ topology_template:
         heat_file: ../Artifacts/nested.yml
         description: cmaui server template for vMMSC
       members:
-      - vdbe_untr_vmi_subport
+      - vdbe_0_subint_untr_vmi_0
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
     capabilities:
-      feature_vdbe_untr_vmi_subport:
-      - vdbe_untr_vmi_subport
+      feature_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
       - feature
     requirements:
-      dependency_vdbe_untr_vmi_subport:
-      - vdbe_untr_vmi_subport
+      dependency_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
       - dependency
-      link_vdbe_untr_vmi_subport:
-      - vdbe_untr_vmi_subport
+      binding_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
+      - binding
+      link_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
       - link
-      binding_vdbe_untr_vmi_subport:
-      - vdbe_untr_vmi_subport
-      - binding
