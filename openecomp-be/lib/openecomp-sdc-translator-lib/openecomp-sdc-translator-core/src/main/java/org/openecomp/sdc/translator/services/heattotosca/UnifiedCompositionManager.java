@@ -67,12 +67,12 @@ public class UnifiedCompositionManager {
       ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
       for (String substitutedNodeTemplateId : fileNestedConsolidationData
           .getAllNestedNodeTemplateIds()) {
-        if (translationContext
+        NodeTemplate nestedNodeTemplate =
+            DataModelUtil.getNodeTemplate(serviceTemplate, substitutedNodeTemplateId);
+        if (Objects.isNull(nestedNodeTemplate) || translationContext
             .isNestedNodeWasHandled(serviceTemplateFileName, substitutedNodeTemplateId)) {
           continue;
         }
-        NodeTemplate nestedNodeTemplate =
-            DataModelUtil.getNodeTemplate(serviceTemplate, substitutedNodeTemplateId);
         Optional<String> substituteServiceTemplateName =
             toscaAnalyzerService.getSubstituteServiceTemplateName(substitutedNodeTemplateId,
                 nestedNodeTemplate);

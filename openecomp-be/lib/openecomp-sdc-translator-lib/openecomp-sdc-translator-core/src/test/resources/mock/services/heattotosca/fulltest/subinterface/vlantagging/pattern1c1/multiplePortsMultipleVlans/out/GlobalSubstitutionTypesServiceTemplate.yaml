@@ -8,6 +8,10 @@ node_types:
   org.openecomp.resource.abstract.nodes.vdbe:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_vdbe_untr_vmi_virtual_machine_interface_allowed_address_pairs:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+        required: true
+        status: SUPPORTED
       subinterface_vlan1_aap_untrusted_v6_ip_prefix:
         type: list
         required: true
@@ -20,6 +24,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_oam_vmi_virtual_machine_interface_mac_addresses:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       subinterface_vlan1_vmac_address:
         type: list
         required: true
@@ -32,17 +42,11 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_2_port_virtual_machine_interface_mac_addresses:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_vdbe_untr_2_port_network_role_tag:
+      vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
-      vm_flavor_name:
+      port_vdbe_oam_vmi_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
@@ -71,7 +75,7 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_vdbe_untr_2_port_network_role:
+      port_vdbe_oam_vmi_network_role_tag:
         type: string
         required: true
         status: SUPPORTED
@@ -87,36 +91,34 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_ip_requirements:
+      port_vdbe_oam_vmi_virtual_network_refs:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_vdbe_untr_vmi_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_vdbe_untr_2_port_vlan_requirements:
+      port_vdbe_oam_vmi_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_vdbe_oam_vmi_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      port_vdbe_untr_2_port_exCP_naming:
-        type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_vdbe_untr_2_port_ip_requirements:
+      port_vdbe_oam_vmi_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_vdbe_untr_1_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
-      port_vdbe_untr_1_port_order:
-        type: integer
-        required: true
-        status: SUPPORTED
+          type: string
       subinterface_vlan2_ip_address:
         type: list
         required: true
@@ -129,8 +131,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_subnetpoolid:
+      port_vdbe_untr_vmi_network_role:
         type: string
+        required: true
+        status: SUPPORTED
+      port_vdbe_oam_vmi_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
       subinterface_vlan2_parent_interface:
@@ -145,14 +151,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_2_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
-      port_vdbe_untr_1_port_virtual_machine_interface_allowed_address_pairs:
-        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        required: true
-        status: SUPPORTED
       subinterface_vlan1_mac_address:
         type: list
         required: true
@@ -183,13 +181,19 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_untr_vmi_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       compute_vdbe_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_network_role_tag:
+      port_vdbe_untr_vmi_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
@@ -199,6 +203,10 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_untr_vmi_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
       subinterface_vlan1_ip_v6_address:
         type: list
         required: true
@@ -217,40 +225,38 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_2_port_virtual_network_refs:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       subinterface_vlan2_vn_network_list:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       subinterface_vlan1_subinterfaces_name_prefix:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_network_role:
+      port_vdbe_oam_vmi_network_role:
         type: string
         required: true
         status: SUPPORTED
-      port_vdbe_untr_2_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_vdbe_untr_1_port_virtual_network_refs:
+      port_vdbe_untr_vmi_virtual_network_refs:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_vdbe_untr_vmi_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
       subinterface_vlan2_vlan_tag_list:
         type: list
         required: true
@@ -269,12 +275,14 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_2_port_subnetpoolid:
-        type: string
+      port_vdbe_oam_vmi_ip_requirements:
+        type: list
         required: true
         status: SUPPORTED
-      port_vdbe_untr_2_port_order:
-        type: integer
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_vdbe_oam_vmi_exCP_naming:
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
       subinterface_vlan2_counter:
@@ -283,6 +291,10 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: float
+      port_vdbe_untr_vmi_order:
+        type: integer
+        required: true
+        status: SUPPORTED
       subinterface_vlan1_parent_interface:
         type: list
         required: true
@@ -321,38 +333,26 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_exCP_naming:
+      port_vdbe_untr_vmi_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-      port_vdbe_untr_1_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       subinterface_vlan1_aap_sec_untrusted_ip_prefix_len:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_2_port_virtual_machine_interface_allowed_address_pairs:
-        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        required: true
-        status: SUPPORTED
-      port_vdbe_untr_1_port_vlan_requirements:
+      port_vdbe_untr_vmi_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      port_vdbe_untr_1_port_virtual_machine_interface_mac_addresses:
-        type: list
+      port_vdbe_oam_vmi_virtual_machine_interface_allowed_address_pairs:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       subinterface_vlan1_vlan_tag_list:
         type: list
         required: true
@@ -374,73 +374,90 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_vdbe_vdbe_untr_2_port:
+    - dependency_vdbe_vdbe_untr_vmi_vlan1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_vdbe_untr_2_port:
+    - dependency_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vlan1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vlan1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - dependency_vdbe_vdbe_untr_2_port_vlan2:
+    - dependency_vdbe_vdbe_untr_vmi:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_vdbe_untr_x_vlan2-Network-Role_vmi_subport_another_vdbe_vdbe_untr_2_port_vlan2:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_vdbe_untr_x_vlan2-Network-Role_vmi_subport_another_vdbe_vdbe_untr_2_port_vlan2:
+    - link_vdbe_vdbe_untr_vmi:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - dependency_vdbe_vdbe_untr_1_port_vlan1:
+    - dependency_vdbe_vdbe_oam_vmi:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_vdbe_untr_x_vlan1-Network-Role_vmi_subport_vdbe_vdbe_untr_1_port_vlan1:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_vdbe_untr_x_vlan1-Network-Role_vmi_subport_vdbe_vdbe_untr_1_port_vlan1:
+    - link_vdbe_vdbe_oam_vmi:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - dependency_vdbe_vdbe_untr_1_port:
+    - dependency_vdbe_vdbe_oam_vmi_vlan2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_vdbe_untr_1_port:
+    - dependency_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
     capabilities:
+      feature_vdbe_vdbe_oam_vmi:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_vdbe_vdbe_oam_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_vdbe_vdbe_untr_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_vdbe:
         type: tosca.capabilities.Node
         occurrences:
@@ -463,17 +480,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_vdbe_vdbe_untr_2_port:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_vdbe_untr_x_vlan1-Network-Role_vmi_subport_vdbe_vdbe_untr_1_port_vlan1:
+      feature_vdbe_vdbe_oam_vmi_vlan2:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
       cpu_util_vdbe:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_vdbe_vdbe_oam_vmi:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -491,7 +509,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_vdbe_vdbe_untr_1_port_vlan1:
+      feature_vdbe_vdbe_untr_vmi:
         type: tosca.capabilities.Node
         occurrences:
         - 1
@@ -508,32 +526,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_vdbe_vdbe_untr_2_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_vdbe_vdbe_untr_1_port:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.write.bytes.rate_vdbe:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_vdbe_vdbe_untr_1_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets.rate_vdbe_vdbe_untr_1_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -560,15 +560,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_vdbe_vdbe_untr_2_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_vdbe_vdbe_untr_1_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      forwarder_vdbe_vdbe_oam_vmi:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -578,7 +571,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_vdbe_untr_x_vlan2-Network-Role_vmi_subport_another_vdbe_vdbe_untr_2_port_vlan2:
+      feature_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vlan1:
         type: tosca.capabilities.Node
         occurrences:
         - 1
@@ -595,19 +588,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_vdbe_vdbe_untr_2_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.read.requests_vdbe:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_vdbe_vdbe_untr_1_port:
+      network.outgoing.packets.rate_vdbe_vdbe_oam_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_vdbe_vdbe_oam_vmi:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -619,29 +612,24 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      cpu.delta_vdbe:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_vdbe_vdbe_untr_2_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_vdbe_vdbe_untr_2_port_vlan2:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      binding_vdbe_vdbe_untr_1_port:
+      binding_vdbe_vdbe_oam_vmi:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
         - 0
+        - UNBOUNDED
+      network.outpoing.packets_vdbe_vdbe_untr_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_vdbe:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
         - UNBOUNDED
       disk.device.read.bytes.rate_vdbe:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -661,12 +649,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      forwarder_vdbe_vdbe_untr_1_port:
-        type: org.openecomp.capabilities.Forwarder
+      network.incoming.packets_vdbe_vdbe_untr_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
       disk.write.requests.rate_vdbe:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_vdbe_vdbe_untr_vmi:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -684,8 +679,22 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      forwarder_vdbe_vdbe_untr_2_port:
-        type: org.openecomp.capabilities.Forwarder
+      network.incoming.packets.rate_vdbe_vdbe_oam_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_vdbe_vdbe_untr_vmi:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outgoing.bytes.rate_vdbe_vdbe_oam_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -707,7 +716,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_vdbe_vdbe_untr_1_port:
+      feature_vdbe_vdbe_untr_vmi_vlan1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_vdbe_vdbe_untr_vmi:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -732,13 +746,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_vdbe_vdbe_untr_1_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_vdbe_vdbe_untr_1_port:
+      network.outpoing.packets_vdbe_vdbe_oam_vmi:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -750,7 +758,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_vdbe_vdbe_untr_2_port:
+      network.outgoing.packets.rate_vdbe_vdbe_untr_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_vdbe_vdbe_untr_vmi:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -761,13 +775,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.read.requests_vdbe:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      forwarder_vdbe_vdbe_untr_vmi:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_vdbe_vdbe_untr_2_port:
+      disk.device.read.requests_vdbe:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -779,18 +792,17 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_vdbe_vdbe_untr_2_port:
+      network.outgoing.bytes_vdbe_vdbe_oam_vmi:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      binding_vdbe_vdbe_untr_2_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      network.outgoing.bytes_vdbe_vdbe_untr_vmi:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
-        - 0
+        - 1
         - UNBOUNDED
       memory_vdbe:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -804,18 +816,6 @@ node_types:
         - 1
         - UNBOUNDED
       disk.device.write.bytes_vdbe:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_vdbe_vdbe_untr_2_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_vdbe_vdbe_untr_1_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -919,20 +919,20 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
-    - dependency_vdbe_untr_x_vlan1-Network-Role_vmi_subport:
+    - dependency_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_untr_x_vlan1-Network-Role_vmi_subport:
+    - link_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - binding_vdbe_untr_x_vlan1-Network-Role_vmi_subport:
+    - binding_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.network.Bindable
         node: org.openecomp.resource.cp.nodes.network.Port
         relationship: tosca.relationships.network.BindsTo
@@ -940,7 +940,7 @@ node_types:
         - 1
         - 1
     capabilities:
-      feature_vdbe_untr_x_vlan1-Network-Role_vmi_subport:
+      feature_vdbe_0_subint_untr_vmi_0:
         type: tosca.capabilities.Node
         occurrences:
         - 1
@@ -1031,20 +1031,20 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
-    - dependency_vdbe_untr_x_vlan2-Network-Role_vmi_subport_another:
+    - dependency_vdbe_1_subint_oam_vmi_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_untr_x_vlan2-Network-Role_vmi_subport_another:
+    - link_vdbe_1_subint_oam_vmi_1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - binding_vdbe_untr_x_vlan2-Network-Role_vmi_subport_another:
+    - binding_vdbe_1_subint_oam_vmi_1:
         capability: tosca.capabilities.network.Bindable
         node: org.openecomp.resource.cp.nodes.network.Port
         relationship: tosca.relationships.network.BindsTo
@@ -1052,8 +1052,8 @@ node_types:
         - 1
         - 1
     capabilities:
-      feature_vdbe_untr_x_vlan2-Network-Role_vmi_subport_another:
+      feature_vdbe_1_subint_oam_vmi_1:
         type: tosca.capabilities.Node
         occurrences:
         - 1
-        - UNBOUNDED
+        - UNBOUNDED
