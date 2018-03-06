@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a2296f9c",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/AuditData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2483
+      },
+      "writtenOn": "2018-03-06T08:23:47Z",
+      "side": 1,
+      "message": "The design for this class was started as interface.\nAs approach is change to concrete implementation\nI would consider to return back getElapsedTime()",
+      "range": {
+        "startLine": 28,
+        "startChar": 13,
+        "endLine": 28,
+        "endChar": 22
+      },
+      "revId": "35f4291240266d369ed7c4f3a8f53a24c15e6777",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
