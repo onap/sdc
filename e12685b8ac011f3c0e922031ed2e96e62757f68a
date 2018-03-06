@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7d76aa07",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T13:26:27Z",
+      "side": 1,
+      "message": "This class has been refactored to AVOID returning its internal structure, but instead make all the related logic part of this class. Please check out the comments and related changes in https://gerrit.onap.org/r/#/c/30285/. Compare different patch sets to see how this can be done.",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 3
+      },
+      "revId": "e12685b8ac011f3c0e922031ed2e96e62757f68a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
