@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {PluginFrameComponent} from "./plugin-frame.component";
 import {LayoutModule} from "../../layout/layout.module";
 import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
+import {UiElementsModule} from "../ui-elements.module";
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
     imports: [
         CommonModule,
         LayoutModule,
-        GlobalPipesModule
+        GlobalPipesModule,
+        UiElementsModule
     ],
     entryComponents: [PluginFrameComponent],
     exports: [

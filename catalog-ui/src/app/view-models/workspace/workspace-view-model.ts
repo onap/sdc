@@ -35,6 +35,7 @@ import {
     LeftPaletteLoaderService
 } from "app/services";
 import {FileUploadModel} from "../../directives/file-upload/file-upload";
+import {EventBusService} from "../../ng2/services/event-bus.service";
 
 
 export interface IWorkspaceViewModelScope extends ng.IScope {
@@ -115,7 +116,8 @@ export class WorkspaceViewModel {
         'Sdc.Services.EntityService',
         'Notification',
         '$stateParams',
-        'Sdc.Services.ProgressService'
+        'Sdc.Services.ProgressService',
+        'EventBusService'
     ];
 
     constructor(private $scope:IWorkspaceViewModelScope,
@@ -134,7 +136,8 @@ export class WorkspaceViewModel {
                 private EntityService:EntityService,
                 private Notification:any,
                 private $stateParams:any,
-                private progressService:ProgressService) {
+                private progressService:ProgressService,
+                private eventBusService:EventBusService) {
 
         this.initScope();
         this.initAfterScope();
@@ -216,6 +219,10 @@ export class WorkspaceViewModel {
             }
         };
 
+        this.$scope.$on('$stateChangeSuccess', (event, toState) => {
+            this.$scope.updateSelectedMenuItem(this.$state.current.name);
+        });
+
         this.$scope.onMenuItemPressed = (state:string, params:any):ng.IPromise<boolean> => {
             let deferred = this.$q.defer();
             let goToState = ():void => {
@@ -223,9 +230,7 @@ export class WorkspaceViewModel {
                     id: this.$scope.component.uniqueId,
                     type: this.$scope.component.componentType.toLowerCase(),
                     components: this.components
-                }, params)).then(() => {
-                    this.$scope.updateSelectedMenuItem(state);
-                });
+                }, params));
                 deferred.resolve(true);
             };
             if (this.isNeedSave()) {
@@ -266,6 +271,14 @@ export class WorkspaceViewModel {
                 });
             }
             this.$scope.isLoading = true;
+
+            let eventData = {
+                uuid: this.$scope.component.uuid,
+                version: this.$scope.changeVersion.selectedVersion.versionNumber
+            };
+
+            this.eventBusService.notify("VERSION_CHANGED", eventData);
+
             this.$state.go(this.$state.current.name, {
                 id: selectedId,
                 type: this.$scope.componentType.toLowerCase(),
@@ -426,6 +439,22 @@ export class WorkspaceViewModel {
             let onSuccess = (component:Component, url:string):void => {
                 //Updating the component from server response
 
+                // Creating the data object to notify the plugins with
+                let eventData: any = {
+                    uuid: this.$scope.component.uuid,
+                    version: this.$scope.component.version
+                };
+
+                // Notifying about events after successfully executing the actions
+                switch (state) {
+                    case "checkOut":
+                        this.eventBusService.notify("CHECK_OUT", eventData);
+                        break;
+                    case "deleteVersion":
+                        this.eventBusService.notify("UNDO_CHECK_OUT", eventData);
+                        break;
+                }
+
                 //the server returns only metaData (small component) except checkout (Full component)  ,so we update only the statuses of distribution & lifecycle
                 this.$scope.component.lifecycleState = component.lifecycleState;
                 this.$scope.component.distributionStatus = component.distributionStatus;
@@ -472,10 +501,12 @@ export class WorkspaceViewModel {
                         });
                         break;
                     case 'lifecycleState/UNDOCHECKOUT':
-                        defaultActionAfterChangeLifecycleState();
-                        this.Notification.success({
-                            message: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TEXT"),
-                            title: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TITLE")
+                        setTimeout(() => {
+                            defaultActionAfterChangeLifecycleState();
+                            this.Notification.success({
+                                message: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TEXT"),
+                                title: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TITLE")
+                            });
                         });
                         break;
                     case 'lifecycleState/certificationRequest':
@@ -550,6 +581,7 @@ export class WorkspaceViewModel {
                 }
             };
             //this.$scope.isLoading = true;
+
             this.ChangeLifecycleStateHandler.changeLifecycleState(this.$scope.component, data, this.$scope, onSuccess);
         };
 

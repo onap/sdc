@@ -37,7 +37,7 @@ export class BasePubSub {
         this.eventsCallbacks.splice(index, 1)
     }
 
-    public notify(eventType:string, eventData:any) {
+    public notify(eventType:string, eventData?:any) {
         let eventObj = {
             type: eventType,
             data: eventData,
@@ -60,9 +60,9 @@ export class BasePubSub {
 
 export class PluginPubSub extends BasePubSub {
 
-    constructor(pluginId: string, subscriberUrl: string) {
+    constructor(pluginId: string, parentUrl: string) {
         super(pluginId);
-        this.register('sdc-hub', window.parent, subscriberUrl);
+        this.register('sdc-hub', window.parent, parentUrl);
         this.subscribe();
     }
 

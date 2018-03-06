@@ -153,7 +153,7 @@ angular.module('sdcApp').directive('ng2SearchWithAutocomplete',
         inputs: ['searchPlaceholder', 'searchBarClass', 'autoCompleteValues'],
         outputs: ['searchChanged', 'searchButtonClicked']
     }) as angular.IDirectiveFactory);
-angular.module('sdcApp').directive('pluginFrame', downgradeComponent( {component: PluginFrameComponent, inputs: ['plugin', 'queryParams']} ) as angular.IDirectiveFactory);
+angular.module('sdcApp').directive('pluginFrame', downgradeComponent( {component: PluginFrameComponent, inputs: ['plugin', 'queryParams'], outputs: ['onLoadingDone']} ) as angular.IDirectiveFactory);
 
 ng1appModule.config([
     '$stateProvider',

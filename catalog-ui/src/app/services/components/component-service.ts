@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, 
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
 import {SharingService} from "../sharing-service";
 import {ComponentMetadata} from "../../models/component-metadata";
+import {EventBusService} from "../../ng2/services/event-bus.service";
 
 export interface IComponentService {
 
@@ -79,14 +80,16 @@ export class ComponentService implements IComponentService {
         'sdcConfig',
         'Sdc.Services.SharingService',
         '$q',
-        '$base64'
+        '$base64',
+        'EventBusService'
     ];
 
     constructor(protected restangular:restangular.IElement,
                 protected sdcConfig:IAppConfigurtaion,
                 protected sharingService:SharingService,
                 protected $q:ng.IQService,
-                protected $base64:any
+                protected $base64:any,
+                protected eventBusService:EventBusService
                ) {
 
         this.restangular.setBaseUrl(sdcConfig.api.root + sdcConfig.api.component_api_root);
@@ -224,6 +227,17 @@ export class ComponentService implements IComponentService {
         }, (err)=> {
             deferred.reject(err);
         });
+
+        // Notifying about events before executing the actual actions
+        switch (state) {
+            case "checkIn":
+                this.eventBusService.notify("CHECK_IN");
+                break;
+            case "submitForTesting":
+                this.eventBusService.notify("SUBMIT_FOR_TESTING");
+                break;
+        }
+
         return deferred.promise;
     };
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@
 import {IComponentService, ComponentService} from "./component-service";
 import {PropertyModel, IAppConfigurtaion, Resource, Component} from "../../models";
 import {SharingService} from "../sharing-service";
+import {EventBusService} from "../../ng2/services/event-bus.service";
 
 export interface IResourceService extends IComponentService {
     updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>>
@@ -37,16 +38,18 @@ export class ResourceService extends ComponentService implements IResourceServic
         'sdcConfig',
         'Sdc.Services.SharingService',
         '$q',
-        '$base64'
+        '$base64',
+        'EventBusService'
     ];
 
     constructor(protected restangular:restangular.IElement,
                 protected sdcConfig:IAppConfigurtaion,
                 protected sharingService:SharingService,
                 protected $q:ng.IQService,
-                protected $base64:any
+                protected $base64:any,
+                protected eventBusService:EventBusService
                 ) {
-        super(restangular, sdcConfig, sharingService, $q, $base64);
+        super(restangular, sdcConfig, sharingService, $q, $base64, eventBusService);
 
         this.restangular = restangular.one("resources");
     }

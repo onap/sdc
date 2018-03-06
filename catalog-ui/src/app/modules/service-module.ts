@@ -52,6 +52,7 @@ import {ConnectionWizardService} from "../ng2/pages/connection-wizard/connection
 import {ComponentInstanceServiceNg2} from "../ng2/services/component-instance-services/component-instance.service";
 import {UserService as UserServiceNg2} from "../ng2/services/user.service";
 import {PluginsService} from "../ng2/services/plugins.service";
+import {EventBusService} from "../ng2/services/event-bus.service";
 
 let moduleName:string = 'Sdc.Services';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
@@ -97,3 +98,4 @@ serviceModule.factory('ConnectionWizardServiceNg2', downgradeInjectable(Connecti
 serviceModule.factory('ComponentInstanceServiceNg2', downgradeInjectable(ComponentInstanceServiceNg2));
 serviceModule.factory('UserServiceNg2', downgradeInjectable(UserServiceNg2));
 serviceModule.factory('PluginsService', downgradeInjectable(PluginsService));
+serviceModule.factory('EventBusService', downgradeInjectable(EventBusService));
