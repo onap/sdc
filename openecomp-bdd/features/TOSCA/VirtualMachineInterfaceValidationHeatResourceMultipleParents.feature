@@ -4,7 +4,7 @@ Feature: Tosca Validation Flow
     Given I want to create a VLM
     Given I want to set all Togglz to be "true"
 
-  Scenario: Test Validation Error
+  Scenario: VirtualMachineInterface Validation Flow - Multiple Parent Port Validation Error
     When I want to create a VSP with onboarding type "NetworkPackage"
 
     Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/multiple-parents.zip"
