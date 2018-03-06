@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_62512735",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T07:53:53Z",
+      "side": 1,
+      "message": "yes, it can be stored in a local variable and use in subsequent calls. I am trying to find the benchmark/benefits of this; is there any known way of evaluating the benefits?",
+      "parentUuid": "5a93c517_6ec35638",
+      "range": {
+        "startLine": 303,
+        "startChar": 22,
+        "endLine": 303,
+        "endChar": 34
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8ebee2ac",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2018-03-05T13:01:25Z",
       "side": 1,
       "message": "There are plenty of frameworks methods that do it.",
+      "range": {
+        "startLine": 321,
+        "startChar": 0,
+        "endLine": 328,
+        "endChar": 42
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0244e371",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T07:53:53Z",
+      "side": 1,
+      "message": "I personally always prefer to use java native APIs to achieve desired results and i generally head to use frameworks when java doesn\u0027t provide a direct way of getting things done. I can make the change; just want to understand if that\u0027s the process we are following in all our code.",
+      "parentUuid": "5a93c517_8ebee2ac",
       "range": {
         "startLine": 321,
         "startChar": 0,
@@ -111,6 +159,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_424e6b98",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T07:53:53Z",
+      "side": 1,
+      "message": "I had kept the code simple by having return at the end which required it to be initialized. However i agree with your assesment, i will fix this.",
+      "parentUuid": "5a93c517_2e2f8ef8",
+      "range": {
+        "startLine": 68,
+        "startChar": 6,
+        "endLine": 68,
+        "endChar": 43
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0e017269",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
         "patchSetId": 4
@@ -122,6 +194,30 @@
       "writtenOn": "2018-03-05T13:01:25Z",
       "side": 1,
       "message": "Why is it done every time? What happens if this is updated concurrently with different values? Can you overwrite somebody else\u0027s configuration by accident?",
+      "range": {
+        "startLine": 81,
+        "startChar": 1,
+        "endLine": 83,
+        "endChar": 71
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e27537cb",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T07:53:53Z",
+      "side": 1,
+      "message": "Here I am overriding the SDC parser configuration in SDC application when a Tosca validation process is initiated. There is no use case of it being updated concurrently.",
+      "parentUuid": "5a93c517_0e017269",
       "range": {
         "startLine": 81,
         "startChar": 1,
@@ -157,6 +253,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_e2ae972d",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T07:53:53Z",
+      "side": 1,
+      "message": "I have kept them separate from readability perspective. Is there any significant benefit in combining them in to one?",
+      "parentUuid": "5a93c517_4e321a60",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 113,
+        "endChar": 51
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0e38923b",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
         "patchSetId": 4
@@ -168,6 +288,30 @@
       "writtenOn": "2018-03-05T13:01:25Z",
       "side": 1,
       "message": "new BufferedInputStream(new FileInputStream(...)) may work better here.",
+      "range": {
+        "startLine": 120,
+        "startChar": 33,
+        "endLine": 120,
+        "endChar": 48
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8280f38b",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T07:53:53Z",
+      "side": 1,
+      "message": "could you please help to explain it better? I tried to research it further but couldn\u0027t find any specific benefits in different approaches in this case.",
+      "parentUuid": "5a93c517_0e38923b",
       "range": {
         "startLine": 120,
         "startChar": 33,
