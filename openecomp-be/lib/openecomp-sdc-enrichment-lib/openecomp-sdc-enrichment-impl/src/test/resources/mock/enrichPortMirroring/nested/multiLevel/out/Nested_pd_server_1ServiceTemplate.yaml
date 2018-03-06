@@ -6,6 +6,8 @@ imports:
     file: openecomp-heat/_index.yml
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
+- openecomp_index:
+    file: openecomp/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.pd_server:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -93,24 +95,24 @@ topology_template:
           - compute_pd_server_user_data_format
           - index_value
     pd_server_pd01_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      type: org.openecomp.resource.cp.v2.extNeutronCP
       properties:
-        exCP_naming:
-          get_input: port_pd01_port_exCP_naming
-        vlan_requirements:
-          get_input: port_pd01_port_vlan_requirements
         ip_requirements:
           get_input: port_pd01_port_ip_requirements
-        network_role_tag:
-          get_input: port_pd01_port_network_role_tag
-        mac_requirements:
-          get_input: port_pd01_port_mac_requirements
-        order:
-          get_input: port_pd01_port_order
         network_role:
           get_input: port_pd01_port_network_role
         subnetpoolid:
           get_input: port_pd01_port_subnetpoolid
+        mac_requirements:
+          get_input: port_pd01_port_mac_requirements
+        exCP_naming:
+          get_input: port_pd01_port_exCP_naming
+        vlan_requirements:
+          get_input: port_pd01_port_vlan_requirements
+        network_role_tag:
+          get_input: port_pd01_port_network_role_tag
+        order:
+          get_input: port_pd01_port_order
         network:
           get_input:
           - port_pd01_port_network
@@ -120,6 +122,15 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: pd_server
           relationship: tosca.relationships.network.BindsTo
+      capabilities:
+        port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: pd_server
+              network_role:
+                get_input: port_pd01_port_network_role
+              pps_capacity: ''
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.pd_server_1
     capabilities:
@@ -279,6 +290,9 @@ topology_template:
       disk.device.iops_pd_server:
       - pd_server
       - disk.device.iops
+      port_mirroring_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - port_mirroring
     requirements:
       local_storage_pd_server:
       - pd_server

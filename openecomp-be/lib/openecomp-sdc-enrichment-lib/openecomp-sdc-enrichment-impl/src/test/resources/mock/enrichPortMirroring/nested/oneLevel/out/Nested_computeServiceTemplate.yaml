@@ -6,8 +6,6 @@ imports:
     file: openecomp-heat/_index.yml
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-- openecomp_index:
-    file: openecomp/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.compute:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -113,7 +111,7 @@ topology_template:
           - compute_compute_user_data_format
           - index_value
     compute_compute_port:
-      type: org.openecomp.resource.cp.v2.extNeutronCP
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
           get_input: port_compute_port_exCP_naming
@@ -140,15 +138,6 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: compute
           relationship: tosca.relationships.network.BindsTo
-      capabilities:
-        port_mirroring:
-          properties:
-            connection_point:
-              nf_type: ''
-              nfc_type: compute
-              network_role:
-                get_input: port_compute_port_network_role
-              pps_capacity: ''
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.compute
     capabilities:
@@ -308,9 +297,6 @@ topology_template:
       disk.device.allocation_compute:
       - compute
       - disk.device.allocation
-      port_mirroring_compute_compute_port:
-      - compute_compute_port
-      - port_mirroring
     requirements:
       local_storage_compute:
       - compute

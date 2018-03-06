@@ -108,7 +108,7 @@ public class PortMirroringEnricher {
       if (isSubstitutableNodeTemplate(nodeTemplate)) {
         List<Map<String, RequirementAssignment>> requirements = nodeTemplate.getRequirements();
         if (Objects.isNull(requirements)) {
-          return;
+          continue;
         }
 
         requirements.forEach(requirement -> addInternalPortToAbstractNode(requirement,
@@ -200,7 +200,7 @@ public class PortMirroringEnricher {
           toscaServiceModel.getServiceTemplates().get(serviceTemplateName);
       Map<String, NodeTemplate> externalNodeTemplates = entry.getValue();
       if (MapUtils.isEmpty(externalNodeTemplates)) {
-        return;
+        continue;
       }
 
       for (Map.Entry<String, NodeTemplate> externalNodeTemplate : externalNodeTemplates
