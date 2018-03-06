@@ -8,6 +8,9 @@ interface IPluginsTabViewModelScope extends ng.IScope {
     user: IUserProperties;
     version: string;
     queryParams: Object;
+    isLoading: boolean;
+
+    onLoadingDone(plugin: Plugin): void;
 }
 
 export class PluginsTabViewModel {
@@ -27,17 +30,23 @@ export class PluginsTabViewModel {
     }
 
     private initScope = ():void => {
+        this.$scope.isLoading = true;
         this.$scope.plugin = this.pluginsService.getPluginByStateUrl(this.$stateParams.path);
-
         this.$scope.version = this.cacheService.get('version');
-
         this.$scope.user = this.cacheService.get('user');
 
         this.$scope.queryParams = {
             userId: this.$scope.user.userId,
             userRole: this.$scope.user.role,
             displayType: "tab",
-            parentUrl: window.location.origin
+            parentUrl: window.location.origin,
+            eventsClientId: this.$scope.plugin.pluginId
+        };
+
+        this.$scope.onLoadingDone = (plugin: Plugin) => {
+            if (plugin.pluginId == this.$scope.plugin.pluginId) {
+                this.$scope.isLoading = false;
+            }
         };
     }
 }

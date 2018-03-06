@@ -1,7 +1,5 @@
 <div class="sdc-catalog-container">
-
+    <loader display="isLoading"></loader>
     <top-nav [version]="version" [hide-search]="true"></top-nav>
-
-    <plugin-frame [plugin]="plugin" [query-params]="queryParams"></plugin-frame>
-
+    <plugin-frame (on-loading-done)="onLoadingDone(plugin)" [plugin]="plugin" [query-params]="queryParams"></plugin-frame>
 </div>

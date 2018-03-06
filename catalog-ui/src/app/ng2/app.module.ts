@@ -28,7 +28,7 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
 import {
     DataTypesServiceProvider, SharingServiceProvider, CookieServiceProvider, StateServiceFactory,
-    StateParamsServiceFactory, CacheServiceProvider, EventListenerServiceProvider
+    StateParamsServiceFactory, CacheServiceProvider, EventListenerServiceProvider, ScopeServiceFactory
 } from "./utils/ng1-upgraded-provider";
 import {ConfigService} from "./services/config.service";
 import {HttpModule} from '@angular/http';
@@ -85,6 +85,7 @@ export function configServiceFactory(config:ConfigService) {
         SharingServiceProvider,
         CookieServiceProvider,
         StateServiceFactory,
+        ScopeServiceFactory,
         StateParamsServiceFactory,
         CacheServiceProvider,
         EventListenerServiceProvider,

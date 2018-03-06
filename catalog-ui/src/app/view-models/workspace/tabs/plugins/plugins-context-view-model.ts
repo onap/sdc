@@ -8,6 +8,9 @@ interface IPluginsContextViewModelScope extends IWorkspaceViewModelScope {
     plugin: Plugin;
     user:IUserProperties;
     queryParams: Object;
+    isLoading: boolean;
+
+    onLoadingDone(plugin: Plugin): void;
 }
 
 export class PluginsContextViewModel {
@@ -27,8 +30,8 @@ export class PluginsContextViewModel {
     }
 
     private initScope = ():void => {
+        this.$scope.isLoading = true;
         this.$scope.plugin = this.pluginsService.getPluginByStateUrl(this.$stateParams.path);
-
         this.$scope.user = this.cacheService.get('user');
 
         this.$scope.queryParams = {
@@ -40,7 +43,14 @@ export class PluginsContextViewModel {
             lifecycleState: this.$scope.component.lifecycleState,
             isOwner: this.$scope.component.lastUpdaterUserId === this.$scope.user.userId,
             version: this.$scope.component.version ,
-            parentUrl: window.location.origin
+            parentUrl: window.location.origin,
+            eventsClientId: this.$scope.plugin.pluginId
+        };
+
+        this.$scope.onLoadingDone = (plugin: Plugin) => {
+            if (plugin.pluginId == this.$scope.plugin.pluginId) {
+                this.$scope.isLoading = false;
+            }
         };
 
     }
