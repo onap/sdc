@@ -39,8 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Utility class for consolidation data collection helper methods.
@@ -80,30 +78,9 @@ public class UnifiedCompositionUtil {
                                                     portTemplateConsolidationDataCollection) {
     ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceDataByType = ArrayListMultimap.create();
     for (PortTemplateConsolidationData port : portTemplateConsolidationDataCollection) {
-      Set<String> allSubInterfaceNodeTypes = port.getAllSubInterfaceNodeTypes();
-      if (CollectionUtils.isEmpty(allSubInterfaceNodeTypes)) {
-        continue;
-      }
-      for (String subInterfaceNodeType : allSubInterfaceNodeTypes) {
-        subInterfaceDataByType.putAll(subInterfaceNodeType,
-            port.getSubInterfaceConsolidationData(subInterfaceNodeType));
-      }
+      port.copyMappedInto(subInterfaceDataByType);
     }
     return subInterfaceDataByType;
-  }
-
-  static List<String> getSubInterfaceNodeTemplateIdsByType(PortTemplateConsolidationData
-                                                               portTemplateConsolidationData,
-                                                           String subInterfaceType) {
-    List<String> subInterfaceNodeTemplateIds = new ArrayList<>();
-    List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        portTemplateConsolidationData.getSubInterfaceConsolidationData(subInterfaceType);
-    if (CollectionUtils.isNotEmpty(subInterfaceTemplateConsolidationDataList)) {
-      subInterfaceNodeTemplateIds = subInterfaceTemplateConsolidationDataList.stream()
-          .map(SubInterfaceTemplateConsolidationData::getNodeTemplateId)
-          .collect(Collectors.toList());
-    }
-    return subInterfaceNodeTemplateIds;
   }
 
   private static void addPortsToMap(Map<String, List<String>> portTypeToIds,
@@ -185,8 +162,7 @@ public class UnifiedCompositionUtil {
         DataModelUtil.getNodeTemplate(serviceTemplate, subInterfaceTemplateConsolidationData.getNodeTemplateId());
     if (Objects.nonNull(portTemplateConsolidationData)) {
       List<String> subInterfaceNodeTemplateIdsByType =
-          UnifiedCompositionUtil.getSubInterfaceNodeTemplateIdsByType(portTemplateConsolidationData,
-              subInterfaceNodeTemplate.getType());
+          portTemplateConsolidationData.getSubInterfaceNodeTemplateIdsByType(subInterfaceNodeTemplate.getType());
       if (CollectionUtils.isNotEmpty(subInterfaceNodeTemplateIdsByType)) {
         //If there are more than one subinterfaces with same type use node template id
         if (subInterfaceNodeTemplateIdsByType.size() > 1) {

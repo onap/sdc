@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -25,7 +24,6 @@ import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -211,38 +209,8 @@ public class ConsolidationDataUtil {
           portTemplateConsolidationData);
     }
 
-    return getSubInterfaceResourceTemplateConsolidationData(subInterfaceTo.getResource(), portTemplateConsolidationData,
+    return portTemplateConsolidationData.getSubInterfaceResourceTemplateConsolidationData(subInterfaceTo.getResource(),
         subInterfaceNodeTemplateId, parentPortNodeTemplateId);
-  }
-
-  private static SubInterfaceTemplateConsolidationData getSubInterfaceResourceTemplateConsolidationData(
-      Resource resource,
-      PortTemplateConsolidationData portTemplateConsolidationData,
-      String subInterfaceNodeTemplateId,
-      String parentPortNodeTemplateId) {
-    String subInterfaceType = ToscaNodeType.VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX
-        + FileUtils.getFileWithoutExtention(HeatToToscaUtil.getSubInterfaceResourceType(resource));
-    SubInterfaceTemplateConsolidationData data = new SubInterfaceTemplateConsolidationData();
-    data.setNodeTemplateId(subInterfaceNodeTemplateId);
-    data.setParentPortNodeTemplateId(parentPortNodeTemplateId);
-    if (CollectionUtils.isNotEmpty(portTemplateConsolidationData.getSubInterfaceConsolidationData(subInterfaceType))) {
-      boolean isNewSubInterface = true;
-      List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          portTemplateConsolidationData.getSubInterfaceConsolidationData(subInterfaceType);
-      for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-          subInterfaceTemplateConsolidationDataList) {
-        if (subInterfaceNodeTemplateId.equals(subInterfaceTemplateConsolidationData.getNodeTemplateId())) {
-          data = subInterfaceTemplateConsolidationData;
-          isNewSubInterface = false;
-        }
-      }
-      if (isNewSubInterface) {
-        portTemplateConsolidationData.addSubInterfaceConsolidationData(subInterfaceType, data);
-      }
-    } else {
-      portTemplateConsolidationData.addSubInterfaceConsolidationData(subInterfaceType, data);
-    }
-    return data;
   }
 
   /**

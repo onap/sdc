@@ -98,7 +98,10 @@ public class ToscaNodeType {
       + "MultiDeploymentFlavor.CVFC";
   public static final String COMPUTE_TYPE_PREFIX = "org.openecomp.resource.vfc.compute.nodes.heat";
   public static final String VFC_TYPE_PREFIX = "org.openecomp.resource.vfc.nodes.heat";
+  public static final String GROUP_TYPE_PREFIX = "org.openecomp.groups";
+  public static final String VFC_INSTANCE_GROUP = ".VfcInstanceGroup";
 
-  private ToscaNodeType() {}
+  private ToscaNodeType() {
+  }
 }
 
