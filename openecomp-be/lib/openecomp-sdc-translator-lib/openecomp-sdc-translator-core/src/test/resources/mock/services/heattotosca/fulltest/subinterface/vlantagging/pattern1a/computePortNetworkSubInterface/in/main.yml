@@ -113,8 +113,8 @@ resources:
       name:
         get_param: vdbe_name_1
       networks:
-        - port: {get_resource: vdbe_untr_1_port}
-  vdbe_untr_1_port:
+        - port: {get_resource: vdbe_1_untr_vmi_1}
+  vdbe_1_untr_vmi_1:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:
@@ -195,7 +195,7 @@ resources:
           mac_address:
             get_param: vdbe_hw_untr_mac_1
           parent_interface:
-            get_resource: vdbe_untr_1_port
+            get_resource: vdbe_1_untr_vmi_1
           subinterfaces_name_prefix:
             str_replace:
               params:

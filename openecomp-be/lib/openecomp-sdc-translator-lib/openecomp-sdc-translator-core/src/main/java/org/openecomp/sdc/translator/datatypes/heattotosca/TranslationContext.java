@@ -60,7 +60,10 @@ public class TranslationContext {
   private static Map<String, ImplementationConfiguration> nameExtractorImplMap;
   private static Map<String, ImplementationConfiguration> supportedConsolidationComputeResources;
   private static Map<String, ImplementationConfiguration> supportedConsolidationPortResources;
+  private static Map<String, ImplementationConfiguration> supportedUnifiedModelProperties;
+  private static List<String> vfcGroupSubInterfaceExposedProperties;
   private static List<String> enrichPortResourceProperties;
+  private static ImplementationConfiguration vfcInstanceConfiguration;
   private ManifestFile manifest;
   private FileContentHandler files = new FileContentHandler();
   private Map<String, FileData.Type> manifestFiles = new HashMap<>();
@@ -94,7 +97,7 @@ public class TranslationContext {
 
   private Set<String> nodeTemplateIdsPointingToStWithoutNodeTemplates = new HashSet<>();
 
-  //Key - service template name, value - Map of key: node template id, value: proerties with %index%
+  //Key - service template name, value - Map of key: node template id, value: properties with %index%
   private Map<String, ListMultimap<String, String>> indexVarProperties = new HashMap<>();
 
   static {
@@ -118,6 +121,23 @@ public class TranslationContext {
     enrichPortResourceProperties = config.getAsStringValues(ConfigConstants
             .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
             .ENRICH_PORT_RESOURCE_PROP);
+    supportedUnifiedModelProperties =
+        config.populateMap(ConfigConstants.UNIFIED_MODEL_NAMESPACE,
+            ConfigConstants.UNIFIED_MODEL_IMPL_KEY, ImplementationConfiguration.class);
+    vfcInstanceConfiguration =
+        MapUtils.isEmpty(supportedUnifiedModelProperties) ? null :
+            supportedUnifiedModelProperties.get(ConfigConstants.VFC_INSTANCE_GROUP_KEY);
+    vfcGroupSubInterfaceExposedProperties = config.getAsStringValues(ConfigConstants
+        .UNIFIED_MODEL_NAMESPACE, ConfigConstants.FULL_EXPOSED_PROPERTIES_KEY);
+  }
+
+  public static boolean isVfcInstanceGroupingEnabled() {
+    return Objects.nonNull(vfcInstanceConfiguration)
+        && vfcInstanceConfiguration.isEnable();
+  }
+
+  public static List<String> getExposedVfcInstanceGroupingProperties() {
+    return vfcGroupSubInterfaceExposedProperties;
   }
 
   public static List<String> getEnrichPortResourceProperties() {
