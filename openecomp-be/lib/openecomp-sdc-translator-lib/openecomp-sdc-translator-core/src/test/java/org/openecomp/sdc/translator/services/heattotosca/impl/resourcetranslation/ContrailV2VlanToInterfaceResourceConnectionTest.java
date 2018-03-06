@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,11 +79,14 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
         .getFilePortConsolidationData(MAIN_SERVICE_TEMPLATE_YAML)
         .getPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_FOR_ATTR_TEST));
 
-    List<SubInterfaceTemplateConsolidationData> subInfList =
+    PortTemplateConsolidationData portTemplateConsolidationData =
     this.translationContext.getConsolidationData().getPortConsolidationData()
         .getFilePortConsolidationData(MAIN_SERVICE_TEMPLATE_YAML)
-        .getPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_FOR_ATTR_TEST)
-        .getSubInterfaceConsolidationData("org.openecomp.resource.abstract.nodes.heat.subinterface.nested");
+        .getPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_FOR_ATTR_TEST);
+    ListMultimap<String, SubInterfaceTemplateConsolidationData> subInfMap = ArrayListMultimap.create();
+    portTemplateConsolidationData.copyMappedInto(subInfMap);
+    List<SubInterfaceTemplateConsolidationData> subInfList =
+        subInfMap.get("org.openecomp.resource.abstract.nodes.heat.subinterface.nested");
 
     Assert.assertEquals(ONE, subInfList.size());
     SubInterfaceTemplateConsolidationData data = subInfList.get(0);
@@ -113,7 +118,8 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
   public void testGetNetworkRoleFromResourceUtil_Port() throws Exception {
     inputFilesPath = INPUT_FILE_PATH_FOR_PORT_NETWORK_ROLE;
     initTranslatorAndTranslate();
-    List<String> validNeutronPortTemplateIds = Arrays.asList("vdbe_0_oam_port_1", "vdbe_oam_port", "vdbe_oam_port_2");
+    List<String> validNeutronPortTemplateIds = Arrays.asList("vdbe_0_oam_port_1", "vdbe_oam_port", "vdbe_oam_port_2",
+        "vdbe_0_int_oam_port_1", "vdbe_int_oam_port", "vdbe_int_oam_port_2");
     validatePortNetworkRole(validNeutronPortTemplateIds, "oam");
 
     List<String> validVmiPortTemplateIds = Arrays.asList("vdbe_0_untr_vmi_0", "vdbe_untr_vmi");

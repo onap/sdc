@@ -52,7 +52,7 @@ parameters:
     description: "IPv6 address associated with subinterfaces"
     type: string
 resources:
-  vdbe_untr_x_vlan1-Network-Role_vmi_subport:
+  vdbe_0_subint_untr_vmi_0:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:
@@ -114,3 +114,22 @@ resources:
           [{get_param: vn_network_list}]
 
 
+
+  vdbe_untrusted_Iip_0:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vdbe_0_subint_untr_vmi_0 ]
+    properties:
+      virtual_machine_interface_refs: [ { get_resource: vdbe_0_subint_untr_vmi_0} ]
+      virtual_network_refs: [{ get_param: [ vn_network_list, { get_param: counter } ] }]
+      instance_ip_address: { get_param: ip_address }
+
+
+
+  vdbe_untrusted_v6_Iip_0:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vdbe_0_subint_untr_vmi_0 ]
+    properties:
+      virtual_machine_interface_refs: [ { get_resource: vdbe_0_subint_untr_vmi_0} ]
+      virtual_network_refs: [{ get_param: [ vn_network_list, { get_param: counter } ] }]
+      instance_ip_address: { get_param: ip_v6_address }
+      instance_ip_family: "v6"
