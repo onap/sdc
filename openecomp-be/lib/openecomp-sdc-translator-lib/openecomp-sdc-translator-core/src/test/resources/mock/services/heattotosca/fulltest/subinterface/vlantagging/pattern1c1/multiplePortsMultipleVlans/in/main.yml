@@ -139,7 +139,7 @@ resources:
           mac_address:
             get_param: vdbe_hw_untr_mac_1
           parent_interface:
-            get_resource: vdbe_untr_1_port_1
+            get_resource: vdbe_1_untr_vmi_1
           subinterfaces_name_prefix:
             str_replace:
               params:
@@ -173,8 +173,8 @@ resources:
       name:
         get_param: vdbe_name_1
       networks:
-        - port: {get_resource: vdbe_untr_1_port_1}
-        - port: {get_resource: vdbe_untr_2_port_1}
+        - port: {get_resource: vdbe_1_untr_vmi_1}
+        - port: {get_resource: vdbe_1_oam_vmi_1}
   vdbe_node_2:
     type: OS::Nova::Server
     properties:
@@ -194,9 +194,9 @@ resources:
       name:
         get_param: vdbe_name_1
       networks:
-        - port: {get_resource: vdbe_untr_1_port_2}
-        - port: {get_resource: vdbe_untr_2_port_2}
-  vdbe_untr_1_port_1:
+        - port: {get_resource: vdbe_1_untr_vmi_2}
+        - port: {get_resource: vdbe_2_oam_vmi_2}
+  vdbe_1_untr_vmi_1:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:
@@ -246,7 +246,7 @@ resources:
       virtual_network_refs:
         -
           get_resource: control_int_net
-  vdbe_untr_2_port_1:
+  vdbe_1_oam_vmi_1:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name: Port_2
@@ -292,7 +292,7 @@ resources:
 
 
 
-  vdbe_untr_1_port_2:
+  vdbe_1_untr_vmi_2:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:
@@ -342,7 +342,7 @@ resources:
       virtual_network_refs:
         -
           get_resource: control_int_net
-  vdbe_untr_2_port_2:
+  vdbe_2_oam_vmi_2:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name: Port_4
@@ -415,7 +415,7 @@ resources:
           mac_address:
             get_param: vdbe_hw_untr_mac_1
           parent_interface:
-            get_resource: vdbe_untr_2_port_1
+            get_resource: vdbe_1_oam_vmi_1
           subinterfaces_name_prefix:
             str_replace:
               params:
@@ -462,7 +462,7 @@ resources:
           mac_address:
             get_param: vdbe_hw_untr_mac_1
           parent_interface:
-            get_resource: vdbe_untr_1_port_2
+            get_resource: vdbe_1_untr_vmi_2
           subinterfaces_name_prefix:
             str_replace:
               params:
@@ -508,7 +508,7 @@ resources:
           mac_address:
             get_param: vdbe_hw_untr_mac_1
           parent_interface:
-            get_resource: vdbe_untr_2_port_2
+            get_resource: vdbe_2_oam_vmi_2
           subinterfaces_name_prefix:
             str_replace:
               params:
@@ -558,4 +558,4 @@ resources:
         virtual_network_properties_forwarding_mode:
           get_param: fabric_int_net_forwarding_mode
         virtual_network_properties_rpf:
-          get_param: fabric_int_net_rpf
+          get_param: fabric_int_net_rpf

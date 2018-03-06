@@ -8,6 +8,9 @@ imports:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 topology_template:
   inputs:
+    Vlan_network_collection_function:
+      type: string
+      required: true
     ps_server_1b_ips:
       hidden: false
       immutable: false
@@ -51,6 +54,9 @@ topology_template:
       hidden: false
       immutable: false
       type: string
+    Vlan_vfc_instance_group_function:
+      type: string
+      required: true
     availability_zone_0:
       label: availabilityzone name
       hidden: false
@@ -165,6 +171,17 @@ topology_template:
         description: nested1
       members:
       - test_nested_level2
+      - abstract_pd_server_1b
+    Vlan_group:
+      type: org.openecomp.groups.VfcInstanceGroup
+      properties:
+        vfc_parent_port_role: 1b
+        network_collection_function:
+          get_input: Vlan_network_collection_function
+        vfc_instance_group_function:
+          get_input: Vlan_vfc_instance_group_function
+        subinterface_role: Vlan
+      members:
       - abstract_pd_server_1b
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested_pattern5
