@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7de46aab",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T13:41:58Z",
+      "side": 1,
+      "message": "It\u0027s still doesn\u0027t make much sense. Let\u0027s discuss if off-line.",
+      "range": {
+        "startLine": 59,
+        "startChar": 1,
+        "endLine": 61,
+        "endChar": 71
+      },
+      "revId": "f5bd699c4461da611b35bd9ef99a422225c4bcb4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5df5ee54",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T13:41:58Z",
+      "side": 1,
+      "message": "This is a bit confusing. What you have at hand here is not a map but a map entry.",
+      "range": {
+        "startLine": 114,
+        "startChar": 16,
+        "endLine": 114,
+        "endChar": 19
+      },
+      "revId": "f5bd699c4461da611b35bd9ef99a422225c4bcb4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fde71aaa",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T13:41:58Z",
+      "side": 1,
+      "message": "Redundant",
+      "range": {
+        "startLine": 122,
+        "startChar": 93,
+        "endLine": 122,
+        "endChar": 94
+      },
+      "revId": "f5bd699c4461da611b35bd9ef99a422225c4bcb4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
