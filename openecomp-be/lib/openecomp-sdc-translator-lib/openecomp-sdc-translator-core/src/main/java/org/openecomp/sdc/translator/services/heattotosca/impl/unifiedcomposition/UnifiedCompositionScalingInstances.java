@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.translator.services.heattotosca.impl.unifiedcomposition;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,21 +42,23 @@ public class UnifiedCompositionScalingInstances implements UnifiedComposition {
 
     unifiedCompositionService.handleComplexVfcType(serviceTemplate, context);
 
-    Integer index = null;
     String substitutionNodeTypeId =
         unifiedCompositionService.getSubstitutionNodeTypeId(serviceTemplate,
             unifiedCompositionDataList.get(0), null, context);
     Optional<ServiceTemplate> substitutionServiceTemplate =
         unifiedCompositionService.createUnifiedSubstitutionServiceTemplate(serviceTemplate,
-            unifiedCompositionDataList, context, substitutionNodeTypeId, index);
+            unifiedCompositionDataList, context, substitutionNodeTypeId, null);
 
     if (!substitutionServiceTemplate.isPresent()) {
       return;
     }
 
-    String abstractNodeTemplateId = unifiedCompositionService
+    String abstractSubstituteNodeTemplateId = unifiedCompositionService
         .createAbstractSubstituteNodeTemplate(serviceTemplate, substitutionServiceTemplate.get(),
-            unifiedCompositionDataList, substitutionNodeTypeId, context, index);
+            unifiedCompositionDataList, substitutionNodeTypeId, context, null);
+
+    unifiedCompositionService.createVfcInstanceGroup(abstractSubstituteNodeTemplateId,
+        serviceTemplate, unifiedCompositionDataList);
 
     unifiedCompositionService
         .updateCompositionConnectivity(serviceTemplate, unifiedCompositionDataList, context);

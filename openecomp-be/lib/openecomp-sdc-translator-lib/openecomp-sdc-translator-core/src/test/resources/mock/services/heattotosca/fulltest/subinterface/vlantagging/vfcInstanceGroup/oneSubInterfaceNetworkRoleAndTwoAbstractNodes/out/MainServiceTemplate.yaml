@@ -6,9 +6,6 @@ imports:
     file: openecomp-heat/_index.yml
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-node_types:
-  org.openecomp.resource.vfc.nodes.heat.vdbe:
-    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
     vf_module_id:
@@ -89,23 +86,6 @@ topology_template:
             param_name: vdbe_aap_untrusted_ip_prefix_len
       type: string
       description: ip prefix length for the primary vDBE VM on the VAN untrusted network
-    untrusted_num_vn:
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - main
-            source_type: HEAT
-            param_name: untrusted_num_vn
-      type: float
-      description: Number of vDBE subinterface virtual Networks
-      constraints:
-      - in_range:
-        - 1
-        - 77
     aap_address_mode:
       hidden: false
       immutable: false
@@ -318,6 +298,12 @@ topology_template:
       description: List of subinterface vlan tags
       entry_schema:
         type: string
+    untr_network_collection_function:
+      type: string
+      required: true
+    untr_vfc_instance_group_function:
+      type: string
+      required: true
     vdbe_flavor_name:
       hidden: false
       immutable: false
@@ -331,6 +317,19 @@ topology_template:
             param_name: vdbe_flavor_name
       type: string
       description: Flavor to use for vDBE
+    counter:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: counter
+      type: float
+      description: Counter.
     vdbe_hw_untr_mac_1:
       hidden: false
       immutable: false
@@ -384,136 +383,92 @@ topology_template:
       type: string
       description: ip prefix for primary vDBE VM on the VAN untrusted network
   node_templates:
-    vdbe_node_1:
-      type: org.openecomp.resource.vfc.nodes.heat.vdbe
+    abstract_vdbe_0:
+      type: org.openecomp.resource.abstract.nodes.vdbe
+      directives:
+      - substitutable
       properties:
-        flavor:
+        subinterface_nested_parent_interface:
+        - vdbe_1_untr_port_1
+        subinterface_nested_aap_address_mode:
+        - get_input: aap_address_mode
+        subinterface_nested_vlan_tag_list:
+        - get_input: untrusted_vlan_tags
+        compute_vdbe_availability_zone:
+        - get_input: availability_zone_1
+        subinterface_nested_aap_untrusted_v6_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        vm_flavor_name:
           get_input: vdbe_flavor_name
-        availability_zone:
-          get_input: availability_zone_1
-        image:
+        subinterface_nested_aap_untrusted_ip_prefix:
+        - get_input: vdbe_aap_untrusted_ip_prefix
+        vm_image_name:
           get_input: vdbe_image_name
-        metadata:
-          vf_module_id:
+        subinterface_nested_aap_sec_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+        subinterface_nested_aap_sec_untrusted_ip_prefix:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix
+        subinterface_nested_aap_untrusted_v6_ip_prefix:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix
+        compute_vdbe_metadata:
+        - vf_module_id:
             get_input: vf_module_id
           vnf_id:
             get_input: vnf_id
           vnf_name:
             get_input: vnf_name
-        name:
-          get_input: vdbe_name_1
-    vdbe_untr_1_port:
-      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
-      properties:
-        name:
-          str_replace:
-            template: VM_NAMEDBE001p1n004
-            params:
-              DBE:
-                get_input: vdbe_device_name
-              VM_NAME:
-                get_input: vdbe_name_1
-        virtual_network_refs:
-        - get_input: untrusted_net_name
-        virtual_machine_interface_allowed_address_pairs:
-          allowed_address_pair:
-          - address_mode:
-              get_input: aap_address_mode
-            ip:
-              ip_prefix:
-                get_input: vdbe_aap_untrusted_ip_prefix
-              ip_prefix_len:
-                get_input: vdbe_aap_untrusted_ip_prefix_len
-            mac:
-              get_input: vdbe_untrusted_vmac_address
-          - address_mode:
-              get_input: aap_address_mode
-            ip:
-              ip_prefix:
-                get_input: vdbe_aap_sec_untrusted_ip_prefix
-              ip_prefix_len:
-                get_input: vdbe_aap_sec_untrusted_ip_prefix_len
-            mac:
-              get_input: vdbe_hw_untr_mac_1
-          - address_mode:
-              get_input: aap_address_mode
-            ip:
-              ip_prefix:
-                get_input: vdbe_aap_untrusted_v6_ip_prefix
-              ip_prefix_len:
-                get_input: vdbe_aap_untrusted_v6_ip_prefix_len
-            mac:
-              get_input: vdbe_untrusted_vmac_address
-        virtual_machine_interface_mac_addresses:
+        subinterface_nested_mac_address:
         - get_input: vdbe_hw_untr_mac_1
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: vdbe_node_1
-          relationship: tosca.relationships.network.BindsTo
-    vdbe_untr_1_subports:
-      type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
-      directives:
-      - substitutable
-      properties:
-        aap_untrusted_ip_prefix:
-          get_input: vdbe_aap_untrusted_ip_prefix
-        attr_test:
-          get_attribute:
-          - vdbe_untr_1_port
-          - name
-        aap_sec_untrusted_ip_prefix:
-          get_input: vdbe_aap_sec_untrusted_ip_prefix
-        vdbe_subport_network: control_int_net
-        ip_v6_address:
-          get_input: vdbe_untrusted_v6_ip_1
-        counter:
-          get_input: vnf_id
-        ip_address:
-          get_input: vdbe_untrusted_ip_1
-        subinterfaces_name_prefix:
-          str_replace:
+        subinterface_nested_ip_address:
+        - get_input: vdbe_untrusted_ip_1
+        subinterface_nested_ip_v6_address:
+        - get_input: vdbe_untrusted_v6_ip_1
+        port_vdbe_untr_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        subinterface_nested_vmac_address:
+        - get_input: vdbe_untrusted_vmac_address
+        subinterface_nested_vn_network_list:
+        - get_input: untrusted_vn_networks
+        port_vdbe_untr_port_name:
+        - str_replace:
             template: VM_NAMEDBE001p1n004
             params:
               DBE:
                 get_input: vdbe_device_name
               VM_NAME:
                 get_input: vdbe_name_1
-        aap_address_mode:
-          get_input: aap_address_mode
+        subinterface_nested_aap_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_ip_prefix_len
+        subinterface_nested_counter:
+        - get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        subinterface_nested_subinterfaces_name_prefix:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        compute_vdbe_name:
+        - get_input: vdbe_name_1
+        port_vdbe_untr_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         service_template_filter:
-          substitute_service_template: nestedServiceTemplate.yaml
-          count:
-            get_input: untrusted_num_vn
-          mandatory: false
-        aap_untrusted_v6_ip_prefix:
-          get_input: vdbe_aap_untrusted_v6_ip_prefix
-        parent_interface: vdbe_untr_1_port
-        mac_address:
-          get_input: vdbe_hw_untr_mac_1
-        vlan_tag_list:
-          get_input: untrusted_vlan_tags
-        aap_sec_untrusted_ip_prefix_len:
-          get_input: vdbe_aap_sec_untrusted_ip_prefix_len
-        vmac_address:
-          get_input: vdbe_untrusted_vmac_address
-        aap_untrusted_v6_ip_prefix_len:
-          get_input: vdbe_aap_untrusted_v6_ip_prefix_len
-        aap_untrusted_ip_prefix_len:
-          get_input: vdbe_aap_untrusted_ip_prefix_len
-      requirements:
-      - link_vdbe_0_subint_untr_vmi_0:
-          capability: tosca.capabilities.network.Linkable
-          node: control_int_net
-          relationship: tosca.relationships.network.LinksTo
-      - binding_vdbe_0_subint_untr_vmi_0:
-          capability: tosca.capabilities.network.Bindable
-          node: vdbe_untr_1_port
-          relationship: tosca.relationships.network.BindsTo
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: control_int_net
-          relationship: tosca.relationships.DependsOn
+          substitute_service_template: Nested_vdbeServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
     control_int_net:
       type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
       properties:
@@ -523,15 +478,89 @@ topology_template:
             params:
               VNF_NAME:
                 get_input: vnf_name
-        network_ipam_refs:
-          get_attribute:
-          - vdbe_untr_1_subports
-          - count
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: vdbe_untr_1_subports
-          relationship: tosca.relationships.DependsOn
+    abstract_vdbe_1:
+      type: org.openecomp.resource.abstract.nodes.vdbe
+      directives:
+      - substitutable
+      properties:
+        subinterface_nested_parent_interface:
+        - vdbe_2_untr_port_2
+        subinterface_nested_aap_address_mode:
+        - get_input: aap_address_mode
+        subinterface_nested_vlan_tag_list:
+        - get_input: untrusted_vlan_tags
+        compute_vdbe_availability_zone:
+        - get_input: availability_zone_1
+        subinterface_nested_aap_untrusted_v6_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        vm_flavor_name:
+          get_input: vdbe_flavor_name
+        subinterface_nested_aap_untrusted_ip_prefix:
+        - get_input: vdbe_aap_untrusted_ip_prefix
+        vm_image_name:
+          get_input: vdbe_image_name
+        subinterface_nested_aap_sec_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+        subinterface_nested_aap_sec_untrusted_ip_prefix:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix
+        subinterface_nested_aap_untrusted_v6_ip_prefix:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix
+        compute_vdbe_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        subinterface_nested_mac_address:
+        - get_input: vdbe_hw_untr_mac_1
+        subinterface_nested_ip_address:
+        - get_input: vdbe_untrusted_ip_1
+        subinterface_nested_ip_v6_address:
+        - get_input: vdbe_untrusted_v6_ip_1
+        port_vdbe_untr_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        subinterface_nested_vmac_address:
+        - get_input: vdbe_untrusted_vmac_address
+        subinterface_nested_vn_network_list:
+        - get_input: untrusted_vn_networks
+        port_vdbe_untr_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        subinterface_nested_aap_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_ip_prefix_len
+        subinterface_nested_counter:
+        - get_input: counter
+        subinterface_nested_subinterfaces_name_prefix:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        compute_vdbe_name:
+        - get_input: vdbe_name_1
+        port_vdbe_untr_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        service_template_filter:
+          substitute_service_template: Nested_vdbeServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
   groups:
     main_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -540,14 +569,18 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
-      - vdbe_node_1
-      - vdbe_untr_1_port
-      - vdbe_untr_1_subports
       - control_int_net
-  outputs:
-    out1:
-      description: output_test
-      value:
-        get_attribute:
-        - vdbe_untr_1_subports
-        - name
+      - abstract_vdbe_0
+      - abstract_vdbe_1
+    untr_group:
+      type: org.openecomp.groups.VfcInstanceGroup
+      properties:
+        vfc_parent_port_role: untr
+        network_collection_function:
+          get_input: untr_network_collection_function
+        vfc_instance_group_function:
+          get_input: untr_vfc_instance_group_function
+        subinterface_role: untr
+      members:
+      - abstract_vdbe_0
+      - abstract_vdbe_1

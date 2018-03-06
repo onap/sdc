@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_INPUT;
+import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.GROUP_TYPE_PREFIX;
+import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_INSTANCE_GROUP;
 import static org.openecomp.sdc.tosca.services.DataModelUtil.getClonedObject;
 import static org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionEntity.COMPUTE;
 import static org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionEntity.PORT;
@@ -23,8 +26,11 @@ import static org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.co
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.GROUP;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.PORT_IDENTICAL_VALUE_PROPERTY_PREFIX;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.SUB_INTERFACE_PROPERTY_VALUE_PREFIX;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.SUB_INTERFACE_ROLE;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.VFC_PARENT_PORT_ROLE;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getComputeTypeSuffix;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewComputeNodeTemplateId;
@@ -266,6 +272,116 @@ public class UnifiedCompositionService {
         .addNodeTemplate(serviceTemplate, substituteNodeTemplateId, substitutionNodeTemplate);
     return substituteNodeTemplateId;
 
+  }
+
+  public void createVfcInstanceGroup(String abstractNodeTemplateId,
+                                     ServiceTemplate serviceTemplate,
+                                     List<UnifiedCompositionData> unifiedCompositionDataList) {
+    if (!TranslationContext.isVfcInstanceGroupingEnabled()) {
+      return;
+    }
+
+    Collection<PortTemplateConsolidationData> portConsolidationDatas =
+        getAllPortTemplateFromUnifiedCompositionList(unifiedCompositionDataList);
+
+    for (PortTemplateConsolidationData portTemplate : portConsolidationDatas) {
+      createVfcInstanceGroupFromPortsSubInterface(abstractNodeTemplateId, serviceTemplate,
+          portTemplate);
+    }
+  }
+
+  private List<PortTemplateConsolidationData> getAllPortTemplateFromUnifiedCompositionList(
+      List<UnifiedCompositionData>
+          unifiedCompositionDataList) {
+    List<PortTemplateConsolidationData> portTemplateConsolidationDataList = new ArrayList<>();
+
+    unifiedCompositionDataList.stream().filter(unifiedCompositionData -> CollectionUtils
+        .isNotEmpty(unifiedCompositionData.getPortTemplateConsolidationDataList()))
+        .forEach(unifiedCompositionData ->
+            portTemplateConsolidationDataList
+                .addAll(unifiedCompositionData.getPortTemplateConsolidationDataList()));
+    return portTemplateConsolidationDataList;
+  }
+
+  private void createVfcInstanceGroupFromPortsSubInterface(String abstractNodeTemplateId,
+                                                           ServiceTemplate serviceTemplate,
+                                                           PortTemplateConsolidationData portTemplate) {
+    Collection<SubInterfaceTemplateConsolidationData> subInterfaceConsolidationDataList =
+        portTemplate.getAllSubInterfaceConsolidationDataValues();
+    if (CollectionUtils.isEmpty(subInterfaceConsolidationDataList)) {
+      return;
+    }
+
+    createVfcInstanceGroupPerSubInterface(abstractNodeTemplateId, serviceTemplate, portTemplate,
+        subInterfaceConsolidationDataList);
+  }
+
+  private void createVfcInstanceGroupPerSubInterface(String abstractNodeTemplateId,
+                                                     ServiceTemplate serviceTemplate,
+                                                     PortTemplateConsolidationData portTemplate,
+                                                     Collection<SubInterfaceTemplateConsolidationData>
+                                                         subInterfaceList) {
+    for (SubInterfaceTemplateConsolidationData subInterface : subInterfaceList) {
+      String subInterfaceNetworkRole = subInterface.getNetworkRole();
+      if (Objects.nonNull(subInterfaceNetworkRole)
+          && Objects.nonNull(portTemplate.getNetworkRole())) {
+        String vfcNetworkRoleGroupId = getVfcNetworkRoleGroupId(subInterfaceNetworkRole);
+        Map<String, GroupDefinition> groups = DataModelUtil.getGroups(serviceTemplate);
+        if (!groups.containsKey(vfcNetworkRoleGroupId)) {
+          createNewVfcInstanceGroup(serviceTemplate, portTemplate,
+              subInterfaceNetworkRole, vfcNetworkRoleGroupId);
+        }
+
+        DataModelUtil
+            .addGroupMember(serviceTemplate, vfcNetworkRoleGroupId, abstractNodeTemplateId);
+      }
+    }
+  }
+
+  private void createNewVfcInstanceGroup(ServiceTemplate serviceTemplate,
+                                         PortTemplateConsolidationData portTemplate,
+                                         String subInterfaceNetworkRole,
+                                         String vfcNetworkRoleGroupId) {
+    Map<String, Object> properties = new HashMap<>();
+    properties.put(SUB_INTERFACE_ROLE, subInterfaceNetworkRole);
+    properties.put(VFC_PARENT_PORT_ROLE, portTemplate.getNetworkRole());
+
+    updateVfcInstanceGroupExposedProperties(subInterfaceNetworkRole,
+        serviceTemplate, properties);
+
+    GroupDefinition groupDefinition = new GroupDefinition();
+    groupDefinition.setType(GROUP_TYPE_PREFIX + VFC_INSTANCE_GROUP);
+    groupDefinition.setProperties(properties);
+
+    DataModelUtil.addGroupDefinitionToTopologyTemplate(serviceTemplate,
+        vfcNetworkRoleGroupId, groupDefinition);
+  }
+
+  private void updateVfcInstanceGroupExposedProperties(String subInterfaceNetworkRole,
+                                                       ServiceTemplate serviceTemplate,
+                                                       Map<String, Object> properties) {
+    List<String> exposedVfcInstanceGroupingProperties =
+        TranslationContext.getExposedVfcInstanceGroupingProperties();
+
+    if (CollectionUtils.isEmpty(exposedVfcInstanceGroupingProperties)) {
+      return;
+    }
+
+    for (String propertyName : exposedVfcInstanceGroupingProperties) {
+      Map<String, Object> getInputMap = new HashMap<>();
+      String vfcGroupPropertyInputName = subInterfaceNetworkRole + "_" + propertyName;
+      getInputMap.put(GET_INPUT.getDisplayName(), vfcGroupPropertyInputName);
+      properties.put(propertyName, getInputMap);
+
+      addInputParameter(vfcGroupPropertyInputName, PropertyType.STRING.getDisplayName(), null,
+          serviceTemplate);
+    }
+  }
+
+  private String getVfcNetworkRoleGroupId(String subInterfaceNetworkRole) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(subInterfaceNetworkRole).append("_").append(GROUP);
+    return sb.toString();
   }
 
   /**

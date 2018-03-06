@@ -20,6 +20,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +52,10 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
 
   public Set<String> getAllSubInterfaceNodeTypes() {
     return this.subInterfaceConsolidationData.keySet();
+  }
+
+  public Collection<SubInterfaceTemplateConsolidationData> getAllSubInterfaceConsolidationDataValues() {
+    return this.subInterfaceConsolidationData.values();
   }
 
   public void addSubInterfaceConsolidationData(String subPortType,

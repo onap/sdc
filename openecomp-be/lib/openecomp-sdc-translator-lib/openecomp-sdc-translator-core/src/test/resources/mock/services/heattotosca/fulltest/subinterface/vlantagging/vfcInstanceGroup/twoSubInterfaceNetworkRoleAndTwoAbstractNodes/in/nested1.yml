@@ -42,7 +42,7 @@ parameters:
   vmac_address:
     description: "virtual MAC address to use for subinterface"
     type: string
-  vdbe_subport_network:
+  vn_network_list:
     description: "List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list"
     type: string
   ip_address:
@@ -111,4 +111,6 @@ resources:
       virtual_machine_interface_refs:
           [{get_param: parent_interface}]
       virtual_network_refs:
-          [{get_param: vdbe_subport_network}]
+          [{get_param: vn_network_list}]
+
+

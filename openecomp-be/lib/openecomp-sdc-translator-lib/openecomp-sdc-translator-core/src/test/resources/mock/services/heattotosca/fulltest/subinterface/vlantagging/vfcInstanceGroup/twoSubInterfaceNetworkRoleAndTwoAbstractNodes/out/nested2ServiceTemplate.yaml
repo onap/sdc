@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
-  template_name: nested
+  template_name: nested2
 imports:
 - openecomp_heat_index:
     file: openecomp-heat/_index.yml
@@ -18,11 +18,6 @@ topology_template:
       immutable: false
       type: string
       description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
-    vdbe_subport_network:
-      hidden: false
-      immutable: false
-      type: string
-      description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
     ip_v6_address:
       hidden: false
       immutable: false
@@ -58,6 +53,11 @@ topology_template:
       immutable: false
       type: string
       description: Parent Contrail interface
+    vn_network_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
     mac_address:
       hidden: false
       immutable: false
@@ -91,7 +91,7 @@ topology_template:
       type: string
       description: ip prefix length for the primary vDBE VM on the VAN untrusted network
   node_templates:
-    vdbe_0_subint_untr_vmi_0:
+    vdbe_0_subint_oam_vmi_0:
       type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
       properties:
         virtual_machine_interface_refs:
@@ -107,7 +107,7 @@ topology_template:
                 - vlan_tag_list
                 - get_input: counter
         virtual_network_refs:
-        - get_input: vdbe_subport_network
+        - get_input: vn_network_list
         virtual_machine_interface_properties:
           sub_interface_vlan_tag:
             get_input:
@@ -146,26 +146,26 @@ topology_template:
           mac_address:
           - get_input: mac_address
   groups:
-    nested_group:
+    nested2_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
-        heat_file: ../Artifacts/nested.yml
+        heat_file: ../Artifacts/nested2.yml
         description: cmaui server template for vMMSC
       members:
-      - vdbe_0_subint_untr_vmi_0
+      - vdbe_0_subint_oam_vmi_0
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
+    node_type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested2
     capabilities:
-      feature_vdbe_0_subint_untr_vmi_0:
-      - vdbe_0_subint_untr_vmi_0
+      feature_vdbe_0_subint_oam_vmi_0:
+      - vdbe_0_subint_oam_vmi_0
       - feature
     requirements:
-      dependency_vdbe_0_subint_untr_vmi_0:
-      - vdbe_0_subint_untr_vmi_0
+      dependency_vdbe_0_subint_oam_vmi_0:
+      - vdbe_0_subint_oam_vmi_0
       - dependency
-      binding_vdbe_0_subint_untr_vmi_0:
-      - vdbe_0_subint_untr_vmi_0
-      - binding
-      link_vdbe_0_subint_untr_vmi_0:
-      - vdbe_0_subint_untr_vmi_0
+      link_vdbe_0_subint_oam_vmi_0:
+      - vdbe_0_subint_oam_vmi_0
       - link
+      binding_vdbe_0_subint_oam_vmi_0:
+      - vdbe_0_subint_oam_vmi_0
+      - binding

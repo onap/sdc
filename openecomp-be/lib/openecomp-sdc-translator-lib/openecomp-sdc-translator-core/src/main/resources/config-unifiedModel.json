@@ -1,0 +1,16 @@
+{
+  "unifiedModelImpl": {
+    "vfcInstanceGroup": {
+      "enable": true,
+      "properties": {
+        "exposedProperties": [
+          "network_collection_function",
+          "vfc_instance_group_function"
+        ]
+      }
+    }
+  },
+  "_config": {
+    "namespace": "unifiedModel"
+  }
+}

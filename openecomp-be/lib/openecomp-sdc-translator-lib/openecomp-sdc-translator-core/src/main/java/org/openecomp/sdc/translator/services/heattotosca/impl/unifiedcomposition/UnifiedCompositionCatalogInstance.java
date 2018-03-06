@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.translator.services.heattotosca.impl.unifiedcomposition;
 
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -12,31 +28,26 @@ import java.util.Optional;
 
 public class UnifiedCompositionCatalogInstance implements UnifiedComposition {
 
-  UnifiedCompositionService unifiedCompositionService = new UnifiedCompositionService();
-
-  // There is consolidation in ScalingInstance implemetation.
+  // There is consolidation in ScalingInstance implementation.
   // In case of scaling instance, if there is more than one entry in the
-  // unifiedComposotionDataList, we should have consolidation between them.
+  // unifiedCompositionDataList, we should have consolidation between them.
   // (all entries in the list are the once which need to be consolidated)
   @Override
   public void createUnifiedComposition(ServiceTemplate serviceTemplate,
                                        ServiceTemplate nestedServiceTemplate,
-                                       List<UnifiedCompositionData> unifiedComposotionDataList,
+                                       List<UnifiedCompositionData> unifiedCompositionDataList,
                                        TranslationContext context) {
 
     UnifiedCompositionService unifiedCompositionService = new UnifiedCompositionService();
     unifiedCompositionService.handleComplexVfcType(serviceTemplate, context);
 
-    UnifiedCompositionSingleSubstitution unifiedCompositionSingleSubstitution =
-        new UnifiedCompositionSingleSubstitution();
-
     String substitutionNodeTypeId =
         unifiedCompositionService.getSubstitutionNodeTypeId(serviceTemplate,
-            unifiedComposotionDataList.get(0), null, context);
+            unifiedCompositionDataList.get(0), null, context);
     // create one substitution ST for all computes
     Optional<ServiceTemplate> substitutionServiceTemplate =
         unifiedCompositionService.createUnifiedSubstitutionServiceTemplate(serviceTemplate,
-            unifiedComposotionDataList, context, substitutionNodeTypeId, null);
+            unifiedCompositionDataList, context, substitutionNodeTypeId, null);
 
     if (!substitutionServiceTemplate.isPresent()) {
       return;
@@ -44,15 +55,18 @@ public class UnifiedCompositionCatalogInstance implements UnifiedComposition {
 
 
     // create abstract NT for each compute
-    for(int i = 0; i < unifiedComposotionDataList.size(); i++){
+    for (int i = 0; i < unifiedCompositionDataList.size(); i++) {
       List<UnifiedCompositionData> catalogInstanceUnifiedList = new ArrayList<>();
-      catalogInstanceUnifiedList.add(unifiedComposotionDataList.get(i));
+      catalogInstanceUnifiedList.add(unifiedCompositionDataList.get(i));
 
-      Integer index = unifiedComposotionDataList.size() > 1 ? i : null;
+      Integer index = unifiedCompositionDataList.size() > 1 ? i : null;
 
-      unifiedCompositionService
+      String abstractSubstituteNodeTemplateId = unifiedCompositionService
           .createAbstractSubstituteNodeTemplate(serviceTemplate, substitutionServiceTemplate.get(),
               catalogInstanceUnifiedList, substitutionNodeTypeId, context, index);
+
+      unifiedCompositionService.createVfcInstanceGroup(abstractSubstituteNodeTemplateId,
+          serviceTemplate, catalogInstanceUnifiedList);
 
       unifiedCompositionService
           .updateCompositionConnectivity(serviceTemplate, catalogInstanceUnifiedList, context);
@@ -61,7 +75,7 @@ public class UnifiedCompositionCatalogInstance implements UnifiedComposition {
           .cleanUnifiedCompositionEntities(serviceTemplate, catalogInstanceUnifiedList, context);
     }
 
-    unifiedCompositionService.cleanNodeTypes(serviceTemplate, unifiedComposotionDataList, context);
+    unifiedCompositionService.cleanNodeTypes(serviceTemplate, unifiedCompositionDataList, context);
     unifiedCompositionService.updateSubstitutionNodeTypePrefix(substitutionServiceTemplate.get());
   }
 }
