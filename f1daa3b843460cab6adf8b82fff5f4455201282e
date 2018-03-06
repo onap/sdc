@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_5d964e40",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T11:26:46Z",
+      "side": 1,
+      "message": "Thanks, i will fix it. Will explore JMH for bench marking such cases in future.",
+      "parentUuid": "5a93c517_fdf2ba04",
+      "range": {
+        "startLine": 303,
+        "startChar": 22,
+        "endLine": 303,
+        "endChar": 34
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8ebee2ac",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
         "patchSetId": 4
@@ -156,6 +180,30 @@
       "side": 1,
       "message": "Yes, the general rule is simple: Don\u0027t write what\u0027s been already written. Reasons? Time to write, time to test, probable bugs, copyright violations if pasted from somewhere. There was even a session on doing code reviews that explicitly mentioned it. Most of the popular frameworks for common tasks are already included as Maven dependencies anyway.",
       "parentUuid": "5a93c517_0244e371",
+      "range": {
+        "startLine": 321,
+        "startChar": 0,
+        "endLine": 328,
+        "endChar": 42
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fd987a6b",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T11:26:46Z",
+      "side": 1,
+      "message": "ok, will remove it.",
+      "parentUuid": "5a93c517_1dae8698",
       "range": {
         "startLine": 321,
         "startChar": 0,
@@ -528,6 +576,30 @@
       "side": 1,
       "message": "This is what I mean https://stackoverflow.com/a/18600383/3365419. I\u0027m not sure how Yaml.load() is implemented, and I don\u0027t care much because the only thing I know from the API is that it accepts an InputStream that can be attached to any source. On the other hand, I know that in our case it\u0027s a file, and its FileInputStream\u0027s low level operations are expensive.",
       "parentUuid": "5a93c517_bd751265",
+      "range": {
+        "startLine": 120,
+        "startChar": 33,
+        "endLine": 120,
+        "endChar": 48
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bda672ac",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T11:26:46Z",
+      "side": 1,
+      "message": "Thanks for the link, it explains the doubts.",
+      "parentUuid": "5a93c517_dd7a5e23",
       "range": {
         "startLine": 120,
         "startChar": 33,
