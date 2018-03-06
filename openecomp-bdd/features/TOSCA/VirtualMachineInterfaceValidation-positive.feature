@@ -4,7 +4,7 @@ Feature: Tosca Validation Flow
     Given I want to create a VLM
     Given I want to set all Togglz to be "true"
 
-  Scenario: No Validations Errors
+  Scenario: VirtualMachineInterface Validation Flow - No Validations Errors
     When I want to create a VSP with onboarding type "NetworkPackage"
 
     Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/vlan-tagging-positive.zip"

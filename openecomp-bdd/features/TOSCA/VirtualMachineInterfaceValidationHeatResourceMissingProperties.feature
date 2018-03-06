@@ -4,7 +4,7 @@ Feature: Tosca Validation Flow
     Given I want to create a VLM
     Given I want to set all Togglz to be "true"
 
-  Scenario: Missing Refs Element Validation Error
+  Scenario: VirtualMachineInterface Validation Flow - Missing Refs Element Validation Error
     When I want to create a VSP with onboarding type "NetworkPackage"
 
     Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/refs_missing.zip"
@@ -17,7 +17,7 @@ Feature: Tosca Validation Flow
     WARNING: [VLAN2]: Parent port property virtual_machine_interface_refs is missing in VLAN Resource ID [template_Vlan_2]
     """
 
-  Scenario: Missing Tag Validation Error
+  Scenario: VirtualMachineInterface Validation Flow - Missing Tag Validation Error
     When I want to create a VSP with onboarding type "NetworkPackage"
 
     Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/tag_missing.zip"
