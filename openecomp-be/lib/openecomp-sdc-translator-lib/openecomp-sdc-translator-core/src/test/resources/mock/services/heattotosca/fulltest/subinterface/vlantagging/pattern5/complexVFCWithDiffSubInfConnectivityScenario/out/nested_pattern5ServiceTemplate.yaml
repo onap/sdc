@@ -8,25 +8,9 @@ imports:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 topology_template:
   inputs:
-    port_net:
-      hidden: false
-      immutable: false
+    Vlan_network_collection_function:
       type: string
-      description: port network
-    pd_server_1b_flavor:
-      hidden: false
-      immutable: false
-      type: string
-      description: Flavor for PD server
-    pd_server_1b_ips:
-      hidden: false
-      immutable: false
-      type: string
-    packet_external_network_name:
-      hidden: false
-      immutable: false
-      type: string
-      description: network name
+      required: true
     packet_internal_network_name:
       hidden: false
       immutable: false
@@ -46,6 +30,28 @@ topology_template:
       description: CMAUI1, CMAUI2 server names
       entry_schema:
         type: string
+    port_net:
+      hidden: false
+      immutable: false
+      type: string
+      description: port network
+    pd_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PD server
+    pd_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    Vlan_vfc_instance_group_function:
+      type: string
+      required: true
+    packet_external_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name
     availability_zone_0:
       label: availabilityzone name
       hidden: false
@@ -153,6 +159,17 @@ topology_template:
       - packet_external_network
       - packet_internal_network
       - test_nested_level2
+      - abstract_pd_server_1b
+    Vlan_group:
+      type: org.openecomp.groups.VfcInstanceGroup
+      properties:
+        vfc_parent_port_role: 1b
+        network_collection_function:
+          get_input: Vlan_network_collection_function
+        vfc_instance_group_function:
+          get_input: Vlan_vfc_instance_group_function
+        subinterface_role: Vlan
+      members:
       - abstract_pd_server_1b
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested_pattern5
