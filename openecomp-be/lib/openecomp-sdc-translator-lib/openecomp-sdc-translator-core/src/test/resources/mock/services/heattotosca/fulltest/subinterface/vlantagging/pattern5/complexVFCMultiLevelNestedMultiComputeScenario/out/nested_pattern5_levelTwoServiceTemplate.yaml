@@ -8,6 +8,32 @@ imports:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 topology_template:
   inputs:
+    Vlan_network_collection_function:
+      type: string
+      required: true
+    ps_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    ps_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: Ps server names
+      entry_schema:
+        type: string
+    packet_ext_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name
     port_net:
       hidden: false
       immutable: false
@@ -17,22 +43,14 @@ topology_template:
       hidden: false
       immutable: false
       type: string
-    ps_server_1b_ips:
-      hidden: false
-      immutable: false
-      type: string
     packet_int_network_name:
       hidden: false
       immutable: false
       type: string
       description: network name
-    security_group_name:
-      hidden: false
-      immutable: false
-      type: list
-      description: CMAUI1, CMAUI2 server names
-      entry_schema:
-        type: string
+    Vlan_vfc_instance_group_function:
+      type: string
+      required: true
     availability_zone_0:
       label: availabilityzone name
       hidden: false
@@ -54,18 +72,6 @@ topology_template:
       immutable: false
       type: string
       description: sub interface network
-    ps_server_1b_names:
-      hidden: false
-      immutable: false
-      type: list
-      description: Ps server names
-      entry_schema:
-        type: string
-    packet_ext_network_name:
-      hidden: false
-      immutable: false
-      type: string
-      description: network name
   node_templates:
     packet_ext_network:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
@@ -159,6 +165,17 @@ topology_template:
           node: packet_ext_network
           relationship: tosca.relationships.network.LinksTo
   groups:
+    Vlan_group:
+      type: org.openecomp.groups.VfcInstanceGroup
+      properties:
+        vfc_parent_port_role: 1b
+        network_collection_function:
+          get_input: Vlan_network_collection_function
+        vfc_instance_group_function:
+          get_input: Vlan_vfc_instance_group_function
+        subinterface_role: Vlan
+      members:
+      - abstract_ps_server_1b
     nested_pattern5_levelTwo_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:

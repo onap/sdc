@@ -199,6 +199,16 @@ public class DataModelUtil {
     return serviceTemplate.getTopology_template().getNode_templates();
   }
 
+  public static Map<String, GroupDefinition> getGroups(ServiceTemplate serviceTemplate) {
+    if (Objects.isNull(serviceTemplate)
+        || Objects.isNull(serviceTemplate.getTopology_template())
+        || MapUtils.isEmpty(serviceTemplate.getTopology_template().getGroups())) {
+      return new HashMap<>();
+    }
+
+    return serviceTemplate.getTopology_template().getGroups();
+  }
+
   /**
    * Add node template.
    *
@@ -476,6 +486,26 @@ public class DataModelUtil {
     }
 
     serviceTemplate.getTopology_template().getGroups().put(groupName, group);
+  }
+
+  public static void addGroupMember(ServiceTemplate serviceTemplate,
+                                    String groupName,
+                                    String groupMemberId) {
+    TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
+    if (Objects.isNull(topologyTemplate)
+        || topologyTemplate.getGroups() == null
+        || topologyTemplate.getGroups().get(groupName) == null) {
+      return;
+    }
+
+    GroupDefinition groupDefinition = topologyTemplate.getGroups().get(groupName);
+    if (CollectionUtils.isEmpty(groupDefinition.getMembers())) {
+      groupDefinition.setMembers(new ArrayList<>());
+    }
+
+    if(!groupDefinition.getMembers().contains(groupMemberId)) {
+      groupDefinition.getMembers().add(groupMemberId);
+    }
   }
 
   /**

@@ -19,9 +19,15 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
+import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
+import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
+import java.util.Optional;
 
 
 /**
@@ -32,7 +38,7 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
   // key - sub-interface type - for ResourceGroup it is the nested file name
   // value - List of sub-interfaces of that type in the port
   private final ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
-      Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
+          Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
   private String networkRole;
 
@@ -44,13 +50,41 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
     this.networkRole = networkRole;
   }
 
-  public List<SubInterfaceTemplateConsolidationData> getSubInterfaceConsolidationData(
-      String subInterfaceType) {
-    return this.subInterfaceConsolidationData.get(subInterfaceType);
+  public SubInterfaceTemplateConsolidationData getSubInterfaceResourceTemplateConsolidationData(Resource resource,
+                                                                                    String subInterfaceNodeTemplateId,
+                                                                                    String parentPortNodeTemplateId) {
+    String subInterfaceType = createSubInterfaceType(resource);
+    List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
+              subInterfaceConsolidationData.get(subInterfaceType);
+    SubInterfaceTemplateConsolidationData consolidationData = null;
+    if (CollectionUtils.isNotEmpty(subInterfaceTemplateConsolidationDataList)) {
+      Optional<SubInterfaceTemplateConsolidationData> optionalConsolidationData =
+          subInterfaceTemplateConsolidationDataList.stream()
+              .filter(s -> s.getNodeTemplateId().equals(subInterfaceNodeTemplateId))
+              .findFirst();
+      if (optionalConsolidationData.isPresent()) {
+        consolidationData = optionalConsolidationData.get();
+      }
+    }
+
+    if (Objects.isNull(consolidationData)) {
+      consolidationData = createSubInterfaceConsolidationData(subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+      addSubInterfaceConsolidationData(subInterfaceType, consolidationData);
+    }
+    return consolidationData;
   }
 
-  public Set<String> getAllSubInterfaceNodeTypes() {
-    return this.subInterfaceConsolidationData.keySet();
+  private String createSubInterfaceType(Resource resource) {
+
+    return ToscaNodeType.VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX
+            + FileUtils.getFileWithoutExtention(HeatToToscaUtil.getSubInterfaceResourceType(resource));
+  }
+
+  private SubInterfaceTemplateConsolidationData createSubInterfaceConsolidationData(String subInterfaceNodeTemplateId, String parentPortNodeTemplateId) {
+    SubInterfaceTemplateConsolidationData data = new SubInterfaceTemplateConsolidationData();
+    data.setNodeTemplateId(subInterfaceNodeTemplateId);
+    data.setParentPortNodeTemplateId(parentPortNodeTemplateId);
+    return data;
   }
 
   public void addSubInterfaceConsolidationData(String subPortType,
@@ -79,6 +113,13 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
               subInterfaceType -> calculateSize(other.subInterfaceConsolidationData.get(subInterfaceType))
                   ==  calculateSize(this.subInterfaceConsolidationData.get(subInterfaceType)));
 
+  }
+
+  public boolean isSubInterfaceNodeTemplateIdParameter(String nodeTemplateType) {
+    List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
+        this.subInterfaceConsolidationData.get(nodeTemplateType);
+    return (Objects.nonNull(subInterfaceTemplateConsolidationDataList)
+        && subInterfaceTemplateConsolidationDataList.size() > 1) ;
   }
 
   private int calculateSize(List<SubInterfaceTemplateConsolidationData> subInterfaces) {
