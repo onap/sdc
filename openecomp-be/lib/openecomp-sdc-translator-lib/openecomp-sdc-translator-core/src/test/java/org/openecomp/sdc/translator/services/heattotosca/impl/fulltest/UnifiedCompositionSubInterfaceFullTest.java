@@ -29,13 +29,15 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1b/";
   private static final String PATTERN_1C1_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1c1/";
-  private static final String PATTERN_5_BASE_DIRECTORY =
-      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern5/";
   private static final String PATTERN_4_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern4/";
+  private static final String PATTERN_5_BASE_DIRECTORY =
+      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern5/";
+  private static final String VFC_INSTANCE_GROUP_BASE_DIRECTORY =
+      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/vfcInstanceGroup/";
 
   @Test
-  public void testSubInterfaceComputePortNetwork() throws IOException {
+  public void testSubInterfaceComputePortNetworkWithGroup() throws IOException {
     /**
      * Heat file with one compute, one port and one subinterface resource group with only port
      * connected to network
@@ -199,7 +201,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   }
 
   @Test
-  public void testSubInterfaceScalingMultiplePortsMultipleVlans() throws IOException {
+  public void testSubInterfaceScalingMultiplePortsMultipleVlansWithGroup() throws IOException {
     /**
      * Heat file with two computes of different type, four ports of two types each and four subinterface resource groups
      * of two types each
@@ -293,8 +295,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 2. Second level nested is having one VFC and one Port with Sub interface which are of
      * different type as parent heat file
      */
-    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
-        "complexVFCMultiLevelNestedDiffComputeScenario");
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCMultiLevelNestedDiffComputeScenario");
   }
 
   @Test
@@ -304,8 +305,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 1. Main is having 4 VFC of 2 type and 2 port and all having sub interface
      * 2. Second level nested is having 4 VFC of 2 type and 2 port and all having sub interface
      */
-    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
-        "complexVFCMultiVFCInAllHeatScalingScenario");
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCMultiVFCInAllHeatScalingScenario");
   }
 
   @Test
@@ -315,8 +315,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 1. First level nested is having one VFC and one Port with Sub interface
      * 2. Second level nested is having two VFC of same type and two Port with Sub interface
      */
-    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
-        "complexVFCMultiLevelNestedMultiComputeScenario");
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCMultiLevelNestedMultiComputeScenario");
   }
 
   @Test
@@ -328,8 +327,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 2. Second level nested is having two VFC of same type and one Port with only one port
      * connected to Sub interface
      */
-    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
-        "complexVFCWithDiffSubInfConnectivityScenario");
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCWithDiffSubInfConnectivityScenario");
   }
 
   //Catalog instance will start working with 1C2 changes in place
@@ -342,8 +340,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 2. Second level nested is having two VFC of same type and connected to Sub interface but
      * having different count
      */
-    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
-        "complexVFCWithDiffSubInfCountScenario");
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCWithDiffSubInfCountScenario");
   }
 
   //Pattern 4 Test Cases
@@ -429,5 +426,22 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 3. Sub-interface has depends on (out) connectivity with network resource
      */
     testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "subInterfaceNodesConnectedOut");
+  }
+
+  //****************** VFC Instance Group Tests ***************************
+
+  @Test
+  public void testGroupingOneSubInterfaceTypeOneAbstractNode() throws IOException {
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "oneSubInterfaceNetworkRole");
+  }
+
+  @Test
+  public void testGroupingOneSubInterfaceTypeAndTwoAbstractNodes() throws IOException {
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "oneSubInterfaceNetworkRoleAndTwoAbstractNodes");
+  }
+
+  @Test
+  public void testGroupingTwoSubInterfaceTypeAndTwoAbstractNodes() throws IOException {
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "twoSubInterfaceNetworkRoleAndTwoAbstractNodes");
   }
 }

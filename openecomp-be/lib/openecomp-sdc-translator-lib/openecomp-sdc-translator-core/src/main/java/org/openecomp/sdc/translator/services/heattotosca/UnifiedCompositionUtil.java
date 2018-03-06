@@ -18,7 +18,6 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -39,8 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Utility class for consolidation data collection helper methods.
@@ -80,30 +77,9 @@ public class UnifiedCompositionUtil {
                                                     portTemplateConsolidationDataCollection) {
     ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceDataByType = ArrayListMultimap.create();
     for (PortTemplateConsolidationData port : portTemplateConsolidationDataCollection) {
-      Set<String> allSubInterfaceNodeTypes = port.getAllSubInterfaceNodeTypes();
-      if (CollectionUtils.isEmpty(allSubInterfaceNodeTypes)) {
-        continue;
-      }
-      for (String subInterfaceNodeType : allSubInterfaceNodeTypes) {
-        subInterfaceDataByType.putAll(subInterfaceNodeType,
-            port.getSubInterfaceConsolidationData(subInterfaceNodeType));
-      }
+      port.copyMappedInto(subInterfaceDataByType);
     }
     return subInterfaceDataByType;
-  }
-
-  static List<String> getSubInterfaceNodeTemplateIdsByType(PortTemplateConsolidationData
-                                                               portTemplateConsolidationData,
-                                                           String subInterfaceType) {
-    List<String> subInterfaceNodeTemplateIds = new ArrayList<>();
-    List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        portTemplateConsolidationData.getSubInterfaceConsolidationData(subInterfaceType);
-    if (CollectionUtils.isNotEmpty(subInterfaceTemplateConsolidationDataList)) {
-      subInterfaceNodeTemplateIds = subInterfaceTemplateConsolidationDataList.stream()
-          .map(SubInterfaceTemplateConsolidationData::getNodeTemplateId)
-          .collect(Collectors.toList());
-    }
-    return subInterfaceNodeTemplateIds;
   }
 
   private static void addPortsToMap(Map<String, List<String>> portTypeToIds,
@@ -184,21 +160,14 @@ public class UnifiedCompositionUtil {
     NodeTemplate subInterfaceNodeTemplate =
         DataModelUtil.getNodeTemplate(serviceTemplate, subInterfaceTemplateConsolidationData.getNodeTemplateId());
     if (Objects.nonNull(portTemplateConsolidationData)) {
-      List<String> subInterfaceNodeTemplateIdsByType =
-          UnifiedCompositionUtil.getSubInterfaceNodeTemplateIdsByType(portTemplateConsolidationData,
-              subInterfaceNodeTemplate.getType());
-      if (CollectionUtils.isNotEmpty(subInterfaceNodeTemplateIdsByType)) {
-        //If there are more than one subinterfaces with same type use node template id
-        if (subInterfaceNodeTemplateIdsByType.size() > 1) {
-          newSubInterfaceNodeTemplateId.append("_").append(subInterfaceTemplateConsolidationData.getNodeTemplateId());
-        } else {
-          //Add sub interface type since we have only one subinterface per type
-          String subInterfaceTypeSuffix = getSubInterfaceTypeSuffix(subInterfaceNodeTemplate.getType());
-          newSubInterfaceNodeTemplateId.append("_").append(subInterfaceTypeSuffix);
-        }
+        String subInterfaceSuffix = (portTemplateConsolidationData.isSubInterfaceNodeTemplateIdParameter(subInterfaceNodeTemplate.getType()))?
+              //If there are more than one subinterfaces with same type use node template id
+              subInterfaceTemplateConsolidationData.getNodeTemplateId():
+                    //Add sub interface type since we have only one subinterface per type
+                     getSubInterfaceTypeSuffix(subInterfaceNodeTemplate.getType());
+        newSubInterfaceNodeTemplateId.append("_").append(subInterfaceSuffix);
         return newSubInterfaceNodeTemplateId.toString();
       }
-    }
     return subInterfaceTemplateConsolidationData.getNodeTemplateId();
   }
 
