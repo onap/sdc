@@ -52,7 +52,7 @@ parameters:
     description: "IPv6 address associated with subinterfaces"
     type: string
 resources:
-  vdbe_untr_x_subport:
+  vdbe_0_untr_vmi_0:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:
