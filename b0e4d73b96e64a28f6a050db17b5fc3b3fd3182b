@@ -1,0 +1,616 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1d9c465c",
+        "filename": "pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please don\u0027t do it. Let it build together with onboarding for now. And if needed to be build separately - can be done from the corresponding POM level.",
+      "range": {
+        "startLine": 379,
+        "startChar": 0,
+        "endLine": 387,
+        "endChar": 12
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5d1f2e6c",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Every additional artifact makes your .war and Docker images fatter. You have to include just what\u0027s necessary.",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bd28b29a",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Where is it used? To my knowledge, the SDC logback configuration needs this in runtime (scope \"runtime\"). But if you\u0027re not using that configuration, than groovy is not needed.",
+      "range": {
+        "startLine": 61,
+        "startChar": 1,
+        "endLine": 61,
+        "endChar": 48
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3d1ca277",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s needed. Does the code compile without it?",
+      "range": {
+        "startLine": 63,
+        "startChar": 1,
+        "endLine": 67,
+        "endChar": 21
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f85728c8",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/api/server/listeners/ActivitySpecAppStartupListener.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Why is it called twice? First time at the beginning of the method.",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 16
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_388cb035",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/dao/types/ActivitySpecEntity.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Can we use Lombok here too?",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_18ea14ac",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/datatypes/ActivitySpecData.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Can we use Lombok here?",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d8cfcc54",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/datatypes/ActivitySpecParameter.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Seems like a candidate for Lombok.",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_78da3818",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/datatypes/ActivitySpecParameter.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Didn\u0027t we want to document why it\u0027s here?",
+      "range": {
+        "startLine": 24,
+        "startChar": 33,
+        "endLine": 24,
+        "endChar": 56
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_38083091",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/datatypes/ElementType.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "This violates Java coding conventions.",
+      "range": {
+        "startLine": 20,
+        "startChar": 2,
+        "endLine": 20,
+        "endChar": 14
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_580bbc8d",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/datatypes/ItemType.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Violates coding conventions",
+      "range": {
+        "startLine": 20,
+        "startChar": 2,
+        "endLine": 20,
+        "endChar": 14
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f8fde86e",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please give a meaningful message and pass the exception as is. Something like LOGGER.error(\"Failed to get version \" + version + \" of activity \" + activitySpecId, exception);",
+      "range": {
+        "startLine": 167,
+        "startChar": 20,
+        "endLine": 167,
+        "endChar": 41
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3816f0a8",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Won\u0027t it be simpler to use something along the following lines?\n\nprivate static final Map\u003cVersionStatus, TransitionData\u003e VALIDATE_STATUSES \u003d \nnew EnumMap\u003c\u003e(); // then put Certified, Deprecated, Deleted along with corresponding TransitionData, which is an inner class\n\nVersionStatus status \u003d version.getStatus();\nTransitionData transition \u003d VALIDATE_STATUSES.get(status);\nif (prevStatus !\u003d null) {\n        String errMsg \u003d String.format(\"%s ActivitySpec With Id %s failed since it is not in %s status\", transition.getAction(), activitySpecId, status);\n        validateStatus(Objects.nonNull(retrievedVersion) ? retrievedVersion.getStatus() : null, status, errMsg);\n        prevVersionStatus \u003d transition.getPrevStatus();\n}",
+      "range": {
+        "startLine": 171,
+        "startChar": 1,
+        "endLine": 191,
+        "endChar": 14
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_180f7489",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Again, don\u0027t remove such a useful piece information as stack the exception\u0027s trace. And provide some message to understand the context the error happened in.",
+      "range": {
+        "startLine": 228,
+        "startChar": 21,
+        "endLine": 228,
+        "endChar": 50
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d824ac0e",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Seems like the pattern \"itemPredicate \u003d item -\u003e ItemType.activityspec.name().equals(item.getType())\n            \u0026\u0026 item.getVersionStatusCounters().containsKey(status)\" repeats. So why not just to pass the status? And if you need to do it only for particular statuses, just create a constant that lists them. It has at least two advantages: 1) you don\u0027t have to repeat the same code; 2) it\u0027s easy to add/remove statuses if needed.",
+      "range": {
+        "startLine": 243,
+        "startChar": 1,
+        "endLine": 253,
+        "endChar": 71
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_387d90e8",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/utils/ActivitySpecConstant.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "It\u0027s about instantiation. The private constructor makes it impossible to call new ActivitySpecConstant(), which make the class explicitly a collection of constants and static methods.",
+      "range": {
+        "startLine": 28,
+        "startChar": 7,
+        "endLine": 28,
+        "endChar": 71
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b870c00b",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/dao/impl/ActivitySpecZusammenDaoImplTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Don\u0027t use members in tests.",
+      "range": {
+        "startLine": 67,
+        "startChar": 2,
+        "endLine": 67,
+        "endChar": 55
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_188694db",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/dao/impl/ActivitySpecZusammenDaoImplTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please avoid members in tests. They may hold a state that can change depending on the order tests run in - creating flaky tests. Don\u0027t take the order of tests, and the fact they run sequentially for granted.",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 28
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d86b4c1c",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "This may hold state that can break in multi-thread execution. Each test should instantiate everything needed for its execution. Unless the state is initialized once before the class (not before each method).",
+      "range": {
+        "startLine": 50,
+        "startChar": 1,
+        "endLine": 70,
+        "endChar": 53
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9871440e",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/mocks/VersionManagerMock.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Why will this.verion.setStatus(version.getStatus()) not work?",
+      "range": {
+        "startLine": 95,
+        "startChar": 1,
+        "endLine": 103,
+        "endChar": 5
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_58673c4d",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/src/main/webapp/WEB-INF/jetty-web.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Did you manage to figure out if it\u0027s needed? As Gautam had suggested.",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f859688e",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/src/main/webapp/WEB-INF/spring-mapper-servlet.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "This seem redundant.",
+      "range": {
+        "startLine": 7,
+        "startChar": 1,
+        "endLine": 10,
+        "endChar": 19
+      },
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_38f27070",
+        "filename": "services/activity-spec/setup/activityspec-cassandra-commands.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Should be plain CQL files.",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d8d90cf4",
+        "filename": "services/activity-spec/setup/activityspec-zusammen-cassandra-commands.json",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please convert this to simple CQL files (one for create and another for drop).",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_18ebf478",
+        "filename": "services/activity-spec/setup/generate-cassandra-alter-cql.sh",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please remove this as it will not be needed.",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b8052047",
+        "filename": "services/activity-spec/setup/generate-cassandra-drop-cql.sh",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please incorporate this into the CQL files and delete the script.",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d8002c36",
+        "filename": "services/activity-spec/setup/generate-cassandra-init-cql.sh",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please convert it into a simple CQL file",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_78fb1847",
+        "filename": "services/activity-spec/setup/parse-json.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please delete",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f89e4806",
+        "filename": "services/activity-spec/setup/zusammen-generate-cassandra-init-cql.sh",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Please convert to CQL",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_18a2144b",
+        "filename": "services/activity-spec/swagger-ui/WEB-INF/jetty-web.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T16:49:05Z",
+      "side": 1,
+      "message": "Do we need it?",
+      "revId": "b0e4d73b96e64a28f6a050db17b5fc3b3fd3182b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
