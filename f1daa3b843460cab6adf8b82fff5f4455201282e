@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_fdf2ba04",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T11:13:36Z",
+      "side": 1,
+      "message": "Well, calling a method is always more expensive than using a variable. Here it\u0027s multiplied by the number of iterations. Premature optimization is evil, but this doesn\u0027t mean you don\u0027t have to care about performance at all. Very likely it will be eventually optimized by the JVM, but why not do it right away? You can use JMH to benchmark the difference.",
+      "parentUuid": "5a93c517_62512735",
+      "range": {
+        "startLine": 303,
+        "startChar": 22,
+        "endLine": 303,
+        "endChar": 34
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8ebee2ac",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
         "patchSetId": 4
@@ -107,6 +131,30 @@
       "writtenOn": "2018-03-06T09:26:44Z",
       "side": 1,
       "message": "Checked with others and I see in ONAP we are ok to use 3rd party libraries if they are making life simple. This was not the approach we used earlier in other core product. I will change the implementation to use the framework lib.",
+      "parentUuid": "5a93c517_0244e371",
+      "range": {
+        "startLine": 321,
+        "startChar": 0,
+        "endLine": 328,
+        "endChar": 42
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1dae8698",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T11:13:36Z",
+      "side": 1,
+      "message": "Yes, the general rule is simple: Don\u0027t write what\u0027s been already written. Reasons? Time to write, time to test, probable bugs, copyright violations if pasted from somewhere. There was even a session on doing code reviews that explicitly mentioned it. Most of the popular frameworks for common tasks are already included as Maven dependencies anyway.",
       "parentUuid": "5a93c517_0244e371",
       "range": {
         "startLine": 321,
@@ -207,6 +255,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_9d705641",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T11:13:36Z",
+      "side": 1,
+      "message": "It doesn\u0027t explain. Look at the code - it either always, unconditionally overwrites the \"issues\" variable, or throws an exception, in which case it can\u0027t return anything. And suppose you needed to return an instance - return a sized HashMap or better yet Collections.emptyMap() (immutability is a bonus).",
+      "parentUuid": "5a93c517_424e6b98",
+      "range": {
+        "startLine": 68,
+        "startChar": 6,
+        "endLine": 68,
+        "endChar": 43
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0e017269",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
         "patchSetId": 4
@@ -278,6 +350,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_dd933e59",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T11:13:36Z",
+      "side": 1,
+      "message": "Yes, it looks like a one-time initialization. Concurrently doesn\u0027t mean multi-threaded in this case. Just some other code would like to put there other values. Also, I can understand why the configuration manager is intitialized/modified outside. In other words the set() APIs are problematic.",
+      "parentUuid": "5a93c517_fd571ac8",
+      "range": {
+        "startLine": 81,
+        "startChar": 1,
+        "endLine": 83,
+        "endChar": 71
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4e321a60",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
         "patchSetId": 4
@@ -313,6 +409,30 @@
       "side": 1,
       "message": "I have kept them separate from readability perspective. Is there any significant benefit in combining them in to one?",
       "parentUuid": "5a93c517_4e321a60",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 113,
+        "endChar": 51
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9d99367b",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T11:13:36Z",
+      "side": 1,
+      "message": "On the face of it, the stream is traversed once to filter by the first predicate, and then once more to filter the result by the second predicate. I believe you wouldn\u0027t have written two loops with an intermediate result. There are other ways to achieve readability - extract the complex condition to a method, for instance.",
+      "parentUuid": "5a93c517_e2ae972d",
       "range": {
         "startLine": 112,
         "startChar": 0,
@@ -384,6 +504,30 @@
       "side": 1,
       "message": "in this case i see the entire stream is read by Yaml.load in one go. I can change it but just wanted to understand the benefit so that it will not be missed in future.",
       "parentUuid": "5a93c517_8280f38b",
+      "range": {
+        "startLine": 120,
+        "startChar": 33,
+        "endLine": 120,
+        "endChar": 48
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dd7a5e23",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T11:13:36Z",
+      "side": 1,
+      "message": "This is what I mean https://stackoverflow.com/a/18600383/3365419. I\u0027m not sure how Yaml.load() is implemented, and I don\u0027t care much because the only thing I know from the API is that it accepts an InputStream that can be attached to any source. On the other hand, I know that in our case it\u0027s a file, and its FileInputStream\u0027s low level operations are expensive.",
+      "parentUuid": "5a93c517_bd751265",
       "range": {
         "startLine": 120,
         "startChar": 33,
