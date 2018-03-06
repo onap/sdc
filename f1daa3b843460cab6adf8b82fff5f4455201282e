@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_9d6616ba",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/file/FileUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T09:26:44Z",
+      "side": 1,
+      "message": "Checked with others and I see in ONAP we are ok to use 3rd party libraries if they are making life simple. This was not the approach we used earlier in other core product. I will change the implementation to use the framework lib.",
+      "parentUuid": "5a93c517_0244e371",
+      "range": {
+        "startLine": 321,
+        "startChar": 0,
+        "endLine": 328,
+        "endChar": 42
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0eead2ab",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/test/java/org/openecomp/core/utilities/file/FileUtilsTest.java",
         "patchSetId": 4
@@ -230,6 +254,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_fd571ac8",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T09:26:44Z",
+      "side": 1,
+      "message": "If i understood correctly, rather than initializing it at every execution it should be done once at application level. Do you want me to move it to a static block?",
+      "parentUuid": "5a93c517_e27537cb",
+      "range": {
+        "startLine": 81,
+        "startChar": 1,
+        "endLine": 83,
+        "endChar": 71
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4e321a60",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
         "patchSetId": 4
@@ -312,6 +360,30 @@
       "side": 1,
       "message": "could you please help to explain it better? I tried to research it further but couldn\u0027t find any specific benefits in different approaches in this case.",
       "parentUuid": "5a93c517_0e38923b",
+      "range": {
+        "startLine": 120,
+        "startChar": 33,
+        "endLine": 120,
+        "endChar": 48
+      },
+      "revId": "f1daa3b843460cab6adf8b82fff5f4455201282e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bd751265",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaValidationServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-03-06T09:26:44Z",
+      "side": 1,
+      "message": "in this case i see the entire stream is read by Yaml.load in one go. I can change it but just wanted to understand the benefit so that it will not be missed in future.",
+      "parentUuid": "5a93c517_8280f38b",
       "range": {
         "startLine": 120,
         "startChar": 33,
