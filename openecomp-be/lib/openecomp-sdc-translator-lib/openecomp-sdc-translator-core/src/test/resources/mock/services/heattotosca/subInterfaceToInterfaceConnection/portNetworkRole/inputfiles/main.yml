@@ -118,6 +118,9 @@ resources:
         - port: {get_resource: vdbe_0_oam_port_1}
         - port: {get_resource: vdbe_oam_port}
         - port: {get_resource: vdbe_oam_port_2}
+        - port: {get_resource: vdbe_0_int_oam_port_1}
+        - port: {get_resource: vdbe_int_oam_port}
+        - port: {get_resource: vdbe_int_oam_port_2}
         - port: {get_resource: vdbe_0_oam_neutronNotFollowingHeatGuidelines_2}
         - port: {get_resource: vdbe_0_untr_vmiNotFollowingHeatGuidelines_1}
   vdbe_untr_1_subports:
@@ -292,6 +295,27 @@ resources:
       replacement_policy: AUTO
 
   vdbe_0_oam_neutronNotFollowingHeatGuidelines_2:
+    type: OS::Neutron::Port
+    properties:
+      network: Test
+      fixed_ips: [{"ip_address": 1.2.3.4}]
+      replacement_policy: AUTO
+
+  vdbe_0_int_oam_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: Test
+      fixed_ips: [{"ip_address": 1.2.3.4}]
+      replacement_policy: AUTO
+
+  vdbe_int_oam_port:
+    type: OS::Neutron::Port
+    properties:
+      network: Test
+      fixed_ips: [{"ip_address": 1.2.3.4}]
+      replacement_policy: AUTO
+
+  vdbe_int_oam_port_2:
     type: OS::Neutron::Port
     properties:
       network: Test
