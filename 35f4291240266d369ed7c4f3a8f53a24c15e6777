@@ -22,6 +22,30 @@
       "revId": "35f4291240266d369ed7c4f3a8f53a24c15e6777",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1da8c6d9",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/AuditData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-06T08:41:48Z",
+      "side": 1,
+      "message": "The reason for switching to a concrete implementation is described in the comment below. And why does it mean that now getElapsedTime() should be here? What additional value does it bring?",
+      "parentUuid": "5a93c517_a2296f9c",
+      "range": {
+        "startLine": 28,
+        "startChar": 13,
+        "endLine": 28,
+        "endChar": 22
+      },
+      "revId": "35f4291240266d369ed7c4f3a8f53a24c15e6777",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
