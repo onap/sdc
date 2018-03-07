@@ -73,6 +73,29 @@ fieldset {
   border: 1px solid $light-blue;
 }
 
+/* Monkey patch for SDC-UI version clash */
+.sdc-radio {
+  .sdc-radio__input {
+    opacity: 1;
+    z-index: initial;
+    padding-right: 5px;
+    margin-right: 0;
 
+    &:before {
+      left: 0;
+      top: 0;
+      padding-right: 0;
+      margin-right: 0;
+    }
+  }
 
+  .sdc-radio__label {
+    margin-left: 14px;
+    padding-left: 0;
+    cursor: default;
 
+    &:before {
+      display: none;
+    }
+  }
+}
