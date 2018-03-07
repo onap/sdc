@@ -104,7 +104,7 @@ public class InterfaceLifecycleTypeImportManager {
 		InterfaceDefinition interfaceDef = new InterfaceDefinition();
 		interfaceDef.setType(interfaceDefinition);
 
-		Map<String, Operation> operations = new HashMap<String, Operation>();
+		Map<String, Operation> operations = new HashMap<>();
 
 		for (Map.Entry<String, Object> entry : toscaJson.entrySet()) {
 			Operation operation = new Operation();

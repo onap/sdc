@@ -66,7 +66,7 @@ public class ComponentParametersView {
 				this.setIgnoreProperties(false);
 				break;
 			case INPUTS:
-				this.setIgnoreInputs(false);;
+				this.setIgnoreInputs(false);
 				break;
 			case USERS:
 				this.setIgnoreUsers(false);

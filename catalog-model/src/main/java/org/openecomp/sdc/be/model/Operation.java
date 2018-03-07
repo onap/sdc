@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefintion;
 
 /**
  * Defines an operation available to manage particular aspects of the Node Type.
@@ -55,7 +54,7 @@ public class Operation extends OperationDataDefinition implements IOperationPara
 	}
 
 	public Operation(ArtifactDataDefinition implementation, String description,
-			Map<String, PropertyDataDefinition> inputs) {
+		ListDataDefinition<OperationInputDefintion> inputs) {
 		super(description);
 		setImplementation(implementation);
 		setInputs(inputs);

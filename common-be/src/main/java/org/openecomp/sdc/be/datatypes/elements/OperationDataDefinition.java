@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,100 +21,87 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
-import java.util.Map;
-
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1951516966187326915L;
 
-	private String uniqueId;
+    @JsonCreator
+    public OperationDataDefinition() {
+        super();
+    }
 
-	/**
-	 * Timestamp of the resource (artifact) creation
-	 */
-	private Long creationDate;
+    public OperationDataDefinition(String description) {
+        super();
+        setDescription(description);
+    }
 
-	/**
-	 * Timestamp of the last resource (artifact) creation
-	 */
-	private Long lastUpdateDate;
+    public OperationDataDefinition(OperationDataDefinition p) {
+        setDescription(p.getUniqueId());
+        setDescription(p.getDescription());
+        setImplementation(p.getImplementation());
+        setInputs(p.getInputs());
+        setName(p.getName());
+    }
 
-	/** Description of the operation. */
-	private String description;
-	/** Implementation artifact for the interface. */
-	private ArtifactDataDefinition implementation;
 
-	/**
-	 * This OPTIONAL property contains a list of one or more input parameter
-	 * definitions.
-	 */
-	// @JsonDeserialize(contentUsing = OperationParameterDeserializer.class)
-	private Map<String, PropertyDataDefinition> inputs;
-	public OperationDataDefinition() {
-		super();
-	}
+    public String getUniqueId() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
+    }
 
-	public OperationDataDefinition(String description) {
-		super();
-		this.description = description;
-	}
+    public void setUniqueId(String uniqueId) {
+        setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
+    }
 
-	public OperationDataDefinition(OperationDataDefinition p) {
-		this.uniqueId = p.uniqueId;
-		this.description = p.description;
-		this.implementation = p.implementation;
-		this.inputs = p.inputs;
-	}
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+    public Long getCreationDate() {
+        return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_DATE);
+    }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+    public void setCreationDate(Long creationDate) {
+        setToscaPresentationValue(JsonPresentationFields.CREATION_DATE, creationDate);
+    }
 
-	public Long getCreationDate() {
-		return creationDate;
-	}
+    public Long getLastUpdateDate() {
+        return (Long) getToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE);
+    }
 
-	public void setCreationDate(Long creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setLastUpdateDate(Long lastUpdateDate) {
+        setToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE, lastUpdateDate);
+    }
 
-	public Long getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public String getDescription() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
+    }
 
-	public void setLastUpdateDate(Long lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
+    public void setDescription(String description) {
+        setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public ArtifactDataDefinition getImplementation() {
+        return (ArtifactDataDefinition) getToscaPresentationValue(JsonPresentationFields.OPERATION_IMPLEMENTATION);
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public ArtifactDataDefinition getImplementation() {
-		return implementation;
-	}
+    public void setImplementation(ArtifactDataDefinition implementation) {
+        setToscaPresentationValue(JsonPresentationFields.OPERATION_IMPLEMENTATION, implementation);
+    }
 
-	public void setImplementation(ArtifactDataDefinition implementation) {
-		this.implementation = implementation;
-	}
+    public ListDataDefinition<OperationInputDefintion> getInputs() {
+        return (ListDataDefinition<OperationInputDefintion>)
+            getToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT);
+    }
 
-	public Map<String, PropertyDataDefinition> getInputs() {
-		return inputs;
-	}
+    public void setInputs(ListDataDefinition<OperationInputDefintion> inputs) {
+        setToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT,inputs);
+    }
 
-	public void setInputs(Map<String, PropertyDataDefinition> inputs) {
-		this.inputs = inputs;
-	}
+    public String getName() {
+       return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
+    }
+
+    public void setName(String name) {
+        setToscaPresentationValue(JsonPresentationFields.NAME, name);
+    }
 }

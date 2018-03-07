@@ -125,7 +125,7 @@ public class OperationDataDefinitionTest {
 	@Test
 	public void testGetInputs() throws Exception {
 		OperationDataDefinition testSubject;
-		Map<String, PropertyDataDefinition> result;
+		ListDataDefinition<OperationInputDefintion> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -136,7 +136,7 @@ public class OperationDataDefinitionTest {
 	@Test
 	public void testSetInputs() throws Exception {
 		OperationDataDefinition testSubject;
-		Map<String, PropertyDataDefinition> inputs = null;
+		ListDataDefinition<OperationInputDefintion> inputs = null;
 
 		// default test
 		testSubject = createTestSubject();
