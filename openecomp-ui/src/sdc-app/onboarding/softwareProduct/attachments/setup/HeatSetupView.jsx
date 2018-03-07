@@ -97,13 +97,11 @@ const UnassignedFileList = (props) => {
 };
 
 const EmptyListContent = props => {
-	let {onClick, heatDataExist, isReadOnlyMode} = props;
+	let {heatDataExist} = props;
 	let displayText = heatDataExist ? 'All Files Are Assigned' : '';
 	return (
 		<div className='go-to-validation-button-wrapper'>
-			<div className='all-files-assigned'>{i18n(displayText)}</div>
-			{heatDataExist && <SVGIcon disabled={isReadOnlyMode} name='angleRight' onClick={onClick}
-				data-test-id='go-to-validation' label={i18n('Proceed To Validation')} labelPosition='left' color='primary'/>}
+			<div className='all-files-assigned'>{i18n(displayText)}</div>			
 		</div>
 	);
 };
@@ -283,7 +281,7 @@ class SoftwareProductHeatSetupView extends Component {
 	}
 
 	render() {
-		let {modules, heatSetupCache, isReadOnlyMode, heatDataExist, unassigned, artifacts, nested, onArtifactListChange, onAddAllUnassigned} = this.props;
+		let {modules, isReadOnlyMode, heatDataExist, unassigned, artifacts, nested, onArtifactListChange, onAddAllUnassigned} = this.props;
 
 		const formattedUnassigned = unassigned.map(buildLabelValueObject);
 		const formattedArtifacts = artifacts.map(buildLabelValueObject);
@@ -317,9 +315,7 @@ class SoftwareProductHeatSetupView extends Component {
 						(<ul>{formattedUnassigned.map(file => <UnassignedFile key={file.label} name={file.label}/>)}</ul>)
 						:
 						(<EmptyListContent
-							heatDataExist={heatDataExist}
-							isReadOnlyMode={this.props.isReadOnlyMode}
-							onClick={() => this.processAndValidateHeat({modules, unassigned, artifacts, nested}, heatSetupCache)}/>)
+							heatDataExist={heatDataExist}/>)
 					}
 				</UnassignedFileList>
 			</div>
