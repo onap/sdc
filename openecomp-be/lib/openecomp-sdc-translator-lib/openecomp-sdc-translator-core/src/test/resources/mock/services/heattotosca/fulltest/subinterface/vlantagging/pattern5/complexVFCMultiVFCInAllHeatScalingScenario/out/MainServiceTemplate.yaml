@@ -1,0 +1,250 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    pd_server_1b_flavor:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_1b_flavor
+      type: string
+      description: Flavor for PS server
+    packet_externalmain_network_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: packet_externalmain_network_name
+      type: string
+      description: network name
+    pd_server_1b_ips:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_1b_ips
+      type: string
+    pd_server_1b_names:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_1b_names
+      type: list
+      description: Ps server names
+      entry_schema:
+        type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: availability_zone_0
+      type: string
+      description: availabilityzone name
+    packet_internalmain_network_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: packet_internalmain_network_name
+      type: string
+      description: network name
+    pd_server_1b_image:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_1b_image
+      type: string
+      description: Ps Image server
+    pd_server_2b_ips:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: pd_server_2b_ips
+      type: string
+  node_templates:
+    abstract_pd_server_1b_1:
+      type: org.openecomp.resource.abstract.nodes.pd_server_1b_1
+      directives:
+      - substitutable
+      properties:
+        compute_pd_server_1b_name:
+        - get_input:
+          - pd_server_1b_names
+          - 0
+        - get_input:
+          - pd_server_1b_names
+          - 1
+        - get_input:
+          - pd_server_1b_names
+          - 2
+        - get_input:
+          - pd_server_1b_names
+          - 1
+        vm_flavor_name:
+          get_input: pd_server_1b_flavor
+        subinterface_nested_vlan_net1:
+        - packet_externalmain_network
+        - packet_externalmain_network
+        - packet_externalmain_network
+        - packet_externalmain_network
+        vm_image_name:
+          get_input: pd_server_1b_image
+        port_pd_server_1b_port_replacement_policy:
+        - AUTO
+        - AUTO
+        - AUTO
+        - AUTO
+        port_pd_server_1b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        subinterface_nested_vlan_parent_interface:
+        - pd_server_1b_port_0
+        - pd_server_1b_port_01
+        - pd_server_1b_port_11
+        - pd_server_1b_port_1
+        port_pd_server_1b_port_fixed_ips:
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 0
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 1
+        - - ip_address:
+              get_input:
+              - pd_server_1b_ips
+              - 1
+        port_pd_server_1b_port_network:
+        - packet_internalmain_network
+        - packet_internalmain_network
+        - packet_internalmain_network
+        - packet_internalmain_network
+        compute_pd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        port_pd_server_1b_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        service_template_filter:
+          substitute_service_template: Nested_pd_server_1b_1ServiceTemplate.yaml
+          count: 4
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_pd_server_1b_pd_server_1b_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internalmain_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_externalmain_network
+          relationship: tosca.relationships.network.LinksTo
+    packet_internalmain_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internalmain_network_name
+    test_nested_level1:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_pattern5
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested_pattern5ServiceTemplate.yaml
+    packet_externalmain_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_externalmain_network_name
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - packet_internalmain_network
+      - test_nested_level1
+      - packet_externalmain_network
+      - abstract_pd_server_1b_1

@@ -1,0 +1,96 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    packet_external_network_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: packet_external_network_name
+      type: string
+      description: network name
+    packet_internal_network_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: packet_internal_network_name
+      type: string
+    jsa_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: jsa_name
+      type: string
+      description: network name of jsa log network
+  node_templates:
+    packet_external_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_external_network_name
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+    test_nested_level1:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_pattern5
+      directives:
+      - substitutable
+      properties:
+        port_net: packet_internal_network
+        service_template_filter:
+          substitute_service_template: nested_pattern5ServiceTemplate.yaml
+        sub_inf_net: packet_external_network
+      requirements:
+      - link_pd_server_1b_port_0:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_pd_server_1b_port_1_test_nested_level2:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_Vlan_vmi_1_test_resourceGroup_0:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_external_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_external_network
+          relationship: tosca.relationships.network.LinksTo
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - packet_external_network
+      - packet_internal_network
+      - test_nested_level1

@@ -1,0 +1,78 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  sub_inf_net:
+      type: string
+      description: sub interface network
+  port_net:
+    type: string
+    description: port network
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pd_server_1b_names:
+    type: comma_delimited_list
+    description: PD server names
+  pd_server_1b_image:
+    type: string
+    description: PD Image server
+  ps_server_1b_names:
+    type: comma_delimited_list
+    description: Ps server names
+  ps_server_1b_image:
+    type: string
+    description: Ps Image server
+  pd_server_1b_flavor:
+    type: string
+    description: Flavor for PD server
+  ps_server_1b_flavor:
+    type: string
+    description: Flavor for PS server
+  pd_server_1b_ips:
+    type: string
+  ps_server_1b_ips:
+    type: string
+  pd_server_2b_ips:
+    type: string
+  ps_server_2b_ips:
+    type: string
+
+resources:
+  pd_server_1b_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: port_net}
+      fixed_ips: [{"ip_address": {get_param: [pd_server_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_1b_pd_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [pd_server_1b_names, 0]}
+      image: { get_param: pd_server_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: pd_server_1b_flavor }
+      networks:
+      - port: { get_resource: pd_server_1b_port_0 }
+
+  test_resourceGroup_0:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 9
+      resource_def:
+        type: nested_vlan.yml
+        properties:
+          parent_interface: { get_resource: pd_server_1b_port_0}
+          net1: { get_param: sub_inf_net}
+
+  test_nested_level2:
+    type: nested_pattern5_levelTwo.yml
+    properties:
+      port_net: {get_param: port_net}
+      sub_inf_net: { get_param: sub_inf_net}

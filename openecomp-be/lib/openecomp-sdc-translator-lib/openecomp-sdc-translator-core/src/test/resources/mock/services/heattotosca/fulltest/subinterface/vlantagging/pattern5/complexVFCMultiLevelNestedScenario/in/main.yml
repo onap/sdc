@@ -1,0 +1,33 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+  packet_external_network_name:
+    type: string
+    description: network name
+  packet_internal_network_name:
+    type: string
+
+resources:
+  packet_internal_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_internal_network_name
+
+  packet_external_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_external_network_name
+
+  test_nested_level1:
+    type: nested_pattern5.yml
+    properties:
+      port_net: {get_resource: packet_internal_network}
+      sub_inf_net: { get_resource: packet_external_network}

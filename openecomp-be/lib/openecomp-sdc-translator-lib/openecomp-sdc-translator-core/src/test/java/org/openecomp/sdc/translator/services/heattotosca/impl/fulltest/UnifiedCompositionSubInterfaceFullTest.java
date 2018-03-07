@@ -31,6 +31,8 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1c1/";
   private static final String PATTERN_4_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern4/";
+  private static final String PATTERN_5_BASE_DIRECTORY =
+      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern5/";
 
   @Test
   public void testSubInterfaceComputePortNetwork() throws IOException {
@@ -329,5 +331,103 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * 3. Sub-interface has depends on (out) connectivity with network resource
      */
     testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "subInterfaceNodesConnectedOut");
+  }
+
+  //Pattern5 Test Cases
+  @Test
+  public void testBaseScenarioPattern5() throws IOException {
+    /**
+     * Base heat has only nested component and nested heat has reference to subinterface and
+     * two VFCs of different type
+     * 1. Each server connected with two port
+     * 2. One Port of each server connected to network
+     * 3. Only one port out of four is having sub interface connectivity
+     * 4. Sub-interface connected to different network then port
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "baseScenario");
+  }
+
+  @Test
+  public void testComplexVFCScalingScenarioPattern5() throws IOException {
+    /**
+     * 1. Base heat has only nested component and nested has reference to subinterface and
+     * two VFCs of same type
+     * 1. Each server connected with two port
+     * 2. One Port of each server connected to network
+     * 3. Only one port out of four is having sub interface
+     * 4. Sub-interface connected to different network then port
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCScalingScenario");
+  }
+
+  @Test
+  public void testComplexVFCMultiLevelNestedScenarioPattern5() throws IOException {
+    /**
+     * 1. First level nested is having one VFC and one Port with Sub interface
+     * 2. Second level nested is having one VFC and one Port with Sub interface which are of same
+     * type as parent heat file
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCMultiLevelNestedScenario");
+  }
+
+  @Test
+  public void testComplexVFCMultiLevelNestedDiffComputeScenarioPattern5() throws
+      IOException {
+    /**
+     * 1. First level nested is having one VFC and one Port with Sub interface
+     * 2. Second level nested is having one VFC and one Port with Sub interface which are of
+     * different type as parent heat file
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
+        "complexVFCMultiLevelNestedDiffComputeScenario");
+  }
+
+  @Test
+  public void testComplexVFCMultiComputeInAllHeatPattern5() throws
+      IOException {
+    /**
+     * 1. Main is having 4 VFC of 2 type and 2 port and all having sub interface
+     * 2. Second level nested is having 4 VFC of 2 type and 2 port and all having sub interface
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
+        "complexVFCMultiVFCInAllHeatScalingScenario");
+  }
+
+  @Test
+  public void testComplexVFCMultiLevelNestedMultiComputeScenarioPattern5() throws
+      IOException {
+    /**
+     * 1. First level nested is having one VFC and one Port with Sub interface
+     * 2. Second level nested is having two VFC of same type and two Port with Sub interface
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
+        "complexVFCMultiLevelNestedMultiComputeScenario");
+  }
+
+  @Test
+  public void testComplexVFCWithDiffSubInfConnectivityScenarioPattern5()
+      throws
+      IOException {
+    /*
+     * 1. First level nested is having one VFC and one Port with Sub interface
+     * 2. Second level nested is having two VFC of same type and one Port with only one port
+     * connected to Sub interface
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
+        "complexVFCWithDiffSubInfConnectivityScenario");
+  }
+
+  //Catalog instance will start working with 1C2 changes in place
+  @Test
+  public void testComplexVFCWithDiffSubInfCountScenarioPattern5()
+      throws
+      IOException {
+    /*
+     * 1. First level nested is having one VFC and one Port with Sub interface
+     * 2. Second level nested is having two VFC of same type and connected to Sub interface but
+     * having different count
+     */
+    testTranslationWithInit(PATTERN_5_BASE_DIRECTORY +
+        "complexVFCWithDiffSubInfCountScenario");
   }
 }

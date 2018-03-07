@@ -1,0 +1,572 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested_pattern5_levelTwo
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    port_net:
+      hidden: false
+      immutable: false
+      type: string
+      description: port network
+    ps_server_2b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    ps_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    packet_int_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    ps_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PS server
+    ps_server_1b_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Ps Image server
+    sub_inf_net:
+      hidden: false
+      immutable: false
+      type: string
+      description: sub interface network
+    ps_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: Ps server names
+      entry_schema:
+        type: string
+    packet_ext_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name
+  node_templates:
+    packet_ext_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_ext_network_name
+    packet_int_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_int_network_name
+    abstract_ps_server_1b_1:
+      type: org.openecomp.resource.abstract.nodes.ps_server_1b_1
+      directives:
+      - substitutable
+      properties:
+        port_ps_server_1b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_ps_server_1b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_1b_ips
+            - 1
+        vm_flavor_name:
+          get_input: ps_server_1b_flavor
+        port_ps_server_1b_port_network:
+        - packet_int_network
+        port_ps_server_1b_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: ps_server_1b_image
+        port_ps_server_1b_port_replacement_policy:
+        - AUTO
+        compute_ps_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        compute_ps_server_1b_name:
+        - get_input:
+          - ps_server_1b_names
+          - 2
+        service_template_filter:
+          substitute_service_template: Nested_ps_server_1b_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_ps_server_1b_ps_server_1b_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_int_network
+          relationship: tosca.relationships.network.LinksTo
+    abstract_ps_server_1b:
+      type: org.openecomp.resource.abstract.nodes.ps_server_1b
+      directives:
+      - substitutable
+      properties:
+        port_ps_server_1b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_ps_server_1b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_1b_ips
+            - 0
+        vm_flavor_name:
+          get_input: ps_server_1b_flavor
+        port_ps_server_1b_port_network:
+        - packet_int_network
+        subinterface_nested_vlan_net1:
+        - packet_ext_network
+        port_ps_server_1b_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: ps_server_1b_image
+        port_ps_server_1b_port_replacement_policy:
+        - AUTO
+        subinterface_nested_vlan_parent_interface:
+        - ps_server_1b_port_1
+        compute_ps_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        compute_ps_server_1b_name:
+        - get_input:
+          - ps_server_1b_names
+          - 1
+        service_template_filter:
+          substitute_service_template: Nested_ps_server_1bServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_ps_server_1b_ps_server_1b_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_int_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_ext_network
+          relationship: tosca.relationships.network.LinksTo
+  groups:
+    nested_pattern5_levelTwo_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested_pattern5_levelTwo.yml
+        description: nested1
+      members:
+      - packet_ext_network
+      - packet_int_network
+      - abstract_ps_server_1b
+      - abstract_ps_server_1b_1
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested_pattern5_levelTwo
+    capabilities:
+      binding_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - binding_ps_server_1b_ps_server_1b_port
+      disk.device.latency_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.latency_ps_server_1b
+      disk.device.usage_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.usage_ps_server_1b
+      disk.device.usage_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.usage_ps_server_1b
+      disk.read.requests_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.read.requests_ps_server_1b
+      disk.device.write.requests.rate_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.write.requests.rate_ps_server_1b
+      disk.read.requests_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.read.requests_ps_server_1b
+      disk.device.write.requests.rate_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.write.requests.rate_ps_server_1b
+      binding_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - binding_ps_server_1b_ps_server_1b_port
+      disk.read.bytes_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.read.bytes_ps_server_1b
+      disk.read.bytes_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.read.bytes_ps_server_1b
+      disk.device.latency_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.latency_ps_server_1b
+      disk.root.size_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.root.size_ps_server_1b
+      network.incoming.bytes.rate_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port
+      disk.root.size_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.root.size_ps_server_1b
+      network.incoming.bytes.rate_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.incoming.bytes.rate_ps_server_1b_ps_server_1b_port
+      disk.device.read.requests.rate_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.read.requests.rate_ps_server_1b
+      disk.device.read.requests.rate_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.read.requests.rate_ps_server_1b
+      feature_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - feature
+      network.incoming.bytes_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.incoming.bytes_ps_server_1b_ps_server_1b_port
+      network.incoming.bytes_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.incoming.bytes_ps_server_1b_ps_server_1b_port
+      attachment_packet_int_network:
+      - packet_int_network
+      - attachment
+      cpu.delta_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - cpu.delta_ps_server_1b
+      memory.resident_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - memory.resident_ps_server_1b
+      cpu.delta_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - cpu.delta_ps_server_1b
+      memory.resident_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - memory.resident_ps_server_1b
+      cpu_util_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - cpu_util_ps_server_1b
+      disk.device.write.bytes.rate_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.write.bytes.rate_ps_server_1b
+      disk.device.write.bytes.rate_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.write.bytes.rate_ps_server_1b
+      cpu_util_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - cpu_util_ps_server_1b
+      disk.ephemeral.size_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.ephemeral.size_ps_server_1b
+      disk.ephemeral.size_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.ephemeral.size_ps_server_1b
+      disk.capacity_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.capacity_ps_server_1b
+      memory_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - memory_ps_server_1b
+      network.outgoing.packets.rate_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port
+      disk.capacity_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.capacity_ps_server_1b
+      memory_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - memory_ps_server_1b
+      instance_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - instance_ps_server_1b
+      forwarder_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - forwarder_ps_server_1b_ps_server_1b_port
+      forwarder_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - forwarder_ps_server_1b_ps_server_1b_port
+      network.outgoing.packets.rate_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.outgoing.packets.rate_ps_server_1b_ps_server_1b_port
+      link_packet_int_network:
+      - packet_int_network
+      - link
+      instance_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - instance_ps_server_1b
+      feature_template_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - feature_template_Vlan_vmi_1
+      disk.device.capacity_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.capacity_ps_server_1b
+      end_point_packet_ext_network:
+      - packet_ext_network
+      - end_point
+      disk.device.capacity_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.capacity_ps_server_1b
+      network.incoming.packets_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.incoming.packets_ps_server_1b_ps_server_1b_port
+      disk.device.iops_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.iops_ps_server_1b
+      disk.device.iops_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.iops_ps_server_1b
+      network.incoming.packets_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.incoming.packets_ps_server_1b_ps_server_1b_port
+      network.outgoing.bytes.rate_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port
+      network.outpoing.packets_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.outpoing.packets_ps_server_1b_ps_server_1b_port
+      network.outpoing.packets_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.outpoing.packets_ps_server_1b_ps_server_1b_port
+      endpoint_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - endpoint_ps_server_1b
+      disk.device.allocation_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.allocation_ps_server_1b
+      endpoint_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - endpoint_ps_server_1b
+      disk.write.requests.rate_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.write.requests.rate_ps_server_1b
+      disk.write.requests.rate_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.write.requests.rate_ps_server_1b
+      host_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - host_ps_server_1b
+      host_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - host_ps_server_1b
+      feature_packet_int_network:
+      - packet_int_network
+      - feature
+      network.outgoing.bytes.rate_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.outgoing.bytes.rate_ps_server_1b_ps_server_1b_port
+      disk.write.bytes.rate_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.write.bytes.rate_ps_server_1b
+      disk.write.bytes_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.write.bytes_ps_server_1b
+      disk.device.write.bytes_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.write.bytes_ps_server_1b
+      disk.device.write.bytes_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.write.bytes_ps_server_1b
+      disk.write.bytes_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.write.bytes_ps_server_1b
+      disk.write.bytes.rate_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.write.bytes.rate_ps_server_1b
+      disk.device.allocation_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.allocation_ps_server_1b
+      scalable_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - scalable_ps_server_1b
+      scalable_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - scalable_ps_server_1b
+      disk.allocation_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.allocation_ps_server_1b
+      disk.allocation_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.allocation_ps_server_1b
+      feature_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - feature_ps_server_1b
+      feature_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - feature_ps_server_1b
+      vcpus_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - vcpus_ps_server_1b
+      vcpus_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - vcpus_ps_server_1b
+      disk.read.bytes.rate_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.read.bytes.rate_ps_server_1b
+      disk.read.bytes.rate_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.read.bytes.rate_ps_server_1b
+      disk.iops_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.iops_ps_server_1b
+      memory.usage_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - memory.usage_ps_server_1b
+      memory.usage_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - memory.usage_ps_server_1b
+      disk.iops_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.iops_ps_server_1b
+      disk.write.requests_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.write.requests_ps_server_1b
+      disk.write.requests_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.write.requests_ps_server_1b
+      network.incoming.packets.rate_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.incoming.packets.rate_ps_server_1b_ps_server_1b_port
+      disk.latency_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.latency_ps_server_1b
+      disk.latency_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.latency_ps_server_1b
+      network.incoming.packets.rate_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.incoming.packets.rate_ps_server_1b_ps_server_1b_port
+      binding_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - binding_ps_server_1b
+      link_packet_ext_network:
+      - packet_ext_network
+      - link
+      binding_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - binding_ps_server_1b
+      disk.device.write.requests_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.write.requests_ps_server_1b
+      disk.device.read.requests_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.read.requests_ps_server_1b
+      disk.device.write.requests_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.write.requests_ps_server_1b
+      disk.device.read.requests_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.read.requests_ps_server_1b
+      end_point_packet_int_network:
+      - packet_int_network
+      - end_point
+      attachment_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - attachment_ps_server_1b_ps_server_1b_port
+      attachment_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - attachment_ps_server_1b_ps_server_1b_port
+      attachment_packet_ext_network:
+      - packet_ext_network
+      - attachment
+      os_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - os_ps_server_1b
+      os_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - os_ps_server_1b
+      network.outgoing.bytes_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - network.outgoing.bytes_ps_server_1b_ps_server_1b_port
+      network.outgoing.bytes_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - network.outgoing.bytes_ps_server_1b_ps_server_1b_port
+      disk.usage_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.usage_ps_server_1b
+      disk.usage_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.usage_ps_server_1b
+      disk.device.read.bytes_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.read.bytes_ps_server_1b
+      disk.device.read.bytes_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.read.bytes_ps_server_1b
+      cpu_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - cpu_ps_server_1b
+      cpu_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - cpu_ps_server_1b
+      feature_packet_ext_network:
+      - packet_ext_network
+      - feature
+      feature_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - feature_ps_server_1b_ps_server_1b_port
+      feature_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - feature_ps_server_1b_ps_server_1b_port
+      disk.device.read.bytes.rate_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - disk.device.read.bytes.rate_ps_server_1b
+      disk.device.read.bytes.rate_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - disk.device.read.bytes.rate_ps_server_1b
+    requirements:
+      dependency_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - dependency
+      dependency_ps_server_1b_port_2:
+      - abstract_ps_server_1b_1
+      - dependency_ps_server_1b_ps_server_1b_port
+      dependency_ps_server_1b_port_1:
+      - abstract_ps_server_1b
+      - dependency_ps_server_1b_ps_server_1b_port
+      dependency_packet_int_network:
+      - packet_int_network
+      - dependency
+      local_storage_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - local_storage_ps_server_1b
+      dependency_packet_ext_network:
+      - packet_ext_network
+      - dependency
+      dependency_template_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - dependency_template_Vlan_vmi_1
+      local_storage_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - local_storage_ps_server_1b
+      dependency_server_1b_ps_1:
+      - abstract_ps_server_1b
+      - dependency_ps_server_1b
+      dependency_server_1b_ps_2:
+      - abstract_ps_server_1b_1
+      - dependency_ps_server_1b

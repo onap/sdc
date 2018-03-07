@@ -1,0 +1,377 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested_pattern5_levelTwo
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.pd_server_1b:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_pd_server_1b_port_1_network_role_tag:
+      type: string
+      required: true
+    port_pd_server_1b_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pd_server_1b_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pd_server_1b_port_1_subnetpoolid:
+      type: string
+      required: true
+    ps_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    pd_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: PD server names
+      entry_schema:
+        type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    port_pd_server_1b_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    ps_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: Ps server names
+      entry_schema:
+        type: string
+    port_net:
+      hidden: false
+      immutable: false
+      type: string
+      description: port network
+    ps_server_2b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    pd_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PD server
+    pd_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    port_pd_server_1b_port_1_order:
+      type: integer
+      required: true
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    ps_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PS server
+    ps_server_1b_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Ps Image server
+    sub_inf_net:
+      hidden: false
+      immutable: false
+      type: string
+      description: sub interface network
+    pd_server_1b_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: PD Image server
+    pd_server_2b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    port_pd_server_1b_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd_server_1b_port_1_network_role:
+      type: string
+      required: true
+  node_templates:
+    test_resourceGroup_1:
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested_vlan
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested_vlanServiceTemplate.yaml
+          count: 9
+          mandatory: true
+        parent_interface: pd_server_1b_port_1
+        net1:
+          get_input: sub_inf_net
+      requirements:
+      - binding_template_Vlan_vmi_1:
+          capability: tosca.capabilities.network.Bindable
+          node: pd_server_1b_port_1
+          relationship: tosca.relationships.network.BindsTo
+    pd_server_1b_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_pd_server_1b_port_1_ip_requirements
+        network_role:
+          get_input: port_pd_server_1b_port_1_network_role
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_1b_ips
+            - 0
+        subnetpoolid:
+          get_input: port_pd_server_1b_port_1_subnetpoolid
+        mac_requirements:
+          get_input: port_pd_server_1b_port_1_mac_requirements
+        exCP_naming:
+          get_input: port_pd_server_1b_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_pd_server_1b_port_1_vlan_requirements
+        network_role_tag:
+          get_input: port_pd_server_1b_port_1_network_role_tag
+        network:
+          get_input: port_net
+        order:
+          get_input: port_pd_server_1b_port_1_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_1b_pd_1
+          relationship: tosca.relationships.network.BindsTo
+    server_1b_pd_1:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server_1b
+      properties:
+        flavor:
+          get_input: pd_server_1b_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: pd_server_1b_image
+        name:
+          get_input:
+          - pd_server_1b_names
+          - 1
+  groups:
+    nested_pattern5_levelTwo_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested_pattern5_levelTwo.yml
+        description: nested1
+      members:
+      - test_resourceGroup_1
+      - pd_server_1b_port_1
+      - server_1b_pd_1
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.pd_server_1b
+    capabilities:
+      attachment_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - attachment
+      network.outgoing.packets.rate_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.outgoing.packets.rate
+      memory.resident_server_1b_pd_1:
+      - server_1b_pd_1
+      - memory.resident
+      disk.device.read.bytes_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.read.bytes
+      disk.device.write.requests_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.write.requests
+      disk.ephemeral.size_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.ephemeral.size
+      disk.capacity_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.capacity
+      forwarder_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - forwarder
+      network.outpoing.packets_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.outpoing.packets
+      instance_server_1b_pd_1:
+      - server_1b_pd_1
+      - instance
+      disk.device.capacity_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.capacity
+      network.outgoing.bytes.rate_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.outgoing.bytes.rate
+      feature_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - feature
+      os_server_1b_pd_1:
+      - server_1b_pd_1
+      - os
+      network.incoming.packets.rate_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.incoming.packets.rate
+      disk.read.bytes_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.read.bytes
+      cpu_server_1b_pd_1:
+      - server_1b_pd_1
+      - cpu
+      feature_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - feature
+      endpoint_server_1b_pd_1:
+      - server_1b_pd_1
+      - endpoint
+      network.incoming.bytes_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.incoming.bytes
+      disk.write.requests.rate_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.write.requests.rate
+      host_server_1b_pd_1:
+      - server_1b_pd_1
+      - host
+      disk.root.size_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.root.size
+      disk.device.read.bytes.rate_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.read.bytes.rate
+      disk.write.bytes.rate_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.write.bytes.rate
+      memory_server_1b_pd_1:
+      - server_1b_pd_1
+      - memory
+      disk.device.allocation_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.allocation
+      disk.device.usage_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.usage
+      disk.usage_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.usage
+      disk.device.iops_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.iops
+      disk.allocation_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.allocation
+      disk.read.requests_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.read.requests
+      disk.device.write.bytes.rate_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.write.bytes.rate
+      cpu_util_server_1b_pd_1:
+      - server_1b_pd_1
+      - cpu_util
+      feature_server_1b_pd_1:
+      - server_1b_pd_1
+      - feature
+      disk.device.latency_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.latency
+      binding_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - binding
+      disk.write.bytes_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.write.bytes
+      disk.device.write.bytes_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.write.bytes
+      disk.device.read.requests.rate_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.read.requests.rate
+      feature_template_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - feature_template_Vlan_vmi_1
+      disk.iops_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.iops
+      disk.write.requests_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.write.requests
+      scalable_server_1b_pd_1:
+      - server_1b_pd_1
+      - scalable
+      disk.device.write.requests.rate_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.write.requests.rate
+      binding_server_1b_pd_1:
+      - server_1b_pd_1
+      - binding
+      cpu.delta_server_1b_pd_1:
+      - server_1b_pd_1
+      - cpu.delta
+      disk.device.read.requests_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.device.read.requests
+      network.incoming.packets_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.incoming.packets
+      vcpus_server_1b_pd_1:
+      - server_1b_pd_1
+      - vcpus
+      disk.read.bytes.rate_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.read.bytes.rate
+      network.outgoing.bytes_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.outgoing.bytes
+      memory.usage_server_1b_pd_1:
+      - server_1b_pd_1
+      - memory.usage
+      network.incoming.bytes.rate_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - network.incoming.bytes.rate
+      disk.latency_server_1b_pd_1:
+      - server_1b_pd_1
+      - disk.latency
+    requirements:
+      dependency_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - dependency
+      link_template_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - link_template_Vlan_vmi_1
+      dependency_template_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - dependency_template_Vlan_vmi_1
+      local_storage_server_1b_pd_1:
+      - server_1b_pd_1
+      - local_storage
+      link_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - link
+      dependency_server_1b_pd_1:
+      - server_1b_pd_1
+      - dependency
+      dependency_pd_server_1b_port_1:
+      - pd_server_1b_port_1
+      - dependency
