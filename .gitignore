@@ -262,3 +262,5 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 /catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
 
 /catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
+
+/catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
