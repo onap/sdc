@@ -18,6 +18,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
@@ -82,6 +84,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilde
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
+import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireValidationResult;
@@ -144,6 +147,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private final ImageDao imageDao;
   private final ManualVspToscaManager manualVspToscaManager;
   private final UniqueValueUtil uniqueValueUtil;
+  private final CandidateService candidateService;
 
   public VendorSoftwareProductManagerImpl(
       VspMergeDao vspMergeDao,
@@ -163,7 +167,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       ComputeDao computeDao,
       ImageDao imageDao,
       ManualVspToscaManager manualVspToscaManager,
-      UniqueValueDao uniqueValueDao) {
+      UniqueValueDao uniqueValueDao,
+      CandidateService candidateService) {
     this.vspMergeDao = vspMergeDao;
     this.orchestrationTemplateDao = orchestrationTemplateDataDao;
     this.orchestrationTemplateCandidateManager = orchestrationTemplateCandidateManager;
@@ -182,6 +187,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     this.imageDao = imageDao;
     this.manualVspToscaManager = manualVspToscaManager;
     this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
+    this.candidateService = candidateService;
 
     registerToVersioning();
   }
@@ -815,6 +821,24 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   String getVspQuestionnaireSchema(SchemaTemplateInput schemaInput) {
     return SchemaGenerator
         .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, schemaInput);
+  }
+
+  @Override
+  public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException {
+
+    OrchestrationTemplateEntity orchestrationTemplateEntity =
+        orchestrationTemplateDao.get(vspId, version);
+
+    if (isOrchestrationTemplateMissing(orchestrationTemplateEntity)) {
+      return Optional.empty();
+    }
+
+    if (CommonUtil.isFileOriginFromZip(orchestrationTemplateEntity.getFileSuffix())) {
+      return Optional.of(new ImmutablePair<>(OnboardingTypesEnum.ZIP.toString(), candidateService
+          .getZipData(orchestrationTemplateEntity.getContentData())));
+    }
+    return Optional.of(new ImmutablePair<>(orchestrationTemplateEntity.getFileSuffix(),
+        orchestrationTemplateEntity.getContentData().array()));
   }
 
   void updateUniqueName(String oldVspName, String newVspName) {

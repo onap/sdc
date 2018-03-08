@@ -25,6 +25,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateMan
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
+import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory;
 
 public class VspManagerFactoryImpl extends VspManagerFactory {
@@ -47,7 +48,8 @@ public class VspManagerFactoryImpl extends VspManagerFactory {
           ComputeDaoFactory.getInstance().createInterface(),
           ImageDaoFactory.getInstance().createInterface(),
           new ManualVspToscaManagerImpl(),
-          UniqueValueDaoFactory.getInstance().createInterface());
+          UniqueValueDaoFactory.getInstance().createInterface(), CandidateServiceFactory
+          .getInstance().createInterface());
 
   @Override
   public VendorSoftwareProductManager createInterface() {

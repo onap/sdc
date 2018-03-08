@@ -64,8 +64,8 @@ public interface OrchestrationTemplateCandidate extends VspEntities {
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  @ApiOperation(value = "Get uploaded candidate HEAT file",
-      notes = "Downloads in process candidate HEAT file",
+  @ApiOperation(value = "Get uploaded Network Package file",
+      notes = "Downloads in uploaded Network Package file",
       response = File.class)
   Response get(
       @PathParam("vspId") String vspId,

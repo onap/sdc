@@ -22,10 +22,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -51,8 +49,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
@@ -128,10 +124,6 @@ public class OrchestrationTemplateCandidateManagerImpl
         fetchCandidateDataEntity(vspId, version);
 
     if (!candidateDataEntity.isPresent()) {
-      ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
-          getErrorWithParameters(Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(),
-              ""));
-      LOGGER.error(errorMessage.getMessage());
       return Optional.empty();
     }
     OnboardingTypesEnum type =

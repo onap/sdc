@@ -61,6 +61,8 @@ public interface CandidateService {
   OrchestrationTemplateCandidateData getOrchestrationTemplateCandidateInfo(String vspId,
                                                                        Version version);
 
+  byte[] getZipData(ByteBuffer contentData) throws IOException;
+
   void deleteOrchestrationTemplateCandidate(String vspId, Version version);
 
   Optional<ByteArrayInputStream> fetchZipFileByteArrayInputStream(String vspId,
