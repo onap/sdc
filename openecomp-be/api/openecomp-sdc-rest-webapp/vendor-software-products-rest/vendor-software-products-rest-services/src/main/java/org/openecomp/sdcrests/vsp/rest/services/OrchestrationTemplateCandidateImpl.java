@@ -25,6 +25,10 @@ import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
@@ -54,12 +58,14 @@ import java.util.Optional;
 
 import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
 import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 @Named
 @Service("orchestrationTemplateCandidate")
 @Scope(value = "prototype")
 public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplateCandidate {
-
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(OrchestrationTemplateCandidateImpl.class);
   private OrchestrationTemplateCandidateManager candidateManager =
       OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
   private VendorSoftwareProductManager vendorSoftwareProductManager = VspManagerFactory
@@ -84,13 +90,24 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   @Override
   public Response get(String vspId, String versionId, String user) throws IOException {
     Optional<Pair<String, byte[]>> zipFile = candidateManager.get(vspId, new Version(versionId));
+    String fileName = null;
+    if (zipFile.isPresent()) {
+      fileName = "Candidate." + zipFile.get().getLeft();
+    } else {
+      zipFile = vendorSoftwareProductManager.get(vspId, new Version((versionId)));
 
-    if (!zipFile.isPresent()) {
-      return Response.status(Response.Status.NOT_FOUND).build();
+      if (!zipFile.isPresent()) {
+        ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
+            getErrorWithParameters(
+                Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(),
+                ""));
+        LOGGER.error(errorMessage.getMessage());
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+      fileName = "Processed." + zipFile.get().getLeft();
     }
     Response.ResponseBuilder response = Response.ok(zipFile.get().getRight());
-    String filename = "Candidate." + zipFile.get().getLeft();
-    response.header("Content-Disposition", "attachment; filename=" + filename);
+    response.header("Content-Disposition", "attachment; filename=" + fileName);
     return response.build();
   }
 

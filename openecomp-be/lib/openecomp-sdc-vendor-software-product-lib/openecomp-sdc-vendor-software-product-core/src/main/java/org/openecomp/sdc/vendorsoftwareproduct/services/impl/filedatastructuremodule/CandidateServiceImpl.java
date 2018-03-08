@@ -422,6 +422,29 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   @Override
+  public byte[] getZipData(ByteBuffer contentData)
+      throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    try (final ZipOutputStream zos = new ZipOutputStream(baos);
+         ZipInputStream zipStream = new ZipInputStream(
+             new ByteArrayInputStream(contentData.array()))) {
+      ZipEntry zipEntry;
+      while ((zipEntry = zipStream.getNextEntry()) != null) {
+        ZipEntry locZipEntry = new ZipEntry(zipEntry.getName());
+        zos.putNextEntry(locZipEntry);
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = zipStream.read(buf)) > 0) {
+          zos.write(buf, 0, (len < buf.length) ? len : buf.length);
+        }
+        zos.closeEntry();
+      }
+    }
+    return baos.toByteArray();
+  }
+
+  @Override
   public Optional<List<ErrorMessage>> validateFileDataStructure(
       FilesDataStructure filesDataStructure) {
     return candidateServiceValidator.validateFileDataStructure(filesDataStructure);

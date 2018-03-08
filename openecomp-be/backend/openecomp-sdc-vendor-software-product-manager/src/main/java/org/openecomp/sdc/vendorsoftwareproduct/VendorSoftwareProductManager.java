@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
@@ -68,6 +69,7 @@ public interface VendorSoftwareProductManager {
 
   File getInformationArtifact(String vspId, Version version);
 
+  public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
 
   Collection<ComputeEntity> getComputeByVsp(String vspId, Version version);
 }

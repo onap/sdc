@@ -30,6 +30,19 @@ class VspZusammenUtil {
     return head;
   }
 
+  static boolean isEmpty(InputStream elementData) {
+    byte[] byteElementData;
+    if (Objects.isNull(elementData)) {
+      return true;
+    }
+    try {
+      byteElementData = IOUtils.toByteArray(elementData);
+    } catch (IOException e) {
+      return false;
+    }
+    return ArrayUtils.isEmpty(byteElementData);
+  }
+
   static boolean hasEmptyData(InputStream elementData) {
     String EMPTY_DATA = "{}";
     byte[] byteElementData;

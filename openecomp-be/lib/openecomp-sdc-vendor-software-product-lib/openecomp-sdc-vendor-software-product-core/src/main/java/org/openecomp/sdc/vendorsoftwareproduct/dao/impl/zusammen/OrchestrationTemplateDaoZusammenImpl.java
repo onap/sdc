@@ -33,6 +33,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.Optional;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
@@ -40,8 +41,8 @@ import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTemplateDao {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger
-      (OrchestrationTemplateDaoZusammenImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(
+      OrchestrationTemplateDaoZusammenImpl.class);
   private ZusammenAdaptor zusammenAdaptor;
 
   public OrchestrationTemplateDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
@@ -106,27 +107,38 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
     Optional<Element> orchestrationTemplateElement = zusammenAdaptor
         .getElementByName(context, elementContext, vspModel.get().getId(),
             ElementType.OrchestrationTemplate.name());
-    if (!orchestrationTemplateElement.isPresent()) {
+    if (orchestrationTemplateElement.isPresent() &&
+        VspZusammenUtil.hasEmptyData(orchestrationTemplateElement.get().getData())) {
       return orchestrationTemplate;
     }
 
-    if (!VspZusammenUtil.hasEmptyData(orchestrationTemplateElement.get().getData())) {
-      orchestrationTemplate.setContentData(
+    orchestrationTemplate.setContentData(
           ByteBuffer.wrap(FileUtils.toByteArray(orchestrationTemplateElement.get().getData())));
+
+    Collection<Element> subElements = orchestrationTemplateElement.get().getSubElements();
+    if (subElements.isEmpty()) {
+      return orchestrationTemplate;
     }
 
-    Optional<Element> validationDataElement =
-        zusammenAdaptor.getElementByName(context, elementContext,
-            orchestrationTemplateElement.get().getElementId(),
-            ElementType.OrchestrationTemplateValidationData.name());
-    if (validationDataElement.isPresent()) {
-      orchestrationTemplate.setFileSuffix(validationDataElement.get().getInfo()
-          .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
-      orchestrationTemplate.setFileName(validationDataElement.get().getInfo()
-          .getProperty(InfoPropertyName.FILE_NAME.getVal()));
-      if (!VspZusammenUtil.hasEmptyData(validationDataElement.get().getData())) {
-        orchestrationTemplate.setValidationData(
-            new String(FileUtils.toByteArray(validationDataElement.get().getData())));
+    for (Element element : subElements) {
+      Optional<Element> subElement = zusammenAdaptor.getElement(context,
+          elementContext, element.getElementId().toString());
+
+      if (subElement.get().getInfo().getName().equals(ElementType
+          .OrchestrationTemplateValidationData.name())) {
+        orchestrationTemplate.setFileSuffix(subElement.get().getInfo()
+            .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
+        orchestrationTemplate.setFileName(subElement.get().getInfo()
+            .getProperty(InfoPropertyName.FILE_NAME.getVal()));
+        if (!VspZusammenUtil.hasEmptyData(subElement.get().getData())) {
+          orchestrationTemplate.setValidationData(
+              new String(FileUtils.toByteArray(subElement.get().getData())));
+        }
+      } else if (subElement.get().getInfo().getName().equals(ElementType
+          .OrchestrationTemplateStructure.name())) {
+        orchestrationTemplate.setFilesDataStructure(new String(FileUtils.toByteArray(subElement
+            .get().getData())));
+
       }
     }
     return orchestrationTemplate;
