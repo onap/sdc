@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1c651eb4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-08T08:46:04Z",
+      "side": 1,
+      "message": "Please check out Optional.ifPresent(), Optional.orElse(), Optional.orElseGet(), Optional.orElseThrow() etc.",
+      "revId": "954c6b3fac72890e011990c71cdda18add520800",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7c754262",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/filedatastructuremodule/CandidateService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-08T08:46:04Z",
+      "side": 1,
+      "message": "It is not a good idea to return byte[]",
+      "revId": "954c6b3fac72890e011990c71cdda18add520800",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fc0872db",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-08T08:46:04Z",
+      "side": 1,
+      "message": "Splitting into multiple methods and using local variables could make it more readable.",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 135,
+        "endChar": 77
+      },
+      "revId": "954c6b3fac72890e011990c71cdda18add520800",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dc11f604",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/VspZusammenUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-08T08:46:04Z",
+      "side": 1,
+      "message": "Why do you need to convert to byte array just to know if there is data? The input stream should be able to tell you if there\u0027s anything you can read from it or not.",
+      "range": {
+        "startLine": 34,
+        "startChar": 1,
+        "endLine": 43,
+        "endChar": 47
+      },
+      "revId": "954c6b3fac72890e011990c71cdda18add520800",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7cfc62b8",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-08T08:46:04Z",
+      "side": 1,
+      "message": "I think there\u0027s already something similar. In FileUtils or somewhere else. Please check. Also, why not just use I/O streams to copy data around instead of converting it into byte arrays?",
+      "range": {
+        "startLine": 429,
+        "startChar": 0,
+        "endLine": 441,
+        "endChar": 25
+      },
+      "revId": "954c6b3fac72890e011990c71cdda18add520800",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
