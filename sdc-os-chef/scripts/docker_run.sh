@@ -232,7 +232,6 @@ echo ""
 
 #Elastic-Search
 function sdc-es {
-dir_perms
 echo "docker run sdc-elasticsearch..."
 if [ ${LOCAL} = false ]; then
 	echo "pulling code"
@@ -247,7 +246,6 @@ monitor_docker sdc-es
 
 #Init-Elastic-Search
 function sdc-init-es {
-dir_perms
 echo "docker run sdc-init-elasticsearch..."
 if [ ${LOCAL} = false ]; then
 	echo "pulling code"
@@ -262,7 +260,6 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 
 #Cassandra
 function sdc-cs {
-dir_perms
 echo "docker run sdc-cassandra..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
@@ -288,7 +285,6 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 
 #Kibana
 function sdc-kbn {
-dir_perms
 echo "docker run sdc-kibana..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-kibana:${RELEASE}
@@ -298,7 +294,6 @@ fi
 
 #Back-End
 function sdc-BE {
-dir_perms
 echo "docker run sdc-backend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-backend:${RELEASE}
@@ -313,7 +308,6 @@ monitor_docker sdc-BE
 
 # Back-End-Init
 function sdc-BE-init {
-dir_perms
 echo "docker run sdc-backend-init..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-backend-init:${RELEASE}
@@ -327,7 +321,6 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 
 # Front-End
 function sdc-FE {
-dir_perms
 echo "docker run sdc-frontend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-frontend:${RELEASE}
@@ -358,6 +351,7 @@ fi
 
 if [ -z "${DOCKER}" ]; then
     cleanup all
+    dir_perms
 	sdc-es
 	sdc-init-es
 	sdc-cs
@@ -370,6 +364,7 @@ if [ -z "${DOCKER}" ]; then
 	sdc-sanity
 else
 	cleanup ${DOCKER}
+	dir_perms
 	${DOCKER}
     healthCheck
 fi

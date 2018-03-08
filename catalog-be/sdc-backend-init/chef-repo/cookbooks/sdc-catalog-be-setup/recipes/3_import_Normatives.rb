@@ -19,6 +19,7 @@ bash "excuting-import_Normatives" do
      curl -s -X GET -H "Content-Type: application/json;charset=UTF-8" -H "USER_ID: jh0003" -H "X-ECOMP-RequestID: cbe744a0-037b-458f-aab5-df6e543c4090" "http://#{be_ip}:8080/sdc2/rest/v1/screen" > ${check_normative}
 
      resources_len=`cat ${check_normative}| jq '.["resources"]|length'`
+     mkdir -p /var/lib/jetty/logs
      if [ $resources_len -eq 0 ] ; then
         python importONAPNormativeAll.py -i #{be_ip} > /var/lib/jetty/logs/importNormativeAll.log
             rc=$?
