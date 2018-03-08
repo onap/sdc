@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Feature: Abort Flow
+Feature: Abort Flow - Test Submit
 
   Background: Init
     Given I want to create a VLM

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Feature: Abort Flow
+Feature: Abort Flow - Test Properties
 
   Background: Init
     Given I want to create a VLM
@@ -30,4 +30,3 @@ Feature: Abort Flow
     Then I want to check property "candidateOnboardingOrigin" exists
     Then I want to check property "candidateOnboardingOrigin" for value "zip"
     Then I want to check property "onboardingOrigin" does not exist
-    # Then I want to print the context data
