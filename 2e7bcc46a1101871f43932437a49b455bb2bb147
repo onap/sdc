@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9cadaeeb",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductLandingPage.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "looks like there is nothing to commit. can you please revert?",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9cdb6e7b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "please make all these text items into constants",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fcd3925d",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/OnboardView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "in prop types- fix wording to archived",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bcc98aad",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "use constants",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fc3ab297",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/details/SoftwareProductDetails.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "please check you remembered the i18n",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bc40aa07",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/details/SoftwareProductDetailsView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "please go over all files and change deprecated to archived",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dc433611",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/versionsPage/VersionsPage.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "fix arcive to archive",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9c492e33",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/versionsPage/VersionsPage.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "i18n for (Archived)",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fc6152a9",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-08T08:39:37Z",
+      "side": 1,
+      "message": "arcive to archive",
+      "revId": "2e7bcc46a1101871f43932437a49b455bb2bb147",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
