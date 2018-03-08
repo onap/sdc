@@ -1,5 +1,5 @@
 /*!
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ const SubmitButton = ({onClick, disabled}) => (
 );
 
 
-const ActionButtons = ({isReadOnlyMode, onSubmit, onRevert, onSave, isFormDataValid, onClickPermissions, onSync, onCommit,
+const ActionButtons = ({isReadOnlyMode, onSubmit, onRevert, onSave, isFormDataValid, onClickPermissions, onSync, onCommit, isDepricated,
 	onOpenCommentCommitModal, showPermissions, onClosePermissions, permissions, onManagePermissions, userInfo, onOpenRevisionsModal, isManual,
 	itemPermissions: {isCertified, isCollaborator, isDirty, isOutOfSync, isUpToDate}}) => (
 	<div className='action-buttons'>
@@ -67,7 +67,7 @@ const ActionButtons = ({isReadOnlyMode, onSubmit, onRevert, onSave, isFormDataVa
 				</Overlay>
 			}
 		</EnhancedClickOutsideWrapper>
-		{isCollaborator && <div className='collaborator-action-buttons'>
+		{isCollaborator && !isDepricated && <div className='collaborator-action-buttons'>
 			<Separator />
 			{onSave && <div className='vc-save-section'>
 					<VCButton dataTestId='vc-save-btn' onClick={() => onSave()}
@@ -83,7 +83,7 @@ const ActionButtons = ({isReadOnlyMode, onSubmit, onRevert, onSave, isFormDataVa
 				<VCButton dataTestId='vc-revert-btn' onClick={onOpenRevisionsModal}
 					name='version-controller-revert' tooltipText={i18n('Revert')} disabled={isReadOnlyMode || isOutOfSync} />
 			}
-			{onSubmit &&
+			{onSubmit && 
 				<div className='vc-submit-section'>
 					<Separator />
 					<SubmitButton onClick={onSubmit}

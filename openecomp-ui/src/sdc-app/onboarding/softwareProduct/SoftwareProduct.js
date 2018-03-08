@@ -19,7 +19,7 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import TabulatedEditor from 'src/nfvo-components/editor/TabulatedEditor.jsx';
 
-import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+import {enums, screenTypes, itemStatus} from 'sdc-app/onboarding/OnboardingConstants.js';
 
 import {onboardingMethod as onboardingMethodTypes, onboardingOriginTypes} from './SoftwareProductConstants.js';
 import SoftwareProductActionHelper from './SoftwareProductActionHelper.js';
@@ -163,7 +163,7 @@ const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, co
 	};
 };
 
-const buildVersionControllerProps = ({softwareProduct, versions, currentVersion, permissions, userInfo, usersList, itemPermission, isReadOnlyMode}) => {
+const buildVersionControllerProps = ({softwareProduct, versions, currentVersion, permissions, userInfo, isDepricated, usersList, itemPermission, isReadOnlyMode}) => {
 	const {softwareProductEditor = {data: {}}} = softwareProduct;
 	const {isValidityData = true, data: {name, onboardingMethod, candidateOnboardingOrigin}} = softwareProductEditor;
 	
@@ -175,6 +175,7 @@ const buildVersionControllerProps = ({softwareProduct, versions, currentVersion,
 		itemName: name,
 		itemPermission,
 		isReadOnlyMode,
+		isDepricated,
 		userInfo,
 		usersList,
 		isManual: onboardingMethod === onboardingMethodType.MANUAL,
@@ -205,7 +206,7 @@ const mapStateToProps = (
 		versionsPage: {versionsList: {versions}, permissions}
 	},
 	{
-		currentScreen: {screen, itemPermission, props: {version: currentVersion, componentId, isReadOnlyMode}}
+		currentScreen: {screen, itemPermission, props: {version: currentVersion, componentId, isReadOnlyMode, status}}
 	}
 ) => {
 	const {softwareProductEditor, softwareProductComponents, softwareProductDependencies} = softwareProduct;
@@ -220,6 +221,7 @@ const mapStateToProps = (
 			currentVersion,
 			userInfo,
 			usersList,
+			isDepricated: status === itemStatus.ARCHIVED,
 			permissions,
 			itemPermission: {...itemPermission, isDirty: true},
 			isReadOnlyMode
@@ -355,7 +357,6 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 				if((action === versionControllerActions.SYNC && !inMerge) ||
 					 ((action === versionControllerActions.COMMIT || action === versionControllerActions.SYNC) && updatedVersion.status === catalogItemStatuses.CERTIFIED)) {
 					ScreensHelper.loadLandingScreen(dispatch, {previousScreenName: screen, props: {softwareProductId, version: updatedVersion}});
-
 				} else {
 					ScreensHelper.loadScreen(dispatch, {screen, screenType: screenTypes.SOFTWARE_PRODUCT,
 						props: {softwareProductId, version: updatedVersion, componentId: currentComponentId}});

@@ -73,6 +73,21 @@ const ItemsHelper = {
 		});
 
 	},
+
+	fetchItem(itemId) {
+		return RestAPIUtil.fetch(`${baseUrl()}/${itemId}`);
+	},
+
+	archiveItem(itemId) {
+		return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
+			action: 'Archive'
+		});
+	},
+	restoreItem(itemId) {
+		return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
+			action: 'Restore'
+		});
+	}
 };
 
 export default ItemsHelper;

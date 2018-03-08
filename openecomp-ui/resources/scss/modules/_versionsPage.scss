@@ -43,14 +43,21 @@
 	.svg-icon-wrapper {
 		justify-content: flex-start;
 	}
-
-	.versions-page-title {
-		@extend .heading-1;
-		text-transform: uppercase;
-		margin-bottom: 29px;
-		color: $blue;
-	}
-
+	.version-page-header {
+		display: flex;
+		justify-content: space-between;
+		.versions-page-title {
+			@extend .heading-1;
+			text-transform: uppercase;
+			margin-bottom: 29px;
+			color: $blue;
+		}
+		.depricate-btn-wrapper {
+			display: flex;
+			justify-content: flex-end;
+			margin-bottom: 10px;
+		}
+	}		
 	.versions-page-permissions-view-wrapper {
 		@extend .body-1-semibold;
 		@include version-page-box-shadow();

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,20 +87,18 @@ const VersionListItem = ({ data, onSelectVersion, onNavigateToVersion, onCreateV
 									labelPosition='right' />
 							</div>
 							<div className='version-item-field item-create'>
-								{!isHeader && isCollaborator && additionalInfo.OptionalCreationMethods.length > 0 &&
+								{!isHeader && isCollaborator && additionalInfo.OptionalCreationMethods.length > 0 && onCreateVersion &&
 									<SVGIcon
 										name='plus-circle'
 										data-test-id='versions-page-create-version'
 										onClick={e => { e.stopPropagation(); onCreateVersion(); }}
 										label={i18n('Create New Version')}
 										labelPosition='right'
-										disabled={!isCollaborator} />
+										disabled={!isCollaborator || !onCreateVersion} />
 								}
 							</div>
 						</div>
 				}
-
-
 		</div>
 	);
 
@@ -118,7 +116,7 @@ const VersionList = ({ versions, onSelectVersion, onNavigateToVersion, onCreateV
 					data={version}
 					onSelectVersion={() => onSelectVersion({version})}
 					onNavigateToVersion={() => onNavigateToVersion({version})}
-					onCreateVersion={() => onCreateVersion({version})}
+					onCreateVersion={onCreateVersion ? () => onCreateVersion({version}) : false}
 					isSelected={selectedVersion === version.id}
 					isCollaborator={isCollaborator} />
 			)}

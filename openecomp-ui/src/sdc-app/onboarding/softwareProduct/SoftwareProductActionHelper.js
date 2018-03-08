@@ -93,6 +93,10 @@ function fetchSoftwareProductList() {
 	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Draft`);
 }
 
+function fetchArchivedSoftwareProductList() {
+	return RestAPIUtil.fetch(`${baseUrl()}?Status=Archived`);
+}
+
 function fetchFinalizedSoftwareProductList() {
 	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Certified`);
 }
@@ -198,6 +202,13 @@ const SoftwareProductActionHelper = {
 	fetchFinalizedSoftwareProductList(dispatch) {
 		return fetchFinalizedSoftwareProductList().then(response => dispatch({
 			type: actionTypes.FINALIZED_SOFTWARE_PRODUCT_LIST_LOADED,
+			response
+		}));
+	},
+
+	fetchArchivedSoftwareProductList(dispatch) {
+		return fetchArchivedSoftwareProductList().then(response => dispatch({
+			type: actionTypes.ARCHIVED_SOFTWARE_PRODUCT_LIST_LOADED,
 			response
 		}));
 	},

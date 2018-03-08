@@ -68,6 +68,13 @@
 					color: $dark-gray;
 				}
 			}
+			.depricated-item-status {
+				color: $white;
+				background-color: $gray;
+				margin-left: 10px;
+				padding: 5px 8px;
+				border-radius: 5px; 
+			}
 		}
 
 		.save-submit-cancel-container {

@@ -135,4 +135,11 @@ describe('versionController UI Component', () => {
 		expect(elem.length).toBe(1);
 	});
 
+	it ('Do not show action buttons in case of archived item', () =>{
+		let propsForArchivedItem = {...props, isDepricated: true};
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...propsForArchivedItem} /></Provider>);
+		let saveBtn  = TestUtils.scryRenderedDOMComponentsWithClass(versionController,'collaborator-action-buttons');
+		expect(saveBtn).toBeTruthy();
+		expect(saveBtn.length).toBe(0);
+	});
 });

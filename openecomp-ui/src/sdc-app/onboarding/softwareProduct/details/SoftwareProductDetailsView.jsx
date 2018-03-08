@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,22 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';
 import {forms} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
+const DeprecatedVlmInfo = ({vendorName, onVendorRemove}) => {
+	return (
+		<div className='depricated-vlm-info'>
+			<Input
+				data-test-id='vsp-vendor-name'
+				isRequired={true}
+				onClick={() => onVendorRemove()}
+				label={i18n('Vendor')}
+				type='select'
+				value={`${vendorName} (Archived)`}>
+				<option key={vendorName} value={`${vendorName} (Archived)`}>{`${vendorName} (Archived)`}</option>
+			</Input>
+		</div>
+	);
+};
+
 class GeneralSection extends React.Component {
 	static propTypes = {
 		vendorId: PropTypes.string,
@@ -36,7 +52,9 @@ class GeneralSection extends React.Component {
 		finalizedLicenseModelList: PropTypes.array,
 		onDataChanged: PropTypes.func.isRequired,
 		onVendorParamChanged: PropTypes.func.isRequired,
-		onSelectSubCategory: PropTypes.func.isRequired
+		onSelectSubCategory: PropTypes.func.isRequired,
+		isVendorDepricated: PropTypes.bool,
+		onDeprecatedVendorRemove: PropTypes.func
 	};
 
 	onVendorParamChanged(e) {
@@ -50,6 +68,10 @@ class GeneralSection extends React.Component {
 		const selectedIndex = e.target.selectedIndex;
 		const subCategory = e.target.options[selectedIndex].value;
 		this.props.onSelectSubCategory(subCategory);
+	}
+	onVendorRemove() {
+		const {finalizedLicenseModelList, vendorName, onVendorParamChanged} = this.props;
+		this.props.onDeprecatedVendorRemove({finalizedLicenseModelList, onVendorParamChanged, vendorName});
 	}
 
 	render (){
@@ -67,18 +89,21 @@ class GeneralSection extends React.Component {
 					errorText={genericFieldInfo.name.errorText}
 					isValid={genericFieldInfo.name.isValid}
 					onChange={name => name.length <= 25 && this.props.onDataChanged({name}, forms.VENDOR_SOFTWARE_PRODUCT_DETAILS)}/>
-				<Input
-					data-test-id='vsp-vendor-name'
-					label={i18n('Vendor')}
-					type='select'
-					value={this.props.vendorId}
-					onChange={e => this.onVendorParamChanged(e)}>
-					{sortByStringProperty(
-						this.props.finalizedLicenseModelList,
-						'name'
-					).map(lm => <option key={lm.id} value={lm.id}>{lm.name}</option>)
-					}
-				</Input>
+				{this.props.isVendorDepricated ? 
+					<DeprecatedVlmInfo  onVendorRemove={()=>this.onVendorRemove()} vendorName={this.props.vendorName} /> :	
+					<Input
+						data-test-id='vsp-vendor-name'
+						label={i18n('Vendor')}
+						type='select'
+						value={this.props.vendorId}
+						onChange={e => this.onVendorParamChanged(e)}>
+						{sortByStringProperty(
+							this.props.finalizedLicenseModelList,
+							'name'
+						).map(lm => <option key={lm.id} value={lm.id}>{lm.name}</option>)
+						}
+					</Input>
+				}
 				<Input
 					data-test-id='vsp-category-name'
 					label={i18n('Category')}
@@ -127,7 +152,8 @@ class LicensesSection extends React.Component {
 		onFeatureGroupsChanged: PropTypes.func.isRequired,
 		onLicensingDataChanged: PropTypes.func.isRequired,
 		featureGroupsList: PropTypes.array,
-		licenseAgreementList: PropTypes.array
+		licenseAgreementList: PropTypes.array, 
+		isVendorDepricated: PropTypes.bool
 	};
 
 	onVendorParamChanged(e) {
@@ -151,6 +177,7 @@ class LicensesSection extends React.Component {
 						onChange={e => this.onVendorParamChanged(e)}
 						value={this.props.licensingVersion || ''}
 						label={i18n('Licensing Version')}
+						disabled={this.props.isVendorDepricated}
 						type='select'>
 						{this.props.licensingVersionsList.map(version =>
 							<option
@@ -165,6 +192,7 @@ class LicensesSection extends React.Component {
 						data-test-id='vsp-license-agreement'
 						label={i18n('License Agreement')}
 						type='select'
+						disabled={this.props.isVendorDepricated}
 						value={this.props.licensingData.licenseAgreement ? this.props.licensingData.licenseAgreement : '' }
 						onChange={(e) => this.onLicensingDataChanged(e)}>
 						<option key='placeholder' value=''>{i18n('Select...')}</option>
@@ -178,6 +206,7 @@ class LicensesSection extends React.Component {
 							type='select'
 							isMultiSelect={true}
 							onInputChange={()=>{}}
+							disabled={this.props.isVendorDepricated}
 							onEnumChange={featureGroups => this.props.onFeatureGroupsChanged({featureGroups})}
 							multiSelectedEnum={this.props.licensingData.featureGroups}
 							name='feature-groups'
@@ -295,8 +324,8 @@ class SoftwareProductDetails extends Component {
 	};
 
 	prepareDataForGeneralSection(){
-		let {softwareProductCategories, finalizedLicenseModelList, onDataChanged, currentSoftwareProduct, genericFieldInfo} = this.props;
-		let {name, description, vendorId, subCategory} = currentSoftwareProduct;
+		let {softwareProductCategories, finalizedLicenseModelList, onDataChanged, currentSoftwareProduct, genericFieldInfo, isVendorDepricated, onDeprecatedVendorRemove} = this.props;
+		let {name, description, vendorId, subCategory, vendorName} = currentSoftwareProduct;		
 		return {
 			name,
 			description,
@@ -307,13 +336,16 @@ class SoftwareProductDetails extends Component {
 			onDataChanged,
 			onVendorParamChanged: args => this.onVendorParamChanged(args),
 			onSelectSubCategory: args => this.onSelectSubCategory(args),
-			genericFieldInfo
+			genericFieldInfo,
+			vendorName,
+			isVendorDepricated,
+			onDeprecatedVendorRemove
 		};
 
 	}
 
 	prepareDataForLicensesSection(){
-		let { featureGroupsList, licenseAgreementList, currentSoftwareProduct } = this.props;
+		let { featureGroupsList, licenseAgreementList, currentSoftwareProduct, isVendorDepricated} = this.props;
 		let {vendorId, licensingVersion, licensingData = {}} = currentSoftwareProduct;
 		return {
 			onVendorParamChanged: args => this.onVendorParamChanged(args),
@@ -325,6 +357,7 @@ class SoftwareProductDetails extends Component {
 			onLicensingDataChanged: args => this.onLicensingDataChanged(args),
 			featureGroupsList,
 			licenseAgreementList,
+			isVendorDepricated
 		};
 
 	}
@@ -356,11 +389,17 @@ class SoftwareProductDetails extends Component {
 	}
 
 	onVendorParamChanged({vendorId, licensingVersion}) {
+		
 		let {finalizedLicenseModelList, onVendorParamChanged} = this.props;
 		if(!licensingVersion) {
 			const licensingVersionsList = this.buildLicensingVersionsListItems();
 			licensingVersion = licensingVersionsList[0].enum;
 		}
+		
+		if (!vendorId) {
+			 vendorId = finalizedLicenseModelList[0].id;
+		}
+		
 		let vendorName = finalizedLicenseModelList.find(licenseModelItem => licenseModelItem.id === vendorId).name || '';
 		let deltaData = {
 			vendorId,

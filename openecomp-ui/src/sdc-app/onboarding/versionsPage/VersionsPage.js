@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,17 @@ import VersionsPageCreationActionHelper from './creation/VersionsPageCreationAct
 import PermissionsActionHelper from '../permissions/PermissionsActionHelper.js';
 import {onboardingMethod as onboardingMethodType} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import VersionsPageView from './VersionsPage.jsx';
+import {itemStatus} from 'sdc-app/onboarding/OnboardingConstants.js';
+
 
 export const mapStateToProps = ({
 	users: {userInfo},
 	versionsPage: {permissions, versionsList},
-	currentScreen: {itemPermission: {isCollaborator}, props: {itemId}},
+	currentScreen: {itemPermission: {isCollaborator}, props: {itemId, status}},
 	softwareProductList = []
 }) => {
 
-	let {versions, selectedVersion} = versionsList;
+	let {versions = [], selectedVersion} = versionsList;
 	let {owner, contributors, viewers} = permissions;
 
 	// sorting the version list
@@ -51,7 +53,8 @@ export const mapStateToProps = ({
 		currentUser: userInfo,
 		selectedVersion,
 		isCollaborator,
-		isManual: curentSoftwareProduct && curentSoftwareProduct.onboardingMethod === onboardingMethodType.MANUAL
+		isManual: curentSoftwareProduct && curentSoftwareProduct.onboardingMethod === onboardingMethodType.MANUAL,
+		isDepricated: status === itemStatus.ARCHIVED
 	};
 
 };
@@ -80,7 +83,9 @@ export const mapActionsToProps = (dispatch, {itemType, itemId, additionalProps})
 
 		onModalNodeClick({version}) {
 			VersionsPageActionHelper.selectVersionFromModal(dispatch, {version});
-		}
+		},
+		onArchive: () => VersionsPageActionHelper.arciveItem(dispatch, itemId),
+		onRestore: () => VersionsPageActionHelper.restoreItemFromArchive(dispatch, itemId)
 	};
 };
 
