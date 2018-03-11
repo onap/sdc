@@ -42,4 +42,4 @@ topology_template:
         description: |
           Module HOT template to create vmme 2 vlc
       members:
-      - template_VMInt_INT1_VLC
+      - template_VMInt_INT1_VLC

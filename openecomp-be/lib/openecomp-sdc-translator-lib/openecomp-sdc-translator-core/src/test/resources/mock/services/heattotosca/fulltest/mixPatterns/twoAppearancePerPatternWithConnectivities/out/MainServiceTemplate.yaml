@@ -272,6 +272,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         compute_b_single_1b_user_data_format:
@@ -285,6 +290,11 @@ topology_template:
         - group: BE_Affinity_group
         port_1b_t2_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -335,6 +345,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c201_port_network_role_tag: oam
@@ -353,6 +368,11 @@ topology_template:
         - 1c2_catalog_instance_network
         port_1c201_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -390,6 +410,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c201_port_network_role_tag: oam
@@ -408,6 +433,11 @@ topology_template:
         - 1c2_catalog_instance_network
         port_1c201_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -447,6 +477,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c201_port_network_role_tag: oam
@@ -461,6 +496,11 @@ topology_template:
         - 1c2_catalog_instance_network
         port_1c201_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -502,6 +542,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c201_port_network_role_tag: oam
@@ -516,6 +561,11 @@ topology_template:
         - 1c2_catalog_instance_network
         port_1c201_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -682,6 +732,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_1a_t2_port_network_role_tag: ppds
         vm_flavor_name:
           get_input: pd_flavor_name
@@ -696,6 +751,11 @@ topology_template:
           get_input: pd_image_name
         port_1a_t2_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -956,9 +1016,19 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         - - ip_version: 4
             ip_count_required:
               is_required: true
+            floating_ip_count_required:
+              is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
             floating_ip_count_required:
               is_required: false
         vm_image_name:
@@ -1063,6 +1133,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         compute_b_single_2b_scheduler_hints:
@@ -1074,6 +1149,11 @@ topology_template:
             is_required: false
         port_1b_t2_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1150,9 +1230,19 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         - - ip_version: 4
             ip_count_required:
               is_required: true
+            floating_ip_count_required:
+              is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
             floating_ip_count_required:
               is_required: false
         vm_image_name:
@@ -1322,6 +1412,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         compute_a_single_2a_scheduler_hints:
         - group: BE_Affinity_group
         compute_a_single_2a_availability_zone:
@@ -1425,6 +1520,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input:
@@ -1444,6 +1544,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         fixed_ips:
@@ -1476,6 +1581,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         compute_b_single_2b_scheduler_hints:
@@ -1487,6 +1597,11 @@ topology_template:
             is_required: false
         port_1b_t2_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1623,6 +1738,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         server_group: BE_Affinity_group
         connectivityChk:
           connectivityTo1C1_T1_02:
@@ -1705,6 +1825,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pcm_port_00_network_role_tag: cps
         pcm_flavor_name:
           get_input: pcm_flavor_name
@@ -1733,6 +1858,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input:
@@ -1754,6 +1884,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         server_group: BE_Affinity_group
@@ -1838,6 +1973,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pcm_port_00_network_role_tag: cps
         pcm_flavor_name:
           get_input: pcm_flavor_name
@@ -1864,6 +2004,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         fixed_ips:
@@ -1896,6 +2041,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         compute_b_single_1b_user_data_format:
@@ -1909,6 +2059,11 @@ topology_template:
         - group: BE_Affinity_group
         port_1b_t2_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -2130,4 +2285,4 @@ topology_template:
         name: def
         affinity: host
       targets:
-      - BE_Affinity_group
+      - BE_Affinity_group

@@ -157,7 +157,17 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+          - ip_version: 6
             ip_count_required:
               is_required: false
             floating_ip_count_required:
@@ -213,4 +223,4 @@ topology_template:
       members:
       - packet_mirror_network
       - pd01_volume
-      - abstract_pd_server
+      - abstract_pd_server

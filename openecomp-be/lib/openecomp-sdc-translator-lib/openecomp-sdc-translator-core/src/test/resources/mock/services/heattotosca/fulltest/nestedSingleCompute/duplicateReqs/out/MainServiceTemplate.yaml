@@ -1989,6 +1989,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - cscf_RSG
         fixed_ips:
@@ -2049,6 +2054,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2113,9 +2123,14 @@ topology_template:
         port_cdi_ims_core_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_cdi_internal_1_port_allowed_address_pairs:
         - ip_address: 0.0.0.0/1
         - ip_address: 128.0.0.0/1
@@ -2143,6 +2158,11 @@ topology_template:
               $DEL:
                 get_input: vcscf_name_delimeter
         port_cdi_internal_1_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -2182,6 +2202,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2256,6 +2281,11 @@ topology_template:
         vcscf_internal_network_mtu:
           get_input: vcscf_internal_network_mtu
         port_cscf_internal_0_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -2297,6 +2327,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - cscf_RSG
         fixed_ips:
@@ -2334,6 +2369,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         vcscf_gateway:
@@ -2381,6 +2421,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vcscf_name_delimeter:
           get_input: vcscf_name_delimeter
         tdcore_internal_ips:
@@ -2423,6 +2468,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - cscf_RSG
         fixed_ips:
@@ -2449,6 +2499,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2512,9 +2567,14 @@ topology_template:
         port_lbd_ims_core_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_lbd_dpdk_1_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -2529,6 +2589,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         port_lbd_internal_1_port_security_groups:
@@ -2576,6 +2641,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         compute_lbd_metadata:
@@ -2628,6 +2698,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - cscf_RSG
         fixed_ips:
@@ -2674,6 +2749,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vcscf_gateway:
           get_input: oam_internal_vip_0
         vnf_name:
@@ -2717,6 +2797,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         vcscf_name_delimeter:
@@ -2772,6 +2857,11 @@ topology_template:
       - substitutable
       properties:
         port_cdi_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -2801,9 +2891,14 @@ topology_template:
         port_cdi_ims_core_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_cdi_ims_core_0_port_network_role_tag: ims_core
         compute_cdi_user_data_format:
         - RAW
@@ -2917,6 +3012,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_oam_oam_1_port_network_role_tag: oam
         port_oam_oam_1_port_security_groups:
         - - cscf_RSG
@@ -2933,6 +3033,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         port_oam_oam_1_port_network:
@@ -3063,12 +3168,22 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         compute_oam_scheduler_hints:
         - group: oam_server_group_group
         port_oam_internal_2_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         compute_oam_availability_zone:
@@ -3112,6 +3227,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3202,6 +3322,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_oam_internal_0_port_network:
         - cscf_internal_network_0
         vm_image_name:
@@ -3235,6 +3360,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_oam_internal_0_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -3319,6 +3449,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_lbd_ims_core_0_port_network:
         - get_input: ims_core_net_id
         port_lbd_dpdk_0_port_network:
@@ -3349,9 +3484,14 @@ topology_template:
         port_lbd_ims_core_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_lbd_internal_0_port_fixed_ips:
         - ip_address:
             get_input: lbd_internal_ip_0
@@ -3376,6 +3516,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         port_lbd_ims_core_0_port_security_groups:
@@ -3459,6 +3604,11 @@ topology_template:
         vcscf_internal_network_mtu:
           get_input: vcscf_internal_network_mtu
         port_cscf_internal_0_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -3500,6 +3650,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - cscf_RSG
         fixed_ips:
@@ -3535,6 +3690,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - cscf_RSG
         fixed_ips:
@@ -3561,6 +3721,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3623,6 +3788,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_cif_ims_li_0_port_fixed_ips:
         - ip_address:
             get_input: cif_ims_li_v6_ip_0
@@ -3633,9 +3803,14 @@ topology_template:
         port_cif_ims_li_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         compute_cif_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -3675,9 +3850,14 @@ topology_template:
         port_cif_ims_core_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_cif_ims_li_0_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -3746,12 +3926,22 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_cif_internal_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_cifServiceTemplate.yaml
           count: 1
@@ -3806,6 +3996,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_cif_internal_1_port_security_groups:
         - - cscf_RSG
         port_cif_oam_1_port_1_network:
@@ -3847,6 +4042,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_cif_ims_core_1_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -3860,6 +4060,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_cif_ims_li_1_port_name:
         - str_replace:
             template: $PREFIX$DELeth4
@@ -3888,9 +4093,14 @@ topology_template:
         port_cif_ims_li_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_cif_ims_core_1_port_fixed_ips:
         - ip_address:
             get_input: cif_ims_core_v6_ip_1
@@ -3904,9 +4114,14 @@ topology_template:
         port_cif_ims_core_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_cif_ims_li_1_port_network:
         - get_input: ims_li_v6_net_id
         port_cif_internal_1_port_fixed_ips:
