@@ -17,10 +17,10 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	FILTER_DATA_CHANGED: null
+    FILTER_DATA_CHANGED: null
 });
 
 export const itemsType = {
-	ACTIVE: '1',
-	ARCHIVED: '2'
+    ACTIVE: '1',
+    ARCHIVED: '2'
 };

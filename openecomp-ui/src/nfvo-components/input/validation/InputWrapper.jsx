@@ -22,114 +22,149 @@ import FormGroup from 'react-bootstrap/lib/FormGroup.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
 
 class InputWrapper extends React.Component {
+    state = {
+        value: this.props.value,
+        checked: this.props.checked,
+        selectedValues: []
+    };
 
-	state = {
-		value: this.props.value,
-		checked: this.props.checked,
-		selectedValues: []
-	}
+    render() {
+        const {
+            label,
+            hasError,
+            validations = {},
+            isReadOnlyMode,
+            value,
+            onBlur,
+            onKeyDown,
+            type,
+            disabled,
+            checked,
+            name
+        } = this.props;
+        const { groupClassName, ...inputProps } = this.props;
+        return (
+            <FormGroup
+                className={classNames('form-group', [groupClassName], {
+                    required: validations.required,
+                    'has-error': hasError
+                })}>
+                {label &&
+                    (type !== 'checkbox' && type !== 'radio') && (
+                        <label className="control-label">{label}</label>
+                    )}
+                {(type === 'text' || type === 'number') && (
+                    <FormControl
+                        bsClass={'form-control input-options-other'}
+                        onChange={e => this.onChange(e)}
+                        disabled={isReadOnlyMode || Boolean(disabled)}
+                        onBlur={onBlur}
+                        onKeyDown={onKeyDown}
+                        value={value || ''}
+                        ref={input => (this.inputWrapper = input)}
+                        type={type}
+                        data-test-id={this.props['data-test-id']}
+                    />
+                )}
 
-	render() {
-		const {label, hasError, validations = {}, isReadOnlyMode, value, onBlur, onKeyDown, type, disabled, checked, name} = this.props;
-		const {groupClassName, ...inputProps} = this.props;
-		return(
-			<FormGroup className={classNames('form-group', [groupClassName], {'required' : validations.required , 'has-error' : hasError})} >
-				{(label && (type !== 'checkbox' && type !== 'radio')) && <label className='control-label'>{label}</label>}
-				{(type === 'text' || type === 'number') &&
-					<FormControl
-						bsClass={'form-control input-options-other'}
-						onChange={(e) => this.onChange(e)}
-						disabled={isReadOnlyMode || Boolean(disabled)}
-						onBlur={onBlur}
-						onKeyDown={onKeyDown}
-						value={value || ''}
-						ref={(input) => this.inputWrapper = input}
-						type={type}
-						data-test-id={this.props['data-test-id']}/>}
+                {type === 'textarea' && (
+                    <FormControl
+                        className="form-control input-options-other"
+                        disabled={isReadOnlyMode || Boolean(disabled)}
+                        value={value || ''}
+                        onBlur={onBlur}
+                        onKeyDown={onKeyDown}
+                        componentClass={type}
+                        onChange={e => this.onChange(e)}
+                        data-test-id={this.props['data-test-id']}
+                    />
+                )}
 
-				{type === 'textarea' &&
-					<FormControl
-						className='form-control input-options-other'
-						disabled={isReadOnlyMode || Boolean(disabled)}
-						value={value || ''}
-						onBlur={onBlur}
-						onKeyDown={onKeyDown}
-						componentClass={type}
-						onChange={(e) => this.onChange(e)}
-						data-test-id={this.props['data-test-id']}/>}
+                {type === 'checkbox' && (
+                    <Checkbox
+                        className={classNames({
+                            required: validations.required,
+                            'has-error': hasError
+                        })}
+                        onChange={e => this.onChangeCheckBox(e)}
+                        disabled={isReadOnlyMode || Boolean(disabled)}
+                        checked={value}
+                        data-test-id={this.props['data-test-id']}>
+                        {label}
+                    </Checkbox>
+                )}
 
-				{type === 'checkbox' &&
-					<Checkbox
-						className={classNames({'required' : validations.required , 'has-error' : hasError})}
-						onChange={(e)=>this.onChangeCheckBox(e)}
-						disabled={isReadOnlyMode || Boolean(disabled)}
-						checked={value}
-						data-test-id={this.props['data-test-id']}>{label}</Checkbox>}
+                {type === 'radio' && (
+                    <Radio
+                        name={name}
+                        checked={checked}
+                        disabled={isReadOnlyMode || Boolean(disabled)}
+                        value={value}
+                        ref={input => (this.inputWrapper = input)}
+                        onChange={isChecked => this.onChangeRadio(isChecked)}
+                        label={label}
+                        data-test-id={this.props['data-test-id']}
+                    />
+                )}
+                {type === 'select' && (
+                    <FormControl
+                        onClick={e => this.optionSelect(e)}
+                        componentClass={type}
+                        name={name}
+                        {...inputProps}
+                        data-test-id={this.props['data-test-id']}
+                    />
+                )}
+            </FormGroup>
+        );
+    }
 
-				{type === 'radio' &&
-					<Radio name={name}
-						checked={checked}
-						disabled={isReadOnlyMode || Boolean(disabled)}
-						value={value}
-						ref={(input) => this.inputWrapper = input}
-						onChange={(isChecked)=>this.onChangeRadio(isChecked)} label={label}
-						data-test-id={this.props['data-test-id']} />}
-				{type === 'select' &&
-					<FormControl onClick={ (e) => this.optionSelect(e) }
-						componentClass={type}
-						name={name} {...inputProps}
-						data-test-id={this.props['data-test-id']}/>}
+    getValue() {
+        return this.props.type !== 'select'
+            ? this.state.value
+            : this.state.selectedValues;
+    }
 
-			</FormGroup>
+    getChecked() {
+        return this.state.checked;
+    }
 
-		);
-	}
+    optionSelect(e) {
+        let selectedValues = [];
+        if (e.target.value) {
+            selectedValues.push(e.target.value);
+        }
+        this.setState({
+            selectedValues
+        });
+    }
 
-	getValue() {
-		return this.props.type !== 'select' ? this.state.value : this.state.selectedValues;
-	}
+    onChange(e) {
+        let { onChange } = this.props;
+        this.setState({
+            value: e.target.value
+        });
+        onChange(e.target.value);
+    }
 
-	getChecked() {
-		return this.state.checked;
-	}
+    onChangeCheckBox(e) {
+        let { onChange } = this.props;
+        this.setState({
+            checked: e.target.checked
+        });
+        onChange(e.target.checked);
+    }
 
-	optionSelect(e) {
-		let selectedValues = [];
-		if (e.target.value) {
-			selectedValues.push(e.target.value);
-		}
-		this.setState({
-			selectedValues
-		});
-	}
+    onChangeRadio(isChecked) {
+        let { onChange } = this.props;
+        this.setState({
+            checked: isChecked
+        });
+        onChange(this.state.value);
+    }
 
-	onChange(e) {
-		let {onChange} = this.props;
-		this.setState({
-			value: e.target.value
-		});
-		onChange(e.target.value);
-	}
-
-	onChangeCheckBox(e) {
-		let {onChange} = this.props;
-		this.setState({
-			checked: e.target.checked
-		});
-		onChange(e.target.checked);
-	}
-
-	onChangeRadio(isChecked) {
-		let {onChange} = this.props;
-		this.setState({
-			checked: isChecked
-		});
-		onChange(this.state.value);
-	}
-
-	focus() {
-		ReactDOM.findDOMNode(this.inputWrapper).focus();
-	}
-
+    focus() {
+        ReactDOM.findDOMNode(this.inputWrapper).focus();
+    }
 }
-export default  InputWrapper;
+export default InputWrapper;

@@ -20,38 +20,77 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-
-const NumberOfVms = ({qgenericFieldInfo, dataMap, onQDataChanged, qValidateData, customValidations}) => {
-	return(
-		<GridSection titleClassName='software-product-compute-number-of-vms' title={i18n('NUMBER OF VMs')}>
-			<GridItem>
-				<Input
-					data-test-id='numOfVMs-minimum'
-					type='number'
-					label={i18n('Minimum')}
-					onChange={(tools) => { onQDataChanged({'compute/numOfVMs/minimum' : tools}, customValidations);
-						qValidateData({'compute/numOfVMs/maximum' : dataMap['compute/numOfVMs/maximum']}, customValidations); } }
-					isValid={qgenericFieldInfo['compute/numOfVMs/minimum'].isValid}
-					errorText={qgenericFieldInfo['compute/numOfVMs/minimum'].errorText}
-					value={dataMap['compute/numOfVMs/minimum']} />
-			</GridItem>
-			<GridItem>
-				<Input
-					data-test-id='numOfVMs-maximum'
-					type='number'
-					label={i18n('Maximum')}
-					onChange={(tools) => { onQDataChanged({'compute/numOfVMs/maximum' : tools}, customValidations);
-						qValidateData({'compute/numOfVMs/minimum' : dataMap['compute/numOfVMs/minimum']}, customValidations); } }
-					isValid={qgenericFieldInfo['compute/numOfVMs/maximum'].isValid}
-					errorText={qgenericFieldInfo['compute/numOfVMs/maximum'].errorText}
-					value={dataMap['compute/numOfVMs/maximum']} />
-			</GridItem>
-		</GridSection>
-	);
+const NumberOfVms = ({
+    qgenericFieldInfo,
+    dataMap,
+    onQDataChanged,
+    qValidateData,
+    customValidations
+}) => {
+    return (
+        <GridSection
+            titleClassName="software-product-compute-number-of-vms"
+            title={i18n('NUMBER OF VMs')}>
+            <GridItem>
+                <Input
+                    data-test-id="numOfVMs-minimum"
+                    type="number"
+                    label={i18n('Minimum')}
+                    onChange={tools => {
+                        onQDataChanged(
+                            { 'compute/numOfVMs/minimum': tools },
+                            customValidations
+                        );
+                        qValidateData(
+                            {
+                                'compute/numOfVMs/maximum':
+                                    dataMap['compute/numOfVMs/maximum']
+                            },
+                            customValidations
+                        );
+                    }}
+                    isValid={
+                        qgenericFieldInfo['compute/numOfVMs/minimum'].isValid
+                    }
+                    errorText={
+                        qgenericFieldInfo['compute/numOfVMs/minimum'].errorText
+                    }
+                    value={dataMap['compute/numOfVMs/minimum']}
+                />
+            </GridItem>
+            <GridItem>
+                <Input
+                    data-test-id="numOfVMs-maximum"
+                    type="number"
+                    label={i18n('Maximum')}
+                    onChange={tools => {
+                        onQDataChanged(
+                            { 'compute/numOfVMs/maximum': tools },
+                            customValidations
+                        );
+                        qValidateData(
+                            {
+                                'compute/numOfVMs/minimum':
+                                    dataMap['compute/numOfVMs/minimum']
+                            },
+                            customValidations
+                        );
+                    }}
+                    isValid={
+                        qgenericFieldInfo['compute/numOfVMs/maximum'].isValid
+                    }
+                    errorText={
+                        qgenericFieldInfo['compute/numOfVMs/maximum'].errorText
+                    }
+                    value={dataMap['compute/numOfVMs/maximum']}
+                />
+            </GridItem>
+        </GridSection>
+    );
 };
 
 NumberOfVms.propTypes = {
-	minNumberOfVMsSelectedByUser: PropTypes.number
+    minNumberOfVMsSelectedByUser: PropTypes.number
 };
 
 export default NumberOfVms;

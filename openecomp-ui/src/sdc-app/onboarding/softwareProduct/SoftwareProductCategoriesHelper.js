@@ -14,17 +14,21 @@
  * permissions and limitations under the License.
  */
 export default {
-
-	getCurrentCategoryOfSubCategory(selectedSubCategory, softwareProductCategories) {
-		let category, subCategory;
-		for (var i = 0; i < softwareProductCategories.length; i++) {
-			let {subcategories = []} = softwareProductCategories[i];
-			subCategory = subcategories.find(sub => sub.uniqueId === selectedSubCategory);
-			if (subCategory) {
-				category = softwareProductCategories[i].uniqueId;
-				break;
-			}
-		}
-		return category;
-	}
+    getCurrentCategoryOfSubCategory(
+        selectedSubCategory,
+        softwareProductCategories
+    ) {
+        let category, subCategory;
+        for (var i = 0; i < softwareProductCategories.length; i++) {
+            let { subcategories = [] } = softwareProductCategories[i];
+            subCategory = subcategories.find(
+                sub => sub.uniqueId === selectedSubCategory
+            );
+            if (subCategory) {
+                category = softwareProductCategories[i].uniqueId;
+                break;
+            }
+        }
+        return category;
+    }
 };

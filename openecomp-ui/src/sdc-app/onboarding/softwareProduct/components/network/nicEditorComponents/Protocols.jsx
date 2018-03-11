@@ -21,55 +21,83 @@ import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const Protocols = ({protocols, qgenericFieldInfo, dataMap, onQDataChanged}) => {
-	return (
-		<GridSection title={i18n('Protocols')} hasLastColSet>
-				<GridItem colSpan={2}>
-					<InputOptions
-						data-test-id='nic-protocols'
-						label={i18n('Protocols')}
-						type='select'
-						isMultiSelect={true}
-						isValid={qgenericFieldInfo['protocols/protocols'].isValid}
-						errorText={qgenericFieldInfo['protocols/protocols'].errorText}
-						onInputChange={()=>{}}
-						onEnumChange={protocols => {
-							onQDataChanged({'protocols/protocols' : protocols});}
-						}
-						multiSelectedEnum={dataMap['protocols/protocols']}
-						clearable={false}
-						values={qgenericFieldInfo['protocols/protocols'].enum}/>
-				</GridItem>
-				<GridItem colSpan={2} lastColInRow>
-					<Input
-						data-test-id='nic-protocolWithHighestTrafficProfile'
-						label={i18n('Protocol with Highest Traffic Profile')}
-						type='select'
-						groupClassName='bootstrap-input-options'
-						className='input-options-select'
-						isValid={qgenericFieldInfo['protocols/protocolWithHighestTrafficProfile'].isValid}
-						errorText={qgenericFieldInfo['protocols/protocolWithHighestTrafficProfile'].errorText}
-						value={dataMap['protocols/protocolWithHighestTrafficProfile']}
-						onChange={(e) => {
-							const selectedIndex = e.target.selectedIndex;
-							const val = e.target.options[selectedIndex].value;
-							onQDataChanged({'protocols/protocolWithHighestTrafficProfile' : val});}
-						}>
-						{(protocols.length === 0) &&
-							<option key={'You must select protocols first...'} value=''>{i18n('You must select protocols first...')}</option>
-						}
-						{protocols.map(protocol => <option key={protocol} value={protocol}>{protocol}</option>)}
-					</Input>
-				</GridItem>
-		</GridSection>
-	);
+const Protocols = ({
+    protocols,
+    qgenericFieldInfo,
+    dataMap,
+    onQDataChanged
+}) => {
+    return (
+        <GridSection title={i18n('Protocols')} hasLastColSet>
+            <GridItem colSpan={2}>
+                <InputOptions
+                    data-test-id="nic-protocols"
+                    label={i18n('Protocols')}
+                    type="select"
+                    isMultiSelect={true}
+                    isValid={qgenericFieldInfo['protocols/protocols'].isValid}
+                    errorText={
+                        qgenericFieldInfo['protocols/protocols'].errorText
+                    }
+                    onInputChange={() => {}}
+                    onEnumChange={protocols => {
+                        onQDataChanged({ 'protocols/protocols': protocols });
+                    }}
+                    multiSelectedEnum={dataMap['protocols/protocols']}
+                    clearable={false}
+                    values={qgenericFieldInfo['protocols/protocols'].enum}
+                />
+            </GridItem>
+            <GridItem colSpan={2} lastColInRow>
+                <Input
+                    data-test-id="nic-protocolWithHighestTrafficProfile"
+                    label={i18n('Protocol with Highest Traffic Profile')}
+                    type="select"
+                    groupClassName="bootstrap-input-options"
+                    className="input-options-select"
+                    isValid={
+                        qgenericFieldInfo[
+                            'protocols/protocolWithHighestTrafficProfile'
+                        ].isValid
+                    }
+                    errorText={
+                        qgenericFieldInfo[
+                            'protocols/protocolWithHighestTrafficProfile'
+                        ].errorText
+                    }
+                    value={
+                        dataMap['protocols/protocolWithHighestTrafficProfile']
+                    }
+                    onChange={e => {
+                        const selectedIndex = e.target.selectedIndex;
+                        const val = e.target.options[selectedIndex].value;
+                        onQDataChanged({
+                            'protocols/protocolWithHighestTrafficProfile': val
+                        });
+                    }}>
+                    {protocols.length === 0 && (
+                        <option
+                            key={'You must select protocols first...'}
+                            value="">
+                            {i18n('You must select protocols first...')}
+                        </option>
+                    )}
+                    {protocols.map(protocol => (
+                        <option key={protocol} value={protocol}>
+                            {protocol}
+                        </option>
+                    ))}
+                </Input>
+            </GridItem>
+        </GridSection>
+    );
 };
 
 Protocols.PropTypes = {
-	protocols: PropTypes.array,
-	onQDataChanged:  PropTypes.function,
-	dataMap: PropTypes.object,
-	qgenericFieldInfo: PropTypes.object
+    protocols: PropTypes.array,
+    onQDataChanged: PropTypes.function,
+    dataMap: PropTypes.object,
+    qgenericFieldInfo: PropTypes.object
 };
 
 export default Protocols;

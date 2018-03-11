@@ -21,9 +21,18 @@ import Form from 'nfvo-components/input/validation/Form.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const GeneralSection = ({onDataChanged, displayName, vfcCode, nfcFunction, description, isReadOnlyMode, genericFieldInfo, isManual}) => (
-	<GridSection title={i18n('General')}>
-		{/* disabled until backend will be ready to implement it
+const GeneralSection = ({
+    onDataChanged,
+    displayName,
+    vfcCode,
+    nfcFunction,
+    description,
+    isReadOnlyMode,
+    genericFieldInfo,
+    isManual
+}) => (
+    <GridSection title={i18n('General')}>
+        {/* disabled until backend will be ready to implement it
 			<div className='validation-input-wrapper'>
 			<div className='form-group'>
 			<label className='control-label'>{i18n('Name')}</label>
@@ -32,156 +41,248 @@ const GeneralSection = ({onDataChanged, displayName, vfcCode, nfcFunction, descr
 			</div>
 
 		*/}
-		<GridItem>
-			<Input
-				data-test-id='name'
-				label={i18n('Name')}
-				value={displayName}
-				disabled={!isManual || isReadOnlyMode}
-				type='text'/>
-			{!isManual  && <Input
-				data-test-id='vfcCode'
-				label={i18n('Naming Code')}
-				value={vfcCode}
-				isValid={genericFieldInfo.vfcCode.isValid}
-				errorText={genericFieldInfo.vfcCode.errorText}
-				onChange={vfcCode => onDataChanged({vfcCode})}
-				disabled={isReadOnlyMode}
-				type='text'/> }
-			<Input
-				data-test-id='nfcFunction'
-				label={i18n('Function')}
-				value={nfcFunction}
-				isValid={genericFieldInfo.nfcFunction.isValid}
-				errorText={genericFieldInfo.nfcFunction.errorText}
-				onChange={nfcFunction => onDataChanged({nfcFunction})}
-				disabled={isReadOnlyMode}
-				type='text'/>
-		</GridItem>
-		<GridItem colSpan={2}>
-			<Input
-				label={i18n('Description')}
-				isValid={genericFieldInfo.description.isValid}
-				errorText={genericFieldInfo.description.errorText}
-				onChange={description => onDataChanged({description})}
-				disabled={isReadOnlyMode}
-				value={description}
-				groupClassName='multi-line-textarea'
-				data-test-id='description'
-				type='textarea'/>
-		</GridItem>
-		<GridItem />
-	</GridSection>
+        <GridItem>
+            <Input
+                data-test-id="name"
+                label={i18n('Name')}
+                value={displayName}
+                disabled={!isManual || isReadOnlyMode}
+                type="text"
+            />
+            {!isManual && (
+                <Input
+                    data-test-id="vfcCode"
+                    label={i18n('Naming Code')}
+                    value={vfcCode}
+                    isValid={genericFieldInfo.vfcCode.isValid}
+                    errorText={genericFieldInfo.vfcCode.errorText}
+                    onChange={vfcCode => onDataChanged({ vfcCode })}
+                    disabled={isReadOnlyMode}
+                    type="text"
+                />
+            )}
+            <Input
+                data-test-id="nfcFunction"
+                label={i18n('Function')}
+                value={nfcFunction}
+                isValid={genericFieldInfo.nfcFunction.isValid}
+                errorText={genericFieldInfo.nfcFunction.errorText}
+                onChange={nfcFunction => onDataChanged({ nfcFunction })}
+                disabled={isReadOnlyMode}
+                type="text"
+            />
+        </GridItem>
+        <GridItem colSpan={2}>
+            <Input
+                label={i18n('Description')}
+                isValid={genericFieldInfo.description.isValid}
+                errorText={genericFieldInfo.description.errorText}
+                onChange={description => onDataChanged({ description })}
+                disabled={isReadOnlyMode}
+                value={description}
+                groupClassName="multi-line-textarea"
+                data-test-id="description"
+                type="textarea"
+            />
+        </GridItem>
+        <GridItem />
+    </GridSection>
 );
 
-const HypervisorSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
-	<GridSection title={i18n('Hypervisor')}>
-		<GridItem>
-			<Input
-				data-test-id='hypervisor'
-				label={i18n('Supported Hypervisors')}
-				type='select'
-				className='input-options-select'
-				groupClassName='bootstrap-input-options'
-				isValid={qgenericFieldInfo['general/hypervisor/hypervisor'].isValid}
-				errorText={qgenericFieldInfo['general/hypervisor/hypervisor'].errorText}
-				value={dataMap['general/hypervisor/hypervisor']}
-				onChange={(e) => {
-					const selectedIndex = e.target.selectedIndex;
-					const val = e.target.options[selectedIndex].value;
-					onQDataChanged({'general/hypervisor/hypervisor' : val});}
-				}>
-				<option key='placeholder' value=''>{i18n('Select...')}</option>
-				{qgenericFieldInfo['general/hypervisor/hypervisor'].enum.map(hv => <option value={hv.enum} key={hv.enum}>{hv.title}</option>)}
-			</Input>
-		</GridItem>
-		<GridItem colSpan={2}>
-			<Input
-				data-test-id='drivers'
-				onChange={(driver) => onQDataChanged({'general/hypervisor/drivers' : driver})}
-				label={i18n('Hypervisor Drivers')}
-				type='text'
-				isValid={qgenericFieldInfo['general/hypervisor/drivers'].isValid}
-				errorText={qgenericFieldInfo['general/hypervisor/drivers'].errorText}
-				value={dataMap['general/hypervisor/drivers']}/>
-		</GridItem>
-		<GridItem colSpan={3}>
-			<Input
-				data-test-id='containerFeaturesDescription'
-				label={i18n('Describe Container Features')}
-				type='textarea'
-				onChange={(containerFeaturesDescription) => onQDataChanged({'general/hypervisor/containerFeaturesDescription' : containerFeaturesDescription})}
-				isValid={qgenericFieldInfo['general/hypervisor/containerFeaturesDescription'].isValid}
-				errorText={qgenericFieldInfo['general/hypervisor/containerFeaturesDescription'].errorText}
-				value={dataMap['general/hypervisor/containerFeaturesDescription']}/>
-		</GridItem>
-	</GridSection>
+const HypervisorSection = ({ dataMap, onQDataChanged, qgenericFieldInfo }) => (
+    <GridSection title={i18n('Hypervisor')}>
+        <GridItem>
+            <Input
+                data-test-id="hypervisor"
+                label={i18n('Supported Hypervisors')}
+                type="select"
+                className="input-options-select"
+                groupClassName="bootstrap-input-options"
+                isValid={
+                    qgenericFieldInfo['general/hypervisor/hypervisor'].isValid
+                }
+                errorText={
+                    qgenericFieldInfo['general/hypervisor/hypervisor'].errorText
+                }
+                value={dataMap['general/hypervisor/hypervisor']}
+                onChange={e => {
+                    const selectedIndex = e.target.selectedIndex;
+                    const val = e.target.options[selectedIndex].value;
+                    onQDataChanged({ 'general/hypervisor/hypervisor': val });
+                }}>
+                <option key="placeholder" value="">
+                    {i18n('Select...')}
+                </option>
+                {qgenericFieldInfo['general/hypervisor/hypervisor'].enum.map(
+                    hv => (
+                        <option value={hv.enum} key={hv.enum}>
+                            {hv.title}
+                        </option>
+                    )
+                )}
+            </Input>
+        </GridItem>
+        <GridItem colSpan={2}>
+            <Input
+                data-test-id="drivers"
+                onChange={driver =>
+                    onQDataChanged({ 'general/hypervisor/drivers': driver })
+                }
+                label={i18n('Hypervisor Drivers')}
+                type="text"
+                isValid={
+                    qgenericFieldInfo['general/hypervisor/drivers'].isValid
+                }
+                errorText={
+                    qgenericFieldInfo['general/hypervisor/drivers'].errorText
+                }
+                value={dataMap['general/hypervisor/drivers']}
+            />
+        </GridItem>
+        <GridItem colSpan={3}>
+            <Input
+                data-test-id="containerFeaturesDescription"
+                label={i18n('Describe Container Features')}
+                type="textarea"
+                onChange={containerFeaturesDescription =>
+                    onQDataChanged({
+                        'general/hypervisor/containerFeaturesDescription': containerFeaturesDescription
+                    })
+                }
+                isValid={
+                    qgenericFieldInfo[
+                        'general/hypervisor/containerFeaturesDescription'
+                    ].isValid
+                }
+                errorText={
+                    qgenericFieldInfo[
+                        'general/hypervisor/containerFeaturesDescription'
+                    ].errorText
+                }
+                value={
+                    dataMap['general/hypervisor/containerFeaturesDescription']
+                }
+            />
+        </GridItem>
+    </GridSection>
 );
 
-const ImageSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
-	<GridSection title={i18n('Disk')}>
-		<GridItem>
-			<Input
-				data-test-id='bootDiskSizePerVM'
-				onChange={(bootDiskSizePerVM) => onQDataChanged({'general/disk/bootDiskSizePerVM' : bootDiskSizePerVM})}
-				label={i18n('Size of boot disk per VM (GB)')}
-				type='number'
-				isValid={qgenericFieldInfo['general/disk/bootDiskSizePerVM'].isValid}
-				errorText={qgenericFieldInfo['general/disk/bootDiskSizePerVM'].errorText}
-				value={dataMap['general/disk/bootDiskSizePerVM']}/>
-		</GridItem>
-		<GridItem>
-			<Input
-				data-test-id='ephemeralDiskSizePerVM'
-				onChange={(ephemeralDiskSizePerVM) => onQDataChanged({'general/disk/ephemeralDiskSizePerVM' : ephemeralDiskSizePerVM})}
-				label={i18n('Size of ephemeral disk per VM (GB)')}
-				type='number'
-				isValid={qgenericFieldInfo['general/disk/ephemeralDiskSizePerVM'].isValid}
-				errorText={qgenericFieldInfo['general/disk/ephemeralDiskSizePerVM'].errorText}
-				value={dataMap['general/disk/ephemeralDiskSizePerVM']}/>
-		</GridItem>
-	</GridSection>
+const ImageSection = ({ dataMap, onQDataChanged, qgenericFieldInfo }) => (
+    <GridSection title={i18n('Disk')}>
+        <GridItem>
+            <Input
+                data-test-id="bootDiskSizePerVM"
+                onChange={bootDiskSizePerVM =>
+                    onQDataChanged({
+                        'general/disk/bootDiskSizePerVM': bootDiskSizePerVM
+                    })
+                }
+                label={i18n('Size of boot disk per VM (GB)')}
+                type="number"
+                isValid={
+                    qgenericFieldInfo['general/disk/bootDiskSizePerVM'].isValid
+                }
+                errorText={
+                    qgenericFieldInfo['general/disk/bootDiskSizePerVM']
+                        .errorText
+                }
+                value={dataMap['general/disk/bootDiskSizePerVM']}
+            />
+        </GridItem>
+        <GridItem>
+            <Input
+                data-test-id="ephemeralDiskSizePerVM"
+                onChange={ephemeralDiskSizePerVM =>
+                    onQDataChanged({
+                        'general/disk/ephemeralDiskSizePerVM': ephemeralDiskSizePerVM
+                    })
+                }
+                label={i18n('Size of ephemeral disk per VM (GB)')}
+                type="number"
+                isValid={
+                    qgenericFieldInfo['general/disk/ephemeralDiskSizePerVM']
+                        .isValid
+                }
+                errorText={
+                    qgenericFieldInfo['general/disk/ephemeralDiskSizePerVM']
+                        .errorText
+                }
+                value={dataMap['general/disk/ephemeralDiskSizePerVM']}
+            />
+        </GridItem>
+    </GridSection>
 );
 
-const RecoverySection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
-	<GridSection title={i18n('Recovery')}>
-		<GridItem>
-			<Input
-				data-test-id='pointObjective'
-				label={i18n('VM Recovery Point Objective (Minutes)')}
-				type='number'
-				onChange={(pointObjective) => onQDataChanged({'general/recovery/pointObjective' : pointObjective})}
-				isValid={qgenericFieldInfo['general/recovery/pointObjective'].isValid}
-				errorText={qgenericFieldInfo['general/recovery/pointObjective'].errorText}
-				value={dataMap['general/recovery/pointObjective']}/>
-		</GridItem>
-		<GridItem>
-			<Input
-				data-test-id='timeObjective'
-				label={i18n('VM Recovery Time Objective (Minutes)')}
-				type='number'
-				onChange={(timeObjective) => onQDataChanged({'general/recovery/timeObjective' : timeObjective})}
-				isValid={qgenericFieldInfo['general/recovery/timeObjective'].isValid}
-				errorText={qgenericFieldInfo['general/recovery/timeObjective'].errorText}
-				value={dataMap['general/recovery/timeObjective']}/>
-			<div className='empty-two-col' />
-		</GridItem>
-		<GridItem colSpan={2} />
-		<GridItem colSpan={2}>
-			<Input
-				data-test-id='vmProcessFailuresHandling'
-				className='textarea'
-				label={i18n('How are in VM process failures handled?')}
-				type='textarea'
-				onChange={(vmProcessFailuresHandling) => onQDataChanged({'general/recovery/vmProcessFailuresHandling' : vmProcessFailuresHandling})}
-				isValid={qgenericFieldInfo['general/recovery/vmProcessFailuresHandling'].isValid}
-				errorText={qgenericFieldInfo['general/recovery/vmProcessFailuresHandling'].errorText}
-				value={dataMap['general/recovery/vmProcessFailuresHandling']}/>
-			<div className='empty-two-col' />
-
-		</GridItem>
-		{
-			/** disabled until backend will be ready to implement it
+const RecoverySection = ({ dataMap, onQDataChanged, qgenericFieldInfo }) => (
+    <GridSection title={i18n('Recovery')}>
+        <GridItem>
+            <Input
+                data-test-id="pointObjective"
+                label={i18n('VM Recovery Point Objective (Minutes)')}
+                type="number"
+                onChange={pointObjective =>
+                    onQDataChanged({
+                        'general/recovery/pointObjective': pointObjective
+                    })
+                }
+                isValid={
+                    qgenericFieldInfo['general/recovery/pointObjective'].isValid
+                }
+                errorText={
+                    qgenericFieldInfo['general/recovery/pointObjective']
+                        .errorText
+                }
+                value={dataMap['general/recovery/pointObjective']}
+            />
+        </GridItem>
+        <GridItem>
+            <Input
+                data-test-id="timeObjective"
+                label={i18n('VM Recovery Time Objective (Minutes)')}
+                type="number"
+                onChange={timeObjective =>
+                    onQDataChanged({
+                        'general/recovery/timeObjective': timeObjective
+                    })
+                }
+                isValid={
+                    qgenericFieldInfo['general/recovery/timeObjective'].isValid
+                }
+                errorText={
+                    qgenericFieldInfo['general/recovery/timeObjective']
+                        .errorText
+                }
+                value={dataMap['general/recovery/timeObjective']}
+            />
+            <div className="empty-two-col" />
+        </GridItem>
+        <GridItem colSpan={2} />
+        <GridItem colSpan={2}>
+            <Input
+                data-test-id="vmProcessFailuresHandling"
+                className="textarea"
+                label={i18n('How are in VM process failures handled?')}
+                type="textarea"
+                onChange={vmProcessFailuresHandling =>
+                    onQDataChanged({
+                        'general/recovery/vmProcessFailuresHandling': vmProcessFailuresHandling
+                    })
+                }
+                isValid={
+                    qgenericFieldInfo[
+                        'general/recovery/vmProcessFailuresHandling'
+                    ].isValid
+                }
+                errorText={
+                    qgenericFieldInfo[
+                        'general/recovery/vmProcessFailuresHandling'
+                    ].errorText
+                }
+                value={dataMap['general/recovery/vmProcessFailuresHandling']}
+            />
+            <div className="empty-two-col" />
+        </GridItem>
+        {/** disabled until backend will be ready to implement it
 			<div className='row'>
 			<div className='col-md-3'>
 			<Input
@@ -190,78 +291,127 @@ const RecoverySection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
 			pointer='/general/recovery/VMRecoveryDocument'/>
 			</div>
 			</div>
-			*/
-		}
-	</GridSection>
+			*/}
+    </GridSection>
 );
 
-const DNSConfigurationSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
-	<GridSection title={i18n('DNS Configuration')}>
-		<GridItem colSpan={2}>
-			<Input
-				data-test-id='dnsConfiguration'
-				label={i18n('Do you have a need for DNS as a Service? Please describe.')}
-				type='textarea'
-				onChange={(dnsConfiguration) => onQDataChanged({'general/dnsConfiguration' : dnsConfiguration})}
-				isValid={qgenericFieldInfo['general/dnsConfiguration'].isValid}
-				errorText={qgenericFieldInfo['general/dnsConfiguration'].errorText}
-				value={dataMap['general/dnsConfiguration']}/>
-		</GridItem>
-	</GridSection>
+const DNSConfigurationSection = ({
+    dataMap,
+    onQDataChanged,
+    qgenericFieldInfo
+}) => (
+    <GridSection title={i18n('DNS Configuration')}>
+        <GridItem colSpan={2}>
+            <Input
+                data-test-id="dnsConfiguration"
+                label={i18n(
+                    'Do you have a need for DNS as a Service? Please describe.'
+                )}
+                type="textarea"
+                onChange={dnsConfiguration =>
+                    onQDataChanged({
+                        'general/dnsConfiguration': dnsConfiguration
+                    })
+                }
+                isValid={qgenericFieldInfo['general/dnsConfiguration'].isValid}
+                errorText={
+                    qgenericFieldInfo['general/dnsConfiguration'].errorText
+                }
+                value={dataMap['general/dnsConfiguration']}
+            />
+        </GridItem>
+    </GridSection>
 );
 
-const CloneSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
-	<GridSection title={i18n('Clone')}>
-		<GridItem colSpan={2}>
-			<Input
-				data-test-id='vmCloneUsage'
-				label={i18n('Describe VM Clone Use')}
-				type='textarea'
-				onChange={(vmCloneUsage) => onQDataChanged({'general/vmCloneUsage' : vmCloneUsage})}
-				isValid={qgenericFieldInfo['general/vmCloneUsage'].isValid}
-				errorText={qgenericFieldInfo['general/vmCloneUsage'].errorText}
-				value={dataMap['general/vmCloneUsage']}/>
-		</GridItem>
-	</GridSection>
+const CloneSection = ({ dataMap, onQDataChanged, qgenericFieldInfo }) => (
+    <GridSection title={i18n('Clone')}>
+        <GridItem colSpan={2}>
+            <Input
+                data-test-id="vmCloneUsage"
+                label={i18n('Describe VM Clone Use')}
+                type="textarea"
+                onChange={vmCloneUsage =>
+                    onQDataChanged({ 'general/vmCloneUsage': vmCloneUsage })
+                }
+                isValid={qgenericFieldInfo['general/vmCloneUsage'].isValid}
+                errorText={qgenericFieldInfo['general/vmCloneUsage'].errorText}
+                value={dataMap['general/vmCloneUsage']}
+            />
+        </GridItem>
+    </GridSection>
 );
 
 class SoftwareProductComponentsGeneralView extends React.Component {
+    render() {
+        let {
+            isManual,
+            onQDataChanged,
+            onDataChanged,
+            genericFieldInfo,
+            dataMap,
+            qGenericFieldInfo,
+            componentData: { displayName, vfcCode, nfcFunction, description },
+            isReadOnlyMode
+        } = this.props;
+        return (
+            <div className="vsp-components-general">
+                <div className="general-data">
+                    {genericFieldInfo &&
+                        qGenericFieldInfo && (
+                            <Form
+                                isValid={this.props.isFormValid}
+                                formReady={null}
+                                isReadOnlyMode={isReadOnlyMode}
+                                onValidityChanged={isValidityData =>
+                                    this.props.onValidityChanged(isValidityData)
+                                }
+                                hasButtons={false}>
+                                <GeneralSection
+                                    onDataChanged={onDataChanged}
+                                    displayName={displayName}
+                                    vfcCode={vfcCode}
+                                    nfcFunction={nfcFunction}
+                                    description={description}
+                                    isManual={isManual}
+                                    isReadOnlyMode={isReadOnlyMode}
+                                    genericFieldInfo={genericFieldInfo}
+                                />
+                                <HypervisorSection
+                                    onQDataChanged={onQDataChanged}
+                                    dataMap={dataMap}
+                                    qgenericFieldInfo={qGenericFieldInfo}
+                                />
+                                <ImageSection
+                                    onQDataChanged={onQDataChanged}
+                                    dataMap={dataMap}
+                                    qgenericFieldInfo={qGenericFieldInfo}
+                                />
+                                <RecoverySection
+                                    onQDataChanged={onQDataChanged}
+                                    dataMap={dataMap}
+                                    qgenericFieldInfo={qGenericFieldInfo}
+                                />
+                                <DNSConfigurationSection
+                                    onQDataChanged={onQDataChanged}
+                                    dataMap={dataMap}
+                                    qgenericFieldInfo={qGenericFieldInfo}
+                                />
+                                <CloneSection
+                                    onQDataChanged={onQDataChanged}
+                                    dataMap={dataMap}
+                                    qgenericFieldInfo={qGenericFieldInfo}
+                                />
+                            </Form>
+                        )}
+                </div>
+            </div>
+        );
+    }
 
-	render() {
-		let {isManual, onQDataChanged, onDataChanged, genericFieldInfo, dataMap, qGenericFieldInfo, componentData: {displayName, vfcCode, nfcFunction, description}, isReadOnlyMode} =  this.props;
-		return(
-			<div className='vsp-components-general'>
-				<div className='general-data'>
-					{genericFieldInfo && qGenericFieldInfo && <Form
-						isValid={this.props.isFormValid}
-						formReady={null}
-						isReadOnlyMode={isReadOnlyMode}
-						onValidityChanged={(isValidityData) => this.props.onValidityChanged(isValidityData)}
-						hasButtons={false}>
-						<GeneralSection
-							onDataChanged={onDataChanged}
-							displayName={displayName}
-							vfcCode={vfcCode}
-							nfcFunction={nfcFunction}
-							description={description}
-							isManual={isManual}
-							isReadOnlyMode={isReadOnlyMode}
-							genericFieldInfo={genericFieldInfo}/>
-						<HypervisorSection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
-						<ImageSection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
-						<RecoverySection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
-						<DNSConfigurationSection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
-						<CloneSection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
-					</Form> }
-				</div>
-			</div>
-		);
-	}
-
-	save() {
-		let {onSubmit, componentData, qdata} = this.props;
-		return onSubmit({componentData, qdata});
-	}
+    save() {
+        let { onSubmit, componentData, qdata } = this.props;
+        return onSubmit({ componentData, qdata });
+    }
 }
 
 export default SoftwareProductComponentsGeneralView;

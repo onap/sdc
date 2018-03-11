@@ -13,51 +13,54 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import SoftwareProductComponentsMonitoringView from './SoftwareProductComponentsMonitoringView.jsx';
 import SoftwareProductComponentsMonitoringAction from './SoftwareProductComponentsMonitoringActionHelper.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-
-
-export const mapStateToProps = ({softwareProduct}) => {
-
-	let {softwareProductComponents: {monitoring}} = softwareProduct;
-	return {
-		filenames: monitoring
-	};
-
+export const mapStateToProps = ({ softwareProduct }) => {
+    let { softwareProductComponents: { monitoring } } = softwareProduct;
+    return {
+        filenames: monitoring
+    };
 };
 
-const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) => {
+const mapActionsToProps = (
+    dispatch,
+    { softwareProductId, version, componentId }
+) => {
+    return {
+        onDropMibFileToUpload: (formData, type) =>
+            SoftwareProductComponentsMonitoringAction.uploadFile(dispatch, {
+                softwareProductId,
+                version,
+                componentId,
+                formData,
+                type
+            }),
 
-	return {
-		onDropMibFileToUpload: (formData, type) =>
-			SoftwareProductComponentsMonitoringAction.uploadFile(dispatch, {
-				softwareProductId,
-				version,
-				componentId,
-				formData,
-				type
-			}),
+        onDeleteFile: type =>
+            SoftwareProductComponentsMonitoringAction.deleteFile(dispatch, {
+                softwareProductId,
+                version,
+                componentId,
+                type
+            }),
 
-		onDeleteFile: type => SoftwareProductComponentsMonitoringAction.deleteFile(dispatch, {
-			softwareProductId,
-			version,
-			componentId,
-			type
-		}),
-
-		onFileUploadError: () => dispatch({
-			type: modalActionTypes.GLOBAL_MODAL_ERROR,
-			data: {
-				title: i18n('Upload Failed'),
-				msg: i18n('Expected "zip" file. Please check the provided file type.')
-			}
-		})
-	};
-
+        onFileUploadError: () =>
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                data: {
+                    title: i18n('Upload Failed'),
+                    msg: i18n(
+                        'Expected "zip" file. Please check the provided file type.'
+                    )
+                }
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(SoftwareProductComponentsMonitoringView);
+export default connect(mapStateToProps, mapActionsToProps, null, {
+    withRef: true
+})(SoftwareProductComponentsMonitoringView);

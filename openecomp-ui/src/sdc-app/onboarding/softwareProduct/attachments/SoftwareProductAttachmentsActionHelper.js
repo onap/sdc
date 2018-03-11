@@ -14,13 +14,13 @@
  * permissions and limitations under the License.
  */
 
-import {actionTypes} from './SoftwareProductAttachmentsConstants';
+import { actionTypes } from './SoftwareProductAttachmentsConstants';
 
 export default {
-	setActiveTab(dispatch, {activeTab}) {
-		dispatch({
-			type: actionTypes.SET_ACTIVE_TAB,
-			activeTab
-		});
-	}
+    setActiveTab(dispatch, { activeTab }) {
+        dispatch({
+            type: actionTypes.SET_ACTIVE_TAB,
+            activeTab
+        });
+    }
 };

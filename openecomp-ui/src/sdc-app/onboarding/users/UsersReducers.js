@@ -14,29 +14,28 @@
  * permissions and limitations under the License.
  */
 
-import {actionTypes} from './UsersConstants.js';
-import {combineReducers} from 'redux';
+import { actionTypes } from './UsersConstants.js';
+import { combineReducers } from 'redux';
 
-function usersList (state = [], action) {
-	switch (action.type) {
-		case (actionTypes.USERS_LIST_LOADED):
-			return [...action.usersList];
-		default:
-			return state;
-	}
-};
-
-function userInfo (state = {}, action) {
-	switch (action.type) {
-		case (actionTypes.GOT_USER_INFO):
-			return action.userInfo;
-		default:
-			return state;
-	}
+function usersList(state = [], action) {
+    switch (action.type) {
+        case actionTypes.USERS_LIST_LOADED:
+            return [...action.usersList];
+        default:
+            return state;
+    }
 }
 
+function userInfo(state = {}, action) {
+    switch (action.type) {
+        case actionTypes.GOT_USER_INFO:
+            return action.userInfo;
+        default:
+            return state;
+    }
+}
 
 export default combineReducers({
-	usersList: usersList,
-	userInfo: userInfo
+    usersList: usersList,
+    userInfo: userInfo
 });

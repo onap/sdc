@@ -26,48 +26,113 @@ import Protocols from './nicEditorComponents/Protocols.jsx';
 import NameAndPurpose from './nicEditorComponents/NameAndPurpose.jsx';
 
 class SoftwareProductComponentsNetworkEditorView extends React.Component {
+    render() {
+        let {
+            onCancel,
+            onValidateForm,
+            isReadOnlyMode,
+            isFormValid,
+            formReady,
+            data = {},
+            qgenericFieldInfo,
+            dataMap,
+            onDataChanged,
+            protocols,
+            onQDataChanged,
+            isManual,
+            genericFieldInfo
+        } = this.props;
+        let {
+            name,
+            description,
+            networkName,
+            networkType,
+            networkDescription
+        } = data;
+        let netWorkValues = [
+            {
+                enum: networkName,
+                title: networkName
+            }
+        ];
+        return (
+            <div>
+                {qgenericFieldInfo && (
+                    <Form
+                        ref={form => {
+                            this.form = form;
+                        }}
+                        hasButtons={true}
+                        onSubmit={() => this.submit()}
+                        onReset={() => onCancel()}
+                        labledButtons={true}
+                        isReadOnlyMode={isReadOnlyMode}
+                        isValid={isFormValid}
+                        formReady={formReady}
+                        onValidateForm={() => onValidateForm()}
+                        className="vsp-components-network-editor">
+                        <div className="editor-data">
+                            <NameAndPurpose
+                                isManual={isManual}
+                                name={name}
+                                description={description}
+                                onDataChanged={onDataChanged}
+                                isReadOnlyMode={isReadOnlyMode}
+                                genericFieldInfo={genericFieldInfo}
+                            />
+                            <Protocols
+                                protocols={protocols}
+                                qgenericFieldInfo={qgenericFieldInfo}
+                                dataMap={dataMap}
+                                onQDataChanged={onQDataChanged}
+                            />
+                            <IpConfig
+                                dataMap={dataMap}
+                                onQDataChanged={onQDataChanged}
+                            />
+                            <Network
+                                networkDescription={networkDescription}
+                                onDataChanged={onDataChanged}
+                                networkValues={netWorkValues}
+                                isReadOnlyMode={isReadOnlyMode}
+                                networkType={networkType}
+                            />
+                            <Sizing
+                                qgenericFieldInfo={qgenericFieldInfo}
+                                dataMap={dataMap}
+                                onQDataChanged={onQDataChanged}
+                            />
+                            <InFlowTraffic
+                                qgenericFieldInfo={qgenericFieldInfo}
+                                dataMap={dataMap}
+                                onQDataChanged={onQDataChanged}
+                            />
+                            <OutFlowTraffic
+                                qgenericFieldInfo={qgenericFieldInfo}
+                                dataMap={dataMap}
+                                onQDataChanged={onQDataChanged}
+                            />
+                            <FlowLength
+                                qgenericFieldInfo={qgenericFieldInfo}
+                                dataMap={dataMap}
+                                onQDataChanged={onQDataChanged}
+                            />
+                            <Acceptable
+                                qgenericFieldInfo={qgenericFieldInfo}
+                                dataMap={dataMap}
+                                onQDataChanged={onQDataChanged}
+                            />
+                        </div>
+                    </Form>
+                )}
+            </div>
+        );
+    }
 
-	render() {
-		let {onCancel, onValidateForm, isReadOnlyMode, isFormValid, formReady, data = {}, qgenericFieldInfo,
-			dataMap, onDataChanged, protocols, onQDataChanged, isManual, genericFieldInfo} = this.props;
-		let {name, description, networkName, networkType, networkDescription} = data;
-		let netWorkValues = [{
-			enum: networkName,
-			title: networkName
-		}];
-		return (
-			<div>
-		{qgenericFieldInfo && <Form
-			ref={(form) => { this.form = form; }}
-			hasButtons={true}
-			onSubmit={ () => this.submit() }
-			onReset={ () => onCancel() }
-			labledButtons={true}
-			isReadOnlyMode={isReadOnlyMode}
-			isValid={isFormValid}
-			formReady={formReady}
-			onValidateForm={() => onValidateForm() }
-			className='vsp-components-network-editor'>
-				<div className='editor-data'>
-					<NameAndPurpose isManual={isManual}  name={name} description={description} onDataChanged={onDataChanged} isReadOnlyMode={isReadOnlyMode} genericFieldInfo={genericFieldInfo} />
-					<Protocols protocols={protocols} qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
-					<IpConfig dataMap={dataMap} onQDataChanged={onQDataChanged} />
-					<Network networkDescription={networkDescription} onDataChanged={onDataChanged} networkValues={netWorkValues}  isReadOnlyMode={isReadOnlyMode} networkType={networkType}  />
-					<Sizing qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
-					<InFlowTraffic qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
-					<OutFlowTraffic qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
-					<FlowLength qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
-					<Acceptable qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
-				</div>
-			</Form> }
-			</div>
-		);
-	}
-
-	submit() {
-		let {data, qdata, onSubmit} = this.props;
-		onSubmit({data, qdata});
-	}
+    submit() {
+        let { data, qdata, onSubmit } = this.props;
+        onSubmit({ data, qdata });
+    }
 }
 
 export default SoftwareProductComponentsNetworkEditorView;

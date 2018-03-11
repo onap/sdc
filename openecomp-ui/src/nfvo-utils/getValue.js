@@ -13,38 +13,50 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
+import { other as optionInputOther } from 'nfvo-components/input/validation/InputOptions.jsx';
 
 function getValueFromObject(element) {
-	return element.choices && element.choices.length > 0 && element.choices[0] !== '' && element.choices[0] !== optionInputOther.OTHER ||
-			element.other && element.choices[0] === optionInputOther.OTHER ?
-			element : undefined;
+    return (element.choices &&
+        element.choices.length > 0 &&
+        element.choices[0] !== '' &&
+        element.choices[0] !== optionInputOther.OTHER) ||
+        (element.other && element.choices[0] === optionInputOther.OTHER)
+        ? element
+        : undefined;
 }
 
 function getValueFromVariable(variable) {
-	return variable ? variable : undefined;
+    return variable ? variable : undefined;
 }
 
 function getArrayData(variable) {
-	return variable.length ? variable : undefined;
+    return variable.length ? variable : undefined;
 }
 
- let getValue = element => {
-	return typeof element === 'object' ?
-		element instanceof Array ? getArrayData(element) : getValueFromObject(element) :
-		getValueFromVariable(element);
- };
+let getValue = element => {
+    return typeof element === 'object'
+        ? element instanceof Array
+          ? getArrayData(element)
+          : getValueFromObject(element)
+        : getValueFromVariable(element);
+};
 
 export function getStrValue(choiceObject) {
-	if (!choiceObject) {
-		return undefined;
-	}
-	if (choiceObject.choice && choiceObject.choice !== '' && choiceObject.choice !== optionInputOther.OTHER) {
-		return choiceObject.choice;
-	}
-	else if (choiceObject.other && choiceObject.choice === optionInputOther.OTHER) {
-		return choiceObject.other;
-	}
+    if (!choiceObject) {
+        return undefined;
+    }
+    if (
+        choiceObject.choice &&
+        choiceObject.choice !== '' &&
+        choiceObject.choice !== optionInputOther.OTHER
+    ) {
+        return choiceObject.choice;
+    } else if (
+        choiceObject.other &&
+        choiceObject.choice === optionInputOther.OTHER
+    ) {
+        return choiceObject.other;
+    }
 }
 
- export default getValue;
+export default getValue;

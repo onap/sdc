@@ -16,12 +16,12 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	IMAGES_LIST_UPDATE: null,
+    IMAGES_LIST_UPDATE: null,
 
-	ImageEditor: {
-		CLOSE: null,
-		OPEN: null
-	}
+    ImageEditor: {
+        CLOSE: null,
+        OPEN: null
+    }
 });
 
 export const IMAGE_QUESTIONNAIRE = 'image';

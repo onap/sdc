@@ -18,93 +18,96 @@
  * Example scenarios, for development, testing and demos.
  */
 export default class Scenarios {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Construct scenarios; read model and metamodel templates.
+     */
+    constructor() {
+        this.templates = {
+            model: {
+                ecomp: require('./model/ECOMP.json'),
+                blank: require('./model/BLANK.json'),
+                dimensions: require('./model/DIMENSIONS.json')
+            },
+            metamodel: {
+                ecomp: require('./metamodel/ECOMP.json'),
+                blank: require('./metamodel/BLANK.json')
+            }
+        };
+    }
 
-  /**
-   * Construct scenarios; read model and metamodel templates.
-   */
-  constructor() {
-    this.templates = {
-      model: {
-        ecomp: require('./model/ECOMP.json'),
-        blank: require('./model/BLANK.json'),
-        dimensions: require('./model/DIMENSIONS.json'),
-      },
-      metamodel: {
-        ecomp: require('./metamodel/ECOMP.json'),
-        blank: require('./metamodel/BLANK.json'),
-      },
-    };
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Get ECOMP scenario.
+     * @return ECOMP scenario JSON.
+     */
+    getECOMP() {
+        return JSON.parse(JSON.stringify(this.templates.model.ecomp));
+    }
 
-  /**
-   * Get ECOMP scenario.
-   * @return ECOMP scenario JSON.
-   */
-  getECOMP() {
-    return JSON.parse(JSON.stringify(this.templates.model.ecomp));
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Get ECOMP scenario metamodel.
+     * @return scenario metamodel JSON.
+     */
+    getECOMPMetamodel() {
+        return JSON.parse(JSON.stringify(this.templates.metamodel.ecomp));
+    }
 
-  /**
-   * Get ECOMP scenario metamodel.
-   * @return scenario metamodel JSON.
-   */
-  getECOMPMetamodel() {
-    return JSON.parse(JSON.stringify(this.templates.metamodel.ecomp));
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Get blank scenario.
+     * @return blank scenario JSON.
+     */
+    getBlank() {
+        return JSON.parse(JSON.stringify(this.templates.model.blank));
+    }
 
-  /**
-   * Get blank scenario.
-   * @return blank scenario JSON.
-   */
-  getBlank() {
-    return JSON.parse(JSON.stringify(this.templates.model.blank));
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Get empty scenario metamodel.
+     * @return empty metamodel JSON.
+     */
+    getBlankMetamodel() {
+        return JSON.parse(JSON.stringify(this.templates.metamodel.blank));
+    }
 
-  /**
-   * Get empty scenario metamodel.
-   * @return empty metamodel JSON.
-   */
-  getBlankMetamodel() {
-    return JSON.parse(JSON.stringify(this.templates.metamodel.blank));
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Get scenario.
+     * @return scenario JSON.
+     */
+    getDimensions() {
+        return JSON.parse(JSON.stringify(this.templates.model.dimensions));
+    }
 
-  /**
-   * Get scenario.
-   * @return scenario JSON.
-   */
-  getDimensions() {
-    return JSON.parse(JSON.stringify(this.templates.model.dimensions));
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Get scenario metamodel.
+     * @return metamodel JSON.
+     */
+    getDimensionsMetamodel() {
+        return JSON.parse(JSON.stringify(this.templates.metamodel.blank));
+    }
 
-  /**
-   * Get scenario metamodel.
-   * @return metamodel JSON.
-   */
-  getDimensionsMetamodel() {
-    return JSON.parse(JSON.stringify(this.templates.metamodel.blank));
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get demo metamodels.
-   * @returns {*[]}
-   */
-  getMetamodels() {
-    return [this.getBlankMetamodel(), this.getDimensionsMetamodel(), this.getECOMPMetamodel()];
-  }
+    /**
+     * Get demo metamodels.
+     * @returns {*[]}
+     */
+    getMetamodels() {
+        return [
+            this.getBlankMetamodel(),
+            this.getDimensionsMetamodel(),
+            this.getECOMPMetamodel()
+        ];
+    }
 }

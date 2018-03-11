@@ -13,87 +13,101 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, defaultState, SP_ENTITLEMENT_POOL_FORM} from './EntitlementPoolsConstants.js';
+import {
+    actionTypes,
+    defaultState,
+    SP_ENTITLEMENT_POOL_FORM
+} from './EntitlementPoolsConstants.js';
 import moment from 'moment';
-import {DATE_FORMAT} from 'sdc-app/onboarding/OnboardingConstants.js';
+import { DATE_FORMAT } from 'sdc-app/onboarding/OnboardingConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.entitlementPoolsEditor.OPEN:
-			let entitlementPoolData = {...action.entitlementPool};
-			let {startDate, expiryDate} = entitlementPoolData;
-			if (startDate) {
-				entitlementPoolData.startDate = moment(startDate, DATE_FORMAT).format(DATE_FORMAT);
-			}
-			if (expiryDate) {
-				entitlementPoolData.expiryDate = moment(expiryDate, DATE_FORMAT).format(DATE_FORMAT);
-			}
-			return {
-				...state,
-				formReady: null,
-				formName: SP_ENTITLEMENT_POOL_FORM,
-				genericFieldInfo: {
-					'name' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 120}]
-					},
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 1000}]
-					},
-					'increments' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 120}]
-					},
-					'operationalScope' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},
-					'thresholdUnits' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},
-					'thresholdValue' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},					
-					'startDate': {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},
-					'expiryDate': {
-						isValid: true,
-						errorText: '',
-						validations: []
-					}
-				},
-				data: action.entitlementPool ? entitlementPoolData : defaultState.ENTITLEMENT_POOLS_EDITOR_DATA
-			};
-		case actionTypes.entitlementPoolsEditor.DATA_CHANGED:
-			return {
-				...state,
-				data: {
-					...state.data,
-					...action.deltaData
-				}
-			};
-		case actionTypes.entitlementPoolsEditor.CLOSE:
-			return {};
+    switch (action.type) {
+        case actionTypes.entitlementPoolsEditor.OPEN:
+            let entitlementPoolData = { ...action.entitlementPool };
+            let { startDate, expiryDate } = entitlementPoolData;
+            if (startDate) {
+                entitlementPoolData.startDate = moment(
+                    startDate,
+                    DATE_FORMAT
+                ).format(DATE_FORMAT);
+            }
+            if (expiryDate) {
+                entitlementPoolData.expiryDate = moment(
+                    expiryDate,
+                    DATE_FORMAT
+                ).format(DATE_FORMAT);
+            }
+            return {
+                ...state,
+                formReady: null,
+                formName: SP_ENTITLEMENT_POOL_FORM,
+                genericFieldInfo: {
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 120 }
+                        ]
+                    },
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 1000 }]
+                    },
+                    increments: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 120 }]
+                    },
+                    operationalScope: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    thresholdUnits: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    thresholdValue: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    startDate: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    expiryDate: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    }
+                },
+                data: action.entitlementPool
+                    ? entitlementPoolData
+                    : defaultState.ENTITLEMENT_POOLS_EDITOR_DATA
+            };
+        case actionTypes.entitlementPoolsEditor.DATA_CHANGED:
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    ...action.deltaData
+                }
+            };
+        case actionTypes.entitlementPoolsEditor.CLOSE:
+            return {};
 
-		case actionTypes.entitlementPoolsEditor.LIMITS_LIST_LOADED:
-			return {
-				...state,
-				limitsList: action.response.results
-			};	
-		default:
-			return state;
-	}
-
+        case actionTypes.entitlementPoolsEditor.LIMITS_LIST_LOADED:
+            return {
+                ...state,
+                limitsList: action.response.results
+            };
+        default:
+            return state;
+    }
 };

@@ -13,30 +13,29 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductNetworksConstants.js';
+import { actionTypes } from './SoftwareProductNetworksConstants.js';
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 
 function baseUrl(vspId, version) {
-	let {id: versionId} = version;
-	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-software-products/${vspId}/versions/${versionId}/networks`;
+    let { id: versionId } = version;
+    const restPrefix = Configuration.get('restPrefix');
+    return `${restPrefix}/v1.0/vendor-software-products/${vspId}/versions/${versionId}/networks`;
 }
 
-
 function fetchNetworksList(softwareProductId, version) {
-	return RestAPIUtil.fetch(`${baseUrl(softwareProductId, version)}`);
+    return RestAPIUtil.fetch(`${baseUrl(softwareProductId, version)}`);
 }
 
 const SoftwareProductNetworksActionHelper = {
-	fetchNetworksList(dispatch, {softwareProductId, version}) {
-		return fetchNetworksList(softwareProductId, version).then(response => {
-			dispatch({
-				type: actionTypes.FETCH_SOFTWARE_PRODUCT_NETWORKS,
-				networksList: response.results
-			});
-		});
-	}
+    fetchNetworksList(dispatch, { softwareProductId, version }) {
+        return fetchNetworksList(softwareProductId, version).then(response => {
+            dispatch({
+                type: actionTypes.FETCH_SOFTWARE_PRODUCT_NETWORKS,
+                networksList: response.results
+            });
+        });
+    }
 };
 
-export  default SoftwareProductNetworksActionHelper;
+export default SoftwareProductNetworksActionHelper;

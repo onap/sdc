@@ -16,27 +16,27 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	FEATURE_GROUPS_LIST_LOADED: null,
-	ADD_FEATURE_GROUPS: null,
-	EDIT_FEATURE_GROUPS: null,
-	DELETE_FEATURE_GROUPS: null,
+    FEATURE_GROUPS_LIST_LOADED: null,
+    ADD_FEATURE_GROUPS: null,
+    EDIT_FEATURE_GROUPS: null,
+    DELETE_FEATURE_GROUPS: null,
 
-	ENTITLEMENT_POOLS_LIST_LOADED: null,
+    ENTITLEMENT_POOLS_LIST_LOADED: null,
 
-	featureGroupsEditor: {
-		OPEN: null,
-		CLOSE: null,
-		DATA_CHANGED: null,
-		SELECT_TAB: null
-	}
+    featureGroupsEditor: {
+        OPEN: null,
+        CLOSE: null,
+        DATA_CHANGED: null,
+        SELECT_TAB: null
+    }
 });
 
 export const FG_EDITOR_FORM = 'FG_EDITOR_FORM';
 
 export const state = keyMirror({
-	SELECTED_FEATURE_GROUP_TAB: {
-		GENERAL: 1,
-		ENTITLEMENT_POOLS: 2,
-		LICENSE_KEY_GROUPS: 3
-	}
+    SELECTED_FEATURE_GROUP_TAB: {
+        GENERAL: 1,
+        ENTITLEMENT_POOLS: 2,
+        LICENSE_KEY_GROUPS: 3
+    }
 });

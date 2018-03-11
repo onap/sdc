@@ -13,37 +13,37 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductComponentsNetworkConstants.js';
-import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
+import { actionTypes } from './SoftwareProductComponentsNetworkConstants.js';
+import { forms } from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.NICEditor.FILL_DATA:
-			return {
-				...state,
-				data: action.nic,
-				genericFieldInfo: {
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},
-					'name' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data : true}]
-					},
-					'networkDescription' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					}
-				},
-				formName: forms.NIC_EDIT_FORM
-			};
-		case actionTypes.NICEditor.CLEAR_DATA:
-			return {};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.NICEditor.FILL_DATA:
+            return {
+                ...state,
+                data: action.nic,
+                genericFieldInfo: {
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    },
+                    networkDescription: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    }
+                },
+                formName: forms.NIC_EDIT_FORM
+            };
+        case actionTypes.NICEditor.CLEAR_DATA:
+            return {};
+        default:
+            return state;
+    }
 };

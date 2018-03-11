@@ -14,30 +14,55 @@
  * permissions and limitations under the License.
  */
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import PermissionsManager from './PermissionsManager.jsx';
 import PermissionsActionHelper from './PermissionsActionHelper.js';
 
-export const mapStateToProps = ({versionsPage, users: {usersList, userInfo}}) => {
-	let {permissions} = versionsPage;
+export const mapStateToProps = ({
+    versionsPage,
+    users: { usersList, userInfo }
+}) => {
+    let { permissions } = versionsPage;
 
-	return {
-		users: usersList,
-		userInfo,
-		owner: permissions.owner,
-		itemUsers: permissions.contributors
-	};
+    return {
+        users: usersList,
+        userInfo,
+        owner: permissions.owner,
+        itemUsers: permissions.contributors
+    };
 };
 
-const mapActionsToProps = (dispatch) => {
-	return {
-		onCancel: () => PermissionsActionHelper.closePermissionManager(dispatch),
-		onSubmit: ({itemId, addedUsersIds, removedUsersIds, allUsers, newOwnerId}) => {
-			return PermissionsActionHelper.saveItemUsers(dispatch,{itemId, addedUsersIds, removedUsersIds, allUsers}).then(() => {
-				return newOwnerId ? PermissionsActionHelper.changeOwner(dispatch, {itemId, newOwnerId, allUsers}) : Promise.resolve();
-			}).then(() => PermissionsActionHelper.closePermissionManager(dispatch));
-		}
-	};
+const mapActionsToProps = dispatch => {
+    return {
+        onCancel: () =>
+            PermissionsActionHelper.closePermissionManager(dispatch),
+        onSubmit: ({
+            itemId,
+            addedUsersIds,
+            removedUsersIds,
+            allUsers,
+            newOwnerId
+        }) => {
+            return PermissionsActionHelper.saveItemUsers(dispatch, {
+                itemId,
+                addedUsersIds,
+                removedUsersIds,
+                allUsers
+            })
+                .then(() => {
+                    return newOwnerId
+                        ? PermissionsActionHelper.changeOwner(dispatch, {
+                              itemId,
+                              newOwnerId,
+                              allUsers
+                          })
+                        : Promise.resolve();
+                })
+                .then(() =>
+                    PermissionsActionHelper.closePermissionManager(dispatch)
+                );
+        }
+    };
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(PermissionsManager);

@@ -13,27 +13,27 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './LicenseModelOverviewConstants.js';
+import { actionTypes } from './LicenseModelOverviewConstants.js';
 
 export default {
-	selectVLMListView(dispatch, {buttonTab}) {
-		dispatch({
-			type: actionTypes.LICENSE_MODEL_OVERVIEW_TAB_SELECTED,
-			buttonTab
-		});
-	},
+    selectVLMListView(dispatch, { buttonTab }) {
+        dispatch({
+            type: actionTypes.LICENSE_MODEL_OVERVIEW_TAB_SELECTED,
+            buttonTab
+        });
+    },
 
-	editDescriptionOpen(dispatch, {description}) {
-		dispatch({
-			type: actionTypes.LM_DATA_CHANGED,
-			description
-		});
-	},
+    editDescriptionOpen(dispatch, { description }) {
+        dispatch({
+            type: actionTypes.LM_DATA_CHANGED,
+            description
+        });
+    },
 
-	editDescriptionClose(dispatch) {
-		dispatch({
-			type: actionTypes.LM_DATA_CHANGED,
-			description: undefined
-		});
-	}
+    editDescriptionClose(dispatch) {
+        dispatch({
+            type: actionTypes.LM_DATA_CHANGED,
+            description: undefined
+        });
+    }
 };

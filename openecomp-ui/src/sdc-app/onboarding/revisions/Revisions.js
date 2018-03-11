@@ -14,24 +14,31 @@
  * permissions and limitations under the License.
  */
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import RevisionsView from './RevisionsView.jsx';
 import RevisionsActionHelper from './RevisionsActionHelper.js';
 
-export const mapStateToProps = ({revisions, users}) => {
-	return {
-		revisions: revisions,
-		users: users.usersList
-	};
+export const mapStateToProps = ({ revisions, users }) => {
+    return {
+        revisions: revisions,
+        users: users.usersList
+    };
 };
 
-export const mapActionsToProps = (dispatch, {itemId, version, itemType}) => {
-	return {
-		onCancel: () => RevisionsActionHelper.closeRevisionsView(dispatch),
-		onRevert: (revisionId) => {
-			RevisionsActionHelper.revertToRevision(dispatch, {itemId, version, revisionId, itemType});
-		}
-	};
+export const mapActionsToProps = (dispatch, { itemId, version, itemType }) => {
+    return {
+        onCancel: () => RevisionsActionHelper.closeRevisionsView(dispatch),
+        onRevert: revisionId => {
+            RevisionsActionHelper.revertToRevision(dispatch, {
+                itemId,
+                version,
+                revisionId,
+                itemType
+            });
+        }
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(RevisionsView);
+export default connect(mapStateToProps, mapActionsToProps, null, {
+    withRef: true
+})(RevisionsView);

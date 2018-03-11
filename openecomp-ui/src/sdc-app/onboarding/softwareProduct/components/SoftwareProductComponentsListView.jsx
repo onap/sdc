@@ -22,85 +22,113 @@ import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.js
 import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 
 const ComponentPropType = PropTypes.shape({
-	id: PropTypes.string,
-	name: PropTypes.string,
-	displayName: PropTypes.string,
-	description: PropTypes.string
+    id: PropTypes.string,
+    name: PropTypes.string,
+    displayName: PropTypes.string,
+    description: PropTypes.string
 });
 
 class SoftwareProductComponentsListView extends React.Component {
+    state = {
+        localFilter: ''
+    };
 
-	state = {
-		localFilter: ''
-	};
+    static propTypes = {
+        isReadOnlyMode: PropTypes.bool,
+        componentsList: PropTypes.arrayOf(ComponentPropType),
+        onComponentSelect: PropTypes.func
+    };
 
-	static propTypes = {
-		isReadOnlyMode: PropTypes.bool,
-		componentsList: PropTypes.arrayOf(ComponentPropType),
-		onComponentSelect: PropTypes.func
-	};
+    render() {
+        let { componentsList = [], isManual } = this.props;
+        return (
+            <div className="">
+                {(componentsList.length > 0 || isManual) &&
+                    this.renderComponents()}
+            </div>
+        );
+    }
 
-	render() {
-		let {componentsList = [], isManual} =  this.props;
-		return (
-			<div className=''>
-				{
-					(componentsList.length > 0 || isManual) && this.renderComponents()
-				}
-			</div>
-		);
-	}
+    renderComponents() {
+        const { localFilter } = this.state;
+        const {
+            isManual,
+            onAddComponent,
+            isReadOnlyMode,
+            version,
+            currentSoftwareProduct: { id: softwareProductId },
+            componentsList
+        } = this.props;
+        return (
+            <ListEditorView
+                title={i18n('Virtual Function Components')}
+                filterValue={localFilter}
+                placeholder={i18n('Filter Components')}
+                onFilter={value => this.setState({ localFilter: value })}
+                isReadOnlyMode={isReadOnlyMode || !!this.filterList().length}
+                plusButtonTitle={i18n('Add Component')}
+                onAdd={
+                    isManual && componentsList.length === 0
+                        ? () => onAddComponent(softwareProductId, version)
+                        : false
+                }
+                twoColumns>
+                {this.filterList().map(component =>
+                    this.renderComponentsListItem(component)
+                )}
+            </ListEditorView>
+        );
+    }
 
-	renderComponents() {
-		const {localFilter} = this.state;
-		const {isManual, onAddComponent, isReadOnlyMode, version, currentSoftwareProduct: {id: softwareProductId}, componentsList } = this.props;
-		return (
-			<ListEditorView
-				title={i18n('Virtual Function Components')}
-				filterValue={localFilter}
-				placeholder={i18n('Filter Components')}
-				onFilter={value => this.setState({localFilter: value})}
-				isReadOnlyMode={isReadOnlyMode || !!this.filterList().length}
-				plusButtonTitle={i18n('Add Component')}
-				onAdd={isManual && componentsList.length === 0 ? () => onAddComponent(softwareProductId, version) : false}
-				twoColumns>
-				{this.filterList().map(component => this.renderComponentsListItem(component))}
-			</ListEditorView>
-		);
-	}
+    renderComponentsListItem(component) {
+        let {
+            id: componentId,
+            name,
+            displayName,
+            description = ''
+        } = component;
+        let {
+            currentSoftwareProduct: { id },
+            onComponentSelect,
+            version
+        } = this.props;
+        return (
+            <ListEditorItemView
+                key={
+                    name + Math.floor(Math.random() * (100 - 1) + 1).toString()
+                }
+                className="list-editor-item-view"
+                onSelect={() =>
+                    onComponentSelect({ id, componentId, version })
+                }>
+                <ListEditorItemViewField>
+                    <div className="name">{displayName}</div>
+                </ListEditorItemViewField>
+                <ListEditorItemViewField>
+                    <div className="description">{description}</div>
+                </ListEditorItemViewField>
+            </ListEditorItemView>
+        );
+    }
 
-	renderComponentsListItem(component) {
-		let {id: componentId, name, displayName, description = ''} = component;
-		let {currentSoftwareProduct: {id}, onComponentSelect, version} = this.props;
-		return (
-			<ListEditorItemView
-				key={name + Math.floor(Math.random() * (100 - 1) + 1).toString()}
-				className='list-editor-item-view'				
-				onSelect={() => onComponentSelect({id, componentId, version})}>
-				<ListEditorItemViewField>
-					<div className='name'>{displayName}</div>
-				</ListEditorItemViewField>
-				<ListEditorItemViewField>
-					<div className='description'>{description}</div>
-				</ListEditorItemViewField>
-			</ListEditorItemView>
-		);
-	}
+    filterList() {
+        let { componentsList = [] } = this.props;
 
-	filterList() {
-		let {componentsList = []} = this.props;
-
-		let {localFilter} = this.state;
-		if (localFilter.trim()) {
-			const filter = new RegExp(escape(localFilter), 'i');
-			return componentsList.filter(({displayName = '', description = ''}) => {
-				return escape(displayName).match(filter) || escape(description).match(filter);
-			});
-		}
-		else {
-			return componentsList;
-		}
-	}
+        let { localFilter } = this.state;
+        if (localFilter.trim()) {
+            const filter = new RegExp(escape(localFilter), 'i');
+            return componentsList.filter(
+                ({ displayName = '', description = '' }) => {
+                    return (
+                        escape(displayName).match(filter) ||
+                        escape(description).match(filter)
+                    );
+                }
+            );
+        } else {
+            return componentsList;
+        }
+    }
 }
 
 export default SoftwareProductComponentsListView;

@@ -20,124 +20,115 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 
 const VersionPropType = PropTypes.shape({
-	name: PropTypes.string,
-	description: PropTypes.string,
-	creationMethod: PropTypes.string
+    name: PropTypes.string,
+    description: PropTypes.string,
+    creationMethod: PropTypes.string
 });
 
 class VersionsPageCreationView extends React.Component {
+    static propTypes = {
+        data: VersionPropType,
+        availableMethods: PropTypes.array,
+        onDataChanged: PropTypes.func.isRequired,
+        onSubmit: PropTypes.func.isRequired,
+        onCancel: PropTypes.func.isRequired
+    };
 
-	static propTypes = {
-		data: VersionPropType,
-		availableMethods: PropTypes.array,
-		onDataChanged: PropTypes.func.isRequired,
-		onSubmit: PropTypes.func.isRequired,
-		onCancel: PropTypes.func.isRequired
-	};
+    render() {
+        let {
+            data = {},
+            genericFieldInfo,
+            baseVersion,
+            onDataChanged,
+            onCancel
+        } = this.props;
+        let { additionalInfo: { OptionalCreationMethods } } = baseVersion;
+        let { description, creationMethod } = data;
 
-	render() {
-		let {data = {}, genericFieldInfo, baseVersion, onDataChanged, onCancel} = this.props;
-		let {additionalInfo: {OptionalCreationMethods}} = baseVersion;
-		let {description, creationMethod} = data;
+        return (
+            <div className="version-creation-page">
+                {genericFieldInfo && (
+                    <Form
+                        ref={validationForm =>
+                            (this.validationForm = validationForm)
+                        }
+                        hasButtons={true}
+                        onSubmit={() => this.submit()}
+                        submitButtonText={i18n('Create')}
+                        onReset={() => onCancel()}
+                        labledButtons={true}
+                        isValid={this.props.isFormValid}
+                        formReady={this.props.formReady}
+                        onValidateForm={() => this.validate()}>
+                        <div className="version-form-row">
+                            <Input
+                                label={i18n('Version Category')}
+                                value={creationMethod}
+                                onChange={e => this.onSelectMethod(e)}
+                                type="select"
+                                overlayPos="bottom"
+                                data-test-id="new-version-category"
+                                isValid={
+                                    genericFieldInfo.creationMethod.isValid
+                                }
+                                errorText={
+                                    genericFieldInfo.creationMethod.errorText
+                                }
+                                isRequired>
+                                <option key="" value="">
+                                    {i18n('Please select…')}
+                                </option>
+                                {OptionalCreationMethods.map(method => (
+                                    <option key={method} value={method}>
+                                        {i18n(method)}
+                                    </option>
+                                ))}
+                            </Input>
+                        </div>
 
-		return (
-			<div className='version-creation-page'>
-				{ genericFieldInfo && <Form
-					ref={(validationForm) => this.validationForm = validationForm}
-					hasButtons={true}
-					onSubmit={() => this.submit()}
-					submitButtonText={i18n('Create')}
-					onReset={() => onCancel()}
-					labledButtons={true}
-					isValid={this.props.isFormValid}
-					formReady={this.props.formReady}
-					onValidateForm={() => this.validate()}>
+                        <div className="version-form-row">
+                            <Input
+                                label={i18n('Description')}
+                                value={description}
+                                type="text"
+                                overlayPos="bottom"
+                                data-test-id="new-version-description"
+                                isValid={genericFieldInfo.description.isValid}
+                                errorText={
+                                    genericFieldInfo.description.errorText
+                                }
+                                onChange={description =>
+                                    onDataChanged({ description })
+                                }
+                                isRequired
+                            />
+                        </div>
+                    </Form>
+                )}
+            </div>
+        );
+    }
 
-					<div className='version-form-row'>
-						<Input
-							label={i18n('Version Category')}
-							value={creationMethod}
-							onChange={e => this.onSelectMethod(e)}
-							type='select'
-							overlayPos='bottom'
-							data-test-id='new-version-category'
-							isValid={genericFieldInfo.creationMethod.isValid}
-							errorText={genericFieldInfo.creationMethod.errorText}
-							isRequired>
-							<option key='' value=''>{i18n('Please select…')}</option>
-							{OptionalCreationMethods.map(method => <option key={method} value={method}>{i18n(method)}</option>)}
-						</Input>
-					</div>
+    onSelectMethod(e) {
+        const selectedIndex = e.target.selectedIndex;
+        const creationMethod = e.target.options[selectedIndex].value;
+        this.props.onDataChanged({ creationMethod });
+    }
 
-					<div className='version-form-row'>
-						<Input
-							label={i18n('Description')}
-							value={description}
-							type='text'
-							overlayPos='bottom'
-							data-test-id='new-version-description'
-							isValid={genericFieldInfo.description.isValid}
-							errorText={genericFieldInfo.description.errorText}
-							onChange={description => onDataChanged({description})}
-							isRequired />
-					</div>
+    submit() {
+        let { baseVersion, data: { description, creationMethod } } = this.props;
+        this.props.onSubmit({
+            baseVersion,
+            payload: { description, creationMethod }
+        });
+    }
 
-				</Form> }
-			</div>
-		);
-	}
-
-	onSelectMethod(e) {
-		const selectedIndex = e.target.selectedIndex;
-		const creationMethod = e.target.options[selectedIndex].value;
-		this.props.onDataChanged({creationMethod});
-	}
-
-	submit() {
-		let {baseVersion, data: {description, creationMethod}} = this.props;
-		this.props.onSubmit({baseVersion, payload: {description, creationMethod}});
-	}
-
-	validate() {
-		this.props.onValidateForm();
-	}
-
+    validate() {
+        this.props.onValidateForm();
+    }
 }
 
 export default VersionsPageCreationView;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 						<div className='software-product-inline-section'>

@@ -16,9 +16,9 @@
 
 import store from 'sdc-app/AppStore.js';
 
-
-export default ({featureName, restFunction, mockResult}) => {
-	const {features} = store.getState();
-	return !!features.find(el => el.name === featureName && el.active) ? 
-		restFunction() : Promise.resolve(mockResult);
+export default ({ featureName, restFunction, mockResult }) => {
+    const { features } = store.getState();
+    return !!features.find(el => el.name === featureName && el.active)
+        ? restFunction()
+        : Promise.resolve(mockResult);
 };

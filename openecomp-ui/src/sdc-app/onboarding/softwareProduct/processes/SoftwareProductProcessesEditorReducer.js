@@ -13,43 +13,49 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, VSP_PROCESS_FORM} from './SoftwareProductProcessesConstants.js';
+import {
+    actionTypes,
+    VSP_PROCESS_FORM
+} from './SoftwareProductProcessesConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.SOFTWARE_PRODUCT_PROCESS_EDITOR_OPEN:
-			return {
-				...state,
-				formReady: null,
-				formName: VSP_PROCESS_FORM,
-				genericFieldInfo: {
-					'name' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 120}]
-					},
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 1000}]
-					},
-					'artifactName' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},
-					'type' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					}
-				},
-				data: action.process
-			};
-		case actionTypes.SOFTWARE_PRODUCT_PROCESS_EDITOR_CLOSE:
-			return {};
+    switch (action.type) {
+        case actionTypes.SOFTWARE_PRODUCT_PROCESS_EDITOR_OPEN:
+            return {
+                ...state,
+                formReady: null,
+                formName: VSP_PROCESS_FORM,
+                genericFieldInfo: {
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 120 }
+                        ]
+                    },
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 1000 }]
+                    },
+                    artifactName: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    type: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    }
+                },
+                data: action.process
+            };
+        case actionTypes.SOFTWARE_PRODUCT_PROCESS_EDITOR_CLOSE:
+            return {};
 
-		default:
-			return state;
-	}
+        default:
+            return state;
+    }
 };

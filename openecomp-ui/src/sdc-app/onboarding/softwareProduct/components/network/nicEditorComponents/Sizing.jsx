@@ -19,21 +19,32 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const Sizing = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
-	return(
-		<GridSection title={i18n('Sizing')} hasLastColSet>
-			<GridItem colSpan={4} lastColInRow>
-				<Input
-					label={i18n('Describe Quality of Service')}
-					type='textarea'
-					data-test-id='sizing-describeQualityOfService'
-					isValid={qgenericFieldInfo['sizing/describeQualityOfService'].isValid}
-					errorText={qgenericFieldInfo['sizing/describeQualityOfService'].errorText}
-					value={dataMap['sizing/describeQualityOfService']}
-					onChange={val => onQDataChanged({'sizing/describeQualityOfService' : val}) }/>
-			</GridItem>
-		</GridSection>
-	);
+const Sizing = ({ qgenericFieldInfo, dataMap, onQDataChanged }) => {
+    return (
+        <GridSection title={i18n('Sizing')} hasLastColSet>
+            <GridItem colSpan={4} lastColInRow>
+                <Input
+                    label={i18n('Describe Quality of Service')}
+                    type="textarea"
+                    data-test-id="sizing-describeQualityOfService"
+                    isValid={
+                        qgenericFieldInfo['sizing/describeQualityOfService']
+                            .isValid
+                    }
+                    errorText={
+                        qgenericFieldInfo['sizing/describeQualityOfService']
+                            .errorText
+                    }
+                    value={dataMap['sizing/describeQualityOfService']}
+                    onChange={val =>
+                        onQDataChanged({
+                            'sizing/describeQualityOfService': val
+                        })
+                    }
+                />
+            </GridItem>
+        </GridSection>
+    );
 };
 
 export default Sizing;

@@ -17,23 +17,22 @@ import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 export const actionTypes = keyMirror({
-	LICENSE_MODEL_LOADED: null,
-	LICENSE_MODELS_LIST_LOADED: null,
-	FINALIZED_LICENSE_MODELS_LIST_LOADED: null,
-	ARCHIVED_LICENSE_MODELS_LIST_LOADED: null,
-	EDIT_LICENSE_MODEL: null
+    LICENSE_MODEL_LOADED: null,
+    LICENSE_MODELS_LIST_LOADED: null,
+    FINALIZED_LICENSE_MODELS_LIST_LOADED: null,
+    ARCHIVED_LICENSE_MODELS_LIST_LOADED: null,
+    EDIT_LICENSE_MODEL: null
 });
 
-
 export const thresholdUnitType = {
-	ABSOLUTE: 'Absolute',
-	PERCENTAGE: 'Percentage'
+    ABSOLUTE: 'Absolute',
+    PERCENTAGE: 'Percentage'
 };
 
 export const optionsInputValues = {
-	THRESHOLD_UNITS: [
-		{enum: '', title: i18n('please select…')},
-		{enum: thresholdUnitType.ABSOLUTE, title: 'Absolute'},
-		{enum: thresholdUnitType.PERCENTAGE, title: '%'}
-	]
+    THRESHOLD_UNITS: [
+        { enum: '', title: i18n('please select…') },
+        { enum: thresholdUnitType.ABSOLUTE, title: 'Absolute' },
+        { enum: thresholdUnitType.PERCENTAGE, title: '%' }
+    ]
 };

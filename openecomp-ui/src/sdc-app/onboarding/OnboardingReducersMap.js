@@ -30,19 +30,19 @@ import revisionsReducer from './revisions/RevisionsReducer.js';
 import featuresReducer from 'sdc-app/features/FeaturesReducer.js';
 
 export default {
-	currentScreen: currentScreenReducer,
-	licenseModel: licenseModelReducer,
-	licenseModelList: licenseModelListReducer,
-	archivedLicenseModelList: archivedLicenseModelListReducer,
-	archivedSoftwareProductList: archivedSoftwareProductListReducer,
-	finalizedLicenseModelList: finalizedLicenseModelListReducer,
-	finalizedSoftwareProductList: finalizedSoftwareProductReducer,
-	mergeEditor: mergeEditorReducer,
-	onboard: onboardReducer,
-	softwareProduct: softwareProductReducer,
-	softwareProductList: softwareProductListReducer,
-	users: usersReducer,
-	versionsPage: versionsPageReducer,
-	revisions: revisionsReducer,
-	features: featuresReducer
+    currentScreen: currentScreenReducer,
+    licenseModel: licenseModelReducer,
+    licenseModelList: licenseModelListReducer,
+    archivedLicenseModelList: archivedLicenseModelListReducer,
+    archivedSoftwareProductList: archivedSoftwareProductListReducer,
+    finalizedLicenseModelList: finalizedLicenseModelListReducer,
+    finalizedSoftwareProductList: finalizedSoftwareProductReducer,
+    mergeEditor: mergeEditorReducer,
+    onboard: onboardReducer,
+    softwareProduct: softwareProductReducer,
+    softwareProductList: softwareProductListReducer,
+    users: usersReducer,
+    versionsPage: versionsPageReducer,
+    revisions: revisionsReducer,
+    features: featuresReducer
 };

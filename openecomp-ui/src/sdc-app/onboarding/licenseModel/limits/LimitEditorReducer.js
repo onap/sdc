@@ -14,58 +14,73 @@
  * permissions and limitations under the License.
  */
 
-import {actionTypes, LIMITS_FORM_NAME, defaultState} from './LimitEditorConstants.js';
-import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
+import {
+    actionTypes,
+    LIMITS_FORM_NAME,
+    defaultState
+} from './LimitEditorConstants.js';
+import { other as optionInputOther } from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.OPEN:
-			return {
-				...state,
-				data: action.limitItem ? {...action.limitItem} : defaultState.LIMITS_EDITOR_DATA,
-				formReady: null,
-				formName: LIMITS_FORM_NAME,
-				genericFieldInfo: {
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 1000}]
-					},
-					'name' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 120}]
-					},
-					'metric' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'requiredChoiceWithOther', data: optionInputOther.OTHER}]
-					},
-					'value' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					},
-					'unit' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},
-					'aggregationFunction' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					},
-					'time' : {
-						isValid: true,
-						errorText: '',
-						validations: []
-					}
-				}
-			};
-		case actionTypes.CLOSE:
-			return {};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.OPEN:
+            return {
+                ...state,
+                data: action.limitItem
+                    ? { ...action.limitItem }
+                    : defaultState.LIMITS_EDITOR_DATA,
+                formReady: null,
+                formName: LIMITS_FORM_NAME,
+                genericFieldInfo: {
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 1000 }]
+                    },
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 120 }
+                        ]
+                    },
+                    metric: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            {
+                                type: 'requiredChoiceWithOther',
+                                data: optionInputOther.OTHER
+                            }
+                        ]
+                    },
+                    value: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    },
+                    unit: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    aggregationFunction: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    },
+                    time: {
+                        isValid: true,
+                        errorText: '',
+                        validations: []
+                    }
+                }
+            };
+        case actionTypes.CLOSE:
+            return {};
+        default:
+            return state;
+    }
 };

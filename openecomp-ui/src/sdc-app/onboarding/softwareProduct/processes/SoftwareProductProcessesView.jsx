@@ -20,45 +20,63 @@ import Modal from 'nfvo-components/modal/Modal.jsx';
 import SoftwareProductProcessesEditor from './SoftwareProductProcessesEditor.js';
 import SoftwareProductProcessListView from './SoftwareProductProcessListView.jsx';
 
-
 class SoftwareProductProcessesView extends React.Component {
+    state = {
+        localFilter: ''
+    };
 
-	state = {
-		localFilter: ''
-	};
+    static propTypes = {
+        onAddProcess: PropTypes.func.isRequired,
+        onEditProcess: PropTypes.func.isRequired,
+        onDeleteProcess: PropTypes.func.isRequired,
+        isDisplayEditor: PropTypes.bool.isRequired,
+        isReadOnlyMode: PropTypes.bool.isRequired,
+        currentSoftwareProduct: PropTypes.object
+    };
 
-	static propTypes = {
-		onAddProcess: PropTypes.func.isRequired,
-		onEditProcess: PropTypes.func.isRequired,
-		onDeleteProcess: PropTypes.func.isRequired,
-		isDisplayEditor: PropTypes.bool.isRequired,
-		isReadOnlyMode: PropTypes.bool.isRequired,
-		currentSoftwareProduct:PropTypes.object
-	};
+    render() {
+        return (
+            <div className="software-product-landing-view-right-side vsp-processes-page">
+                {this.renderEditor()}
+                <SoftwareProductProcessListView
+                    addButtonTitle={i18n('Add Process Details')}
+                    {...this.props}
+                />
+            </div>
+        );
+    }
 
-	render() {
-		return (
-			<div className='software-product-landing-view-right-side vsp-processes-page'>
-				{this.renderEditor()}
-				<SoftwareProductProcessListView addButtonTitle={i18n('Add Process Details')} {...this.props}/>
-			</div>
-		);
-	}
-
-	renderEditor() {
-		let {currentSoftwareProduct: {id}, version, isModalInEditMode, isReadOnlyMode, isDisplayEditor} = this.props;
-		return (
-
-			<Modal show={isDisplayEditor} bsSize='large' animation={true} className='onborading-modal'>
-				<Modal.Header>
-					<Modal.Title>{isModalInEditMode ? i18n('Edit Process Details') : i18n('Create New Process Details')}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body className='edit-process-modal'>
-					<SoftwareProductProcessesEditor softwareProductId={id} version={version} isReadOnlyMode={isReadOnlyMode}/>
-				</Modal.Body>
-			</Modal>
-		);
-	}
+    renderEditor() {
+        let {
+            currentSoftwareProduct: { id },
+            version,
+            isModalInEditMode,
+            isReadOnlyMode,
+            isDisplayEditor
+        } = this.props;
+        return (
+            <Modal
+                show={isDisplayEditor}
+                bsSize="large"
+                animation={true}
+                className="onborading-modal">
+                <Modal.Header>
+                    <Modal.Title>
+                        {isModalInEditMode
+                            ? i18n('Edit Process Details')
+                            : i18n('Create New Process Details')}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="edit-process-modal">
+                    <SoftwareProductProcessesEditor
+                        softwareProductId={id}
+                        version={version}
+                        isReadOnlyMode={isReadOnlyMode}
+                    />
+                </Modal.Body>
+            </Modal>
+        );
+    }
 }
 
 export default SoftwareProductProcessesView;

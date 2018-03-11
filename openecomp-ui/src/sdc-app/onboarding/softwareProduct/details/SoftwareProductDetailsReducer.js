@@ -13,49 +13,56 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, forms} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import {
+    actionTypes,
+    forms
+} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.softwareProductEditor.IS_VALIDITY_DATA_CHANGED:
-			return {
-				...state,
-				isValidityData: action.isValidityData
-			};
-		case actionTypes.SOFTWARE_PRODUCT_LOADED:
-			return {
-				...state,
-				formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS,
-				genericFieldInfo: {
-					'name' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'validateName', data: true}, {type: 'maxLength', data: 25}, {type: 'required', data: true}]
-					},
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					}
-				},
-				data: action.response
-			};
-		case actionTypes.TOGGLE_NAVIGATION_ITEM:
-			return {
-				...state,
-				mapOfExpandedIds: action.mapOfExpandedIds
-			};
-		case actionTypes.LOAD_LICENSING_VERSIONS_LIST:
-			return {
-				...state,
-				licensingVersionsList: action.licensingVersionsList
-			};
-		case actionTypes.CANDIDATE_IN_PROCESS: 
-			return {
-				...state,
-				data: {...state.data, candidateOnboardingOrigin: true}				
-			};	
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.softwareProductEditor.IS_VALIDITY_DATA_CHANGED:
+            return {
+                ...state,
+                isValidityData: action.isValidityData
+            };
+        case actionTypes.SOFTWARE_PRODUCT_LOADED:
+            return {
+                ...state,
+                formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS,
+                genericFieldInfo: {
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'validateName', data: true },
+                            { type: 'maxLength', data: 25 },
+                            { type: 'required', data: true }
+                        ]
+                    },
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    }
+                },
+                data: action.response
+            };
+        case actionTypes.TOGGLE_NAVIGATION_ITEM:
+            return {
+                ...state,
+                mapOfExpandedIds: action.mapOfExpandedIds
+            };
+        case actionTypes.LOAD_LICENSING_VERSIONS_LIST:
+            return {
+                ...state,
+                licensingVersionsList: action.licensingVersionsList
+            };
+        case actionTypes.CANDIDATE_IN_PROCESS:
+            return {
+                ...state,
+                data: { ...state.data, candidateOnboardingOrigin: true }
+            };
+        default:
+            return state;
+    }
 };

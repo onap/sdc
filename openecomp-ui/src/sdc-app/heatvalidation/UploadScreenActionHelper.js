@@ -18,155 +18,197 @@ import showFileSaveDialog from 'nfvo-utils/ShowFileSaveDialog.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import isEqual from 'lodash/isEqual.js';
 import cloneDeep from 'lodash/cloneDeep.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
-import {actionTypes as softwareProductsActionTypes} from '../onboarding/softwareProduct/SoftwareProductConstants.js';
-import {actionTypes as HeatSetupActions} from '../onboarding/softwareProduct/attachments/setup/HeatSetupConstants.js';
-
-
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
+import { actionTypes as softwareProductsActionTypes } from '../onboarding/softwareProduct/SoftwareProductConstants.js';
+import { actionTypes as HeatSetupActions } from '../onboarding/softwareProduct/attachments/setup/HeatSetupConstants.js';
 
 const options = {
-	headers: {
-		USER_ID: 'validationOnlyVspUser'
-	}
+    headers: {
+        USER_ID: 'validationOnlyVspUser'
+    }
 };
 
 function fetchVspIdAndVersion() {
-
-	let vspId = sessionStorage.getItem('validationAppVspId');
-	let versionId = sessionStorage.getItem('validationAppVersionId');
-	if (vspId) {
-		return  Promise.resolve({value: vspId, versionId});
-	}else {
-		return RestAPIUtil.fetch('/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/validation-vsp', options)
-			.then(response => {
-				sessionStorage.setItem('validationAppVspId', response.itemId);
-				sessionStorage.setItem('validationAppVersionId', response.version.id);
-				return Promise.resolve({value: response.itemId, versionId: response.version.id});
-			});
-	}
-
+    let vspId = sessionStorage.getItem('validationAppVspId');
+    let versionId = sessionStorage.getItem('validationAppVersionId');
+    if (vspId) {
+        return Promise.resolve({ value: vspId, versionId });
+    } else {
+        return RestAPIUtil.fetch(
+            '/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/validation-vsp',
+            options
+        ).then(response => {
+            sessionStorage.setItem('validationAppVspId', response.itemId);
+            sessionStorage.setItem(
+                'validationAppVersionId',
+                response.version.id
+            );
+            return Promise.resolve({
+                value: response.itemId,
+                versionId: response.version.id
+            });
+        });
+    }
 }
-
 
 function uploadFile(formData) {
-	return fetchVspIdAndVersion()
-		.then(response => {
-			return RestAPIUtil.post(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate`, formData, options);
-		});
+    return fetchVspIdAndVersion().then(response => {
+        return RestAPIUtil.post(
+            `/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${
+                response.value
+            }/versions/${response.versionId}/orchestration-template-candidate`,
+            formData,
+            options
+        );
+    });
 }
 
-function loadSoftwareProductHeatCandidate(dispatch){
-	return fetchVspIdAndVersion()
-		.then(response => {
-			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate/manifest`, options)
-				.then(response => dispatch({
-					type: HeatSetupActions.MANIFEST_LOADED,
-					response
-				}));
-		});
+function loadSoftwareProductHeatCandidate(dispatch) {
+    return fetchVspIdAndVersion().then(response => {
+        return RestAPIUtil.fetch(
+            `/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${
+                response.value
+            }/versions/${
+                response.versionId
+            }/orchestration-template-candidate/manifest`,
+            options
+        ).then(response =>
+            dispatch({
+                type: HeatSetupActions.MANIFEST_LOADED,
+                response
+            })
+        );
+    });
 }
 
 function updateHeatCandidate(dispatch, heatCandidate) {
-	return fetchVspIdAndVersion()
-		.then(response => {
-			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate/manifest`,
-				heatCandidate.heatData, options)
-				.then(null, error => {
-					dispatch({
-						type: modalActionTypes.GLOBAL_MODAL_ERROR,
-						data: {
-							title: i18n('Save Failed'), 
-							modalComponentName: modalContentMapper.SUMBIT_ERROR_RESPONSE,							
-							modalComponentProps: {
-								validationResponse: error.responseJSON
-							},					
-							cancelButtonText: i18n('Ok')
-						}
-					});
-					return Promise.reject(error);
-				});
-		});
+    return fetchVspIdAndVersion().then(response => {
+        return RestAPIUtil.put(
+            `/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${
+                response.value
+            }/versions/${
+                response.versionId
+            }/orchestration-template-candidate/manifest`,
+            heatCandidate.heatData,
+            options
+        ).then(null, error => {
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                data: {
+                    title: i18n('Save Failed'),
+                    modalComponentName:
+                        modalContentMapper.SUMBIT_ERROR_RESPONSE,
+                    modalComponentProps: {
+                        validationResponse: error.responseJSON
+                    },
+                    cancelButtonText: i18n('Ok')
+                }
+            });
+            return Promise.reject(error);
+        });
+    });
 }
 
 function fetchSoftwareProduct() {
-	return fetchVspIdAndVersion()
-		.then(response => {
-			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}`, options);
-		});
+    return fetchVspIdAndVersion().then(response => {
+        return RestAPIUtil.fetch(
+            `/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${
+                response.value
+            }/versions/${response.versionId}`,
+            options
+        );
+    });
 }
 
 function downloadHeatFile() {
-	return fetchVspIdAndVersion()
-		.then(response => {
-			RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate`, {
-				...options,
-				dataType: 'binary'
-			})
-				.done((response) => showFileSaveDialog({
-					blob: response.blob,
-					headers: response.headers,
-					defaultFilename: 'HEAT_file.zip',
-					addTimestamp: true
-				}));
-		});
+    return fetchVspIdAndVersion().then(response => {
+        RestAPIUtil.fetch(
+            `/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${
+                response.value
+            }/versions/${response.versionId}/orchestration-template-candidate`,
+            {
+                ...options,
+                dataType: 'binary'
+            }
+        ).done(response =>
+            showFileSaveDialog({
+                blob: response.blob,
+                headers: response.headers,
+                defaultFilename: 'HEAT_file.zip',
+                addTimestamp: true
+            })
+        );
+    });
 }
 
 function processAndValidateHeatCandidate(dispatch) {
-	return fetchVspIdAndVersion()
-		.then(response => {
-			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate/process`, {}, options)
-				.then(response => {
-					if (response.status === 'Success') {
-						fetchSoftwareProduct().then(response => {
-							dispatch({
-								type: softwareProductsActionTypes.SOFTWARE_PRODUCT_LOADED,
-								response
-							});
-						});
-					}
-				});
-		});
+    return fetchVspIdAndVersion().then(response => {
+        return RestAPIUtil.put(
+            `/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${
+                response.value
+            }/versions/${
+                response.versionId
+            }/orchestration-template-candidate/process`,
+            {},
+            options
+        ).then(response => {
+            if (response.status === 'Success') {
+                fetchSoftwareProduct().then(response => {
+                    dispatch({
+                        type:
+                            softwareProductsActionTypes.SOFTWARE_PRODUCT_LOADED,
+                        response
+                    });
+                });
+            }
+        });
+    });
 }
 
 const UploadScreenActionHelper = {
-	uploadFile(dispatch, formData) {
+    uploadFile(dispatch, formData) {
+        return Promise.resolve()
+            .then(() => uploadFile(formData))
+            .then(response => {
+                dispatch({
+                    type: softwareProductsActionTypes.SOFTWARE_PRODUCT_LOADED,
+                    response
+                });
+                dispatch({
+                    type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
+                    payload: {}
+                });
+                loadSoftwareProductHeatCandidate(dispatch);
+            })
+            .catch(error => {
+                dispatch({
+                    type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                    data: {
+                        title: i18n('File Upload Failed'),
+                        msg: error.responseJSON.message,
+                        cancelButtonText: i18n('Ok')
+                    }
+                });
+            });
+    },
 
-		return Promise.resolve()
-			.then(() => uploadFile(formData))
-			.then(response => {
-				dispatch({
-					type: softwareProductsActionTypes.SOFTWARE_PRODUCT_LOADED,
-					response
-				});
-				dispatch({
-					type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
-					payload:{}
-				});
-				loadSoftwareProductHeatCandidate(dispatch);
-			})
-			.catch(error => {
-				dispatch({					
-					type: modalActionTypes.GLOBAL_MODAL_ERROR,
-					data: {
-						title: i18n('File Upload Failed'), 													
-						msg: error.responseJSON.message,					
-						cancelButtonText: i18n('Ok')
-					}
-				});
-			});
-	},
+    processAndValidateHeat(dispatch, heatData, heatDataCache) {
+        return isEqual(heatData, heatDataCache)
+            ? Promise.resolve()
+            : updateHeatCandidate(dispatch, heatData)
+                  .then(() => processAndValidateHeatCandidate(dispatch))
+                  .then(() =>
+                      dispatch({
+                          type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
+                          payload: cloneDeep(heatData)
+                      })
+                  );
+    },
 
-	processAndValidateHeat(dispatch, heatData, heatDataCache){
-		return isEqual(heatData, heatDataCache) ? Promise.resolve() :
-			updateHeatCandidate(dispatch, heatData)
-				.then(() => processAndValidateHeatCandidate(dispatch))
-				.then(() => dispatch({type: HeatSetupActions.FILL_HEAT_SETUP_CACHE, payload: cloneDeep(heatData)}));
-	},
-
-	downloadHeatFile(){
-		return downloadHeatFile();
-	},
+    downloadHeatFile() {
+        return downloadHeatFile();
+    }
 };
 
 export default UploadScreenActionHelper;

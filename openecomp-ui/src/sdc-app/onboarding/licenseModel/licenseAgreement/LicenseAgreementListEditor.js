@@ -13,42 +13,64 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import LicenseAgreementActionHelper from './LicenseAgreementActionHelper.js';
 import LicenseAgreementListEditorView from './LicenseAgreementListEditorView.jsx';
-import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as globalMoadlActions } from 'nfvo-components/modal/GlobalModalConstants.js';
 
-const mapStateToProps = ({licenseModel: {licenseAgreement, licenseModelEditor}}) => {
+const mapStateToProps = ({
+    licenseModel: { licenseAgreement, licenseModelEditor }
+}) => {
+    let { licenseAgreementList } = licenseAgreement;
+    let { data } = licenseAgreement.licenseAgreementEditor;
+    let { vendorName, version } = licenseModelEditor.data;
 
-	let {licenseAgreementList} = licenseAgreement;
-	let {data} = licenseAgreement.licenseAgreementEditor;
-	let {vendorName, version} = licenseModelEditor.data;
-
-	return {
-		vendorName,
-		version,
-		licenseAgreementList,
-		isDisplayModal: Boolean(data),
-		isModalInEditMode: Boolean(data && data.id)
-	};
-
+    return {
+        vendorName,
+        version,
+        licenseAgreementList,
+        isDisplayModal: Boolean(data),
+        isModalInEditMode: Boolean(data && data.id)
+    };
 };
 
-const mapActionsToProps = (dispatch, {licenseModelId}) => {
-	return {
-		onAddLicenseAgreementClick: (version) => LicenseAgreementActionHelper.openLicenseAgreementEditor(dispatch, {licenseModelId, version}),
-		onEditLicenseAgreementClick: (licenseAgreement, version) => LicenseAgreementActionHelper.openLicenseAgreementEditor(dispatch, {licenseModelId, licenseAgreement, version}),
-		onDeleteLicenseAgreement: (licenseAgreement, version) => dispatch({
-			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
-			data:{
-				msg: i18n('Are you sure you want to delete "{name}"?', {name: licenseAgreement.name}),
-				confirmationButtonText: i18n('Delete'),
-				title: i18n('Delete'),
-				onConfirmed: ()=>LicenseAgreementActionHelper.deleteLicenseAgreement(dispatch, {licenseModelId, licenseAgreementId: licenseAgreement.id, version})
-			}
-		})
-	};
+const mapActionsToProps = (dispatch, { licenseModelId }) => {
+    return {
+        onAddLicenseAgreementClick: version =>
+            LicenseAgreementActionHelper.openLicenseAgreementEditor(dispatch, {
+                licenseModelId,
+                version
+            }),
+        onEditLicenseAgreementClick: (licenseAgreement, version) =>
+            LicenseAgreementActionHelper.openLicenseAgreementEditor(dispatch, {
+                licenseModelId,
+                licenseAgreement,
+                version
+            }),
+        onDeleteLicenseAgreement: (licenseAgreement, version) =>
+            dispatch({
+                type: globalMoadlActions.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: i18n('Are you sure you want to delete "{name}"?', {
+                        name: licenseAgreement.name
+                    }),
+                    confirmationButtonText: i18n('Delete'),
+                    title: i18n('Delete'),
+                    onConfirmed: () =>
+                        LicenseAgreementActionHelper.deleteLicenseAgreement(
+                            dispatch,
+                            {
+                                licenseModelId,
+                                licenseAgreementId: licenseAgreement.id,
+                                version
+                            }
+                        )
+                }
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(LicenseAgreementListEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    LicenseAgreementListEditorView
+);

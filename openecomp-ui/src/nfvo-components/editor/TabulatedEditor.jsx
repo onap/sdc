@@ -20,79 +20,106 @@ import VersionController from 'nfvo-components/panel/versionController/VersionCo
 import NavigationSideBar from 'nfvo-components/panel/NavigationSideBar.jsx';
 
 export default class TabulatedEditor extends React.Component {
+    render() {
+        const {
+            navigationBarProps,
+            onToggle,
+            onVersionSwitching,
+            onMoreVersionsClick,
+            onCreate,
+            onSave,
+            onClose,
+            onVersionControllerAction,
+            onNavigate,
+            children,
+            meta,
+            onManagePermissions,
+            onOpenCommentCommitModal,
+            onOpenPermissions,
+            onOpenRevisionsModal
+        } = this.props;
+        let { versionControllerProps } = this.props;
+        const { className = '' } = React.Children.only(children).props;
+        const child = this.prepareChild();
 
-	render() {
-		const {navigationBarProps, onToggle, onVersionSwitching, onMoreVersionsClick, onCreate, onSave, onClose,
-				onVersionControllerAction, onNavigate, children, meta, onManagePermissions, onOpenCommentCommitModal, onOpenPermissions, onOpenRevisionsModal} = this.props;
-		let {versionControllerProps} = this.props;
-		const {className = ''} = React.Children.only(children).props;
-		const child = this.prepareChild();
+        if (onClose) {
+            versionControllerProps = {
+                ...versionControllerProps,
+                onClose: () => onClose(versionControllerProps)
+            };
+        }
+        return (
+            <div className="software-product-view">
+                <div className="software-product-navigation-side-bar">
+                    <NavigationSideBar
+                        {...navigationBarProps}
+                        onSelect={onNavigate}
+                        onToggle={onToggle}
+                    />
+                </div>
+                <div className="software-product-landing-view-right-side flex-column">
+                    <VersionController
+                        {...versionControllerProps}
+                        onVersionSwitching={version =>
+                            onVersionSwitching(version, meta)
+                        }
+                        onMoreVersionsClick={onMoreVersionsClick}
+                        onManagePermissions={onManagePermissions}
+                        onOpenCommentCommitModal={onOpenCommentCommitModal}
+                        onOpenPermissions={onOpenPermissions}
+                        onOpenRevisionsModal={onOpenRevisionsModal}
+                        callVCAction={(action, version, comment) =>
+                            onVersionControllerAction(
+                                action,
+                                version,
+                                comment,
+                                meta
+                            )
+                        }
+                        onCreate={onCreate && this.handleCreate}
+                        onSave={onSave && this.handleSave}
+                    />
+                    <div className={classnames('content-area', `${className}`)}>
+                        {child}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-		if(onClose) {
-			versionControllerProps = {
-				...versionControllerProps,
-				onClose: () => onClose(versionControllerProps)
-			};
-		}
-		return (
-			<div className='software-product-view'>
-				<div className='software-product-navigation-side-bar'>
-					<NavigationSideBar {...navigationBarProps} onSelect={onNavigate} onToggle={onToggle}/>
-				</div>
-				<div className='software-product-landing-view-right-side flex-column'>
-					<VersionController
-						{...versionControllerProps}
-						onVersionSwitching={version => onVersionSwitching(version, meta)}
-						onMoreVersionsClick={onMoreVersionsClick}
-						onManagePermissions={onManagePermissions}
-						onOpenCommentCommitModal={onOpenCommentCommitModal}
-						onOpenPermissions={onOpenPermissions}
-						onOpenRevisionsModal={onOpenRevisionsModal}
-						callVCAction={(action, version, comment) => onVersionControllerAction(action, version, comment, meta)}
-						onCreate={onCreate && this.handleCreate}
-						onSave={onSave && this.handleSave}/>
-					<div className={classnames('content-area', `${className}`)}>
-					{
-						child
-					}
-					</div>
-				</div>
-			</div>
-		);
-	}
+    prepareChild() {
+        const { onSave, onCreate, children } = this.props;
 
-	prepareChild() {
-		const {onSave, onCreate, children} = this.props;
+        const additionalChildProps = { ref: 'editor' };
+        if (onSave) {
+            additionalChildProps.onSave = onSave;
+        }
+        if (onCreate) {
+            additionalChildProps.onCreate = onCreate;
+        }
 
-		const additionalChildProps = {ref: 'editor'};
-		if (onSave) {
-			additionalChildProps.onSave = onSave;
-		}
-		if (onCreate) {
-			additionalChildProps.onCreate = onCreate;
-		}
+        const child = React.cloneElement(
+            React.Children.only(children),
+            additionalChildProps
+        );
+        return child;
+    }
 
-		const child = React.cloneElement(React.Children.only(children), additionalChildProps);
-		return child;
-	}
+    handleSave = () => {
+        const childInstance = this.refs.editor.getWrappedInstance();
+        if (childInstance.save) {
+            return childInstance.save();
+        } else {
+            return this.props.onSave();
+        }
+    };
 
-
-
-	handleSave = () => {
-		const childInstance = this.refs.editor.getWrappedInstance();
-		if (childInstance.save) {
-			return childInstance.save();
-		} else {
-			return this.props.onSave();
-		}
-	};
-
-	handleCreate = () => {
-		const childInstance = this.refs.editor.getWrappedInstance();
-		if (childInstance.create) {
-			childInstance.create();
-		} else {
-			this.props.onCreate();
-		}
-	}
+    handleCreate = () => {
+        const childInstance = this.refs.editor.getWrappedInstance();
+        if (childInstance.create) {
+            childInstance.create();
+        } else {
+            this.props.onCreate();
+        }
+    };
 }

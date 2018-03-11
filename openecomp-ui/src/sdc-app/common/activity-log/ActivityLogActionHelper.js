@@ -17,8 +17,13 @@ import ActivityLogConstants from './ActivityLogConstants.js';
 import ItemHelper from 'sdc-app/common/helpers/ItemsHelper.js';
 
 export default {
-
-	fetchActivityLog(dispatch, {itemId, versionId}){
-		return ItemHelper.fetchActivityLog({itemId, versionId}).then(response => dispatch({type: ActivityLogConstants.ACTIVITY_LOG_UPDATED, response}));
-	}
+    fetchActivityLog(dispatch, { itemId, versionId }) {
+        return ItemHelper.fetchActivityLog({ itemId, versionId }).then(
+            response =>
+                dispatch({
+                    type: ActivityLogConstants.ACTIVITY_LOG_UPDATED,
+                    response
+                })
+        );
+    }
 };

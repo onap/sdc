@@ -13,25 +13,42 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import MergeEditorView from './MergeEditorView.jsx';
 import MergeEditorActionHelper from './MergeEditorActionHelper.js';
 
-export const mapStateToProps = ({mergeEditor, currentScreen}) => {
-	let {props} = currentScreen;
-	let item = {
-		id: props.softwareProductId || props.licenseModelId,
-		version: props.version
-	};
-	return {...mergeEditor, item, currentScreen};
+export const mapStateToProps = ({ mergeEditor, currentScreen }) => {
+    let { props } = currentScreen;
+    let item = {
+        id: props.softwareProductId || props.licenseModelId,
+        version: props.version
+    };
+    return { ...mergeEditor, item, currentScreen };
 };
 
-export const mapActionsToProps = (dispatch) => {
-	return {
-		fetchConflict: ({cid, itemId, version}) => MergeEditorActionHelper.fetchConflict(dispatch, {itemId, version, cid}),
-		onResolveConflict: ({conflictId, resolution, itemId, version, currentScreen}) =>
-			MergeEditorActionHelper.resolveConflict(dispatch, {itemId, version, conflictId, resolution, currentScreen})
-	};
+export const mapActionsToProps = dispatch => {
+    return {
+        fetchConflict: ({ cid, itemId, version }) =>
+            MergeEditorActionHelper.fetchConflict(dispatch, {
+                itemId,
+                version,
+                cid
+            }),
+        onResolveConflict: ({
+            conflictId,
+            resolution,
+            itemId,
+            version,
+            currentScreen
+        }) =>
+            MergeEditorActionHelper.resolveConflict(dispatch, {
+                itemId,
+                version,
+                conflictId,
+                resolution,
+                currentScreen
+            })
+    };
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(MergeEditorView);

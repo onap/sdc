@@ -13,41 +13,62 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as globalMoadlActions } from 'nfvo-components/modal/GlobalModalConstants.js';
 
 import LicenseKeyGroupsActionHelper from './LicenseKeyGroupsActionHelper.js';
-import LicenseKeyGroupsListEditorView, {generateConfirmationMsg} from './LicenseKeyGroupsListEditorView.jsx';
+import LicenseKeyGroupsListEditorView, {
+    generateConfirmationMsg
+} from './LicenseKeyGroupsListEditorView.jsx';
 
-const mapStateToProps = ({licenseModel: {licenseKeyGroup, licenseModelEditor}}) => {
-	let {licenseKeyGroupsList} = licenseKeyGroup;
-	let {data} = licenseKeyGroup.licenseKeyGroupsEditor;
-	let {vendorName} = licenseModelEditor.data;
+const mapStateToProps = ({
+    licenseModel: { licenseKeyGroup, licenseModelEditor }
+}) => {
+    let { licenseKeyGroupsList } = licenseKeyGroup;
+    let { data } = licenseKeyGroup.licenseKeyGroupsEditor;
+    let { vendorName } = licenseModelEditor.data;
 
-	return {
-		vendorName,
-		licenseKeyGroupsList,
-		isDisplayModal: Boolean(data),
-		isModalInEditMode: Boolean(data && data.id)
-	};
+    return {
+        vendorName,
+        licenseKeyGroupsList,
+        isDisplayModal: Boolean(data),
+        isModalInEditMode: Boolean(data && data.id)
+    };
 };
 
-const mapActionsToProps = (dispatch, {licenseModelId, version}) => {	
-	return {
-		onAddLicenseKeyGroupClick: () => LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch),
-		onEditLicenseKeyGroupClick: licenseKeyGroup => LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch, {licenseKeyGroup, licenseModelId, version}),
-		onDeleteLicenseKeyGroupClick: licenseKeyGroup => dispatch({
-			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
-			data:{
-				msg: generateConfirmationMsg(licenseKeyGroup),
-				confirmationButtonText: i18n('Delete'),
-				title: i18n('Delete'),
-				onConfirmed: () => LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(dispatch, {licenseModelId, licenseKeyGroupId:licenseKeyGroup.id, version})
-			}
-		})
-	};
+const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
+    return {
+        onAddLicenseKeyGroupClick: () =>
+            LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch),
+        onEditLicenseKeyGroupClick: licenseKeyGroup =>
+            LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch, {
+                licenseKeyGroup,
+                licenseModelId,
+                version
+            }),
+        onDeleteLicenseKeyGroupClick: licenseKeyGroup =>
+            dispatch({
+                type: globalMoadlActions.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: generateConfirmationMsg(licenseKeyGroup),
+                    confirmationButtonText: i18n('Delete'),
+                    title: i18n('Delete'),
+                    onConfirmed: () =>
+                        LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(
+                            dispatch,
+                            {
+                                licenseModelId,
+                                licenseKeyGroupId: licenseKeyGroup.id,
+                                version
+                            }
+                        )
+                }
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(LicenseKeyGroupsListEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    LicenseKeyGroupsListEditorView
+);

@@ -16,9 +16,9 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	OPEN: null,
-	CLOSE: null,
-	LICENSE_MODEL_CREATED: null
+    OPEN: null,
+    CLOSE: null,
+    LICENSE_MODEL_CREATED: null
 });
 
 export const LICENSE_MODEL_CREATION_FORM_NAME = 'LMCREATIONFORM';

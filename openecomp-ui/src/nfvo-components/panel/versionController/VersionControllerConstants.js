@@ -16,9 +16,9 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionsEnum = keyMirror({
-	REVERT: 'Revert',
-	SYNC: 'Sync',
-	SUBMIT: 'Submit',
-	COMMIT: 'Commit',
-	CREATE_PACKAGE: 'Create_Package'
+    REVERT: 'Revert',
+    SYNC: 'Sync',
+    SUBMIT: 'Submit',
+    COMMIT: 'Commit',
+    CREATE_PACKAGE: 'Create_Package'
 });

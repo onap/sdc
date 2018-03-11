@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {actionTypes} from './LicenseModelConstants.js';
+import { actionTypes } from './LicenseModelConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.ARCHIVED_LICENSE_MODELS_LIST_LOADED:
-			return [...action.response.results];
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.ARCHIVED_LICENSE_MODELS_LIST_LOADED:
+            return [...action.response.results];
+        default:
+            return state;
+    }
 };

@@ -16,12 +16,12 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	VERSIONS_LOADED: null,
-	SELECT_VERSION: null,
-	SELECT_NONE: null
+    VERSIONS_LOADED: null,
+    SELECT_VERSION: null,
+    SELECT_NONE: null
 });
 
 export const itemTypes = {
-	LICENSE_MODEL: 'vendor-license-models',
-	SOFTWARE_PRODUCT: 'vendor-software-products'
+    LICENSE_MODEL: 'vendor-license-models',
+    SOFTWARE_PRODUCT: 'vendor-software-products'
 };

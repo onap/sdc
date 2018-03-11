@@ -13,32 +13,37 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, DEPLOYMENT_FLAVORS_FORM_NAME} from '../SoftwareProductDeploymentConstants.js';;
+import {
+    actionTypes,
+    DEPLOYMENT_FLAVORS_FORM_NAME
+} from '../SoftwareProductDeploymentConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.deploymentFlavorEditor.SOFTWARE_PRODUCT_DEPLOYMENT_FILL_DATA:
-			return {
-				...state,
-				data: action.deploymentFlavor,
-				formReady: null,
-				formName: DEPLOYMENT_FLAVORS_FORM_NAME,
-				genericFieldInfo: {
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 500}]
-					},
-					'model' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					}
-				}
-			};
-		case actionTypes.deploymentFlavorEditor.SOFTWARE_PRODUCT_DEPLOYMENT_CLEAR_DATA:
-			return {};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.deploymentFlavorEditor
+            .SOFTWARE_PRODUCT_DEPLOYMENT_FILL_DATA:
+            return {
+                ...state,
+                data: action.deploymentFlavor,
+                formReady: null,
+                formName: DEPLOYMENT_FLAVORS_FORM_NAME,
+                genericFieldInfo: {
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 500 }]
+                    },
+                    model: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    }
+                }
+            };
+        case actionTypes.deploymentFlavorEditor
+            .SOFTWARE_PRODUCT_DEPLOYMENT_CLEAR_DATA:
+            return {};
+        default:
+            return state;
+    }
 };

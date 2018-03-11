@@ -17,37 +17,61 @@ import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 
-const SoftwareProductListHeader = ({selectedVendor, onBack}) => (
-	<div className='vendor-page-header'>
-		<SVGIcon name='back' onClick={onBack}/>
-		<div className='tab-separator' />
-		<div className='vendor-name'>{selectedVendor.name}</div>
-	</div>
+const SoftwareProductListHeader = ({ selectedVendor, onBack }) => (
+    <div className="vendor-page-header">
+        <SVGIcon name="back" onClick={onBack} />
+        <div className="tab-separator" />
+        <div className="vendor-name">{selectedVendor.name}</div>
+    </div>
 );
 
-const CatalogList = ({children, onAddVLM, onAddVSP, vendorPageOptions}) => (
-	<div className='catalog-list'>
-		{vendorPageOptions && <SoftwareProductListHeader onBack={vendorPageOptions.onBack} selectedVendor={vendorPageOptions.selectedVendor}/>}
-		<div className='catalog-items'>
-			{ (onAddVLM || onAddVSP) &&
-				<div className='create-catalog-item-wrapper'>
-					{onAddVLM && <CreateItemTile onClick={onAddVLM} dataTestId={'catalog-add-new-vlm'} className='vlm-type' title={i18n('CREATE NEW VLM')}/>}
-					{onAddVSP && <CreateItemTile onClick={() => onAddVSP()} dataTestId={'catalog-add-new-vsp'} className='vsp-type' title={i18n('CREATE NEW VSP')}/>}
-				</div>
-			}
-			{children}
-		</div>
-	</div>
+const CatalogList = ({ children, onAddVLM, onAddVSP, vendorPageOptions }) => (
+    <div className="catalog-list">
+        {vendorPageOptions && (
+            <SoftwareProductListHeader
+                onBack={vendorPageOptions.onBack}
+                selectedVendor={vendorPageOptions.selectedVendor}
+            />
+        )}
+        <div className="catalog-items">
+            {(onAddVLM || onAddVSP) && (
+                <div className="create-catalog-item-wrapper">
+                    {onAddVLM && (
+                        <CreateItemTile
+                            onClick={onAddVLM}
+                            dataTestId={'catalog-add-new-vlm'}
+                            className="vlm-type"
+                            title={i18n('CREATE NEW VLM')}
+                        />
+                    )}
+                    {onAddVSP && (
+                        <CreateItemTile
+                            onClick={() => onAddVSP()}
+                            dataTestId={'catalog-add-new-vsp'}
+                            className="vsp-type"
+                            title={i18n('CREATE NEW VSP')}
+                        />
+                    )}
+                </div>
+            )}
+            {children}
+        </div>
+    </div>
 );
 
-const CreateItemTile = ({onClick, dataTestId, title, className = ''}) => {
-	//TODO check for buttons
-	return (
-			<div className={`create-catalog-item tile ${className}`} onClick={onClick} data-test-id={dataTestId}>
-				<div className='create-item-plus-icon'><SVGIcon name='plus' /></div>
-				<div className='create-item-text'>{title}</div>
-			</div>
-	);
+const CreateItemTile = ({ onClick, dataTestId, title, className = '' }) => {
+    //TODO check for buttons
+    return (
+        <div
+            className={`create-catalog-item tile ${className}`}
+            onClick={onClick}
+            data-test-id={dataTestId}>
+            <div className="create-item-plus-icon">
+                <SVGIcon name="plus" />
+            </div>
+            <div className="create-item-text">{title}</div>
+        </div>
+    );
 };
 
 export default CatalogList;

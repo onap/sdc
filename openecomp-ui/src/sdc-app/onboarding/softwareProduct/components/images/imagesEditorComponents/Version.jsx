@@ -17,25 +17,29 @@ import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import {imageCustomValidations} from '../ImageValidations.js';
+import { imageCustomValidations } from '../ImageValidations.js';
 
-
-const Version = ({isManual, dataMap, qgenericFieldInfo, onQDataChanged}) => {
-	return(
-		<GridItem colSpan={1} lastColInRow>
-			<Input
-				disabled={!isManual}
-				data-test-id='image-version'
-				type='text'
-				className='image-version'
-				label={i18n('Version')}
-				isRequired={true}
-				onChange={(version) => onQDataChanged({'version' : version}, {'version' : imageCustomValidations['version']})}
-				isValid={qgenericFieldInfo['version'].isValid}
-				errorText={qgenericFieldInfo['version'].errorText}
-				value={dataMap['version']}/>
-		</GridItem>
-	);
+const Version = ({ isManual, dataMap, qgenericFieldInfo, onQDataChanged }) => {
+    return (
+        <GridItem colSpan={1} lastColInRow>
+            <Input
+                disabled={!isManual}
+                data-test-id="image-version"
+                type="text"
+                className="image-version"
+                label={i18n('Version')}
+                isRequired={true}
+                onChange={version =>
+                    onQDataChanged(
+                        { version: version },
+                        { version: imageCustomValidations['version'] }
+                    )
+                }
+                isValid={qgenericFieldInfo['version'].isValid}
+                errorText={qgenericFieldInfo['version'].errorText}
+                value={dataMap['version']}
+            />
+        </GridItem>
+    );
 };
 export default Version;
-

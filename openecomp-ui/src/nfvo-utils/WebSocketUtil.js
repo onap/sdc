@@ -16,41 +16,50 @@
 
 import store from 'sdc-app/AppStore.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import {actionTypes} from 'sdc-app/onboarding/userNotifications/UserNotificationsConstants.js';
+import { actionTypes } from 'sdc-app/onboarding/userNotifications/UserNotificationsConstants.js';
 
-
-export const websocketUrl = 'ws://' + window.location.hostname + ':' + Configuration.get('websocketPort')
-	+ '/'  + Configuration.get('websocketPath');
+export const websocketUrl =
+    'ws://' +
+    window.location.hostname +
+    ':' +
+    Configuration.get('websocketPort') +
+    '/' +
+    Configuration.get('websocketPath');
 
 /***
  * Websocket is treated like a singleton. only need one for the application.
  */
 var websocket;
 
-
 export default {
+    open(url, { lastScanned }) {
+        if (
+            websocket === undefined ||
+            websocket.readyState === websocket.CLOSED
+        ) {
+            websocket = new WebSocket(
+                `${url}?LAST_DELIVERED_EVENT_ID=${lastScanned}`
+            );
+            websocket.onmessage = event =>
+                store.dispatch({
+                    type: actionTypes.NOTIFICATION,
+                    data: JSON.parse(event.data)
+                });
+            websocket.onclose = event => {
+                if (event.code && event.code === 1001) {
+                    // - Idle Timeout
+                    const { lastScanned } = store.getState().notifications;
+                    console.log('Reconnecting to Websocket');
+                    this.open(websocketUrl, { lastScanned });
+                }
+            };
+            websocket.onerror = event => console.log(event);
+        }
+    },
 
-	open(url, {lastScanned}) {
-		if (websocket === undefined || websocket.readyState === websocket.CLOSED) {
-			websocket = new WebSocket(`${url}?LAST_DELIVERED_EVENT_ID=${lastScanned}`);
-			websocket.onmessage = event => store.dispatch({
-				type: actionTypes.NOTIFICATION,
-				data: JSON.parse(event.data)
-			});
-			websocket.onclose = event => {
-				if(event.code && event.code === 1001) { // - Idle Timeout
-					const {lastScanned} = store.getState().notifications;
-					console.log('Reconnecting to Websocket');
-					this.open(websocketUrl, {lastScanned});
-				}
-			};
-			websocket.onerror = event => console.log(event);
-		}
-	},
-
-	close() {
-		if (websocket !== undefined) {
-			websocket.close();
-		}
-	}
+    close() {
+        if (websocket !== undefined) {
+            websocket.close();
+        }
+    }
 };

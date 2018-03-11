@@ -16,41 +16,38 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	SOFTWARE_PRODUCT_LOADED: null,
-	SOFTWARE_PRODUCT_LIST_LOADED: null,
-	ARCHIVED_SOFTWARE_PRODUCT_LIST_LOADED: null,
-	FINALIZED_SOFTWARE_PRODUCT_LIST_LOADED: null,
-	SOFTWARE_PRODUCT_LIST_EDIT: null,
-	SOFTWARE_PRODUCT_CATEGORIES_LOADED: null,
-	SOFTWARE_PRODUCT_QUESTIONNAIRE_UPDATE: null,
-	LOAD_LICENSING_VERSIONS_LIST: null,
-	TOGGLE_NAVIGATION_ITEM: null,
-	CANDIDATE_IN_PROCESS: null,
+    SOFTWARE_PRODUCT_LOADED: null,
+    SOFTWARE_PRODUCT_LIST_LOADED: null,
+    ARCHIVED_SOFTWARE_PRODUCT_LIST_LOADED: null,
+    FINALIZED_SOFTWARE_PRODUCT_LIST_LOADED: null,
+    SOFTWARE_PRODUCT_LIST_EDIT: null,
+    SOFTWARE_PRODUCT_CATEGORIES_LOADED: null,
+    SOFTWARE_PRODUCT_QUESTIONNAIRE_UPDATE: null,
+    LOAD_LICENSING_VERSIONS_LIST: null,
+    TOGGLE_NAVIGATION_ITEM: null,
+    CANDIDATE_IN_PROCESS: null,
 
-	softwareProductEditor: {
-		OPEN: null,
-		CLOSE: null,
-		DATA_CHANGED: null,
-		IS_VALIDITY_DATA_CHANGED: null
-	}
+    softwareProductEditor: {
+        OPEN: null,
+        CLOSE: null,
+        DATA_CHANGED: null,
+        IS_VALIDITY_DATA_CHANGED: null
+    }
 });
 
-
-
 export const onboardingMethod = {
-	MANUAL: 'Manual',
-	NETWORK_PACKAGE: 'NetworkPackage'
+    MANUAL: 'Manual',
+    NETWORK_PACKAGE: 'NetworkPackage'
 };
 
 export const onboardingOriginTypes = {
-	NONE: 'none',
-	ZIP: 'zip',
-	CSAR: 'csar'
+    NONE: 'none',
+    ZIP: 'zip',
+    CSAR: 'csar'
 };
 
 export const forms = keyMirror({
-	VENDOR_SOFTWARE_PRODUCT_DETAILS: 'vendor-software-product-details',
+    VENDOR_SOFTWARE_PRODUCT_DETAILS: 'vendor-software-product-details'
 });
 
 export const PRODUCT_QUESTIONNAIRE = 'product';
-

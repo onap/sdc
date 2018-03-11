@@ -21,59 +21,80 @@ import Form from 'nfvo-components/input/validation/Form.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import {forms} from '../SoftwareProductComponentsConstants.js';
+import { forms } from '../SoftwareProductComponentsConstants.js';
 
 class ComponentCreationView extends React.Component {
-	render() {
-		let {data = {}, onDataChanged, onCancel, genericFieldInfo} = this.props;
-		let {displayName, description} = data;
-		return(
-			<div>
-				{
-					genericFieldInfo && <Form
-						ref='validationForm'
-						hasButtons={true}
-						onSubmit={ () => this.submit() }
-						onReset={ () => onCancel() }
-						submitButtonText={i18n('Create')}
-						labledButtons={true}
-						isValid={this.props.isFormValid}
-						formReady={this.props.formReady}
-						onValidateForm={() => this.props.onValidateForm(forms.CREATE_FORM) }
-						className='entitlement-pools-form'>
-						<GridSection hasLastColSet>
-							<GridItem colSpan={4} lastColInRow>
-								<Input
-									data-test-id='name'
-									onChange={displayName => onDataChanged({displayName})}
-									label={i18n('Name')}
-									isRequired={true}
-									isValid={genericFieldInfo.displayName.isValid}
-									errorText={genericFieldInfo.displayName.errorText}
-									value={displayName}
-									type='text'/>
-							</GridItem>
-							<GridItem colSpan={4} lastColInRow>
-								<Input
-									label={i18n('Description')}
-									onChange={description => onDataChanged({description})}
-									value={description}
-									isValid={genericFieldInfo.description.isValid}
-									errorText={genericFieldInfo.description.errorText}
-									data-test-id='description'
-									type='textarea'/>
-							</GridItem>
-						</GridSection>
-					</Form>
-				}
-			</div>
-		);
-	}
+    render() {
+        let {
+            data = {},
+            onDataChanged,
+            onCancel,
+            genericFieldInfo
+        } = this.props;
+        let { displayName, description } = data;
+        return (
+            <div>
+                {genericFieldInfo && (
+                    <Form
+                        ref="validationForm"
+                        hasButtons={true}
+                        onSubmit={() => this.submit()}
+                        onReset={() => onCancel()}
+                        submitButtonText={i18n('Create')}
+                        labledButtons={true}
+                        isValid={this.props.isFormValid}
+                        formReady={this.props.formReady}
+                        onValidateForm={() =>
+                            this.props.onValidateForm(forms.CREATE_FORM)
+                        }
+                        className="entitlement-pools-form">
+                        <GridSection hasLastColSet>
+                            <GridItem colSpan={4} lastColInRow>
+                                <Input
+                                    data-test-id="name"
+                                    onChange={displayName =>
+                                        onDataChanged({ displayName })
+                                    }
+                                    label={i18n('Name')}
+                                    isRequired={true}
+                                    isValid={
+                                        genericFieldInfo.displayName.isValid
+                                    }
+                                    errorText={
+                                        genericFieldInfo.displayName.errorText
+                                    }
+                                    value={displayName}
+                                    type="text"
+                                />
+                            </GridItem>
+                            <GridItem colSpan={4} lastColInRow>
+                                <Input
+                                    label={i18n('Description')}
+                                    onChange={description =>
+                                        onDataChanged({ description })
+                                    }
+                                    value={description}
+                                    isValid={
+                                        genericFieldInfo.description.isValid
+                                    }
+                                    errorText={
+                                        genericFieldInfo.description.errorText
+                                    }
+                                    data-test-id="description"
+                                    type="textarea"
+                                />
+                            </GridItem>
+                        </GridSection>
+                    </Form>
+                )}
+            </div>
+        );
+    }
 
-	submit() {
-		const {onSubmit, data} = this.props;
-		onSubmit(data);
-	}
+    submit() {
+        const { onSubmit, data } = this.props;
+        onSubmit(data);
+    }
 }
 
 export default ComponentCreationView;

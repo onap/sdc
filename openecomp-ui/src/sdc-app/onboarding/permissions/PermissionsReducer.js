@@ -13,16 +13,16 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './PermissionsConstants.js';
+import { actionTypes } from './PermissionsConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.ITEM_USERS_LOADED:
-			return {
-				owner: action.owner,
-				contributors: action.contributors
-			};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.ITEM_USERS_LOADED:
+            return {
+                owner: action.owner,
+                contributors: action.contributors
+            };
+        default:
+            return state;
+    }
 };

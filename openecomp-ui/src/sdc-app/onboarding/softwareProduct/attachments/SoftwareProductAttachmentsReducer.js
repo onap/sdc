@@ -13,13 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductAttachmentsConstants.js';
+import { actionTypes } from './SoftwareProductAttachmentsConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.SET_ACTIVE_TAB:
-			return {activeTab: action.activeTab};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.SET_ACTIVE_TAB:
+            return { activeTab: action.activeTab };
+        default:
+            return state;
+    }
 };

@@ -26,100 +26,120 @@ import iconOpen from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/i
  * all you get are the buttons for toggling between JSON/YAML/Designer.
  */
 export default class Toolbar extends React.Component {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Construct view.
+     */
+    constructor(props, context) {
+        super(props, context);
+        this.application = Common.assertType(this.props.application, 'Object');
+        this.editor = Common.assertType(this.props.editor, 'Object');
+        this.mode = 'design';
+    }
 
-  /**
-   * Construct view.
-   */
-  constructor(props, context) {
-    super(props, context);
-    this.application = Common.assertType(this.props.application, 'Object');
-    this.editor = Common.assertType(this.props.editor, 'Object');
-    this.mode = 'design';
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Set editor mode, one of {design, json, yaml}.
+     * @param mode
+     */
+    setMode(mode = 'design') {
+        this.mode = mode;
+    }
 
-  /**
-   * Set editor mode, one of {design, json, yaml}.
-   * @param mode
-   */
-  setMode(mode = 'design') {
-    this.mode = mode;
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Render into the DOM.
+     */
+    render() {
+        const demo = this.application.getOptions().demo;
+        const demoCss = demo ? '' : 'asdc-hide';
 
-  /**
-   * Render into the DOM.
-   */
-  render() {
+        return (
+            <div className={`asdcs-editor-toolbar ${demoCss}`}>
+                <div className="asdcs-editor-toolbar-demo">
+                    <button
+                        className="asdcs-button-new"
+                        data-title="New sequence">
+                        <svg>
+                            <use xlinkHref={iconPlus} className="asdcs-icon" />
+                        </svg>
+                    </button>
+                    <button
+                        className="asdcs-button-open"
+                        data-title="Open sequence">
+                        <svg>
+                            <use xlinkHref={iconOpen} className="asdcs-icon" />
+                        </svg>
+                    </button>
+                    <button
+                        className="asdcs-button-save"
+                        data-title="Save checkpoint">
+                        <svg>
+                            <use
+                                xlinkHref="#icon--save"
+                                className="asdcs-icon"
+                            />
+                        </svg>
+                    </button>
+                    <button
+                        className="asdcs-button-validate"
+                        data-title="Validate">
+                        <svg>
+                            <use
+                                xlinkHref="#icon--validate"
+                                className="asdcs-icon"
+                            />
+                        </svg>
+                    </button>
+                    <button
+                        className="asdcs-button-download"
+                        data-title="Download">
+                        <svg>
+                            <use
+                                xlinkHref="#icon--download"
+                                className="asdcs-icon"
+                            />
+                        </svg>
+                    </button>
+                    <button className="asdcs-button-upload" data-title="Upload">
+                        <svg>
+                            <use
+                                xlinkHref="#icon--upload"
+                                className="asdcs-icon"
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <div className="asdcs-editor-toolbar-toggle">
+                    <button className="asdcs-button-design asdcs-button-mode asdcs-button-toggle-left">
+                        Design
+                    </button>
+                    <button className="asdcs-button-json asdcs-button-mode asdcs-button-toggle-center">
+                        JSON
+                    </button>
+                    <button className="asdcs-button-yaml asdcs-button-mode asdcs-button-toggle-right">
+                        YAML
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
-    const demo = this.application.getOptions().demo;
-    const demoCss = demo ? '' : 'asdc-hide';
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    return (
-      <div className={`asdcs-editor-toolbar ${demoCss}`}>
-        <div className="asdcs-editor-toolbar-demo">
-          <button className="asdcs-button-new" data-title="New sequence">
-            <svg>
-              <use xlinkHref={iconPlus} className="asdcs-icon" />
-            </svg>
-          </button>
-          <button className="asdcs-button-open" data-title="Open sequence">
-            <svg>
-              <use xlinkHref={iconOpen} className="asdcs-icon" />
-            </svg>
-          </button>
-          <button className="asdcs-button-save" data-title="Save checkpoint">
-            <svg>
-              <use xlinkHref="#icon--save" className="asdcs-icon" />
-            </svg>
-          </button>
-          <button className="asdcs-button-validate" data-title="Validate">
-            <svg>
-              <use xlinkHref="#icon--validate" className="asdcs-icon" />
-            </svg>
-          </button>
-          <button className="asdcs-button-download" data-title="Download">
-            <svg>
-              <use xlinkHref="#icon--download" className="asdcs-icon" />
-            </svg>
-          </button>
-          <button className="asdcs-button-upload" data-title="Upload">
-            <svg>
-              <use xlinkHref="#icon--upload" className="asdcs-icon" />
-            </svg>
-          </button>
-        </div>
-        <div className="asdcs-editor-toolbar-toggle">
-          <button className="asdcs-button-design asdcs-button-mode asdcs-button-toggle-left">
-            Design
-          </button>
-          <button className="asdcs-button-json asdcs-button-mode asdcs-button-toggle-center">
-            JSON
-          </button>
-          <button className="asdcs-button-yaml asdcs-button-mode asdcs-button-toggle-right">
-            YAML
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
+    /**
    * Initialize eventhandlers.
    * @private
    *
@@ -172,9 +192,9 @@ export default class Toolbar extends React.Component {
   }
   */
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
+    /**
    * Demo action.
    *
   _doDemoOpen() {
@@ -189,9 +209,9 @@ export default class Toolbar extends React.Component {
   }
   */
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
+    /**
    * Demo action.
    *
   _doDemoNew() {
@@ -204,9 +224,9 @@ export default class Toolbar extends React.Component {
   }
   */
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
+    /**
    * Demo action.
    *
   _doDemoSave() {
@@ -217,9 +237,9 @@ export default class Toolbar extends React.Component {
   }
   */
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
+    /**
    * Demo action.
    *
   _doDemoUpload() {
@@ -241,9 +261,9 @@ export default class Toolbar extends React.Component {
   }
   */
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
+    /**
    * Demo action.
    *
   _doDemoDownload() {
@@ -256,9 +276,9 @@ export default class Toolbar extends React.Component {
   }
   */
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
+    /**
    * Demo action.
    *
   _doDemoValidate() {
@@ -270,6 +290,6 @@ export default class Toolbar extends React.Component {
 }
 
 Toolbar.propTypes = {
-  application: PropTypes.object.isRequired,
-  editor: PropTypes.object.isRequired,
+    application: PropTypes.object.isRequired,
+    editor: PropTypes.object.isRequired
 };

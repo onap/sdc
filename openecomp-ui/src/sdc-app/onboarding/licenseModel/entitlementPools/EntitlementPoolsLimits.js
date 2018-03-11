@@ -13,44 +13,74 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import Limits from 'sdc-app/onboarding/licenseModel/limits/Limits.jsx';
-import {actionTypes as globalModalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as globalModalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 
-const mapStateToProps = ({licenseModel: {entitlementPool: {entitlementPoolEditor: {data}}, limitEditor}, currentScreen}) => {
-	let  {props: {licenseModelId, version}} = currentScreen;
-	return {
-		parent: data,
-		limitEditor,
-		licenseModelId,
-		version
-	};
+const mapStateToProps = ({
+    licenseModel: {
+        entitlementPool: { entitlementPoolEditor: { data } },
+        limitEditor
+    },
+    currentScreen
+}) => {
+    let { props: { licenseModelId, version } } = currentScreen;
+    return {
+        parent: data,
+        limitEditor,
+        licenseModelId,
+        version
+    };
 };
 
-const mapActionsToProps = (dispatch) => {
-	return {
-		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
-		onSubmit: (limit, entitlementPool, licenseModelId, version) => EntitlementPoolsActionHelper.submitLimit(dispatch,
-			{
-				limit,
-				entitlementPool,
-				licenseModelId,
-				version}),
-		onDelete: ({limit, parent, licenseModelId, version, onCloseLimitEditor, selectedLimit}) => dispatch({
-			type: globalModalActionTypes.GLOBAL_MODAL_WARNING,
-			data:{
-				msg: i18n('Are you sure you want to delete {name}?', {name: limit.name}),
-				confirmationButtonText: i18n('Delete'),
-				title: i18n('Delete'),
-				onConfirmed: ()=> EntitlementPoolsActionHelper.deleteLimit(dispatch, {limit, entitlementPool: parent, licenseModelId, version}).then(() =>
-					selectedLimit === limit.id && onCloseLimitEditor()
-				)
-			}
-		})
-	};
+const mapActionsToProps = dispatch => {
+    return {
+        onDataChanged: (deltaData, formName, customValidations) =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName,
+                customValidations
+            }),
+        onSubmit: (limit, entitlementPool, licenseModelId, version) =>
+            EntitlementPoolsActionHelper.submitLimit(dispatch, {
+                limit,
+                entitlementPool,
+                licenseModelId,
+                version
+            }),
+        onDelete: ({
+            limit,
+            parent,
+            licenseModelId,
+            version,
+            onCloseLimitEditor,
+            selectedLimit
+        }) =>
+            dispatch({
+                type: globalModalActionTypes.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: i18n('Are you sure you want to delete {name}?', {
+                        name: limit.name
+                    }),
+                    confirmationButtonText: i18n('Delete'),
+                    title: i18n('Delete'),
+                    onConfirmed: () =>
+                        EntitlementPoolsActionHelper.deleteLimit(dispatch, {
+                            limit,
+                            entitlementPool: parent,
+                            licenseModelId,
+                            version
+                        }).then(
+                            () =>
+                                selectedLimit === limit.id &&
+                                onCloseLimitEditor()
+                        )
+                }
+            })
+    };
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(Limits);

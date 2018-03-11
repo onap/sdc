@@ -18,18 +18,20 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import PacketsBytes from './PacketsBytes.jsx';
 
 const pointers = [
-		{label: 'Peak', value: 'sizing/outflowTrafficPerSecond/packets/peak'},
-		{label: 'Avg', value: 'sizing/outflowTrafficPerSecond/packets/avg'},
-		{label: 'Peak', value: 'sizing/outflowTrafficPerSecond/bytes/peak'},
-		{label: 'Avg', value: 'sizing/outflowTrafficPerSecond/bytes/avg'},
+    { label: 'Peak', value: 'sizing/outflowTrafficPerSecond/packets/peak' },
+    { label: 'Avg', value: 'sizing/outflowTrafficPerSecond/packets/avg' },
+    { label: 'Peak', value: 'sizing/outflowTrafficPerSecond/bytes/peak' },
+    { label: 'Avg', value: 'sizing/outflowTrafficPerSecond/bytes/avg' }
 ];
 
-const OutFlowTraffic = (props) => {
-	return(
-		<PacketsBytes {...props} title={i18n('Outflow Traffic per second')} pointers={pointers}/>
-	);
+const OutFlowTraffic = props => {
+    return (
+        <PacketsBytes
+            {...props}
+            title={i18n('Outflow Traffic per second')}
+            pointers={pointers}
+        />
+    );
 };
 
 export default OutFlowTraffic;
-
-

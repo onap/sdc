@@ -13,32 +13,41 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, LICENSE_MODEL_CREATION_FORM_NAME} from './LicenseModelCreationConstants.js';
+import {
+    actionTypes,
+    LICENSE_MODEL_CREATION_FORM_NAME
+} from './LicenseModelCreationConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.OPEN:
-			return {
-				...state,
-				formReady: null,
-				formName: LICENSE_MODEL_CREATION_FORM_NAME,
-				data: {},
-				genericFieldInfo: {
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 1000}]
-					},
-					'vendorName' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 25}]
-					}
-				}
-			};
-		case actionTypes.CLOSE:
-			return {};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.OPEN:
+            return {
+                ...state,
+                formReady: null,
+                formName: LICENSE_MODEL_CREATION_FORM_NAME,
+                data: {},
+                genericFieldInfo: {
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 1000 }
+                        ]
+                    },
+                    vendorName: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 25 }
+                        ]
+                    }
+                }
+            };
+        case actionTypes.CLOSE:
+            return {};
+        default:
+            return state;
+    }
 };

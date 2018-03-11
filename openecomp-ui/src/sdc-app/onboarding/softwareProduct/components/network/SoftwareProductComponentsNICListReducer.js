@@ -13,16 +13,22 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductComponentsNetworkConstants.js';
+import { actionTypes } from './SoftwareProductComponentsNetworkConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.NIC_LIST_UPDATE:
-			return [...action.response];
-		case actionTypes.NIC_LIST_EDIT:
-			const indexForEdit = state.findIndex(nic => nic.id === action.nic.id);
-			return [...state.slice(0, indexForEdit), action.nic, ...state.slice(indexForEdit + 1)];
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.NIC_LIST_UPDATE:
+            return [...action.response];
+        case actionTypes.NIC_LIST_EDIT:
+            const indexForEdit = state.findIndex(
+                nic => nic.id === action.nic.id
+            );
+            return [
+                ...state.slice(0, indexForEdit),
+                action.nic,
+                ...state.slice(indexForEdit + 1)
+            ];
+        default:
+            return state;
+    }
 };

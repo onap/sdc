@@ -14,28 +14,34 @@
  * permissions and limitations under the License.
  */
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {thresholdUnitType} from './LicenseModelConstants.js';
+import { thresholdUnitType } from './LicenseModelConstants.js';
 import Validator from 'nfvo-utils/Validator.js';
 
 export function validateStartDate(value, state) {
-	if (state.data.expiryDate) {
-		if (!value) {
-			return {isValid: false, errorText: i18n('Start date has to be specified if expiry date is specified')};
-		}
-	}
-	return {isValid: true, errorText: ''};
+    if (state.data.expiryDate) {
+        if (!value) {
+            return {
+                isValid: false,
+                errorText: i18n(
+                    'Start date has to be specified if expiry date is specified'
+                )
+            };
+        }
+    }
+    return { isValid: true, errorText: '' };
 }
 
 export function thresholdValueValidation(value, state) {
-	let  unit = state.data.thresholdUnits;
-	if (unit === thresholdUnitType.PERCENTAGE) {
-		return Validator.validate('thresholdValue', value, [
-			{type: 'numeric', data: true},
-			{type: 'maximum', data: 100},
-			{type: 'minimum', data: 0}]);
-	} else {
-		return Validator.validate('thresholdValue', value, [
-			{type: 'numeric', data: true},
-		]);
-	}
+    let unit = state.data.thresholdUnits;
+    if (unit === thresholdUnitType.PERCENTAGE) {
+        return Validator.validate('thresholdValue', value, [
+            { type: 'numeric', data: true },
+            { type: 'maximum', data: 100 },
+            { type: 'minimum', data: 0 }
+        ]);
+    } else {
+        return Validator.validate('thresholdValue', value, [
+            { type: 'numeric', data: true }
+        ]);
+    }
 }

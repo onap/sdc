@@ -13,27 +13,31 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import md5 from 'md5';
 
 class ImportantLogic extends Component {
+    state = {
+        whatToDisplay: false
+    };
 
-	state = {
-		whatToDisplay: false
-	};
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            whatToDisplay:
+                md5(nextProps.display) === 'a55899b341525123628776dbf5755d51'
+        });
+    }
 
-	componentWillReceiveProps(nextProps) {
-		this.setState({whatToDisplay: md5(nextProps.display) === 'a55899b341525123628776dbf5755d51'});
-	}
+    render() {
+        if (this.state.whatToDisplay) {
+            setTimeout(() => this.setState({ whatToDisplay: false }), 5000);
+        }
 
-	render() {
-		if (this.state.whatToDisplay) {
-			setTimeout(() => this.setState({whatToDisplay: false}), 5000);
-		}
-
-		return (
-			<div>
-				<style>{'\.easter-wrapper {\
+        return (
+            <div>
+                <style>
+                    {
+                        '.easter-wrapper {\
 					position: fixed;\
 					width: 70px;\
 					height: 70px;\
@@ -96,16 +100,20 @@ class ImportantLogic extends Component {
 					@keyframes yo-yo {\
 					from { transform: rotate(-0deg); top: 0 }\
 					to { transform: rotate(-360deg); top:120px }\
-				}'}</style>
-				<div
-					className='easter-wrapper'
-					style={{display: this.state.whatToDisplay ? 'block' : 'none'}}>
-					<span className='string'>{}</span>
-					<span className='yo-yo'>{}</span>
-				</div>
-			</div>
-		);
-	}
+				}'
+                    }
+                </style>
+                <div
+                    className="easter-wrapper"
+                    style={{
+                        display: this.state.whatToDisplay ? 'block' : 'none'
+                    }}>
+                    <span className="string">{}</span>
+                    <span className="yo-yo">{}</span>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default ImportantLogic;

@@ -13,20 +13,26 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductProcessesConstants.js';
+import { actionTypes } from './SoftwareProductProcessesConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.FETCH_SOFTWARE_PRODUCT_PROCESSES:
-			return [...action.processesList];
-		case actionTypes.EDIT_SOFTWARE_PRODUCT_PROCESS:
-			const indexForEdit = state.findIndex(process => process.id === action.process.id);
-			return [...state.slice(0, indexForEdit), action.process, ...state.slice(indexForEdit + 1)];
-		case actionTypes.ADD_SOFTWARE_PRODUCT_PROCESS:
-			return [...state, action.process];
-		case actionTypes.DELETE_SOFTWARE_PRODUCT_PROCESS:
-			return state.filter(process => process.id !== action.processId);
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.FETCH_SOFTWARE_PRODUCT_PROCESSES:
+            return [...action.processesList];
+        case actionTypes.EDIT_SOFTWARE_PRODUCT_PROCESS:
+            const indexForEdit = state.findIndex(
+                process => process.id === action.process.id
+            );
+            return [
+                ...state.slice(0, indexForEdit),
+                action.process,
+                ...state.slice(indexForEdit + 1)
+            ];
+        case actionTypes.ADD_SOFTWARE_PRODUCT_PROCESS:
+            return [...state, action.process];
+        case actionTypes.DELETE_SOFTWARE_PRODUCT_PROCESS:
+            return state.filter(process => process.id !== action.processId);
+        default:
+            return state;
+    }
 };

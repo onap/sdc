@@ -22,57 +22,66 @@ import FlowsListEditor from './FlowsListEditor.js';
 import FlowsActions from './FlowsActions.js';
 
 class FlowsListEditorPunchOutWrapper extends React.Component {
+    componentDidMount() {
+        let element = ReactDOM.findDOMNode(this);
+        element.addEventListener('click', event => {
+            if (event.target.tagName === 'A') {
+                event.preventDefault();
+            }
+        });
+        ['wheel', 'mousewheel', 'DOMMouseScroll'].forEach(eventType =>
+            element.addEventListener(eventType, event =>
+                event.stopPropagation()
+            )
+        );
+    }
 
-	componentDidMount() {
-		let element = ReactDOM.findDOMNode(this);
-		element.addEventListener('click', event => {
-			if (event.target.tagName === 'A') {
-				event.preventDefault();
-			}
-		});
-		['wheel', 'mousewheel', 'DOMMouseScroll'].forEach(eventType =>
-			element.addEventListener(eventType, event => event.stopPropagation())
-		);
-	}
-
-	render() {
-		return <FlowsListEditor/>;
-	}
+    render() {
+        return <FlowsListEditor />;
+    }
 }
 
 export default class DiagramPunchOut {
+    render({ options: { data, apiRoot, apiHeaders }, onEvent }, element) {
+        if (!this.isConfigSet) {
+            Configuration.setCatalogApiRoot(apiRoot);
+            Configuration.setCatalogApiHeaders(apiHeaders);
+            this.isConfigSet = true;
+        }
 
-	render({options: {data, apiRoot, apiHeaders}, onEvent}, element) {
+        this.onEvent = onEvent;
+        this.handleData(data);
 
-		if (!this.isConfigSet) {
-			Configuration.setCatalogApiRoot(apiRoot);
-			Configuration.setCatalogApiHeaders(apiHeaders);
-			this.isConfigSet = true;
-		}
+        if (!this.rendered) {
+            ReactDOM.render(
+                <Application>
+                    <div className="dox-ui">
+                        <FlowsListEditorPunchOutWrapper />
+                    </div>
+                </Application>,
+                element
+            );
+            this.rendered = true;
+        }
+    }
 
-		this.onEvent = onEvent;
-		this.handleData(data);
+    unmount(element) {
+        let dispatch = action => store.dispatch(action);
+        ReactDOM.unmountComponentAtNode(element);
+        FlowsActions.reset(dispatch);
+    }
 
-		if (!this.rendered) {
-			ReactDOM.render(<Application><div className='dox-ui'><FlowsListEditorPunchOutWrapper/></div></Application>, element);
-			this.rendered = true;
-		}
-	}
+    handleData(data) {
+        let { serviceID, diagramType } = data;
+        let dispatch = action => store.dispatch(action);
 
-	unmount(element) {
-		let dispatch = action => store.dispatch(action);
-		ReactDOM.unmountComponentAtNode(element);
-		FlowsActions.reset(dispatch);
-	}
-
-	handleData(data) {
-		let {serviceID, diagramType} = data;
-		let dispatch = action => store.dispatch(action);
-
-		if (serviceID !== this.prevServiceID || diagramType !== this.prevDiagramType) {
-			this.prevServiceID = serviceID;
-			this.prevDiagramType = diagramType;
-			FlowsActions.fetchFlowArtifacts(dispatch, {...data});
-		}
-	}
+        if (
+            serviceID !== this.prevServiceID ||
+            diagramType !== this.prevDiagramType
+        ) {
+            this.prevServiceID = serviceID;
+            this.prevDiagramType = diagramType;
+            FlowsActions.fetchFlowArtifacts(dispatch, { ...data });
+        }
+    }
 }

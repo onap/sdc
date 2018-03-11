@@ -26,149 +26,147 @@ import Source from './components/source/Source';
  * Editor view, aggregating the designer, the code editor, the toolbar.
  */
 class Editor extends React.Component {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Construct React view.
+     * @param props properties.
+     * @param context context.
+     */
+    constructor(props, context) {
+        super(props, context);
 
-  /**
-   * Construct React view.
-   * @param props properties.
-   * @param context context.
-   */
-  constructor(props, context) {
-    super(props, context);
+        this.application = Common.assertNotNull(props.application);
+        this.demo = this.application.getOptions().demo;
 
-    this.application = Common.assertNotNull(props.application);
-    this.demo = this.application.getOptions().demo;
+        // Bindings.
 
-    // Bindings.
+        this.selectMessage = this.selectMessage.bind(this);
+        this.selectLifeline = this.selectLifeline.bind(this);
 
-    this.selectMessage = this.selectMessage.bind(this);
-    this.selectLifeline = this.selectLifeline.bind(this);
-
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Select message by ID.
-   * @param id message ID.
-   */
-  selectMessage(id) {
-    if (this.designer) {
-      this.designer.selectMessage(id);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Select lifeline by ID.
-   * @param id lifeline ID.
-   */
-  selectLifeline(id) {
-    if (this.designer) {
-      this.designer.selectLifeline(id);
-    }
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Record that we're dragging.
-   */
-  onMouseDown() {
-    if (this.editor) {
-      this.resize = {
-        initialWidth: this.editor.offsetWidth,
-        initialPageX: undefined,
-      };
-    }
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Record that we're not dragging.
-   */
-  onMouseUp() {
-    this.resize = undefined;
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Record mouse movement.
-   */
-  onMouseMove(event) {
-    if (this.resize) {
-      if (this.editor) {
-        if (this.resize.initialPageX) {
-          const deltaX = event.pageX - this.resize.initialPageX;
-          const newWidth = this.resize.initialWidth + deltaX;
-          const newWidthBounded = Math.min(800, Math.max(400, newWidth));
-          this.editor.style.width = `${newWidthBounded}px`;
-        } else {
-          this.resize.initialPageX = event.pageX;
+    /**
+     * Select message by ID.
+     * @param id message ID.
+     */
+    selectMessage(id) {
+        if (this.designer) {
+            this.designer.selectMessage(id);
         }
-      }
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Render editor.
-   */
-  render() {
+    /**
+     * Select lifeline by ID.
+     * @param id lifeline ID.
+     */
+    selectLifeline(id) {
+        if (this.designer) {
+            this.designer.selectLifeline(id);
+        }
+    }
 
-    Logger.info('Editor.jsx - render()');
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    return (
+    /**
+     * Record that we're dragging.
+     */
+    onMouseDown() {
+        if (this.editor) {
+            this.resize = {
+                initialWidth: this.editor.offsetWidth,
+                initialPageX: undefined
+            };
+        }
+    }
 
-      <div
-        className="asdcs-editor"
-        ref={(r) => { this.editor = r; }}
-      >
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-        <Toolbar application={this.props.application} editor={this} />
+    /**
+     * Record that we're not dragging.
+     */
+    onMouseUp() {
+        this.resize = undefined;
+    }
 
-        <div className="asdcs-editor-content">
-          <Source application={this.props.application} />
-          <Designer
-            application={this.props.application}
-            ref={(r) => {
-              if (r) {
-                this.designer = r.getDecoratedComponentInstance();
-              } else {
-                this.designer = null;
-              }
-            }}
-          />
-        </div>
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-        <div className="asdcs-editor-statusbar">
-          <div className="asdcs-editor-status"></div>
-          <div className="asdcs-editor-validation"></div>
-        </div>
+    /**
+     * Record mouse movement.
+     */
+    onMouseMove(event) {
+        if (this.resize) {
+            if (this.editor) {
+                if (this.resize.initialPageX) {
+                    const deltaX = event.pageX - this.resize.initialPageX;
+                    const newWidth = this.resize.initialWidth + deltaX;
+                    const newWidthBounded = Math.min(
+                        800,
+                        Math.max(400, newWidth)
+                    );
+                    this.editor.style.width = `${newWidthBounded}px`;
+                } else {
+                    this.resize.initialPageX = event.pageX;
+                }
+            }
+        }
+    }
 
-        <div
-          className="asdcs-editor-resize-handle"
-          onMouseDown={this.onMouseDown}
-          onMouseUp={this.onMouseUp}
-        >
-        </div>
-      </div>
-    );
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Render editor.
+     */
+    render() {
+        Logger.info('Editor.jsx - render()');
+
+        return (
+            <div
+                className="asdcs-editor"
+                ref={r => {
+                    this.editor = r;
+                }}>
+                <Toolbar application={this.props.application} editor={this} />
+
+                <div className="asdcs-editor-content">
+                    <Source application={this.props.application} />
+                    <Designer
+                        application={this.props.application}
+                        ref={r => {
+                            if (r) {
+                                this.designer = r.getDecoratedComponentInstance();
+                            } else {
+                                this.designer = null;
+                            }
+                        }}
+                    />
+                </div>
+
+                <div className="asdcs-editor-statusbar">
+                    <div className="asdcs-editor-status" />
+                    <div className="asdcs-editor-validation" />
+                </div>
+
+                <div
+                    className="asdcs-editor-resize-handle"
+                    onMouseDown={this.onMouseDown}
+                    onMouseUp={this.onMouseUp}
+                />
+            </div>
+        );
+    }
 }
 
 /** Element properties. */
 Editor.propTypes = {
-  application: PropTypes.object.isRequired,
+    application: PropTypes.object.isRequired
 };
 
 export default Editor;
-

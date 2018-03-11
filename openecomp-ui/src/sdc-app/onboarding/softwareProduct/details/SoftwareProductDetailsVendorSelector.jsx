@@ -22,57 +22,77 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 
 class VendorSelector extends React.Component {
-	static propTypes = {
-		finalizedLicenseModelList: PropTypes.array,
-		vendorName: PropTypes.string,
-		onClose: PropTypes.func.isRequired,
-		onConfirm: PropTypes.func.isRequired
-	}
-	constructor(props){
-		super(props);
-		const selectedValue = props.finalizedLicenseModelList.length ? props.finalizedLicenseModelList[0].id : '';
-		this.state = {
-			selectedValue
-		};
-	}
-	submit() {
-		const vendor = this.props.finalizedLicenseModelList.find(item => item.id === this.state.selectedValue);
-		this.props.onConfirm(vendor.id);
-		this.props.onClose();
-	}
-	render() {
-		const {finalizedLicenseModelList, vendorName, onClose} =  this.props;
-		const {selectedValue} = this.state;		
-		return (
-			<div className='vsp-details-vendor-select'>
-				<Form 
-					onSubmit={() => this.submit()}
-					onReset={() => onClose()}
-					isValid = {!!selectedValue}
-					submitButtonText={i18n('Save')}
-					hasButtons={true}>
-						<div className='vendor-selector-modal-title'>{`${i18n('The VLM')} '${vendorName}' ${i18n('assigned to this VSP is archived')}.`}</div>
-						<div className='vendor-selector-modal-additional-text'>{i18n('If you select a different VLM you will not be able to reselect the archived VLM.')}</div>
-						<Input
-							data-test-id='vsp-vendor-name-select'
-							label={i18n('Vendor')}
-							type='select'
-							onChange={e => {this.setState({
-								selectedValue: e.target.options[e.target.selectedIndex].value
-							});}} 
-							value={selectedValue}>
-							<option key='emtyVendor' value=''>{i18n('please select...')}</option>
-							{sortByStringProperty(
-								finalizedLicenseModelList,
-								'name'
-							).map(lm => <option key={lm.id} value={lm.id}>{lm.name}</option>)
-							}
-						</Input>
-				</Form>
-			</div>
-		);
-	}
+    static propTypes = {
+        finalizedLicenseModelList: PropTypes.array,
+        vendorName: PropTypes.string,
+        onClose: PropTypes.func.isRequired,
+        onConfirm: PropTypes.func.isRequired
+    };
+    constructor(props) {
+        super(props);
+        const selectedValue = props.finalizedLicenseModelList.length
+            ? props.finalizedLicenseModelList[0].id
+            : '';
+        this.state = {
+            selectedValue
+        };
+    }
+    submit() {
+        const vendor = this.props.finalizedLicenseModelList.find(
+            item => item.id === this.state.selectedValue
+        );
+        this.props.onConfirm(vendor.id);
+        this.props.onClose();
+    }
+    render() {
+        const { finalizedLicenseModelList, vendorName, onClose } = this.props;
+        const { selectedValue } = this.state;
+        return (
+            <div className="vsp-details-vendor-select">
+                <Form
+                    onSubmit={() => this.submit()}
+                    onReset={() => onClose()}
+                    isValid={!!selectedValue}
+                    submitButtonText={i18n('Save')}
+                    hasButtons={true}>
+                    <div className="vendor-selector-modal-title">{`${i18n(
+                        'The VLM'
+                    )} '${vendorName}' ${i18n(
+                        'assigned to this VSP is archived'
+                    )}.`}</div>
+                    <div className="vendor-selector-modal-additional-text">
+                        {i18n(
+                            'If you select a different VLM you will not be able to reselect the archived VLM.'
+                        )}
+                    </div>
+                    <Input
+                        data-test-id="vsp-vendor-name-select"
+                        label={i18n('Vendor')}
+                        type="select"
+                        onChange={e => {
+                            this.setState({
+                                selectedValue:
+                                    e.target.options[e.target.selectedIndex]
+                                        .value
+                            });
+                        }}
+                        value={selectedValue}>
+                        <option key="emtyVendor" value="">
+                            {i18n('please select...')}
+                        </option>
+                        {sortByStringProperty(
+                            finalizedLicenseModelList,
+                            'name'
+                        ).map(lm => (
+                            <option key={lm.id} value={lm.id}>
+                                {lm.name}
+                            </option>
+                        ))}
+                    </Input>
+                </Form>
+            </div>
+        );
+    }
 }
 
 export default VendorSelector;
-

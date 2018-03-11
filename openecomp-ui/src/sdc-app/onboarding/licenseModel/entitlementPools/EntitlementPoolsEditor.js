@@ -13,54 +13,80 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 import EntitlementPoolsEditorView from './EntitlementPoolsEditorView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
 import LimitEditorActionHelper from '../limits/LimitEditorActionHelper.js';
 
-const mapStateToProps = ({licenseModel: {entitlementPool}}) => {
+const mapStateToProps = ({ licenseModel: { entitlementPool } }) => {
+    let {
+        data,
+        genericFieldInfo,
+        formReady,
+        limitsList
+    } = entitlementPool.entitlementPoolEditor;
 
+    let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
-	let {data, genericFieldInfo, formReady, limitsList} = entitlementPool.entitlementPoolEditor;
+    let previousData,
+        EPNames = {};
+    const entitlementPoolId = data ? data.id : null;
+    if (entitlementPoolId) {
+        previousData = entitlementPool.entitlementPoolsList.find(
+            entitlementPool => entitlementPool.id === entitlementPoolId
+        );
+    }
 
-	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
+    const list = entitlementPool.entitlementPoolsList;
+    for (let i = 0; i < list.length; i++) {
+        EPNames[list[i].name.toLowerCase()] = list[i].id;
+    }
 
-	let previousData, EPNames = {};
-	const entitlementPoolId = data ? data.id : null;
-	if(entitlementPoolId) {
-		previousData = entitlementPool.entitlementPoolsList.find(entitlementPool => entitlementPool.id === entitlementPoolId);
-	}
-
-	const list = entitlementPool.entitlementPoolsList;
-	for (let i = 0; i < list.length; i++) {
-		EPNames[list[i].name.toLowerCase()] = list[i].id;
-	}
-
-	return {
-		data,
-		genericFieldInfo,
-		previousData,
-		isFormValid,
-		formReady,
-		EPNames,
-		limitsList
-	};
+    return {
+        data,
+        genericFieldInfo,
+        previousData,
+        isFormValid,
+        formReady,
+        EPNames,
+        limitsList
+    };
 };
 
-const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
-	return {
-		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
-		onCancel: () => EntitlementPoolsActionHelper.closeEntitlementPoolsEditor(dispatch),
-		onSubmit: ({previousEntitlementPool, entitlementPool, keepOpen}) => {
-			if (!keepOpen) {EntitlementPoolsActionHelper.closeEntitlementPoolsEditor(dispatch);}
-			EntitlementPoolsActionHelper.saveEntitlementPool(dispatch, {licenseModelId, previousEntitlementPool, entitlementPool, version});
-		},
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName),
-		onCloseLimitEditor: () => LimitEditorActionHelper.closeLimitsEditor(dispatch),
-		onOpenLimitEditor: (limit) => LimitEditorActionHelper.openLimitsEditor(dispatch, {limit})
-	};
+const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
+    return {
+        onDataChanged: (deltaData, formName, customValidations) =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName,
+                customValidations
+            }),
+        onCancel: () =>
+            EntitlementPoolsActionHelper.closeEntitlementPoolsEditor(dispatch),
+        onSubmit: ({ previousEntitlementPool, entitlementPool, keepOpen }) => {
+            if (!keepOpen) {
+                EntitlementPoolsActionHelper.closeEntitlementPoolsEditor(
+                    dispatch
+                );
+            }
+            EntitlementPoolsActionHelper.saveEntitlementPool(dispatch, {
+                licenseModelId,
+                previousEntitlementPool,
+                entitlementPool,
+                version
+            });
+        },
+        onValidateForm: formName =>
+            ValidationHelper.validateForm(dispatch, formName),
+        onCloseLimitEditor: () =>
+            LimitEditorActionHelper.closeLimitsEditor(dispatch),
+        onOpenLimitEditor: limit =>
+            LimitEditorActionHelper.openLimitsEditor(dispatch, { limit })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(EntitlementPoolsEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    EntitlementPoolsEditorView
+);

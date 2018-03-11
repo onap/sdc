@@ -16,13 +16,13 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	FETCH_SOFTWARE_PRODUCT_DEPLOYMENT_FLAVORS: null,
+    FETCH_SOFTWARE_PRODUCT_DEPLOYMENT_FLAVORS: null,
 
-	deploymentFlavorEditor: {
-		DATA_CHANGED: null,
-		SOFTWARE_PRODUCT_DEPLOYMENT_FILL_DATA: null,
-		SOFTWARE_PRODUCT_DEPLOYMENT_CLEAR_DATA: null
-	}
+    deploymentFlavorEditor: {
+        DATA_CHANGED: null,
+        SOFTWARE_PRODUCT_DEPLOYMENT_FILL_DATA: null,
+        SOFTWARE_PRODUCT_DEPLOYMENT_CLEAR_DATA: null
+    }
 });
 
 export const DEPLOYMENT_FLAVORS_FORM_NAME = 'DEPLOYMENT_FLAVORS_FORM_NAME';

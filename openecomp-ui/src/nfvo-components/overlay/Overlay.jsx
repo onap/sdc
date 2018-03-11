@@ -18,23 +18,21 @@ import React from 'react';
 import enhanceWithClickOutside from 'react-click-outside';
 
 class Overlay extends React.Component {
+    handleClickOutside() {
+        if (this.props.onClose) {
+            this.props.onClose();
+        }
+    }
 
-	handleClickOutside() {
-		if (this.props.onClose) {
-			this.props.onClose();
-		}
-	}
-
-	render() {
-		return (
-			<div className='onboarding-overlay'>
-				<div className='arrow-up'></div>
-				<div className='arrow-border'/>
-				{this.props.children}
-			</div>
-		);
-	}
-
-};
+    render() {
+        return (
+            <div className="onboarding-overlay">
+                <div className="arrow-up" />
+                <div className="arrow-border" />
+                {this.props.children}
+            </div>
+        );
+    }
+}
 
 export default enhanceWithClickOutside(Overlay);

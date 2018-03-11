@@ -13,32 +13,57 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
 import SoftwareProductComponentStorageView from './SoftwareProductComponentStorageView.jsx';
 
-import {COMPONENTS_QUESTIONNAIRE} from '../SoftwareProductComponentsConstants.js';
+import { COMPONENTS_QUESTIONNAIRE } from '../SoftwareProductComponentsConstants.js';
 
-const mapStateToProps = ({softwareProduct: {softwareProductComponents}}) => {
-	let {componentEditor: {qdata, qgenericFieldInfo : qGenericFieldInfo, dataMap}} = softwareProductComponents;
+const mapStateToProps = ({
+    softwareProduct: { softwareProductComponents }
+}) => {
+    let {
+        componentEditor: {
+            qdata,
+            qgenericFieldInfo: qGenericFieldInfo,
+            dataMap
+        }
+    } = softwareProductComponents;
 
-	return {
-		qdata,
-		qGenericFieldInfo,
-		dataMap
-	};
+    return {
+        qdata,
+        qGenericFieldInfo,
+        dataMap
+    };
 };
 
-const mapActionToProps = (dispatch, {softwareProductId, version, componentId}) => {
-	return {
-		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData, qName: COMPONENTS_QUESTIONNAIRE}),
-		onSubmit: ({qdata}) => {
-			return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch, {softwareProductId, version, vspComponentId: componentId, qdata});
-		}
-	};
+const mapActionToProps = (
+    dispatch,
+    { softwareProductId, version, componentId }
+) => {
+    return {
+        onQDataChanged: deltaData =>
+            ValidationHelper.qDataChanged(dispatch, {
+                deltaData,
+                qName: COMPONENTS_QUESTIONNAIRE
+            }),
+        onSubmit: ({ qdata }) => {
+            return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(
+                dispatch,
+                {
+                    softwareProductId,
+                    version,
+                    vspComponentId: componentId,
+                    qdata
+                }
+            );
+        }
+    };
 };
 
-export default connect(mapStateToProps, mapActionToProps, null, {withRef: true}) (SoftwareProductComponentStorageView);
+export default connect(mapStateToProps, mapActionToProps, null, {
+    withRef: true
+})(SoftwareProductComponentStorageView);

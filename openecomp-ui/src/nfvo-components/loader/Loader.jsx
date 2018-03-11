@@ -16,40 +16,39 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-const mapStateToProps = ({loader}) => {
-	return {
-		isLoading: loader.isLoading
-	};
+const mapStateToProps = ({ loader }) => {
+    return {
+        isLoading: loader.isLoading
+    };
 };
 
 class Loader extends React.Component {
+    static propTypes = {
+        isLoading: PropTypes.bool.isRequired
+    };
 
-	static propTypes = {
-		isLoading: PropTypes.bool.isRequired
-	};
+    static defaultProps = {
+        isLoading: false
+    };
 
-	static defaultProps = {
-		isLoading: false
-	};
+    shouldComponentUpdate(nextProps) {
+        return nextProps.isLoading !== this.props.isLoading;
+    }
 
-	shouldComponentUpdate(nextProps) {
-		return (nextProps.isLoading !== this.props.isLoading);
-	}
-
-	render() {
-		let {isLoading} = this.props;
-		return (
-			<div className='onboarding-loader'>
-				{
-					isLoading && <div className='onboarding-loader-backdrop'>
-						<div className='tlv-loader large'></div>
-					</div>
-				}
-			</div>
-		);
-	}
+    render() {
+        let { isLoading } = this.props;
+        return (
+            <div className="onboarding-loader">
+                {isLoading && (
+                    <div className="onboarding-loader-backdrop">
+                        <div className="tlv-loader large" />
+                    </div>
+                )}
+            </div>
+        );
+    }
 }
 
-export default connect(mapStateToProps) (Loader);
+export default connect(mapStateToProps)(Loader);
