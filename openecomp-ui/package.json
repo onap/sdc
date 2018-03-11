@@ -48,7 +48,7 @@
     "react-input-autosize": "^2.2.0",
     "react-show-more": "^1.1.1",
     "react-sortable": "^1.2.0",
-    "sdc-ui": "1.6.23",
+    "sdc-ui": "1.6.24",
     "uuid-js": "^0.7.5",
     "validator": "^4.3.0"
   },
