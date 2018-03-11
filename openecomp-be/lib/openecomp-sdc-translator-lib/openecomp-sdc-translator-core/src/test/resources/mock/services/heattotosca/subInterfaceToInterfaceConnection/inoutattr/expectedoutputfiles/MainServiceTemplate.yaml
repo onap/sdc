@@ -502,11 +502,11 @@ topology_template:
         aap_untrusted_ip_prefix_len:
           get_input: vdbe_aap_untrusted_ip_prefix_len
       requirements:
-      - link_vdbe_untr_vmi_subport:
+      - link_vdbe_0_subint_untr_vmi_0:
           capability: tosca.capabilities.network.Linkable
           node: control_int_net
           relationship: tosca.relationships.network.LinksTo
-      - binding_vdbe_untr_vmi_subport:
+      - binding_vdbe_0_subint_untr_vmi_0:
           capability: tosca.capabilities.network.Bindable
           node: vdbe_untr_1_port
           relationship: tosca.relationships.network.BindsTo
@@ -550,4 +550,4 @@ topology_template:
       value:
         get_attribute:
         - vdbe_untr_1_subports
-        - name
+        - name
