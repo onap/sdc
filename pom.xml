@@ -455,11 +455,6 @@
 			<url>${nexus.proxy}/content/repositories/releases/</url>
 		</repository>
 		<repository>
-			<id>ecomp-staging</id>
-			<name>Staging Repository</name>
-			<url>${nexus.proxy}/content/repositories/staging/</url>
-		</repository>
-		<repository>
 			<id>ecomp-snapshots</id>
 			<name>Snapshots Repository</name>
 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
