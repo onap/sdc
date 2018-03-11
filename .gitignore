@@ -186,7 +186,6 @@ catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/Artifact
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-error-configuration.yaml
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
-catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
 
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SDC-*.zip
@@ -258,9 +257,4 @@ utils/DmaapPublisher/logs/*
 sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 
 
-
-/catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
-
-/catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
-
-/catalog-be/sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default/normatives.tar.gz
+*normatives.tar.gz
