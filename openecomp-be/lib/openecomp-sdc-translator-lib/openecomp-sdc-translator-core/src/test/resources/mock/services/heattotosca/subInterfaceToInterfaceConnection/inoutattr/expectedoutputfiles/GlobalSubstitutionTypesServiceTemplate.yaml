@@ -91,20 +91,20 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
-    - dependency_vdbe_untr_vmi_subport:
+    - dependency_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_untr_vmi_subport:
+    - link_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - binding_vdbe_untr_vmi_subport:
+    - binding_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.network.Bindable
         node: org.openecomp.resource.cp.nodes.network.Port
         relationship: tosca.relationships.network.BindsTo
@@ -112,8 +112,8 @@ node_types:
         - 1
         - 1
     capabilities:
-      feature_vdbe_untr_vmi_subport:
+      feature_vdbe_0_subint_untr_vmi_0:
         type: tosca.capabilities.Node
         occurrences:
         - 1
-        - UNBOUNDED
+        - UNBOUNDED
