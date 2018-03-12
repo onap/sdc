@@ -57,4 +57,15 @@ public class ResourceTranslationNeutronPortImplTest extends BaseResourceTranslat
     validatePortTemplateConsolidationData(ConsolidationDataValidationType
         .VALIDATE_CONNECTIVITY, TEST_CONNECTIVITY_POSITIVE);
   }
+
+  @Test
+  public void testTranslateDualStacks() throws Exception {
+    inputFilesPath = "/mock/services/heattotosca/neutron_dual_stacks/inputfiles";
+    outputFilesPath =
+            "/mock/services/heattotosca/neutron_dual_stacks/expectedoutputfiles";
+    initTranslatorAndTranslate();
+    testTranslation();
+    validatePortTemplateConsolidationData(ConsolidationDataValidationType
+            .VALIDATE_CONNECTIVITY, TEST_CONNECTIVITY_POSITIVE);
+  }
 }

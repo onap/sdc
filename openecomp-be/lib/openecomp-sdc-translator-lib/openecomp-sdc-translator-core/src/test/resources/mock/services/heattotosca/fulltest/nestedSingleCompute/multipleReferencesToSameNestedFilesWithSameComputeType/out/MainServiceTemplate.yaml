@@ -2263,6 +2263,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         oam_net_id:
           get_input: oam_net_id
         vson_vm_names:
@@ -2336,6 +2341,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
     vson_dbs_volume_1:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -2373,6 +2383,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         vf_module_name:
@@ -2491,6 +2506,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         oam_net_id:
@@ -2615,6 +2635,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
     vson_dbs_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
@@ -2638,6 +2663,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         vf_module_name:
@@ -2697,6 +2727,11 @@ topology_template:
         default_gateway:
           get_input: default_gateway
         port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -2944,6 +2979,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vf_module_name:
           get_input: vf_module_name
         dns_servers:
@@ -3010,6 +3050,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         vf_module_name:
@@ -3140,6 +3185,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
     vson_dcl_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
@@ -3163,6 +3213,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         vf_module_name:

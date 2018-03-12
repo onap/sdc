@@ -118,7 +118,17 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+          - ip_version: 6
             ip_count_required:
               is_required: false
             floating_ip_count_required:
@@ -154,4 +164,4 @@ topology_template:
       - network_policy_server_pd_01
       - network_policy_server_pd_02
       - network_policy_port0
-      - abstract_pd_server
+      - abstract_pd_server

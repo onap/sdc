@@ -100,9 +100,19 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         - - ip_version: 4
             ip_count_required:
               is_required: true
+            floating_ip_count_required:
+              is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
             floating_ip_count_required:
               is_required: false
         service_template_filter:
@@ -466,4 +476,4 @@ topology_template:
       - dependency_cmaui_cmaui_port
       local_storage_server_cmaui_1:
       - abstract_cmaui
-      - local_storage_cmaui
+      - local_storage_cmaui

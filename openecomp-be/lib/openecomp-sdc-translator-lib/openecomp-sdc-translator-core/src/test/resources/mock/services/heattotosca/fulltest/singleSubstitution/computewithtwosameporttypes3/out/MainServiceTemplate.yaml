@@ -839,8 +839,18 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd_oam1_port_0_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:

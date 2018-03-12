@@ -32,36 +32,47 @@ public class ResourceTranslationNeutronPortHelper {
   public static final String MAC_REQUIREMENTS = "mac_requirements";
 
   public void setAdditionalProperties(Map<String, Object> properties) {
-    setNetworkRoleTag(properties);
-    Map<String, Object> ipRequirements = new HashMap();
-    Map<String, Object> macRequirements = new HashMap();
-    Map<String, Object> isRequired = new HashMap();
-    Map<String, Object> floatingIsRequired = new HashMap();
-    Map<String, Object> macIsRequired = new HashMap();
+    properties.putAll(createDefaultRequirments());
+    populateFixedIpCount(properties);
+    populateFloatingIpCount(properties);
+    populateMacCount(properties);
+    populateNetworkRoleTag(properties);
 
-    isRequired.put(IS_REQUIRED, Boolean.FALSE);
-    floatingIsRequired.put(IS_REQUIRED, Boolean.FALSE);
-    macIsRequired.put(IS_REQUIRED, Boolean.FALSE);
-
-    ipRequirements.put(IP_COUNT_REQUIRED, isRequired);
-    ipRequirements.put(FLOATING_IP_COUNT_REQUIRED, floatingIsRequired);
-    ipRequirements.put(IP_VERSION, 4);
-    macRequirements.put(MAC_COUNT_REQUIRED, macIsRequired);
-
-    List<Map<String, Object>> ipRequirementsList = new ArrayList<>();
-    ipRequirementsList.add(ipRequirements);
-    properties.put(IP_REQUIREMENTS , ipRequirementsList);
-
-    properties.put(MAC_REQUIREMENTS , macRequirements);
-
-    setIpVersion(properties);
-    setFloatingIpVersion(properties);
-
-    setMacCount(properties);
   }
 
-  private void setMacCount(Map<String, Object> properties) {
-    if(properties.containsKey(MAC_ADDRESS)) {
+  private Map<String, Object> createDefaultRequirments() {
+    Map<String, Object> properties = new HashMap();
+    List<Map<String, Object>> ipRequirementsList = new ArrayList<>();
+    ipRequirementsList.add(createIPRequirment(4));
+    ipRequirementsList.add(createIPRequirment(6));
+    properties.put(IP_REQUIREMENTS, ipRequirementsList);
+    properties.put(MAC_REQUIREMENTS, createMacRequirment());
+    return properties;
+
+  }
+
+  private Map<String, Object> createIPRequirment(Object version) {
+    Map<String, Object> ipRequirements = new HashMap();
+    Map<String, Object> isRequired = new HashMap();
+    Map<String, Object> floatingIsRequired = new HashMap();
+    isRequired.put(IS_REQUIRED, Boolean.FALSE);
+    floatingIsRequired.put(IS_REQUIRED, Boolean.FALSE);
+    ipRequirements.put(IP_COUNT_REQUIRED, isRequired);
+    ipRequirements.put(FLOATING_IP_COUNT_REQUIRED, floatingIsRequired);
+    ipRequirements.put(IP_VERSION, version);
+    return ipRequirements;
+  }
+
+  private Map<String, Object> createMacRequirment() {
+    Map<String, Object> macRequirements = new HashMap();
+    Map<String, Object> macIsRequired = new HashMap();
+    macIsRequired.put(IS_REQUIRED, Boolean.FALSE);
+    macRequirements.put(MAC_COUNT_REQUIRED, macIsRequired);
+    return macRequirements;
+  }
+
+  private void populateMacCount(Map<String, Object> properties) {
+    if (properties.containsKey(MAC_ADDRESS)) {
       Map<String, Object> macRequirements = (Map<String, Object>) properties.get(MAC_REQUIREMENTS);
       Map<String, Object> macIsRequired = new HashMap();
       macIsRequired.put(IS_REQUIRED, Boolean.TRUE);
@@ -70,93 +81,100 @@ public class ResourceTranslationNeutronPortHelper {
     }
   }
 
-  private void setFloatingIpVersion(Map<String, Object> properties) {
-    List<Map<String, Object>> ipRequirementsList =
-        (List<Map<String, Object>>) properties.get(IP_REQUIREMENTS);
-    Map<String, Object> ipRequirements = ipRequirementsList.get(0);
-    Object propertyValue;
-    Map<String, Object> isRequired = new HashMap();
-    isRequired.put(IS_REQUIRED, Boolean.TRUE);
+  private void populateFloatingIpCount(Map<String, Object> properties) {
+    populateIpCountRequired(properties, ALLOWED_ADDRESS_PAIRS, FLOATING_IP_COUNT_REQUIRED );
+  }
 
-    propertyValue = properties.get(ALLOWED_ADDRESS_PAIRS);
+  private void populateFixedIpCount(Map<String, Object> properties) {
+    populateIpCountRequired(properties, FIXED_IPS, IP_COUNT_REQUIRED );
+  }
+
+  private void populateIpCountRequired(Map<String, Object> properties, String ipType, String ipCountRequired ){
+
+    HashMap <Object, Map<String, Object>> ipRequirmentsMap = getIPRequirments(properties);
+    Object propertyValue = properties.get(ipType);
     if (propertyValue instanceof Map && !((Map) propertyValue).isEmpty()) {
-      Map.Entry<String, Object> mapEntry =
-          (Map.Entry<String, Object>) ((Map) propertyValue).entrySet().iterator().next();
-      if (getFloatingIpVersion(mapEntry.getValue()) != null) {
-        ipRequirements.put(IP_VERSION, getFloatingIpVersion(mapEntry.getValue()));
-        ipRequirements.put(FLOATING_IP_COUNT_REQUIRED, isRequired);
-      }
+      handleMapProperty(ipType, ipCountRequired, ipRequirmentsMap, (Map.Entry<String, Object>) ((Map) propertyValue).entrySet().iterator().next());
     }
     else if (propertyValue instanceof List && !((List) propertyValue).isEmpty()) {
-      for (int i = 0; i < ((List) propertyValue).size(); i++) {
-        Object ipMap = ((List) propertyValue).get(i);
-        if(ipMap instanceof Map && !((Map) ipMap).isEmpty()) {
-          Object ipAddressMap = ((Map) ipMap).get(IP_ADDRESS);
-          if (ipAddressMap instanceof Map && !((Map) ipAddressMap).isEmpty()) {
-            Object ipList = ((Map) ipAddressMap).get(GET_INPUT);
-            if (ipList instanceof String && !((String) ipList).isEmpty()) {
-              if (getFloatingIpVersion(ipList) != null) {
-                ipRequirements.put(IP_VERSION, getFloatingIpVersion(ipList));
-                ipRequirements.put(FLOATING_IP_COUNT_REQUIRED, isRequired);
-              }
-            }
-          }
-        }
+      handleListProperty(ipType, ipCountRequired, ipRequirmentsMap, (List) propertyValue);
+    }
+  }
+
+  private void handleListProperty(String ipType, String ipCountRequired, HashMap<Object, Map<String, Object>> ipRequirmentsMap, List propertyValue) {
+    for (int i = 0; i < propertyValue.size(); i++) {
+      handleIpAddress(ipType, ipCountRequired, ipRequirmentsMap, propertyValue.get(i));
+    }
+  }
+
+  private void handleMapProperty(String ipType, String ipCountRequired, HashMap<Object, Map<String, Object>> ipRequirmentsMap, Map.Entry<String, Object> mapEntry) {
+    updateIpCountRequired(ipType, ipCountRequired, ipRequirmentsMap, mapEntry.getValue());
+  }
+
+  private void handleIpAddress(String ipType, String ipCountRequired, HashMap<Object, Map<String, Object>> ipRequirmentsMap, Object ipMap) {
+    if(ipMap instanceof Map && !((Map) ipMap).isEmpty()) {
+      Object ipAddressMap = ((Map) ipMap).get(IP_ADDRESS);
+      if (ipAddressMap instanceof Map && !((Map) ipAddressMap).isEmpty()) {
+        Object ipList = ((Map) ipAddressMap).get(GET_INPUT);
+        handleIpCountRequired(ipType, ipCountRequired, ipRequirmentsMap, ipList);
       }
     }
   }
 
-  private void setIpVersion(Map<String, Object> properties) {
-    List<Map<String, Object>> ipRequirementsList =
-        (List<Map<String, Object>>) properties.get(IP_REQUIREMENTS);
-    Map<String, Object> ipRequirements = ipRequirementsList.get(0);
-    Object propertyValue;
-    Map<String, Object> isRequired = new HashMap();
-    isRequired.put(IS_REQUIRED, Boolean.TRUE);
-
-    propertyValue = properties.get(FIXED_IPS);
-    if (propertyValue instanceof Map && !((Map) propertyValue).isEmpty()) {
-      Map.Entry<String, Object> mapEntry =
-          (Map.Entry<String, Object>) ((Map) propertyValue).entrySet().iterator().next();
-      if (getIpVersion(mapEntry.getValue()) != null) {
-        ipRequirements.put(IP_VERSION, getIpVersion(mapEntry.getValue()));
-        ipRequirements.put(IP_COUNT_REQUIRED, isRequired);
-      }
+  private void handleIpCountRequired(String ipType, String ipCountRequired, HashMap<Object, Map<String, Object>> ipRequirmentsMap, Object ipList) {
+    if (ipList instanceof List && !((List) ipList).isEmpty()) {
+      updateIpCountRequired(ipType, ipCountRequired, ipRequirmentsMap, ((List) ipList).get(0));
     }
-    else if (propertyValue instanceof List && !((List) propertyValue).isEmpty()) {
-      for (int i = 0; i < ((List) propertyValue).size(); i++) {
-        Object ipMap = ((List) propertyValue).get(i);
-        if(ipMap instanceof Map && !((Map) ipMap).isEmpty()) {
-          Object ipAddressMap = ((Map) ipMap).get(IP_ADDRESS);
-          if (ipAddressMap instanceof Map && !((Map) ipAddressMap).isEmpty()) {
-            Object ipList = ((Map) ipAddressMap).get(GET_INPUT);
-            if (ipList instanceof List && !((List) ipList).isEmpty()) {
-              if (getIpVersion(((List) ipList).get(0)) != null) {
-                ipRequirements.put(IP_VERSION, getIpVersion(((List) ipList).get(0)));
-                ipRequirements.put(IP_COUNT_REQUIRED, isRequired);
-              }
-            }
-            else if (ipList instanceof String && !((String) ipList).isEmpty()) {
-              if (getIpVersion(ipList) != null) {
-                ipRequirements.put(IP_VERSION, getIpVersion(ipList));
-                ipRequirements.put(IP_COUNT_REQUIRED, isRequired);
-              }
-            }
-          }
-        }
+    else if (ipList instanceof String && !((String) ipList).isEmpty()) {
+      updateIpCountRequired(ipType, ipCountRequired, ipRequirmentsMap, ipList);
+    }
+  }
+
+  private void updateIpCountRequired(String ipType, String ipCountRequired, HashMap<Object, Map<String, Object>> ipRequirmentsMap, Object ipList) {
+    Object ipVersion = getVersion(ipList, ipType);
+    updateIpCountRequiredForVersion(ipCountRequired, ipRequirmentsMap, ipVersion);
+  }
+
+  private void updateIpCountRequiredForVersion(String ipCountRequired, HashMap<Object, Map<String, Object>> ipRequirmentsMap, Object ipVersion) {
+    Map<String, Object> ipRequirement;
+    if (ipVersion != null) {
+      ipRequirement = ipRequirmentsMap.get(ipVersion);
+      if (ipRequirement != null) {
+        Map<String, Object> isIPCountRequired = (Map<String, Object>)ipRequirement.get(ipCountRequired);
+        isIPCountRequired.put(IS_REQUIRED, Boolean.TRUE);
       }
     }
   }
 
-  private void setNetworkRoleTag(Map<String, Object> properties) {
+  private HashMap <Object, Map<String, Object>> getIPRequirments (Map<String, Object> properties) {
+
+    HashMap<Object, Map<String, Object>> ipRequirmentsMap = new HashMap();
+    List<Map<String, Object>> ipRequirmentsList = ((List<Map<String,Object>>) properties.get(IP_REQUIREMENTS));
+    ipRequirmentsList.stream().forEach(e->ipRequirmentsMap.put(e.get(IP_VERSION),e));
+    return ipRequirmentsMap;
+  }
+
+  private void populateNetworkRoleTag(Map<String, Object> properties) {
     Object propertyValue = properties.get(NETWORK);
     if (propertyValue instanceof Map && !((Map) propertyValue).isEmpty()) {
       Map.Entry<String, String> mapEntry =
-          (Map.Entry<String, String>) ((Map) propertyValue).entrySet().iterator().next();
+              (Map.Entry<String, String>) ((Map) propertyValue).entrySet().iterator().next();
       if (mapEntry.getValue() instanceof String && getNetworkRole(mapEntry.getValue())!=null) {
         properties.put(NETWORK_ROLE_TAG, getNetworkRole(mapEntry.getValue()));
       }
     }
+  }
+
+  private Object getVersion(Object value, String type) {
+
+    Object version = null;
+    if(type.equals(FIXED_IPS)){
+      version =  getIpVersion(value);
+    }
+    else if(type.equals(ALLOWED_ADDRESS_PAIRS)){
+      version =  getFloatingIpVersion(value);
+    }
+    return version;
   }
 
   private Object getFloatingIpVersion(Object value) {
@@ -188,13 +206,13 @@ public class ResourceTranslationNeutronPortHelper {
   private Object getNetworkRole(String value) {
     Object networkRole = null;
     if(value.endsWith(NET_NAME)) {
-      networkRole = (Object) value.substring(0, value.length() - NET_NAME.length());
+      networkRole = value.substring(0, value.length() - NET_NAME.length());
     }
     else if(value.endsWith(NET_ID)) {
-      networkRole = (Object) value.substring(0, value.length() - NET_ID.length());
+      networkRole = value.substring(0, value.length() - NET_ID.length());
     }
     else if(value.endsWith(NET_FQDN)) {
-      networkRole = (Object) value.substring(0, value.length() - NET_FQDN.length());
+      networkRole = value.substring(0, value.length() - NET_FQDN.length());
     }
     return networkRole;
   }

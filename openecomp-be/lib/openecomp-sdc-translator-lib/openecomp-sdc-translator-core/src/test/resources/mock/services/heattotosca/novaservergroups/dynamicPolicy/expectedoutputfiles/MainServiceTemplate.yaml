@@ -1099,6 +1099,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         mac_requirements:
           mac_count_required:
             is_required: false
@@ -1119,6 +1124,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         mac_requirements:
           mac_count_required:
             is_required: false
@@ -1135,6 +1145,11 @@ topology_template:
         replacement_policy: AUTO
         ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1175,6 +1190,11 @@ topology_template:
         replacement_policy: AUTO
         ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
