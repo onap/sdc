@@ -113,7 +113,7 @@ resources:
       name:
         get_param: vdbe_name_1
       networks:
-        - port: {get_resource: vdbe_untr_1_port}
+        - port: {get_resource: vdbe_untr_vmi}
   vdbe_untr_1_subports:
     type: OS::Heat::ResourceGroup
     depends_on: control_int_net
@@ -123,7 +123,7 @@ resources:
       resource_def:
         type: nested.yml
         properties:
-          attr_test: { get_attr: [ vdbe_untr_1_port, name ] }
+          attr_test: { get_attr: [ vdbe_untr_vmi, name ] }
           aap_address_mode:
             get_param: aap_address_mode
           aap_sec_untrusted_ip_prefix:
@@ -147,7 +147,7 @@ resources:
           mac_address:
             get_param: vdbe_hw_untr_mac_1
           parent_interface:
-            get_resource: vdbe_untr_1_port
+            get_resource: vdbe_untr_vmi
           subinterfaces_name_prefix:
             str_replace:
               params:
@@ -162,7 +162,7 @@ resources:
             get_param: vdbe_untrusted_vmac_address
           vdbe_subport_network:
             get_resource: control_int_net
-  vdbe_untr_1_port:
+  vdbe_untr_vmi:
     properties:
       name:
         str_replace:
@@ -235,4 +235,4 @@ resources:
 outputs:
   out1:
       description: output_test
-      value: {get_attr: [vdbe_untr_1_subports, name]}
+      value: {get_attr: [vdbe_untr_1_subports, name]}
