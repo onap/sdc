@@ -104,12 +104,10 @@ import java.util.stream.Collectors;
 public class HeatToToscaUtil {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HeatToToscaUtil.class);
-  public static final String FQ_NAME = "fq_name";
-  public static final String GET_PARAM = "get_param";
+  private static final String FQ_NAME = "fq_name";
+  private static final String GET_PARAM = "get_param";
   private static final String GET_ATTR = "get_attr";
   private static final String GET_RESOURCE = "get_resource";
-  private static final String VMI = "vmi";
-  private static final String NEUTRON_PORT_IDENTIFIER = "port";
   private static final String UNDERSCORE = "_";
 
   /**
@@ -439,7 +437,7 @@ public class HeatToToscaUtil {
    * @param propertyValue the property value
    * @return the optional
    */
-  public static Optional<AttachedPropertyVal> extractProperty(Object propertyValue) {
+  private static Optional<AttachedPropertyVal> extractProperty(Object propertyValue) {
     Object attachedPropertyVal;
     if (Objects.isNull(propertyValue)) {
       return Optional.empty();
@@ -676,7 +674,7 @@ public class HeatToToscaUtil {
    * @param resource the resource
    * @return the nested heat file name
    */
-  public static Optional<String> getNestedHeatFileName(Resource resource) {
+  private static Optional<String> getNestedHeatFileName(Resource resource) {
     if (!isNestedResource(resource)) {
       return Optional.empty();
     }
@@ -838,7 +836,7 @@ public class HeatToToscaUtil {
    * @param entryDefinitionMetadata template name of the entry definition servie template
    * @return the tosca service model
    */
-  public static ToscaServiceModel getToscaServiceModel(
+  private static ToscaServiceModel getToscaServiceModel(
       TranslationContext context,
       Map<String, String> entryDefinitionMetadata) {
     Map<String, ServiceTemplate> serviceTemplates =
@@ -1001,7 +999,7 @@ public class HeatToToscaUtil {
    *
    * @return the service template
    */
-  public static ServiceTemplate createInitGlobalSubstitutionServiceTemplate() {
+  private static ServiceTemplate createInitGlobalSubstitutionServiceTemplate() {
     ServiceTemplate globalSubstitutionServiceTemplate = new ServiceTemplate();
     Map<String, String> templateMetadata = new HashMap<>();
     templateMetadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME,
@@ -1418,7 +1416,7 @@ public class HeatToToscaUtil {
    * @param metadataTemplateName the service template name
    * @return the import
    */
-  public static Import createServiceTemplateImport(String metadataTemplateName) {
+  private static Import createServiceTemplateImport(String metadataTemplateName) {
     Import serviceTemplateImport = new Import();
     serviceTemplateImport.setFile(ToscaUtil.getServiceTemplateFileName(metadataTemplateName));
     return serviceTemplateImport;
@@ -1464,7 +1462,6 @@ public class HeatToToscaUtil {
   }
 
   public static String getNestedResourceTypePrefix(TranslateTo translateTo) {
-    String nestedFileName = translateTo.getResource().getType();
     if (isSubInterfaceResource(translateTo.getResource(), translateTo.getContext())
         && isSubInterfaceBoundToPort(translateTo)) {
       return ToscaNodeType.VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX;
@@ -1520,8 +1517,8 @@ public class HeatToToscaUtil {
   }
 
   private static String extractNetworkRoleFromContrailPortId(String portResourceId) {
-    String vmiResourceIdRegex = "(\\w+)(_\\d+){0,1}_(\\w+)_vmi(_\\d+){0,1}";
-    String vmiIntResourceIdRegex = "(\\w+)(_\\d+){0,1}_int_(\\w+)_vmi(_\\d+){0,1}";
+    String vmiResourceIdRegex = "(\\w+)(_\\d)*_(\\w+)_vmi(_\\d)*";
+    String vmiIntResourceIdRegex = "(\\w+)(_\\d)*_int_(\\w+)_vmi(_\\d)*";
 
     String portNetworkRole = getPortNetworkRole(portResourceId, vmiResourceIdRegex);
     String portIntNetworkRole = getPortNetworkRole(portResourceId, vmiIntResourceIdRegex);
@@ -1531,8 +1528,8 @@ public class HeatToToscaUtil {
 
 
   private static String extractNetworkRoleFromNeutronPortId(String portResourceId) {
-    String portResourceIdRegex = "(\\w+)(_\\d+){0,1}_(\\w+)_port(_\\d+){0,1}";
-    String portIntResourceIdRegex = "(\\w+)(_\\d+){0,1}_int_(\\w+)_port(_\\d+){0,1}";
+    String portResourceIdRegex = "(\\w+)(_\\d)*_(\\w+)_port(_\\d)*";
+    String portIntResourceIdRegex = "(\\w+)(_\\d)*_int_(\\w+)_port(_\\d)*";
 
     String portNetworkRole = getPortNetworkRole(portResourceId, portResourceIdRegex);
     String portIntNetworkRole = getPortNetworkRole(portResourceId, portIntResourceIdRegex);
