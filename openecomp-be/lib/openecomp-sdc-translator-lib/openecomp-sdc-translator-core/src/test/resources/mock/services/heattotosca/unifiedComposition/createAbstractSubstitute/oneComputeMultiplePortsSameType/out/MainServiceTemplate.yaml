@@ -169,7 +169,7 @@ topology_template:
         port_FSB1_Internal_1_network:
         - Internal1-net
         port_FSB1_Internal_2_mac_address:
-          get_input: fsb1-Internal1-mac
+          get_input: fsb1-Internal2-mac
         port_FSB1_Internal_2_network:
         - Internal2-net
         compute_FSB_metadata:
