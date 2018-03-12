@@ -70,18 +70,18 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
     @JsonIgnore
     public Map<String, Operation> getOperationsMap() {
         Map<String, Operation> convertedOperation = getOperations().entrySet()
-                                                                   .stream()
-                                                                   .collect(Collectors.toMap(e -> e.getKey(), e -> new Operation(e
-                                                                           .getValue())));
+            .stream()
+            .collect(Collectors.toMap(e -> e.getKey(), e -> new Operation(e
+                .getValue())));
         return convertedOperation;
     }
 
     @JsonIgnore
     public void setOperationsMap(Map<String, Operation> operations) {
         Map<String, OperationDataDefinition> convertedOperation = operations.entrySet()
-                                                                            .stream()
-                                                                            .collect(Collectors.toMap(e -> e.getKey(), e -> new OperationDataDefinition(e
-                                                                                    .getValue())));
+            .stream()
+            .collect(Collectors.toMap(e -> e.getKey(), e -> new OperationDataDefinition(e
+                .getValue())));
         setOperations(convertedOperation);
     }
 
