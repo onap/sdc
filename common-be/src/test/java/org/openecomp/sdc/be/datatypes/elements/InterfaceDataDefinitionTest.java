@@ -11,7 +11,7 @@ public class InterfaceDataDefinitionTest {
 		return new InterfaceDataDefinition();
 	}
 
-	
+
 	@Test
 	public void testGetUniqueId() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -22,7 +22,7 @@ public class InterfaceDataDefinitionTest {
 		result = testSubject.getUniqueId();
 	}
 
-	
+
 	@Test
 	public void testSetUniqueId() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -33,7 +33,7 @@ public class InterfaceDataDefinitionTest {
 		testSubject.setUniqueId(uniqueId);
 	}
 
-	
+
 	@Test
 	public void testGetType() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -44,7 +44,7 @@ public class InterfaceDataDefinitionTest {
 		result = testSubject.getType();
 	}
 
-	
+
 	@Test
 	public void testSetType() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -55,7 +55,7 @@ public class InterfaceDataDefinitionTest {
 		testSubject.setType(type);
 	}
 
-	
+
 	@Test
 	public void testGetCreationDate() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -66,7 +66,7 @@ public class InterfaceDataDefinitionTest {
 		result = testSubject.getCreationDate();
 	}
 
-	
+
 	@Test
 	public void testSetCreationDate() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -77,7 +77,7 @@ public class InterfaceDataDefinitionTest {
 		testSubject.setCreationDate(creationDate);
 	}
 
-	
+
 	@Test
 	public void testGetLastUpdateDate() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -88,7 +88,7 @@ public class InterfaceDataDefinitionTest {
 		result = testSubject.getLastUpdateDate();
 	}
 
-	
+
 	@Test
 	public void testSetLastUpdateDate() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -99,7 +99,7 @@ public class InterfaceDataDefinitionTest {
 		testSubject.setLastUpdateDate(lastUpdateDate);
 	}
 
-	
+
 	@Test
 	public void testGetDescription() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -110,7 +110,7 @@ public class InterfaceDataDefinitionTest {
 		result = testSubject.getDescription();
 	}
 
-	
+
 	@Test
 	public void testSetDescription() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -121,7 +121,7 @@ public class InterfaceDataDefinitionTest {
 		testSubject.setDescription(description);
 	}
 
-	
+
 	@Test
 	public void testGetOperations() throws Exception {
 		InterfaceDataDefinition testSubject;
@@ -132,7 +132,7 @@ public class InterfaceDataDefinitionTest {
 		result = testSubject.getOperations();
 	}
 
-	
+
 	@Test
 	public void testSetOperations() throws Exception {
 		InterfaceDataDefinition testSubject;
