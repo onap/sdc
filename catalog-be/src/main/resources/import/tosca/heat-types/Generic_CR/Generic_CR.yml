@@ -3,13 +3,9 @@ node_types:
   org.openecomp.resource.abstract.nodes.CR:
     derived_from: tosca.nodes.Root
     properties:
-      nf_function:
+      cr_function:
         type: string
-      nf_role:
+      cr_role:
         type: string
-      nf_naming_code:
+      cr_type:
         type: string
-      nf_type:
-        type: string
-      nf_naming:
-        type: org.openecomp.datatypes.Naming
