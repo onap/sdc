@@ -38,7 +38,7 @@ import java.util.Optional;
 
 public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourceTranslationTest {
 
-  private static final String PORT_NODE_TEMPLATE_ID_FOR_ATTR_TEST = "vdbe_untr_1_port";
+  private static final String PORT_NODE_TEMPLATE_ID_FOR_ATTR_TEST = "vdbe_untr_vmi";
   private static final int ONE = 1;
   private static final int TWO = 2;
   private static final String NETWORK_ROLE_INOUT_ATTR_TEST = "untr";

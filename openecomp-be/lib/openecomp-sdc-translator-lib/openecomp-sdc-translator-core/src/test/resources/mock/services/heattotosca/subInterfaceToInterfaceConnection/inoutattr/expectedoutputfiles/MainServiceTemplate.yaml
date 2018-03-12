@@ -402,7 +402,7 @@ topology_template:
             get_input: vnf_name
         name:
           get_input: vdbe_name_1
-    vdbe_untr_1_port:
+    vdbe_untr_vmi:
       type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
         name:
@@ -460,7 +460,7 @@ topology_template:
           get_input: vdbe_aap_untrusted_ip_prefix
         attr_test:
           get_attribute:
-          - vdbe_untr_1_port
+          - vdbe_untr_vmi
           - name
         aap_sec_untrusted_ip_prefix:
           get_input: vdbe_aap_sec_untrusted_ip_prefix
@@ -488,7 +488,7 @@ topology_template:
           mandatory: false
         aap_untrusted_v6_ip_prefix:
           get_input: vdbe_aap_untrusted_v6_ip_prefix
-        parent_interface: vdbe_untr_1_port
+        parent_interface: vdbe_untr_vmi
         mac_address:
           get_input: vdbe_hw_untr_mac_1
         vlan_tag_list:
@@ -508,7 +508,7 @@ topology_template:
           relationship: tosca.relationships.network.LinksTo
       - binding_vdbe_0_subint_untr_vmi_0:
           capability: tosca.capabilities.network.Bindable
-          node: vdbe_untr_1_port
+          node: vdbe_untr_vmi
           relationship: tosca.relationships.network.BindsTo
       - dependency:
           capability: tosca.capabilities.Node
@@ -541,7 +541,7 @@ topology_template:
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
       - vdbe_node_1
-      - vdbe_untr_1_port
+      - vdbe_untr_vmi
       - vdbe_untr_1_subports
       - control_int_net
   outputs:
