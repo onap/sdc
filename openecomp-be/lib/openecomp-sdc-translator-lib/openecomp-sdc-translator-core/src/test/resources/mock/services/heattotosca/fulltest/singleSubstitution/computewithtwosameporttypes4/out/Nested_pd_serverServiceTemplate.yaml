@@ -22,14 +22,14 @@ topology_template:
     port_pd01_port1_network_role_tag:
       type: string
       required: true
-    port_pd01_port1_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
     port_pd01_port2_network:
       type: list
       required: true
       entry_schema:
         type: string
+    port_pd01_port1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
     port_pd01_port2_ip_requirements:
       type: list
       required: true
@@ -69,11 +69,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_pd01_port1_order:
-      type: integer
-      required: true
     port_pd01_port2_network_role_tag:
       type: string
+      required: true
+    port_pd01_port1_order:
+      type: integer
       required: true
     port_pd01_port1_network_role:
       type: string

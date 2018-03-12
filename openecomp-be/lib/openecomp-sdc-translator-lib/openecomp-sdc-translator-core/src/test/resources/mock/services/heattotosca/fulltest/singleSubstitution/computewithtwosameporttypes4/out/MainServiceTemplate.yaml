@@ -835,11 +835,11 @@ topology_template:
         port_pd01_port1_network:
         - get_input: oam_net_name
         port_pd01_port1_network_role_tag: oam
+        port_pd01_port2_network:
+        - get_input: oam_net_name
         port_pd01_port1_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd01_port2_network:
-        - get_input: oam_net_name
         port_pd01_port2_ip_requirements:
         - ip_version: 4
           ip_count_required:

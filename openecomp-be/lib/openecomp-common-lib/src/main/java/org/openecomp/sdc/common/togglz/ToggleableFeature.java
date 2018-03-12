@@ -6,9 +6,6 @@ import org.togglz.core.context.FeatureContext;
 
 public enum ToggleableFeature implements Feature {
 
-  @Label ("Forwarder Capability")
-  FORWARDER_CAPABILITY,
-
   @Label ("VLAN Tagging")
   VLAN_TAGGING,
 
