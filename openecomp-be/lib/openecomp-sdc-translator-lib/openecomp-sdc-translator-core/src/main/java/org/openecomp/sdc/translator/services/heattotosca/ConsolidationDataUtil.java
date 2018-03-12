@@ -651,7 +651,7 @@ public class ConsolidationDataUtil {
       return portNodeTemplateId;
     }
 
-    String formattedName = portNodeTemplateId.replaceAll(DIGIT_REGEX + "$", "");
+    String formattedName = portNodeTemplateId.replaceAll(UNDERSCORE + DIGIT_REGEX + "$", "");
 
     StringBuilder sb = new StringBuilder();
     int count = 0;

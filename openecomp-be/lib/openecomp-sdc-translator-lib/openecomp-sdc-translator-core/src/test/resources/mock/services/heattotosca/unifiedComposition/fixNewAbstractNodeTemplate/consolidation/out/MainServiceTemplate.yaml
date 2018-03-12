@@ -170,8 +170,8 @@ topology_template:
       properties:
         network_name:
           get_attribute:
-          - FSB2
-          - FSB2_FSB1_Internal_network_id
+          - FSB1_Internal1
+          - network_id
         dhcp_agent_ids_1:
           get_attribute:
           - FSB2
@@ -186,8 +186,8 @@ topology_template:
           - addresses
         tenant_id:
           get_attribute:
-          - FSB2
-          - FSB2_FSB2_Internal_network_id
+          - FSB2_Internal1
+          - network_id
         port_FSB1_Internal_mac_address:
         - get_input: fsb1-Internal1-mac
   groups:

@@ -112,7 +112,7 @@ topology_template:
         shared: true
         network_name:
           get_attribute:
-          - FSB1_Internal1
+          - FSB1_Internal_1
           - network_id
         dhcp_agent_ids:
           get_attribute:
@@ -120,11 +120,11 @@ topology_template:
           - addresses
         tenant_id:
           get_attribute:
-          - FSB2_Internal2
+          - FSB2_Internal_2
           - network_id
         qos_policy:
           get_attribute:
-          - FSB2_Internal2
+          - FSB2_Internal_2
           - network_id
     cmaui_volume1:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
@@ -134,11 +134,11 @@ topology_template:
           - FSB1_template
           - addresses
           - get_attribute:
-            - FSB2_Internal2
+            - FSB2_Internal_2
             - index
         size:
           get_attribute:
-          - FSB1_Internal1
+          - FSB1_Internal_1
           - addresses
           - get_input:
             - CMAUI_volume_type
@@ -170,7 +170,7 @@ topology_template:
       properties:
         network_name:
           get_attribute:
-          - FSB1_Internal1
+          - FSB1_Internal_1
           - network_id
         dhcp_agent_ids:
           get_attribute:
@@ -178,7 +178,7 @@ topology_template:
           - addresses
         tenant_id:
           get_attribute:
-          - FSB1_Internal2
+          - FSB1_Internal_2
           - network_id
         port_FSB1_Internal_mac_address:
         - get_input: fsb1-Internal1-mac
