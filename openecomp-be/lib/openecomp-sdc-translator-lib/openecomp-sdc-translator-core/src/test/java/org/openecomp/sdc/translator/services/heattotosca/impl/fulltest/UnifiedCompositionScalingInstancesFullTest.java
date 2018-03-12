@@ -55,7 +55,7 @@ public class UnifiedCompositionScalingInstancesFullTest extends BaseFullTranslat
         b.	Property with getAttr from Compute2
         c.	Property with getAttr from port
     */
-    testTranslationWithInit(BASE_DIRECTORY + "oneComputeTypeOnePortGetAttrIn");
+   testTranslationWithInit(BASE_DIRECTORY + "oneComputeTypeOnePortGetAttrIn");
   }
 
   @Test

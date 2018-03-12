@@ -91,6 +91,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd02_port_network:
         - get_input: oam_net_name
         compute_pd_server_user_data_format:
@@ -123,6 +128,11 @@ topology_template:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:

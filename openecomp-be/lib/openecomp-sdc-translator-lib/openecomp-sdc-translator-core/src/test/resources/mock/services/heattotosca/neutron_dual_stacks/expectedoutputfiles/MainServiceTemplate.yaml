@@ -1,0 +1,668 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.dns:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: vf_module_id
+      type: string
+      description: Unique ID for this VF module instance
+    dns_int_bearer_ips:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_int_bearer_ips
+      type: list
+      description: DNS Bearer IP list
+      entry_schema:
+        type: string
+    vnf_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            - Use_Case_1_base
+            source_type: HEAT
+            param_name: vnf_name
+      type: string
+      description: Unique name for this VF instance
+    security_group:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: security_group
+      type: string
+      description: security group
+    oam_protected_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: oam_protected_net_name
+      type: string
+      description: OAM network where instaces will connect
+    dns_oam_protected_ips:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_oam_protected_ips
+      type: list
+      description: DNS OAM IP list
+      entry_schema:
+        type: string
+    int_bearer_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: int_bearer_net_name
+      type: string
+      description: Bearer network where instaces will connect
+    dns_oam_protected_v6_ips:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_oam_protected_v6_ips
+      type: list
+      description: DNS OAM IP list
+      entry_schema:
+        type: string
+    dns_names:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_names
+      type: list
+      description: server name
+      entry_schema:
+        type: string
+    vnf_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: vnf_id
+      type: string
+      description: Unique ID for this VF instance
+    dns_int_bearer_v6_ips:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_int_bearer_v6_ips
+      type: list
+      description: fixed IPv6 assignment for VM's on the Bearer network
+      entry_schema:
+        type: string
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: availability_zone_0
+      type: string
+      description: availability zone ID or Name
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: availability_zone_1
+      type: string
+      description: availability zone ID or Name
+    dns_image_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_image_name
+      type: string
+      description: server image
+      default: NIMBUS_DNS_3.0.2.qcow2
+    dns_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_flavor_name
+      type: string
+      description: server flavor
+      default: nv.c4r4d80
+  node_templates:
+    dns_0_oam_protected_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 5
+        - ip_address:
+            get_input:
+            - dns_oam_protected_floating_v6_ip
+            - 5
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 5
+        name:
+          str_replace:
+            template: VNF_NAME_dns_0_oam_protected_port_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_server_0
+          relationship: tosca.relationships.network.BindsTo
+    dns_0_oam_protected_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - dns_int_bearer_ips_v6_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_dns_0_oam_protected_port_1
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_server_0
+          relationship: tosca.relationships.network.BindsTo
+    dns_1_int_bearer_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - dns_int_bearer_ips
+            - 0
+        - ip_address:
+            get_input:
+            - dns_int_bearer_v6_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - dns_int_bearer_floating_v6_ip
+            - 0
+        - ip_address:
+            get_input:
+            - dns_int_bearer_floating_v6_ip
+            - 0
+        name:
+          str_replace:
+            template: VNF_NAME_dns_bearer_port
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: int_bearer
+        network:
+          get_input: int_bearer_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_server_1
+          relationship: tosca.relationships.network.BindsTo
+    DNS_SECURITY_GROUP:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VF_NAME_sec_grp_DNS
+            params:
+              VF_NAME:
+                get_input: vnf_name
+        description: security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+        - protocol: tcp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+    dns_server_1:
+      type: org.openecomp.resource.vfc.nodes.heat.dns
+      properties:
+        flavor:
+          get_input: dns_flavor_name
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: dns_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        name:
+          get_input:
+          - dns_names
+          - 1
+    dns_0_int_bearer_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - dns_int_bearer_ips
+            - 0
+        - ip_address:
+            get_input:
+            - dns_int_bearer_v6_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - dns_int_bearer
+            - 0
+        - ip_address:
+            get_input:
+            - dns_int_bearer
+            - 0
+        name:
+          str_replace:
+            template: VNF_NAME_dns_bearer_port
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: int_bearer
+        network:
+          get_input: int_bearer_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_server_0
+          relationship: tosca.relationships.network.BindsTo
+    dns_server_0:
+      type: org.openecomp.resource.vfc.nodes.heat.dns
+      properties:
+        flavor:
+          get_input: dns_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: dns_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        name:
+          get_input:
+          - dns_names
+          - 0
+    dns_1_oam_protected_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 6
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 7
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 5
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 5
+        - ip_address:
+            get_input:
+            - dns_oam_protected_floating_v6_ip
+            - 5
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 5
+        name:
+          str_replace:
+            template: VNF_NAME_dns_1_oam_protected_port_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_server_1
+          relationship: tosca.relationships.network.BindsTo
+    dns_1_oam_protected_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - dns_oam_protected_v6_ips
+            - 6
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 7
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 5
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - dns_oam_protected_floating_v6_ip
+            - 4
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - 5
+        - ip_address:
+            get_input:
+            - dns_oam_protected_floating_v6_ip
+            - 5
+        name:
+          str_replace:
+            template: VNF_NAME_dns_1_oam_protected_port_1
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_server_1
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    Use_Case_1_base_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/Use_Case_1_base.yaml
+        description: |
+          Base HOT template to create The Security Group for the the DNS VNF
+      members:
+      - DNS_SECURITY_GROUP
+    Use_Case_1_module_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/Use_Case_1_module.yaml
+        description: |
+          nested DNS template for a single VM
+          all parameters are passed from calling heat template of resourcegroup
+      members:
+      - dns_0_oam_protected_port_0
+      - dns_0_oam_protected_port_1
+      - dns_1_int_bearer_port
+      - dns_server_1
+      - dns_0_int_bearer_port
+      - dns_server_0
+      - dns_1_oam_protected_port_0
+      - dns_1_oam_protected_port_1
+  outputs:
+    security_group:
+      description: UUID of DNS Resource SecurityGroup
+      value: DNS_SECURITY_GROUP

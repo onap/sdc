@@ -101,7 +101,17 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+          - ip_version: 6
             ip_count_required:
               is_required: false
             floating_ip_count_required:
@@ -124,4 +134,4 @@ topology_template:
         heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
         description: heat template that creates MOG stack
       members:
-      - abstract_pd_server
+      - abstract_pd_server
