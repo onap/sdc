@@ -86,21 +86,11 @@ org.openecomp.groups.NetworkCollection:
   derived_from: tosca.groups.Root
   description: groups l3-networks in network collection
   properties:
-    network_collection_type: 
+    network_collection_function:
       type: string
       required: true
-      description: network collection type, defined with default value
-      default: l3-network
-    network_collection_subtype: 
-      type: string
-      required: true
-      description: network collection subtype, defined with default value
-      default: sub-interface
-    network_collection_role:
-      type: string
-      required: true
-      description: network collection role
-    network_collection_description: 
+      description: network collection function
+    network_collection_description:
       type: string
       required: true
       description: network collection description, free format text
@@ -108,18 +98,18 @@ org.openecomp.groups.VfcInstanceGroup:
   derived_from: tosca.groups.Root
   description: groups VFCs with same parent port role
   properties:
-    vfc_instance_group_role:
+    vfc_instance_group_function:
       type: string
       required: true
-      description: role of this VFC group
+      description: function of this VFC group
     vfc_parent_port_role:
       type: string
       required: true
       description: common role of parent ports of VFCs in this group
-    network_collection_role:
+    network_collection_function:
       type: string
       required: true
-      description: network collection role assigned to this group
+      description: network collection function assigned to this group
     subinterface_role:
       type: string
       required: true
