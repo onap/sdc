@@ -321,7 +321,7 @@ topology_template:
       description: cgi fw01 left interface Mac-Address
       value:
         get_attribute:
-        - FSB1_Port1
+        - FSB1_Port_1
         - device_owner
         - get_input:
           - CMAUI_volume_type

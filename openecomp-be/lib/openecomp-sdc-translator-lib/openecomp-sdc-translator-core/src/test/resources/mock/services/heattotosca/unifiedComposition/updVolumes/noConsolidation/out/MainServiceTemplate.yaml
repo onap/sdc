@@ -73,7 +73,7 @@ topology_template:
       type: string
       description: prop
   node_templates:
-    FSB2_Internal2:
+    FSB2_Internal_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -84,7 +84,7 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: FSB1_template
           relationship: tosca.relationships.network.BindsTo
-    FSB1_Internal1:
+    FSB1_Internal_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -257,8 +257,8 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
-      - FSB2_Internal2
-      - FSB1_Internal1
+      - FSB2_Internal_2
+      - FSB1_Internal_1
       - FSB1_OAM
       - FSB1_template
       - packet_mirror_network_name

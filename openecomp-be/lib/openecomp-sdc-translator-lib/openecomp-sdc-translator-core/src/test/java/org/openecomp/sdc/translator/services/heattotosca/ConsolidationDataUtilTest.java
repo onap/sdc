@@ -13,8 +13,10 @@ public class ConsolidationDataUtilTest {
     private static final String PORT_TYPE_FORMAT_6 = "network_port22";
     private static final String PORT_TYPE_FORMAT_7 = "a_network_11_port22";
     private static final String PORT_TYPE_OUTPUT_1 = "a_network_port";
-    private static final String PORT_TYPE_OUTPUT_2 = "network_port";
-    private static final String PORT_TYPE_OUTPUT_3 = "a_network_11_port";
+    private static final String PORT_TYPE_OUTPUT_2 =  "a_network_port22";
+    private static final String PORT_TYPE_OUTPUT_3 = "network_port";
+    private static final String PORT_TYPE_OUTPUT_4 = "network_port22";
+    private static final String PORT_TYPE_OUTPUT_5 = "a_network_11_port22";
 
     @Test
     public void testGetPortType_Empty() throws Exception {
@@ -47,7 +49,7 @@ public class ConsolidationDataUtilTest {
 
     @Test
     public void testGetPortType_Input_WithServerAndPortIndexWithoutUnderscore() throws Exception {
-        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_2), PORT_TYPE_OUTPUT_1);
+        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_2), PORT_TYPE_OUTPUT_2);
     }
 
     @Test
@@ -57,21 +59,21 @@ public class ConsolidationDataUtilTest {
 
     @Test
     public void testGetPortType_Input_WithoutServerIndexAndWithPortIndexWithoutUnderscore() throws Exception {
-        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_4), PORT_TYPE_OUTPUT_1);
+        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_4), PORT_TYPE_OUTPUT_2);
     }
 
     @Test
     public void testGetPortType_Input_PortTypeWithIndex() throws Exception {
-        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_5), PORT_TYPE_OUTPUT_2);
+        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_5), PORT_TYPE_OUTPUT_3);
     }
 
     @Test
     public void testGetPortType_Input_PortIndexWithoutUnderscore() throws Exception {
-        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_6), PORT_TYPE_OUTPUT_2);
+        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_6), PORT_TYPE_OUTPUT_4);
     }
 
     @Test
     public void testGetPortType_Input_PortIndexAndDigitInBetween() throws Exception {
-        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_7), PORT_TYPE_OUTPUT_3);
+        assertEquals(ConsolidationDataUtil.getPortType(PORT_TYPE_FORMAT_7), PORT_TYPE_OUTPUT_5);
     }
 }

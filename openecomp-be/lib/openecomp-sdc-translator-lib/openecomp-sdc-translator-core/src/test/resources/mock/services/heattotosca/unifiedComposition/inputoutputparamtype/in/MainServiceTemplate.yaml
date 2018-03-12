@@ -47,7 +47,7 @@ topology_template:
       description: fsb1-flavor
 
   node_templates:
-    VMI1:
+    VMI_1:
       type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
         name:
@@ -71,9 +71,9 @@ topology_template:
           get_input: fsb_zone
         name:
           get_attribute:
-          - VMI1
+          - VMI_1
           - name
-    FSB1_Port1:
+    FSB1_Port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -116,50 +116,50 @@ topology_template:
     cmaui_volume_test_neutron_port_properties:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
-        availability_zone:  {get_attribute: [FSB1_Port1, ip_address ] }
-        backup_id:  {get_attribute: [FSB1_Port1, network ] }
-        #description:  {get_attribute: [FSB1_Port1, subnet ] }
-        image:  {get_attribute: [FSB1_Port1, admin_state_up ] }
-        metadata:  {get_attribute: [FSB1_Port1, allowed_address_pairs ] }
-        multiattach:  {get_attribute: [FSB1_Port1, "binding:vnic_type" ] }
-        name:  {get_attribute: [FSB1_Port1, device_id ] }
-        read_only:  {get_attribute: [FSB1_Port1, device_owner ] }
-        scheduler_hints:  {get_attribute: [FSB1_Port1, fixed_ips ] }
-        #size:  {get_attribute: [FSB1_Port1, mac_address ] }
-        snapshot_id:  {get_attribute: [FSB1_Port1, name ] }
-        source_volid:  {get_attribute: [FSB1_Port1, port_security_enabled ] }
-        volume_id:  {get_attribute: [FSB1_Port1, qos_policy ] }
-        volume_type:  {get_attribute: [FSB1_Port1, security_groups ] }
-        delete_on_termination:  {get_attribute: [FSB1_Port1, value_specs ] }
-        volume_size:  {get_attribute: [FSB1_Port1, replacement_policy ] }
-        device_type:  {get_attribute: [FSB1_Port1, show ] }
-        disk_bus:  {get_attribute: [FSB1_Port1, subnets ] }
-        swap_size:  {get_attribute: [FSB1_Port1, tenant_id ] }
+        availability_zone:  {get_attribute: [FSB1_Port_1, ip_address ] }
+        backup_id:  {get_attribute: [FSB1_Port_1, network ] }
+        #description:  {get_attribute: [FSB1_Port_1, subnet ] }
+        image:  {get_attribute: [FSB1_Port_1, admin_state_up ] }
+        metadata:  {get_attribute: [FSB1_Port_1, allowed_address_pairs ] }
+        multiattach:  {get_attribute: [FSB1_Port_1, "binding:vnic_type" ] }
+        name:  {get_attribute: [FSB1_Port_1, device_id ] }
+        read_only:  {get_attribute: [FSB1_Port_1, device_owner ] }
+        scheduler_hints:  {get_attribute: [FSB1_Port_1, fixed_ips ] }
+        #size:  {get_attribute: [FSB1_Port_1, mac_address ] }
+        snapshot_id:  {get_attribute: [FSB1_Port_1, name ] }
+        source_volid:  {get_attribute: [FSB1_Port_1, port_security_enabled ] }
+        volume_id:  {get_attribute: [FSB1_Port_1, qos_policy ] }
+        volume_type:  {get_attribute: [FSB1_Port_1, security_groups ] }
+        delete_on_termination:  {get_attribute: [FSB1_Port_1, value_specs ] }
+        volume_size:  {get_attribute: [FSB1_Port_1, replacement_policy ] }
+        device_type:  {get_attribute: [FSB1_Port_1, show ] }
+        disk_bus:  {get_attribute: [FSB1_Port_1, subnets ] }
+        swap_size:  {get_attribute: [FSB1_Port_1, tenant_id ] }
 
     cmaui_volume_test_contrailv2_VMI_properties:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
-        availability_zone:  {get_attribute: [VMI1, virtual_machine_interface_mac_addresses ] }
-        #backup_id:  {get_attribute: [VMI1, mac_address ] }
-        description:  {get_attribute: [VMI1, virtual_network_refs ] }
-        image:  {get_attribute: [VMI1, port_tuple_refs ] }
-        metadata:  {get_attribute: [VMI1, security_group_refs ] }
-        multiattach:  {get_attribute: [VMI1, virtual_machine_interface_properties ] }
-        name:  {get_attribute: [VMI1, name ] }
-        #read_only:  {get_attribute: [VMI1, service_interface_type ] }
-        #scheduler_hints:  {get_attribute: [VMI1, sub_interface_vlan_tag ] }
-        size:  {get_attribute: [VMI1, virtual_machine_interface_allowed_address_pairs ] }
-        #snapshot_id:  {get_attribute: [VMI1, allowed_address_pair ] }
-        #source_volid:  {get_attribute: [VMI1, port_security_enabled ] }
-        #volume_id:  {get_attribute: [VMI1, address_mode ] }
-        #volume_type:  {get_attribute: [VMI1, mac ] }
-        #delete_on_termination:  {get_attribute: [VMI1, ip ] }
-        #volume_size:  {get_attribute: [VMI1, ip_prefix ] }
-        #device_type:  {get_attribute: [VMI1, ip_prefix_len ] }
-        #disk_bus:  {get_attribute: [VMI1, virtual_machine_interface_refs ] }
-        #swap_size:  {get_attribute: [VMI1, virtual_machine_interface_properties_service_interface_type ] }
-        created_at:  {get_attribute: [VMI1, fq_name ] }
-        display_description:  {get_attribute: [VMI1, show ] }
+        availability_zone:  {get_attribute: [VMI_1, virtual_machine_interface_mac_addresses ] }
+        #backup_id:  {get_attribute: [VMI_1, mac_address ] }
+        description:  {get_attribute: [VMI_1, virtual_network_refs ] }
+        image:  {get_attribute: [VMI_1, port_tuple_refs ] }
+        metadata:  {get_attribute: [VMI_1, security_group_refs ] }
+        multiattach:  {get_attribute: [VMI_1, virtual_machine_interface_properties ] }
+        name:  {get_attribute: [VMI_1, name ] }
+        #read_only:  {get_attribute: [VMI_1, service_interface_type ] }
+        #scheduler_hints:  {get_attribute: [VMI_1, sub_interface_vlan_tag ] }
+        size:  {get_attribute: [VMI_1, virtual_machine_interface_allowed_address_pairs ] }
+        #snapshot_id:  {get_attribute: [VMI_1, allowed_address_pair ] }
+        #source_volid:  {get_attribute: [VMI_1, port_security_enabled ] }
+        #volume_id:  {get_attribute: [VMI_1, address_mode ] }
+        #volume_type:  {get_attribute: [VMI_1, mac ] }
+        #delete_on_termination:  {get_attribute: [VMI_1, ip ] }
+        #volume_size:  {get_attribute: [VMI_1, ip_prefix ] }
+        #device_type:  {get_attribute: [VMI_1, ip_prefix_len ] }
+        #disk_bus:  {get_attribute: [VMI_1, virtual_machine_interface_refs ] }
+        #swap_size:  {get_attribute: [VMI_1, virtual_machine_interface_properties_service_interface_type ] }
+        created_at:  {get_attribute: [VMI_1, fq_name ] }
+        display_description:  {get_attribute: [VMI_1, show ] }
 
   groups:
     ep-jsa_net_group:
@@ -169,9 +169,9 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: Paul Phillips,  pp2854 PROD)
       members:
-      - VMI1
+      - VMI_1
       - FSB1
-      - FSB1_Port1
+      - FSB1_Port_1
       - cmaui_volume_test_compute_properties
       - cmaui_volume_test_neutron_port_properties
       - cmaui_volume_test_contrailv2_VMI_properties
@@ -185,7 +185,7 @@ topology_template:
       value: {get_attribute: [ FSB1, addresses, {get_attribute: [ FSB2_Internal2,tenant_id ] } ]}
     complexOutput2:
       description:  cgi fw01 left interface Mac-Address
-      value: { get_attribute: [FSB1_Port1, device_owner, get_input: [CMAUI_volume_type,{get_attribute: [FSB1,user_data_format ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
+      value: { get_attribute: [FSB1_Port_1, device_owner, get_input: [CMAUI_volume_type,{get_attribute: [FSB1,user_data_format ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
     complexOutput3:
       description:  cgi fw01 left interface Mac-Address
       value: { get_input: [a, addresses, get_input: [CMAUI_volume_type, {get_attribute: [FSB1,accessIPv6 ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }

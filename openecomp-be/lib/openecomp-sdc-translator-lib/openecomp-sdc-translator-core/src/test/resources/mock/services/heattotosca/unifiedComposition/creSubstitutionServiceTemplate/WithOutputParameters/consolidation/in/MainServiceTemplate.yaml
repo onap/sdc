@@ -106,7 +106,7 @@ topology_template:
       type: string
       description: prop
   node_templates:
-    FSB2_Internal2:
+    FSB2_Internal_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         network: Internal2-net
@@ -115,7 +115,7 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: FSB1_template
           relationship: tosca.relationships.network.BindsTo
-    FSB2_Internal1:
+    FSB2_Internal_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -125,7 +125,7 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: FSB2_template
           relationship: tosca.relationships.network.BindsTo
-    FSB1_Internal1:
+    FSB1_Internal_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -140,7 +140,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: jsa_net1
           relationship: tosca.relationships.network.LinksTo
-    FSB1_Internal2:
+    FSB1_Internal_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         mac_address:
@@ -161,7 +161,7 @@ topology_template:
         shared: true
         network_name:
          get_attribute:
-          - FSB1_Internal1
+          - FSB1_Internal_1
           - network_id
         dhcp_agent_ids:
          get_attribute:
@@ -169,11 +169,11 @@ topology_template:
           - addresses
         tenant_id:
          get_attribute:
-          - FSB2_Internal2
+          - FSB2_Internal_2
           - network_id
         qos_policy:
          get_attribute:
-          - FSB2_Internal2
+          - FSB2_Internal_2
           - network_id
     FSB1_template:
       type: org.openecomp.resource.vfc.nodes.heat.FSB1
@@ -258,8 +258,8 @@ topology_template:
     cmaui_volume1:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
-        volume_type: {get_attribute: [ FSB1_template, addresses, {get_attribute: [ FSB2_Internal2,tenant_id ] } ]}
-        size: { get_attribute: [FSB1_Internal1, device_owner, get_input: [CMAUI_volume_type,{get_attribute: [FSB1_Internal2,status ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
+        volume_type: {get_attribute: [ FSB1_template, addresses, {get_attribute: [ FSB2_Internal_2,tenant_id ] } ]}
+        size: { get_attribute: [FSB1_Internal_1, device_owner, get_input: [CMAUI_volume_type,{get_attribute: [FSB1_Internal_2,status ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
     cmaui_volume2:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -269,8 +269,8 @@ topology_template:
     cmaui_volume3:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
-        volume_type: {get_attribute: [ FSB2_template, addresses, {get_attribute: [ FSB2_Internal1,tenant_id ] } ]}
-        size: { get_attribute: [FSB1_Internal2, device_owner, get_input: [CMAUI_volume_type,{get_attribute: [FSB2_template,status ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
+        volume_type: {get_attribute: [ FSB2_template, addresses, {get_attribute: [ FSB2_Internal_1,tenant_id ] } ]}
+        size: { get_attribute: [FSB1_Internal_2, device_owner, get_input: [CMAUI_volume_type,{get_attribute: [FSB2_template,status ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
   groups:
     ep-jsa_net_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -279,9 +279,9 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
-      - FSB2_Internal2
-      - FSB2_Internal1
-      - FSB1_Internal1
-      - FSB1_Internal2
+      - FSB2_Internal_2
+      - FSB2_Internal_1
+      - FSB1_Internal_1
+      - FSB1_Internal_2
       - FSB1_template
       - FSB2_template

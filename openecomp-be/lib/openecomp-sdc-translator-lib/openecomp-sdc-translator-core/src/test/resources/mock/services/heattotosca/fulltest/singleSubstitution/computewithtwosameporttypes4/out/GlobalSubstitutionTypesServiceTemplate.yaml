@@ -22,16 +22,16 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port1_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_pd01_port2_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port1_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
       port_pd01_port2_ip_requirements:
         type: list
         required: true
@@ -80,12 +80,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_pd01_port1_order:
-        type: integer
-        required: true
-        status: SUPPORTED
       port_pd01_port2_network_role_tag:
         type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port1_order:
+        type: integer
         required: true
         status: SUPPORTED
       port_pd01_port1_network_role:

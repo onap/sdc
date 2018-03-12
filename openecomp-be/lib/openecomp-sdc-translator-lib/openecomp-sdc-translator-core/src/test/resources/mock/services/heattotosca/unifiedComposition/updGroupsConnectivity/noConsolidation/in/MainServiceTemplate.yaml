@@ -49,7 +49,7 @@ topology_template:
       description: port name
       default: port_name
   node_templates:
-    port1:
+    port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
@@ -80,7 +80,7 @@ topology_template:
           get_input: smp_name_1
         scheduler_hints:
           group: BE_Affinity_group
-    port2:
+    port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
