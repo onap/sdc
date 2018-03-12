@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1dd50fe4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2912,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-12T17:00:02Z",
+      "side": 1,
+      "message": "please consider the 100 chars per line. break this lines and fix the identation",
+      "range": {
+        "startLine": 2905,
+        "startChar": 8,
+        "endLine": 2912,
+        "endChar": 55
+      },
+      "revId": "b743e7f38f7d7632124f72df1f9cb27df3c4bb2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
