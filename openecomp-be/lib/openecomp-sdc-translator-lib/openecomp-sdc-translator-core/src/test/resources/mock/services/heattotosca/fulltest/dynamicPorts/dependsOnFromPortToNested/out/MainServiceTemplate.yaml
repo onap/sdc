@@ -567,6 +567,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_sbg_sc_management_1_port_mac_address:
           get_input:
           - sbg_management_mac_addresses
@@ -595,6 +600,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         compute_sbg_sc_metadata:
         - vf_module_id:
             get_input: vf_module_id

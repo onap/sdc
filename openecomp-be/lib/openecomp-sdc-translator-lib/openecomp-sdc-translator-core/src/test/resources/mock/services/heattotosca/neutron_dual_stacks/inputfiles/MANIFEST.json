@@ -1,0 +1,27 @@
+{
+  "name": "multiple_not_nested",
+  "description": "multiple heat files in zip, no nesting",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "Use_Case_1_base.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "Use_Case_1_base.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "Use_Case_1_module.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "Use_Case_1_module.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    }
+  ]
+}

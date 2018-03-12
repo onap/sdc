@@ -134,6 +134,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd_server_nested2_1b_port_network:
         - get_input: jsa_name
         service_template_filter:
@@ -162,6 +167,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd_server_pattern4_port_02_mac_requirements:
           mac_count_required:
             is_required: false
@@ -169,6 +179,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
     test_nested3Level:
@@ -195,6 +210,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd_server_pattern4_port_2_mac_requirements:
           mac_count_required:
             is_required: false
@@ -207,6 +227,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
     abstract_ps_server_nested2_1b:
       type: org.openecomp.resource.abstract.nodes.ps_server_nested2_1b
       directives:
@@ -216,6 +241,11 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
           floating_ip_count_required:
             is_required: false
         compute_ps_server_nested2_1b_name:
@@ -298,9 +328,19 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         - - ip_version: 4
             ip_count_required:
               is_required: true
+            floating_ip_count_required:
+              is_required: false
+          - ip_version: 6
+            ip_count_required:
+              is_required: false
             floating_ip_count_required:
               is_required: false
         compute_cmaui_1c1_nested2_name:
@@ -1509,4 +1549,4 @@ topology_template:
       - local_storage_cmaui_1c1_nested2
       dependency_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
-      - dependency
+      - dependency

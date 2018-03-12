@@ -477,6 +477,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_qos_policy:
         - PORT_PD_QOS_POLICY
         compute_pd_server_config_drive:

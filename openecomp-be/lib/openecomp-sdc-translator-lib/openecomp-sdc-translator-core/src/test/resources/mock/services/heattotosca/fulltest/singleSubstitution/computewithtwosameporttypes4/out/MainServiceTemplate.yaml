@@ -846,6 +846,11 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -856,6 +861,11 @@ topology_template:
           get_input: pd_flavor_name
         port_pd01_port1_ip_requirements:
         - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:

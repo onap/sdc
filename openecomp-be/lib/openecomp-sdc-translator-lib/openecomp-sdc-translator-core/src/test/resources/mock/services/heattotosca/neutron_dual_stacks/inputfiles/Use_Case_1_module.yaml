@@ -1,0 +1,167 @@
+heat_template_version: 2014-10-16
+
+description: |
+  nested DNS template for a single VM
+  all parameters are passed from calling heat template of resourcegroup
+
+parameters:
+  dns_image_name: 
+    type: string
+    description: server image
+  dns_flavor_name: 
+    type: string
+    description: server flavor
+  oam_protected_net_name:
+    type: string
+    description: OAM network where instaces will connect
+  int_bearer_net_name:
+    type: string
+    description: Bearer network where instaces will connect
+  dns_oam_protected_ips:
+    type: comma_delimited_list
+    description: DNS OAM IP list
+  dns_oam_protected_v6_ips:
+        type: comma_delimited_list
+        description: DNS OAM IP list
+  dns_int_bearer_ips:
+    type: comma_delimited_list
+    description: DNS Bearer IP list
+  dns_int_bearer_v6_ips:
+    type: comma_delimited_list
+    description: fixed IPv6 assignment for VM's on the Bearer network
+  dns_names:
+    type: comma_delimited_list
+    description: server name
+  security_group:
+    type: string
+    description: security group
+  availability_zone_0:
+    type: string
+    description: availability zone ID or Name
+  availability_zone_1:
+    type: string
+    description: availability zone ID or Name
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+    
+resources:
+
+  dns_0_oam_protected_port_0:
+    type: OS::Neutron::Port
+    properties:
+      name:
+         str_replace:
+           template: VNF_NAME_dns_0_oam_protected_port_0
+           params:
+               VNF_NAME: {get_param: vnf_name}
+      network: { get_param: oam_protected_net_name }
+      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
+      security_groups: [{ get_param: security_group }]
+
+  dns_0_oam_protected_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+         str_replace:
+           template: VNF_NAME_dns_0_oam_protected_port_1
+           params:
+               VNF_NAME: {get_param: vnf_name}
+      network: { get_param: oam_protected_net_name }
+      fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_ips_v6_ips, 0 ]}}]
+      security_groups: [{ get_param: security_group }]
+ 
+  dns_0_int_bearer_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_dns_bearer_port
+          params:
+              VNF_NAME: {get_param: vnf_name}
+      network: { get_param: int_bearer_net_name }
+      fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_ips, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer_v6_ips, 0 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_int_bearer, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer, 0 ]}}]
+      security_groups: [{ get_param: security_group }]
+
+  dns_server_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [ dns_names, 0 ] }
+      image: { get_param: dns_image_name }
+      flavor: { get_param: dns_flavor_name }
+      availability_zone: { get_param: availability_zone_0 }
+      networks:
+        - port: { get_resource: dns_0_oam_protected_port_0 }
+        - port: { get_resource: dns_0_oam_protected_port_1 }
+        - port: { get_resource: dns_0_int_bearer_port }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+        vnf_name:  {get_param: vnf_name }  
+
+  dns_1_oam_protected_port_0:
+    type: OS::Neutron::Port
+    properties:
+      name:
+         str_replace:
+           template: VNF_NAME_dns_1_oam_protected_port_0
+           params:
+               VNF_NAME: {get_param: vnf_name}
+      network: { get_param: oam_protected_net_name }
+      fixed_ips: [{ "ip_address": { get_param: [ dns_oam_protected_ips, 6 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 7 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
+      security_groups: [{ get_param: security_group }]
+
+  dns_1_oam_protected_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+         str_replace:
+           template: VNF_NAME_dns_1_oam_protected_port_1
+           params:
+               VNF_NAME: {get_param: vnf_name}
+      network: { get_param: oam_protected_net_name }
+      fixed_ips: [{ "ip_address": { get_param: [ dns_oam_protected_v6_ips, 6 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 7 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 4 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 5 ]}}]
+      security_groups: [{ get_param: security_group }]
+ 
+  dns_1_int_bearer_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_dns_bearer_port
+          params:
+              VNF_NAME: {get_param: vnf_name}
+      network: { get_param: int_bearer_net_name }
+      fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_ips, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer_v6_ips, 0 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_int_bearer_floating_v6_ip, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer_floating_v6_ip, 0 ]}}]
+      security_groups: [{ get_param: security_group }]
+
+  dns_server_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [ dns_names, 1 ] }
+      image: { get_param: dns_image_name }
+      flavor: { get_param: dns_flavor_name }
+      availability_zone: { get_param: availability_zone_1 }
+      networks:
+        - port: { get_resource: dns_1_oam_protected_port_0 }
+        - port: { get_resource: dns_1_oam_protected_port_1 }
+        - port: { get_resource: dns_1_int_bearer_port }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+        vnf_name:  {get_param: vnf_name }  
+
+
