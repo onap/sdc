@@ -75,26 +75,26 @@ topology_template:
     FSB1_FSB1_OAM:
       type: org.openecomp.resource.cp.v2.extNeutronCP
       properties:
-        ip_requirements:
-          get_input: port_FSB1_OAM_ip_requirements
-        network_role:
-          get_input: port_FSB1_OAM_network_role
-        fixed_ips:
-          get_input:
-          - port_FSB1_OAM_fixed_ips
-          - index_value
-        subnetpoolid:
-          get_input: port_FSB1_OAM_subnetpoolid
-        mac_requirements:
-          get_input: port_FSB1_OAM_mac_requirements
         exCP_naming:
           get_input: port_FSB1_OAM_exCP_naming
         vlan_requirements:
           get_input: port_FSB1_OAM_vlan_requirements
+        ip_requirements:
+          get_input: port_FSB1_OAM_ip_requirements
         network_role_tag:
           get_input: port_FSB1_OAM_network_role_tag
+        mac_requirements:
+          get_input: port_FSB1_OAM_mac_requirements
         order:
           get_input: port_FSB1_OAM_order
+        network_role:
+          get_input: port_FSB1_OAM_network_role
+        subnetpoolid:
+          get_input: port_FSB1_OAM_subnetpoolid
+        fixed_ips:
+          get_input:
+          - port_FSB1_OAM_fixed_ips
+          - index_value
         network:
           get_input:
           - port_FSB1_OAM_network
