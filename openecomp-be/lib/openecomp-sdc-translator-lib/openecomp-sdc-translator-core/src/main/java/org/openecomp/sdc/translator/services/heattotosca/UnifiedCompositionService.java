@@ -114,30 +114,30 @@ public class UnifiedCompositionService {
   static {
     Configuration config = ConfigurationManager.lookup();
     unifiedCompositionImplMap =
-        config.populateMap(ConfigConstants.MANDATORY_UNIFIED_MODEL_NAMESPACE,
-            ConfigConstants.UNIFIED_COMPOSITION_IMPL_KEY, ImplementationConfiguration.class);
+            config.populateMap(ConfigConstants.MANDATORY_UNIFIED_MODEL_NAMESPACE,
+                    ConfigConstants.UNIFIED_COMPOSITION_IMPL_KEY, ImplementationConfiguration.class);
     unifiedSubstitutionNodeTemplateIdGeneratorImplMap = new EnumMap<>(UnifiedCompositionEntity.class);
     initNodeTemplateIdGeneratorImplMap();
   }
 
   private static void initNodeTemplateIdGeneratorImplMap() {
     unifiedSubstitutionNodeTemplateIdGeneratorImplMap.put(COMPUTE, CommandImplNames
-        .COMPUTE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL);
+            .COMPUTE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL);
     unifiedSubstitutionNodeTemplateIdGeneratorImplMap.put(PORT, CommandImplNames
-        .PORT_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL);
+            .PORT_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL);
     unifiedSubstitutionNodeTemplateIdGeneratorImplMap.put(SUB_INTERFACE, CommandImplNames
-        .SUB_INTERFACE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL);
+            .SUB_INTERFACE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL);
   }
 
   private final ConsolidationService consolidationService = new ConsolidationService();
 
   private static List<EntityConsolidationData> getPortConsolidationDataList(
-      List<String> portIds,
-      List<UnifiedCompositionData> unifiedCompositionDataList) {
+          List<String> portIds,
+          List<UnifiedCompositionData> unifiedCompositionDataList) {
     return unifiedCompositionDataList.stream()
-        .flatMap(unifiedCompositionData -> unifiedCompositionData.getPortTemplateConsolidationDataList().stream())
-        .filter(portTemplateConsolidationData -> portIds.contains(portTemplateConsolidationData.getNodeTemplateId()))
-        .collect(Collectors.toList());
+            .flatMap(unifiedCompositionData -> unifiedCompositionData.getPortTemplateConsolidationDataList().stream())
+            .filter(portTemplateConsolidationData -> portIds.contains(portTemplateConsolidationData.getNodeTemplateId()))
+            .collect(Collectors.toList());
   }
 
   /**
@@ -161,8 +161,8 @@ public class UnifiedCompositionService {
       return;
     }
     unifiedCompositionInstance.get()
-        .createUnifiedComposition(serviceTemplate, nestedServiceTemplate,
-            unifiedCompositionDataList, context);
+            .createUnifiedComposition(serviceTemplate, nestedServiceTemplate,
+                    unifiedCompositionDataList, context);
   }
 
   /**
@@ -178,37 +178,37 @@ public class UnifiedCompositionService {
    * @return the substitution service template
    */
   public Optional<ServiceTemplate> createUnifiedSubstitutionServiceTemplate(
-      ServiceTemplate serviceTemplate,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      TranslationContext context,
-      String substitutionNodeTypeId,
-      Integer index) {
+          ServiceTemplate serviceTemplate,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          TranslationContext context,
+          String substitutionNodeTypeId,
+          Integer index) {
     if (CollectionUtils.isEmpty(unifiedCompositionDataList)) {
       return Optional.empty();
     }
     String templateName = getTemplateName(substitutionNodeTypeId, index);
     ServiceTemplate substitutionServiceTemplate =
-        HeatToToscaUtil.createInitSubstitutionServiceTemplate(templateName);
+            HeatToToscaUtil.createInitSubstitutionServiceTemplate(templateName);
 
     createIndexInputParameter(substitutionServiceTemplate);
 
     String computeNodeType =
-        handleCompute(serviceTemplate, substitutionServiceTemplate, unifiedCompositionDataList,
-            context);
+            handleCompute(serviceTemplate, substitutionServiceTemplate, unifiedCompositionDataList,
+                    context);
     handlePorts(serviceTemplate, substitutionServiceTemplate, unifiedCompositionDataList,
-        computeNodeType, context);
+            computeNodeType, context);
 
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(serviceTemplate,
-        substitutionServiceTemplate, unifiedCompositionDataList, context);
+            substitutionServiceTemplate, unifiedCompositionDataList, context);
     handleSubInterfaces(unifiedCompositionTo);
     createOutputParameters(unifiedCompositionTo, computeNodeType);
     NodeType substitutionGlobalNodeType =
-        handleSubstitutionGlobalNodeType(serviceTemplate, substitutionServiceTemplate,
-            context, substitutionNodeTypeId);
+            handleSubstitutionGlobalNodeType(serviceTemplate, substitutionServiceTemplate,
+                    context, substitutionNodeTypeId);
 
     HeatToToscaUtil.handleSubstitutionMapping(context,
-        substitutionNodeTypeId,
-        substitutionServiceTemplate, substitutionGlobalNodeType);
+            substitutionNodeTypeId,
+            substitutionServiceTemplate, substitutionGlobalNodeType);
 
     context.getTranslatedServiceTemplates().put(templateName, substitutionServiceTemplate);
     return Optional.of(substitutionServiceTemplate);
@@ -229,12 +229,12 @@ public class UnifiedCompositionService {
    * @return the abstract substitute node template id
    */
   public String createAbstractSubstituteNodeTemplate(
-      ServiceTemplate serviceTemplate,
-      ServiceTemplate substitutionServiceTemplate,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      String substituteNodeTypeId,
-      TranslationContext context,
-      Integer index) {
+          ServiceTemplate serviceTemplate,
+          ServiceTemplate substitutionServiceTemplate,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          String substituteNodeTypeId,
+          TranslationContext context,
+          Integer index) {
 
     NodeTemplate substitutionNodeTemplate = new NodeTemplate();
     List<String> directiveList = new ArrayList<>();
@@ -242,28 +242,28 @@ public class UnifiedCompositionService {
     substitutionNodeTemplate.setDirectives(directiveList);
     substitutionNodeTemplate.setType(substituteNodeTypeId);
     Map<String, ParameterDefinition> substitutionTemplateInputs = DataModelUtil
-        .getInputParameters(substitutionServiceTemplate);
+            .getInputParameters(substitutionServiceTemplate);
     Optional<Map<String, Object>> abstractSubstitutionProperties = Optional.empty();
     if (Objects.nonNull(substitutionTemplateInputs)) {
       abstractSubstitutionProperties = createAbstractSubstitutionProperties(serviceTemplate,
-          substitutionTemplateInputs, unifiedCompositionDataList, context);
+              substitutionTemplateInputs, unifiedCompositionDataList, context);
     }
     abstractSubstitutionProperties.ifPresent(substitutionNodeTemplate::setProperties);
 
     //Add substitution filtering property
     String substitutionServiceTemplateName = ToscaUtil.getServiceTemplateFileName(
-        substitutionServiceTemplate);
+            substitutionServiceTemplate);
     int count = unifiedCompositionDataList.size();
     DataModelUtil.addSubstitutionFilteringProperty(substitutionServiceTemplateName,
-        substitutionNodeTemplate, count);
+            substitutionNodeTemplate, count);
     //Add index_value property
     addIndexValueProperty(substitutionNodeTemplate);
     String substituteNodeTemplateId = getSubstituteNodeTemplateId(substituteNodeTypeId, index);
     //Add node template id and related abstract node template id in context
     addUnifiedSubstitionData(context, serviceTemplate, unifiedCompositionDataList,
-        substituteNodeTemplateId);
+            substituteNodeTemplateId);
     DataModelUtil
-        .addNodeTemplate(serviceTemplate, substituteNodeTemplateId, substitutionNodeTemplate);
+            .addNodeTemplate(serviceTemplate, substituteNodeTemplateId, substitutionNodeTemplate);
     return substituteNodeTemplateId;
 
   }
@@ -302,28 +302,28 @@ public class UnifiedCompositionService {
    * @param context                    the translation context
    */
   public void cleanUnifiedCompositionEntities(
-      ServiceTemplate serviceTemplate,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          TranslationContext context) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       //Clean compute node template data from top level service template
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
-          unifiedCompositionData.getComputeTemplateConsolidationData();
+              unifiedCompositionData.getComputeTemplateConsolidationData();
       cleanServiceTemplate(serviceTemplate, computeTemplateConsolidationData, context);
 
       //Clean port node template data from top level service template
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         cleanServiceTemplate(serviceTemplate, portTemplateConsolidationData, context);
       }
 
       //Clean sub-interface node template data from top level service template
       List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+              getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
       for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-          subInterfaceTemplateConsolidationDataList) {
+              subInterfaceTemplateConsolidationDataList) {
         cleanServiceTemplate(serviceTemplate, subInterfaceTemplateConsolidationData, context);
       }
     }
@@ -341,8 +341,8 @@ public class UnifiedCompositionService {
                              TranslationContext context) {
     for (UnifiedCompositionData unifiedData : unifiedCompositionDataList) {
       removeCleanedNodeType(
-          unifiedData.getComputeTemplateConsolidationData().getNodeTemplateId(), serviceTemplate,
-          context);
+              unifiedData.getComputeTemplateConsolidationData().getNodeTemplateId(), serviceTemplate,
+              context);
     }
     if (MapUtils.isEmpty(serviceTemplate.getNode_types())) {
       serviceTemplate.setNode_types(null);
@@ -351,22 +351,22 @@ public class UnifiedCompositionService {
 
   public void updateSubstitutionNodeTypePrefix(ServiceTemplate substitutionServiceTemplate) {
     Map<String, NodeTemplate> nodeTemplates =
-        substitutionServiceTemplate.getTopology_template().getNode_templates();
+            substitutionServiceTemplate.getTopology_template().getNode_templates();
 
     for (Map.Entry<String, NodeTemplate> nodeTemplateEntry : nodeTemplates.entrySet()) {
       String nodeTypeId = nodeTemplateEntry.getValue().getType();
       NodeType origNodeType = substitutionServiceTemplate.getNode_types().get(nodeTypeId);
       if (Objects.nonNull(origNodeType)
-          && nodeTypeId.startsWith(ToscaNodeType.VFC_TYPE_PREFIX)
-          && origNodeType.getDerived_from().equals(ToscaNodeType.NOVA_SERVER)) {
+              && nodeTypeId.startsWith(ToscaNodeType.VFC_TYPE_PREFIX)
+              && origNodeType.getDerived_from().equals(ToscaNodeType.NOVA_SERVER)) {
         substitutionServiceTemplate.getNode_types().remove(nodeTypeId);
 
         String newNodeTypeId =
-            nodeTypeId.replace(ToscaNodeType.VFC_TYPE_PREFIX, ToscaNodeType.COMPUTE_TYPE_PREFIX);
+                nodeTypeId.replace(ToscaNodeType.VFC_TYPE_PREFIX, ToscaNodeType.COMPUTE_TYPE_PREFIX);
         nodeTemplateEntry.getValue().setType(newNodeTypeId);
         DataModelUtil
-            .addNodeTemplate(substitutionServiceTemplate, nodeTemplateEntry.getKey(),
-                nodeTemplateEntry.getValue());
+                .addNodeTemplate(substitutionServiceTemplate, nodeTemplateEntry.getKey(),
+                        nodeTemplateEntry.getValue());
         substitutionServiceTemplate.getNode_types().put(newNodeTypeId, origNodeType);
       }
     }
@@ -384,16 +384,16 @@ public class UnifiedCompositionService {
 
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     UnifiedSubstitutionData unifiedSubstitutionData = context.getUnifiedSubstitutionData()
-        .get(serviceTemplateFileName);
+            .get(serviceTemplateFileName);
 
     if (Objects.nonNull(unifiedSubstitutionData)) {
       //Handle get attribute in connectivity for abstarct node to abstract node templates
       Set<String> abstractNodeIds =
-          new HashSet<>(unifiedSubstitutionData.getAllRelatedAbstractNodeIds());
+              new HashSet<>(unifiedSubstitutionData.getAllRelatedAbstractNodeIds());
       handleGetAttrInConnectivity(serviceTemplate, abstractNodeIds, context);
       //Handle get attribute in connectivity for abstract node templates to nested node template
       Set<String> nestedNodeIds =
-          new HashSet<>(unifiedSubstitutionData.getAllUnifiedNestedNodeTemplateIds());
+              new HashSet<>(unifiedSubstitutionData.getAllUnifiedNestedNodeTemplateIds());
       handleGetAttrInConnectivity(serviceTemplate, nestedNodeIds, context);
     }
   }
@@ -412,19 +412,19 @@ public class UnifiedCompositionService {
                                             TranslationContext context) {
     handleUnifiedNestedNodeType(mainServiceTemplate, nestedServiceTemplate, context);
     updateUnifiedNestedTemplates(mainServiceTemplate, nestedServiceTemplate,
-        unifiedCompositionData, context);
+            unifiedCompositionData, context);
   }
 
   private void handleGetAttrInConnectivity(ServiceTemplate serviceTemplate,
                                            Set<String> unifiedNodeIds,
                                            TranslationContext context) {
     Map<String, NodeTemplate> nodeTemplates =
-        serviceTemplate.getTopology_template().getNode_templates();
+            serviceTemplate.getTopology_template().getNode_templates();
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     for (String unifiedNodeId : unifiedNodeIds) {
       NodeTemplate nodeTemplate = nodeTemplates.get(unifiedNodeId);
       handleGetAttrInAbstractNodeTemplate(serviceTemplate, context, serviceTemplateFileName,
-          nodeTemplate);
+              nodeTemplate);
     }
   }
 
@@ -434,29 +434,29 @@ public class UnifiedCompositionService {
 
 
     SubstitutionMapping substitutionMappings =
-        nestedServiceTemplate.getTopology_template().getSubstitution_mappings();
+            nestedServiceTemplate.getTopology_template().getSubstitution_mappings();
     String nodeTypeId = substitutionMappings.getNode_type();
 
     Optional<String> newNestedNodeTypeId = getNewNestedNodeTypeId(nestedServiceTemplate, context);
 
     ServiceTemplate globalSubstitutionServiceTemplate =
-        context.getGlobalSubstitutionServiceTemplate();
+            context.getGlobalSubstitutionServiceTemplate();
 
     if (isNestedServiceTemplateWasHandled(globalSubstitutionServiceTemplate, nestedServiceTemplate,
-        context,
-        newNestedNodeTypeId)) {
+            context,
+            newNestedNodeTypeId)) {
       context
-          .updateHandledComputeType(ToscaUtil.getServiceTemplateFileName(mainServiceTemplate),
-              newNestedNodeTypeId.get(),
-              ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
+              .updateHandledComputeType(ToscaUtil.getServiceTemplateFileName(mainServiceTemplate),
+                      newNestedNodeTypeId.get(),
+                      ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
       return;
     }
 
 
     newNestedNodeTypeId.ifPresent(
-        newNestedNodeTypeIdVal -> handleNestedNodeType(nodeTypeId, newNestedNodeTypeIdVal,
-            nestedServiceTemplate, mainServiceTemplate, globalSubstitutionServiceTemplate,
-            context));
+            newNestedNodeTypeIdVal -> handleNestedNodeType(nodeTypeId, newNestedNodeTypeIdVal,
+                    nestedServiceTemplate, mainServiceTemplate, globalSubstitutionServiceTemplate,
+                    context));
 
   }
 
@@ -465,9 +465,9 @@ public class UnifiedCompositionService {
                                                     TranslationContext context,
                                                     Optional<String> newNestedNodeTypeId) {
     return newNestedNodeTypeId.isPresent()
-        && context.isNestedServiceTemplateWasHandled(
-        ToscaUtil.getServiceTemplateFileName(mainServiceTemplate),
-        ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
+            && context.isNestedServiceTemplateWasHandled(
+            ToscaUtil.getServiceTemplateFileName(mainServiceTemplate),
+            ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
   }
 
   private void handleNestedNodeType(String nodeTypeId, String newNestedNodeTypeId,
@@ -477,8 +477,8 @@ public class UnifiedCompositionService {
                                     TranslationContext context) {
     updateNestedServiceTemplate(nestedServiceTemplate, context);
     updateNestedNodeType(nodeTypeId, newNestedNodeTypeId, nestedServiceTemplate,
-        mainServiceTemplate,
-        globalSubstitutionServiceTemplate, context);
+            mainServiceTemplate,
+            globalSubstitutionServiceTemplate, context);
 
 
   }
@@ -491,24 +491,24 @@ public class UnifiedCompositionService {
   private void enrichPortProperties(ServiceTemplate nestedServiceTemplate,
                                     TranslationContext context) {
     String nestedServiceTemplateFileName =
-        ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate);
+            ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate);
     FilePortConsolidationData filePortConsolidationData =
-        context.getConsolidationData().getPortConsolidationData().getFilePortConsolidationData
-            (nestedServiceTemplateFileName);
+            context.getConsolidationData().getPortConsolidationData().getFilePortConsolidationData
+                    (nestedServiceTemplateFileName);
 
     if (Objects.nonNull(filePortConsolidationData)) {
       Set<String> portNodeTemplateIds = filePortConsolidationData.getAllPortNodeTemplateIds();
       if (Objects.nonNull(portNodeTemplateIds)) {
         for (String portNodeTemplateId : portNodeTemplateIds) {
           NodeTemplate portNodeTemplate = DataModelUtil.getNodeTemplate(nestedServiceTemplate,
-              portNodeTemplateId);
+                  portNodeTemplateId);
           List<EntityConsolidationData> portEntityConsolidationDataList = new ArrayList<>();
           portEntityConsolidationDataList.add(filePortConsolidationData
-              .getPortTemplateConsolidationData(portNodeTemplateId));
+                  .getPortTemplateConsolidationData(portNodeTemplateId));
 
           handleNodeTypeProperties(nestedServiceTemplate,
-              portEntityConsolidationDataList, portNodeTemplate, UnifiedCompositionEntity.PORT,
-              null, context);
+                  portEntityConsolidationDataList, portNodeTemplate, UnifiedCompositionEntity.PORT,
+                  null, context);
         }
       }
     }
@@ -520,12 +520,12 @@ public class UnifiedCompositionService {
                                     ServiceTemplate globalSubstitutionServiceTemplate,
                                     TranslationContext context) {
     String indexedNewNestedNodeTypeId =
-        updateNodeTypeId(nodeTypeId, newNestedNodeTypeId, nestedServiceTemplate,
-            mainServiceTemplate,
-            globalSubstitutionServiceTemplate, context);
+            updateNodeTypeId(nodeTypeId, newNestedNodeTypeId, nestedServiceTemplate,
+                    mainServiceTemplate,
+                    globalSubstitutionServiceTemplate, context);
 
     updateNodeTypeProperties(nestedServiceTemplate, globalSubstitutionServiceTemplate,
-        indexedNewNestedNodeTypeId);
+            indexedNewNestedNodeTypeId);
   }
 
   private void updateNodeTypeProperties(ServiceTemplate nestedServiceTemplate,
@@ -533,9 +533,9 @@ public class UnifiedCompositionService {
                                         String nodeTypeId) {
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     Map<String, PropertyDefinition> nodeTypePropertiesDefinition =
-        toscaAnalyzerService.manageSubstitutionNodeTypeProperties(nestedServiceTemplate);
+            toscaAnalyzerService.manageSubstitutionNodeTypeProperties(nestedServiceTemplate);
     NodeType nestedNodeType =
-        DataModelUtil.getNodeType(globalSubstitutionServiceTemplate, nodeTypeId);
+            DataModelUtil.getNodeType(globalSubstitutionServiceTemplate, nodeTypeId);
     nestedNodeType.setProperties(nodeTypePropertiesDefinition);
   }
 
@@ -545,17 +545,17 @@ public class UnifiedCompositionService {
                                   ServiceTemplate globalSubstitutionServiceTemplate,
                                   TranslationContext context) {
     String indexedNewNestedNodeTypeId =
-        handleNestedNodeTypeInGlobalSubstitutionTemplate(nodeTypeId, newNestedNodeTypeId,
-            globalSubstitutionServiceTemplate, context);
+            handleNestedNodeTypeInGlobalSubstitutionTemplate(nodeTypeId, newNestedNodeTypeId,
+                    globalSubstitutionServiceTemplate, context);
 
     handleSubstitutionMappingInNestedServiceTemplate(indexedNewNestedNodeTypeId,
-        nestedServiceTemplate, context);
+            nestedServiceTemplate, context);
 
     context
-        .updateHandledComputeType(
-            ToscaUtil.getServiceTemplateFileName(mainServiceTemplate),
-            ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate),
-            newNestedNodeTypeId);
+            .updateHandledComputeType(
+                    ToscaUtil.getServiceTemplateFileName(mainServiceTemplate),
+                    ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate),
+                    newNestedNodeTypeId);
     return indexedNewNestedNodeTypeId;
   }
 
@@ -564,23 +564,23 @@ public class UnifiedCompositionService {
                                                                   ServiceTemplate globalSubstitutionServiceTemplate,
                                                                   TranslationContext context) {
     String indexedNodeType =
-        getIndexedGlobalNodeTypeId(newNestedNodeTypeId, context);
+            getIndexedGlobalNodeTypeId(newNestedNodeTypeId, context);
     context.updateUsedTimesForNestedComputeNodeType(
-        ToscaUtil.getServiceTemplateFileName(globalSubstitutionServiceTemplate),
-        newNestedNodeTypeId);
+            ToscaUtil.getServiceTemplateFileName(globalSubstitutionServiceTemplate),
+            newNestedNodeTypeId);
     handleNestedNodeTypesInGlobalSubstituteServiceTemplate(nodeTypeId, indexedNodeType,
-        globalSubstitutionServiceTemplate, context);
+            globalSubstitutionServiceTemplate, context);
     return indexedNodeType;
   }
 
   private String getIndexedGlobalNodeTypeId(String newNestedNodeTypeId,
                                             TranslationContext context) {
     int globalNodeTypeIndex =
-        context.getGlobalNodeTypeIndex(
-            ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME),
-            newNestedNodeTypeId);
+            context.getGlobalNodeTypeIndex(
+                    ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME),
+                    newNestedNodeTypeId);
     return globalNodeTypeIndex > 0 ? newNestedNodeTypeId + "_"
-        + globalNodeTypeIndex : newNestedNodeTypeId;
+            + globalNodeTypeIndex : newNestedNodeTypeId;
   }
 
   private void updateUnifiedNestedTemplates(ServiceTemplate mainServiceTemplate,
@@ -589,13 +589,13 @@ public class UnifiedCompositionService {
                                             TranslationContext context) {
 
     NestedTemplateConsolidationData nestedTemplateConsolidationData =
-        unifiedCompositionData.getNestedTemplateConsolidationData();
+            unifiedCompositionData.getNestedTemplateConsolidationData();
     if (Objects.isNull(nestedTemplateConsolidationData)) {
       return;
     }
     handleNestedNodeTemplateInMainServiceTemplate(
-        nestedTemplateConsolidationData.getNodeTemplateId(), mainServiceTemplate,
-        nestedServiceTemplate, context);
+            nestedTemplateConsolidationData.getNodeTemplateId(), mainServiceTemplate,
+            nestedServiceTemplate, context);
 
   }
 
@@ -613,13 +613,13 @@ public class UnifiedCompositionService {
                                               TranslationContext context) {
 
     updNestedCompositionNodesConnectedInConnectivity(serviceTemplate, unifiedCompositionData,
-        context);
+            context);
     updNestedCompositionNodesConnectedOutConnectivity(serviceTemplate, nestedServiceTemplate,
-        unifiedCompositionData, context);
+            unifiedCompositionData, context);
     updNestedCompositionNodesGetAttrInConnectivity(serviceTemplate, unifiedCompositionData,
-        context);
+            context);
     updNestedCompositionOutputParamGetAttrInConnectivity(serviceTemplate,
-        unifiedCompositionData, context);
+            unifiedCompositionData, context);
   }
 
 
@@ -634,21 +634,21 @@ public class UnifiedCompositionService {
                                          UnifiedCompositionData unifiedCompositionData,
                                          TranslationContext context) {
     EntityConsolidationData entityConsolidationData =
-        unifiedCompositionData.getNestedTemplateConsolidationData();
+            unifiedCompositionData.getNestedTemplateConsolidationData();
     updateHeatStackGroupNestedComposition(serviceTemplate, entityConsolidationData, context);
 
   }
 
   public void handleComplexVfcType(ServiceTemplate serviceTemplate, TranslationContext context) {
     SubstitutionMapping substitutionMapping =
-        serviceTemplate.getTopology_template().getSubstitution_mappings();
+            serviceTemplate.getTopology_template().getSubstitution_mappings();
 
     if (Objects.isNull(substitutionMapping)) {
       return;
     }
 
     ServiceTemplate globalSubstitutionServiceTemplate =
-        context.getGlobalSubstitutionServiceTemplate();
+            context.getGlobalSubstitutionServiceTemplate();
 
     String substitutionNT = substitutionMapping.getNode_type();
     if (globalSubstitutionServiceTemplate.getNode_types().containsKey(substitutionNT)) {
@@ -659,40 +659,40 @@ public class UnifiedCompositionService {
 
   protected void updNodesConnectedOutConnectivity(ServiceTemplate serviceTemplate,
                                                   List<UnifiedCompositionData>
-                                                      unifiedCompositionDataList,
+                                                          unifiedCompositionDataList,
                                                   TranslationContext context) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData = unifiedCompositionData
-          .getComputeTemplateConsolidationData();
+              .getComputeTemplateConsolidationData();
       //Add requirements in the abstract node template for nodes connected out for computes
       String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
-          computeTemplateConsolidationData.getNodeTemplateId());
+              computeTemplateConsolidationData.getNodeTemplateId());
       Map<String, List<RequirementAssignmentData>> computeNodesConnectedOut =
-          computeTemplateConsolidationData.getNodesConnectedOut();
+              computeTemplateConsolidationData.getNodesConnectedOut();
       if (computeNodesConnectedOut != null) {
         updateRequirementInAbstractNodeTemplate(serviceTemplate, computeTemplateConsolidationData,
-            newComputeNodeTemplateId, computeNodesConnectedOut, context);
+                newComputeNodeTemplateId, computeNodesConnectedOut, context);
       }
       String computeType = getComputeTypeSuffix(serviceTemplate, computeTemplateConsolidationData
-          .getNodeTemplateId());
+              .getNodeTemplateId());
       //Add requirements in the abstract node template for nodes connected out for ports
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         String newPortNodeTemplateId = getNewPortNodeTemplateId(portTemplateConsolidationData
-            .getNodeTemplateId(), computeType, computeTemplateConsolidationData);
+                .getNodeTemplateId(), computeType, computeTemplateConsolidationData);
         Map<String, List<RequirementAssignmentData>> portNodesConnectedOut =
-            portTemplateConsolidationData.getNodesConnectedOut();
+                portTemplateConsolidationData.getNodesConnectedOut();
         if (portNodesConnectedOut != null) {
           updateRequirementInAbstractNodeTemplate(serviceTemplate, portTemplateConsolidationData,
-              newPortNodeTemplateId, portNodesConnectedOut, context);
+                  newPortNodeTemplateId, portNodesConnectedOut, context);
         }
       }
       //For sub-interface
       //Add requirements in the abstract node template for nodes connected out for ports
       updateSubInterfaceNodesConnectedOut(serviceTemplate, unifiedCompositionData,
-          computeTemplateConsolidationData, computeType, context);
+              computeTemplateConsolidationData, computeType, context);
     }
   }
 
@@ -702,16 +702,16 @@ public class UnifiedCompositionService {
                                                    String computeType,
                                                    TranslationContext context) {
     List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+            getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
     for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-        subInterfaceTemplateConsolidationDataList) {
+            subInterfaceTemplateConsolidationDataList) {
       String newSubInterfaceNodeTemplateId = getNewSubInterfaceNodeTemplateId(serviceTemplate, computeType,
-          computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
+              computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
       Map<String, List<RequirementAssignmentData>> subInterfaceNodesConnectedOut =
-          subInterfaceTemplateConsolidationData.getNodesConnectedOut();
+              subInterfaceTemplateConsolidationData.getNodesConnectedOut();
       if (subInterfaceNodesConnectedOut != null) {
         updateRequirementInAbstractNodeTemplate(serviceTemplate, subInterfaceTemplateConsolidationData,
-            newSubInterfaceNodeTemplateId, subInterfaceNodesConnectedOut, context);
+                newSubInterfaceNodeTemplateId, subInterfaceNodesConnectedOut, context);
       }
     }
   }
@@ -721,21 +721,21 @@ public class UnifiedCompositionService {
                                                                  UnifiedCompositionData unifiedCompositionData,
                                                                  TranslationContext context) {
     NestedTemplateConsolidationData nestedTemplateConsolidationData =
-        unifiedCompositionData.getNestedTemplateConsolidationData();
+            unifiedCompositionData.getNestedTemplateConsolidationData();
     Map<String, List<RequirementAssignmentData>> nodesConnectedOut =
-        Objects.isNull(nestedTemplateConsolidationData) ? new HashMap<>()
-            : nestedTemplateConsolidationData.getNodesConnectedOut();
+            Objects.isNull(nestedTemplateConsolidationData) ? new HashMap<>()
+                    : nestedTemplateConsolidationData.getNodesConnectedOut();
 
     FileComputeConsolidationData nestedFileComputeConsolidationData =
-        context.getConsolidationData().getComputeConsolidationData().getFileComputeConsolidationData
-            (ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
+            context.getConsolidationData().getComputeConsolidationData().getFileComputeConsolidationData
+                    (ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
 
     if (Objects.isNull(nestedFileComputeConsolidationData)) {
       return;
     }
 
     TypeComputeConsolidationData computeType =
-        nestedFileComputeConsolidationData.getAllTypeComputeConsolidationData().iterator().next();
+            nestedFileComputeConsolidationData.getAllTypeComputeConsolidationData().iterator().next();
     if (Objects.isNull(computeType)) {
       return;
     }
@@ -743,39 +743,39 @@ public class UnifiedCompositionService {
     String singleComputeId = computeType.getAllComputeNodeTemplateIds().iterator().next();
     if (Objects.nonNull(singleComputeId) && (Objects.nonNull(nestedTemplateConsolidationData))) {
       updateRequirementInNestedNodeTemplate(serviceTemplate, nestedTemplateConsolidationData,
-          singleComputeId, nodesConnectedOut);
+              singleComputeId, nodesConnectedOut);
     }
   }
 
   private void updNodesConnectedInConnectivity(ServiceTemplate serviceTemplate,
-                                                 List<UnifiedCompositionData>
-                                                     unifiedCompositionDataList,
-                                                 TranslationContext context) {
+                                               List<UnifiedCompositionData>
+                                                       unifiedCompositionDataList,
+                                               TranslationContext context) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData = unifiedCompositionData
-          .getComputeTemplateConsolidationData();
+              .getComputeTemplateConsolidationData();
       //Update requirements in the node template which pointing to the computes
       String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
-          computeTemplateConsolidationData.getNodeTemplateId());
+              computeTemplateConsolidationData.getNodeTemplateId());
       updNodesConnectedInConnectivity(serviceTemplate, computeTemplateConsolidationData,
-          newComputeNodeTemplateId, context, false);
+              newComputeNodeTemplateId, context, false);
 
       String computeType = getComputeTypeSuffix(serviceTemplate, computeTemplateConsolidationData
-          .getNodeTemplateId());
+              .getNodeTemplateId());
       //Update requirements in the node template which pointing to the ports
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         String newPortNodeTemplateId = getNewPortNodeTemplateId(portTemplateConsolidationData
-            .getNodeTemplateId(), computeType, computeTemplateConsolidationData);
+                .getNodeTemplateId(), computeType, computeTemplateConsolidationData);
         updNodesConnectedInConnectivity(serviceTemplate, portTemplateConsolidationData,
-            newPortNodeTemplateId, context, false);
+                newPortNodeTemplateId, context, false);
       }
 
       //Update requirements in the node template which pointing to the sub-interface
       updateSubInterfaceNodesConnectedIn(serviceTemplate, unifiedCompositionData,
-          computeTemplateConsolidationData, computeType, context);
+              computeTemplateConsolidationData, computeType, context);
     }
   }
 
@@ -785,19 +785,19 @@ public class UnifiedCompositionService {
                                                TranslationContext context,
                                                boolean isNested) {
     Map<String, List<RequirementAssignmentData>> nodesConnectedIn =
-        entityConsolidationData.getNodesConnectedIn();
+            entityConsolidationData.getNodesConnectedIn();
     if (nodesConnectedIn == null) {
       //No nodes connected in info
       return;
     }
     for (Map.Entry<String, List<RequirementAssignmentData>> entry : nodesConnectedIn
-        .entrySet()) {
+            .entrySet()) {
       List<RequirementAssignmentData> requirementAssignmentDataList = entry.getValue();
       for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
         RequirementAssignment requirementAssignment = requirementAssignmentData
-            .getRequirementAssignment();
+                .getRequirementAssignment();
         if (!requirementAssignment.getNode().equals(entityConsolidationData
-            .getNodeTemplateId())) {
+                .getNodeTemplateId())) {
           //The requirement assignment target node should be the one which we are handling in the
           //consolidation object
           continue;
@@ -805,10 +805,10 @@ public class UnifiedCompositionService {
         //Update the requirement assignment object in the original node template
         if (isNested) {
           updateRequirementForNestedCompositionNodesConnectedIn(serviceTemplate,
-              requirementAssignmentData, newNodeTemplateId);
+                  requirementAssignmentData, newNodeTemplateId);
         } else {
           updateRequirementForNodesConnectedIn(serviceTemplate, requirementAssignmentData,
-              entityConsolidationData, entry.getKey(), newNodeTemplateId, context);
+                  entityConsolidationData, entry.getKey(), newNodeTemplateId, context);
         }
 
       }
@@ -821,89 +821,89 @@ public class UnifiedCompositionService {
                                                   String computeType,
                                                   TranslationContext context) {
     List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+            getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
     for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-        subInterfaceTemplateConsolidationDataList) {
+            subInterfaceTemplateConsolidationDataList) {
       String newSubInterfaceNodeTemplateId = getNewSubInterfaceNodeTemplateId(serviceTemplate, computeType,
-          computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
+              computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
       updNodesConnectedInConnectivity(serviceTemplate, subInterfaceTemplateConsolidationData,
-          newSubInterfaceNodeTemplateId, context, false);
+              newSubInterfaceNodeTemplateId, context, false);
     }
   }
 
   protected void updNestedCompositionNodesConnectedInConnectivity(
-      ServiceTemplate serviceTemplate,
-      UnifiedCompositionData unifiedCompositionData,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          UnifiedCompositionData unifiedCompositionData,
+          TranslationContext context) {
     NestedTemplateConsolidationData nestedTemplateConsolidationData = unifiedCompositionData
-        .getNestedTemplateConsolidationData();
+            .getNestedTemplateConsolidationData();
     //Update requirements in the node template which pointing to the nested nodes
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     Optional<String> newNestedNodeTemplateId = context.getUnifiedNestedNodeTemplateId(
-        serviceTemplateFileName, nestedTemplateConsolidationData.getNodeTemplateId());
+            serviceTemplateFileName, nestedTemplateConsolidationData.getNodeTemplateId());
     newNestedNodeTemplateId.ifPresent(
-        newNestedNodeTemplateIdVal -> updNodesConnectedInConnectivity(serviceTemplate,
-            nestedTemplateConsolidationData,
-            newNestedNodeTemplateIdVal, context, true));
+            newNestedNodeTemplateIdVal -> updNodesConnectedInConnectivity(serviceTemplate,
+                    nestedTemplateConsolidationData,
+                    newNestedNodeTemplateIdVal, context, true));
 
   }
 
   private void updVolumeConnectivity(ServiceTemplate serviceTemplate,
-                                       List<UnifiedCompositionData>
-                                           unifiedCompositionDataList,
-                                       TranslationContext context) {
+                                     List<UnifiedCompositionData>
+                                             unifiedCompositionDataList,
+                                     TranslationContext context) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData = unifiedCompositionData
-          .getComputeTemplateConsolidationData();
+              .getComputeTemplateConsolidationData();
       //Add requirements in the abstract node template for compute volumes
       String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
-          computeTemplateConsolidationData.getNodeTemplateId());
+              computeTemplateConsolidationData.getNodeTemplateId());
       Map<String, List<RequirementAssignmentData>> computeVolumes =
-          computeTemplateConsolidationData.getVolumes();
+              computeTemplateConsolidationData.getVolumes();
       if (computeVolumes != null) {
         updateRequirementInAbstractNodeTemplate(serviceTemplate, computeTemplateConsolidationData,
-            newComputeNodeTemplateId, computeVolumes, context);
+                newComputeNodeTemplateId, computeVolumes, context);
       }
     }
   }
 
   private void updGroupsConnectivity(ServiceTemplate serviceTemplate,
-                                       List<UnifiedCompositionData>
-                                           unifiedCompositionDataList,
-                                       TranslationContext context) {
+                                     List<UnifiedCompositionData>
+                                             unifiedCompositionDataList,
+                                     TranslationContext context) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData = unifiedCompositionData
-          .getComputeTemplateConsolidationData();
+              .getComputeTemplateConsolidationData();
       //Add requirements in the abstract node template for nodes connected in for computes
       updGroupsConnectivity(serviceTemplate, computeTemplateConsolidationData, context);
 
       //Add requirements in the abstract node template for nodes connected in for ports
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         updGroupsConnectivity(serviceTemplate, portTemplateConsolidationData, context);
       }
 
       //Add requirements in the abstract node template for nodes connected in for subInterface
       List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+              getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
       for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-          subInterfaceTemplateConsolidationDataList) {
+              subInterfaceTemplateConsolidationDataList) {
         updGroupsConnectivity(serviceTemplate, subInterfaceTemplateConsolidationData, context);
       }
     }
   }
 
   private void updGroupsConnectivity(ServiceTemplate serviceTemplate, EntityConsolidationData
-      entityConsolidationData, TranslationContext context) {
+          entityConsolidationData, TranslationContext context) {
     List<String> groupIds = entityConsolidationData.getGroupIds();
     if (groupIds == null) {
       return;
     }
     String oldNodeTemplateId = entityConsolidationData.getNodeTemplateId();
     String abstractNodeTemplateId = context.getUnifiedAbstractNodeTemplateId(
-        serviceTemplate, entityConsolidationData.getNodeTemplateId());
+            serviceTemplate, entityConsolidationData.getNodeTemplateId());
     Map<String, GroupDefinition> groups = serviceTemplate.getTopology_template().getGroups();
     if (groups == null) {
       return;
@@ -926,36 +926,36 @@ public class UnifiedCompositionService {
   }
 
   private void updOutputParamGetAttrInConnectivity(
-      ServiceTemplate serviceTemplate, List<UnifiedCompositionData> unifiedComposotionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate, List<UnifiedCompositionData> unifiedComposotionDataList,
+          TranslationContext context) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedComposotionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
-          unifiedCompositionData.getComputeTemplateConsolidationData();
+              unifiedCompositionData.getComputeTemplateConsolidationData();
       String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
-          computeTemplateConsolidationData.getNodeTemplateId());
+              computeTemplateConsolidationData.getNodeTemplateId());
 
       updOutputParamGetAttrInConnectivity(serviceTemplate, computeTemplateConsolidationData,
-          computeTemplateConsolidationData.getNodeTemplateId(), newComputeNodeTemplateId,
-          context, false);
+              computeTemplateConsolidationData.getNodeTemplateId(), newComputeNodeTemplateId,
+              context, false);
 
       String computeType =
-          getComputeTypeSuffix(serviceTemplate,
-              computeTemplateConsolidationData.getNodeTemplateId());
+              getComputeTypeSuffix(serviceTemplate,
+                      computeTemplateConsolidationData.getNodeTemplateId());
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         String newPortNodeTemplateId =
-            getNewPortNodeTemplateId(portTemplateConsolidationData.getNodeTemplateId(), computeType,
-                computeTemplateConsolidationData);
+                getNewPortNodeTemplateId(portTemplateConsolidationData.getNodeTemplateId(), computeType,
+                        computeTemplateConsolidationData);
 
         updOutputParamGetAttrInConnectivity(serviceTemplate, portTemplateConsolidationData,
-            portTemplateConsolidationData.getNodeTemplateId(), newPortNodeTemplateId, context,
-            false);
+                portTemplateConsolidationData.getNodeTemplateId(), newPortNodeTemplateId, context,
+                false);
       }
 
       updateSubInterfaceOutputParamGetAttrIn(serviceTemplate, unifiedCompositionData,
-          computeTemplateConsolidationData, computeType, context);
+              computeTemplateConsolidationData, computeType, context);
     }
   }
 
@@ -965,52 +965,52 @@ public class UnifiedCompositionService {
                                                       String computeType,
                                                       TranslationContext context) {
     List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+            getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
     for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-        subInterfaceTemplateConsolidationDataList) {
+            subInterfaceTemplateConsolidationDataList) {
       String newSubInterfaceNodeTemplateId = getNewSubInterfaceNodeTemplateId(serviceTemplate, computeType,
-          computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
+              computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
       updOutputParamGetAttrInConnectivity(serviceTemplate, subInterfaceTemplateConsolidationData,
-          subInterfaceTemplateConsolidationData.getNodeTemplateId(), newSubInterfaceNodeTemplateId, context,
-          false);
+              subInterfaceTemplateConsolidationData.getNodeTemplateId(), newSubInterfaceNodeTemplateId, context,
+              false);
     }
   }
 
   private void updNodesGetAttrInConnectivity(
-      ServiceTemplate serviceTemplate,
-      List<UnifiedCompositionData> unifiedComposotionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          List<UnifiedCompositionData> unifiedComposotionDataList,
+          TranslationContext context) {
     Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType =
-        getAllConsolidationNodeTemplateIdAndType(unifiedComposotionDataList);
+            getAllConsolidationNodeTemplateIdAndType(unifiedComposotionDataList);
     for (UnifiedCompositionData unifiedCompositionData : unifiedComposotionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
-          unifiedCompositionData.getComputeTemplateConsolidationData();
+              unifiedCompositionData.getComputeTemplateConsolidationData();
       String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
-          computeTemplateConsolidationData.getNodeTemplateId());
-
-      updNodeGetAttrInConnectivity(serviceTemplate, computeTemplateConsolidationData,
-          computeTemplateConsolidationData.getNodeTemplateId(),
-          newComputeNodeTemplateId, context, consolidationNodeTemplateIdAndType, false);
-
-      String computeType =
-          getComputeTypeSuffix(serviceTemplate,
               computeTemplateConsolidationData.getNodeTemplateId());
 
+      updNodeGetAttrInConnectivity(serviceTemplate, computeTemplateConsolidationData,
+              computeTemplateConsolidationData.getNodeTemplateId(),
+              newComputeNodeTemplateId, context, consolidationNodeTemplateIdAndType, false);
+
+      String computeType =
+              getComputeTypeSuffix(serviceTemplate,
+                      computeTemplateConsolidationData.getNodeTemplateId());
+
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         String newPotNodeTemplateId =
-            getNewPortNodeTemplateId(portTemplateConsolidationData.getNodeTemplateId(), computeType,
-                computeTemplateConsolidationData);
+                getNewPortNodeTemplateId(portTemplateConsolidationData.getNodeTemplateId(), computeType,
+                        computeTemplateConsolidationData);
 
         updNodeGetAttrInConnectivity(serviceTemplate, portTemplateConsolidationData,
-            portTemplateConsolidationData.getNodeTemplateId(),
-            newPotNodeTemplateId, context, consolidationNodeTemplateIdAndType, false);
+                portTemplateConsolidationData.getNodeTemplateId(),
+                newPotNodeTemplateId, context, consolidationNodeTemplateIdAndType, false);
       }
 
       updateSubInterfaceNodesGetAttrIn(serviceTemplate, unifiedCompositionData,
-          computeTemplateConsolidationData, computeType, consolidationNodeTemplateIdAndType, context);
+              computeTemplateConsolidationData, computeType, consolidationNodeTemplateIdAndType, context);
     }
   }
 
@@ -1021,145 +1021,145 @@ public class UnifiedCompositionService {
                                                 Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType,
                                                 TranslationContext context) {
     List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+            getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
     for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-        subInterfaceTemplateConsolidationDataList) {
+            subInterfaceTemplateConsolidationDataList) {
       String newSubInterfaceNodeTemplateId = getNewSubInterfaceNodeTemplateId(serviceTemplate, computeType,
-          computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
+              computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
       updNodeGetAttrInConnectivity(serviceTemplate, subInterfaceTemplateConsolidationData,
-          subInterfaceTemplateConsolidationData.getNodeTemplateId(),
-          newSubInterfaceNodeTemplateId, context,
-          consolidationNodeTemplateIdAndType, false);
+              subInterfaceTemplateConsolidationData.getNodeTemplateId(),
+              newSubInterfaceNodeTemplateId, context,
+              consolidationNodeTemplateIdAndType, false);
     }
   }
 
   protected void updNestedCompositionOutputParamGetAttrInConnectivity(
-      ServiceTemplate serviceTemplate, UnifiedCompositionData unifiedCompositionData,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate, UnifiedCompositionData unifiedCompositionData,
+          TranslationContext context) {
     NestedTemplateConsolidationData nestedTemplateConsolidationData =
-        unifiedCompositionData.getNestedTemplateConsolidationData();
+            unifiedCompositionData.getNestedTemplateConsolidationData();
     if (Objects.isNull(nestedTemplateConsolidationData)) {
       return;
     }
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     Optional<String> newNestedNodeTemplateId = context.getUnifiedNestedNodeTemplateId(
-        serviceTemplateFileName, nestedTemplateConsolidationData.getNodeTemplateId());
+            serviceTemplateFileName, nestedTemplateConsolidationData.getNodeTemplateId());
 
     newNestedNodeTemplateId.ifPresent(
-        newNestedNodeTemplateIdVal -> updOutputParamGetAttrInConnectivity(serviceTemplate,
-            nestedTemplateConsolidationData, nestedTemplateConsolidationData.getNodeTemplateId(),
-            newNestedNodeTemplateIdVal, context, true));
+            newNestedNodeTemplateIdVal -> updOutputParamGetAttrInConnectivity(serviceTemplate,
+                    nestedTemplateConsolidationData, nestedTemplateConsolidationData.getNodeTemplateId(),
+                    newNestedNodeTemplateIdVal, context, true));
   }
 
   protected void updNestedCompositionNodesGetAttrInConnectivity(
-      ServiceTemplate serviceTemplate,
-      UnifiedCompositionData unifiedCompositionData,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          UnifiedCompositionData unifiedCompositionData,
+          TranslationContext context) {
     NestedTemplateConsolidationData nestedTemplateConsolidationData =
-        unifiedCompositionData.getNestedTemplateConsolidationData();
+            unifiedCompositionData.getNestedTemplateConsolidationData();
     if (Objects.isNull(nestedTemplateConsolidationData)) {
       return;
     }
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     Optional<String> newNestedNodeTemplateId = context.getUnifiedNestedNodeTemplateId(
-        serviceTemplateFileName, nestedTemplateConsolidationData.getNodeTemplateId());
+            serviceTemplateFileName, nestedTemplateConsolidationData.getNodeTemplateId());
 
     newNestedNodeTemplateId.ifPresent(
-        newNestedNodeTemplateIdVal -> updNodeGetAttrInConnectivity(serviceTemplate,
-            nestedTemplateConsolidationData, nestedTemplateConsolidationData.getNodeTemplateId(),
-            newNestedNodeTemplateIdVal, context, null, true));
+            newNestedNodeTemplateIdVal -> updNodeGetAttrInConnectivity(serviceTemplate,
+                    nestedTemplateConsolidationData, nestedTemplateConsolidationData.getNodeTemplateId(),
+                    newNestedNodeTemplateIdVal, context, null, true));
   }
 
   private void updateRequirementForNodesConnectedIn(
-      ServiceTemplate serviceTemplate,
-      RequirementAssignmentData requirementAssignmentData,
-      EntityConsolidationData entityConsolidationData,
-      String originalNodeTemplateId,
-      String newNodeTemplateId,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          RequirementAssignmentData requirementAssignmentData,
+          EntityConsolidationData entityConsolidationData,
+          String originalNodeTemplateId,
+          String newNodeTemplateId,
+          TranslationContext context) {
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     RequirementAssignment requirementAssignment = requirementAssignmentData
-        .getRequirementAssignment();
+            .getRequirementAssignment();
     String newAbstractUnifiedNodeTemplateId = context.getUnifiedAbstractNodeTemplateId(
-        serviceTemplate, entityConsolidationData.getNodeTemplateId());
+            serviceTemplate, entityConsolidationData.getNodeTemplateId());
     NodeTemplate abstractUnifiedNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-        newAbstractUnifiedNodeTemplateId);
+            newAbstractUnifiedNodeTemplateId);
     Optional<String> newCapabilityId = getNewCapabilityForNodesConnectedIn(serviceTemplate,
-        abstractUnifiedNodeTemplate, requirementAssignment, newNodeTemplateId, context);
+            abstractUnifiedNodeTemplate, requirementAssignment, newNodeTemplateId, context);
     if (newCapabilityId.isPresent()) {
       //Creating a copy of the requirement object and checking if it already exists in the
       // original node template
       RequirementAssignment requirementAssignmentCopy = (RequirementAssignment) getClonedObject(
-          requirementAssignmentData.getRequirementAssignment(), RequirementAssignment.class);
+              requirementAssignmentData.getRequirementAssignment(), RequirementAssignment.class);
       NodeTemplate originalNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-          originalNodeTemplateId);
+              originalNodeTemplateId);
       requirementAssignmentCopy.setCapability(newCapabilityId.get());
       requirementAssignmentCopy.setNode(newAbstractUnifiedNodeTemplateId);
       if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(originalNodeTemplate,
-          requirementAssignmentData.getRequirementId(), requirementAssignmentCopy)) {
+              requirementAssignmentData.getRequirementId(), requirementAssignmentCopy)) {
         //Update the existing requirement
         requirementAssignmentData.getRequirementAssignment().setCapability(newCapabilityId
-            .get());
+                .get());
         requirementAssignmentData.getRequirementAssignment()
-            .setNode(newAbstractUnifiedNodeTemplateId);
+                .setNode(newAbstractUnifiedNodeTemplateId);
       } else {
         //The updated requirement already exists in the node template so simply remove the
         // current one
         DataModelUtil.removeRequirementAssignment(originalNodeTemplate, requirementAssignmentData
-            .getRequirementId(), requirementAssignmentData.getRequirementAssignment());
+                .getRequirementId(), requirementAssignmentData.getRequirementAssignment());
       }
     }
   }
 
   private void updateRequirementForNestedCompositionNodesConnectedIn(
-      ServiceTemplate serviceTemplate,
-      RequirementAssignmentData requirementAssignmentData,
-      String newNodeTemplateId) {
+          ServiceTemplate serviceTemplate,
+          RequirementAssignmentData requirementAssignmentData,
+          String newNodeTemplateId) {
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     String newAbstractUnifiedNodeTemplateId = newNodeTemplateId;
     RequirementAssignment requirementAssignment = requirementAssignmentData
-        .getRequirementAssignment();
+            .getRequirementAssignment();
     //Creating a copy of the requirement object and checking if it already exists in the
     // original node template
     RequirementAssignment requirementAssignmentCopy = (RequirementAssignment) getClonedObject(
-        requirementAssignmentData.getRequirementAssignment(), RequirementAssignment.class);
+            requirementAssignmentData.getRequirementAssignment(), RequirementAssignment.class);
     NodeTemplate unifiedAbstractNestedNodeTemplate = DataModelUtil
-        .getNodeTemplate(serviceTemplate, newAbstractUnifiedNodeTemplateId);
+            .getNodeTemplate(serviceTemplate, newAbstractUnifiedNodeTemplateId);
     requirementAssignmentCopy.setCapability(requirementAssignment.getCapability());
     requirementAssignmentCopy.setNode(newAbstractUnifiedNodeTemplateId);
     if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(unifiedAbstractNestedNodeTemplate,
-        requirementAssignmentData.getRequirementId(), requirementAssignmentCopy)) {
+            requirementAssignmentData.getRequirementId(), requirementAssignmentCopy)) {
       //Update the existing requirement
       requirementAssignmentData.getRequirementAssignment()
-          .setNode(newAbstractUnifiedNodeTemplateId);
+              .setNode(newAbstractUnifiedNodeTemplateId);
     } else {
       //The updated requirement already exists in the node template so simply remove the
       // current one
       DataModelUtil.removeRequirementAssignment(unifiedAbstractNestedNodeTemplate,
-          requirementAssignmentData.getRequirementId(), requirementAssignmentData
-              .getRequirementAssignment());
+              requirementAssignmentData.getRequirementId(), requirementAssignmentData
+                      .getRequirementAssignment());
     }
   }
 
   private Optional<String> getNewCapabilityForNodesConnectedIn(ServiceTemplate serviceTemplate,
                                                                NodeTemplate unifiedNodeTemplate,
                                                                RequirementAssignment
-                                                                   requirementAssignment,
+                                                                       requirementAssignment,
                                                                String newNodeTemplateId,
                                                                TranslationContext context) {
     ServiceTemplate globalSubstitutionServiceTemplate =
-        HeatToToscaUtil.fetchGlobalSubstitutionServiceTemplate(serviceTemplate, context);
+            HeatToToscaUtil.fetchGlobalSubstitutionServiceTemplate(serviceTemplate, context);
     Map<String, NodeType> nodeTypes = globalSubstitutionServiceTemplate.getNode_types();
     String unifiedNodeTemplateType = unifiedNodeTemplate.getType();
     NodeType unifiedNodeType = nodeTypes.get(unifiedNodeTemplateType);
     Map<String, CapabilityDefinition> abstractNodeTypeCapabilities = unifiedNodeType
-        .getCapabilities();
+            .getCapabilities();
     for (Map.Entry<String, CapabilityDefinition> entry : abstractNodeTypeCapabilities.entrySet()) {
       String capabilityId = entry.getKey();
       CapabilityDefinition capabilityDefinition = entry.getValue();
       String capabilityType = capabilityDefinition.getType();
       if (capabilityType.equals(requirementAssignment.getCapability())
-          && capabilityId.endsWith(newNodeTemplateId)) {
+              && capabilityId.endsWith(newNodeTemplateId)) {
         //Matching capability type found..Check if the id ends with new node template id
         return Optional.ofNullable(capabilityId);
       }
@@ -1170,18 +1170,18 @@ public class UnifiedCompositionService {
 
   private void updateRequirementInAbstractNodeTemplate(ServiceTemplate serviceTemplate,
                                                        EntityConsolidationData
-                                                           entityConsolidationData,
+                                                               entityConsolidationData,
                                                        String newNodeTemplateId,
                                                        Map<String, List<RequirementAssignmentData>>
-                                                           requirementAssignmentDataMap,
+                                                               requirementAssignmentDataMap,
                                                        TranslationContext context) {
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     for (Map.Entry<String, List<RequirementAssignmentData>> entry : requirementAssignmentDataMap
-        .entrySet()) {
+            .entrySet()) {
       String abstractNodeTemplateId = context.getUnifiedAbstractNodeTemplateId(
-          serviceTemplate, entityConsolidationData.getNodeTemplateId());
+              serviceTemplate, entityConsolidationData.getNodeTemplateId());
       NodeTemplate abstractNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-          abstractNodeTemplateId);
+              abstractNodeTemplateId);
       if (abstractNodeTemplate == null) {
         //The abstract node template is not found from id in the context
         return;
@@ -1190,18 +1190,18 @@ public class UnifiedCompositionService {
       for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
         String oldRequirementId = requirementAssignmentData.getRequirementId();
         RequirementAssignment abstractRequirementAssignment = (RequirementAssignment)
-            getClonedObject(requirementAssignmentData.getRequirementAssignment(),
-                RequirementAssignment.class);
+                getClonedObject(requirementAssignmentData.getRequirementAssignment(),
+                        RequirementAssignment.class);
         String newRequirementId = oldRequirementId + "_" + newNodeTemplateId;
         //Check if the requirement is not already present in the list of requirements of the
         // abstract node template
         if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(abstractNodeTemplate,
-            newRequirementId, abstractRequirementAssignment)) {
+                newRequirementId, abstractRequirementAssignment)) {
           DataModelUtil.addRequirementAssignment(abstractNodeTemplate, newRequirementId,
-              abstractRequirementAssignment);
+                  abstractRequirementAssignment);
           //Update the volume relationship template if required
           updateVolumeRelationshipTemplate(serviceTemplate, abstractRequirementAssignment
-              .getRelationship(), context);
+                  .getRelationship(), context);
         }
       }
     }
@@ -1209,10 +1209,10 @@ public class UnifiedCompositionService {
 
   private void updateRequirementInNestedNodeTemplate(ServiceTemplate serviceTemplate,
                                                      EntityConsolidationData
-                                                         entityConsolidationData,
+                                                             entityConsolidationData,
                                                      String newNodeTemplateId,
                                                      Map<String, List<RequirementAssignmentData>>
-                                                         requirementAssignmentDataMap) {
+                                                             requirementAssignmentDataMap) {
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
 
     if (MapUtils.isEmpty(requirementAssignmentDataMap)) {
@@ -1220,7 +1220,7 @@ public class UnifiedCompositionService {
     }
 
     for (Map.Entry<String, List<RequirementAssignmentData>> entry : requirementAssignmentDataMap
-        .entrySet()) {
+            .entrySet()) {
       String nodeTemplateId = entityConsolidationData.getNodeTemplateId();
       NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate, nodeTemplateId);
       if (nodeTemplate == null) {
@@ -1231,29 +1231,29 @@ public class UnifiedCompositionService {
       for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
         String oldRequirementId = requirementAssignmentData.getRequirementId();
         RequirementAssignment clonedRequirementAssignment = (RequirementAssignment)
-            getClonedObject(requirementAssignmentData.getRequirementAssignment(),
-                RequirementAssignment.class);
+                getClonedObject(requirementAssignmentData.getRequirementAssignment(),
+                        RequirementAssignment.class);
         String newRequirementId = oldRequirementId + "_" + newNodeTemplateId;
         //Check if the requirement is not already present in the list of requirements of the
         // node template
         if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(nodeTemplate,
-            newRequirementId, clonedRequirementAssignment)) {
+                newRequirementId, clonedRequirementAssignment)) {
           DataModelUtil.removeRequirementAssignment(nodeTemplate, oldRequirementId,
-              requirementAssignmentData.getRequirementAssignment());
+                  requirementAssignmentData.getRequirementAssignment());
           DataModelUtil.addRequirementAssignment(nodeTemplate, newRequirementId,
-              clonedRequirementAssignment);
+                  clonedRequirementAssignment);
         }
       }
     }
   }
 
   private void updNodeGetAttrInConnectivity(
-      ServiceTemplate serviceTemplate,
-      EntityConsolidationData entityConsolidationData,
-      String oldNodeTemplateId, String newNodeTemplateId,
-      TranslationContext context,
-      Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType,
-      boolean isNested) {
+          ServiceTemplate serviceTemplate,
+          EntityConsolidationData entityConsolidationData,
+          String oldNodeTemplateId, String newNodeTemplateId,
+          TranslationContext context,
+          Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType,
+          boolean isNested) {
     Map<String, List<GetAttrFuncData>> nodesGetAttrIn = entityConsolidationData.getNodesGetAttrIn();
     if (MapUtils.isEmpty(nodesGetAttrIn)) {
       return;
@@ -1262,25 +1262,25 @@ public class UnifiedCompositionService {
     for (Map.Entry<String, List<GetAttrFuncData>> nodesGetAttrInEntry : nodesGetAttrIn.entrySet()) {
       String sourceNodeTemplateId = nodesGetAttrInEntry.getKey();
       NodeTemplate sourceNodeTemplate =
-          DataModelUtil.getNodeTemplate(serviceTemplate, sourceNodeTemplateId);
+              DataModelUtil.getNodeTemplate(serviceTemplate, sourceNodeTemplateId);
       if (!isNested && consolidationNodeTemplateIdAndType.keySet().contains(sourceNodeTemplateId)) {
         continue;
       }
       List<GetAttrFuncData> getAttrFuncDataList = nodesGetAttrInEntry.getValue();
       for (GetAttrFuncData getAttrFuncData : getAttrFuncDataList) {
         Object propertyValue =
-            DataModelUtil.getPropertyValue(sourceNodeTemplate, getAttrFuncData.getFieldName());
+                DataModelUtil.getPropertyValue(sourceNodeTemplate, getAttrFuncData.getFieldName());
         String newAttrName = null;
         String newGetAttrAbstractNodeTemplateId = newNodeTemplateId;
         if (!isNested) {
           newGetAttrAbstractNodeTemplateId =
-              context.getUnifiedAbstractNodeTemplateId(serviceTemplate, oldNodeTemplateId);
+                  context.getUnifiedAbstractNodeTemplateId(serviceTemplate, oldNodeTemplateId);
           newAttrName = getNewSubstitutionOutputParameterId(newNodeTemplateId, getAttrFuncData
-              .getAttributeName());
+                  .getAttributeName());
         }
         List<List<Object>> getAttrFuncValueList = extractGetAttrFunction(propertyValue);
         updateGetAttrValue(oldNodeTemplateId, getAttrFuncData, newGetAttrAbstractNodeTemplateId,
-            newAttrName, getAttrFuncValueList, isNested);
+                newAttrName, getAttrFuncValueList, isNested);
       }
     }
   }
@@ -1290,7 +1290,7 @@ public class UnifiedCompositionService {
                                   List<List<Object>> getAttrFuncValueList, boolean isNested) {
     for (List<Object> getAttrFuncValue : getAttrFuncValueList) {
       if (oldNodeTemplateId.equals(getAttrFuncValue.get(0))
-          && getAttrFuncData.getAttributeName().equals(getAttrFuncValue.get(1))) {
+              && getAttrFuncData.getAttributeName().equals(getAttrFuncValue.get(1))) {
         getAttrFuncValue.set(0, newNodeTemplateId);
         if (!isNested) {
           getAttrFuncValue.set(1, newAttrName);
@@ -1316,26 +1316,26 @@ public class UnifiedCompositionService {
                                                    TranslationContext context,
                                                    boolean isNested) {
     List<GetAttrFuncData> outputParametersGetAttrIn =
-        entityConsolidationData.getOutputParametersGetAttrIn();
+            entityConsolidationData.getOutputParametersGetAttrIn();
     if (CollectionUtils.isEmpty(outputParametersGetAttrIn)) {
       return;
     }
     for (GetAttrFuncData getAttrFuncData : outputParametersGetAttrIn) {
       Object outputParamValue =
-          DataModelUtil.getOuputParameter(serviceTemplate, getAttrFuncData.getFieldName())
-              .getValue();
+              DataModelUtil.getOuputParameter(serviceTemplate, getAttrFuncData.getFieldName())
+                      .getValue();
       String newAttrName = null;
       String newGetAttrAbstractNodeTemplateId = newNodeTemplateId;
       if (!isNested) {
         newGetAttrAbstractNodeTemplateId =
-            context.getUnifiedAbstractNodeTemplateId(serviceTemplate, oldNodeTemplateId);
+                context.getUnifiedAbstractNodeTemplateId(serviceTemplate, oldNodeTemplateId);
         newAttrName = getNewSubstitutionOutputParameterId(newNodeTemplateId, getAttrFuncData
-            .getAttributeName());
+                .getAttributeName());
       }
       List<List<Object>> getAttrFuncValueList = extractGetAttrFunction(outputParamValue);
       updateGetAttrValue(oldNodeTemplateId, getAttrFuncData, newGetAttrAbstractNodeTemplateId,
-          newAttrName,
-          getAttrFuncValueList, isNested);
+              newAttrName,
+              getAttrFuncValueList, isNested);
     }
 
   }
@@ -1347,7 +1347,7 @@ public class UnifiedCompositionService {
     if (valueObject instanceof Map) {
       if (((Map) valueObject).containsKey(ToscaFunctions.GET_ATTRIBUTE.getDisplayName())) {
         getAttrValueList.add(
-            (List<Object>) ((Map) valueObject).get(ToscaFunctions.GET_ATTRIBUTE.getDisplayName()));
+                (List<Object>) ((Map) valueObject).get(ToscaFunctions.GET_ATTRIBUTE.getDisplayName()));
       }
 
       for (Object key : ((Map) valueObject).keySet()) {
@@ -1389,33 +1389,33 @@ public class UnifiedCompositionService {
                                       String computeNodeType) {
 
     createOutputParametersForCompute(unifiedCompositionTo.getServiceTemplate(),
-        unifiedCompositionTo.getSubstitutionServiceTemplate(), unifiedCompositionTo.getUnifiedCompositionDataList(),
-        unifiedCompositionTo.getContext());
+            unifiedCompositionTo.getSubstitutionServiceTemplate(), unifiedCompositionTo.getUnifiedCompositionDataList(),
+            unifiedCompositionTo.getContext());
     createOutputParameterForPorts(unifiedCompositionTo.getSubstitutionServiceTemplate(),
-        unifiedCompositionTo.getUnifiedCompositionDataList(), computeNodeType, unifiedCompositionTo.getContext());
+            unifiedCompositionTo.getUnifiedCompositionDataList(), computeNodeType, unifiedCompositionTo.getContext());
     createOutputParameterForSubInterfaces(unifiedCompositionTo, computeNodeType);
   }
 
   private void createOutputParameterForPorts(
-      ServiceTemplate substitutionServiceTemplate,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      String connectedComputeNodeType,
-      TranslationContext context) {
+          ServiceTemplate substitutionServiceTemplate,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          String connectedComputeNodeType,
+          TranslationContext context) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       if (CollectionUtils.isEmpty(portTemplateConsolidationDataList)) {
         return;
       }
 
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         String newPortNodeTemplateId =
-            getNewPortNodeTemplateId(portTemplateConsolidationData.getNodeTemplateId(),
-                connectedComputeNodeType,
-                unifiedCompositionData.getComputeTemplateConsolidationData());
+                getNewPortNodeTemplateId(portTemplateConsolidationData.getNodeTemplateId(),
+                        connectedComputeNodeType,
+                        unifiedCompositionData.getComputeTemplateConsolidationData());
         addOutputParameters(portTemplateConsolidationData, newPortNodeTemplateId,
-            substitutionServiceTemplate, unifiedCompositionDataList, context);
+                substitutionServiceTemplate, unifiedCompositionDataList, context);
       }
     }
   }
@@ -1424,39 +1424,39 @@ public class UnifiedCompositionService {
                                                      String connectedComputeNodeType) {
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionTo.getUnifiedCompositionDataList()) {
       List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+              getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
       if (CollectionUtils.isEmpty(subInterfaceTemplateConsolidationDataList)) {
         return;
       }
 
       for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-          subInterfaceTemplateConsolidationDataList) {
+              subInterfaceTemplateConsolidationDataList) {
         String newSubInterfaceNodeTemplateId = getNewSubInterfaceNodeTemplateId(unifiedCompositionTo
-                .getServiceTemplate(), connectedComputeNodeType, unifiedCompositionData
-                .getComputeTemplateConsolidationData(), subInterfaceTemplateConsolidationData,
-            unifiedCompositionTo.getContext());
+                        .getServiceTemplate(), connectedComputeNodeType, unifiedCompositionData
+                        .getComputeTemplateConsolidationData(), subInterfaceTemplateConsolidationData,
+                unifiedCompositionTo.getContext());
         addOutputParameters(subInterfaceTemplateConsolidationData, newSubInterfaceNodeTemplateId,
-            unifiedCompositionTo.getSubstitutionServiceTemplate(), unifiedCompositionTo.getUnifiedCompositionDataList(),
-            unifiedCompositionTo.getContext());
+                unifiedCompositionTo.getSubstitutionServiceTemplate(), unifiedCompositionTo.getUnifiedCompositionDataList(),
+                unifiedCompositionTo.getContext());
       }
     }
   }
 
   private void createOutputParametersForCompute(
-      ServiceTemplate serviceTemplate,
-      ServiceTemplate substitutionServiceTemplate,
-      List<UnifiedCompositionData>
-          unifiedCompositionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          ServiceTemplate substitutionServiceTemplate,
+          List<UnifiedCompositionData>
+                  unifiedCompositionDataList,
+          TranslationContext context) {
     List<EntityConsolidationData> computeConsolidationDataList =
-        getComputeConsolidationDataList(unifiedCompositionDataList);
+            getComputeConsolidationDataList(unifiedCompositionDataList);
 
     for (EntityConsolidationData computeTemplateConsolidationData : computeConsolidationDataList) {
       String newComputeNodeTemplateId =
-          getNewComputeNodeTemplateId(serviceTemplate,
-              computeTemplateConsolidationData.getNodeTemplateId());
+              getNewComputeNodeTemplateId(serviceTemplate,
+                      computeTemplateConsolidationData.getNodeTemplateId());
       addOutputParameters(computeTemplateConsolidationData, newComputeNodeTemplateId,
-           substitutionServiceTemplate, unifiedCompositionDataList, context);
+              substitutionServiceTemplate, unifiedCompositionDataList, context);
     }
   }
 
@@ -1466,10 +1466,10 @@ public class UnifiedCompositionService {
                                    List<UnifiedCompositionData> unifiedCompositionDataList,
                                    TranslationContext context) {
     handleNodesGetAttrIn(entityConsolidationData, newNodeTemplateId, substitutionServiceTemplate,
-        unifiedCompositionDataList, context);
+            unifiedCompositionDataList, context);
 
     handleOutputParamGetAttrIn(entityConsolidationData, newNodeTemplateId,
-        substitutionServiceTemplate, context);
+            substitutionServiceTemplate, context);
   }
 
   private void handleOutputParamGetAttrIn(EntityConsolidationData entityConsolidationData,
@@ -1477,11 +1477,11 @@ public class UnifiedCompositionService {
                                           ServiceTemplate substitutionServiceTemplate,
                                           TranslationContext context) {
     List<GetAttrFuncData> outputParametersGetAttrIn =
-        entityConsolidationData.getOutputParametersGetAttrIn();
+            entityConsolidationData.getOutputParametersGetAttrIn();
     if (!CollectionUtils.isEmpty(outputParametersGetAttrIn)) {
       for (GetAttrFuncData getAttrFuncData : outputParametersGetAttrIn) {
         createAndAddOutputParameter(newNodeTemplateId,
-            substitutionServiceTemplate, getAttrFuncData, context);
+                substitutionServiceTemplate, getAttrFuncData, context);
       }
     }
   }
@@ -1496,14 +1496,14 @@ public class UnifiedCompositionService {
       return;
     }
     Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType =
-        getAllConsolidationNodeTemplateIdAndType(unifiedCompositionDataList);
+            getAllConsolidationNodeTemplateIdAndType(unifiedCompositionDataList);
     for (Map.Entry<String, List<GetAttrFuncData>> getAttrInEntry : getAttrIn.entrySet()) {
       String sourceNodeTemplateId = getAttrInEntry.getKey();
       if (!consolidationNodeTemplateIdAndType.keySet().contains(sourceNodeTemplateId)) {
         List<GetAttrFuncData> getAttrFuncDataList = getAttrInEntry.getValue();
         for (GetAttrFuncData getAttrFuncData : getAttrFuncDataList) {
           createAndAddOutputParameter(newNodeTemplateId,
-              substitutionServiceTemplate, getAttrFuncData, context);
+                  substitutionServiceTemplate, getAttrFuncData, context);
         }
       }
     }
@@ -1521,10 +1521,10 @@ public class UnifiedCompositionService {
     ParameterDefinition outputParameter = new ParameterDefinition();
     outputParameter.setValue(parameterValue);
     setOutputParameterType(substitutionServiceTemplate, newNodeTemplateId, getAttrFuncData
-        .getAttributeName(), outputParameter, context);
+            .getAttributeName(), outputParameter, context);
     DataModelUtil.addOutputParameterToTopologyTemplate(substitutionServiceTemplate,
-        getNewSubstitutionOutputParameterId(newNodeTemplateId, getAttrFuncData.getAttributeName()),
-        outputParameter);
+            getNewSubstitutionOutputParameterId(newNodeTemplateId, getAttrFuncData.getAttributeName()),
+            outputParameter);
   }
 
   private void setOutputParameterType(ServiceTemplate substitutionServiceTemplate,
@@ -1533,16 +1533,16 @@ public class UnifiedCompositionService {
                                       ParameterDefinition outputParameter,
                                       TranslationContext context) {
     NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(substitutionServiceTemplate,
-        newNodeTemplateId);
+            newNodeTemplateId);
     //Get the type and entry schema of the output parameter from the node type flat hierarchy
     String outputParameterType;
     EntrySchema outputParameterEntrySchema;
     NodeType nodeTypeWithFlatHierarchy =
-        HeatToToscaUtil.getNodeTypeWithFlatHierarchy(nodeTemplate.getType(),
-            substitutionServiceTemplate, context);
+            HeatToToscaUtil.getNodeTypeWithFlatHierarchy(nodeTemplate.getType(),
+                    substitutionServiceTemplate, context);
     //Check if the parameter is present in the attributes
     AttributeDefinition outputParameterDefinitionFromAttributes =
-        getOutputParameterDefinitionFromAttributes(nodeTypeWithFlatHierarchy, outputParameterName);
+            getOutputParameterDefinitionFromAttributes(nodeTypeWithFlatHierarchy, outputParameterName);
     if (Objects.nonNull(outputParameterDefinitionFromAttributes)) {
       outputParameterType = outputParameterDefinitionFromAttributes.getType();
       outputParameterEntrySchema = outputParameterDefinitionFromAttributes.getEntry_schema();
@@ -1551,7 +1551,7 @@ public class UnifiedCompositionService {
       // properties and global types are in sync. Ideally the parameter should be found in either
       // properties or attributes collected from global types
       PropertyDefinition outputParameterDefinitionFromProperties =
-          nodeTypeWithFlatHierarchy.getProperties().get(outputParameterName);
+              nodeTypeWithFlatHierarchy.getProperties().get(outputParameterName);
       outputParameterType = outputParameterDefinitionFromProperties.getType();
       outputParameterEntrySchema = outputParameterDefinitionFromProperties.getEntry_schema();
     }
@@ -1561,13 +1561,13 @@ public class UnifiedCompositionService {
   }
 
   private AttributeDefinition getOutputParameterDefinitionFromAttributes(NodeType
-                                                                             nodeTypeWithFlatHierarchy,
+                                                                                 nodeTypeWithFlatHierarchy,
                                                                          String outputParameterName) {
     AttributeDefinition outputParameterDefinition = null;
     if ((Objects.nonNull(nodeTypeWithFlatHierarchy.getAttributes()))
-        && (nodeTypeWithFlatHierarchy.getAttributes().containsKey(outputParameterName))) {
+            && (nodeTypeWithFlatHierarchy.getAttributes().containsKey(outputParameterName))) {
       outputParameterDefinition =
-          nodeTypeWithFlatHierarchy.getAttributes().get(outputParameterName);
+              nodeTypeWithFlatHierarchy.getAttributes().get(outputParameterName);
     }
     return outputParameterDefinition;
   }
@@ -1578,36 +1578,36 @@ public class UnifiedCompositionService {
   }
 
   private void addUnifiedSubstitionData(TranslationContext context, ServiceTemplate
-      serviceTemplate, List<UnifiedCompositionData> unifiedCompositionDataList, String
-                                            substituteNodeTemplateId) {
+          serviceTemplate, List<UnifiedCompositionData> unifiedCompositionDataList, String
+                                                substituteNodeTemplateId) {
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       //Add compute node template mapping information
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
-          unifiedCompositionData.getComputeTemplateConsolidationData();
+              unifiedCompositionData.getComputeTemplateConsolidationData();
       String computeNodeTemplateId = computeTemplateConsolidationData.getNodeTemplateId();
       context.addUnifiedSubstitutionData(serviceTemplateFileName, computeNodeTemplateId,
-          substituteNodeTemplateId);
+              substituteNodeTemplateId);
       //Add Port template mapping information
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
 
       if (CollectionUtils.isNotEmpty(portTemplateConsolidationDataList)) {
         for (PortTemplateConsolidationData portTemplateConsolidationData :
-            portTemplateConsolidationDataList) {
+                portTemplateConsolidationDataList) {
           String oldPortNodeTemplateId = portTemplateConsolidationData.getNodeTemplateId();
           context.addUnifiedSubstitutionData(serviceTemplateFileName, oldPortNodeTemplateId,
-              substituteNodeTemplateId);
+                  substituteNodeTemplateId);
         }
       }
       //Add Sub-interface template mapping information
       List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+              getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
       if (CollectionUtils.isNotEmpty(subInterfaceTemplateConsolidationDataList)) {
         for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-            subInterfaceTemplateConsolidationDataList) {
+                subInterfaceTemplateConsolidationDataList) {
           context.addUnifiedSubstitutionData(serviceTemplateFileName,
-              subInterfaceTemplateConsolidationData.getNodeTemplateId(), substituteNodeTemplateId);
+                  subInterfaceTemplateConsolidationData.getNodeTemplateId(), substituteNodeTemplateId);
         }
       }
     }
@@ -1622,16 +1622,16 @@ public class UnifiedCompositionService {
     Map<String, Object> indexPropertyValue = new HashMap<>();
     Map<String, Object> properties = nodeTemplate.getProperties();
     indexPropertyValue.put(ToscaFunctions.GET_PROPERTY.getDisplayName(),
-        indexValueGetPropertyValue);
+            indexValueGetPropertyValue);
     properties.put(ToscaConstants.INDEX_VALUE_PROPERTY_NAME,
-        indexPropertyValue);
+            indexPropertyValue);
     nodeTemplate.setProperties(properties);
   }
 
   private String getSubstituteNodeTemplateId(String nodeTypeId,
                                              Integer index) {
     String nodeTemplateId = ABSTRACT_NODE_TEMPLATE_ID_PREFIX + DataModelUtil
-        .getNamespaceSuffix(nodeTypeId);
+            .getNamespaceSuffix(nodeTypeId);
     if (Objects.nonNull(index)) {
       nodeTemplateId = nodeTemplateId + "_" + index.toString();
     }
@@ -1651,15 +1651,15 @@ public class UnifiedCompositionService {
                                           Integer index,
                                           TranslationContext context) {
     String computeNodeTemplateId =
-        unifiedCompositionData.getComputeTemplateConsolidationData().getNodeTemplateId();
+            unifiedCompositionData.getComputeTemplateConsolidationData().getNodeTemplateId();
     NodeTemplate computeNodeTemplate =
-        DataModelUtil.getNodeTemplate(serviceTemplate, computeNodeTemplateId);
+            DataModelUtil.getNodeTemplate(serviceTemplate, computeNodeTemplateId);
     String computeType = computeNodeTemplate.getType();
     String globalSTName = ToscaUtil.getServiceTemplateFileName(Constants
-        .GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
+            .GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
 
     String nodeTypeId = ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX
-        + DataModelUtil.getNamespaceSuffix(getIndexedGlobalNodeTypeId(computeType, context));
+            + DataModelUtil.getNamespaceSuffix(getIndexedGlobalNodeTypeId(computeType, context));
 
     context.updateUsedTimesForNestedComputeNodeType(globalSTName, computeType);
 
@@ -1674,12 +1674,12 @@ public class UnifiedCompositionService {
                                                     TranslationContext context,
                                                     String substitutionNodeTypeId) {
     NodeType substitutionNodeType = new ToscaAnalyzerServiceImpl()
-        .createInitSubstitutionNodeType(substitutionServiceTemplate,
-            ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE);
+            .createInitSubstitutionNodeType(substitutionServiceTemplate,
+                    ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE);
     ServiceTemplate globalSubstitutionServiceTemplate =
-        HeatToToscaUtil.fetchGlobalSubstitutionServiceTemplate(serviceTemplate, context);
+            HeatToToscaUtil.fetchGlobalSubstitutionServiceTemplate(serviceTemplate, context);
     DataModelUtil.addNodeType(globalSubstitutionServiceTemplate, substitutionNodeTypeId,
-        substitutionNodeType);
+            substitutionNodeType);
 
     return substitutionNodeType;
   }
@@ -1692,10 +1692,10 @@ public class UnifiedCompositionService {
 
     if (unifiedCompositionDataList.size() > 1) {
       handleConsolidationPorts(serviceTemplate, substitutionServiceTemplate,
-          unifiedCompositionDataList, connectedComputeNodeType, context);
+              unifiedCompositionDataList, connectedComputeNodeType, context);
     } else {
       handleSinglePorts(serviceTemplate, substitutionServiceTemplate, connectedComputeNodeType,
-          unifiedCompositionDataList, context);
+              unifiedCompositionDataList, context);
     }
   }
 
@@ -1706,18 +1706,18 @@ public class UnifiedCompositionService {
                                  TranslationContext context) {
     UnifiedCompositionData unifiedCompositionData = unifiedCompositionDataList.get(0);
     List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-        getPortTemplateConsolidationDataList(unifiedCompositionData);
+            getPortTemplateConsolidationDataList(unifiedCompositionData);
     if (CollectionUtils.isEmpty(portTemplateConsolidationDataList)) {
       return;
     }
     for (PortTemplateConsolidationData portTemplateConsolidationData :
-        portTemplateConsolidationDataList) {
+            portTemplateConsolidationDataList) {
       List<EntityConsolidationData> portConsolidationDataList = new ArrayList<>();
       portConsolidationDataList.add(portTemplateConsolidationData);
       handlePortNodeTemplate(serviceTemplate, substitutionServiceTemplate,
-          portConsolidationDataList, connectedComputeNodeType,
-          unifiedCompositionData.getComputeTemplateConsolidationData(),
-          unifiedCompositionDataList, context);
+              portConsolidationDataList, connectedComputeNodeType,
+              unifiedCompositionData.getComputeTemplateConsolidationData(),
+              unifiedCompositionDataList, context);
     }
   }
 
@@ -1727,62 +1727,62 @@ public class UnifiedCompositionService {
                                         String connectedComputeNodeType,
                                         TranslationContext context) {
     Collection<ComputeTemplateConsolidationData> computeConsolidationDataList =
-        (Collection) getComputeConsolidationDataList(unifiedCompositionDataList);
+            (Collection) getComputeConsolidationDataList(unifiedCompositionDataList);
 
     Map<String, List<String>> portIdsPerPortType = UnifiedCompositionUtil
-        .collectAllPortsFromEachTypesFromComputes(computeConsolidationDataList);
+            .collectAllPortsFromEachTypesFromComputes(computeConsolidationDataList);
 
     for (Map.Entry<String, List<String>> portIdsPerPortTypeEntry : portIdsPerPortType.entrySet()) {
       List<EntityConsolidationData> portTemplateConsolidationDataList =
-          getPortConsolidationDataList(portIdsPerPortTypeEntry.getValue(),
-              unifiedCompositionDataList);
+              getPortConsolidationDataList(portIdsPerPortTypeEntry.getValue(),
+                      unifiedCompositionDataList);
       if (CollectionUtils.isEmpty(portTemplateConsolidationDataList)) {
         continue;
       }
 
       handlePortNodeTemplate(serviceTemplate, substitutionServiceTemplate,
-          portTemplateConsolidationDataList, connectedComputeNodeType,
-          unifiedCompositionDataList.get(0).getComputeTemplateConsolidationData(),
-          unifiedCompositionDataList, context);
+              portTemplateConsolidationDataList, connectedComputeNodeType,
+              unifiedCompositionDataList.get(0).getComputeTemplateConsolidationData(),
+              unifiedCompositionDataList, context);
     }
   }
 
   private void handlePortNodeTemplate(
-      ServiceTemplate serviceTemplate,
-      ServiceTemplate substitutionServiceTemplate,
-      List<EntityConsolidationData> portTemplateConsolidationDataList,
-      String connectedComputeNodeType,
-      ComputeTemplateConsolidationData computeTemplateConsolidationData,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          ServiceTemplate substitutionServiceTemplate,
+          List<EntityConsolidationData> portTemplateConsolidationDataList,
+          String connectedComputeNodeType,
+          ComputeTemplateConsolidationData computeTemplateConsolidationData,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          TranslationContext context) {
     EntityConsolidationData portTemplateConsolidationData =
-        portTemplateConsolidationDataList.get(0);
+            portTemplateConsolidationDataList.get(0);
     NodeTemplate newPortNodeTemplate = getNodeTemplate(
-        portTemplateConsolidationData.getNodeTemplateId(), serviceTemplate, context).clone();
+            portTemplateConsolidationData.getNodeTemplateId(), serviceTemplate, context).clone();
 
     removeConnectivityOut(portTemplateConsolidationData, newPortNodeTemplate);
     handleProperties(serviceTemplate, newPortNodeTemplate,
-        substitutionServiceTemplate, UnifiedCompositionEntity.PORT,
-        portTemplateConsolidationDataList, computeTemplateConsolidationData,
-        unifiedCompositionDataList, context);
+            substitutionServiceTemplate, UnifiedCompositionEntity.PORT,
+            portTemplateConsolidationDataList, computeTemplateConsolidationData,
+            unifiedCompositionDataList, context);
 
     String newPortNodeTemplateId =
-        getNewPortNodeTemplateId(portTemplateConsolidationData
-                .getNodeTemplateId(), connectedComputeNodeType,
-            computeTemplateConsolidationData);
+            getNewPortNodeTemplateId(portTemplateConsolidationData
+                            .getNodeTemplateId(), connectedComputeNodeType,
+                    computeTemplateConsolidationData);
     //Update requirements for relationships between the consolidation entities
     handleConsolidationEntitiesRequirementConnectivity(newPortNodeTemplate,
-        serviceTemplate, context);
+            serviceTemplate, context);
     DataModelUtil.addNodeTemplate(substitutionServiceTemplate, newPortNodeTemplateId,
-        newPortNodeTemplate);
+            newPortNodeTemplate);
 
     //Add the node template mapping in the context for handling requirement updation
     for (EntityConsolidationData data : portTemplateConsolidationDataList) {
       String newPortTemplateId = getNewPortNodeTemplateId(data.getNodeTemplateId(),
-          connectedComputeNodeType, computeTemplateConsolidationData);
+              connectedComputeNodeType, computeTemplateConsolidationData);
       context.addSubstitutionServiceTemplateUnifiedSubstitutionData(ToscaUtil
-              .getServiceTemplateFileName(serviceTemplate), data.getNodeTemplateId(),
-          newPortTemplateId);
+                      .getServiceTemplateFileName(serviceTemplate), data.getNodeTemplateId(),
+              newPortTemplateId);
     }
 
   }
@@ -1798,9 +1798,9 @@ public class UnifiedCompositionService {
   private void handleSingleSubInterfaces(UnifiedCompositionTo unifiedCompositionTo) {
     UnifiedCompositionData unifiedCompositionData = unifiedCompositionTo.getUnifiedCompositionDataList().get(0);
     List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+            getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
     for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-        subInterfaceTemplateConsolidationDataList) {
+            subInterfaceTemplateConsolidationDataList) {
       List<SubInterfaceTemplateConsolidationData> subInterfaceDataList = new ArrayList<>();
       subInterfaceDataList.add(subInterfaceTemplateConsolidationData);
       createSubInterfaceSubstitutionNodeTemplate(unifiedCompositionTo, subInterfaceDataList);
@@ -1809,30 +1809,30 @@ public class UnifiedCompositionService {
 
   private void handleConsolidationSubInterfaces(UnifiedCompositionTo unifiedCompositionTo) {
     Collection<ComputeTemplateConsolidationData> computeConsolidationDataList =
-        (Collection) getComputeConsolidationDataList(unifiedCompositionTo.getUnifiedCompositionDataList());
+            (Collection) getComputeConsolidationDataList(unifiedCompositionTo.getUnifiedCompositionDataList());
 
     Map<String, List<String>> portIdsPerPortType = UnifiedCompositionUtil
-        .collectAllPortsFromEachTypesFromComputes(computeConsolidationDataList);
+            .collectAllPortsFromEachTypesFromComputes(computeConsolidationDataList);
 
     for (Map.Entry<String, List<String>> portIdsPerPortTypeEntry : portIdsPerPortType.entrySet()) {
       List<EntityConsolidationData> portEntityConsolidationDataList =
-          getPortConsolidationDataList(portIdsPerPortTypeEntry.getValue(),
-              unifiedCompositionTo.getUnifiedCompositionDataList());
+              getPortConsolidationDataList(portIdsPerPortTypeEntry.getValue(),
+                      unifiedCompositionTo.getUnifiedCompositionDataList());
       if (CollectionUtils.isEmpty(portEntityConsolidationDataList)) {
         continue;
       }
 
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-      portEntityConsolidationDataList.stream()
-          .map(data -> (PortTemplateConsolidationData) data)
-          .collect(Collectors.toList());
+              portEntityConsolidationDataList.stream()
+                      .map(data -> (PortTemplateConsolidationData) data)
+                      .collect(Collectors.toList());
 
       ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfacesByType = UnifiedCompositionUtil
-          .collectAllSubInterfacesOfEachTypesFromPorts(portTemplateConsolidationDataList);
+              .collectAllSubInterfacesOfEachTypesFromPorts(portTemplateConsolidationDataList);
       Set<String> subInterfaceTypes = subInterfacesByType.keySet();
       for (String subInterfaceType: subInterfaceTypes) {
         List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-            subInterfacesByType.get(subInterfaceType);
+                subInterfacesByType.get(subInterfaceType);
         createSubInterfaceSubstitutionNodeTemplate(unifiedCompositionTo, subInterfaceTemplateConsolidationDataList);
       }
     }
@@ -1840,45 +1840,45 @@ public class UnifiedCompositionService {
 
   private void createSubInterfaceSubstitutionNodeTemplate(UnifiedCompositionTo unifiedCompositionTo,
                                                           List<SubInterfaceTemplateConsolidationData>
-                                                              subInterfaceTemplateConsolidationDataList) {
+                                                                  subInterfaceTemplateConsolidationDataList) {
     SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData =
-        subInterfaceTemplateConsolidationDataList.get(0);
+            subInterfaceTemplateConsolidationDataList.get(0);
     PortTemplateConsolidationData portTemplateConsolidationData =
-        getSubInterfacePortTemplateConsolidationData(unifiedCompositionTo.getServiceTemplate(),
-            subInterfaceTemplateConsolidationData, unifiedCompositionTo.getContext());
+            getSubInterfacePortTemplateConsolidationData(unifiedCompositionTo.getServiceTemplate(),
+                    subInterfaceTemplateConsolidationData, unifiedCompositionTo.getContext());
 
     if (Objects.isNull(portTemplateConsolidationData)) {
       return;
     }
 
     String originalSubInterfaceNodeTemplateId = subInterfaceTemplateConsolidationDataList.get(0)
-        .getNodeTemplateId();
+            .getNodeTemplateId();
     NodeTemplate originalSubInterfaceNodeTemplate =
-        DataModelUtil.getNodeTemplate(unifiedCompositionTo.getServiceTemplate(), originalSubInterfaceNodeTemplateId);
+            DataModelUtil.getNodeTemplate(unifiedCompositionTo.getServiceTemplate(), originalSubInterfaceNodeTemplateId);
     if (Objects.isNull(originalSubInterfaceNodeTemplate)) {
       return;
     }
     NodeTemplate newSubInterfaceNodeTemplate = originalSubInterfaceNodeTemplate.clone();
     ComputeTemplateConsolidationData connectedComputeConsolidationData =
-        getConnectedComputeConsolidationData(unifiedCompositionTo.getUnifiedCompositionDataList(),
-            portTemplateConsolidationData.getNodeTemplateId());
+            getConnectedComputeConsolidationData(unifiedCompositionTo.getUnifiedCompositionDataList(),
+                    portTemplateConsolidationData.getNodeTemplateId());
     if (Objects.nonNull(connectedComputeConsolidationData)) {
       NodeTemplate connectedComputeNodeTemplate = DataModelUtil.getNodeTemplate(unifiedCompositionTo
               .getServiceTemplate(), connectedComputeConsolidationData.getNodeTemplateId());
       String newSubInterfaceNodeTemplateId = getNewSubInterfaceNodeTemplateId(unifiedCompositionTo
-              .getServiceTemplate(), connectedComputeNodeTemplate.getType(), connectedComputeConsolidationData,
-          subInterfaceTemplateConsolidationData, unifiedCompositionTo.getContext());
+                      .getServiceTemplate(), connectedComputeNodeTemplate.getType(), connectedComputeConsolidationData,
+              subInterfaceTemplateConsolidationData, unifiedCompositionTo.getContext());
       DataModelUtil.addNodeTemplate(unifiedCompositionTo.getSubstitutionServiceTemplate(),
-          newSubInterfaceNodeTemplateId, newSubInterfaceNodeTemplate);
+              newSubInterfaceNodeTemplateId, newSubInterfaceNodeTemplate);
       List<EntityConsolidationData> entityConsolidationDataList =
-          new ArrayList<>(subInterfaceTemplateConsolidationDataList);
+              new ArrayList<>(subInterfaceTemplateConsolidationDataList);
       //Remove all the existing properties as we are going to create new based on the
       // naming convention for the substitution
       handleSubInterfaceProperties(unifiedCompositionTo, newSubInterfaceNodeTemplate, entityConsolidationDataList,
-          portTemplateConsolidationData);
+              portTemplateConsolidationData);
       //Update requirements for relationships between the consolidation entities
       handleConsolidationEntitiesRequirementConnectivity(newSubInterfaceNodeTemplate, unifiedCompositionTo
-          .getServiceTemplate(), unifiedCompositionTo.getContext());
+              .getServiceTemplate(), unifiedCompositionTo.getContext());
       removeConnectivityOut(subInterfaceTemplateConsolidationData,newSubInterfaceNodeTemplate);
     }
   }
@@ -1886,9 +1886,9 @@ public class UnifiedCompositionService {
   private void handleSubInterfaceProperties(UnifiedCompositionTo unifiedCompositionTo,
                                             NodeTemplate newSubInterfaceNodeTemplate,
                                             List<EntityConsolidationData>
-                                                entityConsolidationDataList,
+                                                    entityConsolidationDataList,
                                             PortTemplateConsolidationData
-                                                portTemplateConsolidationData) {
+                                                    portTemplateConsolidationData) {
     UnifiedCompositionData unifiedCompositionData = unifiedCompositionTo.getUnifiedCompositionDataList().get(0);
     ServiceTemplate serviceTemplate = unifiedCompositionTo.getServiceTemplate();
     TranslationContext context = unifiedCompositionTo.getContext();
@@ -1896,42 +1896,42 @@ public class UnifiedCompositionService {
     for (EntityConsolidationData entityConsolidationData : entityConsolidationDataList) {
       String nodeTemplateId = entityConsolidationData.getNodeTemplateId();
       Optional<List<String>> indexVarProperties =
-          context.getIndexVarProperties(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-              nodeTemplateId);
+              context.getIndexVarProperties(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
+                      nodeTemplateId);
       Map<String, Object> properties =
-          DataModelUtil.getNodeTemplateProperties(serviceTemplate, nodeTemplateId);
+              DataModelUtil.getNodeTemplateProperties(serviceTemplate, nodeTemplateId);
       if (MapUtils.isEmpty(properties)) {
         continue;
       }
 
       for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
         NodeType nodeTypeWithFlatHierarchy =
-            HeatToToscaUtil.getNodeTypeWithFlatHierarchy(newSubInterfaceNodeTemplate.getType(),
-                serviceTemplate, context);
+                HeatToToscaUtil.getNodeTypeWithFlatHierarchy(newSubInterfaceNodeTemplate.getType(),
+                        serviceTemplate, context);
         PropertyDefinition propertyDefinition =
-            nodeTypeWithFlatHierarchy.getProperties().get(propertyEntry.getKey());
+                nodeTypeWithFlatHierarchy.getProperties().get(propertyEntry.getKey());
         String propertyType = propertyDefinition.getType();
         //Handle service_template_filter property for subinterface as we should not create inputs
         // for this property
         if (propertyEntry.getKey().equals(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)) {
           handleSubInterfaceServiceTemplateFilterProperty(newSubInterfaceNodeTemplate,
-              propertyEntry.getKey(), propertyEntry.getValue(), serviceTemplate,
-              unifiedCompositionTo.getSubstitutionServiceTemplate());
+                  propertyEntry.getKey(), propertyEntry.getValue(), serviceTemplate,
+                  unifiedCompositionTo.getSubstitutionServiceTemplate());
         } else if (indexVarProperties.isPresent()
-            && indexVarProperties.get().contains(propertyEntry.getKey())) {
+                && indexVarProperties.get().contains(propertyEntry.getKey())) {
           //Handle index property
           handleIndexVarProperty(propertyEntry.getKey(), propertyEntry.getValue(),
-              newSubInterfaceNodeTemplate);
+                  newSubInterfaceNodeTemplate);
         } else {
           Optional<String> parameterId =
-              updateProperty(serviceTemplate, nodeTemplateId, newSubInterfaceNodeTemplate,
-                  propertyEntry, UnifiedCompositionEntity.SUB_INTERFACE, unifiedCompositionData
-                      .getComputeTemplateConsolidationData(), portTemplateConsolidationData,
-                  unifiedCompositionTo.getUnifiedCompositionDataList(), context);
+                  updateProperty(serviceTemplate, nodeTemplateId, newSubInterfaceNodeTemplate,
+                          propertyEntry, UnifiedCompositionEntity.SUB_INTERFACE, unifiedCompositionData
+                                  .getComputeTemplateConsolidationData(), portTemplateConsolidationData,
+                          unifiedCompositionTo.getUnifiedCompositionDataList(), context);
           parameterId.ifPresent(
-              parameterIdValue -> addPropertyInputParameter(propertyType,
-                  unifiedCompositionTo.getSubstitutionServiceTemplate(),
-                  propertyDefinition.getEntry_schema(), parameterIdValue));
+                  parameterIdValue -> addPropertyInputParameter(propertyType,
+                          unifiedCompositionTo.getSubstitutionServiceTemplate(),
+                          propertyDefinition.getEntry_schema(), parameterIdValue));
         }
       }
     }
@@ -1944,8 +1944,8 @@ public class UnifiedCompositionService {
 
     if (Objects.isNull(nodeTemplate)) {
       nodeTemplate = context
-          .getCleanedNodeTemplate(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-              nodeTemplateId);
+              .getCleanedNodeTemplate(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
+                      nodeTemplateId);
 
     }
     return nodeTemplate;
@@ -1957,24 +1957,24 @@ public class UnifiedCompositionService {
                                List<UnifiedCompositionData> unifiedCompositionDataList,
                                TranslationContext context) {
     ComputeTemplateConsolidationData computeTemplateConsolidationData =
-        unifiedCompositionDataList.get(0).getComputeTemplateConsolidationData();
+            unifiedCompositionDataList.get(0).getComputeTemplateConsolidationData();
     handleComputeNodeTemplate(serviceTemplate, substitutionServiceTemplate,
-        unifiedCompositionDataList, context);
+            unifiedCompositionDataList, context);
     return handleComputeNodeType(serviceTemplate, substitutionServiceTemplate,
-        computeTemplateConsolidationData);
+            computeTemplateConsolidationData);
   }
 
   private String handleComputeNodeType(
-      ServiceTemplate serviceTemplate,
-      ServiceTemplate substitutionServiceTemplate,
-      ComputeTemplateConsolidationData computeTemplateConsolidationData) {
+          ServiceTemplate serviceTemplate,
+          ServiceTemplate substitutionServiceTemplate,
+          ComputeTemplateConsolidationData computeTemplateConsolidationData) {
     NodeTemplate computeNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-        computeTemplateConsolidationData.getNodeTemplateId());
+            computeTemplateConsolidationData.getNodeTemplateId());
     String computeNodeTypeId = computeNodeTemplate.getType();
     NodeType computeNodeType =
-        DataModelUtil.getNodeType(serviceTemplate, computeNodeTypeId);
+            DataModelUtil.getNodeType(serviceTemplate, computeNodeTypeId);
     DataModelUtil
-        .addNodeType(substitutionServiceTemplate, computeNodeTypeId, computeNodeType);
+            .addNodeType(substitutionServiceTemplate, computeNodeTypeId, computeNodeType);
 
     return computeNodeTypeId;
   }
@@ -1984,45 +1984,45 @@ public class UnifiedCompositionService {
                                          List<UnifiedCompositionData> unifiedCompositionDataList,
                                          TranslationContext context) {
     ComputeTemplateConsolidationData computeTemplateConsolidationData =
-        unifiedCompositionDataList.get(0).getComputeTemplateConsolidationData();
+            unifiedCompositionDataList.get(0).getComputeTemplateConsolidationData();
     NodeTemplate newComputeNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-        computeTemplateConsolidationData.getNodeTemplateId()).clone();
+            computeTemplateConsolidationData.getNodeTemplateId()).clone();
 
     removeConnectivityOut(computeTemplateConsolidationData, newComputeNodeTemplate);
     removeVolumeConnectivity(computeTemplateConsolidationData, newComputeNodeTemplate);
 
     List<EntityConsolidationData> computeConsolidationDataList =
-        getComputeConsolidationDataList(unifiedCompositionDataList);
+            getComputeConsolidationDataList(unifiedCompositionDataList);
 
     handleProperties(serviceTemplate, newComputeNodeTemplate,
-        substitutionServiceTemplate, COMPUTE,
-        computeConsolidationDataList, computeTemplateConsolidationData, unifiedCompositionDataList,
-        context);
+            substitutionServiceTemplate, COMPUTE,
+            computeConsolidationDataList, computeTemplateConsolidationData, unifiedCompositionDataList,
+            context);
 
     String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
-        computeTemplateConsolidationData.getNodeTemplateId());
+            computeTemplateConsolidationData.getNodeTemplateId());
     //Update requirements for relationships between the consolidation entities
     handleConsolidationEntitiesRequirementConnectivity(
-        newComputeNodeTemplate,
-        serviceTemplate, context);
+            newComputeNodeTemplate,
+            serviceTemplate, context);
     DataModelUtil
-        .addNodeTemplate(substitutionServiceTemplate,
-            newComputeNodeTemplateId, newComputeNodeTemplate);
+            .addNodeTemplate(substitutionServiceTemplate,
+                    newComputeNodeTemplateId, newComputeNodeTemplate);
     //Add the node template mapping in the context for handling requirement updation
     for (EntityConsolidationData data : computeConsolidationDataList) {
       String newComputeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
-          computeTemplateConsolidationData.getNodeTemplateId());
+              computeTemplateConsolidationData.getNodeTemplateId());
       context.addSubstitutionServiceTemplateUnifiedSubstitutionData(ToscaUtil
-              .getServiceTemplateFileName(serviceTemplate), data.getNodeTemplateId(),
-          newComputeTemplateId);
+                      .getServiceTemplateFileName(serviceTemplate), data.getNodeTemplateId(),
+              newComputeTemplateId);
     }
   }
 
   private List<EntityConsolidationData> getComputeConsolidationDataList(
-      List<UnifiedCompositionData> unifiedCompositionDataList) {
+          List<UnifiedCompositionData> unifiedCompositionDataList) {
     return unifiedCompositionDataList.stream()
-        .map(UnifiedCompositionData::getComputeTemplateConsolidationData)
-        .collect(Collectors.toList());
+            .map(UnifiedCompositionData::getComputeTemplateConsolidationData)
+            .collect(Collectors.toList());
   }
 
 
@@ -2036,12 +2036,12 @@ public class UnifiedCompositionService {
                                 TranslationContext context) {
     nodeTemplate.setProperties(new HashedMap());
     handleNodeTemplateProperties(serviceTemplate, nodeTemplate, substitutionServiceTemplate,
-        unifiedCompositionEntity, entityConsolidationDataList, computeTemplateConsolidationData,
-        unifiedCompositionDataList, context);
+            unifiedCompositionEntity, entityConsolidationDataList, computeTemplateConsolidationData,
+            unifiedCompositionDataList, context);
     //Add enrich properties from openecomp node type as input to global and substitution ST
     handleNodeTypeProperties(substitutionServiceTemplate,
-        entityConsolidationDataList, nodeTemplate, unifiedCompositionEntity,
-        computeTemplateConsolidationData, context);
+            entityConsolidationDataList, nodeTemplate, unifiedCompositionEntity,
+            computeTemplateConsolidationData, context);
 
   }
 
@@ -2050,57 +2050,57 @@ public class UnifiedCompositionService {
                                             ServiceTemplate substitutionServiceTemplate,
                                             UnifiedCompositionEntity unifiedCompositionEntity,
                                             List<EntityConsolidationData>
-                                                entityConsolidationDataList,
+                                                    entityConsolidationDataList,
                                             ComputeTemplateConsolidationData
-                                                computeTemplateConsolidationData,
+                                                    computeTemplateConsolidationData,
                                             List<UnifiedCompositionData> unifiedCompositionDataList,
                                             TranslationContext context) {
     List<String> propertiesWithIdenticalVal =
-        consolidationService.getPropertiesWithIdenticalVal(unifiedCompositionEntity);
+            consolidationService.getPropertiesWithIdenticalVal(unifiedCompositionEntity);
 
     for (EntityConsolidationData entityConsolidationData : entityConsolidationDataList) {
       String nodeTemplateId = entityConsolidationData.getNodeTemplateId();
       Optional<List<String>> indexVarProperties =
-          context.getIndexVarProperties(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-              nodeTemplateId);
+              context.getIndexVarProperties(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
+                      nodeTemplateId);
       Map<String, Object> properties =
-          DataModelUtil.getNodeTemplateProperties(serviceTemplate, nodeTemplateId);
+              DataModelUtil.getNodeTemplateProperties(serviceTemplate, nodeTemplateId);
       if (MapUtils.isEmpty(properties)) {
         continue;
       }
 
       for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
         NodeType nodeTypeWithFlatHierarchy =
-            HeatToToscaUtil.getNodeTypeWithFlatHierarchy(nodeTemplate.getType(), serviceTemplate,
-                context);
+                HeatToToscaUtil.getNodeTypeWithFlatHierarchy(nodeTemplate.getType(), serviceTemplate,
+                        context);
         PropertyDefinition propertyDefinition =
-            nodeTypeWithFlatHierarchy.getProperties().get(propertyEntry.getKey());
+                nodeTypeWithFlatHierarchy.getProperties().get(propertyEntry.getKey());
         String propertyType = propertyDefinition.getType();
 
         if (propertiesWithIdenticalVal.contains(propertyEntry.getKey())) {
           String parameterId =
-              updateIdenticalProperty(nodeTemplateId, propertyEntry.getKey(), nodeTemplate,
-                  unifiedCompositionEntity, unifiedCompositionDataList);
+                  updateIdenticalProperty(nodeTemplateId, propertyEntry.getKey(), nodeTemplate,
+                          unifiedCompositionEntity, unifiedCompositionDataList);
 
           addInputParameter(
-              parameterId, propertyType,
-              propertyType.equals(PropertyType.LIST.getDisplayName()) ? propertyDefinition
-                  .getEntry_schema() : null,
-              substitutionServiceTemplate);
+                  parameterId, propertyType,
+                  propertyType.equals(PropertyType.LIST.getDisplayName()) ? propertyDefinition
+                          .getEntry_schema() : null,
+                  substitutionServiceTemplate);
         } else if (indexVarProperties.isPresent()
-            && indexVarProperties.get().contains(propertyEntry.getKey())) {
+                && indexVarProperties.get().contains(propertyEntry.getKey())) {
           //Handle index property
           handleIndexVarProperty(propertyEntry.getKey(), propertyEntry.getValue(), nodeTemplate);
         } else {
           Optional<String> parameterId =
-              updateProperty(serviceTemplate, nodeTemplateId, nodeTemplate, propertyEntry,
-                  unifiedCompositionEntity, computeTemplateConsolidationData, null,
-                  unifiedCompositionDataList,
-                  context);
+                  updateProperty(serviceTemplate, nodeTemplateId, nodeTemplate, propertyEntry,
+                          unifiedCompositionEntity, computeTemplateConsolidationData, null,
+                          unifiedCompositionDataList,
+                          context);
           parameterId.ifPresent(
-              parameterIdValue -> addPropertyInputParameter(propertyType,
-                  substitutionServiceTemplate,
-                  propertyDefinition.getEntry_schema(), parameterIdValue));
+                  parameterIdValue -> addPropertyInputParameter(propertyType,
+                          substitutionServiceTemplate,
+                          propertyDefinition.getEntry_schema(), parameterIdValue));
         }
       }
     }
@@ -2113,19 +2113,19 @@ public class UnifiedCompositionService {
   }
 
   private void handleSubInterfaceServiceTemplateFilterProperty(NodeTemplate nodeTemplate,
-                                                   String propertyKey,
-                                                   Object propertyValue,
-                                                   ServiceTemplate serviceTemplate,
-                                                   ServiceTemplate substitutionServiceTemplate) {
+                                                               String propertyKey,
+                                                               Object propertyValue,
+                                                               ServiceTemplate serviceTemplate,
+                                                               ServiceTemplate substitutionServiceTemplate) {
     //Retain service_template_filter (Can be present in a sub-interface resource-def)
     nodeTemplate.getProperties().put(propertyKey, propertyValue);
     Object serviceTemplateFilterProperty =
-        nodeTemplate.getProperties().get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+            nodeTemplate.getProperties().get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
     if (!(serviceTemplateFilterProperty instanceof Map)) {
       return;
     }
     Map<String, Object> serviceTemplatePropertyMap = (Map<String, Object>)
-        serviceTemplateFilterProperty;
+            serviceTemplateFilterProperty;
     Object countPropertyVal = serviceTemplatePropertyMap.get(ToscaConstants.COUNT_PROPERTY_NAME);
     //Check if the value of the count property is a tosca function
     if (!isPropertyContainsToscaFunction(countPropertyVal)) {
@@ -2136,15 +2136,15 @@ public class UnifiedCompositionService {
     // template
     if (countPropertyValMap.keySet().contains(ToscaFunctions.GET_INPUT.getDisplayName())) {
       String countPropertyInputName = countPropertyValMap.get(ToscaFunctions.GET_INPUT
-          .getDisplayName()).toString();
+              .getDisplayName()).toString();
       //Get the input parameter definition from top level where the resource group was present
       ParameterDefinitionExt parameterDefinition = (ParameterDefinitionExt)
-          DataModelUtil.getInputParameters(serviceTemplate).get(countPropertyInputName);
+              DataModelUtil.getInputParameters(serviceTemplate).get(countPropertyInputName);
       if (Objects.nonNull(parameterDefinition)) {
         //Remove annotations if any for the nested service template
         parameterDefinition.setAnnotations(null);
         DataModelUtil.getInputParameters(substitutionServiceTemplate)
-            .put(countPropertyInputName, parameterDefinition);
+                .put(countPropertyInputName, parameterDefinition);
         if (Objects.nonNull(countPropertyInputName)) {
           //Remove the input from top level
           DataModelUtil.getInputParameters(serviceTemplate).remove(countPropertyInputName);
@@ -2158,7 +2158,7 @@ public class UnifiedCompositionService {
                                         NodeTemplate nodeTemplate,
                                         UnifiedCompositionEntity compositionEntity,
                                         ComputeTemplateConsolidationData
-                                            computeTemplateConsolidationData,
+                                                computeTemplateConsolidationData,
                                         TranslationContext context) {
     ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     Optional<NodeType> enrichNodeType;
@@ -2166,8 +2166,8 @@ public class UnifiedCompositionService {
 
     if (compositionEntity.equals(UnifiedCompositionEntity.PORT)) {
       enrichNodeType =
-          toscaAnalyzerService.fetchNodeType(ToscaNodeType.NETWORK_PORT,
-              context.getGlobalServiceTemplates().values());
+              toscaAnalyzerService.fetchNodeType(ToscaNodeType.NETWORK_PORT,
+                      context.getGlobalServiceTemplates().values());
       enrichProperties = TranslationContext.getEnrichPortResourceProperties();
       if (!enrichNodeType.isPresent() || Objects.isNull(enrichProperties)) {
         return;
@@ -2181,9 +2181,9 @@ public class UnifiedCompositionService {
     if (Objects.nonNull(enrichNodeTypeProperties)) {
       for (String enrichPropertyName : enrichProperties) {
         handleEntityConsolidationDataNodeTypeProperties(
-            enrichPropertyName, substitutionServiceTemplate,
-            enrichNodeType.get(), nodeTemplate, compositionEntity, computeTemplateConsolidationData,
-            entityConsolidationDataList, nodeTemplateProperties, context);
+                enrichPropertyName, substitutionServiceTemplate,
+                enrichNodeType.get(), nodeTemplate, compositionEntity, computeTemplateConsolidationData,
+                entityConsolidationDataList, nodeTemplateProperties, context);
       }
     }
   }
@@ -2204,14 +2204,14 @@ public class UnifiedCompositionService {
       String nodeTemplateId = entityConsolidationData.getNodeTemplateId();
 
       String inputParamId =
-          getParameterId(nodeTemplateId, nodeTemplate, enrichPropertyName,
-              compositionEntity, computeTemplateConsolidationData, null);
+              getParameterId(nodeTemplateId, nodeTemplate, enrichPropertyName,
+                      compositionEntity, computeTemplateConsolidationData, null);
       Map<String, String> propertyValMap = new HashMap<>();
 
       context
-          .addNewPropertyIdToNodeTemplate(
-              ToscaUtil.getServiceTemplateFileName(substitutionServiceTemplate),
-              inputParamId, nodeTemplateProperties.get(enrichPropertyName));
+              .addNewPropertyIdToNodeTemplate(
+                      ToscaUtil.getServiceTemplateFileName(substitutionServiceTemplate),
+                      inputParamId, nodeTemplateProperties.get(enrichPropertyName));
 
       if (nodeTemplateProperties.containsKey(enrichPropertyName)) {
         handleExistingEnrichedProperty(enrichPropertyName, nodeTemplateProperties, inputParamId);
@@ -2220,11 +2220,11 @@ public class UnifiedCompositionService {
         nodeTemplate.getProperties().put(enrichPropertyName, propertyValMap);
       }
       propertyType =
-          enrichNodeType.getProperties().get(enrichPropertyName).getType();
+              enrichNodeType.getProperties().get(enrichPropertyName).getType();
 
       addPropertyInputParameter(propertyType, substitutionServiceTemplate, enrichNodeType
-              .getProperties().get(enrichPropertyName).getEntry_schema(),
-          inputParamId);
+                      .getProperties().get(enrichPropertyName).getEntry_schema(),
+              inputParamId);
 
     }
   }
@@ -2261,23 +2261,23 @@ public class UnifiedCompositionService {
     }
     if (isParameterBelongsToEnrichedPortProperties(parameterId)) {
       addInputParameter(parameterId,
-          propertyType,
-          propertyType.equals(PropertyType.LIST.getDisplayName()) ? entrySchema : null,
-          substitutionServiceTemplate);
+              propertyType,
+              propertyType.equals(PropertyType.LIST.getDisplayName()) ? entrySchema : null,
+              substitutionServiceTemplate);
     } else if (isPropertySimpleType(propertyType)) {
       addInputParameter(parameterId, PropertyType.LIST.getDisplayName(),
-          DataModelUtil.createEntrySchema(propertyType.toLowerCase(), null, null),
-          substitutionServiceTemplate);
+              DataModelUtil.createEntrySchema(propertyType.toLowerCase(), null, null),
+              substitutionServiceTemplate);
 
     } else if (propertyType.equals(PropertyTypeExt.JSON.getDisplayName()) ||
-        (Objects.nonNull(entrySchema) && isPropertySimpleType(entrySchema.getType()))) {
+            (Objects.nonNull(entrySchema) && isPropertySimpleType(entrySchema.getType()))) {
       addInputParameter(parameterId, PropertyType.LIST.getDisplayName(),
-          DataModelUtil.createEntrySchema(PropertyTypeExt.JSON.getDisplayName(), null, null),
-          substitutionServiceTemplate);
+              DataModelUtil.createEntrySchema(PropertyTypeExt.JSON.getDisplayName(), null, null),
+              substitutionServiceTemplate);
     } else {
       addInputParameter(parameterId, analyzeParameterType(propertyType), DataModelUtil
-              .createEntrySchema(analyzeEntrySchemaType(propertyType, entrySchema), null, null),
-          substitutionServiceTemplate);
+                      .createEntrySchema(analyzeEntrySchemaType(propertyType, entrySchema), null, null),
+              substitutionServiceTemplate);
     }
   }
 
@@ -2295,24 +2295,24 @@ public class UnifiedCompositionService {
 
   private boolean isPropertySimpleType(String propertyType) {
     return !Objects.isNull(propertyType)
-        && (PropertyType.getSimplePropertyTypes().contains(propertyType.toLowerCase()));
+            && (PropertyType.getSimplePropertyTypes().contains(propertyType.toLowerCase()));
   }
 
   private String analyzeParameterType(String propertyType) {
     return propertyType.equalsIgnoreCase(PropertyType.LIST.getDisplayName()) ? PropertyType.LIST
-        .getDisplayName() : propertyType;
+            .getDisplayName() : propertyType;
   }
 
   private String analyzeEntrySchemaType(String propertyType, EntrySchema entrySchema) {
     return propertyType.equalsIgnoreCase(PropertyType.LIST.getDisplayName()) && entrySchema != null ?
-        entrySchema.getType() : null;
+            entrySchema.getType() : null;
   }
 
   private void handleConsolidationEntitiesRequirementConnectivity(NodeTemplate nodeTemplate,
                                                                   ServiceTemplate serviceTemplate,
                                                                   TranslationContext context) {
     List<Map<String, RequirementAssignment>> nodeTemplateRequirements = DataModelUtil
-        .getNodeTemplateRequirementList(nodeTemplate);
+            .getNodeTemplateRequirementList(nodeTemplate);
     if (CollectionUtils.isEmpty(nodeTemplateRequirements)) {
       return;
     }
@@ -2322,8 +2322,8 @@ public class UnifiedCompositionService {
         RequirementAssignment requirementAssignment = entry.getValue();
         String requirementNode = requirementAssignment.getNode();
         String unifiedNodeTemplateId =
-            context.getUnifiedSubstitutionNodeTemplateId(serviceTemplate,
-                requirementNode);
+                context.getUnifiedSubstitutionNodeTemplateId(serviceTemplate,
+                        requirementNode);
         if (unifiedNodeTemplateId != null) {
           //Update the node id in the requirement
           requirementAssignment.setNode(unifiedNodeTemplateId);
@@ -2343,14 +2343,14 @@ public class UnifiedCompositionService {
                                                 String relationshipId,
                                                 TranslationContext context) {
     Map<String, RelationshipTemplate> relationshipTemplates = DataModelUtil
-        .getRelationshipTemplates(serviceTemplate);
+            .getRelationshipTemplates(serviceTemplate);
     if (relationshipTemplates != null) {
       RelationshipTemplate relationshipTemplate = relationshipTemplates.get(relationshipId);
       if (relationshipTemplate != null) {
         String relationshipTemplateType = relationshipTemplate.getType();
         if (relationshipTemplateType.equals(ToscaRelationshipType.CINDER_VOLUME_ATTACHES_TO)) {
           handleCinderVolumeAttachmentRelationshipTemplate(serviceTemplate,
-              relationshipTemplate, context);
+                  relationshipTemplate, context);
         }
       }
     }
@@ -2358,14 +2358,14 @@ public class UnifiedCompositionService {
 
 
   private void handleCinderVolumeAttachmentRelationshipTemplate(ServiceTemplate
-                                                                    substitutionServiceTemplate,
+                                                                        substitutionServiceTemplate,
                                                                 RelationshipTemplate
-                                                                    relationshipTemplate,
+                                                                        relationshipTemplate,
                                                                 TranslationContext context) {
     Map<String, Object> properties = relationshipTemplate.getProperties();
     properties.computeIfPresent(HeatConstants.INSTANCE_UUID_PROPERTY_NAME, (key, value) ->
-        context.getUnifiedAbstractNodeTemplateId(substitutionServiceTemplate,
-            (String) value));
+            context.getUnifiedAbstractNodeTemplateId(substitutionServiceTemplate,
+                    (String) value));
   }
 
   private String updateIdenticalProperty(String nodeTemplateId, String propertyId,
@@ -2379,14 +2379,14 @@ public class UnifiedCompositionService {
     switch (unifiedCompositionEntity) {
       case COMPUTE:
         inputParamId = COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX + propertyId
-            + COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX;
+                + COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX;
         propertyVal.put(ToscaFunctions.GET_INPUT.getDisplayName(), inputParamId);
         nodeTemplate.getProperties().put(propertyId, propertyVal);
         break;
       case PORT:
         String portType = ConsolidationDataUtil.getPortType(nodeTemplateId);
         ComputeTemplateConsolidationData computeTemplateConsolidationData =
-            getConnectedComputeConsolidationData(unifiedCompositionDataList, nodeTemplateId);
+                getConnectedComputeConsolidationData(unifiedCompositionDataList, nodeTemplateId);
         inputParamId = getInputParamIdForPort(nodeTemplateId, propertyId, portType, computeTemplateConsolidationData);
         propertyVal.put(ToscaFunctions.GET_INPUT.getDisplayName(), inputParamId);
         nodeTemplate.getProperties().put(propertyId, propertyVal);
@@ -2401,15 +2401,15 @@ public class UnifiedCompositionService {
                                         ComputeTemplateConsolidationData computeTemplateConsolidationData) {
     String inputParamId;
     if (Objects.isNull(computeTemplateConsolidationData)
-        || computeTemplateConsolidationData.getPorts().get(portType).size() > 1) {
+            || computeTemplateConsolidationData.getPorts().get(portType).size() > 1) {
       inputParamId =
-          UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_" + nodeTemplateId + "_" +
-              propertyId;
+              UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_" + nodeTemplateId + "_" +
+                      propertyId;
 
     } else {
       inputParamId =
-          UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_" + portType + "_"
-              + propertyId;
+              UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_" + portType + "_"
+                      + propertyId;
     }
     return inputParamId;
   }
@@ -2420,35 +2420,35 @@ public class UnifiedCompositionService {
                                  ServiceTemplate serviceTemplate) {
 
     ParameterDefinition parameterDefinition = DataModelUtil.createParameterDefinition
-        (parameterType, null, null,
-            true, null, null,
-            entrySchema, null);
+            (parameterType, null, null,
+                    true, null, null,
+                    entrySchema, null);
 
 
     DataModelUtil
-        .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
+            .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
   }
 
   // Return the input parameter Id which is used in the new property value if there is one
   private Optional<String> updateProperty(
-      ServiceTemplate serviceTemplate,
-      String nodeTemplateId, NodeTemplate nodeTemplate,
-      Map.Entry<String, Object> propertyEntry,
-      UnifiedCompositionEntity compositionEntity,
-      ComputeTemplateConsolidationData computeTemplateConsolidationData,
-      PortTemplateConsolidationData portTemplateConsolidationData,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          String nodeTemplateId, NodeTemplate nodeTemplate,
+          Map.Entry<String, Object> propertyEntry,
+          UnifiedCompositionEntity compositionEntity,
+          ComputeTemplateConsolidationData computeTemplateConsolidationData,
+          PortTemplateConsolidationData portTemplateConsolidationData,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          TranslationContext context) {
 
     if (handleGetAttrFromConsolidationNodes(serviceTemplate, nodeTemplateId, nodeTemplate,
-        propertyEntry, unifiedCompositionDataList, context)) {
+            propertyEntry, unifiedCompositionDataList, context)) {
       return Optional.empty();
     }
 
 
     String inputParamId =
-        getParameterId(nodeTemplateId, nodeTemplate, propertyEntry.getKey(), compositionEntity,
-            computeTemplateConsolidationData, portTemplateConsolidationData);
+            getParameterId(nodeTemplateId, nodeTemplate, propertyEntry.getKey(), compositionEntity,
+                    computeTemplateConsolidationData, portTemplateConsolidationData);
     Map<String, List<String>> propertyVal = getPropertyValueInputParam(inputParamId);
     nodeTemplate.getProperties().put(propertyEntry.getKey(), propertyVal);
     return Optional.of(inputParamId);
@@ -2464,17 +2464,17 @@ public class UnifiedCompositionService {
   }
 
   private boolean handleGetAttrFromConsolidationNodes(
-      ServiceTemplate serviceTemplate,
-      String nodeTemplateId, NodeTemplate nodeTemplate,
-      Map.Entry<String, Object> propertyEntry,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          String nodeTemplateId, NodeTemplate nodeTemplate,
+          Map.Entry<String, Object> propertyEntry,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          TranslationContext context) {
     Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType =
-        getAllConsolidationNodeTemplateIdAndType(unifiedCompositionDataList);
+            getAllConsolidationNodeTemplateIdAndType(unifiedCompositionDataList);
 
     Set<String> consolidationNodeTemplateIds = consolidationNodeTemplateIdAndType.keySet();
     Map<String, String> entityIdToType = ConsolidationService.getConsolidationEntityIdToType(
-        serviceTemplate, context.getConsolidationData());
+            serviceTemplate, context.getConsolidationData());
     boolean includeGetAttrFromConsolidationNodes = false;
     boolean includeGetAttrFromOutsideNodes = false;
     boolean isGetAttrFromConsolidationIsFromSameType = false;
@@ -2491,9 +2491,9 @@ public class UnifiedCompositionService {
       }
     }
     if ((includeGetAttrFromConsolidationNodes && includeGetAttrFromOutsideNodes)
-        ||
-        (includeGetAttrFromConsolidationNodes && isIncludeToscaFunc(propertyEntry.getValue(),
-            ToscaFunctions.GET_INPUT))) {
+            ||
+            (includeGetAttrFromConsolidationNodes && isIncludeToscaFunc(propertyEntry.getValue(),
+                    ToscaFunctions.GET_INPUT))) {
       //This case is currently not supported - this property will be ignored
       return true;
     } else if (includeGetAttrFromConsolidationNodes && !isGetAttrFromConsolidationIsFromSameType) {
@@ -2503,7 +2503,7 @@ public class UnifiedCompositionService {
         String targetNodeTemplateId = (String) getAttrFunc.get(0);
         if (consolidationNodeTemplateIds.contains(targetNodeTemplateId)) {
           updatePropertyGetAttrFunc(serviceTemplate, unifiedCompositionDataList,
-              consolidationNodeTemplateIdAndType, targetNodeTemplateId, getAttrFunc, context);
+                  consolidationNodeTemplateIdAndType, targetNodeTemplateId, getAttrFunc, context);
         }
       }
       nodeTemplate.getProperties().put(propertyEntry.getKey(), clonedPropertyValue);
@@ -2517,25 +2517,25 @@ public class UnifiedCompositionService {
                                                     Map<String, String> nodeTemplateIdToType) {
 
     if (Objects.isNull(nodeTemplateIdToType.get(sourceNodeTemplateId))
-        || Objects.isNull(nodeTemplateIdToType.get(targetNodeTemplateId))) {
+            || Objects.isNull(nodeTemplateIdToType.get(targetNodeTemplateId))) {
       return false;
     }
 
     return nodeTemplateIdToType.get(sourceNodeTemplateId).equals(nodeTemplateIdToType
-        .get(targetNodeTemplateId));
+            .get(targetNodeTemplateId));
   }
 
   private void updatePropertyGetAttrFunc(
-      ServiceTemplate serviceTemplate,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType,
-      String targetNodeTemplateId,
-      List<Object> getAttrFunc, TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType,
+          String targetNodeTemplateId,
+          List<Object> getAttrFunc, TranslationContext context) {
     UnifiedCompositionEntity targetCompositionEntity =
-        consolidationNodeTemplateIdAndType.get(targetNodeTemplateId);
+            consolidationNodeTemplateIdAndType.get(targetNodeTemplateId);
     String targetNewNodeTemplateId =
-        getNewNodeTemplateId(serviceTemplate, unifiedCompositionDataList, targetNodeTemplateId,
-            targetCompositionEntity, context);
+            getNewNodeTemplateId(serviceTemplate, unifiedCompositionDataList, targetNodeTemplateId,
+                    targetCompositionEntity, context);
     getAttrFunc.set(0, targetNewNodeTemplateId);
   }
 
@@ -2547,9 +2547,9 @@ public class UnifiedCompositionService {
     String newNodeTemplateId = nodeTemplateId;
     String nodeTemplateIdGeneratorImpl = unifiedSubstitutionNodeTemplateIdGeneratorImplMap.get(compositionEntity);
     UnifiedSubstitutionNodeTemplateIdGenerator nodeTemplateIdGenerator =
-        CommonMethods.newInstance(nodeTemplateIdGeneratorImpl, UnifiedSubstitutionNodeTemplateIdGenerator.class);
+            CommonMethods.newInstance(nodeTemplateIdGeneratorImpl, UnifiedSubstitutionNodeTemplateIdGenerator.class);
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(serviceTemplate, null,
-        unifiedCompositionDataList, context);
+            unifiedCompositionDataList, context);
     Optional<String> generatedNodeTemplateId = nodeTemplateIdGenerator.generate(unifiedCompositionTo, nodeTemplateId);
     if (generatedNodeTemplateId.isPresent()) {
       newNodeTemplateId = generatedNodeTemplateId.get();
@@ -2564,13 +2564,13 @@ public class UnifiedCompositionService {
     ConsolidationData consolidationData = context.getConsolidationData();
 
     if (isIdIsOfExpectedType(origNodeTemplateId, UnifiedCompositionEntity.PORT,
-        serviceTemplateFileName,
-        context)) {
+            serviceTemplateFileName,
+            context)) {
       return handleIdOfPort(origNodeTemplateId, serviceTemplateFileName, consolidationData);
     } else if (isIdIsOfExpectedType(origNodeTemplateId, COMPUTE,
-        serviceTemplateFileName, context)) {
+            serviceTemplateFileName, context)) {
       NodeTemplate nodeTemplate =
-          getComputeNodeTemplate(origNodeTemplateId, serviceTemplate, context);
+              getComputeNodeTemplate(origNodeTemplateId, serviceTemplate, context);
       return getComputeTypeSuffix(nodeTemplate.getType());
     }
 
@@ -2590,34 +2590,34 @@ public class UnifiedCompositionService {
   private String getParameterId(String nodeTemplateId, NodeTemplate nodeTemplate, String propertyId,
                                 UnifiedCompositionEntity unifiedCompositionEntity,
                                 ComputeTemplateConsolidationData
-                                    computeTemplateConsolidationData,
+                                        computeTemplateConsolidationData,
                                 PortTemplateConsolidationData portTemplateConsolidationData) {
     String paramterId = propertyId;
     switch (unifiedCompositionEntity) {
       case COMPUTE:
         paramterId = COMPUTE.getDisplayName().toLowerCase() + "_"
-            + getComputeTypeSuffix(nodeTemplate.getType()) + "_" + propertyId;
+                + getComputeTypeSuffix(nodeTemplate.getType()) + "_" + propertyId;
         break;
       case PORT:
         String portType = ConsolidationDataUtil.getPortType(nodeTemplateId);
         if (Objects.isNull(computeTemplateConsolidationData)
-            || computeTemplateConsolidationData.getPorts().get(portType).size() > 1) {
+                || computeTemplateConsolidationData.getPorts().get(portType).size() > 1) {
           paramterId = UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_"
-              + nodeTemplateId + "_" + propertyId;
+                  + nodeTemplateId + "_" + propertyId;
         } else {
           paramterId = UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_" + portType + "_"
-              + propertyId;
+                  + propertyId;
         }
         break;
       case SUB_INTERFACE:
         String subInterfaceType = getSubInterfaceTypeSuffix(nodeTemplate.getType());
         if (Objects.isNull(portTemplateConsolidationData)
-            || isSubInterfaceNodeTemplateIdParameter(portTemplateConsolidationData, nodeTemplate)) {
+                || isSubInterfaceNodeTemplateIdParameter(portTemplateConsolidationData, nodeTemplate)) {
           paramterId = UnifiedCompositionEntity.SUB_INTERFACE.getDisplayName().toLowerCase() + "_"
-              + nodeTemplateId + "_" + propertyId;
+                  + nodeTemplateId + "_" + propertyId;
         } else {
           paramterId = UnifiedCompositionEntity.SUB_INTERFACE.getDisplayName().toLowerCase() + "_"
-              + subInterfaceType + "_" + propertyId;
+                  + subInterfaceType + "_" + propertyId;
         }
         break;
       default:
@@ -2629,9 +2629,9 @@ public class UnifiedCompositionService {
   private boolean isSubInterfaceNodeTemplateIdParameter(PortTemplateConsolidationData portTemplateConsolidationData,
                                                         NodeTemplate nodeTemplate) {
     List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        portTemplateConsolidationData.getSubInterfaceConsolidationData(nodeTemplate.getType());
+            portTemplateConsolidationData.getSubInterfaceConsolidationData(nodeTemplate.getType());
     return (Objects.nonNull(subInterfaceTemplateConsolidationDataList)
-        && subInterfaceTemplateConsolidationDataList.size() > 1) ;
+            && subInterfaceTemplateConsolidationDataList.size() > 1) ;
   }
 
   private void removeConnectivityOut(EntityConsolidationData entityConsolidationData,
@@ -2641,10 +2641,10 @@ public class UnifiedCompositionService {
     }
 
     for (List<RequirementAssignmentData> requirementAssignmentDataList : entityConsolidationData
-        .getNodesConnectedOut().values()) {
+            .getNodesConnectedOut().values()) {
       for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
         DataModelUtil.removeRequirementsAssignment(nodeTemplate.getRequirements(),
-            requirementAssignmentData.getRequirementId());
+                requirementAssignmentData.getRequirementId());
       }
       if (nodeTemplate.getRequirements().isEmpty()) {
         nodeTemplate.setRequirements(null);
@@ -2653,17 +2653,17 @@ public class UnifiedCompositionService {
   }
 
   private void removeVolumeConnectivity(
-      ComputeTemplateConsolidationData computeTemplateConsolidationData,
-      NodeTemplate computeNodeTemplate) {
+          ComputeTemplateConsolidationData computeTemplateConsolidationData,
+          NodeTemplate computeNodeTemplate) {
     if (MapUtils.isEmpty(computeTemplateConsolidationData.getVolumes())) {
       return;
     }
     Collection<List<RequirementAssignmentData>> volumeCollection =
-        computeTemplateConsolidationData.getVolumes().values();
+            computeTemplateConsolidationData.getVolumes().values();
     for (List<RequirementAssignmentData> requirementAssignmentDataList : volumeCollection) {
       for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
         DataModelUtil.removeRequirementsAssignment(computeNodeTemplate.getRequirements(),
-            requirementAssignmentData.getRequirementId());
+                requirementAssignmentData.getRequirementId());
       }
     }
     if (computeNodeTemplate.getRequirements().isEmpty()) {
@@ -2673,11 +2673,11 @@ public class UnifiedCompositionService {
 
   private void createIndexInputParameter(ServiceTemplate substitutionServiceTemplate) {
     ParameterDefinition indexParameterDefinition =
-        DataModelUtil.createParameterDefinition(PropertyType.INTEGER.getDisplayName(),
-            "Index value of this substitution service template runtime instance", null,
-            false, createIndexValueConstraint(), null, null, 0);
+            DataModelUtil.createParameterDefinition(PropertyType.INTEGER.getDisplayName(),
+                    "Index value of this substitution service template runtime instance", null,
+                    false, createIndexValueConstraint(), null, null, 0);
     DataModelUtil.addInputParameterToTopologyTemplate(substitutionServiceTemplate,
-        ToscaConstants.INDEX_VALUE_PROPERTY_NAME, indexParameterDefinition);
+            ToscaConstants.INDEX_VALUE_PROPERTY_NAME, indexParameterDefinition);
   }
 
 
@@ -2692,44 +2692,44 @@ public class UnifiedCompositionService {
 
   private Optional<UnifiedComposition> getUnifiedCompositionInstance(UnifiedCompositionMode mode) {
     String unifiedCompositionImplClassName =
-        unifiedCompositionImplMap.get(mode.name()).getImplementationClass();
+            unifiedCompositionImplMap.get(mode.name()).getImplementationClass();
     if (StringUtils.isEmpty(unifiedCompositionImplClassName)) {
       return Optional.empty();
     }
     return Optional
-        .of(CommonMethods.newInstance(unifiedCompositionImplClassName, UnifiedComposition.class));
+            .of(CommonMethods.newInstance(unifiedCompositionImplClassName, UnifiedComposition.class));
   }
 
   private Optional<Map<String, Object>> createAbstractSubstitutionProperties(
-      ServiceTemplate serviceTemplate,
-      Map<String, ParameterDefinition> substitutionTemplateInputs,
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      TranslationContext context) {
+          ServiceTemplate serviceTemplate,
+          Map<String, ParameterDefinition> substitutionTemplateInputs,
+          List<UnifiedCompositionData> unifiedCompositionDataList,
+          TranslationContext context) {
     Map<String, Object> abstractSubstituteProperties = new LinkedHashMap<>();
     //Since all the computes have the same type fetching the type from the first entry
     NodeTemplate firstComputeNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-        unifiedCompositionDataList.get(0)
-            .getComputeTemplateConsolidationData().getNodeTemplateId());
+            unifiedCompositionDataList.get(0)
+                    .getComputeTemplateConsolidationData().getNodeTemplateId());
     String computeType = getComputeTypeSuffix(firstComputeNodeTemplate.getType());
     for (Map.Entry<String, ParameterDefinition> input : substitutionTemplateInputs.entrySet()) {
       String substitutionTemplateInputName = input.getKey();
       ParameterDefinition inputParameterDefinition = input.getValue();
       String inputType = inputParameterDefinition.getType();
       UnifiedCompositionEntity inputUnifiedCompositionEntity =
-          getInputCompositionEntity(substitutionTemplateInputName);
+              getInputCompositionEntity(substitutionTemplateInputName);
 
       if (!inputType.equalsIgnoreCase(PropertyType.LIST.getDisplayName())) {
         if (isIdenticalValueProperty(
-            substitutionTemplateInputName, inputUnifiedCompositionEntity)) {
+                substitutionTemplateInputName, inputUnifiedCompositionEntity)) {
           //Handle identical value properties
           Optional<String> identicalValuePropertyName =
-              getIdenticalValuePropertyName(substitutionTemplateInputName,
-                  inputUnifiedCompositionEntity);
+                  getIdenticalValuePropertyName(substitutionTemplateInputName,
+                          inputUnifiedCompositionEntity);
 
           identicalValuePropertyName.ifPresent(propertyName -> updateIdenticalPropertyValue(propertyName,
-              substitutionTemplateInputName, inputUnifiedCompositionEntity,
-              unifiedCompositionDataList.get(0), serviceTemplate, abstractSubstituteProperties,
-              context));
+                  substitutionTemplateInputName, inputUnifiedCompositionEntity,
+                  unifiedCompositionDataList.get(0), serviceTemplate, abstractSubstituteProperties,
+                  context));
         }
         continue;
       }
@@ -2739,15 +2739,15 @@ public class UnifiedCompositionService {
       switch (inputUnifiedCompositionEntity) {
         case COMPUTE:
           createAbstractComputeProperties(unifiedCompositionDataList,
-              substitutionTemplateInputName, serviceTemplate, abstractPropertyValue);
+                  substitutionTemplateInputName, serviceTemplate, abstractPropertyValue);
           break;
         case PORT:
           createAbstractPortProperties(unifiedCompositionDataList, substitutionTemplateInputName,
-              computeType, serviceTemplate, abstractPropertyValue);
+                  computeType, serviceTemplate, abstractPropertyValue);
           break;
         case SUB_INTERFACE:
           createAbstractSubInterfaceProperties(unifiedCompositionDataList,
-              substitutionTemplateInputName, serviceTemplate, abstractPropertyValue);
+                  substitutionTemplateInputName, serviceTemplate, abstractPropertyValue);
           break;
         default:
           break;
@@ -2755,22 +2755,22 @@ public class UnifiedCompositionService {
       //Add the property only if it has at least one non-null value
       if (abstractPropertyValue.stream().anyMatch(Objects::nonNull)) {
         updateAbstractPropertyValue(substitutionTemplateInputName, inputParameterDefinition,
-            abstractPropertyValue, abstractSubstituteProperties);
+                abstractPropertyValue, abstractSubstituteProperties);
       }
     }
     return Optional.ofNullable(abstractSubstituteProperties);
   }
 
   private void createAbstractComputeProperties(List<UnifiedCompositionData>
-                                                   unifiedCompositionDataList,
+                                                       unifiedCompositionDataList,
                                                String substitutionTemplateInputName,
                                                ServiceTemplate serviceTemplate,
                                                List<Object> abstractPropertyValue) {
     for (UnifiedCompositionData compositionData : unifiedCompositionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
-          compositionData.getComputeTemplateConsolidationData();
+              compositionData.getComputeTemplateConsolidationData();
       Object propertyValue = getComputePropertyValue(substitutionTemplateInputName,
-          serviceTemplate, computeTemplateConsolidationData);
+              serviceTemplate, computeTemplateConsolidationData);
       if (!(propertyValue instanceof Optional)) {
         abstractPropertyValue.add(propertyValue);
       }
@@ -2778,25 +2778,25 @@ public class UnifiedCompositionService {
   }
 
   private void createAbstractPortProperties(List<UnifiedCompositionData>
-                                                unifiedCompositionDataList,
+                                                    unifiedCompositionDataList,
                                             String substitutionTemplateInputName,
                                             String computeType,
                                             ServiceTemplate serviceTemplate,
                                             List<Object> abstractPropertyValue) {
     for (UnifiedCompositionData compositionData : unifiedCompositionDataList) {
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(compositionData);
+              getPortTemplateConsolidationDataList(compositionData);
       //Get the input type for this input whether it is of type
       // port_<port_node_template_id>_<property_name> or port_<port_type>_<property_name>
       PropertyInputType portInputType = getPortInputType(substitutionTemplateInputName,
-          compositionData);
+              compositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         //Get the port property value
         String portNodeTemplateId = portTemplateConsolidationData.getNodeTemplateId();
         Object propertyValue = getPortPropertyValue(substitutionTemplateInputName,
-            computeType, portInputType, serviceTemplate,
-            portNodeTemplateId);
+                computeType, portInputType, serviceTemplate,
+                portNodeTemplateId);
         //If the value object is Optional.empty it implies that the property name was not
         // found in the input name
         if (!(propertyValue instanceof Optional)) {
@@ -2807,30 +2807,30 @@ public class UnifiedCompositionService {
   }
 
   private void createAbstractSubInterfaceProperties(List<UnifiedCompositionData>
-                                                        unifiedCompositionDataList,
+                                                            unifiedCompositionDataList,
                                                     String substitutionTemplateInputName,
                                                     ServiceTemplate serviceTemplate,
                                                     List<Object> abstractPropertyValue) {
     for (UnifiedCompositionData compositionData : unifiedCompositionDataList) {
       List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          getSubInterfaceTemplateConsolidationDataList(compositionData);
+              getSubInterfaceTemplateConsolidationDataList(compositionData);
       //Get the input type for this input whether it is of type
       // subInterface_<subinterface_node_template_id>_<property_name> or
       // subInterface_<subinterface_type>_<property_name>
       PropertyInputType subInterfaceInputType =
-          getSubInterfaceInputType(substitutionTemplateInputName, compositionData);
+              getSubInterfaceInputType(substitutionTemplateInputName, compositionData);
       for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-          subInterfaceTemplateConsolidationDataList) {
+              subInterfaceTemplateConsolidationDataList) {
         //Get the subInterface property value
         String subInterfaceNodeTemplateId = subInterfaceTemplateConsolidationData
-            .getNodeTemplateId();
+                .getNodeTemplateId();
         NodeTemplate subInterfaceNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-            subInterfaceNodeTemplateId);
+                subInterfaceNodeTemplateId);
         String subInterfaceType = getSubInterfaceTypeSuffix(subInterfaceNodeTemplate
-            .getType());
+                .getType());
         Object propertyValue = getSubInterfacePropertyValue(substitutionTemplateInputName,
-            subInterfaceType, subInterfaceInputType, serviceTemplate,
-            subInterfaceNodeTemplateId);
+                subInterfaceType, subInterfaceInputType, serviceTemplate,
+                subInterfaceNodeTemplateId);
         //If the value object is Optional.empty it implies that the property name was not
         // found in the input name
         if (!(propertyValue instanceof Optional)) {
@@ -2850,7 +2850,7 @@ public class UnifiedCompositionService {
       Object propertyValue = abstractPropertyValue.get(0);
       String entrySchemaType = parameterDefinition.getEntry_schema().getType();
       if (PropertyType.getSimplePropertyTypes().contains(entrySchemaType.toLowerCase())
-          || entrySchemaType.equals(PropertyTypeExt.JSON.getDisplayName())) {
+              || entrySchemaType.equals(PropertyTypeExt.JSON.getDisplayName())) {
         abstractSubstituteProperties.put(substitutionTemplateInputName, abstractPropertyValue);
       } else {
         abstractSubstituteProperties.put(substitutionTemplateInputName, propertyValue);
@@ -2866,12 +2866,12 @@ public class UnifiedCompositionService {
                                             Map<String, Object> abstractSubstituteProperties,
                                             TranslationContext context) {
     Optional<Object> identicalPropertyValueByType =
-        getIdenticalPropertyValueByType(identicalValuePropertyName, substitutionTemplateInputName,
-            entity, unifiedCompositionData, serviceTemplate, context);
+            getIdenticalPropertyValueByType(identicalValuePropertyName, substitutionTemplateInputName,
+                    entity, unifiedCompositionData, serviceTemplate, context);
 
     if (identicalPropertyValueByType.isPresent()) {
       abstractSubstituteProperties
-          .put(substitutionTemplateInputName, identicalPropertyValueByType.get());
+              .put(substitutionTemplateInputName, identicalPropertyValueByType.get());
 
     }
 
@@ -2882,35 +2882,36 @@ public class UnifiedCompositionService {
                                                            String substitutionTemplateInputName,
                                                            UnifiedCompositionEntity entity,
                                                            UnifiedCompositionData
-                                                               unifiedCompositionData,
+                                                                   unifiedCompositionData,
                                                            ServiceTemplate serviceTemplate,
                                                            TranslationContext context) {
 
     ComputeTemplateConsolidationData computeTemplateConsolidationData =
-        unifiedCompositionData.getComputeTemplateConsolidationData();
+            unifiedCompositionData.getComputeTemplateConsolidationData();
 
     Optional<Object> identicalPropertyValue = Optional.empty();
     switch (entity) {
       case COMPUTE:
         identicalPropertyValue =
-            getIdenticalPropertyValue(identicalValuePropertyName, serviceTemplate,
-                 computeTemplateConsolidationData, context);
+                getIdenticalPropertyValue(identicalValuePropertyName, serviceTemplate,
+                        computeTemplateConsolidationData, context);
         break;
       case OTHER:
         identicalPropertyValue =
-            getIdenticalPropertyValue(identicalValuePropertyName, serviceTemplate,
-                 computeTemplateConsolidationData, context);
+                getIdenticalPropertyValue(identicalValuePropertyName, serviceTemplate,
+                        computeTemplateConsolidationData, context);
         break;
       case PORT:
-        List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-            unifiedCompositionData.getPortTemplateConsolidationDataList();
-        for (PortTemplateConsolidationData portTemplateConsolidationData : portTemplateConsolidationDataList) {
-          String portType =
-              ConsolidationDataUtil.getPortType(portTemplateConsolidationData.getNodeTemplateId());
-          if (substitutionTemplateInputName.contains(portType)) {
-            return getIdenticalPropertyValue(identicalValuePropertyName,
-                serviceTemplate, portTemplateConsolidationData, context);
-          }
+        PropertyInputType portInputType = getPortInputType(substitutionTemplateInputName, unifiedCompositionData);
+        Optional <PortTemplateConsolidationData>  portTemplateConsolidationData =
+                unifiedCompositionData.getPortTemplateConsolidationDataList()
+                        .stream()
+                        .filter(s -> substitutionTemplateInputName.contains(getPropertyInputPrefix(s.getNodeTemplateId(),  ConsolidationDataUtil.getPortType(s.getNodeTemplateId()), portInputType, UnifiedCompositionEntity.PORT)))
+                        .findFirst();
+
+        if(portTemplateConsolidationData.isPresent()) {
+          return getIdenticalPropertyValue(identicalValuePropertyName, serviceTemplate,
+                  portTemplateConsolidationData.get(), context);
         }
         break;
       default:
@@ -2924,13 +2925,13 @@ public class UnifiedCompositionService {
                                              UnifiedCompositionData unifiedCompositionData) {
     String portInputPrefix = UnifiedCompositionEntity.PORT.getDisplayName().toLowerCase() + "_";
     ComputeTemplateConsolidationData computeTemplateConsolidationData = unifiedCompositionData
-        .getComputeTemplateConsolidationData();
+            .getComputeTemplateConsolidationData();
     List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-        getPortTemplateConsolidationDataList(unifiedCompositionData);
+            getPortTemplateConsolidationDataList(unifiedCompositionData);
     //Scan the available port node template ids to check if the input is of the form
     // "port_<port_node_template_id>_<property_name>"
     if (portTemplateConsolidationDataList.stream().map(EntityConsolidationData::getNodeTemplateId)
-        .map(portNodeTemplateId -> portInputPrefix + portNodeTemplateId).anyMatch(inputName::startsWith)) {
+            .map(portNodeTemplateId -> portInputPrefix + portNodeTemplateId).anyMatch(inputName::startsWith)) {
       return PropertyInputType.NODE_TEMPLATE_ID;
     }
     //Check whether the input is of the form "port_<port_type>_<property_name>"
@@ -2942,31 +2943,31 @@ public class UnifiedCompositionService {
   }
 
   private PropertyInputType getSubInterfaceInputType(String inputName,
-                                             UnifiedCompositionData unifiedCompositionData) {
+                                                     UnifiedCompositionData unifiedCompositionData) {
     String subInterfaceInputPrefix = UnifiedCompositionEntity.SUB_INTERFACE.getDisplayName().toLowerCase()
-        + "_";
+            + "_";
     List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-        getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+            getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
     //Scan the available port node template ids to check if the input is of the form
     // "subinterface_<subinterface_node_template_id>_<property_name>"
     if (subInterfaceTemplateConsolidationDataList.stream().map(EntityConsolidationData::getNodeTemplateId)
-        .map(subInterfaceNodeTemplateId -> subInterfaceInputPrefix
-            + subInterfaceNodeTemplateId)
-        .anyMatch(inputName::startsWith)) {
+            .map(subInterfaceNodeTemplateId -> subInterfaceInputPrefix
+                    + subInterfaceNodeTemplateId)
+            .anyMatch(inputName::startsWith)) {
       return PropertyInputType.NODE_TEMPLATE_ID;
     }
     //Check whether the input is of the form "subinterface_<subinterface_type>_<property_name>"
     Set<String> subInterfaceTypes = new HashSet<>();
     List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-        getPortTemplateConsolidationDataList(unifiedCompositionData);
+            getPortTemplateConsolidationDataList(unifiedCompositionData);
     for (PortTemplateConsolidationData portTemplateConsolidationData :
-        portTemplateConsolidationDataList) {
+            portTemplateConsolidationDataList) {
       subInterfaceTypes.addAll(portTemplateConsolidationData.getAllSubInterfaceNodeTypes());
     }
 
     if (subInterfaceTypes.stream().map(UnifiedCompositionUtil::getSubInterfaceTypeSuffix)
-        .map(subInterfaceTypeSuffix -> subInterfaceInputPrefix + subInterfaceTypeSuffix + "_")
-        .anyMatch(inputName::startsWith)) {
+            .map(subInterfaceTypeSuffix -> subInterfaceInputPrefix + subInterfaceTypeSuffix + "_")
+            .anyMatch(inputName::startsWith)) {
       return PropertyInputType.TYPE;
     }
     return PropertyInputType.OTHER;
@@ -2985,17 +2986,17 @@ public class UnifiedCompositionService {
                                                      TranslationContext context) {
     String nodeTemplateIdToRemove = entity.getNodeTemplateId();
     Map<String, NodeTemplate> nodeTemplates =
-        serviceTemplate.getTopology_template().getNode_templates();
+            serviceTemplate.getTopology_template().getNode_templates();
     NodeTemplate nodeTemplateToRemove =
-        nodeTemplates.get(nodeTemplateIdToRemove);
+            nodeTemplates.get(nodeTemplateIdToRemove);
     nodeTemplates.remove(nodeTemplateIdToRemove);
 
     context.addCleanedNodeTemplate(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-        nodeTemplateIdToRemove,
-        entity.getClass() == ComputeTemplateConsolidationData.class
-            ? COMPUTE
-            : UnifiedCompositionEntity.PORT,
-        nodeTemplateToRemove);
+            nodeTemplateIdToRemove,
+            entity.getClass() == ComputeTemplateConsolidationData.class
+                    ? COMPUTE
+                    : UnifiedCompositionEntity.PORT,
+            nodeTemplateToRemove);
 
   }
 
@@ -3003,13 +3004,13 @@ public class UnifiedCompositionService {
                                      ServiceTemplate serviceTemplate,
                                      TranslationContext context) {
     NodeTemplate cleanedNodeTemplate =
-        context
-            .getCleanedNodeTemplate(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-                cleanedNodeTemplateId);
+            context
+                    .getCleanedNodeTemplate(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
+                            cleanedNodeTemplateId);
     String typeToRemove = cleanedNodeTemplate.getType();
 
     if (Objects.nonNull(typeToRemove)
-        && serviceTemplate.getNode_types().containsKey(typeToRemove)) {
+            && serviceTemplate.getNode_types().containsKey(typeToRemove)) {
       serviceTemplate.getNode_types().remove(typeToRemove);
     }
   }
@@ -3018,24 +3019,24 @@ public class UnifiedCompositionService {
                                     EntityConsolidationData entity,
                                     TranslationContext context) {
     Map<String, GroupDefinition> groups = serviceTemplate.getTopology_template()
-        .getGroups() == null ? new HashMap<>()
-        : serviceTemplate.getTopology_template().getGroups();
+            .getGroups() == null ? new HashMap<>()
+            : serviceTemplate.getTopology_template().getGroups();
     String nodeRelatedAbstractNodeId =
-        context.getUnifiedAbstractNodeTemplateId(serviceTemplate, entity.getNodeTemplateId());
+            context.getUnifiedAbstractNodeTemplateId(serviceTemplate, entity.getNodeTemplateId());
 
     for (Map.Entry<String, GroupDefinition> groupEntry : groups.entrySet()) {
       GroupDefinition groupDefinition = groupEntry.getValue();
       if (isHeatStackGroup(groupDefinition.getType())) {
         updateGroupMembersWithNewUnifiedNodeTemplateId(entity, nodeRelatedAbstractNodeId,
-            groupEntry);
+                groupEntry);
       }
     }
   }
 
   private void updateGroupMembersWithNewUnifiedNodeTemplateId(
-      EntityConsolidationData entity,
-      String newNodetemplateId,
-      Map.Entry<String, GroupDefinition> groupEntry) {
+          EntityConsolidationData entity,
+          String newNodetemplateId,
+          Map.Entry<String, GroupDefinition> groupEntry) {
     List<String> members = groupEntry.getValue().getMembers();
     if (members.contains(entity.getNodeTemplateId())) {
       members.remove(entity.getNodeTemplateId());
@@ -3049,34 +3050,34 @@ public class UnifiedCompositionService {
   private void updateSubstitutionMapping(ServiceTemplate serviceTemplate,
                                          TranslationContext context) {
     SubstitutionMapping substitutionMappings =
-        DataModelUtil.getSubstitutionMappings(serviceTemplate);
+            DataModelUtil.getSubstitutionMappings(serviceTemplate);
     if (Objects.nonNull(substitutionMappings)) {
 
       if (Objects.nonNull(substitutionMappings.getRequirements())) {
         updateSubstitutionMappingRequirements(substitutionMappings.getRequirements(),
-            serviceTemplate, context);
+                serviceTemplate, context);
       }
 
       if (Objects.nonNull(substitutionMappings.getCapabilities())) {
         updateSubstitutionMappingCapabilities(substitutionMappings.getCapabilities(),
-            serviceTemplate, context);
+                serviceTemplate, context);
       }
     }
   }
 
   private void updateSubstitutionMappingRequirements(Map<String, List<String>>
-                                                         substitutionMappingRequirements,
+                                                             substitutionMappingRequirements,
                                                      ServiceTemplate serviceTemplate,
                                                      TranslationContext context) {
     for (Map.Entry<String, List<String>> entry : substitutionMappingRequirements.entrySet()) {
       List<String> requirement = entry.getValue();
       String oldNodeTemplateId = requirement.get(0);
       String newAbstractNodeTemplateId = context.getUnifiedAbstractNodeTemplateId(serviceTemplate,
-          requirement.get(0));
+              requirement.get(0));
       String newSubstitutionNodeTemplateId = context.getUnifiedSubstitutionNodeTemplateId(
-          serviceTemplate, oldNodeTemplateId);
+              serviceTemplate, oldNodeTemplateId);
       if (Objects.nonNull(newAbstractNodeTemplateId)
-          && Objects.nonNull(newSubstitutionNodeTemplateId)) {
+              && Objects.nonNull(newSubstitutionNodeTemplateId)) {
         requirement.set(0, newAbstractNodeTemplateId);
         String newRequirementValue = requirement.get(1) + "_" + newSubstitutionNodeTemplateId;
         requirement.set(1, newRequirementValue);
@@ -3085,18 +3086,18 @@ public class UnifiedCompositionService {
   }
 
   private void updateSubstitutionMappingCapabilities(Map<String, List<String>>
-                                                         substitutionMappingCapabilities,
+                                                             substitutionMappingCapabilities,
                                                      ServiceTemplate serviceTemplate,
                                                      TranslationContext context) {
     for (Map.Entry<String, List<String>> entry : substitutionMappingCapabilities.entrySet()) {
       List<String> capability = entry.getValue();
       String oldNodeTemplateId = capability.get(0);
       String newAbstractNodeTemplateId = context.getUnifiedAbstractNodeTemplateId(serviceTemplate,
-          capability.get(0));
+              capability.get(0));
       String newSubstitutionNodeTemplateId = context.getUnifiedSubstitutionNodeTemplateId(
-          serviceTemplate, oldNodeTemplateId);
+              serviceTemplate, oldNodeTemplateId);
       if (Objects.nonNull(newAbstractNodeTemplateId)
-          && Objects.nonNull(newSubstitutionNodeTemplateId)) {
+              && Objects.nonNull(newSubstitutionNodeTemplateId)) {
         capability.set(0, newAbstractNodeTemplateId);
         String newRequirementValue = capability.get(1) + "_" + newSubstitutionNodeTemplateId;
         capability.set(1, newRequirementValue);
@@ -3108,16 +3109,16 @@ public class UnifiedCompositionService {
                                                      EntityConsolidationData entity,
                                                      TranslationContext context) {
     Map<String, GroupDefinition> groups = serviceTemplate.getTopology_template()
-        .getGroups() == null ? new HashMap<>() : serviceTemplate.getTopology_template().getGroups();
+            .getGroups() == null ? new HashMap<>() : serviceTemplate.getTopology_template().getGroups();
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     Optional<String> nestedNodeTemplateId =
-        context.getUnifiedNestedNodeTemplateId(serviceTemplateFileName, entity.getNodeTemplateId());
+            context.getUnifiedNestedNodeTemplateId(serviceTemplateFileName, entity.getNodeTemplateId());
     if (nestedNodeTemplateId.isPresent()) {
       for (Map.Entry<String, GroupDefinition> groupEntry : groups.entrySet()) {
         GroupDefinition groupDefinition = groupEntry.getValue();
         if (isHeatStackGroup(groupDefinition.getType())) {
           updateGroupMembersWithNewUnifiedNodeTemplateId(entity, nestedNodeTemplateId.get(),
-              groupEntry);
+                  groupEntry);
         }
       }
     }
@@ -3128,7 +3129,7 @@ public class UnifiedCompositionService {
                                                              ServiceTemplate nestedServiceTemplate,
                                                              TranslationContext context) {
     NodeTemplate nestedNodeTemplate = DataModelUtil.getNodeTemplate(mainServiceTemplate,
-        nestedNodeTemplateId);
+            nestedNodeTemplateId);
     if (Objects.isNull(nestedNodeTemplate)) {
       return;
     }
@@ -3136,13 +3137,13 @@ public class UnifiedCompositionService {
     updateNestedNodeTemplateProperties(nestedServiceTemplate, nestedNodeTemplate, context);
 
     Optional<String> unifiedNestedNodeTypeId = context
-        .getUnifiedNestedNodeTypeId(
-            ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME),
-            nestedNodeTemplate.getType());
+            .getUnifiedNestedNodeTypeId(
+                    ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME),
+                    nestedNodeTemplate.getType());
     unifiedNestedNodeTypeId
-        .ifPresent(unifiedNestedNodeTypeIdVal -> updateNestedNodeTemplate(
-            unifiedNestedNodeTypeIdVal, nestedNodeTemplateId, nestedNodeTemplate,
-            mainServiceTemplate, context));
+            .ifPresent(unifiedNestedNodeTypeIdVal -> updateNestedNodeTemplate(
+                    unifiedNestedNodeTypeIdVal, nestedNodeTemplateId, nestedNodeTemplate,
+                    mainServiceTemplate, context));
   }
 
   private void updateNestedNodeTemplateProperties(ServiceTemplate nestedServiceTemplate,
@@ -3150,8 +3151,8 @@ public class UnifiedCompositionService {
                                                   TranslationContext context) {
 
     Map<String, Object> newPropertyInputParamIds =
-        context.getAllNewPropertyInputParamIdsPerNodeTenplateId(ToscaUtil
-            .getServiceTemplateFileName(nestedServiceTemplate));
+            context.getAllNewPropertyInputParamIdsPerNodeTenplateId(ToscaUtil
+                    .getServiceTemplateFileName(nestedServiceTemplate));
 
     for (Map.Entry<String, Object> entry : newPropertyInputParamIds.entrySet()) {
       if (Objects.nonNull(entry.getValue())) {
@@ -3161,24 +3162,24 @@ public class UnifiedCompositionService {
     }
 
     String subNodeType =
-        nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getNode_type();
+            nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getNode_type();
     nestedNodeTemplate.setType(subNodeType);
 
   }
 
   private void handleSubstitutionMappingInNestedServiceTemplate(
-      String newNestedNodeType,
-      ServiceTemplate nestedServiceTemplate,
-      TranslationContext context) {
+          String newNestedNodeType,
+          ServiceTemplate nestedServiceTemplate,
+          TranslationContext context) {
     if (Objects.isNull(newNestedNodeType)) {
       return;
     }
 
     Set<String> relatedNestedNodeTypeIds =
-        context.getAllRelatedNestedNodeTypeIds();
+            context.getAllRelatedNestedNodeTypeIds();
 
     SubstitutionMapping substitutionMappings =
-        nestedServiceTemplate.getTopology_template().getSubstitution_mappings();
+            nestedServiceTemplate.getTopology_template().getSubstitution_mappings();
     if (!relatedNestedNodeTypeIds.contains(substitutionMappings.getNode_type())) {
       substitutionMappings.setNode_type(newNestedNodeType);
     }
@@ -3191,43 +3192,43 @@ public class UnifiedCompositionService {
                                         TranslationContext context) {
     String mainSTName = ToscaUtil.getServiceTemplateFileName(mainServiceTemplate);
     String globalSTName =
-        ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
+            ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
     int index =
-        context.getHandledNestedComputeNodeTemplateIndex(globalSTName, newNestedNodeTypeId);
+            context.getHandledNestedComputeNodeTemplateIndex(globalSTName, newNestedNodeTypeId);
     String newNodeTemplateId =
-        Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX + getComputeTypeSuffix(newNestedNodeTypeId)
-            + "_" + index;
+            Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX + getComputeTypeSuffix(newNestedNodeTypeId)
+                    + "_" + index;
 
     nestedNodeTemplate.setType(newNestedNodeTypeId);
     mainServiceTemplate.getTopology_template().getNode_templates().remove(nestedNodeTemplateId);
     mainServiceTemplate.getTopology_template().getNode_templates()
-        .put(newNodeTemplateId, nestedNodeTemplate);
+            .put(newNodeTemplateId, nestedNodeTemplate);
 
     context.addUnifiedNestedNodeTemplateId(mainSTName, nestedNodeTemplateId, newNodeTemplateId);
   }
 
   private void handleNestedNodeTypesInGlobalSubstituteServiceTemplate(
-      String origNestedNodeTypeId,
-      String newNestedNodeTypeId,
-      ServiceTemplate globalSubstitutionServiceTemplate,
-      TranslationContext context) {
+          String origNestedNodeTypeId,
+          String newNestedNodeTypeId,
+          ServiceTemplate globalSubstitutionServiceTemplate,
+          TranslationContext context) {
     Set<String> relatedNestedNodeTypeIds =
-        context.getAllRelatedNestedNodeTypeIds();
+            context.getAllRelatedNestedNodeTypeIds();
 
     Map<String, NodeType> nodeTypes = globalSubstitutionServiceTemplate.getNode_types();
     if (!relatedNestedNodeTypeIds.contains(origNestedNodeTypeId)) {
       NodeType nested = DataModelUtil.getNodeType(globalSubstitutionServiceTemplate,
-          origNestedNodeTypeId);
+              origNestedNodeTypeId);
       setNewValuesForNestedNodeType(origNestedNodeTypeId, newNestedNodeTypeId, nested, nodeTypes);
     } else {
       NodeType nested =
-          (NodeType) DataModelUtil.getClonedObject(
-              DataModelUtil.getNodeType(globalSubstitutionServiceTemplate, origNestedNodeTypeId));
+              (NodeType) DataModelUtil.getClonedObject(
+                      DataModelUtil.getNodeType(globalSubstitutionServiceTemplate, origNestedNodeTypeId));
       nested.setDerived_from(ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE);
       nodeTypes.put(newNestedNodeTypeId, nested);
     }
     context.addUnifiedNestedNodeTypeId(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
-        origNestedNodeTypeId, newNestedNodeTypeId);
+            origNestedNodeTypeId, newNestedNodeTypeId);
   }
 
   private void setNewValuesForNestedNodeType(String origNestedNodeType,
@@ -3244,22 +3245,22 @@ public class UnifiedCompositionService {
   private Optional<String> getNewNestedNodeTypeId(ServiceTemplate nestedServiceTemplate,
                                                   TranslationContext context) {
     FileComputeConsolidationData fileComputeConsolidationData =
-        context.getConsolidationData().getComputeConsolidationData()
-            .getFileComputeConsolidationData(
-                ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
+            context.getConsolidationData().getComputeConsolidationData()
+                    .getFileComputeConsolidationData(
+                            ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate));
 
     if (Objects.nonNull(fileComputeConsolidationData)) {
       String nestedNodeTypePrefix = ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + "heat.";
       return Optional
-          .of(nestedNodeTypePrefix + getComputeTypeInNestedFile(fileComputeConsolidationData));
+              .of(nestedNodeTypePrefix + getComputeTypeInNestedFile(fileComputeConsolidationData));
     }
     return Optional.empty();
   }
 
   private String getComputeTypeInNestedFile(
-      FileComputeConsolidationData fileComputeConsolidationData) {
+          FileComputeConsolidationData fileComputeConsolidationData) {
     List<TypeComputeConsolidationData> typeComputeConsolidationDatas =
-        new ArrayList<>(fileComputeConsolidationData.getAllTypeComputeConsolidationData());
+            new ArrayList<>(fileComputeConsolidationData.getAllTypeComputeConsolidationData());
     if (typeComputeConsolidationDatas.isEmpty()) {
       return null;
     } else {
@@ -3273,20 +3274,20 @@ public class UnifiedCompositionService {
                                                    String serviceTemplateFileName,
                                                    NodeTemplate abstractNodeTemplate) {
     Map<String, Object> properties =
-        abstractNodeTemplate == null || abstractNodeTemplate.getProperties() == null
-            ? new HashMap<>()
-            : abstractNodeTemplate.getProperties();
+            abstractNodeTemplate == null || abstractNodeTemplate.getProperties() == null
+                    ? new HashMap<>()
+                    : abstractNodeTemplate.getProperties();
     for (Object propertyValue : properties.values()) {
       List<List<Object>> getAttrList = extractGetAttrFunction(propertyValue);
       for (List<Object> getAttrFuncValue : getAttrList) {
         String origNodeTemplateId = (String) getAttrFuncValue.get(0);
         Optional<String> nestedNodeTemplateId = context.getUnifiedNestedNodeTemplateId(ToscaUtil
-            .getServiceTemplateFileName(serviceTemplate), origNodeTemplateId);
+                .getServiceTemplateFileName(serviceTemplate), origNodeTemplateId);
         if (nestedNodeTemplateId.isPresent()) {
           getAttrFuncValue.set(0, nestedNodeTemplateId.get());
         } else {
           replaceGetAttrNodeIdAndAttrName(serviceTemplate, context, serviceTemplateFileName,
-              getAttrFuncValue);
+                  getAttrFuncValue);
         }
       }
     }
@@ -3300,17 +3301,17 @@ public class UnifiedCompositionService {
     String attributeName = (String) getAttrFuncValue.get(1);
 
     String unifiedAbstractNodeTemplateId =
-        context.getUnifiedAbstractNodeTemplateId(serviceTemplate, origNodeTemplateId);
+            context.getUnifiedAbstractNodeTemplateId(serviceTemplate, origNodeTemplateId);
 
     if (Objects.isNull(unifiedAbstractNodeTemplateId)) {
       return;
     }
 
     String newNodeTemplateId =
-        getNewNodeTemplateId(origNodeTemplateId, serviceTemplateFileName, serviceTemplate, context);
+            getNewNodeTemplateId(origNodeTemplateId, serviceTemplateFileName, serviceTemplate, context);
 
     String newSubstitutionOutputParameterId =
-        getNewSubstitutionOutputParameterId(newNodeTemplateId, attributeName);
+            getNewSubstitutionOutputParameterId(newNodeTemplateId, attributeName);
 
     getAttrFuncValue.set(0, unifiedAbstractNodeTemplateId);
     getAttrFuncValue.set(1, newSubstitutionOutputParameterId);
@@ -3320,11 +3321,11 @@ public class UnifiedCompositionService {
                                               ServiceTemplate serviceTemplate,
                                               TranslationContext context) {
     NodeTemplate computeNodeTemplate =
-        DataModelUtil.getNodeTemplate(serviceTemplate, origNodeTemplateId);
+            DataModelUtil.getNodeTemplate(serviceTemplate, origNodeTemplateId);
     if (computeNodeTemplate == null) {
       computeNodeTemplate =
-          context.getCleanedNodeTemplate(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-              origNodeTemplateId);
+              context.getCleanedNodeTemplate(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
+                      origNodeTemplateId);
     }
     return computeNodeTemplate;
   }
@@ -3332,14 +3333,14 @@ public class UnifiedCompositionService {
   private String handleIdOfPort(String origNodeTemplateId, String serviceTemplateFileName,
                                 ConsolidationData consolidationData) {
     Optional<Pair<String, ComputeTemplateConsolidationData>>
-        computeTypeAndComputeTemplateByPortId =
-        getComputeTypeAndComputeTemplateByPortId(origNodeTemplateId, serviceTemplateFileName,
-            consolidationData);
+            computeTypeAndComputeTemplateByPortId =
+            getComputeTypeAndComputeTemplateByPortId(origNodeTemplateId, serviceTemplateFileName,
+                    consolidationData);
     if (computeTypeAndComputeTemplateByPortId.isPresent()) {
       Pair<String, ComputeTemplateConsolidationData> computeIdToComputeData =
-          computeTypeAndComputeTemplateByPortId.get();
+              computeTypeAndComputeTemplateByPortId.get();
       return getNewPortNodeTemplateId(origNodeTemplateId, computeIdToComputeData.getKey(),
-          computeIdToComputeData.getValue());
+              computeIdToComputeData.getValue());
     }
 
     return null;
@@ -3349,15 +3350,15 @@ public class UnifiedCompositionService {
   getComputeTypeAndComputeTemplateByPortId(String portId, String serviceTemplateFileName,
                                            ConsolidationData consolidationData) {
     FileComputeConsolidationData fileComputeConsolidationData =
-        consolidationData.getComputeConsolidationData()
-            .getFileComputeConsolidationData(serviceTemplateFileName);
+            consolidationData.getComputeConsolidationData()
+                    .getFileComputeConsolidationData(serviceTemplateFileName);
     Set<String> computeTypes =
-        fileComputeConsolidationData.getAllComputeTypes();
+            fileComputeConsolidationData.getAllComputeTypes();
 
     for (String computeType : computeTypes) {
       Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDatas =
-          fileComputeConsolidationData.getTypeComputeConsolidationData(computeType)
-              .getAllComputeTemplateConsolidationData();
+              fileComputeConsolidationData.getTypeComputeConsolidationData(computeType)
+                      .getAllComputeTemplateConsolidationData();
 
       for (ComputeTemplateConsolidationData compute : computeTemplateConsolidationDatas) {
         if (ConsolidationDataUtil.isComputeReferenceToPortId(compute, portId)) {
@@ -3374,16 +3375,16 @@ public class UnifiedCompositionService {
                                        String serviceTemplateFileName,
                                        TranslationContext context) {
     UnifiedSubstitutionData unifiedSubstitutionData =
-        context.getUnifiedSubstitutionData().get(serviceTemplateFileName);
+            context.getUnifiedSubstitutionData().get(serviceTemplateFileName);
     if (Objects.isNull(unifiedSubstitutionData)) {
       return false;
     }
 
     UnifiedCompositionEntity actualUnifiedCompositionEntity =
-        unifiedSubstitutionData.getCleanedNodeTemplateCompositionEntity(id);
+            unifiedSubstitutionData.getCleanedNodeTemplateCompositionEntity(id);
 
     return actualUnifiedCompositionEntity == null ? false
-        : actualUnifiedCompositionEntity.equals(expectedUnifiedCompositionEntity);
+            : actualUnifiedCompositionEntity.equals(expectedUnifiedCompositionEntity);
   }
 
   private boolean isHeatStackGroup(String groupType) {
@@ -3398,14 +3399,14 @@ public class UnifiedCompositionService {
     //Get the input prefix to extract the property name from the input name
     String portType = ConsolidationDataUtil.getPortType(portNodeTemplateId);
     String portInputPrefix = getPropertyInputPrefix(
-        portNodeTemplateId, portType, portInputType, UnifiedCompositionEntity.PORT);
+            portNodeTemplateId, portType, portInputType, UnifiedCompositionEntity.PORT);
     //Get the property name from the input
     Optional<String> propertyName = getPropertyNameFromInput(inputName,
-        UnifiedCompositionEntity.PORT, computeType, portInputPrefix);
+            UnifiedCompositionEntity.PORT, computeType, portInputPrefix);
     //Get the property value from the node template
     if (propertyName.isPresent()) {
       NodeTemplate portNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-          portNodeTemplateId);
+              portNodeTemplateId);
       if (Objects.nonNull(portNodeTemplate)) {
         return getPropertyValueFromNodeTemplate(propertyName.get(), portNodeTemplate);
       }
@@ -3414,14 +3415,14 @@ public class UnifiedCompositionService {
   }
 
   private Object getComputePropertyValue(
-      String inputName,
-      ServiceTemplate serviceTemplate,
-      ComputeTemplateConsolidationData computeTemplateConsolidationData) {
+          String inputName,
+          ServiceTemplate serviceTemplate,
+          ComputeTemplateConsolidationData computeTemplateConsolidationData) {
     NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-        computeTemplateConsolidationData.getNodeTemplateId());
+            computeTemplateConsolidationData.getNodeTemplateId());
     String nodeType = getComputeTypeSuffix(nodeTemplate.getType());
     Optional<String> propertyName =
-        getPropertyNameFromInput(inputName, COMPUTE, nodeType, null);
+            getPropertyNameFromInput(inputName, COMPUTE, nodeType, null);
     if (propertyName.isPresent()) {
       return getPropertyValueFromNodeTemplate(propertyName.get(), nodeTemplate);
     }
@@ -3429,20 +3430,20 @@ public class UnifiedCompositionService {
   }
 
   private Object getSubInterfacePropertyValue(String inputName,
-                                      String subInterfaceTypeSuffix,
-                                      PropertyInputType propertyInputType,
-                                      ServiceTemplate serviceTemplate,
-                                      String subInterfaceNodeTemplateId) {
+                                              String subInterfaceTypeSuffix,
+                                              PropertyInputType propertyInputType,
+                                              ServiceTemplate serviceTemplate,
+                                              String subInterfaceNodeTemplateId) {
     //Get the input prefix to extract the property name from the input name
     String propertyInputPrefix = getPropertyInputPrefix(subInterfaceNodeTemplateId,
-        subInterfaceTypeSuffix, propertyInputType, UnifiedCompositionEntity.SUB_INTERFACE);
+            subInterfaceTypeSuffix, propertyInputType, UnifiedCompositionEntity.SUB_INTERFACE);
     //Get the property name from the input
     Optional<String> propertyName = getPropertyNameFromInput(inputName,
-        UnifiedCompositionEntity.SUB_INTERFACE, null, propertyInputPrefix);
+            UnifiedCompositionEntity.SUB_INTERFACE, null, propertyInputPrefix);
     //Get the property value from the node template
     if (propertyName.isPresent()) {
       NodeTemplate subInterfaceNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-          subInterfaceNodeTemplateId);
+              subInterfaceNodeTemplateId);
       if (Objects.nonNull(subInterfaceNodeTemplate)) {
         return getPropertyValueFromNodeTemplate(propertyName.get(), subInterfaceNodeTemplate);
       }
@@ -3455,13 +3456,13 @@ public class UnifiedCompositionService {
                                                      EntityConsolidationData entity,
                                                      TranslationContext context) {
     NodeTemplate nodeTemplate =
-        getNodeTemplate(entity.getNodeTemplateId(), serviceTemplate, context);
+            getNodeTemplate(entity.getNodeTemplateId(), serviceTemplate, context);
 
     Object propertyValueFromNodeTemplate =
-        getPropertyValueFromNodeTemplate(identicalValuePropertyName, nodeTemplate);
+            getPropertyValueFromNodeTemplate(identicalValuePropertyName, nodeTemplate);
 
     return Objects.isNull(propertyValueFromNodeTemplate) ? Optional.empty()
-        : Optional.of(propertyValueFromNodeTemplate);
+            : Optional.of(propertyValueFromNodeTemplate);
   }
 
   private UnifiedCompositionEntity getInputCompositionEntity(String inputName) {
@@ -3473,7 +3474,7 @@ public class UnifiedCompositionService {
       } else if (inputType.equalsIgnoreCase(UnifiedCompositionEntity.PORT.getDisplayName())) {
         inputCompositionEntity = UnifiedCompositionEntity.PORT;
       } else if (inputType.equalsIgnoreCase(UnifiedCompositionEntity.SUB_INTERFACE
-          .getDisplayName())) {
+              .getDisplayName())) {
         inputCompositionEntity = UnifiedCompositionEntity.SUB_INTERFACE;
       }
     }
@@ -3481,14 +3482,14 @@ public class UnifiedCompositionService {
   }
 
   private Optional<String> getPropertyNameFromInput(
-      String inputName,
-      UnifiedCompositionEntity compositionEntity,
-      String entityType, String propertyInputPrefix) {
+          String inputName,
+          UnifiedCompositionEntity compositionEntity,
+          String entityType, String propertyInputPrefix) {
     String propertyName = null;
     switch (compositionEntity) {
       case COMPUTE:
         propertyName = inputName.substring(inputName.lastIndexOf(entityType)
-            + entityType.length() + 1);
+                + entityType.length() + 1);
         break;
       case PORT:
       case SUB_INTERFACE:
@@ -3519,7 +3520,7 @@ public class UnifiedCompositionService {
                                            UnifiedCompositionEntity unifiedCompositionEntity) {
 
     List<String> identicalValuePropertyList =
-        consolidationService.getPropertiesWithIdenticalVal(unifiedCompositionEntity);
+            consolidationService.getPropertiesWithIdenticalVal(unifiedCompositionEntity);
 
     StringBuilder builder = getPropertyValueStringBuilder(unifiedCompositionEntity);
     if (Objects.isNull(builder)) {
@@ -3528,8 +3529,8 @@ public class UnifiedCompositionService {
 
     boolean isMatchingProperty = Pattern.matches(builder.toString(), inputName);
     return isMatchingProperty
-        && isPropertyFromIdenticalValuesList(inputName, unifiedCompositionEntity,
-        identicalValuePropertyList);
+            && isPropertyFromIdenticalValuesList(inputName, unifiedCompositionEntity,
+            identicalValuePropertyList);
   }
 
   private boolean isPropertyFromIdenticalValuesList(String inputName,
@@ -3538,11 +3539,11 @@ public class UnifiedCompositionService {
     switch (unifiedCompositionEntity) {
       case COMPUTE:
         return identicalValuePropertyList.contains(getIdenticalValuePropertyName(inputName,
-            unifiedCompositionEntity).get());
+                unifiedCompositionEntity).get());
 
       case OTHER:
         return identicalValuePropertyList.contains(getIdenticalValuePropertyName(inputName,
-            unifiedCompositionEntity).get());
+                unifiedCompositionEntity).get());
 
       case PORT:
         return getPortPropertyNameFromInput(inputName, identicalValuePropertyList).isPresent();
@@ -3563,7 +3564,7 @@ public class UnifiedCompositionService {
   }
 
   private StringBuilder getPropertyValueStringBuilder(
-      UnifiedCompositionEntity unifiedCompositionEntity) {
+          UnifiedCompositionEntity unifiedCompositionEntity) {
 
     switch (unifiedCompositionEntity) {
       case COMPUTE:
@@ -3607,7 +3608,7 @@ public class UnifiedCompositionService {
 
   private Optional<String> getIdenticalValuePropertyName(String input,
                                                          UnifiedCompositionEntity
-                                                             unifiedCompositionEntity) {
+                                                                 unifiedCompositionEntity) {
     switch (unifiedCompositionEntity) {
       case COMPUTE:
         return Optional.of(input.split("_")[1]);
@@ -3617,7 +3618,7 @@ public class UnifiedCompositionService {
 
       case PORT:
         return getPortPropertyNameFromInput(input, consolidationService
-            .getPropertiesWithIdenticalVal(unifiedCompositionEntity));
+                .getPropertiesWithIdenticalVal(unifiedCompositionEntity));
 
       default:
         return Optional.empty();
@@ -3635,46 +3636,46 @@ public class UnifiedCompositionService {
   }
 
   private Map<String, UnifiedCompositionEntity> getAllConsolidationNodeTemplateIdAndType(
-      List<UnifiedCompositionData> unifiedCompositionDataList) {
+          List<UnifiedCompositionData> unifiedCompositionDataList) {
 
     Map<String, UnifiedCompositionEntity> consolidationNodeTemplateIdAndType = new HashMap<>();
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
-          unifiedCompositionData.getComputeTemplateConsolidationData();
+              unifiedCompositionData.getComputeTemplateConsolidationData();
       if (Objects.nonNull(computeTemplateConsolidationData)) {
         consolidationNodeTemplateIdAndType
-            .put(computeTemplateConsolidationData.getNodeTemplateId(),
-                COMPUTE);
+                .put(computeTemplateConsolidationData.getNodeTemplateId(),
+                        COMPUTE);
       }
       List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+              getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
       for (SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData :
-          subInterfaceTemplateConsolidationDataList) {
+              subInterfaceTemplateConsolidationDataList) {
         consolidationNodeTemplateIdAndType.put(subInterfaceTemplateConsolidationData.getNodeTemplateId(),
-            UnifiedCompositionEntity.SUB_INTERFACE);
+                UnifiedCompositionEntity.SUB_INTERFACE);
       }
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          getPortTemplateConsolidationDataList(unifiedCompositionData);
+              getPortTemplateConsolidationDataList(unifiedCompositionData);
       for (PortTemplateConsolidationData portTemplateConsolidationData :
-          portTemplateConsolidationDataList) {
+              portTemplateConsolidationDataList) {
         consolidationNodeTemplateIdAndType.put(portTemplateConsolidationData.getNodeTemplateId(),
-            UnifiedCompositionEntity.PORT);
+                UnifiedCompositionEntity.PORT);
       }
       NestedTemplateConsolidationData nestedTemplateConsolidationData =
-          unifiedCompositionData.getNestedTemplateConsolidationData();
+              unifiedCompositionData.getNestedTemplateConsolidationData();
       if (Objects.nonNull(nestedTemplateConsolidationData)) {
         consolidationNodeTemplateIdAndType
-            .put(nestedTemplateConsolidationData.getNodeTemplateId(),
-                UnifiedCompositionEntity.NESTED);
+                .put(nestedTemplateConsolidationData.getNodeTemplateId(),
+                        UnifiedCompositionEntity.NESTED);
       }
     }
     return consolidationNodeTemplateIdAndType;
   }
 
   private List<PortTemplateConsolidationData> getPortTemplateConsolidationDataList(
-      UnifiedCompositionData unifiedCompositionData) {
+          UnifiedCompositionData unifiedCompositionData) {
     return unifiedCompositionData.getPortTemplateConsolidationDataList() == null ? new
-        ArrayList<>() : unifiedCompositionData.getPortTemplateConsolidationDataList();
+            ArrayList<>() : unifiedCompositionData.getPortTemplateConsolidationDataList();
   }
 
   private enum PropertyInputType {

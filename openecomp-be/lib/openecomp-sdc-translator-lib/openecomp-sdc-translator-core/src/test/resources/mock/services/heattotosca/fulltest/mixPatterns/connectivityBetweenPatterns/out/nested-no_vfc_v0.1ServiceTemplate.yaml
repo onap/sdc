@@ -112,7 +112,7 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pcm_port_1_network_role_tag: cps
+        port_pcm_port_1_network_role_tag: oam
         port_pcm_port_0_fixed_ips:
         - ip_address:
             get_input: cps_net_ip
@@ -211,7 +211,7 @@ topology_template:
         port_pcm_port_2_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pcm_port_3_network_role_tag: cps
+        port_pcm_port_3_network_role_tag: oam
         compute_pcma_server_config_drive:
         - true
         port_pcm_port_3_fixed_ips:
