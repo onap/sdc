@@ -54,9 +54,9 @@
                                 <fileset>
                                     <directory>${basedir}/dist</directory>
                                 </fileset>
-                                <fileset>
-                                    <directory>${basedir}/node_modules</directory>
-                                </fileset>
+                                <!--<fileset>-->
+                                    <!--<directory>${basedir}/node_modules</directory>-->
+                                <!--</fileset>-->
                                 <fileset>
                                     <directory>${basedir}/coverage</directory>
                                 </fileset>
@@ -64,10 +64,10 @@
                                     <directory>${basedir}/../dox-sequence-diagram-ui/dist
                                     </directory>
                                 </fileset>
-                                <fileset>
-                                    <directory>${basedir}/../dox-sequence-diagram-ui/node_modules
-                                    </directory>
-                                </fileset>
+                                <!--<fileset>-->
+                                    <!--<directory>${basedir}/../dox-sequence-diagram-ui/node_modules-->
+                                    <!--</directory>-->
+                                <!--</fileset>-->
                             </filesets>
                         </configuration>
                     </execution>
