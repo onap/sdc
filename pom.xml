@@ -95,8 +95,6 @@
 
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.jacoco.itReportPath>${project.basedir}/../target/it-jacoco.exec</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
 		<!-- Sonar properties -->
 		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
@@ -271,11 +269,6 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.7.9</version>
-				<configuration>
-					<append>true</append>
-					<destFile>${sonar.jacoco.reportPath}</destFile>
-					<dataFile>${sonar.jacoco.reportPath}</dataFile>
-				</configuration>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
