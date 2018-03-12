@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.Map;
-
 import org.junit.Test;
 
 
@@ -11,7 +9,7 @@ public class OperationDataDefinitionTest {
 		return new OperationDataDefinition();
 	}
 
-	
+
 	@Test
 	public void testGetUniqueId() throws Exception {
 		OperationDataDefinition testSubject;
@@ -22,7 +20,7 @@ public class OperationDataDefinitionTest {
 		result = testSubject.getUniqueId();
 	}
 
-	
+
 	@Test
 	public void testSetUniqueId() throws Exception {
 		OperationDataDefinition testSubject;
@@ -33,7 +31,7 @@ public class OperationDataDefinitionTest {
 		testSubject.setUniqueId(uniqueId);
 	}
 
-	
+
 	@Test
 	public void testGetCreationDate() throws Exception {
 		OperationDataDefinition testSubject;
@@ -44,7 +42,7 @@ public class OperationDataDefinitionTest {
 		result = testSubject.getCreationDate();
 	}
 
-	
+
 	@Test
 	public void testSetCreationDate() throws Exception {
 		OperationDataDefinition testSubject;
@@ -55,7 +53,7 @@ public class OperationDataDefinitionTest {
 		testSubject.setCreationDate(creationDate);
 	}
 
-	
+
 	@Test
 	public void testGetLastUpdateDate() throws Exception {
 		OperationDataDefinition testSubject;
@@ -66,7 +64,7 @@ public class OperationDataDefinitionTest {
 		result = testSubject.getLastUpdateDate();
 	}
 
-	
+
 	@Test
 	public void testSetLastUpdateDate() throws Exception {
 		OperationDataDefinition testSubject;
@@ -77,7 +75,7 @@ public class OperationDataDefinitionTest {
 		testSubject.setLastUpdateDate(lastUpdateDate);
 	}
 
-	
+
 	@Test
 	public void testGetDescription() throws Exception {
 		OperationDataDefinition testSubject;
@@ -88,7 +86,7 @@ public class OperationDataDefinitionTest {
 		result = testSubject.getDescription();
 	}
 
-	
+
 	@Test
 	public void testSetDescription() throws Exception {
 		OperationDataDefinition testSubject;
@@ -99,7 +97,7 @@ public class OperationDataDefinitionTest {
 		testSubject.setDescription(description);
 	}
 
-	
+
 	@Test
 	public void testGetImplementation() throws Exception {
 		OperationDataDefinition testSubject;
@@ -110,7 +108,7 @@ public class OperationDataDefinitionTest {
 		result = testSubject.getImplementation();
 	}
 
-	
+
 	@Test
 	public void testSetImplementation() throws Exception {
 		OperationDataDefinition testSubject;
@@ -121,22 +119,22 @@ public class OperationDataDefinitionTest {
 		testSubject.setImplementation(implementation);
 	}
 
-	
+
 	@Test
 	public void testGetInputs() throws Exception {
 		OperationDataDefinition testSubject;
-		Map<String, PropertyDataDefinition> result;
+		ListDataDefinition<OperationInputDefinition> result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getInputs();
 	}
 
-	
+
 	@Test
 	public void testSetInputs() throws Exception {
 		OperationDataDefinition testSubject;
-		Map<String, PropertyDataDefinition> inputs = null;
+		ListDataDefinition<OperationInputDefinition> inputs = null;
 
 		// default test
 		testSubject = createTestSubject();

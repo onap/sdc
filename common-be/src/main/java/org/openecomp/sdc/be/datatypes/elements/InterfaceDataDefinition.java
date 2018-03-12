@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,102 +20,92 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class InterfaceDataDefinition extends ToscaDataDefinition implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2208369368489725049L;
-
-	private String type;
-
-	private String description;
-
-	private String uniqueId;
-
-	/**
-	 * Timestamp of the resource (artifact) creation
-	 */
-	private Long creationDate;
-
-	/**
-	 * Timestamp of the last resource (artifact) creation
-	 */
-	private Long lastUpdateDate;
-	/**
-	 * Defines an operation available to manage particular aspects of the Node
-	 * Type.
-	 */
-	private Map<String, OperationDataDefinition> operations = new HashMap<String, OperationDataDefinition>();
-	
+	@JsonCreator
 	public InterfaceDataDefinition() {
 		super();
+		setOperations(new HashMap<>());
 	}
 
 	public InterfaceDataDefinition(String type, String description) {
-		super();
-		this.type = type;
-		this.description = description;
+		this();
+		setType(type);
+		setDescription(description);
 
 	}
 
 	public InterfaceDataDefinition(InterfaceDataDefinition p) {
-		this.uniqueId = p.uniqueId;
-		this.type = p.type;
-		this.description = p.description;
-
+		setUniqueId(p.getUniqueId());
+		setType(p.getType());
+		setDescription(p.getDescription());
+		setToscaResourceName(p.getToscaResourceName());
+		setOperations(p.getOperations());
 	}
 
 	public String getUniqueId() {
-		return uniqueId;
+		return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
 	}
 
 	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
+		setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
 	}
 
 	public String getType() {
-		return type;
+		return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
 	}
 
 	public void setType(String type) {
-		this.type = type;
+		setToscaPresentationValue(JsonPresentationFields.TYPE, type);
 	}
 
 	public Long getCreationDate() {
-		return creationDate;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_DATE);
 	}
 
 	public void setCreationDate(Long creationDate) {
-		this.creationDate = creationDate;
+		setToscaPresentationValue(JsonPresentationFields.CREATION_DATE, creationDate);
 	}
 
 	public Long getLastUpdateDate() {
-		return lastUpdateDate;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE);
 	}
 
 	public void setLastUpdateDate(Long lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
+		setToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE, lastUpdateDate);
 	}
 
 	public String getDescription() {
-		return description;
+		return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
 	}
-	public Map<String, OperationDataDefinition> getOperations() {
-		return operations;
+
+	public  Map<String, OperationDataDefinition>  getOperations() {
+		return (Map<String, OperationDataDefinition>)
+			getToscaPresentationValue(JsonPresentationFields.INTERFACE_OPERATION);
 	}
 
 	public void setOperations(Map<String, OperationDataDefinition> operations) {
-		this.operations = operations;
+		setToscaPresentationValue(JsonPresentationFields.INTERFACE_OPERATION, operations);
+	}
+
+	public String getToscaResourceName() {
+		return (String) getToscaPresentationValue(TOSCA_RESOURCE_NAME);
+	}
+
+	public void setToscaResourceName(String toscaResourceName) {
+		setToscaPresentationValue(TOSCA_RESOURCE_NAME, toscaResourceName);
 	}
 }

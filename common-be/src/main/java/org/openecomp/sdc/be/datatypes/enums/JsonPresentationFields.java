@@ -202,7 +202,13 @@ public enum JsonPresentationFields {
 	WO_INPUT_PARAMETERS ("inputParams",null),
 	WO_OUTPUT_PARAMETERS ("outputParams",null),
 	WO_PARAM_NAME("paramName", null),
-	WO_PARAM_ID("paramId", null)
+	WO_PARAM_ID("paramId", null),
+
+	//Interface
+	INTERFACE ("interface", null),
+	INTERFACE_OPERATION ("operation", null),
+	OPERATION_IMPLEMENTATION("operationImplementation",null),
+	OPERATION_INPUT("operationInput",null)
 	;
 	
 
