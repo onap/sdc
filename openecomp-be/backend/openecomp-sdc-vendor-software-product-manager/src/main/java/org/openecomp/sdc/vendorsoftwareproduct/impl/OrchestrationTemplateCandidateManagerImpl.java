@@ -25,8 +25,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.annotations.Metrics;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -48,12 +46,12 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(OrchestrationTemplateCandidateManagerImpl.class);
+
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final CandidateService candidateService;
 
@@ -126,6 +124,11 @@ public class OrchestrationTemplateCandidateManagerImpl
     if (!candidateDataEntity.isPresent()) {
       return Optional.empty();
     }
+
+    if(Objects.isNull(candidateDataEntity.get().getFileSuffix())) {
+      return Optional.empty();
+    }
+
     OnboardingTypesEnum type =
         OnboardingTypesEnum.getOnboardingTypesEnum(candidateDataEntity.get().getFileSuffix());
 
