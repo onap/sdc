@@ -258,3 +258,4 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 
 
 *normatives.tar.gz
+/openecomp-ui/yarn.lock

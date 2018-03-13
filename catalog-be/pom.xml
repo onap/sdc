@@ -84,8 +84,14 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey2-jaxrs</artifactId>
             <scope>compile</scope>
-            <version>1.5.15</version>
+            <version>1.5.18</version>
         </dependency>
+        
+        <!-- <dependency>
+    		<groupId>io.swagger.core.v3</groupId>
+    		<artifactId>swagger-jaxrs2</artifactId>
+    		<version>2.0.0-rc4</version>
+		</dependency> -->
         <!-- Swagger Dependencies End -->
 
         <dependency>
@@ -711,24 +717,6 @@
 							<includeScope>compile</includeScope>
 						</configuration>
 					</execution>
-					<execution>
-						<id>copy-installed</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<type>${project.packaging}</type>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/</outputDirectory>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 
@@ -749,47 +737,6 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.6</version>
 				<executions>
-					<execution>
-						<id>copy-normatives</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default</outputDirectory>
-							<resources>
-								<resource>
-									<directory>./target</directory>
-									<includes>
-										<include>normatives.tar.gz</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-
-					<execution>
-						<id>copy-static-configuration-files</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
-									<includes>
-										<include>Artifact-Generator.properties</include>
-										<include>error-configuration.yaml</include>
-										<include>ecomp-error-configuration.yaml</include>
-										<include>logback.xml</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-
 					<execution>
 						<id>copy-tosca-folder</id>
 						<!-- here the phase you need -->
@@ -888,16 +835,6 @@
 								<fileset>
 									<directory>${project.parent.basedir}/asdctool/tosca</directory>
 									<followSymlinks>false</followSymlinks>
-								</fileset>
-								<!-- static configuration files -->
-								<fileset>
-									<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
-									<includes>
-										<include>Artifact-Generator.properties</include>
-										<include>error-configuration.yaml</include>
-										<include>ecomp-error-configuration.yaml</include>
-										<include>logback.xml</include>
-									</includes>
 								</fileset>
 							</filesets>
 						</configuration>
