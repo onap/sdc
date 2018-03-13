@@ -1,19 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>activity-spec-service</artifactId>
-    <name>activity-spec-service</name>
 
     <parent>
         <groupId>org.openecomp.activityspec</groupId>
-        <artifactId>activity-spec-web</artifactId>
+        <artifactId>activity-spec</artifactId>
         <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../..</relativePath>
     </parent>
 
-
     <properties>
+        <!-- TODO: Is it required -->
         <errorcode.dir>${project.build.directory}/generated-sources/error-codes</errorcode.dir>
     </properties>
 
@@ -24,15 +25,12 @@
             <artifactId>openecomp-sdc-common-rest</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- CXF -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
             <version>${cxf.version}</version>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- Java Stuff -->
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-versioning-core</artifactId>
@@ -49,7 +47,6 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-jaxrs</artifactId>
@@ -75,15 +72,5 @@
             <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${mvn.surefire.version}</version>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

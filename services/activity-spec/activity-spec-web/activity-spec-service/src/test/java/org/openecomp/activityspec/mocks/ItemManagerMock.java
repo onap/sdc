@@ -54,34 +54,33 @@ public class ItemManagerMock implements ItemManager {
 
   @Override
   public void updateVersionStatus(String itemId, VersionStatus addedVersionStatus,
-                                  VersionStatus removedVersionStatus) {
-
+      VersionStatus removedVersionStatus) {
+    // noop
   }
 
   @Override
   public void archive(Item item) {
-
+    // noop
   }
 
-  @Override
   public void restore(Item item) {
-
+    // noop
   }
 
 
   @Override
   public void updateName(String itemId, String name) {
-
+    // noop
   }
 
   @Override
   public void update(Item item) {
-
+    // noop
   }
 
   @Override
   public void delete(Item item) {
-
+    // noop
   }
 
 }

@@ -1,9 +1,10 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>activity-spec-web</artifactId>
+    <artifactId>activity-spec-init</artifactId>
     <packaging>pom</packaging>
 
     <parent>
@@ -11,12 +12,6 @@
         <artifactId>activity-spec</artifactId>
         <version>1.2.0-SNAPSHOT</version>
     </parent>
-
-    <modules>
-        <module>activity-spec-service</module>
-        <module>activity-spec-war</module>
-        <module>activity-spec-api-docs</module>
-    </modules>
 
     <profiles>
         <profile>
@@ -32,16 +27,13 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>onap/activity-spec</name>
+                                    <name>onap/activity-spec-init</name>
                                     <build>
                                         <tags>
                                             <tag>${project.version}</tag>
                                         </tags>
                                         <dockerFileDir>${project.basedir}</dockerFileDir>
                                         <dockerFile>Dockerfile</dockerFile>
-                                        <args>
-                                            <ARTIFACT_VERSION>${project.version}</ARTIFACT_VERSION>
-                                        </args>
                                     </build>
                                 </image>
                             </images>
@@ -51,4 +43,5 @@
             </build>
         </profile>
     </profiles>
+
 </project>
