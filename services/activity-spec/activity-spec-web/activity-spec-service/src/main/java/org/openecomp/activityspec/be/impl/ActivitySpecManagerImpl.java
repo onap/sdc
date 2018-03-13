@@ -139,7 +139,8 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
 
     if (!activitySpec.getName().equals(previousActivitySpec.getName())) {
       uniqueValueUtil.createUniqueValue(ACTIVITY_SPEC_NAME, activitySpec.getName());
-      itemManager.updateName(activitySpec.getId(), activitySpec.getName());
+      // TODO: Use correct API
+      //itemManager.updateName(activitySpec.getId(), activitySpec.getName());
       uniqueValueUtil.deleteUniqueValue(ACTIVITY_SPEC_NAME, previousActivitySpec.getName());
     }
   }
