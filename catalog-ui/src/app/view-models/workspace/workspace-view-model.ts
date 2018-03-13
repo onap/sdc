@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,6 +37,7 @@ import {
 } from "app/services";
 import {FileUploadModel} from "../../directives/file-upload/file-upload";
 import {EventBusService} from "../../ng2/services/event-bus.service";
+import {PluginsService} from "../../ng2/services/plugins.service";
 
 
 export interface IWorkspaceViewModelScope extends ng.IScope {
@@ -119,7 +120,8 @@ export class WorkspaceViewModel {
         'Notification',
         '$stateParams',
         'Sdc.Services.ProgressService',
-        'EventBusService'
+        'EventBusService',
+        'PluginsService'
     ];
 
     constructor(private $scope:IWorkspaceViewModelScope,
@@ -139,7 +141,8 @@ export class WorkspaceViewModel {
                 private Notification:any,
                 private $stateParams:any,
                 private progressService:ProgressService,
-                private eventBusService:EventBusService) {
+                private eventBusService:EventBusService,
+                private pluginsService:PluginsService) {
 
         this.initScope();
         this.initAfterScope();
@@ -669,8 +672,15 @@ export class WorkspaceViewModel {
 
             let selectedIndex = selectedItem ? this.$scope.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
 
-            if (stateArray[1] === 'plugins') {
-                selectedIndex += _.findIndex(PluginsConfiguration.plugins, (plugin: Plugin) => plugin.pluginStateUrl === this.$state.params.path);
+           if (stateArray[1] === 'plugins') {
+                _.forEach(PluginsConfiguration.plugins, (plugin) => {
+                    if (plugin.pluginStateUrl == this.$state.params.path) {
+                        return false;
+                    }
+                    else if (this.pluginsService.isPluginDisplayedInContext(plugin, this.role, this.$scope.component.getComponentSubType())) {
+                            selectedIndex++;
+                    }
+                });
             }
 
             this.$scope.leftBarTabs.selectedIndex = selectedIndex;
@@ -678,7 +688,7 @@ export class WorkspaceViewModel {
 
         this.$scope.isSelected = (menuItem:MenuItem): boolean => {
             return this.$scope.leftBarTabs.selectedIndex === _.indexOf(this.$scope.leftBarTabs.menuItems, menuItem);
-        }
+        };
 
         this.$scope.$watch('$state.current.name', (newVal:string):void => {
             if (newVal) {
@@ -730,9 +740,9 @@ export class WorkspaceViewModel {
         return new MenuItem(text, null, States.WORKSPACE_GENERAL, 'goToState', [this.$state.params]);
     };
 
-    private updateMenuItemByRole = (menuItems:Array<MenuItem>, role:string) => {
-        let tempMenuItems:Array<MenuItem> = new Array<MenuItem>();
-        menuItems.forEach((item:MenuItem) => {
+    private updateMenuItemByRole = (menuItems:Array<any>, role:string) => {
+        let tempMenuItems:Array<any> = new Array<any>();
+        menuItems.forEach((item:any) => {
             //remove item if role is disabled
             if (!(item.disabledRoles && item.disabledRoles.indexOf(role) > -1)) {
                 tempMenuItems.push(item);
@@ -765,31 +775,28 @@ export class WorkspaceViewModel {
 
         // Only adding plugins to the workspace if they can be displayed for the current user role
         _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
-            if (plugin.pluginDisplayOptions["context"] && plugin.pluginDisplayOptions["context"].displayRoles.includes(this.role)) {
-                let displayOptions : PluginDisplayOptions = plugin.pluginDisplayOptions["context"];
-
-                if (displayOptions.displayContext.indexOf(this.$scope.component.getComponentSubType()) !== -1) {
-                    menuItemsObjects.push({
-                        text: displayOptions.displayName,
-                        action: 'onMenuItemPressed',
-                        state: 'workspace.plugins',
-                        params: {path: plugin.pluginStateUrl}
-                    });
-                }
+            if (this.pluginsService.isPluginDisplayedInContext(plugin, this.role, this.$scope.component.getComponentSubType())) {
+                menuItemsObjects.push({
+                    text: plugin.pluginDisplayOptions["context"].displayName,
+                    action: 'onMenuItemPressed',
+                    state: 'workspace.plugins',
+                    params: {path: plugin.pluginStateUrl}
+                });
             }
         });
 
         this.$scope.leftBarTabs.menuItems = menuItemsObjects.map((item:MenuItem) => {
-            if (item.params) {
-                item.params.state = item.state;
+            const menuItem = new MenuItem(item.text, item.callback, item.state, item.action, item.params, item.blockedForTypes);
+            if (menuItem.params) {
+                menuItem.params.state = menuItem.state;
             }
             else {
-                item.params = {state: item.state};
+                menuItem.params = {state: menuItem.state};
             }
-            item.callback = () => this.$scope[item.action](item.state, item.params);
-            item.isDisabled = (inCreateMode && States.WORKSPACE_GENERAL != item.state) ||
-                (States.WORKSPACE_DEPLOYMENT === item.state && this.$scope.component.groups && this.$scope.component.groups.length === 0 && this.$scope.component.isResource());
-            return new MenuItem(item.text, item.callback, item.state, item.action, item.params, item.blockedForTypes);
+            menuItem.callback = () => this.$scope[menuItem.action](menuItem.state, menuItem.params);
+            menuItem.isDisabled = (inCreateMode && States.WORKSPACE_GENERAL != menuItem.state) ||
+                (States.WORKSPACE_DEPLOYMENT === menuItem.state && this.$scope.component.groups && this.$scope.component.groups.length === 0 && this.$scope.component.isResource());
+            return menuItem;
         });
 
         if (this.cacheService.get('breadcrumbsComponents')) {

@@ -42,7 +42,8 @@ export class ServiceService extends ComponentService implements IServiceService 
         'sdcConfig',
         'Sdc.Services.SharingService',
         '$q',
-        '$base64'
+        '$base64',
+        'EventBusService'
     ];
 
     public distribution:string = "distribution";

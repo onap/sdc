@@ -232,10 +232,10 @@ export class ComponentService implements IComponentService {
 
         // Notifying about events before executing the actual actions
         switch (state) {
-            case "checkIn":
+            case "lifecycleState/CHECKIN":
                 this.eventBusService.notify("CHECK_IN");
                 break;
-            case "submitForTesting":
+            case "lifecycleState/certificationRequest":
                 this.eventBusService.notify("SUBMIT_FOR_TESTING");
                 break;
         }

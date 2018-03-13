@@ -48,7 +48,7 @@ export class PluginFrameComponent implements OnInit {
         // Listening to the stateChangeStart event in order to notify the plugin about it being closed
         // before moving to a new state
         this.$scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
-            if (fromState.name !== toState.name) {
+            if ((fromState.name !== toState.name) || (fromState.name === toState.name) && (toParams.path !== fromParams.path)) {
                 if (!this.isClosed) {
                     event.preventDefault();
 
