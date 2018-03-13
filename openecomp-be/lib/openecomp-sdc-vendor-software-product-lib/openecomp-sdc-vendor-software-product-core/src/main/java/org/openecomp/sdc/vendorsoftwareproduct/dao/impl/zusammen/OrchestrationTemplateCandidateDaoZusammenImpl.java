@@ -72,7 +72,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
         zusammenAdaptor.getElementByName(context, elementContext, null,
             ElementType.OrchestrationTemplateCandidate.name());
     if (candidateElement.isPresent()) {
-      if (VspZusammenUtil.isEmpty(candidateElement.get().getData())) {
+      if (VspZusammenUtil.hasEmptyData(candidateElement.get().getData())) {
         return null;
       }
       OrchestrationTemplateCandidateData candidateData = new OrchestrationTemplateCandidateData();
