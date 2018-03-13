@@ -332,7 +332,12 @@ public class HeatValidator implements Validator {
   private static String getResourceTypeFromResourcesMap(String resourceName,
                                                         HeatOrchestrationTemplate
                                                             heatOrchestrationTemplate) {
-    return heatOrchestrationTemplate.getResources().get(resourceName).getType();
+      Resource resource = heatOrchestrationTemplate.getResources().get(resourceName);
+      if (Objects.nonNull(resource)) {
+          return resource.getType();
+      } else {
+          return null;
+      }
   }
 
   /* validation 17 + */
