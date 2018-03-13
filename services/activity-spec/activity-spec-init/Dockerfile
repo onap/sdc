@@ -1,0 +1,10 @@
+FROM cassandra:2.1.9
+
+ENV CASSANDRA_PORT=9042
+
+COPY create_activityspec_db.cql .
+COPY start.sh .
+
+RUN chmod 744 start.sh
+
+ENTRYPOINT ["/start.sh"]
