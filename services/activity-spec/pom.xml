@@ -11,6 +11,7 @@
     <modules>
         <module>activity-spec-web</module>
         <module>swagger-ui</module>
+        <module>setup</module>
     </modules>
 
     <properties>

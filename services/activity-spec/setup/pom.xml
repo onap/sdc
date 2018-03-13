@@ -1,0 +1,47 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.openecomp.activityspec</groupId>
+  <artifactId>setup</artifactId>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>org.openecomp.activityspec</groupId>
+    <artifactId>activity-spec</artifactId>
+    <version>1.2.0-SNAPSHOT</version>
+  </parent>
+
+  <build>
+      <plugins>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.23.0</version>
+          <configuration>
+            <images>
+              <image>
+                <name>activityspec-init</name>
+                <build>
+                  <tags>
+                    <tag>${project.version}</tag>
+                  </tags>
+                  <dockerFileDir>${basedir}</dockerFileDir>
+                </build>
+              </image>
+            </images>
+          </configuration>
+          <executions>
+            <execution>
+              <id>docker-build</id>
+              <goals>
+                <goal>build</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+  </build>
+
+</project>

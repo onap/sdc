@@ -72,6 +72,54 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.23.0</version>
+                    <configuration>
+                        <!--<skip>${skip.docker}</skip>-->
+                        <images>
+                            <image>
+                                <name>activity-spec-be</name>
+                                <build>
+                                    <tags>
+                                        <tag>${project.version}</tag>
+                                    </tags>
+                                    <from>jetty</from>
+                                    <ports>
+                                        <port>8080</port> <!-- HTTP -->
+                                        <port>8443</port> <!-- HTTPS -->
+                                        <port>5005</port> <!-- Java remote debug -->
+                                    </ports>
+                                    <entryPoint>
+                                        <shell>
+                                            java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 "$JETTY_HOME/start.jar"
+                                        </shell>
+                                    </entryPoint>
+                                    <assembly>
+                                        <descriptorRef>artifact</descriptorRef>
+                                        <targetDir>/var/lib/jetty/webapps</targetDir>
+                                    </assembly>
+                                </build>
+                                <run>
+                                    <ports>
+                                        <port>8080:8080</port>
+                                        <port>8443:8443</port>
+                                        <port>5005:5005</port>
+                                    </ports>
+                                </run>
+                            </image>
+                        </images>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>docker-build</id>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
     </build>
         
