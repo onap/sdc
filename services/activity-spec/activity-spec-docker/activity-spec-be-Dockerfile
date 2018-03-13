@@ -1,0 +1,10 @@
+FROM jetty:alpine
+EXPOSE 8080 8443 5005
+COPY deploy/activity-spec-api-docs.war /var/lib/jetty/webapps/
+COPY deploy/activityspec-war-1.2.0-SNAPSHOT.war /var/lib/jetty/webapps/
+COPY configuration.yaml /var/lib/jetty/
+COPY start-be.sh /var/lib/jetty/
+USER root
+RUN chown jetty:jetty /var/lib/jetty/start-be.sh
+RUN chmod 744 /var/lib/jetty/start-be.sh
+ENTRYPOINT ["/var/lib/jetty/start-be.sh"]

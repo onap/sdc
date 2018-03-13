@@ -92,6 +92,37 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- copy swagger war and cql to temporary directory "deploy" inside activity-spec-docker -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>../activity-spec-docker/deploy</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>api-docs</directory>
+                                    <includes>
+                                        <include>*.war</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../setup</directory>
+                                    <includes>
+                                        <include>*.cql</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
