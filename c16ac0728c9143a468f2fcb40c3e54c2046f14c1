@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e17515fa",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-14T07:57:57Z",
+      "side": 1,
+      "message": "Is it expected that \"resource\" may be null? I mean that just checking it for null, and returning a null can move the problem to the client code (who now has to handle a null), instead of handling the real cause. Won\u0027t throwing an exception with a clear message here make more sense?",
+      "range": {
+        "startLine": 336,
+        "startChar": 0,
+        "endLine": 339,
+        "endChar": 22
+      },
+      "revId": "c16ac0728c9143a468f2fcb40c3e54c2046f14c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
