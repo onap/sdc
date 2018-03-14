@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017-2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,7 @@ public class HealingManagerImpl implements HealingManager {
   private Optional<Version> createNewVersion(String itemId, String versionId) {
     Version newVersion = new Version();
     newVersion.setBaseId(versionId);
+    newVersion.setDescription("Version is created by healing process");
     try {
       return Optional.of(versioningManager.create(itemId, newVersion, VersionCreationMethod.major));
     } catch (Exception e) {
