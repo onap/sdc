@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b7666f4f",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-14T14:49:51Z",
+      "side": 1,
+      "message": "Please remove commented out code",
+      "revId": "beb3649d54eec535aa8479b3643b85ba9e80ed5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d7e3fba1",
+        "filename": "services/activity-spec/setup/.maven-dockerignore",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-14T14:49:51Z",
+      "side": 1,
+      "message": "target/ should be sufficient to cover any \"target\" directory  https://git-scm.com/docs/gitignore",
+      "revId": "beb3649d54eec535aa8479b3643b85ba9e80ed5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_97f1f36c",
+        "filename": "services/activity-spec/setup/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-14T14:49:51Z",
+      "side": 1,
+      "message": "Please don\u0027t commit commented out code",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 29
+      },
+      "revId": "beb3649d54eec535aa8479b3643b85ba9e80ed5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
