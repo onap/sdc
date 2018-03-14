@@ -11,7 +11,7 @@ from importPolicyTypes import importPolicyTypes
 from importGroupTypes import importGroupTypes
 from importNormativeCapabilities import importNormativeCapabilities
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
-from importOnapTypes import importOnapTypes
+from upgradeONAPTypes import upgradeOnapTypesPerConfigFile
 
 
 from importCommon import *
@@ -33,7 +33,7 @@ import importCommon
 def usage():
 	print sys.argv[0], '[-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>]'
 
-def handleResults(results, updateversion):
+def handleResults(results):
 	printFrameLine()
 	for result in results:
 		printNameAndReturnCode(result[0], result[1])
@@ -51,6 +51,7 @@ def main(argv):
 	adminUser = 'jh0003'
 	debugf = None
 	updateversion = 'true'
+	updateOnapVersion = 'false'
 	importCommon.debugFlag = False
 	scheme = 'http'
 
@@ -115,11 +116,10 @@ def main(argv):
 	time.sleep( 70 )
 
 	resultsHeat = upgradeTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateversion)
-	handleResults(resultsHeat, 'false')
+	handleResults(resultsHeat)
 	
-	fileLocation = baseFileLocation + "onap-types/"
-	resultsHeat = importOnapTypes(scheme, beHost, bePort, adminUser, fileLocation, updateversion)
-	handleResults(resultsHeat, updateversion)
+	resultsHeat = upgradeOnapTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
+	handleResults(resultsHeat)
 	
 	errorAndExit(0, None)
 
