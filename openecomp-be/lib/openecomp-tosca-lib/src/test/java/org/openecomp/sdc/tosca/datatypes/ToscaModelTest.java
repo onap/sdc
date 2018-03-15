@@ -30,11 +30,13 @@ import org.openecomp.sdc.tosca.datatypes.model.Constraint;
 import org.openecomp.sdc.tosca.datatypes.model.Directive;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinitionType;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeFilter;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.OperationDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.OperationDefinitionType;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
@@ -374,8 +376,9 @@ public class ToscaModelTest {
 
     NodeTemplate nodeTemplate =
         DataModelUtil.getNodeTemplate(serviceTemplate, NODE_TEMPLATE_ID);
-    InterfaceDefinition interfaceDefinition = getInterfaceDefinition();
-    Optional<Object> interfaceObj = DataModelUtil.convertInterfaceDefinitionToObj(interfaceDefinition);
+    InterfaceDefinitionType interfaceDefinitionType = getInterfaceDefinition();
+    Optional<Object> interfaceObj = DataModelUtil.convertInterfaceDefinitionToObj(
+        interfaceDefinitionType);
 
     Assert.assertTrue(interfaceObj.isPresent());
     Map<String, Object> interfaces = new HashMap<>();
@@ -396,13 +399,15 @@ public class ToscaModelTest {
         DataModelUtil.getNodeTemplate(serviceTemplateWithInterfaceDef, NODE_TEMPLATE_ID);
     Map<String, Object> interfaces = nodeTemplateWithInterface.getInterfaces();
     Object interfaceObj = interfaces.get(INTERFACE_ID);
-    Optional<InterfaceDefinition> actualInterfaceDefinition =
-        DataModelUtil.convertObjToInterfaceDefinition(INTERFACE_ID, interfaceObj);
+
+    Optional<? extends InterfaceDefinition> actualInterfaceDefinition =
+        DataModelUtil.convertObjToInterfaceDefinition(INTERFACE_ID, interfaceObj,
+            InterfaceDefinitionType.class);
 
     Assert.assertTrue(actualInterfaceDefinition.isPresent());
 
-    InterfaceDefinition expectedInterfaceDefinition = getInterfaceDefinition();
-    Assert.assertEquals(expectedInterfaceDefinition, actualInterfaceDefinition.get());
+    InterfaceDefinitionType expectedInterfaceDefinitionType = getInterfaceDefinition();
+    Assert.assertEquals(expectedInterfaceDefinitionType, actualInterfaceDefinition.get());
   }
 
   @Test
@@ -435,19 +440,19 @@ public class ToscaModelTest {
     return interfaceType;
   }
 
-  private OperationDefinition getOperationDefinition() {
-    OperationDefinition operationDefinition = new OperationDefinition();
+  private OperationDefinitionType getOperationDefinition() {
+    OperationDefinitionType operationDefinition = new OperationDefinitionType();
     operationDefinition.setDescription("start operation");
     operationDefinition.setImplementation("start.sh");
     return operationDefinition;
   }
 
-  private InterfaceDefinition getInterfaceDefinition() {
+  private InterfaceDefinitionType getInterfaceDefinition() {
     OperationDefinition operationDefinition = getOperationDefinition();
-    InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
-    interfaceDefinition.setType("test interface");
-    interfaceDefinition.addOperation("start", operationDefinition);
-    return interfaceDefinition;
+    InterfaceDefinitionType interfaceDefinitionType = new InterfaceDefinitionType();
+    interfaceDefinitionType.setType("test interface");
+    interfaceDefinitionType.addOperation("start", operationDefinition);
+    return interfaceDefinitionType;
   }
 
 }

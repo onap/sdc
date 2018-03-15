@@ -49,7 +49,6 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ArtifactDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
-import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.NodeFilter;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
@@ -62,18 +61,15 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
 public class ToscaConverterImpl implements ToscaConverter {
@@ -84,8 +80,7 @@ public class ToscaConverterImpl implements ToscaConverter {
   }
 
   @Override
-  public ToscaServiceModel convert(FileContentHandler fileContentHandler)
-      throws IOException {
+  public ToscaServiceModel convert(FileContentHandler fileContentHandler) {
     Map<String, byte[]> csarFiles = new HashMap<>(fileContentHandler.getFiles());
     ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
     Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
@@ -195,16 +190,6 @@ public class ToscaConverterImpl implements ToscaConverter {
                                     ServiceTemplate serviceTemplate,
                                     Map<String, ServiceTemplate> serviceTemplates) {
         serviceTemplates.put(serviceTemplateName, serviceTemplate);
-    }
-
-    private Optional<byte[]> getManifestContent(Map<String, byte[]> csarFiles) {
-        for (Map.Entry<String, byte[]> csarFileEntry : csarFiles.entrySet()) {
-            if (csarFileEntry.getKey().contains(manifestFileName)) {
-                return Optional.of(csarFileEntry.getValue());
-            }
-        }
-
-        return Optional.empty();
     }
 
     private Optional<ServiceTemplate> getServiceTemplateFromCsar(String fileName,
