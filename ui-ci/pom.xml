@@ -407,7 +407,6 @@
 										<dockerFileDir>${project.basedir}/sdc-ui-tests</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
 											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
