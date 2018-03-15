@@ -5,6 +5,7 @@ SDC_USER="asdc_user"
 SDC_PASSWORD="Aa1234%^!"
 JETTY_BASE="/var/lib/jetty"
 BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx2g -Xms2g"
+ONBOARD_BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx2g -Xms2g"
 FE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx512m -Xms512m"
 
 
@@ -35,6 +36,7 @@ function cleanup {
 function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/BE/SDC/SDC-BE
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
+    mkdir -p ${WORKSPACE}/data/logs/ONBOARD-BE/SDC/SDC-BE
     mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/ExtentReport
 	mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/target
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
@@ -67,6 +69,18 @@ rc=$?
 if [[ $rc == 200 ]]; then
   echo DOCKER start finished in $2 seconds
   be_stat=true
+fi
+
+}
+
+function probe_sdc_onboard_be {
+
+sdc_onboard_be_stat=false
+docker exec $1 /var/lib/ready-probe.sh > /dev/null 2>&1
+rc=$?
+if [[ $rc == 200 ]]; then
+  echo DOCKER start finished in $2 seconds
+  sdc_onboard_be_stat=true
 fi
 
 }
@@ -127,6 +141,10 @@ function monitor_docker {
 		elif [ "$1" == "sdc-FE" ]; then
 		    probe_fe $1 $TIME
 			if [[ $fe_stat == true ]]; then break; fi
+        elif [ "$1" == "sdc-onboard-BE" ]; then
+             probe_sdc_onboard_be $1 $TIME
+             if [[ $sdc_onboard_be_stat == true ]]; then break; fi
+
         else
             probe_docker $1 $TIME
             if [[ $match_result == true ]]; then break; fi
@@ -172,6 +190,7 @@ RELEASE=latest
 LOCAL=false
 RUNTESTS=false
 DEBUG_PORT="--publish 4000:4000"
+ONBOARD_DEBUG_PORT="--publish 4001:4000"
 
 while [ $# -gt 0 ]; do
     case $1 in
@@ -283,6 +302,18 @@ docker_logs sdc-cs-init
 if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
+#Onboard Cassandra-init
+function sdc-cs-onboard-init {
+echo "docker run sdc-cs-onboard-init..."
+if [ ${LOCAL} = false ]; then
+        docker pull ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
+fi
+docker run --name sdc-cs-onboard-init --env RELEASE="${RELEASE}" --env HOST_IP=${IP} --env SDC_USER="${SDC_USER}" --env SDC_PASS="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
+rc=$?
+docker_logs sdc-onboard-cs-init
+if [[ $rc != 0 ]]; then exit $rc; fi
+}
+
 #Kibana
 function sdc-kbn {
 echo "docker run sdc-kibana..."
@@ -316,6 +347,23 @@ docker run --name sdc-BE-init --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --l
 rc=$?
 docker_logs sdc-BE-init
 if [[ $rc != 0 ]]; then exit $rc; fi
+}
+
+# Onboard Back-End
+function sdc-onboard-BE {
+
+dir_perms
+# Back-End
+echo "docker run  sdc-onboard-BE ..."
+if [ ${LOCAL} = false ]; then
+        docker pull ${PREFIX}/sdc-onboard-backend:${RELEASE}
+else
+        ADDITIONAL_ARGUMENTS=${ONBOARD_DEBUG_PORT}
+fi
+docker run --detach --name sdc-onboard-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/ONBOARD-BE:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8444:8443 --publish 8081:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
+
+echo "please wait while sdc-onboard-BE is starting..."
+monitor_docker sdc-onboard-BE
 }
 
 
@@ -356,6 +404,8 @@ if [ -z "${DOCKER}" ]; then
 	sdc-init-es
 	sdc-cs
 	sdc-cs-init
+	sdc-cs-onboard-init
+	sdc-onboard-BE
 	sdc-kbn
 	sdc-BE
 	sdc-BE-init
