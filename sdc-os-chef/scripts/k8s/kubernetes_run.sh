@@ -52,8 +52,18 @@ status $?
 print_header "Dependency - Install ..."
 echo "[INFO]   Install - nsenter"
 # Use pre compiled nsenter:
-sudo cp bin/nsenter /usr/local/bin/nsenter
-sudo cp etc/bash_completion.d/nsenter /etc/bash_completion.d/nsenter
+if [ -f bin_nsenter ]; then
+    sudo cp bin_nsenter /usr/local/bin/nsenter
+else
+  echo "[ERROR] File [bin_nsenter] is missing"
+fi
+
+if [ -f etc_nsenter ]; then
+    sudo cp etc_nsenter /etc/bash_completion.d/nsenter
+else
+  echo "[ERROR] File [etc_nsenter] is missing"
+fi
+
 
 ## In order to build the nsenter use the below instructions:
 ##./build_nsenter_exec.sh
