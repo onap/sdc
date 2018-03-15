@@ -1,0 +1,22 @@
+{
+  "name": "sdc-onboard-backend",
+  "description": "Installation application - SDC_Onboard_Backend",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-onboard-backend::cleanup_jettydir]",
+    "recipe[sdc-onboard-backend::locate_keystore]",
+    "recipe[sdc-onboard-backend::logback]",
+    "recipe[sdc-onboard-backend::setup_jetty_modules]",
+    "recipe[sdc-onboard-backend::setup_configuration]"
+  ],
+  "env_run_lists": {
+  }
+}
+
