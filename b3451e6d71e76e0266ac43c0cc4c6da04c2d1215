@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_863d3e91",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/Implementation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T14:50:25Z",
+      "side": 1,
+      "message": "insert license",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 48
+      },
+      "revId": "b3451e6d71e76e0266ac43c0cc4c6da04c2d1215",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_06492e30",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T14:50:25Z",
+      "side": 1,
+      "message": "insert license (Amdocs)",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 48
+      },
+      "revId": "b3451e6d71e76e0266ac43c0cc4c6da04c2d1215",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c64ee637",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinitionTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T14:50:25Z",
+      "side": 1,
+      "message": "change to amdocs license",
+      "range": {
+        "startLine": 5,
+        "startChar": 21,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "b3451e6d71e76e0266ac43c0cc4c6da04c2d1215",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_86645eb9",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinitionType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T14:50:25Z",
+      "side": 1,
+      "message": "change to amdocs license",
+      "range": {
+        "startLine": 4,
+        "startChar": 73,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "b3451e6d71e76e0266ac43c0cc4c6da04c2d1215",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
