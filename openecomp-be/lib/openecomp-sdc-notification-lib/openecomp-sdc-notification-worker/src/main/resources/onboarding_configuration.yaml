@@ -3,3 +3,14 @@ notifications:
     selectionSize: 10
     beHost: localhost
     beHttpPort: 8080
+
+cassandraConfig:
+    cassandraHosts: ['localhost']
+    localDataCenter: CLUSTER_NAME
+    reconnectTimeout : 30000
+    authenticate: true
+    username: CS_USER
+    password: CS_PASS
+    ssl: false
+    truststorePath : /config/.truststore
+    truststorePassword : Aa123456

@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,10 +27,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.client.api.Response;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
+import org.openecomp.sdc.fe.mdc.MdcData;
+import org.openecomp.sdc.fe.utils.BeProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -41,12 +41,30 @@ import com.google.common.cache.CacheBuilder;
 
 public class FeProxyServlet extends SSLProxyServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String URL = "%s://%s:%s%s";
-	private static Logger log = LoggerFactory.getLogger(FeProxyServlet.class.getName());
+	private static final String URL = "%s://%s%s%s";
+    private static final String ONBOARDING_CONTEXT = "/onboarding-api";
+    private static final String DCAED_CONTEXT = "/dcae-api";
+	private static final Logger log = LoggerFactory.getLogger(FeProxyServlet.class.getName());
 	private static Cache<String, MdcData> mdcDataCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
 
+//	@Override
+//	public URI rewriteURI(HttpServletRequest request) {
+//		try {
+//			logFeRequest(request);
+//		} catch (Exception e) {
+//			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Request");
+//			log.error("Unexpected FE request logging error :", e);
+//		}
+//		String originalUrl = request.getRequestURL().toString();
+//		String redirectedUrl = getModifiedUrl(request);
+//
+//		log.debug("FeProxyServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
+//
+//		return URI.create(redirectedUrl);
+//	}
+
 	@Override
-	public URI rewriteURI(HttpServletRequest request) {
+	protected String rewriteTarget(HttpServletRequest request) {
 		try {
 			logFeRequest(request);
 		} catch (Exception e) {
@@ -58,18 +76,29 @@ public class FeProxyServlet extends SSLProxyServlet {
 
 		log.debug("FeProxyServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
 
-		return URI.create(redirectedUrl);
+		return redirectedUrl;
 	}
 
+//	@Override
+//	protected void onResponseSuccess(HttpServletRequest request, HttpServletResponse response, Response proxyResponse) {
+//		try {
+//			logFeResponse(request, proxyResponse);
+//		} catch (Exception e) {
+//			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
+//			log.error("Unexpected FE response logging error :", e);
+//		}
+//		super.onResponseSuccess(request, response, proxyResponse);
+//	}
+//protected void onProxyResponseSuccess(HttpServletRequest clientRequest, HttpServletResponse proxyResponse, Response serverResponse) {
 	@Override
-	protected void onResponseSuccess(HttpServletRequest request, HttpServletResponse response, Response proxyResponse) {
+	protected void onProxyResponseSuccess(HttpServletRequest request, HttpServletResponse proxyResponse, Response response) {
 		try {
-			logFeResponse(request, proxyResponse);
+			logFeResponse(request, response);
 		} catch (Exception e) {
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
 			log.error("Unexpected FE response logging error :", e);
 		}
-		super.onResponseSuccess(request, response, proxyResponse);
+		super.onProxyResponseSuccess(request, proxyResponse, response);
 	}
 
 	private void logFeRequest(HttpServletRequest httpRequest) {
@@ -135,79 +164,104 @@ public class FeProxyServlet extends SSLProxyServlet {
 		MDC.put("timer", transactionStartTime);
 	}
 
-	private class MdcData {
-		private String serviceInstanceID;
-		private String userId;
-		private String remoteAddr;
-		private String localAddr;
-		private Long transactionStartTime;
-
-		public MdcData(String serviceInstanceID, String userId, String remoteAddr, String localAddr, Long transactionStartTime) {
-			super();
-			this.serviceInstanceID = serviceInstanceID;
-			this.userId = userId;
-			this.remoteAddr = remoteAddr;
-			this.localAddr = localAddr;
-			this.transactionStartTime = transactionStartTime;
-		}
-
-		public Long getTransactionStartTime() {
-			return transactionStartTime;
-		}
-
-		public String getUserId() {
-			return userId;
-		}
-
-		public String getRemoteAddr() {
-			return remoteAddr;
-		}
-
-		public String getLocalAddr() {
-			return localAddr;
-		}
-
-		public String getServiceInstanceID() {
-			return serviceInstanceID;
-		}
-	}
-
-	public String getModifiedUrl(HttpServletRequest request) {
-
+    private String getModifiedUrl(HttpServletRequest request) {
 		Configuration config = getConfiguration(request);
 		if (config == null) {
 			log.error("failed to retrive configuration.");
+			throw new RuntimeException("failed to read FE configuration");
 		}
-		String scheme = config.getBeProtocol();
-		String uri = request.getRequestURI().toString();
-		StringBuilder url = new StringBuilder();
-		url.append(scheme).append("://").append(config.getBeHost());
-		url.append(":");
-		if (config.getBeProtocol().equals(BE_PROTOCOL.HTTP.getProtocolName())) {
-			url.append(config.getBeHttpPort());
-		} else {
-			url.append(config.getBeSslPort());
+		String uri = request.getRequestURI();
+        String protocol;
+        String host;
+        String port;
+		if (uri.contains(ONBOARDING_CONTEXT)){
+            uri = uri.replace("/sdc1/feProxy"+ONBOARDING_CONTEXT,ONBOARDING_CONTEXT);
+            protocol = config.getOnboarding().getProtocolBe();
+            host = config.getOnboarding().getHostBe();
+            port = config.getOnboarding().getPortBe().toString();
 		}
-		url.append(uri);
-		String queryString = request.getQueryString(); // d=789
-		if (queryString != null) {
-			url.append("?").append(queryString);
+		else if(uri.contains(DCAED_CONTEXT)){
+            uri = uri.replace("/sdc1/feProxy"+DCAED_CONTEXT,DCAED_CONTEXT);
+            protocol = config.getBeProtocol();
+            host = config.getBeHost();
+            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+                port = config.getBeHttpPort().toString();
+            } else {
+                port = config.getBeSslPort().toString();
+            }
+		}
+		else{
+		    uri = uri.replace("/sdc1/feProxy","/sdc2");
+            protocol = config.getBeProtocol();
+            host = config.getBeHost();
+            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+                port = config.getBeHttpPort().toString();
+            } else {
+                port = config.getBeSslPort().toString();
+            }
+
 		}
 
-		String redirectedUrl = url.toString();
-		String onboardingForwardContext = config.getOnboardingForwardContext();
-		if (onboardingForwardContext == null || onboardingForwardContext.isEmpty()) {
-			onboardingForwardContext = "/onboarding-api";
-		}
-		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy/dcae-api", "/dcae");
-		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy/onboarding-api", onboardingForwardContext);
-		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy", "/sdc2");
-		return redirectedUrl;
+        String authority = getAuthority(host, port);
+        String queryString = getQueryString(request);
+        return  String.format(URL,protocol,authority,uri,queryString);
+
+
+
+
+//		String scheme = config.getBeProtocol();
+//		String uri = request.getRequestURI().toString();
+//		StringBuilder url = new StringBuilder();
+//		url.append(scheme).append("://").append(config.getBeHost());
+//		url.append(":");
+//		if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+//			url.append(config.getBeHttpPort());
+//		} else {
+//			url.append(config.getBeSslPort());
+//		}
+//		url.append(uri);
+//		String queryString = request.getQueryString(); // d=789
+//		if (queryString != null) {
+//			url.append("?").append(queryString);
+//		}
+//
+//		String redirectedUrl = url.toString();
+//		String onboardingForwardContext = config.getOnboardingForwardContext();
+//		if (onboardingForwardContext == null || onboardingForwardContext.isEmpty()) {
+//			onboardingForwardContext = "/onboarding-api";
+//		}
+//		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy/dcae-api", "/dcae");
+//		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy/onboarding-api", onboardingForwardContext);
+//		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy", "/sdc2");
+//		return redirectedUrl;
 
 	}
 
-	private Configuration getConfiguration(HttpServletRequest request) {
-		Configuration config = ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
-		return config;
+
+
+    private Configuration getConfiguration(HttpServletRequest request) {
+		return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
 	}
+
+    private String getAuthority(String host, String port) {
+        String authority;
+        if (port==null){
+            authority=host;
+        }
+        else{
+            authority=host+":"+port;
+        }
+        return authority;
+    }
+
+    private String getQueryString(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            queryString="?"+queryString;
+        }
+        else{
+            queryString="";
+        }
+        return queryString;
+    }
 }

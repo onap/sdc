@@ -562,7 +562,6 @@
                                     <dockerFileDir>${project.basedir}/sdc-api-tests</dockerFileDir>
                                     <tags>
                                         <tag>${docker.tag}</tag>
-                                        <tag>${docker.latest.tag}</tag>
                                         <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                     </tags>
                                 </build>

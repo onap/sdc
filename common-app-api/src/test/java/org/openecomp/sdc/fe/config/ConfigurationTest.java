@@ -499,35 +499,7 @@ public class ConfigurationTest {
 		testSubject.setFeFqdn(feFqdn);
 	}
 
-	
-	@Test
-	public void testGetOnboardingForwardContext() throws Exception {
-		Configuration testSubject;
-		String result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getOnboardingForwardContext();
-	}
-
-	
-	@Test
-	public void testSetOnboardingForwardContext() throws Exception {
-		Configuration testSubject;
-		String onboardingForwardContext = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setOnboardingForwardContext(onboardingForwardContext);
-	}
-
-	
-
-
-	
-
-
-	
 	@Test
 	public void testToString() throws Exception {
 		Configuration testSubject;
