@@ -6,6 +6,14 @@ catalogFeHost:  <%= @webportal_ip %>
 catalogFePort:  <%= @webportal_port %>
 catalogBeHost:  <%= @catalogBE_ip %>
 catalogBePort:  <%= @catalogBE_port %>
+onboardingBeHost:  <%= node['ONBOARDING_BE_VIP'] %>
+<% if node[:disableHttp] -%>
+sdcHttpMethod: https
+onboardingBePort:  <%= node['ONBOARDING_BE'][:https_port] %>
+<% else %>
+sdcHttpMethod: http
+onboardingBePort:  <%= node['ONBOARDING_BE'][:http_port] %>
+<% end -%>
 disributionClientPort: 8181
 esPort: 9200
 
@@ -29,13 +37,6 @@ cassandraTruststorePath : /tmp/.truststore
 cassandraTruststorePassword : Aa123456
 cassandraAuditKeySpace: sdcAudit
 cassandraArtifactKeySpace: sdcArtifact
-
-# catalog backend protocol
-<% if node[:disableHttp] -%>
-sdcHttpMethod: https
-<% else %>
-sdcHttpMethod: http
-<% end -%>
 
 localDataCenter: DC-Automate01
 

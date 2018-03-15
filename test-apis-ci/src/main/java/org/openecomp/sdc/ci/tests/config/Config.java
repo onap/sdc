@@ -62,6 +62,9 @@ public class Config {
 	private String catalogBePort;
 	private String catalogBeTlsPort;
 
+	private String onboardingBeHost;
+	private String onboardingBePort;
+
 	private String neoDBusername;
 	private String neoDBpassword;
 
@@ -111,6 +114,22 @@ public class Config {
 	
 	private Config() {
 		super();
+	}
+
+	public String getOnboardingBePort() {
+		return onboardingBePort;
+	}
+
+	public void setOnboardingBePort(String onboardingBePort) {
+		this.onboardingBePort = onboardingBePort;
+	}
+
+	public String getOnboardingBeHost() {
+		return onboardingBeHost;
+	}
+
+	public void setOnboardingBeHost(String onboardingBeHost) {
+		this.onboardingBeHost = onboardingBeHost;
 	}
 
 	public static class TestPackages {

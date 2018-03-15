@@ -44,7 +44,7 @@ public class VendorLicenseModelRestUtils {
 
      private static RestResponse getVLMComponentByVersion(String vlmId, String vlmVersion, User user) throws Exception{
         Config config = Utils.getConfig();
-        String url = String.format(Urls.GET_VLM_COMPONENT_BY_VERSION, config.getCatalogBeHost(),config.getCatalogBePort(), vlmId,vlmVersion);
+        String url = String.format(Urls.GET_VLM_COMPONENT_BY_VERSION, config.getOnboardingBeHost(),config.getOnboardingBePort(), vlmId,vlmVersion);
         String userId = user.getUserId();
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
@@ -102,7 +102,7 @@ public class VendorLicenseModelRestUtils {
 
     private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.ACTION_ON_COMPONENT, config.getCatalogBeHost(), config.getCatalogBePort(), onboardComponent, vspid, componentVersion);
+        String url = String.format(Urls.ACTION_ON_COMPONENT, config.getOnboardingBeHost(), config.getOnboardingBePort(), onboardComponent, vspid, componentVersion);
         String userId = user.getUserId();
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
 
@@ -113,7 +113,7 @@ public class VendorLicenseModelRestUtils {
 
     private static RestResponse createMethodVendorLicense(String vendorId, String body, String onboardComponent, User user, String componentVersion) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_METHOD, config.getCatalogBeHost(), config.getCatalogBePort(), onboardComponent, vendorId, componentVersion);
+        String url = String.format(Urls.CREATE_METHOD, config.getOnboardingBeHost(), config.getOnboardingBePort(), onboardComponent, vendorId, componentVersion);
         String userId = user.getUserId();
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
 
@@ -145,7 +145,7 @@ public class VendorLicenseModelRestUtils {
 
     public static RestResponse createVendorLicenseModels_1(String name, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_VENDOR_LISENCE_MODELS, config.getCatalogBeHost(), config.getCatalogBePort());
+        String url = String.format(Urls.CREATE_VENDOR_LISENCE_MODELS, config.getOnboardingBeHost(), config.getOnboardingBePort());
         String userId = user.getUserId();
 
         JSONObject jObject = new JSONObject();
@@ -164,7 +164,7 @@ public class VendorLicenseModelRestUtils {
     public static RestResponse createVendorLicenseAgreement_5(String vspid, String versionId, String featureGroupId, User user)
             throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_VENDOR_LISENCE_AGREEMENT, config.getCatalogBeHost(), config.getCatalogBePort(), vspid, versionId);
+        String url = String.format(Urls.CREATE_VENDOR_LISENCE_AGREEMENT, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
         String userId = user.getUserId();
 
         JSONObject licenseTermpObject = new JSONObject();
@@ -188,7 +188,7 @@ public class VendorLicenseModelRestUtils {
     public static RestResponse createVendorLicenseFeatureGroups_4(String vspid, String versionId, String licenseKeyGroupId,
                                                                   String entitlementPoolId, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_VENDOR_LISENCE_FEATURE_GROUPS, config.getCatalogBeHost(), config.getCatalogBePort(), vspid, versionId);
+        String url = String.format(Urls.CREATE_VENDOR_LISENCE_FEATURE_GROUPS, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
         String userId = user.getUserId();
 
         JSONObject jObject = new JSONObject();
@@ -209,7 +209,7 @@ public class VendorLicenseModelRestUtils {
 
     public static RestResponse createVendorEntitlementPool_3(String vspid, String versionId, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_VENDOR_LISENCE_ENTITLEMENT_POOL, config.getCatalogBeHost(), config.getCatalogBePort(), vspid, versionId);
+        String url = String.format(Urls.CREATE_VENDOR_LISENCE_ENTITLEMENT_POOL, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
         String userId = user.getUserId();
 
         JSONObject jEntitlementMetricObject = new JSONObject();
@@ -249,7 +249,7 @@ public class VendorLicenseModelRestUtils {
 
     public static RestResponse createVendorKeyGroups_2(String vspid, String versionId, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_VENDOR_LISENCE_KEY_GROUPS, config.getCatalogBeHost(), config.getCatalogBePort(), vspid, versionId);
+        String url = String.format(Urls.CREATE_VENDOR_LISENCE_KEY_GROUPS, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
         String userId = user.getUserId();
 
         JSONObject jOperationalScope = new JSONObject();
@@ -272,7 +272,7 @@ public class VendorLicenseModelRestUtils {
     public static RestResponse validateUpload(String vspid, User user, String vspVersion) throws Exception {
         String body = null;
         Config config = Utils.getConfig();
-        String url = String.format(Urls.VALIDATE_UPLOAD, config.getCatalogBeHost(), config.getCatalogBePort(), vspid,vspVersion);
+        String url = String.format(Urls.VALIDATE_UPLOAD, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid,vspVersion);
         String userId = user.getUserId();
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);

@@ -136,7 +136,7 @@ public class OnboardingUtils {
 
 	private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.ACTION_ON_COMPONENT, config.getCatalogBeHost(), config.getCatalogBePort(), onboardComponent, vspid, componentVersion);
+		String url = String.format(Urls.ACTION_ON_COMPONENT, config.getOnboardingBeHost(), config.getOnboardingBePort(), onboardComponent, vspid, componentVersion);
 		String userId = user.getUserId();
 		Map<String, String> headersMap = prepareHeadersMap(userId);
 
