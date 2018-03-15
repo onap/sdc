@@ -9,6 +9,7 @@ import org.openecomp.sdc.common.api.BasicConfiguration;
 public class PluginsConfiguration extends BasicConfiguration {
 
     private List<Plugin> pluginsList;
+    private Integer connectionTimeout;
 
     public List<Plugin> getPluginsList() {
         return pluginsList;
@@ -16,6 +17,14 @@ public class PluginsConfiguration extends BasicConfiguration {
 
     public void setPluginsList(List<Plugin> pluginsList) {
         this.pluginsList = pluginsList;
+    }
+
+    public Integer getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(Integer connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
     }
 
     public PluginsConfiguration() {
@@ -29,6 +38,7 @@ public class PluginsConfiguration extends BasicConfiguration {
         private String pluginSourceUrl;
         private String pluginStateUrl;
         private Map<String, PluginDisplayOptions> pluginDisplayOptions;
+        private boolean isOnline;
 
         public String getPluginId() {
             return pluginId;
@@ -68,6 +78,14 @@ public class PluginsConfiguration extends BasicConfiguration {
 
         public void setPluginDisplayOptions(Map<String, PluginDisplayOptions> pluginDisplayOptions) {
             this.pluginDisplayOptions = pluginDisplayOptions;
+        }
+
+        public boolean isOnline() {
+            return isOnline;
+        }
+
+        public void setOnline(boolean online) {
+            isOnline = online;
         }
 
     }

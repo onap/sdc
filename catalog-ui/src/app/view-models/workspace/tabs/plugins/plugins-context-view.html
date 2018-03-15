@@ -1,4 +1,5 @@
 <loader display="isLoading"></loader>
 <div class="workspace-plugins">
-    <plugin-frame (on-loading-done)="onLoadingDone(plugin)" [plugin]="plugin" [query-params]="queryParams"></plugin-frame>
+    <plugin-frame data-ng-if="plugin.isOnline" (on-loading-done)="onLoadingDone(plugin)" [plugin]="plugin" [query-params]="queryParams"></plugin-frame>
+    <div class="offline-plugin-message" data-ng-if="!plugin.isOnline">The plugin {{plugin.pluginId}} is offline. Please try again later</div>
 </div>
