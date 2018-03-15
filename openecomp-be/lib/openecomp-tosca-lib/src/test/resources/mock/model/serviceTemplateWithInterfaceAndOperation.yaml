@@ -20,7 +20,6 @@ interface_types:
     description: test interface
     start:
       description: start operation
-      implementation: start.sh
 node_types:
   compute_node_type:
     derived_from: tosca.nodes.Root
