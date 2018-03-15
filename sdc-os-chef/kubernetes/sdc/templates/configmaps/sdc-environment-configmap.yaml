@@ -19,6 +19,7 @@ data:
             "disableHttp": false,
             "CS_VIP": "sdc-cs.{{ .Values.nsPrefix }}",
             "BE_VIP": "sdc-be.{{ .Values.nsPrefix }}",
+            "ONBOARDING_BE_VIP": "sdc-onboard-be.{{ .Values.nsPrefix }}",
             "FE_VIP": "sdc-fe.{{ .Values.nsPrefix }}",
             "ES_VIP": "sdc-es.{{ .Values.nsPrefix }}",
             "KB_VIP": "sdc-es.{{ .Values.nsPrefix }}",
@@ -44,6 +45,7 @@ data:
             "Nodes": {
                 "CS": "sdc-cs",
                 "BE": "sdc-be",
+                "ONBOARDING_BE": "sdc-onboard-be",
                 "FE": "sdc-fe",
                 "ES": "sdc-es",
                 "KB": "sdc-kb"
@@ -71,6 +73,10 @@ data:
             "BE": {
                 "http_port": "8080",
                 "https_port": "8443"
+            },
+            "ONBOARDING_BE": {
+                "http_port": "8081",
+                "https_port": "8445"
             },
             "elasticsearch": {
                 "cluster_name": "SDC-ES-",
