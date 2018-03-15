@@ -33,6 +33,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.openecomp.sdc.fe.utils.BeProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,18 +42,7 @@ public abstract class SSLProxyServlet extends ProxyServlet {
 	private static final long serialVersionUID = 1L;
 	private static Logger log = LoggerFactory.getLogger(SSLProxyServlet.class.getName());
 
-	public enum BE_PROTOCOL {
-		HTTP("http"), SSL("ssl");
-		private String protocolName;
 
-		public String getProtocolName() {
-			return protocolName;
-		}
-
-		BE_PROTOCOL(String protocolName) {
-			this.protocolName = protocolName;
-		}
-	};
 
 	@Override
 	public void customizeProxyRequest(Request proxyRequest, HttpServletRequest request) {
@@ -77,7 +67,7 @@ public abstract class SSLProxyServlet extends ProxyServlet {
 	protected HttpClient createHttpClient() throws ServletException {
 		Configuration config = ((ConfigurationManager) getServletConfig().getServletContext()
 				.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
-		boolean isSecureClient = !config.getBeProtocol().equals(BE_PROTOCOL.HTTP.getProtocolName());
+		boolean isSecureClient = !config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName());
 		HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
 		setTimeout(600000);
 		client.setIdleTimeout(600000);
