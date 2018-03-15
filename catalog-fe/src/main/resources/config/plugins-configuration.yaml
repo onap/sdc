@@ -17,5 +17,7 @@ pluginsList:
             displayName: "WORKFLOW"
         context:
             displayName: "Workflow Designer"
-            displayContext: ["VF"]
+            displayContext: ["VF", "SERVICE"]
             displayRoles: ["DESIGNER", "TESTER"]
+
+connectionTimeout: 1000

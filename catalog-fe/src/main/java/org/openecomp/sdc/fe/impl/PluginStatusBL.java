@@ -23,11 +23,13 @@ public class PluginStatusBL {
 	private static Logger log = LoggerFactory.getLogger(PluginStatusBL.class.getName());
 	private static  Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	private CloseableHttpClient client = null;
-	
+	private PluginsConfiguration pluginsConfiguration = ConfigurationManager.getConfigurationManager().getPluginsConfiguration();
+	private Integer connectionTimeout;
+
 	public PluginStatusBL() {
 		this.client = HttpClients.createDefault();
 	}
-	
+
 	public PluginStatusBL(CloseableHttpClient client) {
 		this.client = client;
 				
@@ -36,21 +38,18 @@ public class PluginStatusBL {
 	public String checkPluginsListAvailability() {
 		String result = null;
 
-		PluginsConfiguration pluginsConfiguration = ConfigurationManager.getConfigurationManager()
-				.getPluginsConfiguration();
-
 		if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
 			log.warn("Configuration of type {} was not found", PluginsConfiguration.class);
 		} else {
 			log.debug("The value returned from getConfig is {}", pluginsConfiguration);
+			connectionTimeout = pluginsConfiguration.getConnectionTimeout();
 
 			List<Plugin> availablePluginsList = new ArrayList<>();
 
-			pluginsConfiguration.getPluginsList().forEach(value -> {
-				if (checkPluginAvailability(value)) {
-					availablePluginsList.add(value);
-				}
+			pluginsConfiguration.getPluginsList().forEach(plugin -> {
+				plugin.setOnline(checkPluginAvailability(plugin));
 
+				availablePluginsList.add(plugin);
 			});
 			result = gson.toJson(availablePluginsList);
 		}
@@ -62,9 +61,9 @@ public class PluginStatusBL {
 
 		HttpHead head = new HttpHead(plugin.getPluginDiscoveryUrl());
 		RequestConfig requestConfig = RequestConfig.custom()
-				.setSocketTimeout(1000)
-				.setConnectTimeout(1000)
-				.setConnectionRequestTimeout(1000).build();
+				.setSocketTimeout(connectionTimeout)
+				.setConnectTimeout(connectionTimeout)
+				.setConnectionRequestTimeout(connectionTimeout).build();
 
 		head.setConfig(requestConfig);
 

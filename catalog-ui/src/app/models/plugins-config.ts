@@ -5,6 +5,7 @@ export class Plugin {
     pluginSourceUrl: string;
     pluginStateUrl: string;
     pluginDisplayOptions: Map<string, PluginDisplayOptions>;
+    isOnline: boolean;
 }
 
 export class PluginDisplayOptions {
@@ -17,4 +18,5 @@ export type Plugins = Array<Plugin>;
 
 export class PluginsConfiguration {
     static plugins: Plugins;
+    static connectionTimeout: boolean;
 }

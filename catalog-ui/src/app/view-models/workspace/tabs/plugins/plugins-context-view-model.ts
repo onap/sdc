@@ -9,6 +9,7 @@ interface IPluginsContextViewModelScope extends IWorkspaceViewModelScope {
     user:IUserProperties;
     queryParams: Object;
     isLoading: boolean;
+    show: boolean;
 
     onLoadingDone(plugin: Plugin): void;
 }
@@ -30,9 +31,14 @@ export class PluginsContextViewModel {
     }
 
     private initScope = ():void => {
-        this.$scope.isLoading = true;
+        this.$scope.show = false;
         this.$scope.plugin = this.pluginsService.getPluginByStateUrl(this.$stateParams.path);
         this.$scope.user = this.cacheService.get('user');
+
+        // Don't show loader if the plugin isn't online
+        if (this.$scope.plugin.isOnline) {
+            this.$scope.isLoading = true;
+        }
 
         this.$scope.queryParams = {
             userId: this.$scope.user.userId,

@@ -12,6 +12,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -35,7 +36,8 @@ public class PluginStatusBLTest {
 	final static Plugin onlinePlugin = new Plugin();
 	final static CloseableHttpResponse httpResponse = Mockito.mock(CloseableHttpResponse.class);
 	final static StatusLine statusLine = Mockito.mock(StatusLine.class); 
-	final static List<Plugin> testPluginsList = new ArrayList<>();
+	static List<Plugin> testPluginsList = new ArrayList<>();
+	static List<Plugin> assertPluginList = new ArrayList<>();
 
 	final static String offlinePluginsDisplayName = "offlinePlugin";
 	final static String offlinePluginDiscoveryPath = "http://192.168.10.1:1000/offline";
@@ -53,34 +55,50 @@ public class PluginStatusBLTest {
 
 		onlinePlugin.setPluginId(onlinePluginDisplayName);
 		onlinePlugin.setPluginDiscoveryUrl(onlinePluginDiscoveryPath);
-		
+	}
+
+	@Before
+	public void beforeTest() {
+		testPluginsList = new ArrayList<>();
+		assertPluginList = new ArrayList<>();
 	}
 
 	@Test
-	public void TestOfflinePluginNotBeingReturnedWhenCallingCheckPluginsListAvailability() throws ClientProtocolException, IOException {
+	public void TestOfflinePluginBeingReturnedWithIsOnlineValueFalse() throws ClientProtocolException, IOException {
 		testPluginsList.add(offlinePlugin);
 		when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
 		
 		when(statusLine.getStatusCode()).thenReturn(404);		
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
 		when(httpClient.execute(Mockito.any(HttpHead.class))).thenReturn(httpResponse);
+
+		offlinePlugin.setOnline(false);
+		assertPluginList.add(offlinePlugin);
+
+		String result = gson.toJson(assertPluginList);
+		String actualResult = pluginStatusBL.checkPluginsListAvailability();
+
+		System.out.println(result);
+		System.out.println(actualResult);
 		
-		assertTrue(pluginStatusBL.checkPluginsListAvailability().equals("[]"));
-		
+		assertTrue(pluginStatusBL.checkPluginsListAvailability().equals(result));
 	}
 	
 	@Test
-	public void TestOnlinePluginNotBeingReturnedWhenCallingCheckPluginsListAvailability() throws ClientProtocolException, IOException {
+	public void TestOnlinePluginBeingReturnedWithIsOnlineValueTrue() throws ClientProtocolException, IOException {
 		testPluginsList.add(onlinePlugin);
 		when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
 		
 		when(statusLine.getStatusCode()).thenReturn(200);		
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
 		when(httpClient.execute(Mockito.any())).thenReturn(httpResponse);
+
+		onlinePlugin.setOnline(true);
+		assertPluginList.add(onlinePlugin);
+
+		String result = gson.toJson(assertPluginList);
 		
-		String result = gson.toJson(testPluginsList);
-		
-		assertTrue(pluginStatusBL.checkPluginsListAvailability().contains(result));
+		assertTrue(pluginStatusBL.checkPluginsListAvailability().equals(result));
 		
 	}
 
