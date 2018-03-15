@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_260eaae5",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/Items.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T15:34:09Z",
+      "side": 1,
+      "message": "enter license",
+      "revId": "99ec989019e0ba3a5c4e4a171ad2cb478ca42458",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c6c1064f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T15:34:09Z",
+      "side": 1,
+      "message": "add spring annotations",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 41
+      },
+      "revId": "99ec989019e0ba3a5c4e4a171ad2cb478ca42458",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a674fa35",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T15:34:09Z",
+      "side": 1,
+      "message": "this switch is redundant since both case are handled almost the same and doesn\u0027t need even a function extraction",
+      "range": {
+        "startLine": 58,
+        "startChar": 6,
+        "endLine": 74,
+        "endChar": 9
+      },
+      "revId": "99ec989019e0ba3a5c4e4a171ad2cb478ca42458",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_66b912cb",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T15:34:09Z",
+      "side": 1,
+      "message": "unused parameter",
+      "range": {
+        "startLine": 92,
+        "startChar": 69,
+        "endLine": 92,
+        "endChar": 76
+      },
+      "revId": "99ec989019e0ba3a5c4e4a171ad2cb478ca42458",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_469bb665",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T15:34:09Z",
+      "side": 1,
+      "message": "typo? should it be \"to\"?",
+      "range": {
+        "startLine": 105,
+        "startChar": 79,
+        "endLine": 105,
+        "endChar": 80
+      },
+      "revId": "99ec989019e0ba3a5c4e4a171ad2cb478ca42458",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_26af8a7e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-types/src/main/java/org/openecomp/sdcrests/item/types/ItemActionRequestDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-15T15:34:09Z",
+      "side": 1,
+      "message": "change to amdocs",
+      "range": {
+        "startLine": 5,
+        "startChar": 21,
+        "endLine": 5,
+        "endChar": 50
+      },
+      "revId": "99ec989019e0ba3a5c4e4a171ad2cb478ca42458",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
