@@ -238,7 +238,7 @@
                             <tasks>
                                 <property name="version" value="${project.version}"/>
                                 <mkdir dir="target/docs"/>
-                                <echo file="target/docs/build-info.json">{"Version": "${version}"}</echo>
+                                <echo file="target/docs/build-info.json">{"Version": "${project.version}"}</echo>
                             </tasks>
                         </configuration>
                         <goals>
