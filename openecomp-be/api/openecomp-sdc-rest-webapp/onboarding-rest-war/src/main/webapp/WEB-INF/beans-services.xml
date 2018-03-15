@@ -40,6 +40,7 @@
     <bean id = "itemPermissions" class="org.openecomp.sdcrests.itempermissions.rest.services.ItemPermissionsImpl"/>
     <bean id = "notifications" class="org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl"/>
     <bean id = "togglz" class="org.openecomp.sdcrests.togglz.rest.services.TogglzFeaturesImpl"/>
+    <bean id = "items" class="org.openecomp.sdcrests.item.rest.services.ItemsImpl"/>
 
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">
@@ -73,6 +74,7 @@
             <ref bean="itemPermissions"/>
             <ref bean="notifications"/>
             <ref bean="togglz"/>
+            <ref bean="items"/>
         </jaxrs:serviceBeans>
 
         <jaxrs:providers>

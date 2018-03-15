@@ -16,25 +16,7 @@
 
 package org.openecomp.sdc.versioning;
 
-import java.util.Collection;
-import java.util.function.Predicate;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.types.Item;
+public interface AsdcItemManager extends ItemManager {
 
-public interface AsdcItemManager {
-
-  Collection<Item> list(Predicate<Item> predicate);
-
-  Item get(String itemId);
-
-  Item create(Item item);
-
-  void updateVersionStatus(String itemId, VersionStatus addedVersionStatus,
-      VersionStatus removedVersionStatus);
-
-  void updateOwner(String itemId, String owner);
-
-  void updateName(String itemId, String name);
-
-  void delete(Item item);
+    void updateOwner(String itemId, String owner);
 }

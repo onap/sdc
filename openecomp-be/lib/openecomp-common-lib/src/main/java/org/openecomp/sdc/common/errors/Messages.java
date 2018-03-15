@@ -42,6 +42,7 @@ public enum Messages {
   DELETE_VSP_ERROR("VSP has been certified and cannot be deleted."),
   DELETE_VLM_ERROR("VLM has been certified and cannot be deleted."),
 
+
   ZIP_SHOULD_NOT_CONTAIN_FOLDERS("Zip file should not contain folders"),
   VES_ZIP_SHOULD_CONTAIN_YML_ONLY(
       "Wrong VES EVENT Artifact was uploaded - all files contained in Artifact must be YAML files" +

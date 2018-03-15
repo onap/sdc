@@ -12,6 +12,7 @@ public class Item {
   private String type;
   private String name;
   private String owner;
+  private ItemStatus status;
   private String description;
   private Map<String, Object> properties = new HashMap<>();
   private Map<VersionStatus, Integer> versionStatusCounters = new EnumMap<>(VersionStatus.class);
@@ -48,6 +49,14 @@ public class Item {
 
   public void setOwner(String owner) {
     this.owner = owner;
+  }
+
+  public ItemStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(ItemStatus status) {
+    this.status = status;
   }
 
   public String getDescription() {

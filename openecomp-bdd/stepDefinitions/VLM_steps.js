@@ -55,3 +55,25 @@ Then('I want to delete this VLM', function()  {
 	return util.request(this.context, 'DELETE', path);
 });
 
+
+/**
+ * @module VLM
+ * @exampleFile ArchiveItem.feature
+ * @step I want to list Archived VLMs
+ **/
+Then('I want to list Archived VLMs', function()  {
+	let path = '/vendor-license-models/?Status=ARCHIVED';
+	return util.request(this.context, 'GET', path);
+});
+
+/**
+ * @module VLM
+ * @exampleFile ArchiveItem.feature
+ * @step I want to list Active VLMs
+ **/
+Then('I want to list Active VLMs', function()  {
+	let path = '/vendor-license-models';
+	return util.request(this.context, 'GET', path);
+});
+
+

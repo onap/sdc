@@ -10,6 +10,7 @@ import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -28,6 +29,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.openecomp.sdc.versioning.dao.impl.zusammen.TestUtil.createZusammenContext;
+import static org.testng.Assert.assertEquals;
 
 public class ItemZusammenDaoImplTest {
 
@@ -114,6 +116,8 @@ public class ItemZusammenDaoImplTest {
 
     Assert.assertNotNull(item);
     assertItemEquals(item, toBeReturned);
+    assertEquals(item.getStatus(), ItemStatus.ACTIVE);
+
   }
 
   @Test

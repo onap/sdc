@@ -32,9 +32,11 @@ public interface ItemManager {
   void updateVersionStatus(String itemId, VersionStatus addedVersionStatus,
       VersionStatus removedVersionStatus);
 
-  void delete(Item item);
+  void archive(Item item);
 
-  void updateName(String itemId, String name);
+  void restore(Item item);
+
+  void delete(Item item);
 
   void update(Item item);
 }

@@ -16,6 +16,29 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -62,6 +85,7 @@ import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.NotificationEventTypes;
 import org.openecomp.sdcrests.item.rest.mapping.MapVersionToDto;
 import org.openecomp.sdcrests.item.types.ItemCreationDto;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.item.types.VersionDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
@@ -84,29 +108,6 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.VALIDATION_VSP_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
 
 @Named
 @Service("vendorSoftwareProducts")
@@ -166,6 +167,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     Item item = new MapVspDescriptionDtoToItem().applyMapping(vspRequestDto, Item.class);
     item.setType(ItemType.vsp.name());
     item.setOwner(user);
+    item.setStatus(ItemStatus.ACTIVE);
     item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
 
     uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
@@ -197,27 +199,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     throw new CoreException(onboardingMethodUpdateErrorCode, e);
   }
 
-  @Override
-  public Response listVsps(String versionStatus, String user) {
-    Predicate<Item> itemPredicate;
-    if (VersionStatus.Certified.name().equals(versionStatus)) {
-      itemPredicate = item -> ItemType.vsp.name().equals(item.getType())
-          && item.getVersionStatusCounters().containsKey(VersionStatus.Certified);
+    @Override
+    public Response listVsps(String versionStatus, String itemStatus, String user) {
 
-    } else if (VersionStatus.Draft.name().equals(versionStatus)) {
-      itemPredicate = item -> ItemType.vsp.name().equals(item.getType())
-          && item.getVersionStatusCounters().containsKey(VersionStatus.Draft)
-          && userHasPermission(item.getId(), user);
+      GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
+      MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
 
-    } else {
-      itemPredicate = item -> ItemType.vsp.name().equals(item.getType());
-    }
-
-    GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
-    MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
-    itemManager.list(itemPredicate).stream()
-        .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-        .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
+      getVspList(versionStatus,itemStatus,user)
+              .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
 
     return Response.ok(results).build();
   }
@@ -386,9 +375,18 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   @Override
-  public Response listPackages(String category, String subCategory, String user) {
+  public Response listPackages(String status, String category, String subCategory, String user) {
+
+    List<String> VspsIds =
+            getVspList(null, status != null ? ItemStatus.valueOf(status).name(): null, user)
+            .stream().map(Item::getId).collect(Collectors.toList());
+
     List<PackageInfo> packageInfoList =
         vendorSoftwareProductManager.listPackages(category, subCategory);
+
+    packageInfoList = packageInfoList.stream().
+            filter(packageInfo -> VspsIds.contains(packageInfo.getVspId()))
+            .collect(Collectors.toList());
 
     GenericCollectionWrapper<PackageInfoDto> results = new GenericCollectionWrapper<>();
     MapPackageInfoToPackageInfoDto mapper = new MapPackageInfoToPackageInfoDto();
@@ -610,5 +608,39 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     String permission = permissionsManager.getUserItemPermiission(itemId, userId);
     return permission != null && permission
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name());
+  }
+
+
+  private Predicate<Item> createItemPredicate(String versionStatus,
+                                              String itemStatus,
+                                              String user) {
+    Predicate<Item> itemPredicate = item -> ItemType.vsp.name().equals(item.getType());
+
+    if (ItemStatus.ARCHIVED.name().equals(itemStatus)) {
+      itemPredicate = itemPredicate.and(item -> ItemStatus.ARCHIVED.equals(item.getStatus()));
+    } else {
+      itemPredicate = itemPredicate.and(item -> ItemStatus.ACTIVE.equals(item.getStatus()));
+
+      if (VersionStatus.Certified.name().equals(versionStatus)) {
+        itemPredicate = itemPredicate
+                .and(item -> item.getVersionStatusCounters().containsKey(VersionStatus.Certified));
+
+      } else if (VersionStatus.Draft.name().equals(versionStatus)) {
+        itemPredicate = itemPredicate.and(
+                item -> item.getVersionStatusCounters().containsKey(VersionStatus.Draft)
+                        && userHasPermission(item.getId(), user));
+      }
+    }
+    return itemPredicate;
+  }
+
+  private List<Item> getVspList(String versionStatus, String itemStatus, String user) {
+
+    Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
+
+    return itemManager.list(itemPredicate).stream()
+            .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime())).
+            collect(Collectors.toList());
+
   }
 }

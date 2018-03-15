@@ -52,6 +52,7 @@ import org.openecomp.sdcrests.item.rest.mapping.MapItemToDto;
 import org.openecomp.sdcrests.item.rest.mapping.MapVersionToDto;
 import org.openecomp.sdcrests.item.types.ItemCreationDto;
 import org.openecomp.sdcrests.item.types.ItemDto;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.item.types.VersionDto;
 import org.openecomp.sdcrests.vendorlicense.rest.VendorLicenseModels;
 import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapVendorLicenseModelEntityToDto;
@@ -106,20 +107,8 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
       .createInterface());
 
   @Override
-  public Response listLicenseModels(String versionStatus, String user) {
-    Predicate<Item> itemPredicate;
-    if (VersionStatus.Certified.name().equals(versionStatus)) {
-      itemPredicate = item -> ItemType.vlm.name().equals(item.getType()) &&
-          item.getVersionStatusCounters().containsKey(VersionStatus.Certified);
-
-    } else if (VersionStatus.Draft.name().equals(versionStatus)) {
-      itemPredicate = item -> ItemType.vlm.name().equals(item.getType()) &&
-          item.getVersionStatusCounters().containsKey(VersionStatus.Draft) &&
-          userHasPermission(item.getId(), user);
-
-    } else {
-      itemPredicate = item -> ItemType.vlm.name().equals(item.getType());
-    }
+  public Response listLicenseModels(String versionStatus,String itemStatus, String user) {
+    Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
 
     GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
     MapItemToDto mapper = new MapItemToDto();
@@ -135,6 +124,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     Item item = new Item();
     item.setType(ItemType.vlm.name());
     item.setOwner(user);
+    item.setStatus(ItemStatus.ACTIVE);
     item.setName(request.getVendorName());
     item.setDescription(request.getDescription());
 
@@ -334,4 +324,28 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     return (permission != null && permission
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name()));
   }
+
+  private Predicate<Item> createItemPredicate(String versionStatus,
+                                              String itemStatus,
+                                              String user) {
+    Predicate<Item> itemPredicate = item -> ItemType.vlm.name().equals(item.getType());
+
+    if (ItemStatus.ARCHIVED.name().equals(itemStatus)) {
+      itemPredicate = itemPredicate.and(item -> ItemStatus.ARCHIVED.equals(item.getStatus()));
+    } else {
+      itemPredicate = itemPredicate.and(item -> ItemStatus.ACTIVE.equals(item.getStatus()));
+
+      if (VersionStatus.Certified.name().equals(versionStatus)) {
+        itemPredicate = itemPredicate
+                .and(item -> item.getVersionStatusCounters().containsKey(VersionStatus.Certified));
+
+      } else if (VersionStatus.Draft.name().equals(versionStatus)) {
+        itemPredicate = itemPredicate.and(
+                item -> item.getVersionStatusCounters().containsKey(VersionStatus.Draft)
+                        &&  userHasPermission(item.getId(), user));
+      }
+    }
+    return itemPredicate;
+  }
+
 }

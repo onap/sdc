@@ -57,12 +57,15 @@ public interface VendorLicenseModels {
   @ApiOperation(value = "List vendor license models",
       response = ItemDto.class,
       responseContainer = "List")
-  Response listLicenseModels(@ApiParam(value =
-      "Currently supported value: 'Certified' - only vendor License models with final versions "
-          + "will be return - with their latest final version")
-                             @QueryParam("versionFilter") String versionStatus,
-                             @NotNull(message = USER_MISSING_ERROR_MSG)
-                             @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
+  Response listLicenseModels(@ApiParam(value = "Filter to return only Vendor License Models with at" +
+                            " least one version at this status. Currently supported values: 'Certified' , 'Draft'")
+                            @QueryParam("versionFilter") String versionStatus,
+                            @ApiParam(value = "Filter to only return Vendor License Models at this status." +
+                            "Currently supported values: 'ACTIVE' , 'ARCHIVED'." +
+                            "Default value = 'ACTIVE'.")
+                            @QueryParam("Status") String itemStatus,
+                            @NotNull(message = USER_MISSING_ERROR_MSG)
+                            @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/")

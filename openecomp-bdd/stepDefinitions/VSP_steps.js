@@ -119,3 +119,64 @@ Then('I want to delete this VSP', function()  {
 	let path = '/vendor-software-products/' + this.context.item.id ;
 	return util.request(this.context, 'DELETE', path);
 });
+
+/**
+ * @module VSP
+ * @exampleFile ArchiveItem.feature
+ * @step I want to list Archived VSPs
+ **/
+Then('I want to list Archived VSPs', function()  {
+	let path = '/vendor-software-products/?Status=ARCHIVED';
+	return util.request(this.context, 'GET', path);
+});
+
+/**
+ * @module VSP
+ * @exampleFile ArchiveItem.feature
+ * @step I want to list Active VSPs
+ **/
+Then('I want to list Active VSPs', function()  {
+	let path = '/vendor-software-products';
+	return util.request(this.context, 'GET', path);
+});
+
+
+/**
+ * @module VSP
+ * @exampleFile FilterArchivedVSPpackage.feature
+ * @step I want to list Archived VSPs packages
+ **/
+Then('I want to list Archived VSPs packages', function()  {
+	let path = '/vendor-software-products/packages?Status=ARCHIVED';
+	return util.request(this.context, 'GET', path);
+});
+
+/**
+ * @module VSP
+ * @exampleFile FilterArchivedVSPpackage.feature
+ * @step I want to list Active VSPs packages
+ **/
+Then('I want to list Active VSPs packages', function()  {
+	let path = '/vendor-software-products/packages';
+	return util.request(this.context, 'GET', path);
+
+});
+
+/**
+ * @module VSP
+ * @exampleFile FilterArchivedVSPpackage.feature
+ * @step I want to check that VSP package exits in response
+ **/
+Then('I want to check that VSP package exits in response', function()  {
+
+      const packages = this.context.responseData.results;
+      const id = this.context.item.id;
+      var testResult = false;
+
+      for(var i=0; i< packages.length; i++){
+          if (id == packages[i].packageId){
+               testResult = true;
+          }
+      }
+      assert.equal(testResult,true);
+});
