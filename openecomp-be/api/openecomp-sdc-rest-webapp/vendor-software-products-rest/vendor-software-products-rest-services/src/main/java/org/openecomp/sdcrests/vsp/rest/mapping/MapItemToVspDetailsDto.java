@@ -15,5 +15,6 @@ public class MapItemToVspDetailsDto extends MappingBase<Item, VspDetailsDto> {
     target.setVendorName((String) source.getProperties().get(VspItemProperty.VENDOR_NAME));
     target.setOnboardingMethod((String) source.getProperties().get(VspItemProperty.ONBOARDING_METHOD));
     target.setOwner(source.getOwner());
+    target.setStatus(source.getStatus().name());
   }
 }

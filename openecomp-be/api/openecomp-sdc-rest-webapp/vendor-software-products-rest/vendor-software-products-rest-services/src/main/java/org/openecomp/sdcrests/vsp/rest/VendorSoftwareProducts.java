@@ -69,10 +69,13 @@ public interface VendorSoftwareProducts extends VspEntities {
   @Path("/")
   @ApiOperation(value = "Get list of vendor software products and their description",
       responseContainer = "List")
-  Response listVsps(@ApiParam(
-      value = "Currently supported values: 'Certified' - only vendor software products with final "
-          + " version will be return - with their latest final version")
+  Response listVsps(@ApiParam(value = "Filter to return only Vendor Software Products with at" +
+                    " least one version at this status. Currently supported values: 'Certified' , 'Draft'")
                     @QueryParam("versionFilter") String versionStatus,
+                    @ApiParam(value = "Filter to only return Vendor Software Products at this status." +
+                    "Currently supported values: 'ACTIVE' , 'ARCHIVED'." +
+                    "Default value = 'ACTIVE'.")
+                    @QueryParam("Status") String itemStatus,
                     @NotNull(message = USER_MISSING_ERROR_MSG)
                     @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
@@ -105,7 +108,10 @@ public interface VendorSoftwareProducts extends VspEntities {
   @ApiOperation(value = "Get list of translated CSAR files details",
       response = PackageInfoDto.class,
       responseContainer = "List")
-  Response listPackages(@ApiParam("Category") @QueryParam("category") String category,
+  Response listPackages(@ApiParam("Vendor Software Product status filter. " +
+                        "Currently supported values: 'ACTIVE', 'ARCHIVED'")
+                        @QueryParam("Status") String status,
+                        @ApiParam("Category") @QueryParam("category") String category,
                         @ApiParam("Sub-category") @QueryParam("subCategory") String subCategory,
                         @NotNull(message = USER_MISSING_ERROR_MSG)
                         @HeaderParam(USER_ID_HEADER_PARAM) String user);

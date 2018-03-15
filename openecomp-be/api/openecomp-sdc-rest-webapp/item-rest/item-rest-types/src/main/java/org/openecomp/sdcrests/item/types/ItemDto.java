@@ -6,6 +6,7 @@ public class ItemDto {
   private String name;
   private String description;
   private String owner;
+  private String status;
 
   public String getId() {
     return id;
@@ -45,5 +46,13 @@ public class ItemDto {
 
   public void setOwner(String owner) {
     this.owner = owner;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 }

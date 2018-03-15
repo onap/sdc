@@ -65,3 +65,27 @@ Then('I want to revert this Item to the revision with the value from saved prope
 	return util.request(this.context, 'PUT', path, inputData);
 });
 
+
+/**
+ * @module Item
+ * @exampleFile ArchiveItem.feature
+ * @step I want to archive this item
+ **/
+Then('I want to archive this item', function()  {
+    let path = '/items/' + this.context.item.id + '/actions'
+    let inputData = {action: 'ARCHIVE'};
+	return util.request(this.context, 'PUT', path, inputData);
+});
+
+
+/**
+ * @module Item
+ * @exampleFile ArchiveItem.feature
+ * @step I want to restore this item
+ **/
+Then('I want to restore this item', function()  {
+    let path = '/items/' + this.context.item.id + '/actions'
+    let inputData = {action: 'RESTORE'};
+	return util.request(this.context, 'PUT', path, inputData);
+});
+

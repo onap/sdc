@@ -99,7 +99,7 @@ public class HealAll {
       return versionInfoEntity.getCandidate().getVersion();
     } else if (!CollectionUtils.isEmpty(versionInfoEntity.getViewableVersions())) {
 
-      return versionInfoEntity.getViewableVersions().stream().max(Version::compateTo)
+      return versionInfoEntity.getViewableVersions().stream().max(Version::compareTo)
           .orElse(new Version());
     }
     return versionInfoEntity.getActiveVersion();

@@ -22,6 +22,11 @@ YAML = require('yamljs');
 const fs = require('fs');
 const util = require('./Utils.js');
 
+function getPath(path, context) {
+	let compiled = _.template(path);
+	return compiled(context);
+}
+
 /**
  * @module ContextData
  * @description  Use with "Given". Use ONLY for local testing when you know the value of the Item you want to use
@@ -183,7 +188,8 @@ Then('I want the following to fail with error code {string}', function(string)  
  **/
 Then('I want the following to fail with error message {string}', function(string)  {
 	this.context.shouldFail = true;
-	this.context.errorMessage = string;
+	let errorMessage = getPath(string, this.context);
+	this.context.errorMessage = errorMessage;
 });
 
 /**
@@ -228,4 +234,47 @@ When('I want to load the json content of the entry {string} in the zip {string} 
 	let str = zip.files[string]._data;
 	this.context.responseData = JSON.parse(str);
 	callback();
+});
+
+/**
+ * @module ResponseData
+ * @description Check that the itemId from context exits in result of responseData
+ * exampleFile ArchiveItem.feature
+ * step I want to check that item exits in response
+ **/
+Then('I want to check that item exits in response', function() {
+
+  const id = this.context.item.id;
+  const results = this.context.responseData.results;
+  var testResult = false;
+
+  for(var i=0; i< results.length; i++){
+     if ( id == results[i].id){
+            testResult = true;
+     }
+  }
+
+   assert.equal(testResult,true);
+});
+
+
+/**
+ * @module ResponseData
+ * @description Check that the itemId from context does NOT exits in result of responseData
+ * exampleFile ArchiveItem.feature
+ * step I want to check that item does not exits in response
+ **/
+Then('I want to check that item does not exits in response', function() {
+
+  const id = this.context.item.id;
+  const results = this.context.responseData.results;
+  var testResult = false;
+
+  for(var i=0; i< results.length; i++){
+     if ( id == results[i].id){
+            testResult = true;
+     }
+  }
+
+   assert.equal(testResult,false);
 });

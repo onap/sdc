@@ -10,7 +10,13 @@ public enum ToggleableFeature implements Feature {
   VLAN_TAGGING,
 
   @Label ("Annotations")
-  ANNOTATIONS;
+  ANNOTATIONS,
+
+  @Label("Archive Item")
+  ARCHIVE_ITEM,
+
+  @Label("Filter")
+  FILTER;
 
   public boolean isActive() {
     return FeatureContext.getFeatureManager().isActive(this);

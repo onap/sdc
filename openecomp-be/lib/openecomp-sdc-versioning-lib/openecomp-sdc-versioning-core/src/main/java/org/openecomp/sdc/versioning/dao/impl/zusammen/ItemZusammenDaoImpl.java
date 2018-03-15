@@ -7,6 +7,7 @@ import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.versioning.dao.ItemDao;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 
 import java.util.Collection;
 import java.util.Map;
@@ -67,6 +68,12 @@ public class ItemZusammenDaoImpl implements ItemDao {
 
     item.setCreationTime(zusammenItem.getCreationTime());
     item.setModificationTime(zusammenItem.getModificationTime());
+
+    if(item.getStatus() == null){
+      item.setStatus(ItemStatus.ACTIVE);
+      update(item);
+    }
+
     return item;
   }
 
@@ -77,6 +84,9 @@ public class ItemZusammenDaoImpl implements ItemDao {
         break;
       case InfoPropertyName.ITEM_OWNER:
         item.setOwner((String) propertyValue);
+        break;
+      case InfoPropertyName.ITEM_STATUS:
+        item.setStatus(ItemStatus.valueOf((String)propertyValue));
         break;
       case InfoPropertyName.ITEM_VERSIONS_STATUSES:
         for (Map.Entry<String, Number> statusCounter :
@@ -96,6 +106,9 @@ public class ItemZusammenDaoImpl implements ItemDao {
     info.setDescription(item.getDescription());
     info.addProperty(InfoPropertyName.ITEM_TYPE, item.getType());
     info.addProperty(InfoPropertyName.ITEM_OWNER,item.getOwner());
+    if (item.getStatus() != null) {
+      info.addProperty(InfoPropertyName.ITEM_STATUS, item.getStatus());
+    }
     info.addProperty(InfoPropertyName.ITEM_VERSIONS_STATUSES, item.getVersionStatusCounters());
     item.getProperties().entrySet()
         .forEach(property -> info.addProperty(property.getKey(), property.getValue()));
@@ -106,6 +119,7 @@ public class ItemZusammenDaoImpl implements ItemDao {
     private static final String ITEM_TYPE = "item_type";
     private static final String ITEM_VERSIONS_STATUSES = "item_versions_statuses";
     private static final String ITEM_OWNER = "Owner";
+    private static final String ITEM_STATUS = "status";
 
     private InfoPropertyName() {
       throw new IllegalStateException("Constants class");

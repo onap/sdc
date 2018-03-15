@@ -19,10 +19,14 @@ package org.openecomp.sdc.versioning.impl;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.dao.ItemDao;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 
 public class ItemManagerImpl implements ItemManager {
 
@@ -72,15 +76,32 @@ public class ItemManagerImpl implements ItemManager {
   }
 
   @Override
-  public void updateName(String itemId, String name) {
-    Item item = get(itemId);
-    if (item == null) {
-      return;
+  public void archive(Item item) {
+
+    if (item.getStatus() == ItemStatus.ARCHIVED) {
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder()
+          .withCategory(ErrorCategory.APPLICATION)
+          .withMessage(String.format("Archive item failed, item %s is already Archived", item.getId()))
+          .build());
     }
 
-    item.setName(name);
+    item.setStatus(ItemStatus.ARCHIVED);
     itemDao.update(item);
   }
+
+  @Override
+  public void restore(Item item) {
+
+      if (item.getStatus() == ItemStatus.ACTIVE) {
+          throw new CoreException(new ErrorCode.ErrorCodeBuilder()
+                  .withCategory(ErrorCategory.APPLICATION)
+                  .withMessage(String.format("Restore item failed, item %s is already Active", item.getId()))
+                  .build());
+      }
+
+      item.setStatus(ItemStatus.ACTIVE);
+      itemDao.update(item);
+    }
 
   @Override
   public void update(Item item) {

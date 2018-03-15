@@ -1,6 +1,7 @@
 package org.openecomp.sdcrests.item.rest.mapping;
 
 import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.item.types.ItemDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
@@ -12,5 +13,6 @@ public class MapItemToDto extends MappingBase<Item, ItemDto> {
     target.setName(source.getName());
     target.setDescription(source.getDescription());
     target.setOwner(source.getOwner());
+    target.setStatus(source.getStatus().name());
   }
 }

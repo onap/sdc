@@ -209,7 +209,7 @@ public class Version {
     return major == version.major && minor == version.minor;
   }
 
-  public int compateTo(Version other){
+  public int compareTo(Version other){
     if (this.major>other.major) {
       return 1;
     } else if(this.major<other.major){
