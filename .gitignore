@@ -264,3 +264,6 @@ utils/DmaapPublisher/logs/*
 /openecomp-ui/yarn.lock
 
 /ui-ci/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files/VNFs/*
+
+/openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/init_keyspaces.cql
+/openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/init_schemas.cql

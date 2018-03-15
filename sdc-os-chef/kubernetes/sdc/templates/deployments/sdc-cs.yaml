@@ -30,6 +30,10 @@ spec:
         - name: CS_PASSWORD
           valueFrom:
             secretKeyRef: {name: sdc-cs-secret, key: cs_password}
+        - name: MAX_HEAP_SIZE
+          value: 1536M
+        - name: HEAP_NEWSIZE
+          value: 512M
         volumeMounts:
         - mountPath: /var/lib/cassandra/
           name: sdc-sdc-cs-cs

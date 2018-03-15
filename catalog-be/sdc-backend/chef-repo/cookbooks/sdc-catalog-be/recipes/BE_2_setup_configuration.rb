@@ -1,4 +1,13 @@
-replication_factor=1
+# Set the cassandra replica number
+cassandra_nodes = node['Nodes']['CS']
+if cassandra_nodes.length <=2
+   replication_factor=1
+elsif cassandra_nodes.length >2 && cassandra_nodes.length <=4
+   replication_factor=3
+else
+   replication_factor=4
+end
+
 
 template "titan.properties" do
    path "#{ENV['JETTY_BASE']}/config/catalog-be/titan.properties"
@@ -30,7 +39,7 @@ template "catalog-be-config" do
       :catalog_port           => node['BE'][:http_port],
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'],
-      :rep_factor             => 1,
+      :rep_factor             => replication_factor,
       :DC_NAME                => node['cassandra'][:cluster_name]+node.chef_environment,
       :titan_Path             => "/var/lib/jetty/config/catalog-be/",
       :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
