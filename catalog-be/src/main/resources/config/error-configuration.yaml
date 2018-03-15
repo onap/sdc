@@ -2031,4 +2031,56 @@ errors:
         message: "Error: External Reference '%1' was not found.",
         messageId: "SVC4694"
     }
-
+#---------SVC4695-----------------------------
+# %1 - Interface operation type
+    INTERFACE_OPERATION_TYPE_ALREADY_IN_USE: {
+      code: 400,
+      message: "Error: Interface Operation type %1 already in use",
+      messageId: "SVC4695"
+    }
+#---------SVC4696-----------------------------
+# %1 - workflow operation type
+    INTERFACE_OPERATION_TYPE_INVALID: {
+      code: 400,
+      message: "Error: Interface Operation type %1 is Invalid, Operation type should not contain
+                	Special character, space and  should not be greater than 200 characters ",
+      messageId: "SVC4696"
+    }
+#---------SVC4697-----------------------------
+    INTERFACE_OPERATION_TYPE_MANDATORY: {
+      code: 404,
+      message: "Error: Interface Operation type is mandatory, Operation type can't be empty",
+      messageId: "SVC4697"
+    }
+#---------SVC4698-----------------------------
+# %1 - workflow operation description
+    INTERFACE_OPERATION_DESCRIPTION_MAX_LENGTH: {
+      code: 400,
+      message: "Error: Interface Operation description %1 is invalid, maximum 200 characters allowed",
+      messageId: "SVC4698"
+    }
+#---------SVC4699-----------------------------
+    INTERFACE_OPERATION_INPUT_NAME_INVALID: {
+      code: 400,
+      message: "Error: Interface Operation input parameter names %1 are invalid ,Input parameters name should be unique",
+      messageId: "SVC4699"
+    }
+#---------SVC4700-----------------------------
+    INTERFACE_OPERATION_OUTPUT_NAME_INVALID: {
+      code: 400,
+      message: "Error: Interface Operation output parameters invalid, should be unique and mandatory",
+      messageId: "SVC4700"
+    }
+#---------SVC4701-----------------------------
+# %1 - resource Id
+    INTERFACE_OPERATION_NOT_FOUND: {
+      code: 404,
+      message: "Error: Interface operations not found in the resource %1",
+      messageId: "SVC4701"
+    }
+#---------SVC46702-----------------------------
+    INTERFACE_OPERATION_NOT_DELETED: {
+      code: 404,
+      message: "Error: Failed to delete interface operation.",
+      messageId: "SVC4702"
+    }
