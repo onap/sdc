@@ -118,7 +118,7 @@
 		<fabric8.version>0.23.0</fabric8.version>
 		<!--docker tags-->
 		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-		<docker.latest.tag>${project.version}-latest</docker.latest.tag>
+		<!--<docker.latest.tag>${project.version}-latest</docker.latest.tag>-->
 
 	</properties>
 
