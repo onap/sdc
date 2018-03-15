@@ -553,14 +553,13 @@ heatEnvArtifactHeader: ""
 heatEnvArtifactFooter: ""
 
 onboarding:
+    host: <%= node['ONBOARDING_VIP'] %>
     <% if node[:disableHttp] -%>
     protocol: https
-    host: <%= @catalog_ip %>
-    port: <%= node['BE'][:https_port] %> 
+    port: <%= node['ONBOARDING_BE'][:https_port] %> 
     <% else %>
     protocol: http
-    host: <%= @catalog_ip %>
-    port: <%= node['BE'][:http_port] %> 
+    port: <%= node['ONBOARDING_BE'][:http_port] %> 
     <% end -%>
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"

@@ -32,15 +32,23 @@ healthCheckSocketTimeoutInMs: 5000
 healthCheckIntervalInSeconds: 5
 
 onboarding:
-    host: <%= @fe_host_ip %>
+    hostFe: <%= @fe_host_ip %>
     <% if node[:disableHttp] -%>
-    protocol: https
-    port: <%= node['FE'][:https_port] %> 
+    protocolFe: https
+    portFe: <%= node['FE'][:https_port] %>
     <% else %>
-    protocol: http
-    port: <%= node['FE'][:http_port] %> 
+    protocolFe: http
+    portFe: <%= node['FE'][:http_port] %>
     <% end -%>
-    healthCheckUri: "/onboarding/v1.0/healthcheck"
+    healthCheckUriFe: "/onboarding/v1.0/healthcheck"
+    hostBe: <%= node['Nodes']['ONBOARDING_BE'] %>
+    <% if node[:disableHttp] -%>
+    protocolBe: https
+    portBe: <%= node['ONBOARDING_BE'][:https_port] %>
+    <% else %>
+    protocolBe: http
+    portBe: <%= node['ONBOARDING_BE'][:http_port] %>
+    <% end -%>
 
 dcae:
     host: <%= @fe_host_ip %>
@@ -51,12 +59,6 @@ dcae:
     protocol: http
     port: <%= node['FE'][:http_port] %> 
     <% end -%>
-    healthCheckUri: "/dcae/healthCheck"
-
-dcae:
-    protocol: http
-    host: localhost
-    port: 8181
     healthCheckUri: "/dcae/healthCheck"
 
 identificationHeaderFields: 

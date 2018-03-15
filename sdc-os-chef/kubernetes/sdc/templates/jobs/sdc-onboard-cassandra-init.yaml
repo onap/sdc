@@ -1,0 +1,68 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sdc-onboard-cassandra-init
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+  labels:
+    app: sdc-onboard-cassandra-init
+spec:
+  template:
+    metadata:
+      name: sdc-onboard-cassandra-init
+    spec:
+      initContainers:
+      - name: sdc-init-cs-readiness
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        command:
+        - /root/ready.py
+        args:
+        - --container-name
+        - sdc-cs
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      containers:
+      - name: sdc-onboard-cassandra-init
+        image: "{{ .Values.image.sdcOnboardBackendInit }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+#        command:
+#        - /bin/sh
+#        args:
+#        - "-c"
+#        - "sleep 30000000000m"
+        volumeMounts:
+        - mountPath: /root/chef-solo/environments/
+          name: sdc-environments
+        - mountPath: /var/lib/cassandra/
+          name: sdc-sdc-cs-cs
+        env:
+        - name: ENVNAME
+          value: "{{ .Values.env.name }}"
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SDC_USER
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_user}
+        - name: SDC_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_password}
+        - name: CS_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: cs_password}
+      volumes:
+        - name: sdc-environments
+          configMap:
+            name: sdc-environment
+        - name: sdc-sdc-cs-cs
+            persistentVolumeClaim:
+              claimName: sdc-cs-db
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
+      restartPolicy: Never
