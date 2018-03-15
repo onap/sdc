@@ -16,15 +16,6 @@
         <relativePath>../onboarding</relativePath>
     </parent>
 
-    <modules>
-        <module>/api</module>
-        <module>/lib</module>
-        <module>/tools/swagger-ui</module>
-        <!--<module>/tools/migration/1702_to_1707_zusammen</module>-->
-        <module>/tools/zusammen-tools</module>
-        <module>/backend</module>
-    </modules>
-
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -282,5 +273,32 @@
         </dependencies>
     </dependencyManagement>
 
+        <modules>
+            <module>/api</module>
+            <module>/lib</module>
+            <module>/tools/swagger-ui</module>
+            <module>/tools/zusammen-tools</module>
+            <module>/backend</module>
+        </modules>
+    <profiles>
+        <!--<profile>-->
+            <!--<id>docker-staging</id>-->
+            <!--<properties>-->
+                <!--<docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>-->
+                <!--<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>-->
+            <!--</properties>-->
+        <!--</profile>-->
+
+        <profile>
+            <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>/dist</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
 
