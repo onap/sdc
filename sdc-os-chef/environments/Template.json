@@ -11,6 +11,7 @@
         "disableHttp": false,
         "CS_VIP": "yyy",
         "BE_VIP": "yyy",
+        "ONBOARDING_BE_VIP": "yyy",
         "FE_VIP": "yyy",
         "ES_VIP": "yyy",
         "KB_VIP": "yyy",
@@ -34,11 +35,12 @@
             "fqdn": ["10.0.11.1", "10.0.11.1"]
         },
         "Nodes": {
-            "CS": "yyy",
-            "BE": "yyy",
-            "FE": "yyy",
-            "ES": "yyy",
-            "KB": "yyy"
+            "CS":            "yyy",
+            "BE":            "yyy",
+            "ONBOARDING_BE": "yyy",
+            "FE":            "yyy",
+            "ES":            "yyy",
+            "KB":            "yyy"
         },
         "Plugins": {
             "DCAE": {
@@ -63,6 +65,10 @@
         "BE": {
             "http_port": "8080",
             "https_port": "8443"
+        },
+        "ONBOARDING_BE": {
+            "http_port": "8081",
+            "https_port": "8445"
         },
         "elasticsearch": {
             "cluster_name": "SDC-ES-",

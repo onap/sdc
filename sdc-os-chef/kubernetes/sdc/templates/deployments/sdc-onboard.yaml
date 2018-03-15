@@ -1,0 +1,131 @@
+#{{ if not .Values.disableSdcSdcBe }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: sdc-onboard-backend
+  name: sdc-onboard-backend
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: sdc-onboard-backend
+  template:
+    metadata:
+      labels:
+        app: sdc-onboard-backend
+      name: sdc-onboard-backend
+    spec:
+      initContainers:
+      - name: sdc-onboard-init-readiness
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        command:
+        - /root/ready.py
+        args:
+        - --container-name
+        - sdc-cs
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      - name: sdc-job-completion
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        command:
+        - python
+        args:
+        - /root/readiness/sdc_check_job_completion.py
+        - --job-name
+        - sdc-onboard-cassandra-init
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - mountPath: /root/readiness
+          name: sdc-check-job-completion
+      containers:
+      - name: sdc-onboard-backend
+        image: "{{ .Values.image.sdcOnboardBackend }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        ports:
+        - containerPort: 8445
+        - containerPort: 8081
+        volumeMounts:
+        - mountPath: /root/chef-solo/environments/
+          name: sdc-environments
+        - mountPath: /etc/localtime
+          name: sdc-localtime
+          readOnly: true
+        - mountPath: /var/lib/jetty/logs
+          name: sdc-logs
+        - mountPath: /var/log/onap
+          name: sdc-logs-2
+        - mountPath: /tmp/logback.xml
+          name: sdc-logback
+        env:
+        - name: ENVNAME
+          value: "{{ .Values.env.name }}"
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SDC_CLUSTER_NAME
+          value: "SDC-CS-{{ .Values.env.name }}"
+        - name: SDC_USER
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_user}
+        - name: SDC_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_password}
+        - name: JAVA_OPTIONS
+          value: "-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g"
+        - name: cassandra_ssl_enabled
+          value: false
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "export LOG=wait_logback.log; touch $LOG; export SRC=/tmp/logback.xml; export DST=/var/lib/jetty/config/onboard-be/; while [ ! -e $DST ]; do echo 'Waiting for $DST...' >> $LOG; sleep 5; done; sleep 2; /bin/cp -f $SRC $DST; echo 'Done' >> $LOG"]
+        readinessProbe:
+          tcpSocket:
+            port: 8445
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 30
+      volumes:
+        - name: filebeat-conf
+          hostPath:
+            path: /dockerdata-nfs/{{ .Values.nsPrefix }}/log/filebeat/logback/filebeat.yml
+        - name: sdc-logs-2
+          emptyDir: {}
+        - name: sdc-data-filebeat
+          emptyDir: {}
+        - name: sdc-logback
+          hostPath:
+            path: /dockerdata-nfs/{{ .Values.nsPrefix }}/log/sdc/be/logback.xml
+        - name: sdc-environments
+          configMap:
+            name: sdc-environment
+        - name: sdc-localtime
+          hostPath:
+            path:  /etc/localtime
+        - name:  sdc-logs
+          hostPath:
+            path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/logs
+        - name: sdc-check-job-completion
+          configMap:
+            name: sdc-check-job-completion
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
+#{{ end }}
