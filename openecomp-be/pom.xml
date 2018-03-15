@@ -47,6 +47,9 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <maven.jacoco.skip>true</maven.jacoco.skip>
+    </properties>
     <build>
         <plugins>
 
@@ -128,6 +131,9 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <skip>${maven.jacoco.skip}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
