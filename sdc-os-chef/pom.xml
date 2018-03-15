@@ -84,13 +84,13 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>docker-staging</id>
-            <properties>
-                <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
-                <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
-            </properties>
-        </profile>
+        <!--<profile>-->
+            <!--<id>docker-staging</id>-->
+            <!--<properties>-->
+                <!--<docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>-->
+                <!--<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>-->
+            <!--</properties>-->
+        <!--</profile>-->
 
         <profile>
             <id>docker</id>
@@ -131,7 +131,6 @@
                                         <dockerFileDir>${project.basedir}/sdc-init-elasticsearch</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
                                             <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>
@@ -146,7 +145,6 @@
                                         <dockerFileDir>${project.basedir}/sdc-elasticsearch</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
                                             <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>
@@ -161,7 +159,6 @@
                                         <dockerFileDir>${project.basedir}/sdc-kibana</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
                                             <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>
@@ -176,7 +173,6 @@
                                         <dockerFileDir>${project.basedir}/sdc-cassandra</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
                                             <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>
