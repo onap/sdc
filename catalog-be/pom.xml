@@ -769,7 +769,9 @@
                         <configuration>
                             <finalName>normatives</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
-                            <descriptor>${project.basedir}/normatives.xml</descriptor>
+                            <descriptors>
+                                <descriptor>${project.basedir}/normatives.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>
@@ -900,16 +902,6 @@
     </build>
 
     <profiles>
-		<profile>
-			<id>catalog</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-
-			<build>
-				<finalName>${project.artifactId}-${project.version}</finalName>
-			</build>
-		</profile>
         <profile>
             <id>docker-staging</id>
             <properties>
@@ -1044,7 +1036,6 @@
                                         <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
                                             <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>
@@ -1058,7 +1049,6 @@
                                         <dockerFileDir>${project.basedir}/sdc-backend-init</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
                                             <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>

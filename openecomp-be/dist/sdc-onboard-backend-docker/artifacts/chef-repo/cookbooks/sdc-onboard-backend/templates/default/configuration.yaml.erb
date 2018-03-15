@@ -1,0 +1,18 @@
+notifications:
+    pollingIntervalMsec: 2000
+    selectionSize: 100
+    beHost: <%= @onboard_ip %>
+    beHttpPort: <%= @onboard_port %>
+
+cassandraConfig:
+    cassandraHosts: [<%= @cassandra_ip %>]
+    localDataCenter: <%= @DC_NAME %>
+    reconnectTimeout : 30000
+    socketReadTimeout: <%= @socket_read_timeout %>
+    socketConnectTimeout: <%= @socket_connect_timeout %>
+    authenticate: true
+    username: <%= @cassandra_usr %>
+    password: <%= @cassandra_pwd %>
+    ssl: false
+    truststorePath : /config/.truststore
+    truststorePassword : Aa123456

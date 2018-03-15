@@ -295,10 +295,10 @@ public class HealthCheckService {
             Configuration.OnboardingConfig onboardingConfig = config.getOnboarding();
 
             if (onboardingConfig != null) {
-                String protocol = onboardingConfig.getProtocol();
-                String host = onboardingConfig.getHost();
-                Integer port = onboardingConfig.getPort();
-                String uri = onboardingConfig.getHealthCheckUri();
+                String protocol = onboardingConfig.getProtocolFe();
+                String host = onboardingConfig.getHostFe();
+                Integer port = onboardingConfig.getPortFe();
+                String uri = onboardingConfig.getHealthCheckUriFe();
 
                 return protocol + "://" + host + ":" + port + uri;
             }

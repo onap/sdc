@@ -570,7 +570,9 @@
 						<configuration>
 							<finalName>sdctool</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
-							<descriptor>${project.basedir}/tarball.xml</descriptor>
+							<descriptors>
+								<descriptor>${project.basedir}/tarball.xml</descriptor>
+							</descriptors>
 						</configuration>
 						<id>assemble-file</id>
 						<phase>verify</phase>
@@ -799,7 +801,6 @@
 										<dockerFileDir>${project.basedir}/sdc-cassandra-init</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
 											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
