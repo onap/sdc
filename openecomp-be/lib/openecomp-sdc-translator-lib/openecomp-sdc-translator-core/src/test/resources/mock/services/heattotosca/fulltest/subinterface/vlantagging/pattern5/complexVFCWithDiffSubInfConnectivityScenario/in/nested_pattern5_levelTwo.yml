@@ -1,0 +1,94 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  sub_inf_net:
+    type: string
+    description: sub interface network
+  port_net:
+    type: string
+    description: port network
+  ps_server_1b_names:
+    type: comma_delimited_list
+    description: Ps server names
+  ps_server_1b_image:
+    type: string
+    description: Ps Image server
+  ps_server_1b_flavor:
+    type: string
+    description: Flavor for PS server
+  ps_server_1b_ips:
+    type: string
+  ps_server_2b_ips:
+    type: string
+  packet_ext_network_name:
+    type: string
+    description: network name
+  packet_int_network_name:
+    type: string
+    description: network name
+
+resources:
+  packet_int_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_int_network_name
+
+  packet_ext_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_ext_network_name
+
+  ps_server_1b_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_int_network}
+      fixed_ips: [{"ip_address": {get_param: [ps_server_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_1b_ps_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [ps_server_1b_names, 1]}
+      image: { get_param: ps_server_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: ps_server_1b_flavor }
+      networks:
+      - port: { get_resource: ps_server_1b_port_1 }
+
+  ps_server_1b_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_int_network}
+      fixed_ips: [{"ip_address": {get_param: [ps_server_1b_ips, 1]}}]
+      replacement_policy: AUTO
+
+  server_1b_ps_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [ps_server_1b_names, 2]}
+      image: { get_param: ps_server_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: ps_server_1b_flavor }
+      networks:
+        - port: { get_resource: ps_server_1b_port_2 }
+
+  test_resourceGroup_1:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 9
+      resource_def:
+        type: nested_vlan.yml
+        properties:
+          parent_interface: { get_resource: ps_server_1b_port_1}
+          net1: { get_resource: packet_ext_network}
