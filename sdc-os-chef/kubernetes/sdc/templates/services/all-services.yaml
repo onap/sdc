@@ -124,4 +124,36 @@ spec:
   selector:
     app: sdc-fe
   type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sdc-onboard-be
+  name: sdc-onboard-be
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+  annotations:
+    msb.onap.org/service-info: '[
+      {
+          "serviceName": "sdc-onboard-be",
+          "version": "v1",
+          "url": "/sdc/v1",
+          "protocol": "REST",
+          "port": "8081",
+          "visualRange":"1"
+      }
+      ]'
+spec:
+  ports:
+  - name: sdc-onboard-port-8445
+    nodePort: {{ .Values.nodePortPrefix }}09
+    port: 8445
+  - name: sdc-onboard-port-8081
+    nodePort: {{ .Values.nodePortPrefix }}08
+    port: 8081
+  selector:
+    app: sdc-onboard-be
+  type: NodePort
+#{{ end }}
+#{{ if not .Values.disableSdcSdcOnboardBE }}
 #{{ end }}

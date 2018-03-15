@@ -11,6 +11,8 @@ image:
   sdcElasticsearchInit: nexus3.onap.org:10001/onap/sdc-init-elasticsearch:1.2-STAGING-latest
   sdcCassandraInit: nexus3.onap.org:10001/onap/sdc-cassandra-init:1.2-STAGING-latest
   sdcBackendInit: nexus3.onap.org:10001/onap/sdc-backend-init:1.2-STAGING-latest
+  sdcOnboardBackendInit: nexus3.onap.org:10001/onap/sdc-onboard-cassandra-init:1.2-STAGING-latest
+  sdcOnboardBackend: nexus3.onap.org:10001/onap/sdc-onboard-backend:1.2-STAGING-latest
   filebeat: docker.elastic.co/beats/filebeat:5.5.0
 
 env:
