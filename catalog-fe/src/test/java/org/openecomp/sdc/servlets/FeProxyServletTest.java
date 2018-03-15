@@ -52,18 +52,22 @@ public class FeProxyServletTest {
 	 * http://localhost:8080/sdc1/feProxy/dummy/not/working -->
 	 * http://localhost:8090/sdc2/dummy/not/working
 	 */
-	FeProxyServlet feProxy = new FeProxyServlet();
+	FeProxyServletForTest feProxy = new FeProxyServletForTest();
 	final static HttpServletRequest servletRequest = Mockito.mock(HttpServletRequest.class);
 	final static HttpSession httpSession = Mockito.mock(HttpSession.class);
 	final static ServletContext servletContext = Mockito.mock(ServletContext.class);
 	final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
 	final static Configuration configuration = Mockito.mock(Configuration.class);
+    final static Configuration.OnboardingConfig onboardingConfiguration = Mockito.mock(Configuration.OnboardingConfig.class);
 	final static Request proxyRequest = Mockito.spy(Request.class);
 	final static HttpFields httpFields = Mockito.mock(HttpFields.class);
 
 	final static String BE_PROTOCOL = "http";
 	final static String BE_HOST = "172.20.43.124";
 	final static int BE_PORT = 8090;
+	final static String ONBOARDING_BE_PROTOCOL = "http";
+	final static String ONBOARDING_BE_HOST = "172.20.43.125";
+	final static int ONBOARDING_BE_PORT = 8091;
 	final static String HEADER_1 = "Header1";
 	final static String HEADER_2 = "Header2";
 	final static String HEADER_3 = "Header3";
@@ -81,6 +85,10 @@ public class FeProxyServletTest {
 		when(configuration.getBeProtocol()).thenReturn(BE_PROTOCOL);
 		when(configuration.getBeHost()).thenReturn(BE_HOST);
 		when(configuration.getBeHttpPort()).thenReturn(BE_PORT);
+		when(configuration.getOnboarding()).thenReturn(onboardingConfiguration);
+		when(configuration.getOnboarding().getProtocolBe()).thenReturn(ONBOARDING_BE_PROTOCOL);
+		when(configuration.getOnboarding().getHostBe()).thenReturn(ONBOARDING_BE_HOST);
+		when(configuration.getOnboarding().getPortBe()).thenReturn(ONBOARDING_BE_PORT);
 
 		List<String> strList = new ArrayList<String>();
 		strList.add(HEADER_1);
@@ -110,13 +118,44 @@ public class FeProxyServletTest {
 		when(servletRequest.getContextPath()).thenReturn("/sdc1");
 		when(servletRequest.getServletPath()).thenReturn("/feProxy/rest/dummyBeAPI");
 
-		URI rewriteURI = feProxy.rewriteURI(servletRequest);
+		String rewriteURI = feProxy.rewriteTarget(servletRequest);
 
-		assertTrue(rewriteURI.toString().equals(expectedChangedUrl));
+		assertTrue(rewriteURI.equals(expectedChangedUrl));
 	}
 
 	@Test
+	public void testRewriteURIWithOnboardingAPIRequest() {
+		when(servletRequest.getRequestURI()).thenReturn("/sdc1/feProxy/onboarding-api/gg%20g?subtype=VF");
+		String requestResourceUrl = "http://localhost:8080/sdc1/feProxy/onboarding-api/gg%20g?subtype=VF";
+		String expectedChangedUrl = ONBOARDING_BE_PROTOCOL + "://" + ONBOARDING_BE_HOST + ":" + ONBOARDING_BE_PORT + "/onboarding-api/gg%20g?subtype=VF";
+		when(servletRequest.getRequestURL()).thenReturn(new StringBuffer(requestResourceUrl));
+
+		when(servletRequest.getContextPath()).thenReturn("/sdc1");
+		when(servletRequest.getServletPath()).thenReturn("/feProxy/onboarding-api/gg%20g?subtype=VF");
+
+		String rewriteURI = feProxy.rewriteTarget(servletRequest);
+
+		assertTrue(rewriteURI.equals(expectedChangedUrl));
+	}
+
+
+	@Test
 	public void testRewriteURIWithQureyParam_APIRequest() {
+		when(servletRequest.getRequestURI()).thenReturn("/sdc1/feProxy/dcae-api/gg%20g?subtype=VF");
+		String requestResourceUrl = "http://localhost:8080/sdc1/feProxy/dcae-api/gg%20g?subtype=VF";
+		String expectedChangedUrl = BE_PROTOCOL + "://" + BE_HOST + ":" + BE_PORT + "/dcae-api/gg%20g?subtype=VF";
+		when(servletRequest.getRequestURL()).thenReturn(new StringBuffer(requestResourceUrl));
+
+		when(servletRequest.getContextPath()).thenReturn("/sdc1");
+		when(servletRequest.getServletPath()).thenReturn("/feProxy/dcae-api/gg%20g?subtype=VF");
+
+		String rewriteURI = feProxy.rewriteTarget(servletRequest);
+
+		assertTrue(rewriteURI.equals(expectedChangedUrl));
+	}
+
+	@Test
+	public void testRewriteTargetWithRedeirectAPIRequest() {
 		when(servletRequest.getRequestURI()).thenReturn("/sdc1/feProxy/rest/gg%20g?subtype=VF");
 		String requestResourceUrl = "http://localhost:8080/sdc1/feProxy/rest/gg%20g?subtype=VF";
 		String expectedChangedUrl = BE_PROTOCOL + "://" + BE_HOST + ":" + BE_PORT + "/sdc2/rest/gg%20g?subtype=VF";
@@ -125,10 +164,12 @@ public class FeProxyServletTest {
 		when(servletRequest.getContextPath()).thenReturn("/sdc1");
 		when(servletRequest.getServletPath()).thenReturn("/feProxy/rest/gg%20g?subtype=VF");
 
-		URI rewriteURI = feProxy.rewriteURI(servletRequest);
+		String rewriteURI = feProxy.rewriteTarget(servletRequest);
 
-		assertTrue(rewriteURI.toString().equals(expectedChangedUrl));
+		assertTrue(rewriteURI.equals(expectedChangedUrl));
 	}
+
+
 
 	@Test
 	public void testCustomizeProxyRequest() {
@@ -136,5 +177,16 @@ public class FeProxyServletTest {
 		verify(proxyRequest).header(HEADER_3, HEADER_3_VAL);
 		verify(proxyRequest, times(1)).header(Mockito.anyString(), Mockito.anyString());
 
+	}
+
+	/**
+	 * class for testing only exposes the protected method.
+	 */
+	public static class FeProxyServletForTest extends FeProxyServlet{
+
+		@Override
+		public String rewriteTarget(HttpServletRequest request) {
+			return super.rewriteTarget(request);
+		}
 	}
 }

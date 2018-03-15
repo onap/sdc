@@ -22,13 +22,11 @@ spec:
         - /root/ready.py
         args:
         - --container-name
-        - sdc-es
-        - --container-name
-        - sdc-cs
-        - --container-name
         - sdc-kb
         - --container-name
         - sdc-be
+        - --container-name
+        - sdc-onboard-backend
         env:
         - name: NAMESPACE
           valueFrom:
@@ -37,6 +35,21 @@ spec:
               fieldPath: metadata.namespace
         image: "{{ .Values.image.readiness }}"
         imagePullPolicy: "{{ .Values.pullPolicy }}"
+      - name: sdc-job-completion
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        command:
+        - python
+        args:
+        - /root/readiness/sdc_check_job_completion.py
+        - --job-name
+        - sdc-config-backend
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
       volumes:
 #        - name: filebeat-conf
 #          hostPath:
@@ -45,24 +58,15 @@ spec:
           emptyDir: {}
         - name: sdc-data-filebeat
           emptyDir: {}
-#        - name: sdc-logback
-#          hostPath:
-#            path: /dockerdata-nfs/{{ .Values.nsPrefix }}/log/sdc/fe/logback.xml
-#        - name: sdc-sdc-es-es
-#          hostPath:
-#            path: /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/sdc-es/ES
         - name: sdc-environments
           configMap:
             name: sdc-environment
         - name: sdc-localtime
           hostPath:
             path:  /etc/localtime
-#        - name:  sdc-logs
-#          hostPath:
-#            path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/logs
-#        - name:  sdc-fe-config
-#          hostPath:
-#            path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/sdc-fe/FE_2_setup_configuration.rb
+        - name:  sdc-logs
+          hostPath:
+            path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/logs/FE
       imagePullSecrets:
       - name: "{{ .Values.nsPrefix }}-docker-registry-key"
       containers:
@@ -77,23 +81,17 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         - name: JAVA_OPTIONS
-          value: ""
+          value: "-Xmx256m -Xms256m"
         volumeMounts:
-#        - mountPath: /usr/share/elasticsearch/data/
-#          name: sdc-sdc-es-es
         - mountPath: /root/chef-solo/environments/
           name: sdc-environments
         - mountPath: /etc/localtime
           name: sdc-localtime
           readOnly: true
-#        - mountPath: /var/lib/jetty/logs
-#          name: sdc-logs
+        - mountPath: /var/lib/jetty/logs
+          name: sdc-logs
 #        - mountPath: /var/log/onap
 #          name: sdc-logs-2
-#        - mountPath: /root/chef-solo/cookbooks/sdc-catalog-fe/recipes/FE_2_setup_configuration.rb
-#          name: sdc-fe-config
-#        - mountPath: /tmp/logback.xml
-#          name: sdc-logback
         lifecycle:
           postStart:
             exec:
