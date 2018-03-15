@@ -40,6 +40,7 @@ import org.openecomp.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinitionType;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
@@ -1212,33 +1213,32 @@ public class DataModelUtil {
     return convertedInterfaceTypes;
   }
 
-  public static Optional<InterfaceDefinition> convertObjToInterfaceDefinition(
-      String interfaceId, Object interfaceObj)
-      throws CoreException {
+  public static <T extends InterfaceDefinition> Optional<T>
+  convertObjToInterfaceDefinition(
+      String interfaceId, Object interfaceObj, Class<T> interfaceClass) {
 
     try {
-      Optional<InterfaceDefinition> interfaceDefinition =
-          CommonUtil.createObjectUsingSetters(interfaceObj, InterfaceDefinition.class);
-      interfaceDefinition.ifPresent(interfaceDefinition1 -> updateInterfaceDefinitionOperations(
+      Optional<T> interfaceDefinition =
+          CommonUtil.createObjectUsingSetters(interfaceObj, interfaceClass);
+      interfaceDefinition.ifPresent(interfaceDefinitionType1 -> updateInterfaceDefinitionOperations(
           CommonUtil.getObjectAsMap(interfaceObj),
-          interfaceDefinition1));
+          interfaceDefinitionType1));
       return interfaceDefinition;
     } catch (Exception ex) {
       throw new CoreException(
-          new CreateInterfaceObjectErrorBuilder(InterfaceDefinition.class.getName(), interfaceId,
+          new CreateInterfaceObjectErrorBuilder(InterfaceDefinitionType.class.getName(), interfaceId,
               ex.getMessage()).build());
     }
 
   }
 
   public static Optional<Object> convertInterfaceDefinitionToObj(
-      InterfaceDefinition interfaceDefinition) {
-    return converInetrfaceToToscaInterfaceObj(interfaceDefinition);
+      InterfaceDefinitionType interfaceDefinitionType) {
+    return converInetrfaceToToscaInterfaceObj(interfaceDefinitionType);
   }
 
   public static Optional<InterfaceType> convertObjToInterfaceType(String interfaceId,
-                                                                  Object interfaceObj)
-      throws CoreException {
+                                                                  Object interfaceObj) {
     try {
       Optional<InterfaceType> interfaceType =
           CommonUtil.createObjectUsingSetters(interfaceObj, InterfaceType.class);
@@ -1289,8 +1289,7 @@ public class DataModelUtil {
 
   private static Optional<OperationDefinition> createOperation(String propertyName,
                                                                Object operationCandidate,
-                                                               Set<String> fieldNames)
-      throws CoreException {
+                                                               Set<String> fieldNames) {
     if (!fieldNames.contains(propertyName)) {
       try {
         return CommonUtil.createObjectUsingSetters(operationCandidate, OperationDefinition.class);
@@ -1306,7 +1305,7 @@ public class DataModelUtil {
   private static void updateInterfaceDefinitionOperations(Map<String, Object> interfaceAsMap,
                                                           InterfaceDefinition interfaceDefinition) {
 
-    Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinition.class);
+    Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinitionType.class);
 
     for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
       Optional<OperationDefinition> operationDefinition =

@@ -24,6 +24,7 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class InterfaceType {
   private String derived_from;
@@ -98,40 +99,18 @@ public class InterfaceType {
     if (!(o instanceof InterfaceType)) {
       return false;
     }
-
     InterfaceType that = (InterfaceType) o;
-
-    if (getDerived_from() != null ? !getDerived_from().equals(that.getDerived_from())
-        : that.getDerived_from() != null) {
-      return false;
-    }
-    if (getVersion() != null ? !getVersion().equals(that.getVersion())
-        : that.getVersion() != null) {
-      return false;
-    }
-    if (getMetadata() != null ? !getMetadata().equals(that.getMetadata())
-        : that.getMetadata() != null) {
-      return false;
-    }
-    if (getDescription() != null ? !getDescription().equals(that.getDescription())
-        : that.getDescription() != null) {
-      return false;
-    }
-    if (getInputs() != null ? !getInputs().equals(that.getInputs()) : that.getInputs() != null) {
-      return false;
-    }
-    return getOperations() != null ? getOperations().equals(that.getOperations())
-        : that.getOperations() == null;
+    return Objects.equals(derived_from, that.derived_from) &&
+        Objects.equals(version, that.version) &&
+        Objects.equals(metadata, that.metadata) &&
+        Objects.equals(description, that.description) &&
+        Objects.equals(inputs, that.inputs) &&
+        Objects.equals(operations, that.operations);
   }
 
   @Override
   public int hashCode() {
-    int result = getDerived_from() != null ? getDerived_from().hashCode() : 0;
-    result = 31 * result + (getVersion() != null ? getVersion().hashCode() : 0);
-    result = 31 * result + (getMetadata() != null ? getMetadata().hashCode() : 0);
-    result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
-    result = 31 * result + (getInputs() != null ? getInputs().hashCode() : 0);
-    result = 31 * result + (getOperations() != null ? getOperations().hashCode() : 0);
-    return result;
+
+    return Objects.hash(derived_from, version, metadata, description, inputs, operations);
   }
 }
