@@ -1,12 +1,24 @@
 url: http://<%= @webportal_ip %>:8285/sdc1
 browser: firefox
 uiSimulator: true
-sdcHttpMethod: http
+
 
 catalogBeHost:  <%= @catalogBE_ip %>
 catalogBePort:  <%= @catalogBE_port %>
 catalogFeHost:  <%= @webportal_ip %>
 catalogFePort:  <%= @webportal_port %>
+onboardingBeHost:  <%= node['ONBOARDING_BE_VIP'] %>
+<% if node[:disableHttp] -%>
+sdcHttpMethod: https
+onboardingBePort:  <%= node['ONBOARDING_BE'][:https_port] %>
+<% else %>
+sdcHttpMethod: http
+onboardingBePort:  <%= node['ONBOARDING_BE'][:http_port] %>
+<% end -%>
+
+
+
+
 esHost:         <%= @ES_IP %>
 esPort: 9200
 disributionClientHost: disClient

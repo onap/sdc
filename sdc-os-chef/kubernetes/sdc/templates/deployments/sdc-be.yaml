@@ -35,6 +35,8 @@ spec:
         - sdc-cs
         - --container-name
         - sdc-kb
+        - --container-name
+        - sdc-onboard-backend
         env:
         - name: NAMESPACE
           valueFrom:
@@ -67,8 +69,8 @@ spec:
         - containerPort: 8443
         - containerPort: 8080
         volumeMounts:
-        - mountPath: /usr/share/elasticsearch/data/
-          name: sdc-sdc-es-es
+        #- mountPath: /usr/share/elasticsearch/data/
+        #  name: sdc-sdc-es-es
         - mountPath: /root/chef-solo/environments/
           name: sdc-environments
         - mountPath: /etc/localtime
@@ -88,14 +90,17 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         - name: JAVA_OPTIONS
-          value: ""
+          value: "-Xmx1536m -Xms1536m"
+        - name: cassandra_ssl_enabled
+          value: "false"
         lifecycle:
           postStart:
             exec:
               command: ["/bin/sh", "-c", "export LOG=wait_logback.log; touch $LOG; export SRC=/tmp/logback.xml; export DST=/var/lib/jetty/config/catalog-be/; while [ ! -e $DST ]; do echo 'Waiting for $DST...' >> $LOG; sleep 5; done; sleep 2; /bin/cp -f $SRC $DST; echo 'Done' >> $LOG"]
         readinessProbe:
-          tcpSocket:
-            port: 8443
+          exec:
+            command:
+            - "/var/lib/ready-probe.sh"
           initialDelaySeconds: 120
           periodSeconds: 10
           failureThreshold: 30
@@ -110,9 +115,9 @@ spec:
         - name: sdc-logback
           hostPath:
             path: /dockerdata-nfs/{{ .Values.nsPrefix }}/log/sdc/be/logback.xml
-        - name: sdc-sdc-es-es
-          hostPath:
-            path: /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/sdc-es/ES
+        #- name: sdc-sdc-es-es
+        #  hostPath:
+        #    path: /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/sdc-es/ES
         - name: sdc-environments
           configMap:
             name: sdc-environment
@@ -121,7 +126,7 @@ spec:
             path:  /etc/localtime
         - name:  sdc-logs
           hostPath:
-            path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/logs
+            path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/logs/BE
         - name: sdc-check-job-completion
           configMap:
             name: sdc-check-job-completion

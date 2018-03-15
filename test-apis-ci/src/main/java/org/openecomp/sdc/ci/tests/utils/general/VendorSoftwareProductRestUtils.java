@@ -124,7 +124,7 @@ public class VendorSoftwareProductRestUtils {
     private static RestResponse deleteArtifactByType(String componentInstanceId, VendorSoftwareProductObject vendorSoftwareProductObject, User user, CvfcTypeEnum snmpType) throws Exception
     {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.DELETE_AMDOCS_ARTIFACT_BY_TYPE, config.getCatalogBeHost(), config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), componentInstanceId, snmpType.getValue());
+        String url = String.format(Urls.DELETE_AMDOCS_ARTIFACT_BY_TYPE, config.getOnboardingBeHost(), config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), componentInstanceId, snmpType.getValue());
         String userId = user.getUserId();
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
 
@@ -196,27 +196,27 @@ public class VendorSoftwareProductRestUtils {
 
     public static RestResponse uploadCvfcArtifact(String filepath, String cvfcType, User user, VendorSoftwareProductObject vendorSoftwareProductObject, String componentInstanceId) throws IOException {
         Config config = Utils.getConfig();
-        String snmpPollUrl = String.format(Urls.UPLOAD_AMDOCS_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), componentInstanceId, cvfcType);
+        String snmpPollUrl = String.format(Urls.UPLOAD_AMDOCS_ARTIFACT, config.getOnboardingBeHost(),config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), componentInstanceId, cvfcType);
         return uploadFile(filepath, null, snmpPollUrl, user);
     }
 
 
     private static RestResponse uploadSnmpPollArtifact(String filepath, String zipArtifact, VendorSoftwareProductObject vendorSoftwareProductObject, User user, String componentInstanceId) throws IOException {
         Config config = Utils.getConfig();
-        String snmpPollUrl = String.format(Urls.UPLOAD_SNMP_POLL_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), componentInstanceId);
+        String snmpPollUrl = String.format(Urls.UPLOAD_SNMP_POLL_ARTIFACT, config.getOnboardingBeHost(),config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), componentInstanceId);
         return uploadFile(filepath, zipArtifact, snmpPollUrl, user);
     }
 
     private static RestResponse uploadSnmpTrapArtifact(String filepath, String zipArtifact, VendorSoftwareProductObject vendorSoftwareProductObject, User user, String vspComponentId) throws IOException {
         Config config = Utils.getConfig();
-        String snmpTrapUrl = String.format(Urls.UPLOAD_SNMP_POLL_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), vspComponentId);
+        String snmpTrapUrl = String.format(Urls.UPLOAD_SNMP_POLL_ARTIFACT, config.getOnboardingBeHost(),config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId(), vspComponentId);
         return uploadFile(filepath, zipArtifact, snmpTrapUrl, user);
     }
 
     private static RestResponse deleteSnmpArtifact(String componentId, String vspId, User user, SnmpTypeEnum snmpType) throws Exception
     {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.DELETE_AMDOCS_ARTIFACT_BY_TYPE, config.getCatalogBeHost(),config.getCatalogBePort(), vspId, componentId, snmpType.getValue());
+        String url = String.format(Urls.DELETE_AMDOCS_ARTIFACT_BY_TYPE, config.getOnboardingBeHost(),config.getOnboardingBePort(), vspId, componentId, snmpType.getValue());
         String userId = user.getUserId();
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
@@ -248,7 +248,7 @@ public class VendorSoftwareProductRestUtils {
 
     private static RestResponse getVSPComponents(VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception{
         Config config = Utils.getConfig();
-        String url = String.format(Urls.GET_VSP_COMPONENTS, config.getCatalogBeHost(),config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
+        String url = String.format(Urls.GET_VSP_COMPONENTS, config.getOnboardingBeHost(),config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(user.getUserId());
 
         HttpRequest http = new HttpRequest();
@@ -267,7 +267,7 @@ public class VendorSoftwareProductRestUtils {
 
     private static RestResponse getVSPComponentByVersion(VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception{
         Config config = Utils.getConfig();
-        String url = String.format(Urls.GET_VSP_COMPONENT_BY_VERSION, config.getCatalogBeHost(),config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
+        String url = String.format(Urls.GET_VSP_COMPONENT_BY_VERSION, config.getOnboardingBeHost(),config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
         String userId = user.getUserId();
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
@@ -279,7 +279,7 @@ public class VendorSoftwareProductRestUtils {
 
     private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.ACTION_ON_COMPONENT, config.getCatalogBeHost(), config.getCatalogBePort(), onboardComponent, vspid, componentVersion);
+        String url = String.format(Urls.ACTION_ON_COMPONENT, config.getOnboardingBeHost(), config.getOnboardingBePort(), onboardComponent, vspid, componentVersion);
         String userId = user.getUserId();
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
 
@@ -291,7 +291,7 @@ public class VendorSoftwareProductRestUtils {
     public static Pair<RestResponse, VendorSoftwareProductObject> createNewVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String vspName, AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
 
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_VENDOR_SOFTWARE_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort());
+        String url = String.format(Urls.CREATE_VENDOR_SOFTWARE_PRODUCT, config.getOnboardingBeHost(), config.getOnboardingBePort());
         String userId = user.getUserId();
         VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
         LicensingData licensingData = new LicensingData(amdocsLicenseMembers.getVendorLicenseAgreementId(), Arrays.asList(amdocsLicenseMembers.getFeatureGroupId()));
@@ -324,7 +324,7 @@ public class VendorSoftwareProductRestUtils {
 
     public static RestResponse validateUpload(VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.VALIDATE_UPLOAD, config.getCatalogBeHost(), config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
+        String url = String.format(Urls.VALIDATE_UPLOAD, config.getOnboardingBeHost(), config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
         String userId = user.getUserId();
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
@@ -336,7 +336,7 @@ public class VendorSoftwareProductRestUtils {
 
     public static RestResponse uploadHeatPackage(String filepath, String filename, VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.UPLOAD_HEAT_PACKAGE, config.getCatalogBeHost(), config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
+        String url = String.format(Urls.UPLOAD_HEAT_PACKAGE, config.getOnboardingBeHost(), config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
         return uploadFile(filepath, filename, url, user);
     }
 
@@ -421,7 +421,7 @@ public class VendorSoftwareProductRestUtils {
 
     public static RestResponse checkinVendorSoftwareProduct(User user, VendorSoftwareProductObject vendorSoftwareProductObject) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.UPDATE_VSP, config.getCatalogBeHost(), config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
+        String url = String.format(Urls.UPDATE_VSP, config.getOnboardingBeHost(), config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
 
         String userId = user.getUserId();
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
@@ -467,7 +467,7 @@ public class VendorSoftwareProductRestUtils {
 
     private static RestResponse createMethodVendorSoftwareProduct(VendorSoftwareProductObject vendorSoftwareProductObject, String body, String onboardComponent, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.CREATE_METHOD, config.getCatalogBeHost(), config.getCatalogBePort(), onboardComponent, vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
+        String url = String.format(Urls.CREATE_METHOD, config.getOnboardingBeHost(), config.getOnboardingBePort(), onboardComponent, vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
         String userId = user.getUserId();
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
 
@@ -511,7 +511,7 @@ public class VendorSoftwareProductRestUtils {
     public static RestResponse updateVendorSoftwareProduct(VendorSoftwareProductObject vendorSoftwareProductObject, String body, User user) throws Exception {
 
         Config config = Utils.getConfig();
-        String url = String.format(Urls.UPDATE_VSP, config.getCatalogBeHost(), config.getCatalogBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
+        String url = String.format(Urls.UPDATE_VSP, config.getOnboardingBeHost(), config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
         String userId = user.getUserId();
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);

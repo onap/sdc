@@ -235,7 +235,7 @@ public class OnboardingUtillViaApis {
 	public static Either<String, RestResponse> getVendorSoftwareProduct(String vspId, User user, Boolean validateState) throws Exception {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_VENDOR_SOFTWARE_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort(), vspId);
+		String url = String.format(Urls.GET_VENDOR_SOFTWARE_PRODUCT, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspId);
 		String userId = user.getUserId();
 		Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
 		headersMap.put(HttpHeaderEnum.X_ECOMP_REQUEST_ID_HEADER.getValue(), "123456");

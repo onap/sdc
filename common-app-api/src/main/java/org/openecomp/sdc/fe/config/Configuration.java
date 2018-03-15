@@ -258,14 +258,6 @@ public class Configuration extends BasicConfiguration {
         this.feFqdn = feFqdn;
     }
 
-    public String getOnboardingForwardContext() {
-        return onboardingForwardContext;
-    }
-
-    public void setOnboardingForwardContext(String onboardingForwardContext) {
-        this.onboardingForwardContext = onboardingForwardContext;
-    }
-
     public OnboardingConfig getOnboarding() {
         return onboarding;
     }
@@ -330,42 +322,68 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class OnboardingConfig {
+        String protocolFe = "http";
+        String hostFe;
+        Integer portFe;
+        String protocolBe = "http";
+        String hostBe;
+        Integer portBe;
+        String healthCheckUriFe;
 
-        String protocol = "http";
-        String host;
-        Integer port;
-        String healthCheckUri;
-
-        public String getProtocol() {
-            return protocol;
+        public String getProtocolFe() {
+            return protocolFe;
         }
 
-        public void setProtocol(String protocol) {
-            this.protocol = protocol;
+        public void setProtocolFe(String protocolFe) {
+            this.protocolFe = protocolFe;
         }
 
-        public String getHost() {
-            return host;
+        public String getProtocolBe() {
+            return protocolBe;
         }
 
-        public void setHost(String host) {
-            this.host = host;
+        public void setProtocolBe(String protocolBe) {
+            this.protocolBe = protocolBe;
         }
 
-        public Integer getPort() {
-            return port;
+        public String getHostFe() {
+            return hostFe;
         }
 
-        public void setPort(Integer port) {
-            this.port = port;
+        public void setHostFe(String hostFe) {
+            this.hostFe = hostFe;
         }
 
-        public String getHealthCheckUri() {
-            return healthCheckUri;
+        public String getHostBe() {
+            return hostBe;
         }
 
-        public void setHealthCheckUri(String healthCheckUri) {
-            this.healthCheckUri = healthCheckUri;
+        public void setHostBe(String hostBe) {
+            this.hostBe = hostBe;
+        }
+
+        public Integer getPortFe() {
+            return portFe;
+        }
+
+        public void setPortFe(Integer portFe) {
+            this.portFe = portFe;
+        }
+
+        public Integer getPortBe() {
+            return portBe;
+        }
+
+        public void setPortBe(Integer portBe) {
+            this.portBe = portBe;
+        }
+
+        public String getHealthCheckUriFe() {
+            return healthCheckUriFe;
+        }
+
+        public void setHealthCheckUriFe(String healthCheckUriFe) {
+            this.healthCheckUriFe = healthCheckUriFe;
         }
     }
 

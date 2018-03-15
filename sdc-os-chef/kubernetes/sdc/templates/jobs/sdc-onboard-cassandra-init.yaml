@@ -1,0 +1,86 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sdc-onboard-cassandra-init
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+  labels:
+    app: sdc-onboard-cassandra-init
+spec:
+  template:
+    metadata:
+      name: sdc-onboard-cassandra-init
+    spec:
+      initContainers:
+      - name: sdc-init-cs-readiness
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        command:
+        - /root/ready.py
+        args:
+        - --container-name
+        - sdc-cs
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      - name: sdc-job-completion
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        command:
+        - python
+        args:
+        - /root/readiness/sdc_check_job_completion.py
+        - --job-name
+        - sdc-config-cassandra
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - mountPath: /root/readiness
+          name: sdc-check-job-completion
+
+      containers:
+      - name: sdc-onboard-cassandra-init
+        image: "{{ .Values.image.sdcOnboardBackendInit }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        volumeMounts:
+        - mountPath: /root/chef-solo/environments/
+          name: sdc-environments
+        - mountPath: /var/lib/cassandra/
+          name: sdc-sdc-cs-cs
+        env:
+        - name: ENVNAME
+          value: "{{ .Values.env.name }}"
+        - name: CS_HOST_IP
+          value: sdc-cs
+        - name: SDC_USER
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_user}
+        - name: SDC_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_password}
+        - name: CS_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: cs_password}
+      volumes:
+      - name: sdc-sdc-cs-cs
+        persistentVolumeClaim:
+          claimName: sdc-cs-db
+      - name: sdc-environments
+        configMap:
+          name: sdc-environment
+      - name: sdc-localtime
+        hostPath:
+          path:  /etc/localtime
+      - name: sdc-check-job-completion
+        configMap:
+          name: sdc-check-job-completion
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
+      restartPolicy: Never
