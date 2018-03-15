@@ -29,14 +29,9 @@ end
 
 
 template "onboarding-fe-config" do
- path "#{ENV['JETTY_BASE']}/config/onboarding-fe/onboarding_configuration.yaml"
- source "FE-onboarding-configuration.yaml.erb"
- owner "jetty"
- group "jetty"
- mode "0755"
- variables({
-    :catalog_ip   => node['Nodes']['BE'],
-    :catalog_port => node['BE'][:http_port],
-    :ssl_port     => node['BE'][:https_port]
-})
+    path "#{ENV['JETTY_BASE']}/config/onboarding-fe/onboarding_configuration.yaml"
+    source "FE-onboarding-configuration.yaml.erb"
+    owner "jetty"
+    group "jetty"
+    mode "0755"
 end
