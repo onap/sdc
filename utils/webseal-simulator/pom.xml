@@ -164,7 +164,7 @@
 						<executions>
 							<execution>
 								<id>copy-resources-simulator</id>
-								<phase>verify</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
