@@ -259,7 +259,39 @@
 	</dependencies>
 
 	<build>
+
 		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>clean.tosca.chef.os.folder</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+
+								<!-- Sanity jar -->
+								<fileset>
+									<directory>${project.basedir}/sdc-ui-tests</directory>
+									<followSymlinks>false</followSymlinks>
+									<includes>
+										<include>*.jar</include>
+									</includes>
+								</fileset>
+								<!-- Sanity test suites -->
+								<fileset>
+									<directory>${project.basedir}/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites</directory>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -297,4 +329,127 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-tests-suites</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/ui-ci/src/main/resources/ci/testSuites</directory>
+											<includes>
+												<include>*</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>copy-resources-ui-ci</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/sdc-ui-tests</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/ui-ci/target</directory>
+											<includes>
+												<include>ui-ci-${project.version}-jar-with-dependencies.jar</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${fabric8.version}</version>
+
+						<configuration>
+							<verbose>true</verbose>
+							<apiVersion>1.23</apiVersion>
+							<registry>nexus3.onap.org:10001</registry>
+							<authConfig>
+								<pull>
+									<username>docker</username>
+									<password>docker</password>
+								</pull>
+							</authConfig>
+							<images>
+
+								<!-- Build sanity image -->
+								<image>
+									<name>onap/sdc-ui-tests</name>
+									<alias>sdc-ui-sanity</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>${project.basedir}/sdc-ui-tests</dockerFileDir>
+										<tags>
+											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+										</tags>
+									</build>
+								</image>
+
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>clean-images</id>
+								<phase>pre-clean</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+								<configuration>
+									<removeAll>true</removeAll>
+									<image>onap/sdc-ui-tests</image>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>generate-images</id>
+								<phase>install</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+
+							<execution>
+								<id>push-images</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>push</goal>
+								</goals>
+								<configuration>
+									<image>onap/sdc-ui-tests</image>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
