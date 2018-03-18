@@ -192,7 +192,9 @@ sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SD
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/sdctool.tar
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools/*
 sdc-os-chef/sdc-normatives/chef-repo/cookbooks/sdc-normatives/files/default/normatives.tar.gz
-sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/testSuites/*
+ui-ci/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites/*
+ 
 sdnc-tests-new-frame-work/test-output/*
 sdnc-tests-new-frame-work/test-output/**
 sdnc-tests/logs/wordnik.log
@@ -226,12 +228,12 @@ utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/de
 vagrant-asdc-all-in-one/
 
 
-sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
 /asdctool/*.xls
 
 /sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools/build/scripts/*
 
-sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
 
 /sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
 
@@ -240,13 +242,12 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 /openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/vsp_*
 
 
-sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 
 
 utils/DmaapPublisher/logs/*
 
 
-sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
 
 
 utils/DmaapPublisher/logs/*
@@ -254,8 +255,8 @@ utils/DmaapPublisher/logs/*
 *.xls
 
 
-sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
 
 
 *normatives.tar.gz
-/openecomp-ui/yarn.lock
+
