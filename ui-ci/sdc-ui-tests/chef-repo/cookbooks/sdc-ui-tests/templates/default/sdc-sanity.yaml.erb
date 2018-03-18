@@ -1,0 +1,31 @@
+url: http://<%= @webportal_ip %>:8285/sdc1
+browser: firefox
+uiSimulator: true
+sdcHttpMethod: http
+
+catalogBeHost:  <%= @catalogBE_ip %>
+catalogBePort:  <%= @catalogBE_port %>
+catalogFeHost:  <%= @webportal_ip %>
+catalogFePort:  <%= @webportal_port %>
+esHost:         <%= @ES_IP %>
+esPort: 9200
+disributionClientHost: disClient
+disributionClientPort: 8181
+
+remoteTesting: false
+systemUnderDebug: false
+reportDBhost: 135.76.210.43
+reportDBport: 27017
+
+useBrowserMobProxy: false
+captureTraffic: false
+
+
+resourceConfigDir: <%= @tests_path_ci %>
+componentsConfigDir: <%= @components_path %>
+importResourceConfigDir: <%= @importResourceConfigDir %>
+importResourceTestsConfigDir: <%= @importResourceTestsConfigDir %>
+errorConfigurationFile: <%= @errorConfigurationFile %>
+configurationFile: <%= @ConfigurationFile %>
+importTypesConfigDir: <%= @importTypesDir %>
+titanPropertiesFile: <%= @titan_file %>

@@ -6,7 +6,9 @@ SDC_PASSWORD="Aa1234%^!"
 JETTY_BASE="/var/lib/jetty"
 BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx2g -Xms2g"
 FE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx512m -Xms512m"
-
+SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m"
+API_TESTS_JAVA_OPTIONS="-Xmx512m -Xms512m"
+UI_TESTS_JAVA_OPTIONS="-Xmx1024m -Xms1024m"
 
 function usage {
     echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ]  [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -t|--runTests <Run-with-sanityDocker>] [ -h|--help ]"
@@ -35,8 +37,10 @@ function cleanup {
 function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/BE/SDC/SDC-BE
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
-    mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/ExtentReport
-	mkdir -p ${WORKSPACE}/data/logs/sdc-sanity/target
+    mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport
+	mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/target
+	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport
+	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
     chmod -R 777 ${WORKSPACE}/data/logs
 }
@@ -95,6 +99,19 @@ if [[ "$health_Check_http_code" -eq 200 ]]
 
 }
 
+function probe_sim {
+
+if lsof -Pi :8285 -sTCP:LISTEN -t >/dev/null ; then
+    echo "running"
+    sim_stat=true
+else
+    echo "not running"
+    sim_stat=false
+fi
+
+
+}
+
 function probe_docker {
 
 match_result=false
@@ -106,7 +123,6 @@ if [ -n "$MATCH" ]; then
    match_result=true
 fi
 }
-
 function monitor_docker {
 
     echo monitor $1 Docker
@@ -194,9 +210,27 @@ while [ $# -gt 0 ]; do
     -l | --local )
           LOCAL=true;
           shift 1;;
-	# -t | --runTests - Use this for running the sanity tests docker after all other dockers have been deployed
-    -t | --runTests )
-          RUNTESTS=true;
+	# -ta - Use this for running the APIs sanity docker after all other dockers have been deployed
+    -ta  )
+          shift 1 ;
+          API_SUITE=$1;
+          RUN_API_TESTS=true;
+          shift 1 ;;
+	# -tu - Use this for running the UI sanity docker after all other dockers have been deployed
+    -tu  )
+          shift 1 ;
+	      UI_SUITE=$1;
+          RUN_UI_TESTS=true;
+          shift 1 ;;
+    # -tad - Use this for running the DEFAULT suite of tests in APIs sanity docker after all other dockers have been deployed
+    -tad | -t )
+          API_SUITE="onapApiSanity";
+          RUN_API_TESTS=true;
+          shift 1 ;;
+	# -tud - Use this for running the DEFAULT suite of tests in UI sanity docker after all other dockers have been deployed
+    -tud   )
+          UI_SUITE="onapUiSanity";
+          RUN_UI_TESTS=true;
           shift 1 ;;
     # -d | --docker - The init specified docker
     -d | --docker )
@@ -251,6 +285,7 @@ if [ ${LOCAL} = false ]; then
 	echo "pulling code"
 	docker pull ${PREFIX}/sdc-init-elasticsearch:${RELEASE}
 fi
+echo "Running sdc-init-es"
 docker run --name sdc-init-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE} > /dev/null 2>&1
 rc=$?
 docker_logs sdc-init-es
@@ -290,6 +325,7 @@ if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-kibana:${RELEASE}
 docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
 fi
+
 }
 
 #Back-End
@@ -332,26 +368,63 @@ monitor_docker sdc-FE
 }
 
 
-# sanityDocker
-function sdc-sanity {
-if [[ (${RUNTESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
-    echo "docker run sdc-sanity..."
-    echo "Triger sanity docker, please wait..."
+# apis-sanity
+function sdc-api-tests {
+healthCheck
+if [[ (${RUN_API_TESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
+    echo "docker run sdc-api-tests..."
+    echo "Triger sdc-api-tests docker, please wait..."
 
     if [ ${LOCAL} = false ]; then
-        docker pull ${PREFIX}/sdc-sanity:${RELEASE}
+        docker pull ${PREFIX}/sdc-api-tests:${RELEASE}
     fi
 
-docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/sdc-sanity/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-sanity/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
-echo "please wait while SANITY is starting....."
-monitor_docker sdc-sanity
+docker run --detach --name sdc-api-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${API_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${API_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/sdc-api-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-api-tests/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-api-tests:${RELEASE} echo "please wait while SDC-API-TESTS is starting....."
+monitor_docker sdc-api-tests
+
+fi
+}
+
+# ui-sanity
+function sdc-ui-tests {
+healthCheck
+if [[ (${RUN_UI_TESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
+    echo "docker run sdc-ui-tets..."
+    echo "Triger sdc-ui-tests docker, please wait..."
+
+    if [ ${LOCAL} = false ]; then
+        docker pull ${PREFIX}/sdc-ui-tests:${RELEASE}
+    fi
+
+sdc-sim
+docker run --detach --name sdc-ui-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${UI_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${UI_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/sdc-ui-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5901:5901 --publish 6901:6901 ${PREFIX}/sdc-ui-tests:${RELEASE}
+echo "please wait while SDC-UI-TESTS is starting....."
+monitor_docker sdc-ui-tests
+
+fi
+}
+
+
+# SDC-Simulator
+function sdc-sim {
+echo "docker run sdc-webSimulator..."
+if [ ${LOCAL} = false ]; then
+        docker pull ${PREFIX}/sdc-sim:${RELEASE}
+fi
+
+probe_sim
+if [ sim_stat=false ]; then
+
+docker run --detach --name sdc-sim  --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" --env ENVNAME="${DEP_ENV}" --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/WS/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 8285:8080 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
+echo "please wait while SDC-WEB-SIMULATOR is starting....."
+monitor_docker sdc-sim
 
 fi
 }
 
 if [ -z "${DOCKER}" ]; then
     cleanup all
-    dir_perms
+	dir_perms
 	sdc-es
 	sdc-init-es
 	sdc-cs
@@ -361,11 +434,11 @@ if [ -z "${DOCKER}" ]; then
 	sdc-BE-init
 	sdc-FE
     healthCheck
-	sdc-sanity
+	sdc-api-tests
+        sdc-ui-tests
 else
 	cleanup ${DOCKER}
 	dir_perms
 	${DOCKER}
     healthCheck
 fi
-
