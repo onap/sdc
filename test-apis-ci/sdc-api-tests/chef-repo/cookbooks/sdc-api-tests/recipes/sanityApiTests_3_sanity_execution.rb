@@ -1,5 +1,5 @@
 tests_base="/var/lib/tests"
-ci_test_suite="onap.xml"
+ci_test_suite="#{ENV['SUITE_NAME']}.xml"
 
 bash "echo status" do
    code <<-EOH

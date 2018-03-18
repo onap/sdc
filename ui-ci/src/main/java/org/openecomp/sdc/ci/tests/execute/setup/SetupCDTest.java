@@ -102,6 +102,7 @@ public abstract class SetupCDTest extends DriverFactory {
 
 	/**************** PRIVATES ****************/
 	private static String url;
+	private static boolean uiSimulator;
 	private static boolean localEnv = true;
 	private static OnboardCSVReport csvReport;
 	private static Map<?, ?> credentials;
@@ -301,11 +302,12 @@ public abstract class SetupCDTest extends DriverFactory {
 	
 	protected static String setUrl() {
 		url = getConfig().getUrl();
+		uiSimulator = getConfig().isUiSimulator();
 		if (url == null) {
 			String message = "no URL found";
 			System.out.println(message);
 			Assert.fail(message);
-		} else if (!url.contains("localhost") && !url.contains("192.168.33.10") && !url.contains("127.0.0.1")) {
+		} else if (!url.contains("localhost") && !url.contains("192.168.33.10") && !url.contains("127.0.0.1") && !url.contains("192.168.50.5") && !uiSimulator==true) {
 			localEnv = false;
 		}
 		return url;

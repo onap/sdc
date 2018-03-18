@@ -1,7 +1,6 @@
 #!/bin/bash
 REMOTE_DEBUG=false
 RERUN=false
-JAVA_OPTION=""
 debug_port=8000
 TEST_SUITES=testSuites
 fileName=testng-failed.xml
@@ -22,7 +21,7 @@ function isBoolean ()
 	VALUE=$2
 	if [[ ${VALUE} != "true" ]] && [[ ${VALUE} != "false" ]]; then
 		echo "Valid parameter" ${PARAM_NAME} "values are: true/false"
-	        help_usage
+	    help_usage
 	fi
 }
 
@@ -32,6 +31,27 @@ function prepareFailedXmlFile ()
 	PATTERN=`grep -w "test name=" ${FULL_PATH}/${TEST_SUITES}/$2 | awk -F'"' '{print $2}'`
 	sed '/<test name="'${PATTERN}'"/,/<!-- '${PATTERN}' --/d' $1 > ${FULL_PATH}/${TEST_SUITES}/${fileName}
     sed -i 's/thread-count="[0-9]\+"/thread-count="1"/g' ${FULL_PATH}/${TEST_SUITES}/${fileName}
+    if [ -s "ExtentReport/ShortReport.csv" ]
+    then
+        SKIP_TESTS_LIST=$(cat ExtentReport/ShortReport.csv  |awk  -F, '{print  $2}' | sed 's/&.*//g' | uniq)
+        for SKIP_TEST in ${SKIP_TESTS_LIST}; do
+            sed -i "s/.*\"${SKIP_TEST}\".*//g" ${FULL_PATH}/${TEST_SUITES}/${fileName};
+        done;
+    fi
+}
+
+function setUpdatedTimeToReport ()
+{
+	LINE_NUMBER_OF_START_REPORT_DATE=`grep -A1 -nw "Start" ExtentReport/SDC_UI_Extent_Report.html | tail -1 | awk '{print $1}' | tr -d -`
+    END_REPORT_DATE=`grep -A1 -nw "End" ExtentReport/SDC_UI_Extent_Report.html | tail -1 | awk -F'[>|<]' '{print $3}'`
+    EPOCH_START_REPORT_DATE=`date --date="${1}" +%s`
+    EPOCH_END_REPORT_DATE=`date --date="${END_REPORT_DATE}" +%s`
+    let DIFF_EPOCH_TIME=${EPOCH_END_REPORT_DATE}-${EPOCH_START_REPORT_DATE}
+    TAKEN_TIME_IN_MINUTES=`echo $((${DIFF_EPOCH_TIME}/60))`
+    LINE_NUMBER_OF_TAKEN_REPORT_TIME=`grep -A1 -nw "Time Taken" ExtentReport/SDC_UI_Extent_Report.html | tail -1 | awk '{print $1}' | tr -d -`
+    PATTERN="div class='panel-lead'>";
+    sed -i "${LINE_NUMBER_OF_START_REPORT_DATE}s/${PATTERN}.*\</${PATTERN}$1\<\//1" ExtentReport/SDC_UI_Extent_Report.html
+    sed -i "${LINE_NUMBER_OF_TAKEN_REPORT_TIME}s/${PATTERN}.*\</${PATTERN}${TAKEN_TIME_IN_MINUTES} min\<\//1" ExtentReport/SDC_UI_Extent_Report.html
 }
 
 #main
@@ -83,9 +103,14 @@ COMPONENTS_DIR=/opt/app/sdc/ci/resources/components
 
 TARGET_LOG_DIR="${TARGET_DIR}/"
 
+
 ######ADD USERS################
 
 BE_IP=`cat conf/attsdc.yaml | grep catalogBeHost| awk '{print $2}'`
+
+
+
+
 
 
 if [ ${REMOTE_DEBUG} == "true" ]; then
@@ -93,7 +118,7 @@ if [ ${REMOTE_DEBUG} == "true" ]; then
     JAVA_OPTION="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=${debug_port}" ;
 fi
 
-cmd="java $JAVA_OPTION -Xms1024m -Xmx1024m -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -Dfilepath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
+cmd="java $JAVA_OPTIONS -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -DfilePath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
 
 
 if [ $DEBUG == "true" ]
@@ -108,7 +133,7 @@ if [ ${RERUN} == "true" ]; then
         echo "Prepare" ${TARGET_DIR}/${fileName} "file to rerun all failed tests ...";
         prepareFailedXmlFile ${TARGET_DIR}/${fileName} $SUITE_FILE;
         SUITE_FILE=${fileName};
-	cmd="java $JAVA_OPTION -Xms1024m -Xmx1024m -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -Dfilepath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
+    	cmd="java $JAVA_OPTIONS -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -DfilePath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
         $cmd;
     fi
 fi

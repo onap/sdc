@@ -94,6 +94,7 @@ public class Config {
 	private boolean useBrowserMobProxy;
 	private String sdcHttpMethod;
 	private String localDataCenter;
+	private boolean uiSimulator;
 
 	public String getLocalDataCenter() {
 		return localDataCenter;
@@ -196,6 +197,14 @@ public class Config {
 		// Config.class);
 
 		return config;
+	}
+
+	public boolean isUiSimulator() {
+		return uiSimulator;
+	}
+
+	public void setUiSimulator(boolean uiSimulator) {
+		this.uiSimulator = uiSimulator;
 	}
 
 	private static void setPackagesAndBugs(String path, Config config) throws IOException {
