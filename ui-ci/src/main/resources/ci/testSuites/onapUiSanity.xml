@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="uitests" configfailurepolicy="continue" parallel="methods" thread-count="1" data-provider-thread-count="1">
+
+  <test name="uiSanity">
+    <classes>
+
+        <class name="org.openecomp.sdc.ci.tests.execute.sanity.Vf">
+            <methods>
+                <include name="updateVF"/>
+            </methods>
+        </class>
+
+        <class name="org.openecomp.sdc.ci.tests.execute.sanity.Service">
+            <methods>
+                <include name="updateService"/>
+            </methods>
+        </class>
+
+						
+    </classes>
+  </test> <!-- uitests -->
+</suite> <!-- uisuite -->
