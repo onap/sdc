@@ -396,6 +396,7 @@
 				<module>test-apis-ci</module>
 				<module>ui-ci</module>
 				<module>sdc-os-chef</module>
+				<module>utils/webseal-simulator</module>
 			</modules>
 
 		</profile>

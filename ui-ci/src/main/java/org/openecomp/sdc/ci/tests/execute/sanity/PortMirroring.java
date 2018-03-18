@@ -603,7 +603,7 @@ public class PortMirroring extends SetupCDTest {
 
     @Override
     protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
+        return UserRoleEnum.DESIGNER3;
     }
 }
 
