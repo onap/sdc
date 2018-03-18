@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_cfdfd267",
+        "filename": "asdctool/sdc-cassandra-init/chef-solo/roles/cassandra-actions.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-18T12:15:04Z",
+      "side": 0,
+      "message": "please remove the logic connected to thsi in the chef and update  the pom file the copys the artifacts",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 14,
+        "endChar": 54
+      },
+      "revId": "de67b61f2fcd1bfc3cd6c44d9f1e66786777a238",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_efdace76",
+        "filename": "catalog-be/sdc-backend/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-18T12:15:04Z",
+      "side": 0,
+      "message": "remove the pom logic connected to this",
+      "range": {
+        "startLine": 11,
+        "startChar": 7,
+        "endLine": 11,
+        "endChar": 49
+      },
+      "revId": "de67b61f2fcd1bfc3cd6c44d9f1e66786777a238",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

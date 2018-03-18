@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8fe54a39",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-18T12:15:04Z",
+      "side": 1,
+      "message": "why you are not using CHEF? that is a requirment",
+      "range": {
+        "startLine": 3,
+        "startChar": 5,
+        "endLine": 3,
+        "endChar": 46
+      },
+      "revId": "2cc843861c0f35cf4263cdab869d0bf73aa65ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_afe04626",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-18T12:15:04Z",
+      "side": 1,
+      "message": "how are you handling upgrade vs create?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 45
+      },
+      "revId": "2cc843861c0f35cf4263cdab869d0bf73aa65ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4fd3c25f",
+        "filename": "openecomp-be/tools/install/database/init_keyspaces.cql",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-18T12:15:04Z",
+      "side": 1,
+      "message": "why 3?",
+      "range": {
+        "startLine": 2,
+        "startChar": 115,
+        "endLine": 2,
+        "endChar": 116
+      },
+      "revId": "2cc843861c0f35cf4263cdab869d0bf73aa65ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6fd6be50",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-18T12:15:04Z",
+      "side": 1,
+      "message": "you need 2g to run?????",
+      "range": {
+        "startLine": 8,
+        "startChar": 62,
+        "endLine": 8,
+        "endChar": 114
+      },
+      "revId": "2cc843861c0f35cf4263cdab869d0bf73aa65ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
