@@ -860,12 +860,12 @@ topology_template:
       disk.device.write.requests.rate_perimeta_ssc_b_server_0:
       - perimeta_ssc_b_server_0
       - disk.device.write.requests.rate
-      attachment_perimeta_ssc_b_mgmt_0_port:
-      - perimeta_ssc_b_mgmt_0_port
-      - attachment
       feature_perimeta_ssc_b_mgmt_0_port:
       - perimeta_ssc_b_mgmt_0_port
       - feature
+      attachment_perimeta_ssc_b_mgmt_0_port:
+      - perimeta_ssc_b_mgmt_0_port
+      - attachment
       network.incoming.bytes.rate_perimeta_ssc_b_mgmt_0_port:
       - perimeta_ssc_b_mgmt_0_port
       - network.incoming.bytes.rate

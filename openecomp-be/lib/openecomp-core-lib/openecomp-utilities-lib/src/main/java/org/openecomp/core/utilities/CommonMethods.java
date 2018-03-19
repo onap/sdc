@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -347,17 +347,18 @@ public class CommonMethods {
    *
    * @param <T>    the type parameter
    * @param <S>    the type parameter
-   * @param target the target
-   * @param source the source
+   * @param firstMap the firstMap
+   * @param secondMap the secondMap
    * @return the map
+   * Second Map is overridden data from the first map
    */
-  public static <T, S> Map<T, S> mergeMaps(Map<T, S> target, Map<T, S> source) {
+  public static <T, S> Map<T, S> mergeMaps(Map<T, S> firstMap, Map<T, S> secondMap) {
     Map<T, S> retMap = new HashMap<>();
-    if (MapUtils.isNotEmpty(source)) {
-      retMap.putAll(source);
+    if (MapUtils.isNotEmpty(firstMap)) {
+      retMap.putAll(firstMap);
     }
-    if (MapUtils.isNotEmpty(target)) {
-      retMap.putAll(target);
+    if (MapUtils.isNotEmpty(secondMap)) {
+      retMap.putAll(secondMap);
     }
     return retMap;
   }
