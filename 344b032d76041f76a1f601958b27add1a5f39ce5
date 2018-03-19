@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a6e38ca3",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/conf/Conf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-19T18:48:14Z",
+      "side": 1,
+      "message": "becouse of the way our dockers work i do not see a reseon to do thsi. in order for you to use thsi addition you will need to add some thing to the class path but since we are delivering a docker a with the configuration in it you will not be able to use thsi feture.",
+      "range": {
+        "startLine": 33,
+        "startChar": 11,
+        "endLine": 33,
+        "endChar": 98
+      },
+      "revId": "344b032d76041f76a1f601958b27add1a5f39ce5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
