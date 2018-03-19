@@ -25,6 +25,44 @@ imports:
 node_types:
   org.openecomp.resource.vfc.nodes.heat.cmaui_image:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    properties:
+      admin_pass:
+        description: The administrator password for the server
+        type: string
+        status: SUPPORTED
+        default: overridden default value
+        required: false
+      new_property:
+        description: new property
+        type: string
+        status: SUPPORTED
+        required: false
+data_types:
+  org.openecomp.datatypes.heat.network.MyAddressPair:
+    derived_from: org.openecomp.datatypes.heat.network.AddressPair
+    description: My MAC/IP address pairs
+    properties:
+      mac_address:
+        description: MAC address
+        type: string
+        status: SUPPORTED
+        required: false
+        default: overridden default value
+      new_property:
+        description: new property
+        type: string
+        status: SUPPORTED
+        required: false
+  org.openecomp.datatypes.heat.network.MyNewAddressPair:
+    derived_from: org.openecomp.datatypes.heat.network.MyAddressPair
+    description: My new MAC/IP address pairs
+    properties:
+      mac_address:
+        description: MAC address
+        type: string
+        status: SUPPORTED
+        required: true
+        default: overridden default value
 topology_template:
   inputs:
     cmaui_names:

@@ -2021,13 +2021,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_perimeta_ssc_b_mgmt_0_port:
-        type: tosca.capabilities.Attachment
+      feature_perimeta_ssc_b_mgmt_0_port:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      feature_perimeta_ssc_b_mgmt_0_port:
-        type: tosca.capabilities.Node
+      attachment_perimeta_ssc_b_mgmt_0_port:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -3706,4 +3706,4 @@ node_types:
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
-        - UNBOUNDED
+        - UNBOUNDED
