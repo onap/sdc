@@ -589,6 +589,9 @@ public class CandidateServiceImpl implements CandidateService {
                              FilesDataStructure structure, int inx,
                              Map<String, List<ErrorMessage>> uploadErrors) {
     for (HeatStructureTree volume : volumeSet) {
+      if (Objects.isNull(volume)) {
+        return;
+      }
       if (inx++ > 0) {
         ErrorsUtil.addStructureErrorToErrorMap(SdcCommon.UPLOAD_FILE,
             new ErrorMessage(ErrorLevel.WARNING,
