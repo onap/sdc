@@ -87,7 +87,7 @@ def usage():
 
 def importNormativeTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 	
-	normativeTypes = [ "root", "compute", "softwareComponent", "webServer", "webApplication", "DBMS", "database", "objectStorage", "blockStorage", "containerRuntime", "containerApplication", "loadBalancer", "port", "network", "allottedResource"]
+	normativeTypes = [ "root", "compute", "softwareComponent", "webServer", "webApplication", "DBMS", "database", "objectStorage", "blockStorage", "containerRuntime", "containerApplication", "loadBalancer", "port", "network"]
 	#normativeTypes = [ "root" ]
 	responseCodes = [200, 201]
 	

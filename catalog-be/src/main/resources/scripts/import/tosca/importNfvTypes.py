@@ -9,20 +9,34 @@ import importCommon
 
 #####################################################################################################################################################################################################
 #																																		       														#	
-# Import all users from a given file																										   														#
+# Import Nfv Types from a given file																										   														#
 # 																																			   														#		
 # activation :																																   														#
-#       python importUsers.py [optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ] #
+#       python importNfvTypes.py [optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ] #
 #																																		  	  														#			
 # shortest activation (be host = localhost, be port = 8080): 																				   														#
 #		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           														#
 #																																		       														#	
 #####################################################################################################################################################################################################
 
-def importOnapTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
-
-	#Add desired type names to the list
-	onapTypes = []
+def importNfvTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
+	
+	nfvTypes = [ "underlayVpn",
+	              "overlayTunnel",
+                  "genericNeutronNet",
+                  "allottedResource",
+	              "extImageFile",
+	              "extLocalStorage",
+	              "extZteCP",
+	              "extZteVDU",
+	              "extZteVL",
+	              "NSD",
+				  "VDU",
+	              "vduCompute",
+				  "vduCpd",
+				  "vduVirtualStorage",
+				  "vnfVirtualLinkDesc"
+				  ]
 		
 	responseCodes = [200, 201]
 		
@@ -30,11 +44,11 @@ def importOnapTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 		responseCodes = [200, 201, 409]
 		
         results = []
-        for onapType in onapTypes:
-                result = createNormativeType(scheme, beHost, bePort, adminUser, fileDir, onapType, updateversion)
+        for nfvType in nfvTypes:
+                result = createNormativeType(scheme, beHost, bePort, adminUser, fileDir, nfvType, updateversion)
                 results.append(result)
                 if ( result[1] == None or result[1] not in responseCodes) :
-			print "Failed creating heat type " + onapType + ". " + str(result[1]) 				
+			print "Failed creating heat type " + nfvType + ". " + str(result[1])
 	return results	
 
 
@@ -76,7 +90,7 @@ def main(argv):
 		usage()
 		sys.exit(3)
 
-	results = importOnapTypes(scheme, beHost, bePort, adminUser, "../../../import/tosca/onap-types/", updateversion)
+	results = importNfvTypes(scheme, beHost, bePort, adminUser, "../../../import/tosca/nfv-types/", updateversion)
 
 	print "-----------------------------"
 	for result in results:

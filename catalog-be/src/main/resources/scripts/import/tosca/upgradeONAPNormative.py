@@ -11,7 +11,9 @@ from importPolicyTypes import importPolicyTypes
 from importGroupTypes import importGroupTypes
 from importNormativeCapabilities import importNormativeCapabilities
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
+from upgradeNfvTypes import upgradeNfvTypesPerConfigFile
 from upgradeONAPTypes import upgradeOnapTypesPerConfigFile
+from upgradeSolTypes import upgradeSolTypesPerConfigFile
 
 
 from importCommon import *
@@ -119,10 +121,16 @@ def main(argv):
 
 	resultsHeat = upgradeTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateversion)
 	handleResults(resultsHeat)
-	
+
+	resultsHeat = upgradeNfvTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
+    handleResults(resultsHeat)
+
 	resultsHeat = upgradeOnapTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
 	handleResults(resultsHeat)
-	
+
+	resultsHeat = upgradeSolTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
+    handleResults(resultsHeat)
+
 	errorAndExit(0, None)
 
 if __name__ == "__main__":
