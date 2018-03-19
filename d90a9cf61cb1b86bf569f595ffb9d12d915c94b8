@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c5e9f3e6",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-19T09:40:31Z",
+      "side": 1,
+      "message": "please verify no need for artifact\nI think you are missing some i18n entries, like item is deleted, item is restored",
+      "revId": "d90a9cf61cb1b86bf569f595ffb9d12d915c94b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a56f075f",
+        "filename": "openecomp-ui/src/sdc-app/common/helpers/ItemsHelper.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-19T09:40:31Z",
+      "side": 1,
+      "message": "restore action should be constant. please also add toggle-z features to a constants list.",
+      "revId": "d90a9cf61cb1b86bf569f595ffb9d12d915c94b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_45072382",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-03-19T09:40:31Z",
+      "side": 1,
+      "message": "why some upper case and some camelcase (catalogItemStatuses)?",
+      "revId": "d90a9cf61cb1b86bf569f595ffb9d12d915c94b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
