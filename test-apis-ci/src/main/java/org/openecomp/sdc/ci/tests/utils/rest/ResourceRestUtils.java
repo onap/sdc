@@ -81,8 +81,6 @@ public class ResourceRestUtils extends BaseRestUtils {
 		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
 		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
 		HttpRequest http = new HttpRequest();
-		// System.out.println(url);
-		// System.out.println(userBodyJson);
 		RestResponse createResourceResponse = http.httpSendPost(url, userBodyJson, headersMap);
 		if (createResourceResponse.getErrorCode() == STATUS_CODE_CREATED) {
 			resourceDetails.setUUID(ResponseParser.getUuidFromResponse(createResourceResponse));
