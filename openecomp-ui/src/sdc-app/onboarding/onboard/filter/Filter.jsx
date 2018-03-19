@@ -22,10 +22,12 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import Accordion from 'nfvo-components/accordion/Accordion.jsx';
 import {actionTypes} from './FilterConstants.js';
 import featureToggle from 'sdc-app/features/featureToggle.js';
-
-const mapStateToProps = ({onboard: {filter}}) => {
+import {tabsMapping as onboardTabsMapping} from '../OnboardConstants.js';
+import {itemsType as itemsTypeConstants} from './FilterConstants.js';
+const mapStateToProps = ({onboard: {filter, activeTab}}) => {
 	return {
-		data: filter
+		data: filter,
+		activeTab
 	};
 };
 
@@ -40,9 +42,27 @@ const mapActionsToProps = (dispatch) => {
 };
 
 const Filter = ({onDataChanged, data: {entityTypeVsp, entityTypeVlm, roleOwner, roleContributor, roleViewer,
-		 procedureNetwork, procedureManual, recentlyUpdated}}) => (
-    <div className='catalog-filter'>        
-        <Input label={i18n('Recently Updated')} type='checkbox' checked={recentlyUpdated}
+		 procedureNetwork, procedureManual, recentlyUpdated, byVendorView, itemsType}, activeTab}) => (
+    <div className='catalog-filter'>			
+		 {activeTab === onboardTabsMapping.CATALOG && <Input
+			type='select'
+			className='catalog-filter-items-type'
+			data-test-id='catalog-filter-items-type' 
+			disabled={byVendorView}
+			value={itemsType}
+			onChange={e => onDataChanged({itemsType: e.target.value})}>
+				<option key={itemsTypeConstants.ACTIVE} value={itemsTypeConstants.ACTIVE}>Active Items</option>
+				<option key={itemsTypeConstants.ARCHIVED} value={itemsTypeConstants.ARCHIVED}>Archived Items</option>
+		</Input>}
+		{activeTab === onboardTabsMapping.CATALOG && <Input 
+			label={i18n('By Vendor View')}
+			 type='checkbox'
+			 disabled={itemsType === itemsTypeConstants.ARCHIVED} 
+			 checked={byVendorView} 
+			 onChange={byVendorView => onDataChanged({byVendorView})}
+			 data-test-id='filter-by-vendor-view' value='' />
+		}
+        <Input label={i18n('Recently Updated')} type='checkbox' checked={recentlyUpdated} 
 	onChange={recentlyUpdated => onDataChanged({recentlyUpdated})}  data-test-id='filter-recently-updated' value='' />
 
 		<Accordion title={i18n('ENTITY TYPE')}>
@@ -71,4 +91,4 @@ Filter.PropTypes = {
 	data: PropTypes.object
 };
 
-export default featureToggle('ONBOARDING_FILTER')(connect(mapStateToProps, mapActionsToProps)(Filter));
+export default featureToggle('FILTER')(connect(mapStateToProps, mapActionsToProps)(Filter));

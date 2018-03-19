@@ -66,8 +66,10 @@ const OnboardingActionHelper = {
 	loadItemsLists(dispatch) {
 		LicenseModelActionHelper.fetchLicenseModels(dispatch);
 		LicenseModelActionHelper.fetchFinalizedLicenseModels(dispatch);
+		LicenseModelActionHelper.fetchArchivedLicenseModels(dispatch);
 		SoftwareProductActionHelper.fetchSoftwareProductList(dispatch);
 		SoftwareProductActionHelper.fetchFinalizedSoftwareProductList(dispatch);
+		SoftwareProductActionHelper.fetchArchivedSoftwareProductList(dispatch);
 	},
 
 	navigateToOnboardingCatalog(dispatch) {
@@ -95,7 +97,7 @@ const OnboardingActionHelper = {
 		return Promise.resolve();
 	},
 
-	navigateToLicenseModelOverview(dispatch, {licenseModelId, version}) {
+	navigateToLicenseModelOverview(dispatch, {licenseModelId, version, status}) {
 
 		/**
 		 * TODO change to specific rest
@@ -103,39 +105,39 @@ const OnboardingActionHelper = {
 
 		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
 			LicenseModelActionHelper.fetchLicenseModelItems(dispatch, {licenseModelId, version}).then(() => {
-				setCurrentScreen(dispatch, enums.SCREEN.LICENSE_MODEL_OVERVIEW, {licenseModelId, version});
+				setCurrentScreen(dispatch, enums.SCREEN.LICENSE_MODEL_OVERVIEW, {licenseModelId, version, status});
 			});
 			licenseModelOverviewActionHelper.selectVLMListView(dispatch, {buttonTab: null});
 		});
 	},
-	navigateToLicenseAgreements(dispatch, {licenseModelId, version}) {
+	navigateToLicenseAgreements(dispatch, {licenseModelId, version, status}) {
 		LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
 		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
-			setCurrentScreen(dispatch, enums.SCREEN.LICENSE_AGREEMENTS, {licenseModelId, version});
+			setCurrentScreen(dispatch, enums.SCREEN.LICENSE_AGREEMENTS, {licenseModelId, version, status});
 		});
 	},
 
-	navigateToFeatureGroups(dispatch, {licenseModelId, version}) {
+	navigateToFeatureGroups(dispatch, {licenseModelId, version, status}) {
 		FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.FEATURE_GROUPS, {licenseModelId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.FEATURE_GROUPS, {licenseModelId, version, status});
 	},
 
-	navigateToEntitlementPools(dispatch, {licenseModelId, version}) {
+	navigateToEntitlementPools(dispatch, {licenseModelId, version, status}) {
 		EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.ENTITLEMENT_POOLS, {licenseModelId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.ENTITLEMENT_POOLS, {licenseModelId, version, status});
 	},
 
-	navigateToLicenseKeyGroups(dispatch, {licenseModelId, version}) {
+	navigateToLicenseKeyGroups(dispatch, {licenseModelId, version, status}) {
 		LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.LICENSE_KEY_GROUPS, {licenseModelId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.LICENSE_KEY_GROUPS, {licenseModelId, version, status});
 	},
 
-	navigateToLicenseModelActivityLog(dispatch, {licenseModelId, version}){
+	navigateToLicenseModelActivityLog(dispatch, {licenseModelId, version, status}){
 		ActivityLogActionHelper.fetchActivityLog(dispatch, {itemId: licenseModelId, versionId: version.id});
-		setCurrentScreen(dispatch, enums.SCREEN.ACTIVITY_LOG, {licenseModelId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.ACTIVITY_LOG, {licenseModelId, version, status});
 	},
 
-	navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version, status}) {
 		SoftwareProductComponentsActionHelper.clearComponentsStore(dispatch);
 		SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version}).then(response => {
 			let {vendorId: licenseModelId, licensingVersion} = response[0];
@@ -144,112 +146,112 @@ const OnboardingActionHelper = {
 			if(response[0].onboardingOrigin === onboardingOriginTypes.ZIP) {
 				SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: version});
 			}
-			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version, status});
 		});
 	},
 
-	navigateToSoftwareProductDetails(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductDetails(dispatch, {softwareProductId, version, status}) {
 		SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version}).then(response => {
 			let {vendorId: licenseModelId, licensingVersion} = response[0];
 			SoftwareProductActionHelper.loadLicensingVersionsList(dispatch, {licenseModelId});
 			SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion});
-			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, {softwareProductId, version});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, {softwareProductId, version, status});
 		});
 	},
 
-	navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version, status}) {
 		SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version});
 		SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab: attachmentsTabsMapping.SETUP});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {softwareProductId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {softwareProductId, version, status});
 	},
-	navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version, status}) {
 		SoftwareProductActionHelper.processAndValidateHeatCandidate(dispatch, {softwareProductId, version}).then(() => {
 			SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab: attachmentsTabsMapping.VALIDATION});
-			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {softwareProductId, version});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {softwareProductId, version, status});
 		});
 	},
 
-	navigateToSoftwareProductProcesses(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductProcesses(dispatch, {softwareProductId, version, status}) {
 		if (softwareProductId) {
 			SoftwareProductProcessesActionHelper.fetchProcessesList(dispatch, {softwareProductId, version});
 		}
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES, {softwareProductId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES, {softwareProductId, version, status});
 	},
 
-	navigateToSoftwareProductNetworks(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductNetworks(dispatch, {softwareProductId, version, status}) {
 		if (softwareProductId) {
 			SoftwareProductNetworksActionHelper.fetchNetworksList(dispatch, {softwareProductId, version});
 		}
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS, {softwareProductId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS, {softwareProductId, version, status});
 	},
 
-	navigateToSoftwareProductDependencies(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductDependencies(dispatch, {softwareProductId, version, status}) {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version}).then(result => {
 			if(result.listCount >= 2) {
 				SoftwareProductDependenciesActionHelper.fetchDependencies(dispatch, {softwareProductId, version});
-				setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES, {softwareProductId, version});
+				setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES, {softwareProductId, version, status});
 			}
 			else {
-				this.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version});
+				this.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version, status});
 			}
 		});
 	},
 
-	navigateToSoftwareProductComponents(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductComponents(dispatch, {softwareProductId, version, status}) {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS, {softwareProductId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS, {softwareProductId, version, status});
 	},
-	navigateToSoftwareProductDeployment(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductDeployment(dispatch, {softwareProductId, version, status}) {
 		SoftwareProductDeploymentActionHelper.fetchDeploymentFlavorsList(dispatch, {softwareProductId, version});
 		ComputeFlavorActionHelper.fetchComputesListForVSP(dispatch, {softwareProductId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT, {softwareProductId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT, {softwareProductId, version, status});
 	},
-	navigateToSoftwareProductActivityLog(dispatch, {softwareProductId, version}){
+	navigateToSoftwareProductActivityLog(dispatch, {softwareProductId, version, status}){
 		ActivityLogActionHelper.fetchActivityLog(dispatch, {itemId: softwareProductId, versionId: version.id});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG, {softwareProductId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG, {softwareProductId, version, status});
 	},
 
-	navigateToSoftwareProductComponentProcesses(dispatch, {softwareProductId, componentId, version}) {
+	navigateToSoftwareProductComponentProcesses(dispatch, {softwareProductId, componentId, version, status}) {
 		if (componentId && softwareProductId) {
 			SoftwareProductComponentProcessesActionHelper.fetchProcessesList(dispatch, {componentId, softwareProductId, version});
 		}
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES, {softwareProductId, componentId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES, {softwareProductId, componentId, version, status});
 	},
 
-	navigateToSoftwareProductComponentMonitoring(dispatch, {softwareProductId, version, componentId}){
+	navigateToSoftwareProductComponentMonitoring(dispatch, {softwareProductId, version, componentId, status}){
 		if (componentId && softwareProductId && version) {
 			SoftwareProductComponentsMonitoringAction.fetchExistingFiles(dispatch, {componentId, softwareProductId, version});
 		}
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING, {softwareProductId, componentId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING, {softwareProductId, componentId, version, status});
 	},
 
-	navigateToComponentStorage(dispatch, {softwareProductId, componentId, version}) {
+	navigateToComponentStorage(dispatch, {softwareProductId, componentId, version, status}) {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponent(dispatch, {softwareProductId, vspComponentId: componentId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE, {softwareProductId, version, componentId});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE, {softwareProductId, version, componentId, status});
 	},
 
-	navigateToComponentCompute(dispatch, {softwareProductId, componentId, version}) {
+	navigateToComponentCompute(dispatch, {softwareProductId, componentId, version, status}) {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponent(dispatch, {softwareProductId, vspComponentId: componentId, version});
 		if (componentId && softwareProductId) {
 			ComputeFlavorActionHelper.fetchComputesList(dispatch, {softwareProductId, componentId, version});
 		}
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE, {softwareProductId, version, componentId});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE, {softwareProductId, version, componentId, status});
 	},
 
-	navigateToComponentNetwork(dispatch, {softwareProductId, componentId, version}) {
+	navigateToComponentNetwork(dispatch, {softwareProductId, componentId, version, status}) {
 		SoftwareProductComponentsNetworkActionHelper.fetchNICsList(dispatch, {softwareProductId, componentId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK, {softwareProductId, version, componentId});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK, {softwareProductId, version, componentId, status});
 	},
 
-	navigateToSoftwareProductComponentGeneral(dispatch, {softwareProductId, componentId, version}) {
+	navigateToSoftwareProductComponentGeneral(dispatch, {softwareProductId, componentId, version, status}) {
 		if (componentId && softwareProductId) {
 			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponent(dispatch, {softwareProductId, vspComponentId: componentId, version});
 		}
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL, {softwareProductId, version, componentId});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL, {softwareProductId, version, componentId, status});
 	},
 
-	navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {softwareProductId, componentId, version}) {
-		this.navigateToSoftwareProductComponentGeneral(dispatch, {softwareProductId, componentId, version});
+	navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {softwareProductId, componentId, version, status}) {
+		this.navigateToSoftwareProductComponentGeneral(dispatch, {softwareProductId, componentId, version, status});
 		dispatch({
 			type: SoftwareProductActionTypes.TOGGLE_NAVIGATION_ITEM,
 			mapOfExpandedIds: {
@@ -259,26 +261,30 @@ const OnboardingActionHelper = {
 		});
 	},
 
-	navigateToComponentLoadBalancing(dispatch, {softwareProductId, componentId, version}) {
+	navigateToComponentLoadBalancing(dispatch, {softwareProductId, componentId, version, status}) {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponent(dispatch, {softwareProductId, vspComponentId: componentId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING, {softwareProductId, version, componentId});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING, {softwareProductId, version, componentId, status});
 	},
 
-	navigateToComponentImages(dispatch, {softwareProductId, componentId, version}) {
+	navigateToComponentImages(dispatch, {softwareProductId, componentId, version, status}) {
 		SoftwareProductComponentsImageActionHelper.fetchImagesList(dispatch, {
 			softwareProductId,
 			componentId,
 			version
 		});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES, {softwareProductId, version, componentId});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES, {softwareProductId, version, componentId, status});
 	},
 
 	navigateToVersionsPage(dispatch, {itemType, itemId, itemName, additionalProps, users}) {
 		PermissionsActionHelper.fetchItemUsers(dispatch, {itemId, allUsers: users});
 		VersionsPageActionHelper.selectNone(dispatch);
 		VersionsPageActionHelper.fetchVersions(dispatch, {itemType, itemId}).then(() => {
-			setCurrentScreen(dispatch, enums.SCREEN.VERSIONS_PAGE, {itemType, itemId, itemName, additionalProps});
+			ItemsHelper.fetchItem(itemId).then(result => {
+				setCurrentScreen(dispatch, enums.SCREEN.VERSIONS_PAGE, {status: result.status, itemType, itemId, itemName, additionalProps});
+			});
+			
 		});
+		
 	},
 
 	checkMergeStatus(dispatch, {itemId, versionId, version}) {

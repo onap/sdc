@@ -18,6 +18,18 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import {permissionTypes} from 'sdc-app/onboarding/permissions/PermissionsConstants.js';
 import {actionsEnum as VersionControllerActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 import {actionTypes as onboardingActionTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+import restToggle from 'sdc-app/features/restToggle.js';
+export const archiveActions = {
+	ARCHIVE: 'ARCHIVE',
+	RESTORE: 'RESTORE'
+};
+
+export const itemStatus = {
+	ARCHIVED: 'ARCHIVED',
+	DRAFT: 'Draft',
+	CERTIFIED: 'Certified'
+};
+
 
 function baseUrl() {
 	const restPrefix = Configuration.get('restPrefix');
@@ -58,21 +70,36 @@ const ItemsHelper = {
 		return RestAPIUtil.put(`${baseUrl()}/${itemId}/permissions/${permissionTypes.OWNER}`, {removedUsersIds: [], addedUsersIds: [ownerId]});
 	},
 
-	checkItemStatus(dispatch, {itemId, versionId}) {
-		return ItemsHelper.fetchVersion({itemId, versionId}).then(response => {
-			let state = response && response.state || {};
-			const {baseId, description, id, name, status} = response;
-
-			dispatch({
-				type: onboardingActionTypes.UPDATE_ITEM_STATUS,
-				itemState: state,
-				itemStatus: response.status,
-				updatedVersion: {baseId, description, id, name, status}
-			});
-			return Promise.resolve(response);
+	async checkItemStatus(dispatch, {itemId, versionId}) {
+		const response = await ItemsHelper.fetchVersion({itemId, versionId});
+		let state = response && response.state || {};
+		const {baseId, description, id, name, status} = response;
+		const item = await ItemsHelper.fetchItem(itemId);
+		dispatch({
+			type: onboardingActionTypes.UPDATE_ITEM_STATUS,
+			itemState: state,
+			itemStatus: response.status,
+			archivedStatus: item.status,
+			updatedVersion: {baseId, description, id, name, status}
 		});
 
+		return Promise.resolve({...response, archivedStatus: item.status});
 	},
+
+	fetchItem(itemId) {
+		return restToggle({restFunction: () => RestAPIUtil.fetch(`${baseUrl()}/${itemId}`), featureName: 'ARCHIVE_ITEM', mockResult: {}});
+	},
+
+	archiveItem(itemId) {
+		return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
+			action: archiveActions.ARCHIVE
+		});
+	},
+	restoreItem(itemId) {
+		return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
+			action: 'RESTORE'
+		});
+	}
 };
 
 export default ItemsHelper;

@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import VersionsPageView from './VersionsPage.jsx';
 export const mapStateToProps = ({
 	users: {userInfo},
 	versionsPage: {permissions, versionsList},
-	currentScreen: {itemPermission: {isCollaborator}, props: {itemId}},
+	currentScreen: {itemPermission: {isCollaborator, isArchived}, props: {itemId}},
 	softwareProductList = []
 }) => {
 
-	let {versions, selectedVersion} = versionsList;
+	let {versions = [], selectedVersion} = versionsList;
 	let {owner, contributors, viewers} = permissions;
 
 	// sorting the version list
@@ -40,8 +40,7 @@ export const mapStateToProps = ({
 			return statusCompare;
 		}
 
-	});
-
+	});	
 	const curentSoftwareProduct = softwareProductList.find(item => item.id === itemId);
 	return {
 		versions,
@@ -51,7 +50,8 @@ export const mapStateToProps = ({
 		currentUser: userInfo,
 		selectedVersion,
 		isCollaborator,
-		isManual: curentSoftwareProduct && curentSoftwareProduct.onboardingMethod === onboardingMethodType.MANUAL
+		isManual: curentSoftwareProduct && curentSoftwareProduct.onboardingMethod === onboardingMethodType.MANUAL,
+		isArchived
 	};
 
 };
@@ -80,7 +80,9 @@ export const mapActionsToProps = (dispatch, {itemType, itemId, additionalProps})
 
 		onModalNodeClick({version}) {
 			VersionsPageActionHelper.selectVersionFromModal(dispatch, {version});
-		}
+		},
+		onArchive: () => VersionsPageActionHelper.archiveItem(dispatch, itemId),
+		onRestore: () => VersionsPageActionHelper.restoreItemFromArchive(dispatch, itemId)
 	};
 };
 

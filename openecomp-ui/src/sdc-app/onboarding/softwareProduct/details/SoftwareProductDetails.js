@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * permissions and limitations under the License.
  */
 import {connect} from 'react-redux';
-
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 import SoftwareProductDetailsView from './SoftwareProductDetailsView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {PRODUCT_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
-
+import {actionTypes as modalActionTypes, modalSizes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
+import {forms} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
 export const mapStateToProps = ({
 	finalizedLicenseModelList,
+	archivedLicenseModelList,
 	softwareProduct,
 	licenseModel: {licenseAgreement, featureGroup}
 }) => {
@@ -44,7 +47,7 @@ export const mapStateToProps = ({
 	let {qdata, qgenericFieldInfo : qGenericFieldInfo, dataMap} = softwareProductQuestionnaire;
 
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
-
+	const isVendorArchived = archivedLicenseModelList.find(item => item.id === currentSoftwareProduct.vendorId);
 	return {
 		currentSoftwareProduct,
 		softwareProductCategories,
@@ -56,7 +59,8 @@ export const mapStateToProps = ({
 		isFormValid,
 		genericFieldInfo,
 		qGenericFieldInfo,
-		dataMap
+		dataMap,
+		isVendorArchived: !!isVendorArchived
 	};
 
 };
@@ -67,7 +71,21 @@ export const mapActionsToProps = (dispatch, {version}) => {
 		onVendorParamChanged: (deltaData, formName) => SoftwareProductActionHelper.softwareProductEditorVendorChanged(dispatch, {deltaData, formName}),
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData, qName: PRODUCT_QUESTIONNAIRE}),
 		onValidityChanged: isValidityData => SoftwareProductActionHelper.setIsValidityData(dispatch, {isValidityData}),
-		onSubmit: (softwareProduct, qdata) => SoftwareProductActionHelper.updateSoftwareProduct(dispatch, {softwareProduct, qdata, version})
+		onSubmit: (softwareProduct, qdata) => SoftwareProductActionHelper.updateSoftwareProduct(dispatch, {softwareProduct, qdata, version}),
+		onArchivedVendorRemove: ({onVendorParamChanged, finalizedLicenseModelList, vendorName}) => dispatch({
+			type: modalActionTypes.GLOBAL_MODAL_SHOW,
+			data:{
+				title: i18n('Change Archived VLM'),
+				modalComponentName: modalContentMapper.VENDOR_SELECTOR,
+				modalComponentProps: {
+					size: modalSizes.MEDIUM,
+					finalizedLicenseModelList,
+					vendorName,
+					onClose: () => dispatch({type: modalActionTypes.GLOBAL_MODAL_CLOSE}),
+					onConfirm: (vendorId) => onVendorParamChanged({vendorId}, forms.VENDOR_SOFTWARE_PRODUCT_DETAILS)
+				}
+			}
+		})
 	};
 };
 

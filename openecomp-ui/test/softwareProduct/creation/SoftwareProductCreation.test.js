@@ -31,6 +31,8 @@ describe('Software Product Creation Module Tests', function() {
 	it ('should return empty data', () => {
 		let state = {
 			softwareProductList: [],
+			finalizedSoftwareProductList: [],
+			archivedSoftwareProductList: [],
 			softwareProduct: {
 				softwareProductCreation: {
 					data: {}
@@ -46,6 +48,8 @@ describe('Software Product Creation Module Tests', function() {
 
 	it ('should return vsp names list', () => {
 		let state = {
+			finalizedSoftwareProductList: [],
+			archivedSoftwareProductList: [],
 			softwareProductList: [{
 				name: 'vsp1',
 				id: 'vsp1_id'
@@ -73,6 +77,8 @@ describe('Software Product Creation Module Tests', function() {
 
 		let state = {
 			softwareProductList: [],
+			finalizedSoftwareProductList: [],
+			archivedSoftwareProductList: [],
 			softwareProduct: {
 				softwareProductCreation: SoftwareProductCreationFactory.build(),
 				softwareProductCategories: CategoryWithSubFactory.buildList({}, {quantity: 2})
@@ -97,6 +103,8 @@ describe('Software Product Creation Module Tests', function() {
 		let finalizedLicenseModelList = FinalizedLicenseModelFactory.buildList(3);
 		let state = {
 			softwareProductList: [],
+			finalizedSoftwareProductList: [],
+			archivedSoftwareProductList: [],
 			softwareProduct: {
 				softwareProductCreation: SoftwareProductCreationFactoryWithSelectedVendor.build({selectedVendorId: finalizedLicenseModelList[0].id}),
 				softwareProductCategories: CategoryWithSubFactory.buildList({}, {quantity: 2})

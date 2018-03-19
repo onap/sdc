@@ -15,6 +15,9 @@
  */
 
 import React from 'react';
+import {Provider} from 'react-redux';
+import {storeCreator} from 'sdc-app/AppStore.js';
+
 import TestUtils from 'react-dom/test-utils';
 import {defaultStoreFactory} from 'test-utils/factories/onboard/OnboardingCatalogFactories.js';
 import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
@@ -80,8 +83,13 @@ describe('OnBoarding Catalog test - View: ', function () {
 		};
 
 		let params = {...func, ...mapStateToProps(data)};
-		let CatalogView = TestUtils.renderIntoDocument(<OnboardingCatalogView
-			{...params}/>);
+		const store = storeCreator();
+
+		let CatalogView = TestUtils.renderIntoDocument(
+			<Provider store={store}>
+				<OnboardingCatalogView
+					{...params}/>
+			</Provider>);
 		expect(CatalogView).toBeTruthy();
 	});
 

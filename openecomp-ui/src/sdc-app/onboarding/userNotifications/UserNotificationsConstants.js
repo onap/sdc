@@ -15,5 +15,8 @@ export const notificationType = keyMirror({
 	ITEM_CHANGED: {
 		COMMIT: 'commit',
 		SUBMIT: 'submit'
-	}
+	},
+	ITEM_DELETED: 'delete',
+	ITEM_ARCHIVED: 'archive',
+	ITEM_RESTORED: 'restore'
 });

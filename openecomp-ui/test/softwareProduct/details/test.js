@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
@@ -35,7 +35,7 @@ import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import {InitializedCurrentScreenFactory} from 'test-utils/factories/common/CurrentScreenFactory.js';
 
 describe('Software Product Details Module Tests', function () {
-	it('Get Software Products List', () => {
+	it('Get Software Products List', async () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 		const softwareProductList = VSPEditorFactory.buildList(2);
@@ -57,11 +57,18 @@ describe('Software Product Details Module Tests', function () {
 			return {results: []};
 		});
 
-		return SoftwareProductActionHelper.fetchSoftwareProductList(store.dispatch).then(() => {
-			return SoftwareProductActionHelper.fetchFinalizedSoftwareProductList(store.dispatch);
-		}).then(() => {
-			expect(store.getState()).toEqual(expectedStore);
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/?Status=ARCHIVED');
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: []};
 		});
+
+		await SoftwareProductActionHelper.fetchSoftwareProductList(store.dispatch);
+		await SoftwareProductActionHelper.fetchFinalizedSoftwareProductList(store.dispatch);
+		await SoftwareProductActionHelper.fetchArchivedSoftwareProductList(store.dispatch);
+		
+		expect(store.getState()).toEqual(expectedStore);		
 	});
 
 	it('Add Software Product', () => {

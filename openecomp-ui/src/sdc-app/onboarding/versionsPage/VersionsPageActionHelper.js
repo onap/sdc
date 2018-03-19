@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,22 @@ const VersionsPageActionHelper = {
 			type: modalActionTypes.GLOBAL_MODAL_CLOSE
 		});
 		this.selectVersion(dispatch, {version});
+	},
+
+	archiveItem(dispatch, itemId) {
+		ItemsHelper.archiveItem(itemId).then(() => {
+			ScreensHelper.loadScreen(dispatch, {
+				screen: enums.SCREEN.ONBOARDING_CATALOG
+			});
+		});	
+	},
+
+	restoreItemFromArchive(dispatch, itemId) {
+		ItemsHelper.restoreItem(itemId).then(() => {
+			ScreensHelper.loadScreen(dispatch, {
+				screen: enums.SCREEN.ONBOARDING_CATALOG
+			});
+		});
 	}
 };
 
