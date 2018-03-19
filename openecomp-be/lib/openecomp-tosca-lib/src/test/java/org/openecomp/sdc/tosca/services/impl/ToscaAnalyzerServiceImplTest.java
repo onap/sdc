@@ -34,6 +34,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.DataType;
 import org.openecomp.sdc.tosca.datatypes.model.DefinitionOfDataType;
+import org.openecomp.sdc.tosca.datatypes.model.DataType;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinitionType;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceType;
@@ -107,7 +108,26 @@ public class ToscaAnalyzerServiceImplTest {
   }
 
   @Test
-  public void testGetFlatEntity() throws Exception {
+  public void testGetFlatEntityNotFound() throws Exception {
+    thrown.expect(CoreException.class);
+    thrown.expectMessage(
+        "Entity Type 'org.openecomp.resource.vfc.notFound' or one of its derivedFrom type hierarchy, is not defined in tosca service model");
+    ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
+
+      ServiceTemplate
+          serviceTemplateFromYaml =
+          toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+      toscaAnalyzerService
+          .getFlatEntity(ToscaElementTypes.NODE_TYPE, "org.openecomp.resource.vfc.notFound",
+              serviceTemplateFromYaml, toscaServiceModel);
+    }
+  }
+
+  @Test
+  public void testGetFlatEntityNodeType() throws Exception {
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
     try (InputStream yamlFile = toscaExtensionYamlUtil
         .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
@@ -123,6 +143,39 @@ public class ToscaAnalyzerServiceImplTest {
       Assert.assertNotNull(flatEntity);
       Assert.assertEquals("org.openecomp.resource.vfc.nodes.heat.nova.Server", flatEntity
           .getDerived_from());
+      Assert.assertEquals(20, flatEntity.getProperties().size());
+      Assert.assertEquals("overridden default value",
+          flatEntity.getProperties().get("admin_pass").get_default());
+      Assert.assertEquals("REBUILD",
+          flatEntity.getProperties().get("image_update_policy").get_default());
+      Assert.assertNotNull(flatEntity.getProperties().get("new_property"));
+    }
+  }
+
+  @Test
+  public void testGetFlatEntityDataType() throws Exception {
+    ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
+
+      ServiceTemplate
+          serviceTemplateFromYaml =
+          toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+      final DataType flatEntity = (DataType) toscaAnalyzerService
+          .getFlatEntity(ToscaElementTypes.DATA_TYPE,
+              "org.openecomp.datatypes.heat.network.MyNewAddressPair", serviceTemplateFromYaml,
+              toscaServiceModel);
+
+      Assert.assertNotNull(flatEntity);
+      Assert.assertEquals("org.openecomp.datatypes.heat.network.MyAddressPair", flatEntity
+          .getDerived_from());
+      Assert.assertEquals(3, flatEntity.getProperties().size());
+      Assert.assertEquals("overridden default value",
+          flatEntity.getProperties().get("mac_address").get_default());
+      Assert.assertEquals(true,
+          flatEntity.getProperties().get("mac_address").getRequired());
+      Assert.assertNotNull(flatEntity.getProperties().get("new_property"));
     }
   }
 

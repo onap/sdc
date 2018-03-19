@@ -98,12 +98,12 @@ topology_template:
       forwarder_template_VMInt_INT1_VLC_1:
       - template_VMInt_INT1_VLC_1
       - forwarder
-      binding_template_VMInt_INT1_VLC_1:
-      - template_VMInt_INT1_VLC_1
-      - binding
       network.incoming.bytes.rate_template_VMInt_INT1_VLC_1:
       - template_VMInt_INT1_VLC_1
       - network.incoming.bytes.rate
+      binding_template_VMInt_INT1_VLC_1:
+      - template_VMInt_INT1_VLC_1
+      - binding
     requirements:
       dependency_template_VMInt_INT1_VLC_1:
       - template_VMInt_INT1_VLC_1
@@ -113,4 +113,4 @@ topology_template:
       - link
       binding_template_VMInt_INT1_VLC_1:
       - template_VMInt_INT1_VLC_1
-      - binding
+      - binding
