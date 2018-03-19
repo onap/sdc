@@ -16,6 +16,24 @@
       "revId": "2cc4218cbe72340e3817498d9d044b1db46b9f57",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a2d38aa",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-03-19T07:33:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_cab26093",
+      "revId": "2cc4218cbe72340e3817498d9d044b1db46b9f57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
