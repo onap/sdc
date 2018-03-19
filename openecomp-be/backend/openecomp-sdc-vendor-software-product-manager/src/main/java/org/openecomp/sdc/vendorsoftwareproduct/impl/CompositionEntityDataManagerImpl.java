@@ -212,16 +212,14 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
   @Override
   public Set<CompositionEntityValidationData> getAllErrorsByVsp(String vspId) {
-    CompositionEntityValidationData matchVsp = null;
     Set<CompositionEntityValidationData> entitiesWithErrors = new HashSet<>();
     for (CompositionEntityValidationData root : roots) {
       if (root.getEntityId().equals(vspId)) {
-        matchVsp = root;
+        getEntityListWithErrors(root, entitiesWithErrors);
         break;
       }
     }
 
-    getEntityListWithErrors(matchVsp, entitiesWithErrors);
     if (CollectionUtils.isNotEmpty(entitiesWithErrors)) {
       updateValidationCompositionEntityName(entitiesWithErrors);
       return entitiesWithErrors;
@@ -449,6 +447,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
       case vsp:
         CompositionEntityData vspEntity = getCompositionEntityDataById(entity);
+        if (Objects.isNull(vspEntity)) {
+          return null;
+        }
         VspQuestionnaireEntity vspQuestionnaireEntity = (VspQuestionnaireEntity) vspEntity.entity;
         VspDetails vspDetails =
             vspInfoDao.get(new VspDetails(vspQuestionnaireEntity.getId(),
