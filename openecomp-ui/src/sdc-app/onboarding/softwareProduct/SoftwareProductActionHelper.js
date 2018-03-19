@@ -32,7 +32,7 @@ import {actionTypes as componentActionTypes} from './components/SoftwareProductC
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
-import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import {default as ItemsHelper} from 'sdc-app/common/helpers/ItemsHelper.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
 import MergeEditorActionHelper from 'sdc-app/common/merge/MergeEditorActionHelper.js';
@@ -90,11 +90,15 @@ function putSoftwareProductAction(id, action, version) {
 }
 
 function fetchSoftwareProductList() {
-	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Draft`);
+	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=${catalogItemStatuses.DRAFT}`);
+}
+
+function fetchArchivedSoftwareProductList() {
+	return RestAPIUtil.fetch(`${baseUrl()}?Status=${catalogItemStatuses.ARCHIVED}`);
 }
 
 function fetchFinalizedSoftwareProductList() {
-	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Certified`);
+	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=${catalogItemStatuses.CERTIFIED}`);
 }
 
 function fetchSoftwareProduct(vspId, version) {
@@ -198,6 +202,13 @@ const SoftwareProductActionHelper = {
 	fetchFinalizedSoftwareProductList(dispatch) {
 		return fetchFinalizedSoftwareProductList().then(response => dispatch({
 			type: actionTypes.FINALIZED_SOFTWARE_PRODUCT_LIST_LOADED,
+			response
+		}));
+	},
+
+	fetchArchivedSoftwareProductList(dispatch) {
+		return fetchArchivedSoftwareProductList().then(response => dispatch({
+			type: actionTypes.ARCHIVED_SOFTWARE_PRODUCT_LIST_LOADED,
 			response
 		}));
 	},
@@ -473,14 +484,15 @@ const SoftwareProductActionHelper = {
 
 	performVCAction(dispatch, {softwareProductId, action, version, comment}) {
 		return MergeEditorActionHelper.analyzeSyncResult(dispatch, {itemId: softwareProductId, version}).then(({inMerge, isDirty, updatedVersion}) => {
-			if (updatedVersion.status === catalogItemStatuses.CERTIFIED &&
+			if ((updatedVersion.status === catalogItemStatuses.CERTIFIED || updatedVersion.archivedStatus === catalogItemStatuses.ARCHIVED) &&
 					 (action === VersionControllerActionsEnum.COMMIT || action === VersionControllerActionsEnum.SYNC)) {
 				versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.SOFTWARE_PRODUCT, itemId: softwareProductId});
+				const msg = updatedVersion.archivedStatus === catalogItemStatuses.ARCHIVED ? i18n('Item was Archived') : i18n('Item version already Certified');
 				dispatch({
 					type: modalActionTypes.GLOBAL_MODAL_WARNING,
 					data: {
 						title: i18n('Commit error'),
-						msg: i18n('Item version already Certified'),
+						msg,
 						cancelButtonText: i18n('Cancel')
 					}
 				});

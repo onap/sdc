@@ -8,16 +8,17 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 const ScreensHelper = {
-	loadScreen(dispatch, {screen, screenType, props}) {
+	async loadScreen(dispatch, {screen, screenType, props}) {
 		if(screen === enums.SCREEN.ONBOARDING_CATALOG) {
 			OnboardingActionHelper.navigateToOnboardingCatalog(dispatch);
 			return;
 		}
-
+		
 		screenType = !screenType ? this.getScreenType(screen) : screenType;
 
 		if(screenType === screenTypes.LICENSE_MODEL) {
 			const {licenseModelId, version, licenseModel, usersList} = props;
+			const item = await ItemsHelper.fetchItem(licenseModelId);
 			let itemStatusPromise = version && screen ?
 				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id}) :
 				Promise.resolve();
@@ -34,24 +35,25 @@ const ScreensHelper = {
 					versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
 				}
 				let newVersion = updatedVersion ? updatedVersion : version;
+				const screenProps = {licenseModelId, version: newVersion, status: item.status};
 				switch (screen) {
 					case enums.SCREEN.LICENSE_MODEL_OVERVIEW:
-						OnboardingActionHelper.navigateToLicenseModelOverview(dispatch, {licenseModelId, version: newVersion});
+						OnboardingActionHelper.navigateToLicenseModelOverview(dispatch, screenProps);
 						break;
 					case enums.SCREEN.LICENSE_AGREEMENTS:
-						OnboardingActionHelper.navigateToLicenseAgreements(dispatch, {licenseModelId, version: newVersion});
+						OnboardingActionHelper.navigateToLicenseAgreements(dispatch, screenProps);
 						break;
 					case enums.SCREEN.FEATURE_GROUPS:
-						OnboardingActionHelper.navigateToFeatureGroups(dispatch, {licenseModelId, version: newVersion});
+						OnboardingActionHelper.navigateToFeatureGroups(dispatch, screenProps);
 						break;
 					case enums.SCREEN.ENTITLEMENT_POOLS:
-						OnboardingActionHelper.navigateToEntitlementPools(dispatch, {licenseModelId, version: newVersion});
+						OnboardingActionHelper.navigateToEntitlementPools(dispatch, screenProps);
 						break;
 					case enums.SCREEN.LICENSE_KEY_GROUPS:
-						OnboardingActionHelper.navigateToLicenseKeyGroups(dispatch, {licenseModelId, version: newVersion});
+						OnboardingActionHelper.navigateToLicenseKeyGroups(dispatch, screenProps);
 						break;
 					case enums.SCREEN.ACTIVITY_LOG:
-						OnboardingActionHelper.navigateToLicenseModelActivityLog(dispatch, {licenseModelId, version: newVersion});
+						OnboardingActionHelper.navigateToLicenseModelActivityLog(dispatch, screenProps);
 						break;
 					case enums.SCREEN.VERSIONS_PAGE:
 					default:
@@ -68,6 +70,7 @@ const ScreensHelper = {
 
 		else if(screenType === screenTypes.SOFTWARE_PRODUCT) {
 			const {softwareProductId, componentId, version, softwareProduct, usersList} = props;
+			const item = await ItemsHelper.fetchItem(softwareProductId);
 			let itemStatusPromise = version && screen ?
 				ItemsHelper.checkItemStatus(dispatch, {itemId: softwareProductId, versionId: version.id}) :
 				Promise.resolve();
@@ -85,162 +88,94 @@ const ScreensHelper = {
 				}
 
 				let newVersion = updatedVersion ? updatedVersion : version;
+				
+				const props = {
+					softwareProductId,
+					componentId,
+					version: newVersion,
+					status: item.status
+				};
 				if (screen === screenTypes.SOFTWARE_PRODUCT_COMPONENT_DEFAULT_GENERAL) {
-					OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {
-						softwareProductId,
-						componentId,
-						version: newVersion
-					});
+					OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, props);
 				}
-				if (componentId) {
-					switch (screen) {
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
-							OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL:
-							OnboardingActionHelper.navigateToSoftwareProductComponentGeneral(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
-							OnboardingActionHelper.navigateToComponentCompute(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
-							OnboardingActionHelper.navigateToComponentLoadBalancing(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
-							OnboardingActionHelper.navigateToComponentNetwork(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
-							OnboardingActionHelper.navigateToComponentStorage(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
-							OnboardingActionHelper.navigateToSoftwareProductComponentProcesses(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
-							OnboardingActionHelper.navigateToSoftwareProductComponentMonitoring(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
-							OnboardingActionHelper.navigateToComponentImages(dispatch, {
-								softwareProductId,
-								componentId,
-								version: newVersion
-							});
-							break;
-					}
-				}
-				else {
-					switch (screen) {
-						case enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE:
-							OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_DETAILS:
-							OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP:
-							OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(dispatch, {
-								softwareProductId,
-								version
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_VALIDATION:
-							OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(dispatch, {
-								softwareProductId,
-								version
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
-							OnboardingActionHelper.navigateToSoftwareProductProcesses(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
-							OnboardingActionHelper.navigateToSoftwareProductDeployment(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
-							OnboardingActionHelper.navigateToSoftwareProductNetworks(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
-							OnboardingActionHelper.navigateToSoftwareProductDependencies(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
-							OnboardingActionHelper.navigateToSoftwareProductActivityLog(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
-							OnboardingActionHelper.navigateToSoftwareProductComponents(dispatch, {
-								softwareProductId,
-								version: newVersion
-							});
-							dispatch({
-								type: SoftwareProductActionTypes.TOGGLE_NAVIGATION_ITEM,
-								mapOfExpandedIds: {
-									[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS]: true
-								}
-							});
-							break;
-						case enums.SCREEN.SOFTWARE_PRODUCT_VERSIONS_PAGE:
-						default:
-							OnboardingActionHelper.navigateToVersionsPage(dispatch, {
-								itemId: softwareProductId,
-								itemType: itemTypes.SOFTWARE_PRODUCT,
-								itemName: softwareProduct.name,
-								users: usersList,
-								additionalProps: {
-									licenseModelId: softwareProduct.vendorId,
-									licensingVersion: softwareProduct.licensingVersion
-								}
-							});
-							break;
-					}
+				
+				switch (screen) {
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
+						OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL:
+						OnboardingActionHelper.navigateToSoftwareProductComponentGeneral(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
+						OnboardingActionHelper.navigateToComponentCompute(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
+						OnboardingActionHelper.navigateToComponentLoadBalancing(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
+						OnboardingActionHelper.navigateToComponentNetwork(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
+						OnboardingActionHelper.navigateToComponentStorage(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
+						OnboardingActionHelper.navigateToSoftwareProductComponentProcesses(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
+						OnboardingActionHelper.navigateToSoftwareProductComponentMonitoring(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
+						OnboardingActionHelper.navigateToComponentImages(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE:
+						OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_DETAILS:
+						OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP:
+						OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_VALIDATION:
+						OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
+						OnboardingActionHelper.navigateToSoftwareProductProcesses(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
+						OnboardingActionHelper.navigateToSoftwareProductDeployment(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
+						OnboardingActionHelper.navigateToSoftwareProductNetworks(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
+						OnboardingActionHelper.navigateToSoftwareProductDependencies(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
+						OnboardingActionHelper.navigateToSoftwareProductActivityLog(dispatch, props);
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
+						OnboardingActionHelper.navigateToSoftwareProductComponents(dispatch, props);
+						dispatch({
+							type: SoftwareProductActionTypes.TOGGLE_NAVIGATION_ITEM,
+							mapOfExpandedIds: {
+								[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS]: true
+							}
+						});
+						break;
+					case enums.SCREEN.SOFTWARE_PRODUCT_VERSIONS_PAGE:
+					default:
+						OnboardingActionHelper.navigateToVersionsPage(dispatch, {
+							itemId: softwareProductId,
+							itemType: itemTypes.SOFTWARE_PRODUCT,
+							itemName: softwareProduct.name,
+							users: usersList,
+							additionalProps: {
+								licenseModelId: softwareProduct.vendorId,
+								licensingVersion: softwareProduct.licensingVersion
+							}
+						});
+						break;	
 				}
 			});
 		}

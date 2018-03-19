@@ -1,5 +1,5 @@
 /*!
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 import currentScreenReducer from './OnboardingReducers.js';
 import licenseModelListReducer from './licenseModel/LicenseModelListReducer.js';
 import finalizedLicenseModelListReducer from './licenseModel/FinalizedLicenseModelListReducer.js';
+import archivedLicenseModelListReducer from './licenseModel/ArchivedLicenseModelListReducer.js';
 import licenseModelReducer from './licenseModel/LicenseModelReducer.js';
 import softwareProductReducer from './softwareProduct/SoftwareProductReducer.js';
 import softwareProductListReducer from './softwareProduct/SoftwareProductListReducer.js';
 import finalizedSoftwareProductReducer from './softwareProduct/FinalizedSoftwareProductReducer.js';
+import archivedSoftwareProductListReducer from './softwareProduct/ArchivedSoftwareProductReducer.js';
 import onboardReducer from './onboard/OnboardReducer.js';
 import versionsPageReducer from './versionsPage/VersionsPageReducer.js';
 import usersReducer from './users/UsersReducers.js';
@@ -31,6 +33,8 @@ export default {
 	currentScreen: currentScreenReducer,
 	licenseModel: licenseModelReducer,
 	licenseModelList: licenseModelListReducer,
+	archivedLicenseModelList: archivedLicenseModelListReducer,
+	archivedSoftwareProductList: archivedSoftwareProductListReducer,
 	finalizedLicenseModelList: finalizedLicenseModelListReducer,
 	finalizedSoftwareProductList: finalizedSoftwareProductReducer,
 	mergeEditor: mergeEditorReducer,

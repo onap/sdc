@@ -29,6 +29,7 @@ export const ItemPermissionFactory = new Factory()
 	.attrs({
 		'isDirty': false,
 		'isOutOfSync': false,
+		'isArchived': false,
 		'isUpToDate': true
 	});
 
@@ -52,7 +53,8 @@ Factory.define('InitializedCurrentScreenFactory')
 	.option('isCertified', false)
 	.option('inMerge', false)
 	.option('isCollaborator', true)
-	.option('isReadOnlyMode', ['isCertified', 'inMerge', 'isCollaborator'], (isCertified, inMerge, isCollaborator) =>
+	.option('isArchived', false)
+	.option('isReadOnlyMode', ['isCertified', 'inMerge', 'isCollaborator', 'isArchived'], (isCertified, inMerge, isCollaborator, isArchived) =>
 		isCertified || inMerge || !isCollaborator
 	)
 	.attr('itemPermission', ['isCertified', 'inMerge', 'isCollaborator'], (isCertified, inMerge, isCollaborator) =>
@@ -71,9 +73,9 @@ Factory.define('CurrentScreenFactory')
 	.option('isUpToDate', true)
 	.option('version', ['isCertified'], (isCertified) => VersionFactory.build({isCertified}))
 	.attr('itemPermission', [
-		'isCertified', 'inMerge', 'isCollaborator', 'isDirty', 'isOutOfSync', 'isUpToDate'
-	], (isCertified, inMerge, isCollaborator, isDirty, isOutOfSync, isUpToDate) =>
-		ItemPermissionFactory.build({isCollaborator, isCertified, inMerge, isDirty, isOutOfSync, isUpToDate})
+		'isCertified', 'inMerge', 'isCollaborator', 'isDirty', 'isOutOfSync', 'isUpToDate', 'isArchived'
+	], (isCertified, inMerge, isCollaborator, isDirty, isOutOfSync, isUpToDate, isArchived) =>
+		ItemPermissionFactory.build({isCollaborator, isCertified, inMerge, isDirty, isOutOfSync, isUpToDate, isArchived})
 	)
 	.attr('props', ['isReadOnlyMode', 'version'], (isReadOnlyMode, version) => {
 		return {isReadOnlyMode, version};

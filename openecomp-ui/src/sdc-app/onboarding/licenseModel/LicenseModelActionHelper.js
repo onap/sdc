@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
@@ -23,7 +23,7 @@ import LicenseAgreementActionHelper from './licenseAgreement/LicenseAgreementAct
 import FeatureGroupsActionHelper from './featureGroups/FeatureGroupsActionHelper.js';
 import EntitlementPoolsActionHelper from './entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from './licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
-import ItemsHelper from '../../common/helpers/ItemsHelper.js';
+import {default as ItemsHelper} from 'sdc-app/common/helpers/ItemsHelper.js';
 import MergeEditorActionHelper from 'sdc-app/common/merge/MergeEditorActionHelper.js';
 import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
 import {CommitModalType} from 'nfvo-components/panel/versionController/components/CommitCommentModal.jsx';
@@ -38,13 +38,15 @@ function baseUrl() {
 }
 
 function fetchLicenseModels() {
-	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Draft`);
+	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=${catalogItemStatuses.DRAFT}`);
 }
 
 function fetchFinalizedLicenseModels() {
-	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Certified`);
+	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=${catalogItemStatuses.CERTIFIED}`);
 }
-
+function fetchArchivedLicenseModels() {
+	return RestAPIUtil.fetch(`${baseUrl()}?Status=${catalogItemStatuses.ARCHIVED}`);
+}
 function fetchLicenseModelById(licenseModelId, version) {
 	const {id: versionId} = version;
 	return RestAPIUtil.fetch(`${baseUrl()}${licenseModelId}/versions/${versionId}`);
@@ -78,6 +80,14 @@ const LicenseModelActionHelper = {
 	fetchFinalizedLicenseModels(dispatch) {
 		return fetchFinalizedLicenseModels().then(response => dispatch({
 			type: actionTypes.FINALIZED_LICENSE_MODELS_LIST_LOADED,
+			response
+		}));
+
+	},
+
+	fetchArchivedLicenseModels(dispatch) {
+		return fetchArchivedLicenseModels().then(response => dispatch({
+			type: actionTypes.ARCHIVED_LICENSE_MODELS_LIST_LOADED,
 			response
 		}));
 
@@ -145,14 +155,15 @@ const LicenseModelActionHelper = {
 
 	performVCAction(dispatch, {licenseModelId, action, version, comment}) {
 		return MergeEditorActionHelper.analyzeSyncResult(dispatch, {itemId: licenseModelId, version}).then(({inMerge, isDirty, updatedVersion}) => {
-			if (updatedVersion.status === catalogItemStatuses.CERTIFIED &&
+			if ( (updatedVersion.status === catalogItemStatuses.CERTIFIED || updatedVersion.archivedStatus === catalogItemStatuses.ARCHIVED) && 
 				(action === VersionControllerActionsEnum.COMMIT || action === VersionControllerActionsEnum.SYNC)) {
 				versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
+				const msg = updatedVersion.archivedStatus === catalogItemStatuses.ARCHIVED ? i18n('Item was Archived') : i18n('Item version already Certified');
 				dispatch({
 					type: modalActionTypes.GLOBAL_MODAL_WARNING,
 					data: {
 						title: i18n('Commit error'),
-						msg: i18n('Item version already Certified'),
+						msg,
 						cancelButtonText: i18n('Cancel')
 					}
 				});

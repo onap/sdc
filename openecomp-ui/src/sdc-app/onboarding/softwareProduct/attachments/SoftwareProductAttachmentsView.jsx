@@ -31,8 +31,8 @@ class HeatScreenView extends Component {
 		setActiveTab: PropTypes.func
 	};
 
-	componentDidMount() {		
-		 if (!this.props.goToOverview && this.props.candidateInProcess) {			
+	componentDidMount() {
+		 if (!this.props.goToOverview && this.props.candidateInProcess) {
 			this.props.setActiveTab({activeTab: tabsMapping.VALIDATION});
 		 }
 	}
@@ -49,9 +49,9 @@ class HeatScreenView extends Component {
 							data-test-id='proceed-to-validation-btn'
 							disabled={!isValidationAvailable} 
 							className='proceed-to-validation-btn'
-							onClick={()=>this.validate()}>{i18n('PROCEED TO VALIDATION')}</Button>					
-					}		
-					{candidateInProcess && <SVGIcon							
+							onClick={()=>this.validate()}>{i18n('PROCEED TO VALIDATION')}</Button>
+					}
+					{candidateInProcess && <SVGIcon
 						onClick={onUploadAbort}
 						name='close'
 						className='icon-component abort-btn'
@@ -59,26 +59,24 @@ class HeatScreenView extends Component {
 						labelPosition='right'
 						color='secondary'
 						data-test-id='abort-btn'/>
-					}	
-					
+					}
 					{(activeTab === tabsMapping.VALIDATION && softwareProductId) &&
 						<Button btnType='outline' 
 							data-test-id='go-to-overview'
 							disabled={this.props.goToOverview !== true}
 							className='go-to-overview-btn'
 							onClick={this.props.goToOverview ? () => onGoToOverview({version}) : undefined}>{i18n('GO TO OVERVIEW')}</Button>}						
-					<div className='separator'></div>		
+					<div className='separator'></div>
 					<SVGIcon
 						disabled={heatDataExist ? false : true}
 						name='download'
-						className='icon-component'														
+						className='icon-component'
 						color='dark-gray'
 						onClick={heatDataExist ? () => onDownload({heatCandidate: heatSetup, isReadOnlyMode: isReadOnlyMode || !candidateInProcess, version}) : undefined}
 						data-test-id='download-heat'/>
-
 					<SVGIcon
 						name='upload'
-						className='icon-component'						
+						className='icon-component'
 						color='dark-gray'
 						disabled={isReadOnlyMode || candidateInProcess}
 						onClick={isReadOnlyMode ? undefined : evt => this.refs.hiddenImportFileInput.click(evt)}
@@ -144,7 +142,6 @@ class HeatScreenView extends Component {
 		);
 	}
 	save() {
-
 		return this.props.onboardingOrigin === onboardingOriginTypes.ZIP ?
 			this.props.onSave(this.props.heatSetup, this.props.version) :
 			Promise.resolve();

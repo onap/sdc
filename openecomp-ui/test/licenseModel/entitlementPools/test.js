@@ -88,14 +88,14 @@ describe('Entitlement Pools Module Tests', function () {
 				}
 			};
 		});
-
+		
 		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
-
+		
 		return EntitlementPoolsActionHelper.deleteEntitlementPool(store.dispatch, {
 			licenseModelId: LICENSE_MODEL_ID,
 			version,
@@ -147,6 +147,8 @@ describe('Entitlement Pools Module Tests', function () {
 			expect(options).toEqual(undefined);
 			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
+
+		
 
 		return EntitlementPoolsActionHelper.saveEntitlementPool(store.dispatch,
 			{

@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import {connect} from 'react-redux';
@@ -21,16 +21,20 @@ import OnboardActionHelper from './OnboardActionHelper.js';
 import LicenseModelCreationActionHelper from '../licenseModel/creation/LicenseModelCreationActionHelper.js';
 import SoftwareProductCreationActionHelper from '../softwareProduct/creation/SoftwareProductCreationActionHelper.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
-
+import {tabsMapping} from './onboardingCatalog/OnboardingCatalogConstants.js';
+import {itemsType} from './filter/FilterConstants.js';
 
 export const mapStateToProps = ({
 	onboard: {
 		onboardingCatalog,
 		activeTab,
-		searchValue
+		searchValue,
+		filter
 	},
 	licenseModelList,
 	users,
+	archivedLicenseModelList,
+	archivedSoftwareProductList,
 	finalizedLicenseModelList,
 	softwareProductList,
 	finalizedSoftwareProductList
@@ -69,12 +73,20 @@ export const mapStateToProps = ({
 	).concat(finalizedLicenseModelList);
 
 	let {activeTab: catalogActiveTab, vendorCatalog: {vspOverlay, selectedVendor}} = onboardingCatalog;
+	if (filter.byVendorView) {
+		catalogActiveTab = tabsMapping.BY_VENDOR;
+	} 
+	else if (filter.itemsType && filter.itemsType === itemsType.ARCHIVED) {
+		catalogActiveTab = tabsMapping.ARCHIVE;
+	}
 
 	return {
 		finalizedLicenseModelList,
 		finalizedSoftwareProductList,
 		licenseModelList,
 		softwareProductList,
+		archivedLicenseModelList,
+		archivedSoftwareProductList,
 		fullLicenseModelList,
 		activeTab,
 		catalogActiveTab,
@@ -105,7 +117,6 @@ const mapActionsToProps = (dispatch) => {
 		onVendorSelect: (vendor) => OnboardingCatalogActionHelper.onVendorSelect(dispatch, {vendor}),
 		onMigrate: ({softwareProduct}) => OnboardingCatalogActionHelper.onMigrate(dispatch, softwareProduct)
 	};
-
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(OnboardView);

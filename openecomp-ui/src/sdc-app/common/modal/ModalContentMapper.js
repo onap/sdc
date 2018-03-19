@@ -29,6 +29,7 @@ import CommitCommentModal from 'nfvo-components/panel/versionController/componen
 import Tree from 'nfvo-components/tree/Tree.jsx';
 import MergeEditor from 'sdc-app/common/merge/MergeEditor.js';
 import Revisions from 'sdc-app/onboarding/revisions/Revisions.js';
+import VendorSelector from 'sdc-app/onboarding/softwareProduct/details/SoftwareProductDetailsVendorSelector.jsx';
 
 export const modalContentMapper = {
 	SOFTWARE_PRODUCT_CREATION: 'SOFTWARE_PRODUCT_CREATION',
@@ -45,7 +46,9 @@ export const modalContentMapper = {
 	COMMIT_COMMENT: 'COMMIT_COMMENT',
 	VERSION_TREE: 'VERSION_TREE',
 	MERGE_EDITOR: 'MERGE_EDITOR',
-	REVISIONS_LIST: 'REVISIONS_LIST'
+	REVISIONS_LIST: 'REVISIONS_LIST',
+	VENDOR_SELECTOR: 'VENDOR_SELECTOR'
+
 };
 
 export const modalContentComponents = {
@@ -63,5 +66,6 @@ export const modalContentComponents = {
 	COMMIT_COMMENT: CommitCommentModal,
 	VERSION_TREE: Tree,
 	MERGE_EDITOR: MergeEditor,
-	REVISIONS_LIST: Revisions
+	REVISIONS_LIST: Revisions,
+	VENDOR_SELECTOR: VendorSelector
 };

@@ -86,7 +86,7 @@ export default {
 				type: featureGroupsActionConstants.DELETE_FEATURE_GROUPS,
 				featureGroupId
 			});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
@@ -99,7 +99,7 @@ export default {
 				});
 				EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
 				LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
@@ -114,7 +114,7 @@ export default {
 				});
 				EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
 				LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 	},
