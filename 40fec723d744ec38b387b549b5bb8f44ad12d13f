@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c0724011",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 593,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-19T13:00:03Z",
+      "side": 1,
+      "message": "This is not different from the previous solution. What I meant was - why is there a null in volumeSet? Is it OK to have it there? What does a null in volumeSet mean? Now we at least get a NullPointerException, but if we just ignore the null silently the original problem will not go away.",
+      "revId": "40fec723d744ec38b387b549b5bb8f44ad12d13f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
