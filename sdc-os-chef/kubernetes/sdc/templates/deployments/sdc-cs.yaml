@@ -15,6 +15,7 @@ spec:
       labels:
         app: sdc-cs
       name: sdc-cs
+    spec:
       containers:
       - name: sdc-cs
         image: "{{ .Values.image.sdcCassandra }}"

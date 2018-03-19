@@ -10,15 +10,11 @@ image:
   sdcBackend: nexus3.onap.org:10001/onap/sdc-backend:1.2-STAGING-latest
   sdcElasticsearchInit: nexus3.onap.org:10001/onap/sdc-init-elasticsearch:1.2-STAGING-latest
   sdcCassandraInit: nexus3.onap.org:10001/onap/sdc-cassandra-init:1.2-STAGING-latest
+  sdcBackendInit: nexus3.onap.org:10001/onap/sdc-backend-init:1.2-STAGING-latest
   filebeat: docker.elastic.co/beats/filebeat:5.5.0
 
 env:
   name: AUTO
-  vip: sdc-cs.onap-sdc
-  nodeCS: sdc-cs.onap-sdc
-  nodeES: sdc-es.onap-sdc
-  nodeBE: sdc-be.onap-sdc
-  nodeFe: sdc-fe.onap-sdc
 
 secrets:
     sdc_user: YXNkY191c2Vy

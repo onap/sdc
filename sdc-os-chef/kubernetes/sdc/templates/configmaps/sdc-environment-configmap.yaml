@@ -14,23 +14,25 @@ data:
        },
        "json_class": "Chef::Environment",
        "chef_type": "environment",
-
+    
        "default_attributes": {
-            "CS_VIP": "{{ .Values.env.vip }}",
-            "BE_VIP": "{{ .Values.env.vip }}",
-            "FE_VIP": "{{ .Values.env.vip }}",
-            "ES_VIP": "{{ .Values.env.vip }}",
+            "disableHttp": false,
+            "CS_VIP": "sdc-cs.{{ .Values.nsPrefix }}",
+            "BE_VIP": "sdc-be.{{ .Values.nsPrefix }}",
+            "FE_VIP": "sdc-fe.{{ .Values.nsPrefix }}",
+            "ES_VIP": "sdc-es.{{ .Values.nsPrefix }}",
+            "KB_VIP": "sdc-es.{{ .Values.nsPrefix }}",
             "interfaces": {
                 "application": "eth0",
-                "private": "eth0"
+                "private": "eth1"
             },
             "ECompP": {
-                "ecomp_rest_url": "http://portalapps.onap-portal:8989/ONAPPORTAL/auxapi",
-                "ueb_url_list": "dmaap.onap-message-router,dmaap.onap-message-router",
+            	"ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
+                "ueb_url_list": "dmaap.{{.Values.nsPrefix}}, dmaap.{{.Values.nsPrefix}}",
                 "app_secret": "XftIATw9Jr3VzAcPqt3NnJOu",
                 "app_key": "x9UfO7JsDn8BESVX",
                 "inbox_name": "ECOMP-PORTAL-INBOX",
-                "ecomp_redirect_url": "http://portalapps.onap-portal:8989/ONAPPORTAL/login.htm",
+                "ecomp_redirect_url": "http://portal.api.simpledemo.onap.org:8989/ECOMPPORTAL/login.htm",
                 "app_topic_name": "ECOMP-PORTAL-OUTBOX-SDC1",
                 "decryption_key": "AGLDdG4D04BKm2IxIWEr8o=="
             },
@@ -40,25 +42,26 @@ data:
                 "fqdn": ["dmaap.onap-message-router", "dmaap.onap-message-router"]
             },
             "Nodes": {
-                "CS": "{{ .Values.env.nodeCS }}",
-                "BE": "{{ .Values.env.nodeBE }}",
-                "FE": "{{ .Values.env.nodeFE }}",
-                "ES": "{{ .Values.env.nodeES }}"
+                "CS": "sdc-cs",
+                "BE": "sdc-be",
+                "FE": "sdc-fe",
+                "ES": "sdc-es",
+                "KB": "sdc-kb"
             },
-            "Designers": {
+            "Plugins": {
                 "DCAE": {
-                    "dcae_host": "yyy",
-                    "dcae_port": "yyy",
-                    "dcae_path": "yyy",
-                    "dcae_protocol": "yyy"
+                    "dcae_discovery_url": "10.0.2.15",
+                    "dcae_source_url": "10.0.2.15"
                 },
                 "WORKFLOW": {
-                    "workflow_host": "yyy",
-                    "workflow_port": "yyy",
-                    "workflow_path": "yyy",
-                    "workflow_protocol": "yyy"
+                    "workflow_discovery_url": "10.0.2.15",
+                    "workflow_source_url": "10.0.2.15"
                 }
-            }
+            },
+               "VnfRepo": {
+                 "vnfRepoPort": "8702",
+                 "vnfRepoHost": "192.168.50.5"
+               }
         },
         "override_attributes": {
             "FE": {
@@ -76,7 +79,7 @@ data:
                 "num_of_replicas": "0",
                 "num_of_shards": "1"
             },
-
+    
             "cassandra": {
                 "concurrent_reads": "32",
                 "num_tokens": "256",
@@ -97,3 +100,4 @@ data:
             }
         }
     }
+  

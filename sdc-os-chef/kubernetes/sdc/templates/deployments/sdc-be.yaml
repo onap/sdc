@@ -87,6 +87,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: JAVA_OPTIONS
+          value: ""
         lifecycle:
           postStart:
             exec:

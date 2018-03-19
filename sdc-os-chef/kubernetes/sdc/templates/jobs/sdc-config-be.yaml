@@ -1,0 +1,50 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sdc-config-backend
+  namespace: "{{ .Values.nsPrefix }}-sdc"
+  labels:
+    app: sdc-config-backend
+spec:
+  template:
+    metadata:
+      name: sdc-backend-init
+    spec:
+      initContainers:
+      - name: sdc-init-be-readiness
+        image: "{{ .Values.image.readiness }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        command:
+        - /root/ready.py
+        args:
+        - --container-name
+        - sdc-be
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+      containers:
+      - name: sdc-config-be
+        image: "{{ .Values.image.sdcBackendInit }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+#        command:
+#        - /bin/sh
+#        args:
+#        - "-c"
+#        - "sleep 30000000000m"
+        volumeMounts:
+        - mountPath: /root/chef-solo/environments/
+          name: sdc-environments
+        env:
+        - name: ENVNAME
+          value: "{{ .Values.env.name }}"
+      volumes:
+        - name: sdc-environments
+          configMap:
+            name: sdc-environment
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
+      restartPolicy: Never

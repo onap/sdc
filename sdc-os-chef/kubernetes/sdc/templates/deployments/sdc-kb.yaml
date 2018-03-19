@@ -15,15 +15,16 @@ spec:
       labels:
         app: sdc-kb
       name: sdc-kb
+    spec:
       containers:
-      - env:
+      - name: sdc-kb
+        image: "{{ .Values.image.sdcKibana }}"
+        imagePullPolicy: "{{ .Values.pullPolicy }}"
+        env:
         - name: ENVNAME
           value: "{{ .Values.env.name }}"
         - name: ELASTICSEARCH_URL
           value: http://sdc-es:9200
-        image: "{{ .Values.image.sdcKibana }}"
-        imagePullPolicy: "{{ .Values.pullPolicy }}"
-        name: sdc-kb
         volumeMounts:
         - mountPath: /root/chef-solo/environments/
           name: sdc-environments
