@@ -289,12 +289,12 @@ topology_template:
       network.outgoing.bytes_FSB1_FSB1_Internal:
       - FSB1_FSB1_Internal
       - network.outgoing.bytes
-      attachment_FSB1_FSB2_Internal:
-      - FSB1_FSB2_Internal
-      - attachment
       feature_FSB1_FSB2_Internal:
       - FSB1_FSB2_Internal
       - feature
+      attachment_FSB1_FSB2_Internal:
+      - FSB1_FSB2_Internal
+      - attachment
       network.incoming.packets_FSB1_FSB2_Internal:
       - FSB1_FSB2_Internal
       - network.incoming.packets

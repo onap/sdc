@@ -358,13 +358,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_FSB1_FSB2_Internal:
-        type: tosca.capabilities.Attachment
+      feature_FSB1_FSB2_Internal:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      feature_FSB1_FSB2_Internal:
-        type: tosca.capabilities.Node
+      attachment_FSB1_FSB2_Internal:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED

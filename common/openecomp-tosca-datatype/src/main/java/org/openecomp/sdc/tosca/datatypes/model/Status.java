@@ -30,7 +30,7 @@ public enum Status {
   DEPRECATED("deprecated"),;
   private String displayName;
 
-  Status(String displayName) {
+  Status(String displayName ) {
     this.displayName = displayName;
   }
 

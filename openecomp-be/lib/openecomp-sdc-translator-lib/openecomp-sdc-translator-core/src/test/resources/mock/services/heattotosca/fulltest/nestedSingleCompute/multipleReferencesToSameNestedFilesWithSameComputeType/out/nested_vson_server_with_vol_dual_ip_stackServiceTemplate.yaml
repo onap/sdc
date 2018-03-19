@@ -457,12 +457,12 @@ topology_template:
       host_vson_server:
       - vson_server
       - host
-      binding_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - binding
       network.incoming.bytes.rate_vson_server_oam_net_port_0:
       - vson_server_oam_net_port_0
       - network.incoming.bytes.rate
+      binding_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - binding
       disk.read.requests_vson_server:
       - vson_server
       - disk.read.requests

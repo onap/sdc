@@ -224,12 +224,12 @@ topology_template:
       disk.write.bytes.rate_1c2_catalog_instance:
       - 1c2_catalog_instance
       - disk.write.bytes.rate
-      binding_1c2_catalog_instance_1c2_t2_port:
-      - 1c2_catalog_instance_1c2_t2_port
-      - binding
       network.incoming.bytes.rate_1c2_catalog_instance_1c2_t2_port:
       - 1c2_catalog_instance_1c2_t2_port
       - network.incoming.bytes.rate
+      binding_1c2_catalog_instance_1c2_t2_port:
+      - 1c2_catalog_instance_1c2_t2_port
+      - binding
       network.incoming.packets_1c2_catalog_instance_1c2_t1_port:
       - 1c2_catalog_instance_1c2_t1_port
       - network.incoming.packets
@@ -254,12 +254,12 @@ topology_template:
       disk.read.requests_1c2_catalog_instance:
       - 1c2_catalog_instance
       - disk.read.requests
-      binding_1c2_catalog_instance_1c2_t1_port:
-      - 1c2_catalog_instance_1c2_t1_port
-      - binding
       network.incoming.bytes.rate_1c2_catalog_instance_1c2_t1_port:
       - 1c2_catalog_instance_1c2_t1_port
       - network.incoming.bytes.rate
+      binding_1c2_catalog_instance_1c2_t1_port:
+      - 1c2_catalog_instance_1c2_t1_port
+      - binding
       disk.ephemeral.size_1c2_catalog_instance:
       - 1c2_catalog_instance
       - disk.ephemeral.size

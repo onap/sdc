@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ public class ToscaConstants {
   //General
   public static final String TOSCA_DEFINITIONS_VERSION = "tosca_simple_yaml_1_0_0";
   public static final String MODELABLE_ENTITY_NAME_SELF = "SELF";
+  public static final String MODELABLE_ENTITY_NAME_HOST = "HOST";
   public static final String NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE = "substitutable";
   public static final String NATIVE_TYPES_SERVICE_TEMPLATE_NAME = "NativeTypesServiceTemplate";
   public static final String UNBOUNDED = "UNBOUNDED";
@@ -55,6 +56,7 @@ public class ToscaConstants {
   public static final String SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME =
       "substitute_service_template";
   public static final String COUNT_PROPERTY_NAME = "count";
+  public static final String MANDATORY_PROPERTY_NAME = "mandatory";
   public static final String INDEX_VALUE_PROPERTY_NAME = "index_value";
   public static final String SCALING_ENABLED_PROPERTY_NAME = "scaling_enabled";
 
@@ -73,9 +75,10 @@ public class ToscaConstants {
   public static final String VF_MODULE_LABEL_PROPERTY_NAME = "vf_module_label";
   public static final String PARAM_NAME_PROPERTY_NAME = "param_name";
 
-  // propertiies valid values
+  // properties valid values
   public static final String HEAT_SOURCE_TYPE = "HEAT";
   public static final String GENERIC_SOURCE_TYPE = "Generic";
+
 
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
+import org.openecomp.sdc.tosca.datatypes.model.DataType;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
@@ -36,6 +37,7 @@ import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.errors.ToscaElementTypeNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidEntryNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstitutionServiceTemplateErrorBuilder;
@@ -410,7 +412,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
   private boolean isSameCapability(RequirementAssignment requirementAssignment, String capability) {
     return capability != null && (requirementAssignment.getCapability() == null
-       || !requirementAssignment.getCapability().equals(capability));
+        || !requirementAssignment.getCapability().equals(capability));
   }
 
   @Override
@@ -425,14 +427,20 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
       case NODE_TYPE:
         returnEntity = new NodeType();
         break;
+      case DATA_TYPE:
+        returnEntity = new DataType();
+        break;
       default:
         throw new RuntimeException(
             "Entity[" + elementType + "] id[" + typeId + "] flat not supported");
     }
 
-    scanAnFlatEntity(elementType, typeId, returnEntity, serviceTemplate, toscaModel,
-        new ArrayList<>(), 0);
-
+    boolean isEntityFound =
+        scanAnFlatEntity(elementType, typeId, returnEntity, serviceTemplate, toscaModel,
+            new ArrayList<>(), 0);
+    if (!isEntityFound) {
+      throw new CoreException(new ToscaElementTypeNotFoundErrorBuilder(typeId).build());
+    }
 
     return returnEntity;
   }
@@ -558,7 +566,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
 
     boolean entityFound = enrichEntityFromCurrentServiceTemplate(elementType, typeId, entity,
-        serviceTemplate,toscaModel, filesScanned, rootScanStartInx);
+        serviceTemplate, toscaModel, filesScanned, rootScanStartInx);
     if (!entityFound) {
       List<Map<String, Import>> imports = serviceTemplate.getImports();
       if (CollectionUtils.isEmpty(imports)) {
@@ -570,7 +578,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
           return true;
         }
         found = isFlatEntity(importMap, entity, serviceTemplate, filesScanned,
-            toscaModel,elementType,typeId);
+            toscaModel, elementType, typeId);
       }
       return found;
     }
@@ -635,6 +643,12 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
           return false;
         }
         break;
+      case DATA_TYPE:
+        if (enrichDataTypeInfo(elementType, typeId, entity, serviceTemplate, toscaModel,
+            filesScanned, rootScanStartInx)) {
+          return false;
+        }
+        break;
       default:
         throw new RuntimeException(
             "Entity[" + elementType + "] id[" + typeId + "] flat not supported");
@@ -661,6 +675,28 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             filesScanned, rootScanStartInx);
       }
       combineNodeTypeInfo(sourceNodeType, targetNodeType);
+    } else {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean enrichDataTypeInfo(ToscaElementTypes elementType, String typeId, Object entity,
+                                     ServiceTemplate serviceTemplate, ToscaServiceModel toscaModel,
+                                     List<String> filesScanned, int rootScanStartInx) {
+    String derivedFrom;
+    if (serviceTemplate.getData_types() != null
+        && serviceTemplate.getData_types().containsKey(typeId)) {
+
+      filesScanned.clear();
+      DataType targetDataType = (DataType) entity;
+      DataType sourceDataType = serviceTemplate.getData_types().get(typeId);
+      derivedFrom = sourceDataType.getDerived_from();
+      if (derivedFrom != null) {
+        scanAnFlatEntity(elementType, derivedFrom, entity, serviceTemplate, toscaModel,
+            filesScanned, rootScanStartInx);
+      }
+      combineDataTypeInfo(sourceDataType, targetDataType);
     } else {
       return true;
     }
@@ -707,6 +743,16 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     targetNodeType.setRequirements(CommonMethods
         .mergeListsOfMap(targetNodeType.getRequirements(), sourceNodeType.getRequirements()));
 
+  }
+
+  private void combineDataTypeInfo(DataType sourceDataType, DataType targetDataType) {
+    targetDataType.setDerived_from(sourceDataType.getDerived_from());
+    targetDataType.setDescription(sourceDataType.getDescription());
+    targetDataType.setVersion(sourceDataType.getVersion());
+    targetDataType.setProperties(
+        CommonMethods.mergeMaps(targetDataType.getProperties(), sourceDataType.getProperties()));
+    targetDataType.setConstraints(
+        CommonMethods.mergeLists(targetDataType.getConstraints(), sourceDataType.getConstraints()));
   }
 
 

@@ -380,12 +380,12 @@ topology_template:
       disk.iops_server_pd_pattern4_1:
       - server_pd_pattern4_1
       - disk.iops
-      binding_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - binding
       network.incoming.bytes.rate_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.incoming.bytes.rate
+      binding_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - binding
       network.outgoing.packets.rate_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.outgoing.packets.rate
