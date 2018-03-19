@@ -330,7 +330,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   @Override
-  public Response getValidationVsp(String user) {
+  public synchronized Response getValidationVsp(String user) {
     if (validationVsp != null) {
       return Response.ok(validationVsp).build();
     }
