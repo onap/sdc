@@ -215,9 +215,11 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     CompositionEntityValidationData matchVsp = null;
     Set<CompositionEntityValidationData> entitiesWithErrors = new HashSet<>();
     for (CompositionEntityValidationData root : roots) {
-      if (root.getEntityId().equals(vspId)) {
-        matchVsp = root;
-        break;
+      if (root != null) {
+        if (root.getEntityId().equals(vspId)) {
+          matchVsp = root;
+          break;
+        }
       }
     }
 
@@ -449,6 +451,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
       case vsp:
         CompositionEntityData vspEntity = getCompositionEntityDataById(entity);
+        if (Objects.isNull(vspEntity)) {
+          return null;
+        }
         VspQuestionnaireEntity vspQuestionnaireEntity = (VspQuestionnaireEntity) vspEntity.entity;
         VspDetails vspDetails =
             vspInfoDao.get(new VspDetails(vspQuestionnaireEntity.getId(),
