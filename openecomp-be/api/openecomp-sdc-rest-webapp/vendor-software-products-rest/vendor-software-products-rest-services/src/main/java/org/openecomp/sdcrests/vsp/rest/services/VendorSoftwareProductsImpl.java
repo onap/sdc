@@ -120,7 +120,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
       "VSP Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
   private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductsImpl.class);
 
-  private static ItemCreationDto validationVsp;
+  private ItemCreationDto validationVsp;
 
   private final AsdcItemManager itemManager = AsdcItemManagerFactory.getInstance()
       .createInterface();
