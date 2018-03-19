@@ -356,7 +356,7 @@ if [ -z "${DOCKER}" ]; then
 	sdc-init-es
 	sdc-cs
 	sdc-cs-init
-	sdc-kbn
+#	sdc-kbn
 	sdc-BE
 	sdc-BE-init
 	sdc-FE
