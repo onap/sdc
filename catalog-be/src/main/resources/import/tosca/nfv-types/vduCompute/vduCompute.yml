@@ -1,0 +1,96 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  tosca.nodes.nfv.VDU.Compute:
+    derived_from: tosca.nodes.Root
+    properties:
+      configurable_properties:
+        type: map
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfcConfigurableProperties
+      name:
+        type: string
+        required: true
+        status: SUPPORTED
+      nfvi_constraints:
+        type: list
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      descrption:
+        type: string
+        required: true
+        status: SUPPORTED
+      boot_order:
+        type: list
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      private_address:
+        type: string
+        status: SUPPORTED
+      public_address:
+        type: string
+        status: SUPPORTED
+      networks:
+        type: string
+        status: SUPPORTED
+      ports:
+        type: string
+        status: SUPPORTED
+    requirements:
+    - local_storage:
+        capability: tosca.capabilities.Attachment
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - virtual_storage:
+        capability: tosca.capabilities.nfv.VirtualStorage
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      scalable:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      virtual_compute:
+        type: tosca.capabilities.nfv.VirtualCompute
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      virtual_binding:
+        type: tosca.capabilities.nfv.VirtualBindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host:
+        type: tosca.capabilities.Container
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      monitoring_parameter:
+        type: tosca.capabilities.nfv.Metric
+        occurrences:
+        - 1
+        - UNBOUNDED

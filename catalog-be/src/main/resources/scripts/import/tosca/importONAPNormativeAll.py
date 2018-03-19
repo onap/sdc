@@ -8,7 +8,9 @@ import time
 from importNormativeElements import * 
 from importNormativeTypes import importNormativeTypes
 from importHeatTypes import importHeatTypes
+from importNfvTypes import importNfvTypes
 from importOnapTypes import importOnapTypes
+from importSolTypes import importSolTypes
 from importNormativeCapabilities import importNormativeCapabilities
 from importCategoryTypes import importCategories
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
@@ -125,11 +127,19 @@ def main(argv):
 	fileLocation = baseFileLocation + "heat-types/"
 	resultsHeat = importHeatTypes(scheme, beHost, bePort, adminUser, fileLocation, updateversion)
 	handleResults(resultsHeat, updateversion)
-	
+
+	fileLocation = baseFileLocation + "nfv-types/"
+	resultsHeat = importNfvTypes(scheme, beHost, bePort, adminUser, fileLocation, updateversion)
+	handleResults(resultsHeat, updateversion)
+
 	fileLocation = baseFileLocation + "onap-types/"
 	resultsHeat = importOnapTypes(scheme, beHost, bePort, adminUser, fileLocation, updateversion)
 	handleResults(resultsHeat, updateversion)
-  
+
+	fileLocation = baseFileLocation + "sol-types/"
+	resultsHeat = importSolTypes(scheme, beHost, bePort, adminUser, fileLocation, updateversion)
+	handleResults(resultsHeat, updateversion)
+
 	fileLocation = baseFileLocation + "group-types/"
 	importGroupTypes(scheme, beHost, bePort, adminUser, False, fileLocation)
 	
@@ -139,5 +149,5 @@ def main(argv):
 	errorAndExit(0, None)	
 
 if __name__ == "__main__":
-        main(sys.argv[1:])
+		main(sys.argv[1:])
 

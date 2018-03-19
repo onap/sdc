@@ -9,20 +9,20 @@ import importCommon
 
 #####################################################################################################################################################################################################
 #																																		       														#	
-# Import all users from a given file																										   														#
+# Import Sol Types from a given file																										   														#
 # 																																			   														#		
 # activation :																																   														#
-#       python importUsers.py [optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ] #
+#       python importSolTypes.py [optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ] #
 #																																		  	  														#			
 # shortest activation (be host = localhost, be port = 8080): 																				   														#
 #		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           														#
 #																																		       														#	
 #####################################################################################################################################################################################################
 
-def importOnapTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
+def importSolTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 
 	#Add desired type names to the list
-	onapTypes = []
+	solTypes = []
 		
 	responseCodes = [200, 201]
 		
@@ -30,7 +30,7 @@ def importOnapTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 		responseCodes = [200, 201, 409]
 		
         results = []
-        for onapType in onapTypes:
+        for onapType in solTypes:
                 result = createNormativeType(scheme, beHost, bePort, adminUser, fileDir, onapType, updateversion)
                 results.append(result)
                 if ( result[1] == None or result[1] not in responseCodes) :
@@ -76,7 +76,7 @@ def main(argv):
 		usage()
 		sys.exit(3)
 
-	results = importOnapTypes(scheme, beHost, bePort, adminUser, "../../../import/tosca/onap-types/", updateversion)
+	results = importSolTypes(scheme, beHost, bePort, adminUser, "../../../import/tosca/sol-types/", updateversion)
 
 	print "-----------------------------"
 	for result in results:
