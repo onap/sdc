@@ -124,7 +124,7 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @GET
   @Path("/validation-vsp")
-  Response getValidationVsp(
+  static Response getValidationVsp(
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
       throws Exception;
 
