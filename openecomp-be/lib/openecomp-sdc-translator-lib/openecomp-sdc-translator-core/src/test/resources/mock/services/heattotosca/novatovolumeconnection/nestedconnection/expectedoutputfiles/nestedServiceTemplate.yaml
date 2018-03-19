@@ -137,12 +137,12 @@ topology_template:
       disk.write.bytes.rate_server_cmaui:
       - server_cmaui
       - disk.write.bytes.rate
-      disk.device.read.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.read.bytes.rate
       host_server_cmaui:
       - server_cmaui
       - host
+      disk.device.read.bytes.rate_server_cmaui:
+      - server_cmaui
+      - disk.device.read.bytes.rate
       cpu_util_server_cmaui:
       - server_cmaui
       - cpu_util
