@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6ca003a6",
+        "filename": "README.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-19T18:50:51Z",
+      "side": 1,
+      "message": "this is not correct since if we do not run mvn install the war for the simulator will not be generated.",
+      "range": {
+        "startLine": 96,
+        "startChar": 17,
+        "endLine": 96,
+        "endChar": 38
+      },
+      "revId": "0eb0dd07b438708404fb5e96c28b24079e3e56e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
