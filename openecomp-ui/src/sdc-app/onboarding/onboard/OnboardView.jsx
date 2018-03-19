@@ -60,6 +60,8 @@ class OnboardView extends React.Component {
 		softwareProductList: PropTypes.array,
 		finalizedLicenseModelList: PropTypes.array,
 		finalizedSoftwareProductList: PropTypes.array,
+		archivedSoftwareProductList: PropTypes.array,
+		archivedLicenseModelList: PropTypes.array,
 		modalToShow: PropTypes.oneOf(objectValues(catalogItemTypes)),
 		onSelectLicenseModel: PropTypes.func.isRequired,
 		onSelectSoftwareProduct: PropTypes.func.isRequired,
@@ -80,8 +82,9 @@ class OnboardView extends React.Component {
 			case tabsMapping.WORKSPACE:
 				return <WorkspaceView {...this.props} />;
 			case tabsMapping.CATALOG:
-			default:
 				return <OnboardingCatalogView {...this.props} />;
+			default:
+				return <WorkspaceView {...this.props} />;
 		}
 	}
 
@@ -93,7 +96,7 @@ class OnboardView extends React.Component {
 				<div className='catalog-parts'>
 					<OnboardHeader activeTab={activeTab} onTabClick={onTabClick} searchValue={searchValue} onSearch={value => onSearch(value)}/>
 					{this.renderViewByTab(activeTab)}
-				</div>			
+				</div>
 			</div>
 		);
 	}

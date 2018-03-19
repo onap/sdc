@@ -128,7 +128,7 @@ export default {
 					type: licenseKeyGroupsConstants.EDIT_LICENSE_KEY_GROUP,
 					licenseKeyGroup
 				});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
@@ -141,7 +141,7 @@ export default {
 						id: response.value
 					}
 				});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 
@@ -154,7 +154,7 @@ export default {
 				type: licenseKeyGroupsConstants.DELETE_LICENSE_KEY_GROUP,
 				licenseKeyGroupId
 			});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
@@ -190,14 +190,14 @@ export default {
 				type: limitEditorActions.CLOSE
 			});
 			this.fetchLimits(dispatch, {licenseModelId, version, licenseKeyGroup});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
 	deleteLimit(dispatch, {licenseModelId, version, licenseKeyGroup, limit}) {
 		return deleteLimit(licenseModelId,licenseKeyGroup.id, version, limit.id).then(() => {
 			this.fetchLimits(dispatch, {licenseModelId, version, licenseKeyGroup});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	}
 

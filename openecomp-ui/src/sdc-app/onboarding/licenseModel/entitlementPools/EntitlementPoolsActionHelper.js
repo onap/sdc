@@ -124,7 +124,7 @@ export default {
 				type: entitlementPoolsActionTypes.DELETE_ENTITLEMENT_POOL,
 				entitlementPoolId
 			});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
@@ -148,7 +148,7 @@ export default {
 					type: entitlementPoolsActionTypes.EDIT_ENTITLEMENT_POOL,
 					entitlementPool
 				});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
@@ -161,7 +161,7 @@ export default {
 						id: response.value
 					}
 				});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 	},
@@ -198,14 +198,14 @@ export default {
 				type: limitEditorActions.CLOSE
 			});
 			this.fetchLimits(dispatch, {licenseModelId, version, entitlementPool});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
 	deleteLimit(dispatch, {licenseModelId, version, entitlementPool, limit}) {
 		return  deleteLimit(licenseModelId,entitlementPool.id, version, limit.id).then(() => {
 			this.fetchLimits(dispatch, {licenseModelId, version, entitlementPool});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	}
 };

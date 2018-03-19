@@ -92,14 +92,14 @@ export default {
 		if (previousLicenseAgreement) {
 			return putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAgreement, version).then(() => {
 				this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
 			return postLicenseAgreement(licenseModelId, licenseAgreement, version).then(() => {
 				this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
 				FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
-				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+				return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 	},
@@ -110,7 +110,7 @@ export default {
 				type: licenseAgreementActionTypes.DELETE_LICENSE_AGREEMENT,
 				licenseAgreementId
 			});
-			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 

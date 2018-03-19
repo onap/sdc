@@ -1,0 +1,13 @@
+.vsp-details-vendor-select {   
+    .validation-form-content {
+        padding-top: 20px;
+        .vendor-selector-modal-title {
+            @extend .body-1;
+        }
+        .vendor-selector-modal-additional-text {
+            @extend .body-2;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+    }        
+}

@@ -16,11 +16,12 @@
 
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
+import {mount} from 'enzyme';
+import {Provider} from 'react-redux';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
-
 import {mapStateToProps, mapActionsToProps} from 'sdc-app/onboarding/versionsPage/VersionsPage.js';
 import VersionsPageView from 'sdc-app/onboarding/versionsPage/VersionsPage.jsx';
 import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
@@ -29,6 +30,7 @@ import {itemTypes as versionPageItemTypes} from 'sdc-app/onboarding/versionsPage
 import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import {VersionsPageCreationFactory} from 'test-utils/factories/versionsPage/VersionsPageCreationFactories.js';
 import {VersionsPageAdditionalPropsFactory} from 'test-utils/factories/versionsPage/VersionsPageFactories.js';
+import {cloneAndSet} from 'test-utils/Util.js';
 
 describe('Versions Page Module Tests', () => {
 
@@ -45,7 +47,15 @@ describe('Versions Page Module Tests', () => {
 			userInfo: 'user123'
 		},
 		versionsPage: {
-			permissions: {},
+			permissions: {
+				contributors: [],
+				owner: {
+					userId: 'fgfgfg',
+					permission: 'Owner',
+					fullName: 'Test User',
+					role: 'Test ROLE'
+				}
+			},
 			versionsList: {versions: []},
 			versionCreation: {}
 		}
@@ -71,7 +81,7 @@ describe('Versions Page Module Tests', () => {
 
 		const additionalProps = VersionsPageAdditionalPropsFactory.build();
 
-		const props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch, additionalProps));
+		const props = {...mapStateToProps(state), ...mapActionsToProps(dispatch, additionalProps)};		
 		const renderer = new ShallowRenderer();
 		renderer.render(<VersionsPageView {...props} />);
 
@@ -79,6 +89,23 @@ describe('Versions Page Module Tests', () => {
 		expect(renderedOutput).toBeTruthy();
 
 	});
+	/**
+	 * turn on when ARCHIVE_ITEM feature toggle will be removed in VersionPage.jsx
+	 */
+	// it('archive btn test', () => {
+
+	// 	const store = storeCreator();
+	// 	const dispatch = store.dispatch;
+
+	// 	const additionalProps = VersionsPageAdditionalPropsFactory.build();
+	// 	const props = {...mapStateToProps(state), ...mapActionsToProps(dispatch, additionalProps)};		
+	// 	const wrapper = mount(<Provider store={store}><VersionsPageView {...props}/></Provider>);		
+	// 	const depricateBtn = wrapper.find('.depricate-btn');
+	// 	expect(depricateBtn).toBeTruthy();
+	// 	expect(depricateBtn.text()).toBe('ARCHIVE');
+	// });
+
+	
 
 });
 

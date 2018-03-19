@@ -23,7 +23,7 @@ import {SyncStates} from 'sdc-app/common/merge/MergeEditorConstants.js';
 import {catalogItemStatuses} from './onboard/onboardingCatalog/OnboardingCatalogConstants.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 
-const checkReadOnly = ({isCollaborator = true, inMerge = false, isCertified = false}) => !isCollaborator || inMerge || isCertified;
+const checkReadOnly = ({isCollaborator = true, inMerge = false, isCertified = false, isArchived  = false}) => !isCollaborator || inMerge || isCertified || isArchived;
 
 const currentScreen = (state = {
 	forceBreadCrumbsUpdate: false,
@@ -37,6 +37,7 @@ const currentScreen = (state = {
 		case actionTypes.SET_CURRENT_SCREEN: {
 			let itemPermission = {...state.itemPermission};
 			let {currentScreen} = action;
+			itemPermission.isArchived = currentScreen.props.status === catalogItemStatuses.ARCHIVED;
 
 			if (currentScreen.props.version) {
 				let {status} = currentScreen.props.version;
@@ -70,7 +71,7 @@ const currentScreen = (state = {
 				props: {
 					...state.props,
 					version: action.version,
-					isReadOnlyMode: checkReadOnly(state.itemPermission)
+					isReadOnlyMode: checkReadOnly({...state.itemPermission,itemStatus: state.props.status})
 				}
 			};
 
@@ -114,12 +115,13 @@ const currentScreen = (state = {
 		}
 
 		case actionTypes.UPDATE_ITEM_STATUS: {
-			const {itemState: {synchronizationState, dirty}, itemStatus, updatedVersion} = action;
+			const {itemState: {synchronizationState, dirty}, itemStatus, updatedVersion, archivedStatus} = action;
 			const inMerge = synchronizationState === SyncStates.MERGE;
 			const isOutOfSync = synchronizationState === SyncStates.OUT_OF_SYNC;
 			const isUpToDate = synchronizationState === SyncStates.UP_TO_DATE;
 			const isCertified = itemStatus === catalogItemStatuses.CERTIFIED;
-			const itemPermission = {...state.itemPermission, inMerge, isDirty: dirty, isOutOfSync, isUpToDate, isCertified};
+			const isArchived = archivedStatus === catalogItemStatuses.ARCHIVED;
+			const itemPermission = {...state.itemPermission, inMerge, isDirty: dirty, isOutOfSync, isUpToDate, isCertified, isArchived};
 			const isReadOnlyMode = checkReadOnly(itemPermission);
 			const props = {...state.props, isReadOnlyMode, version: {...state.props.version, ...updatedVersion}};
 

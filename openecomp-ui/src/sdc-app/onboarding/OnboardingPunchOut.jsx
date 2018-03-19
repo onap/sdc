@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,6 @@ export default class OnboardingPunchOut {
 				});
 			}
 			this.rendered = true;
-
 		}
 	}
 
@@ -96,9 +95,9 @@ export default class OnboardingPunchOut {
 		let dispatch = action => store.dispatch(action);
 		let {currentScreen, users: {usersList}, softwareProductList, finalizedSoftwareProductList, licenseModelList, finalizedLicenseModelList,
 			softwareProduct: {softwareProductEditor: {data: vspData = {}},
-			softwareProductComponents = {}, softwareProductQuestionnaire = {}}} = store.getState();
+			softwareProductComponents = {}, softwareProductQuestionnaire = {}}, archivedLicenseModelList} = store.getState();
 		const wholeSoftwareProductList = [...softwareProductList, ...finalizedSoftwareProductList];
-		const wholeLicenseModelList = [...licenseModelList, ...finalizedLicenseModelList];
+		const wholeLicenseModelList = [...licenseModelList, ...finalizedLicenseModelList, ...archivedLicenseModelList];
 
 		let {props: {version, isReadOnlyMode}, screen} = currentScreen;
 		let {componentEditor: {data: componentData = {}, qdata: componentQData = {}}} = softwareProductComponents;
@@ -200,9 +199,9 @@ export default class OnboardingPunchOut {
 		let {currentScreen, licenseModelList, finalizedLicenseModelList, softwareProductList, finalizedSoftwareProductList, versionsPage:
 			{versionsList: {itemType, itemId}},
 			softwareProduct: {softwareProductEditor: {data: currentSoftwareProduct = {onboardingMethod: ''}},
-				softwareProductComponents: {componentsList}}} = store.getState();
-		const wholeSoftwareProductList = lodashUnionBy(softwareProductList, finalizedSoftwareProductList, 'id');
-		const wholeLicenseModelList = lodashUnionBy(licenseModelList, finalizedLicenseModelList, 'id');
+				softwareProductComponents: {componentsList}}, archivedLicenseModelList, archivedSoftwareProductList} = store.getState();
+		const wholeSoftwareProductList = lodashUnionBy(softwareProductList, [...finalizedSoftwareProductList, ...archivedSoftwareProductList], 'id');
+		const wholeLicenseModelList = lodashUnionBy(licenseModelList, [...finalizedLicenseModelList, ...archivedLicenseModelList], 'id');
 		let breadcrumbsData = {itemType, itemId, currentScreen, wholeLicenseModelList, wholeSoftwareProductList, currentSoftwareProduct, componentsList};
 
 		if (currentScreen.forceBreadCrumbsUpdate || !isEqual(breadcrumbsData, this.prevBreadcrumbsData) || this.breadcrumbsPrefixSelected) {

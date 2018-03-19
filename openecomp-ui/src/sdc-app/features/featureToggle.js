@@ -37,8 +37,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
-export const FeatureComponent = ({features = [], featureName, InnerComponent}) => {	
-	return !!features.find(el => el.name === featureName && el.active) ? <InnerComponent/> : null;
+export const FeatureComponent = (props) => {
+	const {features = [], featureName, InnerComponent, ...otherProps} = props;
+	const AComp = InnerComponent.AComp ? InnerComponent.AComp : InnerComponent;
+	
+	return !!features.find(el => el.name === featureName && el.active) ?
+		 <AComp {...otherProps}/> 
+		 : InnerComponent.BComp ? <InnerComponent.BComp {...otherProps}/> : null;
 };
 
 FeatureComponent.propTypes = {
