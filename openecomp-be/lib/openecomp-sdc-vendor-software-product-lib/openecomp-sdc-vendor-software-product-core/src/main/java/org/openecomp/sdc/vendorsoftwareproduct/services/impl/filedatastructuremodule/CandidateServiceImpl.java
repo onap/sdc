@@ -57,6 +57,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -588,6 +589,12 @@ public class CandidateServiceImpl implements CandidateService {
   private void handleVolumes(Module module, Set<HeatStructureTree> volumeSet,
                              FilesDataStructure structure, int inx,
                              Map<String, List<ErrorMessage>> uploadErrors) {
+    Iterator<HeatStructureTree> iterator = volumeSet.iterator();
+    while(iterator.hasNext()) {
+      if (iterator.next() == null) {
+        iterator.remove();
+      }
+    }
     for (HeatStructureTree volume : volumeSet) {
       if (inx++ > 0) {
         ErrorsUtil.addStructureErrorToErrorMap(SdcCommon.UPLOAD_FILE,
