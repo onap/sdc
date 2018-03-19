@@ -68,6 +68,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -214,7 +215,11 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   public Set<CompositionEntityValidationData> getAllErrorsByVsp(String vspId) {
     CompositionEntityValidationData matchVsp = null;
     Set<CompositionEntityValidationData> entitiesWithErrors = new HashSet<>();
+    Iterator<CompositionEntityValidationData> iterator = roots.iterator();
     for (CompositionEntityValidationData root : roots) {
+      if (iterator.hasNext() && (iterator.next() == null)) {
+        iterator.remove();
+      }
       if (root.getEntityId().equals(vspId)) {
         matchVsp = root;
         break;
@@ -449,6 +454,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
       case vsp:
         CompositionEntityData vspEntity = getCompositionEntityDataById(entity);
+        if (Objects.isNull(vspEntity)) {
+          return null;
+        }
         VspQuestionnaireEntity vspQuestionnaireEntity = (VspQuestionnaireEntity) vspEntity.entity;
         VspDetails vspDetails =
             vspInfoDao.get(new VspDetails(vspQuestionnaireEntity.getId(),
