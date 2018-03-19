@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,17 @@ import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
 import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsActionHelper.js';
 
-export const mapStateToProps = ({finalizedLicenseModelList, users: {usersList}, softwareProductList, softwareProduct: {softwareProductCreation, softwareProductCategories} }) => {
+export const mapStateToProps = ({finalizedLicenseModelList, users: {usersList}, archivedSoftwareProductList, 
+		softwareProductList, finalizedSoftwareProductList, softwareProduct: {softwareProductCreation, softwareProductCategories} }) => {
 	let {genericFieldInfo} = softwareProductCreation;
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
 	let VSPNames = {};
-	for (let i = 0; i < softwareProductList.length; i++) {
-		VSPNames[softwareProductList[i].name.toLowerCase()] = softwareProductList[i].id;
-	}
+	const allVspList = [...softwareProductList, ...finalizedSoftwareProductList, ...archivedSoftwareProductList];
+	allVspList.map(item => {
+		VSPNames[item.name.toLowerCase()] = item.id;
+	});
+	
 
 	return {
 		data: softwareProductCreation.data,

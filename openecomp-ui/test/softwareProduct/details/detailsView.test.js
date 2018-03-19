@@ -1,7 +1,7 @@
 /*
  * Copyright © 2016-2018 European Support Limited
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the 'License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -25,7 +25,6 @@ import {FeatureGroupStoreFactory}  from 'test-utils/factories/licenseModel/Featu
 import {SchemaGenericFieldInfoFactory}  from 'test-utils/factories/softwareProduct/SoftwareProductQSchemaFactory.js';
 import {default as VspQdataFactory, VspDataMapFactory}  from 'test-utils/factories/softwareProduct/VspQdataFactory.js';
 import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
-import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
 
 describe('Software Product Details: ', function () {
@@ -46,9 +45,14 @@ describe('Software Product Details: ', function () {
 		licenseAgreementList = LicenseAgreementStoreFactory.buildList(2);
 		licensingVersionsList = [
 			{
-				"id":"0127b419e9574a11aab8e031a78fc534",
-				"name":"1.0","description":"Initial version",
-				"baseId":"","status":"Certified","creationTime":1506409288390,"modificationTime":1506409288390,"additionalInfo":{"OptionalCreationMethods":["minor"]}},{"id":"ea159ffedd9a4f9a8a56d53ba66b7314","name":"2.0","description":"ggggg","baseId":"0127b419e9574a11aab8e031a78fc534","status":"Draft","creationTime":1508839019802,"modificationTime":1508839019802,"additionalInfo":{"OptionalCreationMethods":[]}}
+				'id':'0127b419e9574a11aab8e031a78fc534',
+				'name':'1.0','description':'Initial version',
+				'baseId':'','status':'Certified','creationTime':1506409288390,
+				'modificationTime':1506409288390,'additionalInfo':{'OptionalCreationMethods':['minor']}},
+				{'id':'ea159ffedd9a4f9a8a56d53ba66b7314','name':'2.0','description':'ggggg',
+				'baseId':'0127b419e9574a11aab8e031a78fc534','status':'Draft','creationTime':1508839019802,
+				'modificationTime':1508839019802,'additionalInfo':{'OptionalCreationMethods':[]}
+			}
 		];
 		featureGroupsList = FeatureGroupStoreFactory.buildList(2, {referencingLicenseAgreements: [licenseAgreementList[0].id]});
 		qdata = VspQdataFactory.build();
@@ -109,7 +113,9 @@ describe('Software Product Details: ', function () {
 				featureGroup: {
 					featureGroupsList: []
 				}
-			}
+			},
+			archivedLicenseModelList: [],
+			archivedSoftwareProductList: []
 		};
 
 		var result = mapStateToProps(obj);
@@ -145,7 +151,9 @@ describe('Software Product Details: ', function () {
 					dataMap
 				}
 			},
-			finalizedLicenseModelList: finalizedLicenseModelList,
+			finalizedLicenseModelList: finalizedLicenseModelList,			
+			archivedLicenseModelList: [],
+			archivedSoftwareProductList: [],
 			licenseModel: {
 				licenseAgreement: {
 					licenseAgreementList: licenseAgreementList

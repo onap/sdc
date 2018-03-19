@@ -1,5 +1,5 @@
 /*!
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import keyMirror from 'nfvo-utils/KeyMirror.js';
+import {actionTypes} from './SoftwareProductConstants.js';
 
-export const actionTypes = keyMirror({
-	FEATURES_LIST_LOADED: null
-});
-
-export const featureToggleNames = {
-	ARCHIVE_ITEM: 'ARCHIVE_ITEM',
-	FILTER: 'FILTER'
+export default (state = [], action) => {
+	switch (action.type) {
+		case actionTypes.ARCHIVED_SOFTWARE_PRODUCT_LIST_LOADED:
+			return [...action.response.results];
+		default:
+			return state;
+	}
 };

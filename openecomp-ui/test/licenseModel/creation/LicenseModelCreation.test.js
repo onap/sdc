@@ -28,6 +28,8 @@ describe('License Model Creation Module Tests', function() {
 	it ('should return empty data', () => {
 		let state = {
 			licenseModelList: [],
+			archivedLicenseModelList: [],
+			finalizedLicenseModelList: [],
 			licenseModel: {
 				licenseModelCreation: {
 					data: {}
@@ -43,6 +45,8 @@ describe('License Model Creation Module Tests', function() {
 
 	it ('should return vlm names list', () => {
 		let state = {
+			archivedLicenseModelList: [],
+			finalizedLicenseModelList: [],
 			licenseModelList: [{
 				name: 'vlm1',
 				id: 'vlm1_id'

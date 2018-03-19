@@ -54,7 +54,10 @@ const Notification = ({notification, users, onActionClicked, getNotificationType
 			</div>
 			<div className='notification-action'>
 				<div className={classnames('action-button', {'hidden': read})} onClick={() => onActionClicked(notification)}>
-					{eventType === notificationType.PERMISSION_CHANGED ? i18n('OK') : i18n('Sync')}
+					{eventType === notificationType.PERMISSION_CHANGED
+						|| eventType === notificationType.ITEM_DELETED
+						|| eventType === notificationType.ITEM_ARCHIVED
+						|| eventType === notificationType.ITEM_RESTORED ? i18n('OK') : i18n('Sync')}
 				</div>
 			</div>
 		</div>
@@ -64,11 +67,18 @@ const Notification = ({notification, users, onActionClicked, getNotificationType
 function getNotificationTypeDesc(eventType, permission, granted) {
 	switch (eventType) {
 		case notificationType.PERMISSION_CHANGED:
-			return i18n('Permission {granted}: {permission}', {granted: granted ? 'Granted' : 'Taken', permission: permission});
+			const grantedStr = granted ? i18n('Granted') : i18n('Taken');
+			return `${i18n('Permission')} ${grantedStr}: ${permission}`;			
 		case notificationType.ITEM_CHANGED.COMMIT:
 			return i18n('Your Copy Is Out Of Sync');
 		case notificationType.ITEM_CHANGED.SUBMIT:
 			return i18n('Version Submitted');
+		case notificationType.ITEM_DELETED:
+			return i18n('Item was deleted');
+		case notificationType.ITEM_ARCHIVED:
+			return i18n('Item was archived');
+		case notificationType.ITEM_RESTORED:
+			return i18n('Item was restored from archive');
 	}
 }
 
@@ -106,8 +116,11 @@ class UserNotifications extends React.Component {
 
 	onActionClicked(notification) {
 		const {onSync, updateNotification, currentScreen, onLoadItemsLists} = this.props;
-		const {eventType, eventAttributes: {itemId, itemName, versionId, versionName}} = notification;
-		if(eventType !== notificationType.PERMISSION_CHANGED) {
+		const {eventType, eventAttributes: {itemId, itemName, versionId, versionName}} = notification;		
+		if(eventType !== notificationType.PERMISSION_CHANGED &&
+			eventType !== notificationType.ITEM_DELETED &&
+			eventType !== notificationType.ITEM_ARCHIVED &&
+			eventType !== notificationType.ITEM_RESTORED) {
 			onSync({itemId, itemName, versionId, versionName, currentScreen});
 		}
 		else {
