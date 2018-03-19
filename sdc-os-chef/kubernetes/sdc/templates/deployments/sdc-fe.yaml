@@ -76,6 +76,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: JAVA_OPTIONS
+          value: ""
         volumeMounts:
 #        - mountPath: /usr/share/elasticsearch/data/
 #          name: sdc-sdc-es-es

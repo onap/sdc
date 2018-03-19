@@ -48,6 +48,8 @@ spec:
           initialDelaySeconds: 60
           timeoutSeconds: 5
           periodSeconds: 5
+      imagePullSecrets:
+      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
       volumes:
       - name: sdc-environments
         configMap:
@@ -58,6 +60,4 @@ spec:
       - name:  sdc-logs
         hostPath:
           path:  /dockerdata-nfs/{{ .Values.nsPrefix }}/sdc/logs
-      imagePullSecrets:
-      - name: "{{ .Values.nsPrefix }}-docker-registry-key"
 #{{ end }}
