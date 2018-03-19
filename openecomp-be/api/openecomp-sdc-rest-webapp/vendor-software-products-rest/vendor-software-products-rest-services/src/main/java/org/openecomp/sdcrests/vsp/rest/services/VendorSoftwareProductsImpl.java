@@ -340,10 +340,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     return Response.ok().build();
   }
 
+  private static ItemCreationDto validVspGetter() {
+    return validationVsp;
+  }
+
   @Override
-  public Response getValidationVsp(String user) {
-    if (validationVsp != null) {
-      return Response.ok(validationVsp).build();
+  public static Response getValidationVsp(String user) {
+    ItemCreationDto validatedVsp = validVspGetter();
+    if (validatedVsp != null) {
+      return Response.ok(validatedVsp).build();
     }
 
     VspRequestDto validationVspRequest = new VspRequestDto();
@@ -351,8 +356,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     validationVspRequest.setName(VALIDATION_VSP_NAME);
 
     try {
-      validationVsp = (ItemCreationDto) createVsp(validationVspRequest, user).getEntity();
-      return Response.ok(validationVsp).build();
+      validatedVsp = (ItemCreationDto) createVsp(validationVspRequest, user).getEntity();
+      return Response.ok(validatedVsp).build();
 
     } catch (CoreException validationVspAlreadyExistException) {
       // find validationVsp
@@ -363,12 +368,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
           .getId();
       Version validationVspVersion = versioningManager.list(validationVspId).iterator().next();
 
-      validationVsp = new ItemCreationDto();
-      validationVsp.setItemId(validationVspId);
-      validationVsp
+      validatedVsp = new ItemCreationDto();
+      validatedVsp.setItemId(validationVspId);
+      validatedVsp
           .setVersion(new MapVersionToDto().applyMapping(validationVspVersion, VersionDto.class));
 
-      return Response.ok(validationVsp).build();
+      return Response.ok(validatedVsp).build();
     }
   }
 
