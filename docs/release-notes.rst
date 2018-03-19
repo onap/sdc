@@ -27,7 +27,7 @@ SDC SDKs Versions
 
 Release Purpose
 ----------------
-The Amsterdam release is the first OMAP release.
+The Amsterdam release is the first ONAP release.
 This release is focused on creating a merged architecture between the OpenECOMP and OpenO comonents.
 In addition, the release enhances the list of supported use cases to support the `VoLTE <https://wiki.onap.org/pages/viewpage.action?pageId=6593603>`_ snd 'vCPE <https://wiki.onap.org/pages/viewpage.action?pageId=3246168>`_ use cases.
 
