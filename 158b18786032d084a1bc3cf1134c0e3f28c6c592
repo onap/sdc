@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_1d8173fb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-19T11:02:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_ea095c31",
+      "range": {
+        "startLine": 124,
+        "startChar": 4,
+        "endLine": 124,
+        "endChar": 35
+      },
+      "revId": "158b18786032d084a1bc3cf1134c0e3f28c6c592",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ca0ee03a",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
         "patchSetId": 8
@@ -36,6 +60,30 @@
       "writtenOn": "2018-03-19T09:52:18Z",
       "side": 1,
       "message": "Does it have to be exposed as a list? Can the logic be moved here?",
+      "range": {
+        "startLine": 140,
+        "startChar": 3,
+        "endLine": 140,
+        "endChar": 48
+      },
+      "revId": "158b18786032d084a1bc3cf1134c0e3f28c6c592",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7d8c3736",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-19T11:02:04Z",
+      "side": 1,
+      "message": "Since this data is obtained from configuration and is used in unified tosca model specific logic to add input parameters for these properties I feel its better to keep the logic in org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionService#updateVfcInstanceGroupExposedPropertiesinstead of moving it here. Is that ok ?",
+      "parentUuid": "5a93c517_ca0ee03a",
       "range": {
         "startLine": 140,
         "startChar": 3,
