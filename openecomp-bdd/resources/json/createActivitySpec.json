@@ -1,0 +1,17 @@
+{
+  "name": "RANDOM",
+  "description": "Start Server",
+  "categoryList": [
+    "Server"
+  ],
+  "inputParameters": [{
+    "name": "host",
+    "type": "string",
+    "value": "10.1.2.3"
+  }],
+  "outputParameters": [{
+    "name": "status",
+    "type": "string",
+    "value": "started"
+  }]
+}

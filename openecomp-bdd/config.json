@@ -11,6 +11,6 @@
   },
   "activity_spec" : {
     "port" : 8080,
-    "prefix" : "sdc1/feProxy/activityspec-api/v1"
+    "prefix" : "activityspec-api/v1.0"
   }
 }
