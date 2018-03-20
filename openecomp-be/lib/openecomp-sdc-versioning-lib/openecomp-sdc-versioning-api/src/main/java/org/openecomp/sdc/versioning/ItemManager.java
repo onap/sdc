@@ -38,5 +38,7 @@ public interface ItemManager {
 
   void delete(Item item);
 
+  void updateName(String itemId, String name);
+
   void update(Item item);
 }

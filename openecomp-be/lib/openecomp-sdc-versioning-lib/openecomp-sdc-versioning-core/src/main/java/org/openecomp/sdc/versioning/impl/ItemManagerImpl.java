@@ -76,6 +76,17 @@ public class ItemManagerImpl implements ItemManager {
   }
 
   @Override
+  public void updateName(String itemId, String name) {
+    Item item = get(itemId);
+    if (item == null) {
+      return;
+    }
+
+    item.setName(name);
+    itemDao.update(item);
+  }
+
+  @Override
   public void archive(Item item) {
 
     if (item.getStatus() == ItemStatus.ARCHIVED) {
