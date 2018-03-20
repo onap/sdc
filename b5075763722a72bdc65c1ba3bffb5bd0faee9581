@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_66b49fd1",
+        "filename": "openecomp-bdd/features/ActivitySpec/TestCreate.feature",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-03-20T07:43:16Z",
+      "side": 1,
+      "message": "Please adjust step names",
+      "revId": "b5075763722a72bdc65c1ba3bffb5bd0faee9581",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_66eb3fb1",
+        "filename": "openecomp-bdd/features/ActivitySpec/TestInvalidStatusTransition.feature",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-03-20T07:43:16Z",
+      "side": 1,
+      "message": "please adjust the step names",
+      "revId": "b5075763722a72bdc65c1ba3bffb5bd0faee9581",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_46b3a30a",
+        "filename": "openecomp-bdd/stepDefinitions/ActivitySpec_steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-03-20T07:43:16Z",
+      "side": 1,
+      "message": "\"an\" instead of \"a\"",
+      "range": {
+        "startLine": 22,
+        "startChar": 23,
+        "endLine": 22,
+        "endChar": 24
+      },
+      "revId": "b5075763722a72bdc65c1ba3bffb5bd0faee9581",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_06cd9b86",
+        "filename": "openecomp-bdd/stepDefinitions/ActivitySpec_steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-03-20T07:43:16Z",
+      "side": 1,
+      "message": "\"ActivitySpecs\" this should be plural",
+      "range": {
+        "startLine": 30,
+        "startChar": 21,
+        "endLine": 30,
+        "endChar": 33
+      },
+      "revId": "b5075763722a72bdc65c1ba3bffb5bd0faee9581",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e6c3cf55",
+        "filename": "openecomp-bdd/stepDefinitions/ActivitySpec_steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-03-20T07:43:16Z",
+      "side": 1,
+      "message": "\"I want to get the ActivitySpec for the current item\"",
+      "range": {
+        "startLine": 37,
+        "startChar": 6,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "b5075763722a72bdc65c1ba3bffb5bd0faee9581",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e6a8af79",
+        "filename": "openecomp-bdd/stepDefinitions/ActivitySpec_steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2018-03-20T07:43:16Z",
+      "side": 1,
+      "message": "I want to call action {string} on this ActivitySpec item",
+      "range": {
+        "startLine": 43,
+        "startChar": 6,
+        "endLine": 43,
+        "endChar": 37
+      },
+      "revId": "b5075763722a72bdc65c1ba3bffb5bd0faee9581",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
