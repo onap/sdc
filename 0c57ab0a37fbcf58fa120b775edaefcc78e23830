@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_465723cb",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/CompositionEntityDataManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-20T07:12:20Z",
+      "side": 1,
+      "message": "reduce complexity by merging to 1 if statement",
+      "range": {
+        "startLine": 218,
+        "startChar": 6,
+        "endLine": 219,
+        "endChar": 47
+      },
+      "revId": "0c57ab0a37fbcf58fa120b775edaefcc78e23830",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
