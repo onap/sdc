@@ -20,42 +20,35 @@ import React from 'react';
  * Overlay view.
  */
 export default class Overlay extends React.Component {
+    /**
+     * Construct view.
+     * @param props element properties.
+     * @param context react context.
+     */
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            visible: false
+        };
+        this.setVisible = this.setVisible.bind(this);
+    }
 
-  /**
-   * Construct view.
-   * @param props element properties.
-   * @param context react context.
-   */
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      visible: false,
-    };
-    this.setVisible = this.setVisible.bind(this);
-  }
+    /**
+     * Set visibility.
+     * @param visible true if visible.
+     */
+    setVisible(visible) {
+        this.setState({
+            visible
+        });
+    }
 
-  /**
-   * Set visibility.
-   * @param visible true if visible.
-   */
-  setVisible(visible) {
-    this.setState({
-      visible,
-    });
-  }
-
-  /**
-   * Render view.
-   * @returns {XML}
-   */
-  render() {
-    const display = this.state.visible ? 'block' : 'none';
-    return (
-      <div
-        className="asdcs-overlay"
-        style={{ display }}
-      >
-      </div>
-    );
-  }
+    /**
+     * Render view.
+     * @returns {XML}
+     */
+    render() {
+        const display = this.state.visible ? 'block' : 'none';
+        return <div className="asdcs-overlay" style={{ display }} />;
+    }
 }

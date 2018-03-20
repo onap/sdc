@@ -17,15 +17,18 @@
 import React from 'react';
 
 const Export = function Export() {
-  return (
-    <form className="asdcs-export" action="/ossui-svg/services/ossui/svg/export" method="post">
-      <input name="svg" type="hidden" value="" />
-      <input name="css" type="hidden" value="sdc/sequencer/default" />
-      <input name="type" type="hidden" value="PDF" />
-      <input name="height" type="hidden" value="1920" />
-      <input name="width" type="hidden" value="1080" />
-    </form>
-  );
+    return (
+        <form
+            className="asdcs-export"
+            action="/ossui-svg/services/ossui/svg/export"
+            method="post">
+            <input name="svg" type="hidden" value="" />
+            <input name="css" type="hidden" value="sdc/sequencer/default" />
+            <input name="type" type="hidden" value="PDF" />
+            <input name="height" type="hidden" value="1920" />
+            <input name="width" type="hidden" value="1080" />
+        </form>
+    );
 };
 
 export default Export;

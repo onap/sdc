@@ -15,35 +15,48 @@
  */
 
 function getTimestampString() {
-	let date = new Date();
-	let z = n => n < 10 ? '0' + n : n;
-	return `${date.getFullYear()}-${z(date.getMonth())}-${z(date.getDate())}_${z(date.getHours())}-${z(date.getMinutes())}`;
+    let date = new Date();
+    let z = n => (n < 10 ? '0' + n : n);
+    return `${date.getFullYear()}-${z(date.getMonth())}-${z(
+        date.getDate()
+    )}_${z(date.getHours())}-${z(date.getMinutes())}`;
 }
 
+export default function showFileSaveDialog({
+    blob,
+    headers,
+    defaultFilename,
+    addTimestamp
+}) {
+    let filename;
+    let contentDisposition = headers['content-disposition']
+        ? headers['content-disposition']
+        : '';
+    let match = contentDisposition
+        ? contentDisposition.match(/filename=(.*?)(;|$)/)
+        : false;
+    if (match) {
+        filename = match[1];
+    } else {
+        filename = defaultFilename;
+    }
 
-export default function showFileSaveDialog({blob, headers, defaultFilename, addTimestamp}) {
-	let filename;
-	let contentDisposition = headers['content-disposition'] ? headers['content-disposition'] : '';
-	let match = contentDisposition ? contentDisposition.match(/filename=(.*?)(;|$)/) : false;
-	if (match) {
-		filename = match[1];
-	} else {
-		filename = defaultFilename;
-	}
+    if (addTimestamp) {
+        filename = filename.replace(
+            /(^.*?)\.([^.]+$)/,
+            `$1_${getTimestampString()}.$2`
+        );
+    }
 
-	if (addTimestamp) {
-		filename = filename.replace(/(^.*?)\.([^.]+$)/, `$1_${getTimestampString()}.$2`);
-	}
-
-	let link = document.createElement('a');
-	let url = URL.createObjectURL(blob);
-	link.href = url;
-	link.download = filename;
-	link.style.display = 'none';
-	document.body.appendChild(link);
-	link.click();
-	setTimeout(function(){
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
-	}, 0);
-};
+    let link = document.createElement('a');
+    let url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(function() {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }, 0);
+}

@@ -14,41 +14,47 @@
  * permissions and limitations under the License.
  */
 
-import {actionTypes, selectValues} from './LimitEditorConstants.js';
-import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
-
+import { actionTypes, selectValues } from './LimitEditorConstants.js';
+import { other as optionInputOther } from 'nfvo-components/input/validation/InputOptions.jsx';
 
 const LimitEditorActionHelper = {
-	openLimitsEditor(dispatch, {limit}) {
-		let modifiedLimit = {...limit};
-		if (limit && limit.metric) {
-			modifiedLimit.metric = LimitEditorActionHelper.createChoiceObject(modifiedLimit.metric, selectValues.METRIC);
-		}
-		if (limit && limit.unit) {
-			modifiedLimit.unit = LimitEditorActionHelper.createChoiceObject(modifiedLimit.unit, selectValues.UNIT);
-		}
-		dispatch({type: actionTypes.OPEN, limitItem: modifiedLimit});
-	},
+    openLimitsEditor(dispatch, { limit }) {
+        let modifiedLimit = { ...limit };
+        if (limit && limit.metric) {
+            modifiedLimit.metric = LimitEditorActionHelper.createChoiceObject(
+                modifiedLimit.metric,
+                selectValues.METRIC
+            );
+        }
+        if (limit && limit.unit) {
+            modifiedLimit.unit = LimitEditorActionHelper.createChoiceObject(
+                modifiedLimit.unit,
+                selectValues.UNIT
+            );
+        }
+        dispatch({ type: actionTypes.OPEN, limitItem: modifiedLimit });
+    },
 
-	closeLimitsEditor(dispatch) {
-		dispatch({type: actionTypes.CLOSE});
-	},
+    closeLimitsEditor(dispatch) {
+        dispatch({ type: actionTypes.CLOSE });
+    },
 
-	createChoiceObject(value, optionsList) {
-		let option = optionsList.find(function(item) { return item.enum === value; });
-		if (!option) {
-			return {
-				choice: optionInputOther.OTHER,
-				other: value
-			};
-		}
-		else {
-			return {
-				choice: value,
-				other: ''
-			};
-		}
-	}
+    createChoiceObject(value, optionsList) {
+        let option = optionsList.find(function(item) {
+            return item.enum === value;
+        });
+        if (!option) {
+            return {
+                choice: optionInputOther.OTHER,
+                other: value
+            };
+        } else {
+            return {
+                choice: value,
+                other: ''
+            };
+        }
+    }
 };
 
 export default LimitEditorActionHelper;

@@ -13,11 +13,11 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import {Collapse} from 'react-bootstrap';
+import { Collapse } from 'react-bootstrap';
 /**
  * parsing and showing the following Java Response object
  *
@@ -42,121 +42,151 @@ import {Collapse} from 'react-bootstrap';
     }
  */
 class SubmitErrorResponse extends Component {
+    render() {
+        let {
+            validationResponse: {
+                vspErrors,
+                licensingDataErrors,
+                questionnaireValidationResult,
+                uploadDataErrors
+            }
+        } = this.props;
+        return (
+            <div className="submit-error-response-view">
+                {vspErrors && this.renderVspErrors(vspErrors)}
+                {licensingDataErrors &&
+                    this.renderVspErrors(licensingDataErrors)}
+                {questionnaireValidationResult &&
+                    this.renderComponentsErrors(questionnaireValidationResult)}
+                {uploadDataErrors &&
+                    this.renderUploadDataErrors(uploadDataErrors)}
+            </div>
+        );
+    }
 
+    renderVspErrors(errors) {
+        return (
+            <ErrorBlock errorType={i18n('VSP Errors')}>
+                <div>
+                    {errors.length &&
+                        errors.map((error, i) => {
+                            return (
+                                <ErrorMessage key={i} error={error.message} />
+                            );
+                        })}
+                </div>
+            </ErrorBlock>
+        );
+    }
 
-	render() {
-		let {validationResponse : {vspErrors, licensingDataErrors, questionnaireValidationResult, uploadDataErrors}} = this.props;
-		return (
-			<div className='submit-error-response-view'>
-				{vspErrors && this.renderVspErrors(vspErrors)}
-				{licensingDataErrors && this.renderVspErrors(licensingDataErrors)}
-				{questionnaireValidationResult && this.renderComponentsErrors(questionnaireValidationResult)}
-				{uploadDataErrors && this.renderUploadDataErrors(uploadDataErrors)}
-			</div>
-		);
-	}
+    renderComponentsErrors(errors) {
+        return (
+            <ErrorBlock errorType={i18n('Components Errors')}>
+                <div>
+                    {errors.validationData.length &&
+                        errors.validationData.map((item, i) => {
+                            return <ComponentError key={i} item={item} />;
+                        })}
+                </div>
+            </ErrorBlock>
+        );
+    }
 
-	renderVspErrors(errors) {
-		return (
-			<ErrorBlock errorType={i18n('VSP Errors')}>
-				<div>
-					{errors.length && errors.map((error, i) => {return (<ErrorMessage key={i} error={error.message}/>);})}
-				</div>
-			</ErrorBlock>
-		);
-	}
-
-
-	renderComponentsErrors(errors) {
-		return (
-			<ErrorBlock errorType={i18n('Components Errors')}>
-				<div>
-					{errors.validationData.length && errors.validationData.map((item, i) =>{ return (<ComponentError key={i} item={item}/>);})}
-				</div>
-			</ErrorBlock>
-		);
-	}
-
-	renderUploadDataErrors(uploadDataErrors) {
-		return (
-			<ErrorBlock errorType={i18n('Upload Data Errors')}>
-				<div>
-					<UploadErrorList items={uploadDataErrors}/>
-				</div>
-			</ErrorBlock>
-		);
-	}
+    renderUploadDataErrors(uploadDataErrors) {
+        return (
+            <ErrorBlock errorType={i18n('Upload Data Errors')}>
+                <div>
+                    <UploadErrorList items={uploadDataErrors} />
+                </div>
+            </ErrorBlock>
+        );
+    }
 }
 
-
-const ComponentError = ({item}) => {
-	return (
-		<div>
-			<div className='component-name-header'>{item.entityName}</div>
-			{item.errors.map((error, i) => {return(<ErrorMessage key={i} error={error}/>);})}
-		</div>
-	);
+const ComponentError = ({ item }) => {
+    return (
+        <div>
+            <div className="component-name-header">{item.entityName}</div>
+            {item.errors.map((error, i) => {
+                return <ErrorMessage key={i} error={error} />;
+            })}
+        </div>
+    );
 };
 
 function* entries(obj) {
-	for (let key of Object.keys(obj)) {
-		yield {header: key, list: obj[key]};
-	}
+    for (let key of Object.keys(obj)) {
+        yield { header: key, list: obj[key] };
+    }
 }
 
-const UploadErrorList = ({items}) => {
-	let generator = entries(items);
+const UploadErrorList = ({ items }) => {
+    let generator = entries(items);
 
-	let errors = [];
-	for (let item of generator) {errors.push(
-		<div key={item.header}>
-			<div className='component-name-header'>{item.header}</div>
-			{item.list.map((error, i) => <ErrorMessage key={i} warning={error.level === 'WARNING'} error={error.message}/> )}
-		</div>
-	);}
+    let errors = [];
+    for (let item of generator) {
+        errors.push(
+            <div key={item.header}>
+                <div className="component-name-header">{item.header}</div>
+                {item.list.map((error, i) => (
+                    <ErrorMessage
+                        key={i}
+                        warning={error.level === 'WARNING'}
+                        error={error.message}
+                    />
+                ))}
+            </div>
+        );
+    }
 
-	return (
-		<div>
-			{errors}
-		</div>
-	);
+    return <div>{errors}</div>;
 };
 
 class ErrorBlock extends React.Component {
-	state = {
-		collapsed: false
-	};
+    state = {
+        collapsed: false
+    };
 
-	render() {
-		let {errorType, children} = this.props;
-		return (
-			<div className='error-block'>
-				<ErrorHeader collapsed={this.state.collapsed} onClick={()=>{this.setState({collapsed: !this.state.collapsed});}} errorType={errorType}/>
-				<Collapse in={this.state.collapsed}>
-					{children}
-				</Collapse>
-			</div>
-		);
-	}
+    render() {
+        let { errorType, children } = this.props;
+        return (
+            <div className="error-block">
+                <ErrorHeader
+                    collapsed={this.state.collapsed}
+                    onClick={() => {
+                        this.setState({ collapsed: !this.state.collapsed });
+                    }}
+                    errorType={errorType}
+                />
+                <Collapse in={this.state.collapsed}>{children}</Collapse>
+            </div>
+        );
+    }
 }
 
-const ErrorHeader = ({errorType, collapsed, onClick}) => {
-	return(
-		<div onClick={onClick} className='error-block-header'>
-			<SVGIcon iconClassName={collapsed ? '' : 'collapse-right' } name='chevronDown' label={errorType} labelPosition='right'/>
-		</div>
-	);
+const ErrorHeader = ({ errorType, collapsed, onClick }) => {
+    return (
+        <div onClick={onClick} className="error-block-header">
+            <SVGIcon
+                iconClassName={collapsed ? '' : 'collapse-right'}
+                name="chevronDown"
+                label={errorType}
+                labelPosition="right"
+            />
+        </div>
+    );
 };
 
-const ErrorMessage = ({error, warning}) => {
-	return (
-		<ListGroupItem className='error-code-list-item'>
-			<SVGIcon
-				name={warning ? 'exclamationTriangleLine' : 'error'}
-				color={warning ? 'warning' : 'negative'} />
-			<span className='icon-label'>{error}</span>
-		</ListGroupItem>
-	);
+const ErrorMessage = ({ error, warning }) => {
+    return (
+        <ListGroupItem className="error-code-list-item">
+            <SVGIcon
+                name={warning ? 'exclamationTriangleLine' : 'error'}
+                color={warning ? 'warning' : 'negative'}
+            />
+            <span className="icon-label">{error}</span>
+        </ListGroupItem>
+    );
 };
 
 export default SubmitErrorResponse;

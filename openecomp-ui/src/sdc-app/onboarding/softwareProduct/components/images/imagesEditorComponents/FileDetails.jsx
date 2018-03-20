@@ -18,32 +18,64 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
+import { forms } from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 
 import Format from './Format.jsx';
 import Version from './Version.jsx';
 
-const FileDetails = ({editingMode, fileName, onDataChanged, isManual, dataMap, onQDataChanged, genericFieldInfo, qgenericFieldInfo}) => {
-	let fileNameCols = (editingMode) ? 3 : 4;
-	return(
-		<GridSection hasLastColSset>
-			<GridItem colSpan={fileNameCols} lastColInRow={!editingMode}>
-				<Input
-					disabled={!isManual}
-					onChange={fileName => onDataChanged({fileName}, forms.IMAGE_EDIT_FORM)}
-					label={i18n('Image Name')}
-					data-test-id='image-filename'
-					value={fileName}
-					isValid={genericFieldInfo.fileName.isValid}
-					errorText={genericFieldInfo.fileName.errorText}
-					isRequired={true}
-					type='text'
-					className='image-filename'/>
-			</GridItem>
-			{!editingMode && <div className='note-text'>{i18n('After image creation you must go to Edit Image and add File Version')}</div>}
-			{editingMode && <Version isManual={isManual} dataMap={dataMap} qgenericFieldInfo={qgenericFieldInfo} onQDataChanged={onQDataChanged}/>}
-			{editingMode && <Format isManual={isManual} qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged}/>}
-		</GridSection>
-	);
+const FileDetails = ({
+    editingMode,
+    fileName,
+    onDataChanged,
+    isManual,
+    dataMap,
+    onQDataChanged,
+    genericFieldInfo,
+    qgenericFieldInfo
+}) => {
+    let fileNameCols = editingMode ? 3 : 4;
+    return (
+        <GridSection hasLastColSset>
+            <GridItem colSpan={fileNameCols} lastColInRow={!editingMode}>
+                <Input
+                    disabled={!isManual}
+                    onChange={fileName =>
+                        onDataChanged({ fileName }, forms.IMAGE_EDIT_FORM)
+                    }
+                    label={i18n('Image Name')}
+                    data-test-id="image-filename"
+                    value={fileName}
+                    isValid={genericFieldInfo.fileName.isValid}
+                    errorText={genericFieldInfo.fileName.errorText}
+                    isRequired={true}
+                    type="text"
+                    className="image-filename"
+                />
+            </GridItem>
+            {!editingMode && (
+                <div className="note-text">
+                    {i18n(
+                        'After image creation you must go to Edit Image and add File Version'
+                    )}
+                </div>
+            )}
+            {editingMode && (
+                <Version
+                    isManual={isManual}
+                    dataMap={dataMap}
+                    qgenericFieldInfo={qgenericFieldInfo}
+                    onQDataChanged={onQDataChanged}
+                />
+            )}
+            {editingMode && (
+                <Format
+                    isManual={isManual}
+                    qgenericFieldInfo={qgenericFieldInfo}
+                    dataMap={dataMap}
+                    onQDataChanged={onQDataChanged}
+                />
+            )}
+        </GridSection>
+    );
 };
 export default FileDetails;

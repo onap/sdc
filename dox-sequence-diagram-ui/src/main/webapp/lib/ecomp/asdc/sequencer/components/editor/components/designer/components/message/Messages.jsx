@@ -28,116 +28,113 @@ import MessageNew from './MessageNew';
  * @constructor
  */
 export default class Messages extends React.Component {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Construct view.
+     * @param props element properties.
+     * @param context react context.
+     */
+    constructor(props, context) {
+        super(props, context);
+        this.state = {};
+        this.setHoverIndex = this.setHoverIndex.bind(this);
+        this.getHoverIndex = this.getHoverIndex.bind(this);
+    }
 
-  /**
-   * Construct view.
-   * @param props element properties.
-   * @param context react context.
-   */
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-    };
-    this.setHoverIndex = this.setHoverIndex.bind(this);
-    this.getHoverIndex = this.getHoverIndex.bind(this);
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Record last hover index as non-state.
+     * @param index index.
+     */
+    setHoverIndex(index) {
+        this.hoverIndex = index;
+    }
 
-  /**
-   * Record last hover index as non-state.
-   * @param index index.
-   */
-  setHoverIndex(index) {
-    this.hoverIndex = index;
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Get last recorded hover index.
+     * @returns {*}
+     */
+    getHoverIndex() {
+        return this.hoverIndex;
+    }
 
-  /**
-   * Get last recorded hover index.
-   * @returns {*}
-   */
-  getHoverIndex() {
-    return this.hoverIndex;
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Handle drop.
-   * @param dragIndex dragged item index; undefined if new.
-   * @param hoverIndex drop index.
-   */
-  onDrop(dragIndex, hoverIndex) {
-    if (hoverIndex >= 0) {
-      const application = this.props.application;
-      const model = application.getModel();
-      if (Common.isNumber(dragIndex)) {
-        if (dragIndex !== hoverIndex) {
-          model.reorderMessages(dragIndex, hoverIndex);
+    /**
+     * Handle drop.
+     * @param dragIndex dragged item index; undefined if new.
+     * @param hoverIndex drop index.
+     */
+    onDrop(dragIndex, hoverIndex) {
+        if (hoverIndex >= 0) {
+            const application = this.props.application;
+            const model = application.getModel();
+            if (Common.isNumber(dragIndex)) {
+                if (dragIndex !== hoverIndex) {
+                    model.reorderMessages(dragIndex, hoverIndex);
+                }
+            } else {
+                model.addMessage(hoverIndex);
+            }
+            this.forceUpdate();
+            application.renderDiagram();
         }
-      } else {
-        model.addMessage(hoverIndex);
-      }
-      this.forceUpdate();
-      application.renderDiagram();
-    }
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Render view.
-   * @returns {*}
-   */
-  render() {
-
-    const model = this.props.application.getModel();
-    const diagram = model.unwrap().diagram;
-
-    // Render existing messages.
-
-    const messages = [];
-    for (const step of diagram.steps) {
-      const message = step.message;
-      const from = model.getLifelineById(message.from);
-      const to = model.getLifelineById(message.to);
-      messages.push(<Message
-        key={`m${message.id}`}
-        application={this.props.application}
-        designer={this.props.designer}
-        message={message}
-        active={this.props.activeMessageId === message.id}
-        from={from}
-        to={to}
-        model={model}
-        index={messages.length}
-        messages={this}
-      />);
     }
 
-    // Render add.
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    messages.push(<MessageNew
-      key="_m"
-      designer={this.props.designer}
-      messages={this}
-    />);
+    /**
+     * Render view.
+     * @returns {*}
+     */
+    render() {
+        const model = this.props.application.getModel();
+        const diagram = model.unwrap().diagram;
 
-    return (
-      <div className="asdcs-designer-steps">
-        {messages}
-      </div>
-    );
-  }
+        // Render existing messages.
+
+        const messages = [];
+        for (const step of diagram.steps) {
+            const message = step.message;
+            const from = model.getLifelineById(message.from);
+            const to = model.getLifelineById(message.to);
+            messages.push(
+                <Message
+                    key={`m${message.id}`}
+                    application={this.props.application}
+                    designer={this.props.designer}
+                    message={message}
+                    active={this.props.activeMessageId === message.id}
+                    from={from}
+                    to={to}
+                    model={model}
+                    index={messages.length}
+                    messages={this}
+                />
+            );
+        }
+
+        // Render add.
+
+        messages.push(
+            <MessageNew
+                key="_m"
+                designer={this.props.designer}
+                messages={this}
+            />
+        );
+
+        return <div className="asdcs-designer-steps">{messages}</div>;
+    }
 }
 
 /** Element properties. */
 Messages.propTypes = {
-  application: PropTypes.object.isRequired,
-  designer: PropTypes.object.isRequired,
-  activeMessageId: PropTypes.string,
+    application: PropTypes.object.isRequired,
+    designer: PropTypes.object.isRequired,
+    activeMessageId: PropTypes.string
 };

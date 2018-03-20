@@ -14,6 +14,8 @@
  * permissions and limitations under the License.
  */
 
-export const filterCatalogItemsByType = ({items, filter}) => {
-	return items.filter(item => item.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
+export const filterCatalogItemsByType = ({ items, filter }) => {
+    return items.filter(
+        item => item.name.toLowerCase().indexOf(filter.toLowerCase()) > -1
+    );
 };

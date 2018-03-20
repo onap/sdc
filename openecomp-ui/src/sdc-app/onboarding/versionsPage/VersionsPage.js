@@ -14,76 +14,100 @@
  * permissions and limitations under the License.
  */
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import VersionsPageActionHelper from './VersionsPageActionHelper.js';
 import VersionsPageCreationActionHelper from './creation/VersionsPageCreationActionHelper.js';
 import PermissionsActionHelper from '../permissions/PermissionsActionHelper.js';
-import {onboardingMethod as onboardingMethodType} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import { onboardingMethod as onboardingMethodType } from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import VersionsPageView from './VersionsPage.jsx';
 
 export const mapStateToProps = ({
-	users: {userInfo},
-	versionsPage: {permissions, versionsList},
-	currentScreen: {itemPermission: {isCollaborator, isArchived}, props: {itemId}},
-	softwareProductList = []
+    users: { userInfo },
+    versionsPage: { permissions, versionsList },
+    currentScreen: {
+        itemPermission: { isCollaborator, isArchived },
+        props: { itemId }
+    },
+    softwareProductList = []
 }) => {
+    let { versions = [], selectedVersion } = versionsList;
+    let { owner, contributors, viewers } = permissions;
 
-	let {versions = [], selectedVersion} = versionsList;
-	let {owner, contributors, viewers} = permissions;
-
-	// sorting the version list
-	versions.sort((a,b) => {
-		let statusCompare = b.status.localeCompare(a.status);
-		if (statusCompare === 0) {
-			return b.modificationTime - a.modificationTime;
-		} else {
-			return statusCompare;
-		}
-
-	});	
-	const curentSoftwareProduct = softwareProductList.find(item => item.id === itemId);
-	return {
-		versions,
-		contributors,
-		viewers,
-		owner,
-		currentUser: userInfo,
-		selectedVersion,
-		isCollaborator,
-		isManual: curentSoftwareProduct && curentSoftwareProduct.onboardingMethod === onboardingMethodType.MANUAL,
-		isArchived
-	};
-
+    // sorting the version list
+    versions.sort((a, b) => {
+        let statusCompare = b.status.localeCompare(a.status);
+        if (statusCompare === 0) {
+            return b.modificationTime - a.modificationTime;
+        } else {
+            return statusCompare;
+        }
+    });
+    const curentSoftwareProduct = softwareProductList.find(
+        item => item.id === itemId
+    );
+    return {
+        versions,
+        contributors,
+        viewers,
+        owner,
+        currentUser: userInfo,
+        selectedVersion,
+        isCollaborator,
+        isManual:
+            curentSoftwareProduct &&
+            curentSoftwareProduct.onboardingMethod ===
+                onboardingMethodType.MANUAL,
+        isArchived
+    };
 };
 
-export const mapActionsToProps = (dispatch, {itemType, itemId, additionalProps}) => {
-	return {
-		onNavigateToVersion({version}) {
-			VersionsPageActionHelper.onNavigateToVersion(dispatch, {version, itemId, itemType, additionalProps});
-		},
+export const mapActionsToProps = (
+    dispatch,
+    { itemType, itemId, additionalProps }
+) => {
+    return {
+        onNavigateToVersion({ version }) {
+            VersionsPageActionHelper.onNavigateToVersion(dispatch, {
+                version,
+                itemId,
+                itemType,
+                additionalProps
+            });
+        },
 
-		onSelectVersion({version}) {
-			VersionsPageActionHelper.selectVersion(dispatch, {version});
-		},
+        onSelectVersion({ version }) {
+            VersionsPageActionHelper.selectVersion(dispatch, { version });
+        },
 
-		onCreateVersion({version}) {
-			VersionsPageCreationActionHelper.open(dispatch, {baseVersion: version, itemId, itemType, additionalProps});
-		},
+        onCreateVersion({ version }) {
+            VersionsPageCreationActionHelper.open(dispatch, {
+                baseVersion: version,
+                itemId,
+                itemType,
+                additionalProps
+            });
+        },
 
-		onManagePermissions() {
-			PermissionsActionHelper.openPermissonsManager(dispatch, {itemId, askForRights: false});
-		},
+        onManagePermissions() {
+            PermissionsActionHelper.openPermissonsManager(dispatch, {
+                itemId,
+                askForRights: false
+            });
+        },
 
-		onTreeFullScreen(treeProps) {
-			VersionsPageActionHelper.openTree(dispatch, treeProps);
-		},
+        onTreeFullScreen(treeProps) {
+            VersionsPageActionHelper.openTree(dispatch, treeProps);
+        },
 
-		onModalNodeClick({version}) {
-			VersionsPageActionHelper.selectVersionFromModal(dispatch, {version});
-		},
-		onArchive: () => VersionsPageActionHelper.archiveItem(dispatch, itemId),
-		onRestore: () => VersionsPageActionHelper.restoreItemFromArchive(dispatch, itemId)
-	};
+        onModalNodeClick({ version }) {
+            VersionsPageActionHelper.selectVersionFromModal(dispatch, {
+                version
+            });
+        },
+        onArchive: () => VersionsPageActionHelper.archiveItem(dispatch, itemId),
+        onRestore: () =>
+            VersionsPageActionHelper.restoreItemFromArchive(dispatch, itemId)
+    };
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(VersionsPageView);

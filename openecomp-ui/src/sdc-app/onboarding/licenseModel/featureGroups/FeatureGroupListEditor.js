@@ -13,48 +13,62 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
-import FeatureGroupsActionHelper  from './FeatureGroupsActionHelper.js';
-import FeatureGroupListEditorView, {generateConfirmationMsg} from './FeatureGroupListEditorView.jsx';
+import { connect } from 'react-redux';
+import FeatureGroupsActionHelper from './FeatureGroupsActionHelper.js';
+import FeatureGroupListEditorView, {
+    generateConfirmationMsg
+} from './FeatureGroupListEditorView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as globalMoadlActions } from 'nfvo-components/modal/GlobalModalConstants.js';
 
-export const mapStateToProps = ({licenseModel: {featureGroup, licenseModelEditor}}) => {
+export const mapStateToProps = ({
+    licenseModel: { featureGroup, licenseModelEditor }
+}) => {
+    const { featureGroupEditor: { data }, featureGroupsList } = featureGroup;
+    const { vendorName, version } = licenseModelEditor.data;
 
-	const {featureGroupEditor: {data}, featureGroupsList} = featureGroup;
-	const {vendorName, version} = licenseModelEditor.data;
-
-	return {
-		vendorName,
-		version,
-		featureGroupsModal: {
-			show: Boolean(data),
-			editMode: Boolean(data && data.id)
-		},
-		featureGroupsList
-	};
-
+    return {
+        vendorName,
+        version,
+        featureGroupsModal: {
+            show: Boolean(data),
+            editMode: Boolean(data && data.id)
+        },
+        featureGroupsList
+    };
 };
 
-
-const mapActionsToProps = (dispatch, {licenseModelId}) => {
-	return {
-		onDeleteFeatureGroupClick: (featureGroup, version) => dispatch({
-			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
-			data:{
-				msg: generateConfirmationMsg(featureGroup),
-				confirmationButtonText: i18n('Delete'),
-				title: i18n('Delete'),
-				onConfirmed: ()=>FeatureGroupsActionHelper.deleteFeatureGroup(dispatch, {featureGroupId: featureGroup.id, licenseModelId, version})
-			}
-		}),
-		onAddFeatureGroupClick: (actualVersion) => FeatureGroupsActionHelper.openFeatureGroupsEditor(dispatch, {licenseModelId, version: actualVersion}),
-		onEditFeatureGroupClick: (featureGroup, actualVersion) => FeatureGroupsActionHelper.openFeatureGroupsEditor(dispatch, {
-			featureGroup,
-			licenseModelId,
-			version: actualVersion
-		})
-	};
+const mapActionsToProps = (dispatch, { licenseModelId }) => {
+    return {
+        onDeleteFeatureGroupClick: (featureGroup, version) =>
+            dispatch({
+                type: globalMoadlActions.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: generateConfirmationMsg(featureGroup),
+                    confirmationButtonText: i18n('Delete'),
+                    title: i18n('Delete'),
+                    onConfirmed: () =>
+                        FeatureGroupsActionHelper.deleteFeatureGroup(dispatch, {
+                            featureGroupId: featureGroup.id,
+                            licenseModelId,
+                            version
+                        })
+                }
+            }),
+        onAddFeatureGroupClick: actualVersion =>
+            FeatureGroupsActionHelper.openFeatureGroupsEditor(dispatch, {
+                licenseModelId,
+                version: actualVersion
+            }),
+        onEditFeatureGroupClick: (featureGroup, actualVersion) =>
+            FeatureGroupsActionHelper.openFeatureGroupsEditor(dispatch, {
+                featureGroup,
+                licenseModelId,
+                version: actualVersion
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(FeatureGroupListEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    FeatureGroupListEditorView
+);

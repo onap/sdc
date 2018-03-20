@@ -17,6 +17,6 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	USERS_LIST_LOADED: null,
-	GOT_USER_INFO: null
+    USERS_LIST_LOADED: null,
+    GOT_USER_INFO: null
 });

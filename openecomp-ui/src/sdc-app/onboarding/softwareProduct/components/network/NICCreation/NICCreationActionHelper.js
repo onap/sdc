@@ -13,35 +13,37 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from '../SoftwareProductComponentsNetworkConstants';
+import { actionTypes } from '../SoftwareProductComponentsNetworkConstants';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 
 export default {
+    open(
+        dispatch,
+        { softwareProductId, componentId, modalClassName, version }
+    ) {
+        dispatch({
+            type: actionTypes.NICCreation.OPEN
+        });
 
-	open(dispatch, {softwareProductId, componentId, modalClassName, version}) {
-		dispatch({
-			type: actionTypes.NICCreation.OPEN
-		});
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_SHOW,
+            data: {
+                modalComponentName: modalContentMapper.NIC_CREATION,
+                title: i18n('Create NEW NIC'),
+                modalClassName,
+                modalComponentProps: { softwareProductId, componentId, version }
+            }
+        });
+    },
 
-		dispatch({
-			type: modalActionTypes.GLOBAL_MODAL_SHOW,
-			data: {
-				modalComponentName: modalContentMapper.NIC_CREATION,
-				title: i18n('Create NEW NIC'),
-				modalClassName,
-				modalComponentProps: {softwareProductId, componentId, version}
-			}
-		});
-	},
-
-	close(dispatch){
-		dispatch({
-			type: modalActionTypes.GLOBAL_MODAL_CLOSE
-		});
-		dispatch({
-			type: actionTypes.NICCreation.CLEAR_DATA
-		});
-	}
+    close(dispatch) {
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
+        });
+        dispatch({
+            type: actionTypes.NICCreation.CLEAR_DATA
+        });
+    }
 };

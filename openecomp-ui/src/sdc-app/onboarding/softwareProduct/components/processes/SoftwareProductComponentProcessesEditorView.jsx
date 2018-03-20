@@ -14,17 +14,18 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import  {optionsInputValues as ComponentProcessesOptionsInputValues} from './SoftwareProductComponentProcessesConstants.js';
+import { optionsInputValues as ComponentProcessesOptionsInputValues } from './SoftwareProductComponentProcessesConstants.js';
 import SoftwareProductProcessesEditorForm from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessesEditorForm.jsx';
 
-
 class SoftwareProductProcessesEditorView extends React.Component {
-
-	render() {
-		return (
-			<SoftwareProductProcessesEditorForm optionsInputValues={ComponentProcessesOptionsInputValues} {...this.props}/>
-		);
-	}
+    render() {
+        return (
+            <SoftwareProductProcessesEditorForm
+                optionsInputValues={ComponentProcessesOptionsInputValues}
+                {...this.props}
+            />
+        );
+    }
 }
 
 export default SoftwareProductProcessesEditorView;

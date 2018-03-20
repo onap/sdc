@@ -13,66 +13,92 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import FeatureGroupsActionHelper from './FeatureGroupsActionHelper.js';
 import FeatureGroupEditorView from './FeatureGroupEditorView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
-export const mapStateToProps = ({licenseModel: {featureGroup, entitlementPool, licenseKeyGroup}}) => {
-	let {entitlementPoolsList = []} = entitlementPool;
-	let {licenseKeyGroupsList = []} = licenseKeyGroup;
-	const {featureGroupEditor} = featureGroup;
-	let {data, selectedTab, genericFieldInfo, formReady} = featureGroupEditor;
-	const featureGroupId = data ? data.id : null;
-	const list = featureGroup.featureGroupsList;
+export const mapStateToProps = ({
+    licenseModel: { featureGroup, entitlementPool, licenseKeyGroup }
+}) => {
+    let { entitlementPoolsList = [] } = entitlementPool;
+    let { licenseKeyGroupsList = [] } = licenseKeyGroup;
+    const { featureGroupEditor } = featureGroup;
+    let { data, selectedTab, genericFieldInfo, formReady } = featureGroupEditor;
+    const featureGroupId = data ? data.id : null;
+    const list = featureGroup.featureGroupsList;
 
-	let previousData, FGNames = {}, isFormValid = true, invalidTabs = [];
+    let previousData,
+        FGNames = {},
+        isFormValid = true,
+        invalidTabs = [];
 
-	if (featureGroupId) {
-		previousData = list.find(featureGroup => featureGroup.id === featureGroupId);
-	}
+    if (featureGroupId) {
+        previousData = list.find(
+            featureGroup => featureGroup.id === featureGroupId
+        );
+    }
 
-	for (let i = 0; i < list.length; i++) {
-		FGNames[list[i].name.toLowerCase()] = list[i].id;
-	}
+    for (let i = 0; i < list.length; i++) {
+        FGNames[list[i].name.toLowerCase()] = list[i].id;
+    }
 
-	for (let field in genericFieldInfo) {
-		if (!genericFieldInfo[field].isValid) {
-			isFormValid = false;
-			let tabId = genericFieldInfo[field].tabId;
-			if (invalidTabs.indexOf(tabId) === -1) {
-				invalidTabs[invalidTabs.length] = genericFieldInfo[field].tabId;
-			}
-		}
-	}
+    for (let field in genericFieldInfo) {
+        if (!genericFieldInfo[field].isValid) {
+            isFormValid = false;
+            let tabId = genericFieldInfo[field].tabId;
+            if (invalidTabs.indexOf(tabId) === -1) {
+                invalidTabs[invalidTabs.length] = genericFieldInfo[field].tabId;
+            }
+        }
+    }
 
-	return {
-		data,
-		previousData,
-		selectedTab,
-		entitlementPoolsList,
-		licenseKeyGroupsList,
-		isFormValid,
-		formReady,
-		genericFieldInfo,
-		invalidTabs,
-		FGNames
-	};
+    return {
+        data,
+        previousData,
+        selectedTab,
+        entitlementPoolsList,
+        licenseKeyGroupsList,
+        isFormValid,
+        formReady,
+        genericFieldInfo,
+        invalidTabs,
+        FGNames
+    };
 };
 
-
-const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
-	return {
-		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
-		onTabSelect: tab => FeatureGroupsActionHelper.selectEntitlementPoolsEditorTab(dispatch, {tab}),
-		onSubmit: (previousFeatureGroup, featureGroup) => {
-			FeatureGroupsActionHelper.closeFeatureGroupsEditor(dispatch);
-			FeatureGroupsActionHelper.saveFeatureGroup(dispatch, {licenseModelId, previousFeatureGroup, featureGroup, version});
-		},
-		onCancel: () => FeatureGroupsActionHelper.closeFeatureGroupsEditor(dispatch),
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)
-	};
+const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
+    return {
+        onDataChanged: (deltaData, formName, customValidations) =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName,
+                customValidations
+            }),
+        onTabSelect: tab =>
+            FeatureGroupsActionHelper.selectEntitlementPoolsEditorTab(
+                dispatch,
+                {
+                    tab
+                }
+            ),
+        onSubmit: (previousFeatureGroup, featureGroup) => {
+            FeatureGroupsActionHelper.closeFeatureGroupsEditor(dispatch);
+            FeatureGroupsActionHelper.saveFeatureGroup(dispatch, {
+                licenseModelId,
+                previousFeatureGroup,
+                featureGroup,
+                version
+            });
+        },
+        onCancel: () =>
+            FeatureGroupsActionHelper.closeFeatureGroupsEditor(dispatch),
+        onValidateForm: formName =>
+            ValidationHelper.validateForm(dispatch, formName)
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(FeatureGroupEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    FeatureGroupEditorView
+);

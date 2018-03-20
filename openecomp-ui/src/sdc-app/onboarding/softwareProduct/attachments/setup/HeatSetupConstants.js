@@ -16,27 +16,25 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
+    ARTIFACT_LIST_CHANGE: null,
+    ADD_ALL_UNASSIGNED_TO_ARTIFACTS: null,
+    ADD_ALL_ARTIFACTS_TO_UNASSIGNED: null,
 
-	ARTIFACT_LIST_CHANGE: null,
-	ADD_ALL_UNASSIGNED_TO_ARTIFACTS: null,
-	ADD_ALL_ARTIFACTS_TO_UNASSIGNED: null,
+    ADD_MODULE: null,
+    REMOVE_MODULE: null,
+    RENAME_MODULE: null,
+    FILL_HEAT_SETUP_CACHE: null,
+    FILE_ASSIGN_CHANGED: null,
 
-	ADD_MODULE: null,
-	REMOVE_MODULE: null,
-	RENAME_MODULE: null,
-	FILL_HEAT_SETUP_CACHE: null,
-	FILE_ASSIGN_CHANGED: null,
+    MANIFEST_LOADED: null,
 
-	MANIFEST_LOADED: null,
-
-	GO_TO_VALIDATION: null,
-	IN_VALIDATION: null
-
+    GO_TO_VALIDATION: null,
+    IN_VALIDATION: null
 });
 
 export const fileTypes = {
-	YAML: {label: 'yaml', regex: /(yaml|yml)/g},
-	ENV: {label: 'env', regex: /env/g},
-	VOL: {label: 'vol', regex: /(yaml|yml)/g},
-	VOL_ENV: {label: 'volEnv', regex: /env/g}
+    YAML: { label: 'yaml', regex: /(yaml|yml)/g },
+    ENV: { label: 'env', regex: /env/g },
+    VOL: { label: 'vol', regex: /(yaml|yml)/g },
+    VOL_ENV: { label: 'volEnv', regex: /env/g }
 };

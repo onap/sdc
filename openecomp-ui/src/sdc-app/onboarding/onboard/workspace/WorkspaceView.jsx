@@ -16,31 +16,43 @@
 import React from 'react';
 import DetailsCatalogView from '../DetailsCatalogView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {tabsMapping} from 'sdc-app/onboarding/onboard/OnboardConstants.js';
+import { tabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 
-const WorkspaceView = (props) => {
-	let {
-		licenseModelList, softwareProductList, onAddLicenseModelClick, users,
-		onAddSoftwareProductClick, onSelectLicenseModel, onSelectSoftwareProduct, searchValue, onMigrate
-	} = props;
+const WorkspaceView = props => {
+    let {
+        licenseModelList,
+        softwareProductList,
+        onAddLicenseModelClick,
+        users,
+        onAddSoftwareProductClick,
+        onSelectLicenseModel,
+        onSelectSoftwareProduct,
+        searchValue,
+        onMigrate
+    } = props;
 
-	return (
-		<div className='catalog-wrapper workspace-view'>
-			<div className='catalog-header workspace-header'>
-				{i18n('WORKSPACE')}
-			</div>
-			<DetailsCatalogView
-				VLMList={licenseModelList}
-				VSPList={softwareProductList}
-				users={users}
-				onAddVLM={onAddLicenseModelClick}
-				onAddVSP={onAddSoftwareProductClick}
-				onSelectVLM={(item, users) => onSelectLicenseModel(item, users, tabsMapping.WORKSPACE)}
-				onSelectVSP={(item, users) => onSelectSoftwareProduct(item, users, tabsMapping.WORKSPACE)}
-				onMigrate={onMigrate}
-				filter={searchValue} />
-		</div>
-	);
+    return (
+        <div className="catalog-wrapper workspace-view">
+            <div className="catalog-header workspace-header">
+                {i18n('WORKSPACE')}
+            </div>
+            <DetailsCatalogView
+                VLMList={licenseModelList}
+                VSPList={softwareProductList}
+                users={users}
+                onAddVLM={onAddLicenseModelClick}
+                onAddVSP={onAddSoftwareProductClick}
+                onSelectVLM={(item, users) =>
+                    onSelectLicenseModel(item, users, tabsMapping.WORKSPACE)
+                }
+                onSelectVSP={(item, users) =>
+                    onSelectSoftwareProduct(item, users, tabsMapping.WORKSPACE)
+                }
+                onMigrate={onMigrate}
+                filter={searchValue}
+            />
+        </div>
+    );
 };
 
 export default WorkspaceView;

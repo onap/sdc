@@ -13,48 +13,84 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import LicenseModelCreationActionHelper from './LicenseModelCreationActionHelper.js';
 import LicenseModelCreationView from './LicenseModelCreationView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
-import {itemTypes as versionItemTypes} from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
+import { itemTypes as versionItemTypes } from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
-import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsActionHelper.js';
 
-export const mapStateToProps = ({users: {usersList}, licenseModelList, finalizedLicenseModelList, archivedLicenseModelList, licenseModel: {licenseModelCreation}}) => {
-	let {genericFieldInfo} = licenseModelCreation;
-	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
-	let VLMNames = {};
+export const mapStateToProps = ({
+    users: { usersList },
+    licenseModelList,
+    finalizedLicenseModelList,
+    archivedLicenseModelList,
+    licenseModel: { licenseModelCreation }
+}) => {
+    let { genericFieldInfo } = licenseModelCreation;
+    let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
+    let VLMNames = {};
 
-	const allVlmList = [...licenseModelList, ...finalizedLicenseModelList,...archivedLicenseModelList];
-	allVlmList.map((item) => {
-		VLMNames[item.name.toLowerCase()] = item.id;
-	});
+    const allVlmList = [
+        ...licenseModelList,
+        ...finalizedLicenseModelList,
+        ...archivedLicenseModelList
+    ];
+    allVlmList.map(item => {
+        VLMNames[item.name.toLowerCase()] = item.id;
+    });
 
-	return {...licenseModelCreation, isFormValid: isFormValid, VLMNames, usersList};
+    return {
+        ...licenseModelCreation,
+        isFormValid: isFormValid,
+        VLMNames,
+        usersList
+    };
 };
 
-export const mapActionsToProps = (dispatch) => {
-	return {
-		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
-		onCancel: () => LicenseModelCreationActionHelper.close(dispatch),
-		onSubmit: (licenseModel, usersList) => {
-			LicenseModelCreationActionHelper.close(dispatch);
-			LicenseModelCreationActionHelper.createLicenseModel(dispatch, {licenseModel}).then(response => {
-				let {itemId, version} = response;
-				LicenseModelActionHelper.fetchLicenseModels(dispatch).then(() =>
-					PermissionsActionHelper.fetchItemUsers(dispatch, {itemId, allUsers: usersList}).then(() =>
-						VersionsPageActionHelper.fetchVersions(dispatch, {itemType: versionItemTypes.LICENSE_MODEL, itemId}).then(() =>
-							ScreensHelper.loadScreen(dispatch, {screen: enums.SCREEN.LICENSE_MODEL_OVERVIEW, screenType: screenTypes.LICENSE_MODEL,
-								props: {licenseModelId: itemId, version}})
-				)));
-			});
-		},
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)
-	};
+export const mapActionsToProps = dispatch => {
+    return {
+        onDataChanged: (deltaData, formName, customValidations) =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName,
+                customValidations
+            }),
+        onCancel: () => LicenseModelCreationActionHelper.close(dispatch),
+        onSubmit: (licenseModel, usersList) => {
+            LicenseModelCreationActionHelper.close(dispatch);
+            LicenseModelCreationActionHelper.createLicenseModel(dispatch, {
+                licenseModel
+            }).then(response => {
+                let { itemId, version } = response;
+                LicenseModelActionHelper.fetchLicenseModels(dispatch).then(() =>
+                    PermissionsActionHelper.fetchItemUsers(dispatch, {
+                        itemId,
+                        allUsers: usersList
+                    }).then(() =>
+                        VersionsPageActionHelper.fetchVersions(dispatch, {
+                            itemType: versionItemTypes.LICENSE_MODEL,
+                            itemId
+                        }).then(() =>
+                            ScreensHelper.loadScreen(dispatch, {
+                                screen: enums.SCREEN.LICENSE_MODEL_OVERVIEW,
+                                screenType: screenTypes.LICENSE_MODEL,
+                                props: { licenseModelId: itemId, version }
+                            })
+                        )
+                    )
+                );
+            });
+        },
+        onValidateForm: formName =>
+            ValidationHelper.validateForm(dispatch, formName)
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(LicenseModelCreationView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    LicenseModelCreationView
+);

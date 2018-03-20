@@ -16,41 +16,41 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const catalogItemTypes = Object.freeze({
-	LICENSE_MODEL: 'license-model',
-	SOFTWARE_PRODUCT: 'software-product'
+    LICENSE_MODEL: 'license-model',
+    SOFTWARE_PRODUCT: 'software-product'
 });
 
 export const catalogItemTypeClasses = {
-	LICENSE_MODEL: 'license-model-type',
-	SOFTWARE_PRODUCT: 'software-product-type',
-	VENDOR: 'vendor-type'
+    LICENSE_MODEL: 'license-model-type',
+    SOFTWARE_PRODUCT: 'software-product-type',
+    VENDOR: 'vendor-type'
 };
 
 export const catalogItemStatuses = {
-	DRAFT: 'Draft',
-	CERTIFIED: 'Certified',
-	ARCHIVED: 'ARCHIVED'
+    DRAFT: 'Draft',
+    CERTIFIED: 'Certified',
+    ARCHIVED: 'ARCHIVED'
 };
 
 export const modalMapper = {
-	'license-model': 'LICENSE_MODEL',
-	'software-product': 'SOFTWARE_PRODUCT'
+    'license-model': 'LICENSE_MODEL',
+    'software-product': 'SOFTWARE_PRODUCT'
 };
 
 export const tabsMapping = {
-	'BY_VENDOR': 1,
-	'ACTIVE': 2,
-	'ARCHIVE': 3
+    BY_VENDOR: 1,
+    ACTIVE: 2,
+    ARCHIVE: 3
 };
 
 export const migrationStatusMapper = {
-	OLD_VERSION: 'True',
+    OLD_VERSION: 'True'
 };
 
 export const actionTypes = keyMirror({
-	ONBOARDING_CATALOG_OPEN_VENDOR_PAGE: null,
-	CHANGE_ACTIVE_CATALOG_TAB: null,
-	CHANGE_SEARCH_VALUE: null,
-	CHANGE_VSP_OVERLAY: null,
-	CLOSE_VSP_OVERLAY: null
+    ONBOARDING_CATALOG_OPEN_VENDOR_PAGE: null,
+    CHANGE_ACTIVE_CATALOG_TAB: null,
+    CHANGE_SEARCH_VALUE: null,
+    CHANGE_VSP_OVERLAY: null,
+    CLOSE_VSP_OVERLAY: null
 });

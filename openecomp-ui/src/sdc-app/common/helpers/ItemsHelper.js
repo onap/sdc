@@ -15,92 +15,110 @@
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import {permissionTypes} from 'sdc-app/onboarding/permissions/PermissionsConstants.js';
-import {actionsEnum as VersionControllerActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
-import {actionTypes as onboardingActionTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+import { permissionTypes } from 'sdc-app/onboarding/permissions/PermissionsConstants.js';
+import { actionsEnum as VersionControllerActionsEnum } from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
+import { actionTypes as onboardingActionTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import restToggle from 'sdc-app/features/restToggle.js';
-import {featureToggleNames} from 'sdc-app/features/FeaturesConstants.js';
+import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 export const archiveActions = {
-	ARCHIVE: 'ARCHIVE',
-	RESTORE: 'RESTORE'
+    ARCHIVE: 'ARCHIVE',
+    RESTORE: 'RESTORE'
 };
 
 export const itemStatus = {
-	ARCHIVED: 'ARCHIVED',
-	DRAFT: 'Draft',
-	CERTIFIED: 'Certified'
+    ARCHIVED: 'ARCHIVED',
+    DRAFT: 'Draft',
+    CERTIFIED: 'Certified'
 };
 
-
 function baseUrl() {
-	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/items`;
+    const restPrefix = Configuration.get('restPrefix');
+    return `${restPrefix}/v1.0/items`;
 }
 
 const ItemsHelper = {
-	performVCAction({itemId, version, action, comment}) {
-		const {id: versionId} = version;
-		const data = {
-			action,
-			...action === VersionControllerActionsEnum.COMMIT && {commitRequest: {message: comment}}
-		};
-		return RestAPIUtil.put(`${baseUrl()}/${itemId}/versions/${versionId}/actions`, data);
-	},
+    performVCAction({ itemId, version, action, comment }) {
+        const { id: versionId } = version;
+        const data = {
+            action,
+            ...(action === VersionControllerActionsEnum.COMMIT && {
+                commitRequest: { message: comment }
+            })
+        };
+        return RestAPIUtil.put(
+            `${baseUrl()}/${itemId}/versions/${versionId}/actions`,
+            data
+        );
+    },
 
-	fetchVersions({itemId}) {
-		return RestAPIUtil.fetch(`${baseUrl()}/${itemId}/versions`);
-	},
+    fetchVersions({ itemId }) {
+        return RestAPIUtil.fetch(`${baseUrl()}/${itemId}/versions`);
+    },
 
-	fetchVersion({itemId, versionId}) {
-		return RestAPIUtil.fetch(`${baseUrl()}/${itemId}/versions/${versionId}`);
-	},
+    fetchVersion({ itemId, versionId }) {
+        return RestAPIUtil.fetch(
+            `${baseUrl()}/${itemId}/versions/${versionId}`
+        );
+    },
 
-	fetchActivityLog({itemId, versionId}) {
-		return RestAPIUtil.fetch(`${baseUrl()}/${itemId}/versions/${versionId}/activity-logs`);
-	},
+    fetchActivityLog({ itemId, versionId }) {
+        return RestAPIUtil.fetch(
+            `${baseUrl()}/${itemId}/versions/${versionId}/activity-logs`
+        );
+    },
 
-	fetchUsers({itemId}) {
-		return RestAPIUtil.fetch(`${baseUrl()}/${itemId}/permissions`);
-	},
+    fetchUsers({ itemId }) {
+        return RestAPIUtil.fetch(`${baseUrl()}/${itemId}/permissions`);
+    },
 
-	updateContributors({itemId, removedUsersIds, addedUsersIds}) {
-		return RestAPIUtil.put(`${baseUrl()}/${itemId}/permissions/${permissionTypes.CONTRIBUTOR}`, {removedUsersIds, addedUsersIds});
-	},
+    updateContributors({ itemId, removedUsersIds, addedUsersIds }) {
+        return RestAPIUtil.put(
+            `${baseUrl()}/${itemId}/permissions/${permissionTypes.CONTRIBUTOR}`,
+            { removedUsersIds, addedUsersIds }
+        );
+    },
 
-	changeOwner({itemId, ownerId}) {
-		return RestAPIUtil.put(`${baseUrl()}/${itemId}/permissions/${permissionTypes.OWNER}`, {removedUsersIds: [], addedUsersIds: [ownerId]});
-	},
+    changeOwner({ itemId, ownerId }) {
+        return RestAPIUtil.put(
+            `${baseUrl()}/${itemId}/permissions/${permissionTypes.OWNER}`,
+            { removedUsersIds: [], addedUsersIds: [ownerId] }
+        );
+    },
 
-	async checkItemStatus(dispatch, {itemId, versionId}) {
-		const response = await ItemsHelper.fetchVersion({itemId, versionId});
-		let state = response && response.state || {};
-		const {baseId, description, id, name, status} = response;
-		const item = await ItemsHelper.fetchItem(itemId);
-		dispatch({
-			type: onboardingActionTypes.UPDATE_ITEM_STATUS,
-			itemState: state,
-			itemStatus: response.status,
-			archivedStatus: item.status,
-			updatedVersion: {baseId, description, id, name, status}
-		});
+    async checkItemStatus(dispatch, { itemId, versionId }) {
+        const response = await ItemsHelper.fetchVersion({ itemId, versionId });
+        let state = (response && response.state) || {};
+        const { baseId, description, id, name, status } = response;
+        const item = await ItemsHelper.fetchItem(itemId);
+        dispatch({
+            type: onboardingActionTypes.UPDATE_ITEM_STATUS,
+            itemState: state,
+            itemStatus: response.status,
+            archivedStatus: item.status,
+            updatedVersion: { baseId, description, id, name, status }
+        });
 
-		return Promise.resolve({...response, archivedStatus: item.status});
-	},
+        return Promise.resolve({ ...response, archivedStatus: item.status });
+    },
 
-	fetchItem(itemId) {
-		return restToggle({restFunction: () => RestAPIUtil.fetch(`${baseUrl()}/${itemId}`), featureName: featureToggleNames.ARCHIVE_ITEM, mockResult: {}});
-	},
+    fetchItem(itemId) {
+        return restToggle({
+            restFunction: () => RestAPIUtil.fetch(`${baseUrl()}/${itemId}`),
+            featureName: featureToggleNames.ARCHIVE_ITEM,
+            mockResult: {}
+        });
+    },
 
-	archiveItem(itemId) {
-		return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
-			action: archiveActions.ARCHIVE
-		});
-	},
-	restoreItem(itemId) {
-		return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
-			action: archiveActions.RESTORE
-		});
-	}
+    archiveItem(itemId) {
+        return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
+            action: archiveActions.ARCHIVE
+        });
+    },
+    restoreItem(itemId) {
+        return RestAPIUtil.put(`${baseUrl()}/${itemId}/actions`, {
+            action: archiveActions.RESTORE
+        });
+    }
 };
 
 export default ItemsHelper;

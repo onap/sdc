@@ -20,15 +20,11 @@ import PropTypes from 'prop-types';
  * Metadata view.
  */
 const Metadata = function Metadata(props) {
-  return (
-    <div className="asdcs-designer-metadata">
-      {props.metadata.name}
-    </div>
-  );
+    return <div className="asdcs-designer-metadata">{props.metadata.name}</div>;
 };
 
 Metadata.propTypes = {
-  metadata: PropTypes.object.isRequired,
+    metadata: PropTypes.object.isRequired
 };
 
 export default Metadata;

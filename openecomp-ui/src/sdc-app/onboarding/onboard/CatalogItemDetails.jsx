@@ -16,71 +16,96 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {catalogItemTypes, migrationStatusMapper} from './onboardingCatalog/OnboardingCatalogConstants.js';
-import {Tile, TileInfo, TileInfoLine, TileFooter, TileFooterCell} from 'sdc-ui/lib/react';
-import {TooltipWrapper} from './onboardingCatalog/Tooltip.jsx';
+import {
+    catalogItemTypes,
+    migrationStatusMapper
+} from './onboardingCatalog/OnboardingCatalogConstants.js';
+import {
+    Tile,
+    TileInfo,
+    TileInfoLine,
+    TileFooter,
+    TileFooterCell
+} from 'sdc-ui/lib/react';
+import { TooltipWrapper } from './onboardingCatalog/Tooltip.jsx';
 
 const ITEM_TYPE_MAP = {
-	[catalogItemTypes.LICENSE_MODEL]: {
-		headerText: i18n('VLM'),
-		contentIconName: 'vlm',
-		color: 'purple'
-	},
-	[catalogItemTypes.SOFTWARE_PRODUCT]: {
-		headerText: i18n('VSP'),
-		contentIconName: 'vsp',
-		color: 'blue'
-	}
+    [catalogItemTypes.LICENSE_MODEL]: {
+        headerText: i18n('VLM'),
+        contentIconName: 'vlm',
+        color: 'purple'
+    },
+    [catalogItemTypes.SOFTWARE_PRODUCT]: {
+        headerText: i18n('VSP'),
+        contentIconName: 'vsp',
+        color: 'blue'
+    }
 };
 
-const CatalogItemDetails = ({catalogItemData, catalogItemTypeClass, onSelect, onMigrate}) => {
+const CatalogItemDetails = ({
+    catalogItemData,
+    catalogItemTypeClass,
+    onSelect,
+    onMigrate
+}) => {
+    let { vendorName, name, owner } = catalogItemData;
+    let { headerText, color, contentIconName } = ITEM_TYPE_MAP[
+        catalogItemTypeClass
+    ];
 
-	let {vendorName, name, owner} = catalogItemData;
-	let {headerText, color, contentIconName} = ITEM_TYPE_MAP[catalogItemTypeClass];
+    let onClick = e => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (
+            catalogItemData.isOldVersion &&
+            catalogItemData.isOldVersion === migrationStatusMapper.OLD_VERSION
+        ) {
+            onMigrate({ softwareProduct: catalogItemData });
+        } else {
+            onSelect();
+        }
+    };
 
-	let onClick = (e) => {
-		e.stopPropagation();
-		e.preventDefault();
-		if (catalogItemData.isOldVersion && catalogItemData.isOldVersion === migrationStatusMapper.OLD_VERSION) {
-			onMigrate({softwareProduct: catalogItemData});
-		} else {
-			onSelect();
-		}
-	};
-
-	return (
-		<Tile
-			headerText={headerText}
-			headerColor={color}
-			iconName={contentIconName}
-			iconColor={color}
-			onClick={onClick}
-			dataTestId={catalogItemTypeClass}>
-			<TileInfo data-test-id='catalog-item-content'>
-				{vendorName &&
-					<TileInfoLine type='supertitle'>
-						<TooltipWrapper className='with-overlay' tooltipClassName='tile-super-info' dataTestId='catalog-item-vendor-name'>{vendorName}</TooltipWrapper>
-					</TileInfoLine>
-				}
-				<TileInfoLine type='title'>
-					<TooltipWrapper className='with-overlay' tooltipClassName='tile-title-info' dataTestId='catalog-item-name'>{name}</TooltipWrapper>
-				</TileInfoLine>
-			</TileInfo>
-				<TileFooter>
-				{owner &&
-					<TileFooterCell>Owner - {owner}</TileFooterCell>
-				}
-				</TileFooter>
-		</Tile>
-	);
-
+    return (
+        <Tile
+            headerText={headerText}
+            headerColor={color}
+            iconName={contentIconName}
+            iconColor={color}
+            onClick={onClick}
+            dataTestId={catalogItemTypeClass}>
+            <TileInfo data-test-id="catalog-item-content">
+                {vendorName && (
+                    <TileInfoLine type="supertitle">
+                        <TooltipWrapper
+                            className="with-overlay"
+                            tooltipClassName="tile-super-info"
+                            dataTestId="catalog-item-vendor-name">
+                            {vendorName}
+                        </TooltipWrapper>
+                    </TileInfoLine>
+                )}
+                <TileInfoLine type="title">
+                    <TooltipWrapper
+                        className="with-overlay"
+                        tooltipClassName="tile-title-info"
+                        dataTestId="catalog-item-name">
+                        {name}
+                    </TooltipWrapper>
+                </TileInfoLine>
+            </TileInfo>
+            <TileFooter>
+                {owner && <TileFooterCell>Owner - {owner}</TileFooterCell>}
+            </TileFooter>
+        </Tile>
+    );
 };
 
 CatalogItemDetails.PropTypes = {
-	catalogItemData: PropTypes.obj,
-	catalogItemTypeClass: PropTypes.string,
-	onSelect: PropTypes.func,
-	onMigrate: PropTypes.func
+    catalogItemData: PropTypes.obj,
+    catalogItemTypeClass: PropTypes.string,
+    onSelect: PropTypes.func,
+    onMigrate: PropTypes.func
 };
 
 export default CatalogItemDetails;

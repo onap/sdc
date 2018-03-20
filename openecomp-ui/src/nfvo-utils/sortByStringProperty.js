@@ -14,5 +14,7 @@
  * permissions and limitations under the License.
  */
 export default function sortByStringProperty(array, property) {
-	return [...array].sort((a, b) => a[property].toLowerCase().localeCompare(b[property].toLowerCase()));
+    return [...array].sort((a, b) =>
+        a[property].toLowerCase().localeCompare(b[property].toLowerCase())
+    );
 }

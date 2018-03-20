@@ -24,18 +24,17 @@ import PropTypes from 'prop-types';
  * @constructor
  */
 const Icon = function Icon({ glyph, className }) {
-  return (
-    <svg viewBox="0 0 1000 1000" className={className} >
-      <use xlinkHref={glyph} className="asdcs-icon" />
-    </svg>
-  );
+    return (
+        <svg viewBox="0 0 1000 1000" className={className}>
+            <use xlinkHref={glyph} className="asdcs-icon" />
+        </svg>
+    );
 };
 
 /** Declare properties. */
 Icon.propTypes = {
-  className: PropTypes.string,
-  glyph: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    glyph: PropTypes.string.isRequired
 };
 
 export default Icon;
-

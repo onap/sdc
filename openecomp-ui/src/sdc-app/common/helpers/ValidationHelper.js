@@ -13,80 +13,85 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes as commonActionTypes} from 'sdc-app/common/reducers/PlainDataReducerConstants.js';
-import {actionTypes as qcommonActionTypes} from 'sdc-app/common/reducers/JSONSchemaReducerConstants.js';
+import { actionTypes as commonActionTypes } from 'sdc-app/common/reducers/PlainDataReducerConstants.js';
+import { actionTypes as qcommonActionTypes } from 'sdc-app/common/reducers/JSONSchemaReducerConstants.js';
 
 class ValidationHelper {
+    static dataChanged(
+        dispatch,
+        { deltaData, formName, customValidations = {} }
+    ) {
+        dispatch({
+            type: commonActionTypes.DATA_CHANGED,
+            deltaData,
+            formName,
+            customValidations
+        });
+    }
 
-	static dataChanged(dispatch, {deltaData, formName, customValidations = {}}){
-		dispatch({
-			type: commonActionTypes.DATA_CHANGED,
-			deltaData,
-			formName,
-			customValidations
-		});
-	}
+    static validateForm(dispatch, formName) {
+        dispatch({
+            type: commonActionTypes.VALIDATE_FORM,
+            formName
+        });
+    }
 
-	static validateForm(dispatch, formName){
-		dispatch({
-			type: commonActionTypes.VALIDATE_FORM,
-			formName
-		});
-	}
+    static validateData(dispatch, { formName, data }) {
+        dispatch({
+            type: commonActionTypes.VALIDATE_DATA,
+            formName,
+            data
+        });
+    }
 
-	static validateData(dispatch, {formName, data}) {
-		dispatch({
-			type: commonActionTypes.VALIDATE_DATA,
-			formName,
-			data
-		});
-	}
+    static qValidateData(dispatch, { data, qName, customValidations = {} }) {
+        dispatch({
+            type: qcommonActionTypes.VALIDATE_DATA,
+            data,
+            qName,
+            customValidations
+        });
+    }
 
-	static qValidateData(dispatch, {data, qName, customValidations = {}}) {
-		dispatch({
-			type: qcommonActionTypes.VALIDATE_DATA,
-			data,
-			qName,
-			customValidations
-		});
-	}
+    static qValidateForm(dispatch, qName, customValidations) {
+        dispatch({
+            type: qcommonActionTypes.VALIDATE_FORM,
+            qName,
+            customValidations
+        });
+    }
 
-	static qValidateForm(dispatch, qName, customValidations){
-		dispatch({
-			type: qcommonActionTypes.VALIDATE_FORM,
-			qName,
-			customValidations
-		});
-	}
+    static qDataChanged(
+        dispatch,
+        { deltaData, qName, customValidations = {} }
+    ) {
+        dispatch({
+            type: qcommonActionTypes.DATA_CHANGED,
+            deltaData,
+            qName,
+            customValidations
+        });
+    }
 
-	static qDataChanged(dispatch, {deltaData, qName, customValidations = {}}){
-		dispatch({
-			type: qcommonActionTypes.DATA_CHANGED,
-			deltaData,
-			qName,
-			customValidations
-		});
-	}
+    static qDataLoaded(dispatch, { qName, response: { qdata, qschema } }) {
+        dispatch({
+            type: qcommonActionTypes.DATA_LOADED,
+            payload: {
+                qdata,
+                qschema
+            },
+            qName
+        });
+    }
 
-	static qDataLoaded(dispatch, {qName, response: {qdata, qschema}}) {
-		dispatch({
-			type: qcommonActionTypes.DATA_LOADED,
-			payload: {
-				qdata,
-				qschema
-			},
-			qName
-		});
-	}
-
-	static checkFormValid(genericFieldInfo) {
-		for (let field in genericFieldInfo) {
-			if (!genericFieldInfo[field].isValid) {
-				return false;
-			}
-		}
-		return true;
-	}
+    static checkFormValid(genericFieldInfo) {
+        for (let field in genericFieldInfo) {
+            if (!genericFieldInfo[field].isValid) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 export default ValidationHelper;

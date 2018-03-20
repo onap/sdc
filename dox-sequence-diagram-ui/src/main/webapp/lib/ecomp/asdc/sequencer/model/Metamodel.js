@@ -22,73 +22,71 @@ import Common from '../common/Common';
  * Rules governing what a definition can contain.
  */
 export default class Metamodel {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Construct from JSON definition.
-   * @param json schema definition.
-   */
-  constructor(json) {
-    Common.assertType(json, 'Object');
-    const dfault = require('./templates/default.metamodel.json');
-    this.json = _merge({}, dfault, json);
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get schema identifier.
-   * @returns ID.
-   */
-  getId() {
-    return this.json.diagram.metadata.id;
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get lifeline constraints.
-   * @returns {*}
-   */
-  getConstraints() {
-    return this.json.diagram.lifelines.constraints;
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get lifeline metadata by lifeline ID.
-   * @param id sought lifeline.
-   * @returns lifeline if found.
-   */
-  getLifelineById(id) {
-    for (const lifeline of this.json.diagram.lifelines.lifelines) {
-      if (lifeline.id === id) {
-        return lifeline;
-      }
+    /**
+     * Construct from JSON definition.
+     * @param json schema definition.
+     */
+    constructor(json) {
+        Common.assertType(json, 'Object');
+        const dfault = require('./templates/default.metamodel.json');
+        this.json = _merge({}, dfault, json);
     }
-    return undefined;
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Get original JSON.
-   * @returns JSON.
-   */
-  unwrap() {
-    return this.json;
-  }
+    /**
+     * Get schema identifier.
+     * @returns ID.
+     */
+    getId() {
+        return this.json.diagram.metadata.id;
+    }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Get default schema.
-   * @returns Metamodel default (permissive) Metamodel.
-   */
-  static getDefault() {
-    return new Metamodel({});
-  }
+    /**
+     * Get lifeline constraints.
+     * @returns {*}
+     */
+    getConstraints() {
+        return this.json.diagram.lifelines.constraints;
+    }
 
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Get lifeline metadata by lifeline ID.
+     * @param id sought lifeline.
+     * @returns lifeline if found.
+     */
+    getLifelineById(id) {
+        for (const lifeline of this.json.diagram.lifelines.lifelines) {
+            if (lifeline.id === id) {
+                return lifeline;
+            }
+        }
+        return undefined;
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Get original JSON.
+     * @returns JSON.
+     */
+    unwrap() {
+        return this.json;
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Get default schema.
+     * @returns Metamodel default (permissive) Metamodel.
+     */
+    static getDefault() {
+        return new Metamodel({});
+    }
 }

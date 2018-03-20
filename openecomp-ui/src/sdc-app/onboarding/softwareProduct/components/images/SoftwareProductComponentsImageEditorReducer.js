@@ -13,30 +13,29 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductComponentsImageConstants.js';
-import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
+import { actionTypes } from './SoftwareProductComponentsImageConstants.js';
+import { forms } from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.ImageEditor.CLOSE:
-			return {};
-		case actionTypes.ImageEditor.OPEN:
-			return {
-				...state,
-				data: {
-					...action.image
-				},
-				genericFieldInfo: {
-					'fileName' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					}
-				},
-				formName: forms.IMAGE_EDIT_FORM
-			};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.ImageEditor.CLOSE:
+            return {};
+        case actionTypes.ImageEditor.OPEN:
+            return {
+                ...state,
+                data: {
+                    ...action.image
+                },
+                genericFieldInfo: {
+                    fileName: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    }
+                },
+                formName: forms.IMAGE_EDIT_FORM
+            };
+        default:
+            return state;
+    }
 };
-

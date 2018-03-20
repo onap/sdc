@@ -14,13 +14,13 @@
  * permissions and limitations under the License.
  */
 
- import {actionTypes} from './FeaturesConstants.js';
+import { actionTypes } from './FeaturesConstants.js';
 
- export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.FEATURES_LIST_LOADED:
-			return [...action.features];
-		default:
-			return state;
-	}            
- };
+export default (state = [], action) => {
+    switch (action.type) {
+        case actionTypes.FEATURES_LIST_LOADED:
+            return [...action.features];
+        default:
+            return state;
+    }
+};

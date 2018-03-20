@@ -15,8 +15,8 @@
  */
 
 import flowListReducer from './FlowsListReducer.js';
-import {createPlainDataReducer} from 'sdc-app/common/reducers/PlainDataReducer.js';
+import { createPlainDataReducer } from 'sdc-app/common/reducers/PlainDataReducer.js';
 
 export default {
-	flows: createPlainDataReducer(flowListReducer)
+    flows: createPlainDataReducer(flowListReducer)
 };

@@ -13,25 +13,48 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import SoftwareProductDependenciesView from './SoftwareProductDependenciesView.jsx';
 import SoftwareProductDependenciesActionHelper from './SoftwareProductDependenciesActionHelper.js';
 
-export const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductDependencies, softwareProductComponents: {componentsList}} = softwareProduct;
-	return {
-		softwareProductDependencies: softwareProductDependencies,
-		componentsOptions: componentsList.map(component => ({value: component.id, label: component.displayName}))
-	};
+export const mapStateToProps = ({ softwareProduct }) => {
+    let {
+        softwareProductDependencies,
+        softwareProductComponents: { componentsList }
+    } = softwareProduct;
+    return {
+        softwareProductDependencies: softwareProductDependencies,
+        componentsOptions: componentsList.map(component => ({
+            value: component.id,
+            label: component.displayName
+        }))
+    };
 };
 
-const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
-	return {
-		onDataChanged: (item) => SoftwareProductDependenciesActionHelper.updateDependency(dispatch, {softwareProductId, version, item}),
-		onDeleteDependency: (item) => SoftwareProductDependenciesActionHelper.removeDependency(dispatch, {softwareProductId, version, item}),
-		onAddDependency: (item) => SoftwareProductDependenciesActionHelper.createDependency(dispatch, {softwareProductId, version, item})
-	};
+const mapActionsToProps = (dispatch, { softwareProductId, version }) => {
+    return {
+        onDataChanged: item =>
+            SoftwareProductDependenciesActionHelper.updateDependency(dispatch, {
+                softwareProductId,
+                version,
+                item
+            }),
+        onDeleteDependency: item =>
+            SoftwareProductDependenciesActionHelper.removeDependency(dispatch, {
+                softwareProductId,
+                version,
+                item
+            }),
+        onAddDependency: item =>
+            SoftwareProductDependenciesActionHelper.createDependency(dispatch, {
+                softwareProductId,
+                version,
+                item
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(SoftwareProductDependenciesView);
+export default connect(mapStateToProps, mapActionsToProps, null, {
+    withRef: true
+})(SoftwareProductDependenciesView);

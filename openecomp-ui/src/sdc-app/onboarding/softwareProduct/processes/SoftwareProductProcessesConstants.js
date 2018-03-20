@@ -16,20 +16,20 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	ADD_SOFTWARE_PRODUCT_PROCESS: null,
-	EDIT_SOFTWARE_PRODUCT_PROCESS: null,
-	DELETE_SOFTWARE_PRODUCT_PROCESS: null,
-	SOFTWARE_PRODUCT_PROCESS_EDITOR_OPEN: null,
-	SOFTWARE_PRODUCT_PROCESS_EDITOR_CLOSE: null,
-	FETCH_SOFTWARE_PRODUCT_PROCESSES: null,
-	SOFTWARE_PRODUCT_PROCESS_DELETE_CONFIRM: null
+    ADD_SOFTWARE_PRODUCT_PROCESS: null,
+    EDIT_SOFTWARE_PRODUCT_PROCESS: null,
+    DELETE_SOFTWARE_PRODUCT_PROCESS: null,
+    SOFTWARE_PRODUCT_PROCESS_EDITOR_OPEN: null,
+    SOFTWARE_PRODUCT_PROCESS_EDITOR_CLOSE: null,
+    FETCH_SOFTWARE_PRODUCT_PROCESSES: null,
+    SOFTWARE_PRODUCT_PROCESS_DELETE_CONFIRM: null
 });
 
 export const optionsInputValues = {
-	PROCESS_TYPE: [
-		{title: 'Select...', enum: ''},
-		{title: 'Other', enum: 'Other'}
-	]
+    PROCESS_TYPE: [
+        { title: 'Select...', enum: '' },
+        { title: 'Other', enum: 'Other' }
+    ]
 };
 
 export const VSP_PROCESS_FORM = 'VSPPROCESSFORM';

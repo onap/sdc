@@ -14,47 +14,48 @@
  * permissions and limitations under the License.
  */
 
-
- /**
+/**
  * Feature toggling decorator
- * 	usage: 
- * 
+ * 	usage:
+ *
  * @featureToggle('FeatureName')
  * class Example extends React.Component {
  * 		render() {
  * 			return (<div>test feature</div>);
  * 		}
  * }
- * 
- *  OR 
- * 
+ *
+ *  OR
+ *
  * const TestFeature = () => (<div>test feature</div>)
  * export default featureToggle('FeatureName')(TestFeature)
- * 
+ *
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-export const FeatureComponent = (props) => {
-	const {features = [], featureName, InnerComponent, ...otherProps} = props;
-	const AComp = InnerComponent.AComp ? InnerComponent.AComp : InnerComponent;
-	
-	return !!features.find(el => el.name === featureName && el.active) ?
-		 <AComp {...otherProps}/> 
-		 : InnerComponent.BComp ? <InnerComponent.BComp {...otherProps}/> : null;
+export const FeatureComponent = props => {
+    const { features = [], featureName, InnerComponent, ...otherProps } = props;
+    const AComp = InnerComponent.AComp ? InnerComponent.AComp : InnerComponent;
+
+    return !!features.find(el => el.name === featureName && el.active) ? (
+        <AComp {...otherProps} />
+    ) : InnerComponent.BComp ? (
+        <InnerComponent.BComp {...otherProps} />
+    ) : null;
 };
 
 FeatureComponent.propTypes = {
-	features: PropTypes.array,
-	featureName: PropTypes.string.isRequired
+    features: PropTypes.array,
+    featureName: PropTypes.string.isRequired
 };
 
-
 export default function featureToggle(featureName) {
-	return (InnerComponent) => {		
-		return connect(({features}) => {return {features, featureName, InnerComponent};})(FeatureComponent);
-	};
+    return InnerComponent => {
+        return connect(({ features }) => {
+            return { features, featureName, InnerComponent };
+        })(FeatureComponent);
+    };
 }
-

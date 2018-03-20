@@ -13,54 +13,54 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './MergeEditorConstants.js';
+import { actionTypes } from './MergeEditorConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.LOAD_CONFLICT: {
-			let cdata = {...action.data};
-			// let data = state.conflicts ? {...state.conflicts.data} : {} ;
-			// data[cdata.id] = cdata;
-			let conflicts = state.conflicts ? {...state.conflicts} : {};
-			conflicts[cdata.id] = cdata;
-			return {
-				...state,
-				conflicts
-			};
-		}
-		case actionTypes.DATA_PROCESSED: {
-			let conflicts = {...state.conflicts};
-			let {data} = action;
-			if (data && data.cid) {
-				let yours = {...conflicts[data.cid].yours};
-				let theirs = {...conflicts[data.cid].theirs};
-				let {yoursField, theirsField} = data;
-				if (yoursField) {
-					yours[yoursField.name] = yoursField.value;
-					conflicts[data.cid].yours = yours;
-				}
-				if (theirsField) {
-					theirs[theirsField.name] = theirsField.value;
-					conflicts[data.cid].theirs = theirs;
-				}
-			}
-			return {
-				...state,
-				conflicts: {
-					...conflicts
-				}
-			};
-		}
-		case actionTypes.LOAD_CONFLICTS:
-			let conflictFiles = [];
-			if (action.data) {
-				conflictFiles = [...action.data.conflictInfoList];
-			}
-			return {
-				inMerge: conflictFiles.length > 0,
-				conflictFiles
-			};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.LOAD_CONFLICT: {
+            let cdata = { ...action.data };
+            // let data = state.conflicts ? {...state.conflicts.data} : {} ;
+            // data[cdata.id] = cdata;
+            let conflicts = state.conflicts ? { ...state.conflicts } : {};
+            conflicts[cdata.id] = cdata;
+            return {
+                ...state,
+                conflicts
+            };
+        }
+        case actionTypes.DATA_PROCESSED: {
+            let conflicts = { ...state.conflicts };
+            let { data } = action;
+            if (data && data.cid) {
+                let yours = { ...conflicts[data.cid].yours };
+                let theirs = { ...conflicts[data.cid].theirs };
+                let { yoursField, theirsField } = data;
+                if (yoursField) {
+                    yours[yoursField.name] = yoursField.value;
+                    conflicts[data.cid].yours = yours;
+                }
+                if (theirsField) {
+                    theirs[theirsField.name] = theirsField.value;
+                    conflicts[data.cid].theirs = theirs;
+                }
+            }
+            return {
+                ...state,
+                conflicts: {
+                    ...conflicts
+                }
+            };
+        }
+        case actionTypes.LOAD_CONFLICTS:
+            let conflictFiles = [];
+            if (action.data) {
+                conflictFiles = [...action.data.conflictInfoList];
+            }
+            return {
+                inMerge: conflictFiles.length > 0,
+                conflictFiles
+            };
+        default:
+            return state;
+    }
 };

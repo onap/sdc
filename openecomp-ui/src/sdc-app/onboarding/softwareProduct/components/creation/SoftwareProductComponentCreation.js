@@ -14,36 +14,50 @@
  * permissions and limitations under the License.
  */
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import SoftwareProductComponentCreationView from './SoftwareProductComponentCreationView.jsx';
 import SoftwareProductComponentsActionHelper from '../SoftwareProductComponentsActionHelper.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
-import {forms} from '../SoftwareProductComponentsConstants.js';
+import { forms } from '../SoftwareProductComponentsConstants.js';
 
-export const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductComponents: {componentEditor: {data, genericFieldInfo, formReady}}} = softwareProduct;
-	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
-	return {
-		data,
-		genericFieldInfo,
-		formReady,
-		isFormValid
-	};
+export const mapStateToProps = ({ softwareProduct }) => {
+    let {
+        softwareProductComponents: {
+            componentEditor: { data, genericFieldInfo, formReady }
+        }
+    } = softwareProduct;
+    let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
+    return {
+        data,
+        genericFieldInfo,
+        formReady,
+        isFormValid
+    };
 };
 
-
-const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
-	return {
-		onDataChanged: (deltaData) => ValidationHelper.dataChanged(dispatch, {deltaData, formName: forms.CREATE_FORM}),
-		//onDataChanged: deltaData => SoftwareProductComponentsActionHelper.componentDataChanged(dispatch, {deltaData}),
-		onSubmit: (componentData) => {
-			return SoftwareProductComponentsActionHelper.createSoftwareProductComponent(dispatch,
-			{softwareProductId, componentData, version});
-		},
-		onCancel: () => SoftwareProductComponentsActionHelper.closeComponentCreationModal(dispatch),
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)
-	};
-
+const mapActionsToProps = (dispatch, { softwareProductId, version }) => {
+    return {
+        onDataChanged: deltaData =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName: forms.CREATE_FORM
+            }),
+        //onDataChanged: deltaData => SoftwareProductComponentsActionHelper.componentDataChanged(dispatch, {deltaData}),
+        onSubmit: componentData => {
+            return SoftwareProductComponentsActionHelper.createSoftwareProductComponent(
+                dispatch,
+                { softwareProductId, componentData, version }
+            );
+        },
+        onCancel: () =>
+            SoftwareProductComponentsActionHelper.closeComponentCreationModal(
+                dispatch
+            ),
+        onValidateForm: formName =>
+            ValidationHelper.validateForm(dispatch, formName)
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(SoftwareProductComponentCreationView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    SoftwareProductComponentCreationView
+);

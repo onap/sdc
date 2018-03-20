@@ -1,32 +1,110 @@
 {
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "classes": true,
+            "modules": true,
+            "experimentalDecorators": true
+        }
+    },
+    "env": {
+        "es6": true,
+        "jquery": true,
+        "node": true,
+        "jest": true
+    },
+    "plugins": ["react", "import", "prettier"],
+    "extends": ["prettier"],
+    "globals": {
+        "Event": true,
+        "window": true,
+        "navigator": true,
+        "System": true,
+        "document": true,
+        "localStorage": true,
+        "sessionStorage": true,
+        "Image": true,
+        "requestAnimationFrame": true,
+        "cancelAnimationFrame": true,
+        "DEBUG": true,
+        "SVGElement": true,
+        "FormData": true,
+        "DEV": true,
+        "Blob": true,
+        "XMLHttpRequest": true,
+        "WebSocket": true,
+        "URL": true,
+        "PunchOutRegistry": true,
+        "it": true,
+        "describe": true
+    },
+    "rules": {
+        "prettier/prettier": [
+            "error",
+            {
+                "singleQuote": true,
+                "jsxBracketSameLine": true,
+                "tabWidth": 4
+            }
+        ],
+        "linebreak-style": 0,
+        "no-unused-vars": 2,
+        "no-bitwise": 0,
+        "no-eq-null": 2,
+        "eqeqeq": 2,
+        "no-unused-expressions": 2,
+        "no-use-before-define": 2,
+        "new-cap": [
+            2,
+            {
+                "capIsNewExceptions": ["DataTable", "V"]
+            }
+        ],
+        "no-caller": 2,
+        "no-empty": 2,
+        "no-undef": 2,
+        "quotes": [2, "single", "avoid-escape"],
+        "no-plusplus": 0,
+        "no-cond-assign": [2, "except-parens"],
+        "no-invalid-this": 0,
+        "dot-notation": 0,
+        "camelcase": [
+            2,
+            {
+                "properties": "never"
+            }
+        ],
+        "curly": 2,
+        "semi": [2, "always"],
+        "import/default": 0,
+        "import/no-unresolved": 0,
+        "import/no-named-as-default": 2,
+        "import/no-duplicates": 0,
+        "import/imports-first": 2,
+        "import/export": 2,
+        "react/display-name": 0,
+        "react/forbid-prop-types": 0,
+        "react/jsx-boolean-value": 0,
+        "react/jsx-no-duplicate-props": 1,
+        "react/jsx-no-literals": 0,
+        "react/jsx-no-undef": 1,
+        "react/jsx-sort-prop-types": 0,
+        "react/jsx-sort-props": 0,
+        "react/jsx-uses-react": 1,
+        "react/jsx-uses-vars": 1,
+        "react/no-danger": 1,
+        "react/no-did-mount-set-state": 2,
+        "react/no-did-update-set-state": 2,
+        "react/no-direct-mutation-state": 1,
+        "react/no-multi-comp": 0,
+        "react/no-set-state": 0,
+        "react/no-unknown-property": 1,
+        "react/prop-types": 0,
+        "react/react-in-jsx-scope": 1,
+        "react/self-closing-comp": 1,
+        "react/sort-comp": 0
     }
-  },
-  "env": {
-    "browser": true
-  },
-  "plugins": [
-    "react"
-  ],
-  "extends": [
-    "airbnb"
-  ],
-  "rules": {
-    "padded-blocks": 0,
-    "max-len": ["error", 160, 4],
-    "no-underscore-dangle": 0,
-    "global-require": 0,
-    "react/sort-comp": 0,
-    "new-cap": 0
-  },
-  "settings": {
-    "react": {
-      "pragma": "React",
-      "version": "0.14.8"
-    }
-  }
 }

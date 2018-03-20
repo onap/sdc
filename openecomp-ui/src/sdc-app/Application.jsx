@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import GlobalModal from 'nfvo-components/modal/GlobalModal.js';
 import Loader from 'nfvo-components/loader/Loader.jsx';
 import WebSocketUtil from 'nfvo-utils/WebSocketUtil.js';
@@ -24,31 +24,32 @@ import store from './AppStore.js';
 import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
 
 class Application extends React.Component {
-	static propTypes = {
-		openSocket: PropTypes.bool
-	};
-	componentDidMount() {
-		const {openSocket = true} = this.props;
-		if(openSocket) {
-			UserNotificationsActionHelper.notificationsFirstHandling(store.dispatch);
-		}
-		FeaturesActionHelper.getFeaturesList(store.dispatch);
-	}
-	componentWillUnmount() {
-		WebSocketUtil.close();
-	}
-	render() {
-		return (
-			<Provider store={store}>
-				<div>
-					<GlobalModal/>
-					{this.props.children}
-					<Loader />
-				</div>
-			</Provider>
-		);
-	}
+    static propTypes = {
+        openSocket: PropTypes.bool
+    };
+    componentDidMount() {
+        const { openSocket = true } = this.props;
+        if (openSocket) {
+            UserNotificationsActionHelper.notificationsFirstHandling(
+                store.dispatch
+            );
+        }
+        FeaturesActionHelper.getFeaturesList(store.dispatch);
+    }
+    componentWillUnmount() {
+        WebSocketUtil.close();
+    }
+    render() {
+        return (
+            <Provider store={store}>
+                <div>
+                    <GlobalModal />
+                    {this.props.children}
+                    <Loader />
+                </div>
+            </Provider>
+        );
+    }
 }
 
 export default Application;
-

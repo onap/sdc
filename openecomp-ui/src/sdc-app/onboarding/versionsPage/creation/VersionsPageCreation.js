@@ -13,32 +13,52 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import VersionsPageCreationActionHelper from './VersionsPageCreationActionHelper.js';
 import VersionsPageActionHelper from '../VersionsPageActionHelper.js';
 import VersionsPageCreationView from './VersionsPageCreationView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
-import {VERSION_CREATION_FORM_NAME} from './VersionsPageCreationConstants.js';
+import { VERSION_CREATION_FORM_NAME } from './VersionsPageCreationConstants.js';
 
-export const mapStateToProps = ({versionsPage: {versionCreation}}) => {
-	let {genericFieldInfo} = versionCreation;
-	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
+export const mapStateToProps = ({ versionsPage: { versionCreation } }) => {
+    let { genericFieldInfo } = versionCreation;
+    let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
-	return {...versionCreation, isFormValid};
+    return { ...versionCreation, isFormValid };
 };
 
-export const mapActionsToProps = (dispatch, {itemId, itemType, additionalProps}) => {
-	return {
-		onDataChanged: (deltaData, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName: VERSION_CREATION_FORM_NAME, customValidations}),
-		onCancel: () => VersionsPageCreationActionHelper.close(dispatch),
-		onSubmit: ({baseVersion, payload}) => {
-			VersionsPageCreationActionHelper.close(dispatch);
-			VersionsPageCreationActionHelper.createVersion(dispatch, {baseVersion, itemId, payload}).then(response => {
-				VersionsPageActionHelper.onNavigateToVersion(dispatch, {version: response, itemId, itemType, additionalProps});
-			});
-		},
-		onValidateForm: () => ValidationHelper.validateForm(dispatch, VERSION_CREATION_FORM_NAME)
-	};
+export const mapActionsToProps = (
+    dispatch,
+    { itemId, itemType, additionalProps }
+) => {
+    return {
+        onDataChanged: (deltaData, customValidations) =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName: VERSION_CREATION_FORM_NAME,
+                customValidations
+            }),
+        onCancel: () => VersionsPageCreationActionHelper.close(dispatch),
+        onSubmit: ({ baseVersion, payload }) => {
+            VersionsPageCreationActionHelper.close(dispatch);
+            VersionsPageCreationActionHelper.createVersion(dispatch, {
+                baseVersion,
+                itemId,
+                payload
+            }).then(response => {
+                VersionsPageActionHelper.onNavigateToVersion(dispatch, {
+                    version: response,
+                    itemId,
+                    itemType,
+                    additionalProps
+                });
+            });
+        },
+        onValidateForm: () =>
+            ValidationHelper.validateForm(dispatch, VERSION_CREATION_FORM_NAME)
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(VersionsPageCreationView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    VersionsPageCreationView
+);

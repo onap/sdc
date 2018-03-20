@@ -16,29 +16,26 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-
 export const actionTypes = keyMirror({
-	MONITOR_FILES_DATA_CHANGE: null,
-	MONITOR_UPLOADED: null,
-	MONITOR_DELETED: null
+    MONITOR_FILES_DATA_CHANGE: null,
+    MONITOR_UPLOADED: null,
+    MONITOR_DELETED: null
 });
 
 export const fileTypes = {
-	SNMP_TRAP: 'SNMP_TRAP',
-	SNMP_POLL: 'SNMP_POLL',
-	VES_EVENT: 'VES_EVENTS'
+    SNMP_TRAP: 'SNMP_TRAP',
+    SNMP_POLL: 'SNMP_POLL',
+    VES_EVENT: 'VES_EVENTS'
 };
 
 export const type2Name = {
-	SNMP_TRAP: 'snmpTrap',
-	SNMP_POLL: 'snmpPoll',
-	VES_EVENTS: 'vesEvent'
+    SNMP_TRAP: 'snmpTrap',
+    SNMP_POLL: 'snmpPoll',
+    VES_EVENTS: 'vesEvent'
 };
-
 
 export const type2Title = {
-	SNMP_TRAP : i18n('SNMP Trap'),
-	SNMP_POLL : i18n('SNMP Poll'),
-	VES_EVENTS: i18n('VES')
+    SNMP_TRAP: i18n('SNMP Trap'),
+    SNMP_POLL: i18n('SNMP Poll'),
+    VES_EVENTS: i18n('VES')
 };
-

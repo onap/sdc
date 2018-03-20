@@ -21,15 +21,15 @@ import '../res/ecomp/asdc/sequencer/sequencer-development.scss';
 import '../res/thirdparty/react-select/react-select.min.css';
 
 function renderApplication() {
-  const shell = document.createElement('div');
-  shell.setAttribute('style', 'height:100%;width:100%;margin:0;padding:0');
-  document.body.appendChild(shell);
-  const options = { demo: true };
-  render(<Sequencer options={options} />, shell);
+    const shell = document.createElement('div');
+    shell.setAttribute('style', 'height:100%;width:100%;margin:0;padding:0');
+    document.body.appendChild(shell);
+    const options = { demo: true };
+    render(<Sequencer options={options} />, shell);
 }
 
 if (window.addEventListener) {
-  window.addEventListener('DOMContentLoaded', renderApplication);
+    window.addEventListener('DOMContentLoaded', renderApplication);
 } else {
-  window.attachEvent('onload', renderApplication);
+    window.attachEvent('onload', renderApplication);
 }

@@ -26,43 +26,51 @@
  * or
  * https://github.com/JedWatson/react-select
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select';
 
 class SelectInput extends Component {
+    inputValue = [];
 
-	inputValue = [];
+    render() {
+        let { label, value, ...other } = this.props;
+        const dataTestId = this.props['data-test-id']
+            ? { 'data-test-id': this.props['data-test-id'] }
+            : {};
+        return (
+            <div
+                {...dataTestId}
+                className="validation-input-wrapper dropdown-multi-select">
+                <div className="form-group">
+                    {label && <label className="control-label">{label}</label>}
+                    <Select
+                        ref="_myInput"
+                        onChange={value => this.onSelectChanged(value)}
+                        {...other}
+                        value={value}
+                    />
+                </div>
+            </div>
+        );
+    }
 
-	render() {
-		let {label, value, ...other} = this.props;
-		const dataTestId = this.props['data-test-id'] ? {'data-test-id': this.props['data-test-id']} : {};
-		return (
-			<div  {...dataTestId} className='validation-input-wrapper dropdown-multi-select'>
-				<div className='form-group'>
-					{label && <label className='control-label'>{label}</label>}
-					<Select ref='_myInput' onChange={value => this.onSelectChanged(value)} {...other} value={value} />
-				</div>
-			</div>
-		);
-	}
+    getValue() {
+        return this.inputValue && this.inputValue.length ? this.inputValue : '';
+    }
 
-	getValue() {
-		return this.inputValue && this.inputValue.length ? this.inputValue : '';
-	}
+    onSelectChanged(value) {
+        this.props.onMultiSelectChanged(value);
+    }
 
-	onSelectChanged(value) {
-		this.props.onMultiSelectChanged(value);
-	}
-
-	componentDidMount() {
-		let {value} = this.props;
-		this.inputValue = value ? value : [];
-	}
-	componentDidUpdate() {
-		if (this.inputValue !== this.props.value) {
-			this.inputValue = this.props.value;
-		}
-	}
+    componentDidMount() {
+        let { value } = this.props;
+        this.inputValue = value ? value : [];
+    }
+    componentDidUpdate() {
+        if (this.inputValue !== this.props.value) {
+            this.inputValue = this.props.value;
+        }
+    }
 }
 
 export default SelectInput;

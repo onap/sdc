@@ -13,33 +13,32 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, COMPUTE_FLAVOR_FORM} from './ComputeFlavorConstants.js';
+import { actionTypes, COMPUTE_FLAVOR_FORM } from './ComputeFlavorConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.computeEditor.LOAD_EDITOR_DATA:
-			return {
-				...state,
-				formName: COMPUTE_FLAVOR_FORM,
-				data: action.compute,
-				formReady: null,
-				genericFieldInfo: {
-					name: {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true }]
-					},
-					description: {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 300}]
-					}
-				}
-			};
-		case actionTypes.computeEditor.CLEAR_DATA:
-			return {};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.computeEditor.LOAD_EDITOR_DATA:
+            return {
+                ...state,
+                formName: COMPUTE_FLAVOR_FORM,
+                data: action.compute,
+                formReady: null,
+                genericFieldInfo: {
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    },
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 300 }]
+                    }
+                }
+            };
+        case actionTypes.computeEditor.CLEAR_DATA:
+            return {};
+        default:
+            return state;
+    }
 };
-

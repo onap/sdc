@@ -13,45 +13,64 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import SoftwareProductComponentProcessesActionHelper from './SoftwareProductComponentProcessesActionHelper.js';
 
 import SoftwareProductComponentsProcessesListView from './SoftwareProductComponentsProcessesListView.jsx';
 
-export const mapStateToProps = ({softwareProduct}) => {
+export const mapStateToProps = ({ softwareProduct }) => {
+    let {
+        softwareProductEditor: {
+            data: currentSoftwareProduct = {},
+            isValidityData = true
+        },
+        softwareProductComponents: { componentProcesses = {} }
+    } = softwareProduct;
+    let { processesList = [], processesEditor = {} } = componentProcesses;
+    let { data } = processesEditor;
 
-	let {softwareProductEditor: {data:currentSoftwareProduct = {},  isValidityData = true}, softwareProductComponents: {componentProcesses = {}}} = softwareProduct;
-	let{processesList = [], processesEditor = {}} = componentProcesses;
-	let {data} = processesEditor;
-
-	return {
-		currentSoftwareProduct,
-		isValidityData,
-		processesList,
-		isDisplayModal: Boolean(data),
-		isModalInEditMode: Boolean(data && data.id)
-	};
-
+    return {
+        currentSoftwareProduct,
+        isValidityData,
+        processesList,
+        isDisplayModal: Boolean(data),
+        isModalInEditMode: Boolean(data && data.id)
+    };
 };
 
-const mapActionsToProps = (dispatch, {componentId, softwareProductId, version}) => {
-
-	return {
-		onAddProcess: () => SoftwareProductComponentProcessesActionHelper.openEditor(dispatch),
-		onEditProcess: (process) => SoftwareProductComponentProcessesActionHelper.openEditor(dispatch, process),
-		onDeleteProcess: (process) => dispatch({
-			type: modalActionTypes.GLOBAL_MODAL_WARNING,
-			data:{
-				msg: i18n('Are you sure you want to delete "{name}"?', {name: process.name}),
-				confirmationButtonText: i18n('Delete'),
-				title: i18n('Delete'),
-				onConfirmed: ()=> SoftwareProductComponentProcessesActionHelper.deleteProcess(dispatch,
-					{process, softwareProductId, version, componentId})
-			}
-		})
-	};
+const mapActionsToProps = (
+    dispatch,
+    { componentId, softwareProductId, version }
+) => {
+    return {
+        onAddProcess: () =>
+            SoftwareProductComponentProcessesActionHelper.openEditor(dispatch),
+        onEditProcess: process =>
+            SoftwareProductComponentProcessesActionHelper.openEditor(
+                dispatch,
+                process
+            ),
+        onDeleteProcess: process =>
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: i18n('Are you sure you want to delete "{name}"?', {
+                        name: process.name
+                    }),
+                    confirmationButtonText: i18n('Delete'),
+                    title: i18n('Delete'),
+                    onConfirmed: () =>
+                        SoftwareProductComponentProcessesActionHelper.deleteProcess(
+                            dispatch,
+                            { process, softwareProductId, version, componentId }
+                        )
+                }
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(SoftwareProductComponentsProcessesListView);
+export default connect(mapStateToProps, mapActionsToProps, null, {
+    withRef: true
+})(SoftwareProductComponentsProcessesListView);

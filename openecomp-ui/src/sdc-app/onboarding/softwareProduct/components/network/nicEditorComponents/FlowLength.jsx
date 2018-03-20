@@ -18,18 +18,20 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import PacketsBytes from './PacketsBytes.jsx';
 
 const pointers = [
-		{label: 'Peak', value: 'sizing/flowLength/packets/peak'},
-		{label: 'Avg', value: 'sizing/flowLength/packets/avg'},
-		{label: 'Peak', value: 'sizing/flowLength/bytes/peak'},
-		{label: 'Avg', value: 'sizing/flowLength/bytes/avg'},
+    { label: 'Peak', value: 'sizing/flowLength/packets/peak' },
+    { label: 'Avg', value: 'sizing/flowLength/packets/avg' },
+    { label: 'Peak', value: 'sizing/flowLength/bytes/peak' },
+    { label: 'Avg', value: 'sizing/flowLength/bytes/avg' }
 ];
 
-const  FlowLength = (props) => {
-	return(
-		<PacketsBytes {...props} title={i18n('Flow Length')} pointers={pointers}/>
-	);
+const FlowLength = props => {
+    return (
+        <PacketsBytes
+            {...props}
+            title={i18n('Flow Length')}
+            pointers={pointers}
+        />
+    );
 };
 
 export default FlowLength;
-
-

@@ -23,108 +23,107 @@ import Common from './Common';
  * disable them for production.
  */
 export default class Logger {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * No-op call so that we can leave imports in place,
-   * even when there's no debugging.
-   */
-  static noop() {
-    // Nothing.
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Set debug level.
-   * @param level threshold.
-   */
-  static setLevel(level) {
-    this.level = Logger.OFF;
-    if (Common.getType(level) === 'Number') {
-      this.level = level;
-    } else {
-      this.level = Logger[level];
+    /**
+     * No-op call so that we can leave imports in place,
+     * even when there's no debugging.
+     */
+    static noop() {
+        // Nothing.
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Get debug level.
-   * @returns {number|*}
-   */
-  static getLevel() {
-    return this.level;
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Write DEBUG-level log.
-   * @param msg message or tokens.
-   */
-  static debug(...msg) {
-    if (this.level >= Logger.DEBUG) {
-      const out = this.serialize(msg);
-      console.info(`ASDCS [DEBUG] ${out}`);
+    /**
+     * Set debug level.
+     * @param level threshold.
+     */
+    static setLevel(level) {
+        this.level = Logger.OFF;
+        if (Common.getType(level) === 'Number') {
+            this.level = level;
+        } else {
+            this.level = Logger[level];
+        }
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Write INFO-level log.
-   * @param msg message or tokens.
-   */
-  static info(...msg) {
-    if (this.level >= Logger.INFO) {
-      const out = this.serialize(msg);
-      console.info(`ASDCS [INFO] ${out}`);
+    /**
+     * Get debug level.
+     * @returns {number|*}
+     */
+    static getLevel() {
+        return this.level;
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Write debug.
-   * @param msg message or tokens.
-   */
-  static warn(msg) {
-    if (this.level >= Logger.WARN) {
-      const out = this.serialize(msg);
-      console.warn(`ASDCS [WARN] ${out}`);
+    /**
+     * Write DEBUG-level log.
+     * @param msg message or tokens.
+     */
+    static debug(...msg) {
+        if (this.level >= Logger.DEBUG) {
+            const out = this.serialize(msg);
+            console.info(`ASDCS [DEBUG] ${out}`);
+        }
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Write error.
-   * @param msg message or tokens.
-   */
-  static error(...msg) {
-    if (this.level >= Logger.ERROR) {
-      const out = this.serialize(msg);
-      console.error(`ASDCS [ERROR] ${out}`);
+    /**
+     * Write INFO-level log.
+     * @param msg message or tokens.
+     */
+    static info(...msg) {
+        if (this.level >= Logger.INFO) {
+            const out = this.serialize(msg);
+            console.info(`ASDCS [INFO] ${out}`);
+        }
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Serialize msg.
-   * @param msg message or tokens.
-   * @returns {string}
-   */
-  static serialize(...msg) {
-    let out = '';
-    msg.forEach((token) => {
-      out = `${out}${token}`;
-    });
-    return out;
-  }
+    /**
+     * Write debug.
+     * @param msg message or tokens.
+     */
+    static warn(msg) {
+        if (this.level >= Logger.WARN) {
+            const out = this.serialize(msg);
+            console.warn(`ASDCS [WARN] ${out}`);
+        }
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Write error.
+     * @param msg message or tokens.
+     */
+    static error(...msg) {
+        if (this.level >= Logger.ERROR) {
+            const out = this.serialize(msg);
+            console.error(`ASDCS [ERROR] ${out}`);
+        }
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Serialize msg.
+     * @param msg message or tokens.
+     * @returns {string}
+     */
+    static serialize(...msg) {
+        let out = '';
+        msg.forEach(token => {
+            out = `${out}${token}`;
+        });
+        return out;
+    }
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////

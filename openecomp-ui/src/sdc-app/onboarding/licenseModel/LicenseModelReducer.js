@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 
 import activityLogReducer from 'sdc-app/common/activity-log/ActivityLogReducer.js';
 
@@ -32,56 +32,75 @@ import entitlementPoolsEditorReducer from './entitlementPools/EntitlementPoolsEd
 import licenseKeyGroupsEditorReducer from './licenseKeyGroups/LicenseKeyGroupsEditorReducer.js';
 import licenseKeyGroupsListReducer from './licenseKeyGroups/LicenseKeyGroupsListReducer.js';
 
-import {createPlainDataReducer} from 'sdc-app/common/reducers/PlainDataReducer.js';
+import { createPlainDataReducer } from 'sdc-app/common/reducers/PlainDataReducer.js';
 
-import {actionTypes as licenseModelOverviewConstants, VLM_DESCRIPTION_FORM} from './overview/LicenseModelOverviewConstants.js';
-import limitEditorReducer from './limits/LimitEditorReducer.js'; 
+import {
+    actionTypes as licenseModelOverviewConstants,
+    VLM_DESCRIPTION_FORM
+} from './overview/LicenseModelOverviewConstants.js';
+import limitEditorReducer from './limits/LimitEditorReducer.js';
 
 export default combineReducers({
-	licenseModelCreation: createPlainDataReducer(licenseModelCreationReducer),
-	licenseModelEditor: licenseModelEditorReducer,
+    licenseModelCreation: createPlainDataReducer(licenseModelCreationReducer),
+    licenseModelEditor: licenseModelEditorReducer,
 
-	licenseAgreement: combineReducers({
-		licenseAgreementEditor: createPlainDataReducer(licenseAgreementEditorReducer),
-		licenseAgreementList: licenseAgreementListReducer
-	}),
-	featureGroup: combineReducers({
-		featureGroupEditor: createPlainDataReducer(featureGroupsEditorReducer),
-		featureGroupsList: featureGroupsListReducer
-	}),
-	entitlementPool: combineReducers({
-		entitlementPoolEditor: createPlainDataReducer(entitlementPoolsEditorReducer),
-		entitlementPoolsList: entitlementPoolsListReducer
-	}),
-	licenseKeyGroup: combineReducers({
-		licenseKeyGroupsEditor: createPlainDataReducer(licenseKeyGroupsEditorReducer),
-		licenseKeyGroupsList: licenseKeyGroupsListReducer
-	}),
-	licenseModelOverview: combineReducers({
-		selectedTab: (state = null, action) => action.type === licenseModelOverviewConstants.LICENSE_MODEL_OVERVIEW_TAB_SELECTED ? action.buttonTab : state,
-		descriptionEditor: createPlainDataReducer(function(state = false, action) {
-			if (action.type === licenseModelOverviewConstants.LM_DATA_CHANGED) {
-				return {
-					...state,
-					data : {
-						description : action.description
-					},
-					formReady: null,
-					formName: VLM_DESCRIPTION_FORM,
-					genericFieldInfo: {
-						'description': {
-							isValid: true,
-							errorText: '',
-							validations: [{type: 'required', data: true}, {type: 'maxLength', data: 1000}]
-						}
-					}
-				};
-				//return action.description;
-			} else {
-				return state;
-			}
-		}
-	)}),
-	limitEditor: createPlainDataReducer(limitEditorReducer),
-	activityLog: activityLogReducer
+    licenseAgreement: combineReducers({
+        licenseAgreementEditor: createPlainDataReducer(
+            licenseAgreementEditorReducer
+        ),
+        licenseAgreementList: licenseAgreementListReducer
+    }),
+    featureGroup: combineReducers({
+        featureGroupEditor: createPlainDataReducer(featureGroupsEditorReducer),
+        featureGroupsList: featureGroupsListReducer
+    }),
+    entitlementPool: combineReducers({
+        entitlementPoolEditor: createPlainDataReducer(
+            entitlementPoolsEditorReducer
+        ),
+        entitlementPoolsList: entitlementPoolsListReducer
+    }),
+    licenseKeyGroup: combineReducers({
+        licenseKeyGroupsEditor: createPlainDataReducer(
+            licenseKeyGroupsEditorReducer
+        ),
+        licenseKeyGroupsList: licenseKeyGroupsListReducer
+    }),
+    licenseModelOverview: combineReducers({
+        selectedTab: (state = null, action) =>
+            action.type ===
+            licenseModelOverviewConstants.LICENSE_MODEL_OVERVIEW_TAB_SELECTED
+                ? action.buttonTab
+                : state,
+        descriptionEditor: createPlainDataReducer(function(
+            state = false,
+            action
+        ) {
+            if (action.type === licenseModelOverviewConstants.LM_DATA_CHANGED) {
+                return {
+                    ...state,
+                    data: {
+                        description: action.description
+                    },
+                    formReady: null,
+                    formName: VLM_DESCRIPTION_FORM,
+                    genericFieldInfo: {
+                        description: {
+                            isValid: true,
+                            errorText: '',
+                            validations: [
+                                { type: 'required', data: true },
+                                { type: 'maxLength', data: 1000 }
+                            ]
+                        }
+                    }
+                };
+                //return action.description;
+            } else {
+                return state;
+            }
+        })
+    }),
+    limitEditor: createPlainDataReducer(limitEditorReducer),
+    activityLog: activityLogReducer
 });

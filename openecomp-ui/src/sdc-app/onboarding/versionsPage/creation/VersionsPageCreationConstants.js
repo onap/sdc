@@ -16,13 +16,13 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	OPEN: null,
-	CLOSE: null,
-	VERSION_CREATED: null
+    OPEN: null,
+    CLOSE: null,
+    VERSION_CREATED: null
 });
 
 export const VERSION_CREATION_FORM_NAME = 'VCREATIONFORM';
 
 export const defaultState = {
-	creationMethod: 'major'
+    creationMethod: 'major'
 };

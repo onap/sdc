@@ -13,45 +13,60 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
-import EntitlementPoolsListEditorView, {generateConfirmationMsg} from './EntitlementPoolsListEditorView.jsx';
-import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
+import EntitlementPoolsListEditorView, {
+    generateConfirmationMsg
+} from './EntitlementPoolsListEditorView.jsx';
+import { actionTypes as globalMoadlActions } from 'nfvo-components/modal/GlobalModalConstants.js';
 
-const mapStateToProps = ({licenseModel: {entitlementPool, licenseModelEditor}}) => {
+const mapStateToProps = ({
+    licenseModel: { entitlementPool, licenseModelEditor }
+}) => {
+    const { entitlementPoolsList } = entitlementPool;
+    const { data } = entitlementPool.entitlementPoolEditor;
+    const { vendorName } = licenseModelEditor.data;
 
-	const {entitlementPoolsList} = entitlementPool;
-	const {data} = entitlementPool.entitlementPoolEditor;
-	const {vendorName} = licenseModelEditor.data;
-
-	return {
-		vendorName,
-		entitlementPoolsList,
-		isDisplayModal: Boolean(data),
-		isModalInEditMode: Boolean(data && data.id),
-	};
-
+    return {
+        vendorName,
+        entitlementPoolsList,
+        isDisplayModal: Boolean(data),
+        isModalInEditMode: Boolean(data && data.id)
+    };
 };
 
-const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
-	return {
-		onAddEntitlementPoolClick: () => EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch),
-		onEditEntitlementPoolClick: entitlementPool => EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch, {entitlementPool, licenseModelId, version}),
-		onDeleteEntitlementPool: entitlementPool => dispatch({
-			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
-			data:{
-				msg: generateConfirmationMsg(entitlementPool),
-				confirmationButtonText: i18n('Delete'),
-				title: i18n('Delete'),
-				onConfirmed: () => EntitlementPoolsActionHelper.deleteEntitlementPool(dispatch, {
-					licenseModelId,
-					entitlementPoolId: entitlementPool.id,
-					version
-				})
-			}
-		})
-	};
+const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
+    return {
+        onAddEntitlementPoolClick: () =>
+            EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch),
+        onEditEntitlementPoolClick: entitlementPool =>
+            EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch, {
+                entitlementPool,
+                licenseModelId,
+                version
+            }),
+        onDeleteEntitlementPool: entitlementPool =>
+            dispatch({
+                type: globalMoadlActions.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: generateConfirmationMsg(entitlementPool),
+                    confirmationButtonText: i18n('Delete'),
+                    title: i18n('Delete'),
+                    onConfirmed: () =>
+                        EntitlementPoolsActionHelper.deleteEntitlementPool(
+                            dispatch,
+                            {
+                                licenseModelId,
+                                entitlementPoolId: entitlementPool.id,
+                                version
+                            }
+                        )
+                }
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(EntitlementPoolsListEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    EntitlementPoolsListEditorView
+);

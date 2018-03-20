@@ -15,39 +15,39 @@
  */
 import UUID from 'uuid-js';
 
-let toCustomUUID = (uuid) => {
-	return 'U' + uuid.replace(/-/g, '');
+let toCustomUUID = uuid => {
+    return 'U' + uuid.replace(/-/g, '');
 };
 
 let getUUID = function(num, isSync) {
-	if (isSync) {
-		let uuid;
-		if (!num) {
-			uuid = toCustomUUID(UUID.create().toString());
-		} else {
-			uuid = [];
-			for (var i = 0; i < num; i++) {
-				uuid[i] = toCustomUUID(UUID.create().toString());
-			}
-		}
-		if (num === 1) {
-			return uuid[0];
-		} else {
-			return uuid;
-		}
-	}
-	return new Promise(resolve => {
-		let uuid;
-		if (!num) {
-			uuid = toCustomUUID(UUID.create().toString());
-		} else {
-			uuid = [];
-			for (var i = 0; i < num; i++) {
-				uuid[i] = toCustomUUID(UUID.create().toString());
-			}
-		}
-		setTimeout(() => resolve(uuid), 100);
-	});
+    if (isSync) {
+        let uuid;
+        if (!num) {
+            uuid = toCustomUUID(UUID.create().toString());
+        } else {
+            uuid = [];
+            for (var i = 0; i < num; i++) {
+                uuid[i] = toCustomUUID(UUID.create().toString());
+            }
+        }
+        if (num === 1) {
+            return uuid[0];
+        } else {
+            return uuid;
+        }
+    }
+    return new Promise(resolve => {
+        let uuid;
+        if (!num) {
+            uuid = toCustomUUID(UUID.create().toString());
+        } else {
+            uuid = [];
+            for (var i = 0; i < num; i++) {
+                uuid[i] = toCustomUUID(UUID.create().toString());
+            }
+        }
+        setTimeout(() => resolve(uuid), 100);
+    });
 };
 
 export default getUUID;

@@ -13,53 +13,79 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import LicenseKeyGroupsActionHelper from './LicenseKeyGroupsActionHelper.js';
 import LicenseKeyGroupsEditorView from './LicenseKeyGroupsEditorView.jsx';
 import LimitEditorActionHelper from '../limits/LimitEditorActionHelper.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
-const mapStateToProps = ({licenseModel: {licenseKeyGroup}}) => {
+const mapStateToProps = ({ licenseModel: { licenseKeyGroup } }) => {
+    let {
+        data,
+        genericFieldInfo,
+        formReady,
+        limitsList
+    } = licenseKeyGroup.licenseKeyGroupsEditor;
 
+    let previousData,
+        LKGNames = {};
+    const licenseKeyGroupId = data ? data.id : null;
+    if (licenseKeyGroupId) {
+        previousData = licenseKeyGroup.licenseKeyGroupsList.find(
+            licenseKeyGroup => licenseKeyGroup.id === licenseKeyGroupId
+        );
+    }
 
-	let {data, genericFieldInfo, formReady, limitsList} = licenseKeyGroup.licenseKeyGroupsEditor;
+    let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
-	let previousData, LKGNames = {};
-	const licenseKeyGroupId = data ? data.id : null;
-	if(licenseKeyGroupId) {
-		previousData = licenseKeyGroup.licenseKeyGroupsList.find(licenseKeyGroup => licenseKeyGroup.id === licenseKeyGroupId);
-	}
+    const list = licenseKeyGroup.licenseKeyGroupsList;
+    for (let i = 0; i < list.length; i++) {
+        LKGNames[list[i].name.toLowerCase()] = list[i].id;
+    }
 
-	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
-
-	const list = licenseKeyGroup.licenseKeyGroupsList;
-	for (let i = 0; i < list.length; i++) {
-		LKGNames[list[i].name.toLowerCase()] = list[i].id;
-	}
-
-	return {
-		data,
-		previousData,
-		genericFieldInfo,
-		isFormValid,
-		formReady,
-		LKGNames,
-		limitsList
-	};
+    return {
+        data,
+        previousData,
+        genericFieldInfo,
+        isFormValid,
+        formReady,
+        LKGNames,
+        limitsList
+    };
 };
 
-const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
-	return {
-		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
-		onCancel: () => LicenseKeyGroupsActionHelper.closeLicenseKeyGroupEditor(dispatch),
-		onSubmit: ({previousLicenseKeyGroup, licenseKeyGroup, keepOpen}) => {
-			if (!keepOpen) {LicenseKeyGroupsActionHelper.closeLicenseKeyGroupEditor(dispatch);}
-			LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(dispatch, {licenseModelId, previousLicenseKeyGroup, licenseKeyGroup, version});
-		},
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName),
-		onCloseLimitEditor: () => LimitEditorActionHelper.closeLimitsEditor(dispatch),
-		onOpenLimitEditor: (limit) => LimitEditorActionHelper.openLimitsEditor(dispatch, {limit})
-	};
+const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
+    return {
+        onDataChanged: (deltaData, formName, customValidations) =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName,
+                customValidations
+            }),
+        onCancel: () =>
+            LicenseKeyGroupsActionHelper.closeLicenseKeyGroupEditor(dispatch),
+        onSubmit: ({ previousLicenseKeyGroup, licenseKeyGroup, keepOpen }) => {
+            if (!keepOpen) {
+                LicenseKeyGroupsActionHelper.closeLicenseKeyGroupEditor(
+                    dispatch
+                );
+            }
+            LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(dispatch, {
+                licenseModelId,
+                previousLicenseKeyGroup,
+                licenseKeyGroup,
+                version
+            });
+        },
+        onValidateForm: formName =>
+            ValidationHelper.validateForm(dispatch, formName),
+        onCloseLimitEditor: () =>
+            LimitEditorActionHelper.closeLimitsEditor(dispatch),
+        onOpenLimitEditor: limit =>
+            LimitEditorActionHelper.openLimitsEditor(dispatch, { limit })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(LicenseKeyGroupsEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    LicenseKeyGroupsEditorView
+);

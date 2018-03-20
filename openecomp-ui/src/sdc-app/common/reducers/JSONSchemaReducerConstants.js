@@ -16,8 +16,8 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	DATA_LOADED: null,
-	DATA_CHANGED: null,
-	VALIDATE_FORM: null,
-	VALIDATE_DATA: null
+    DATA_LOADED: null,
+    DATA_CHANGED: null,
+    VALIDATE_FORM: null,
+    VALIDATE_DATA: null
 });

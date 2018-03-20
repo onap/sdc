@@ -16,13 +16,13 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const tabsMapping = {
-	'WORKSPACE': 1,
-	'CATALOG': 2
+    WORKSPACE: 1,
+    CATALOG: 2
 };
 
 export const actionTypes = keyMirror({
-	CHANGE_ACTIVE_ONBOARD_TAB: null,
-	CHANGE_SEARCH_VALUE: null,
-	RESET_ONBOARD_STORE: null,
-	VSP_MIGRATION: null
+    CHANGE_ACTIVE_ONBOARD_TAB: null,
+    CHANGE_SEARCH_VALUE: null,
+    RESET_ONBOARD_STORE: null,
+    VSP_MIGRATION: null
 });

@@ -22,88 +22,94 @@ import i18nJson from 'i18nJson';
  Intl libs are using out dated transpailer from ecmascript6.
  *  TODO: As soon as they fix it, remove this assignments!!!
  * */
-var Intl               = window.Intl || IntlObj.default,
-	IntlMessageFormat  = IntlMessageFormatObj.default,
-	IntlRelativeFormat = IntlRelativeFormatObj.default,
-	createFormatCache  = createFormatCacheObj.default;
+var Intl = window.Intl || IntlObj.default,
+    IntlMessageFormat = IntlMessageFormatObj.default,
+    IntlRelativeFormat = IntlRelativeFormatObj.default,
+    createFormatCache = createFormatCacheObj.default;
 
 /*extract locale*/
 var _locale = window.localStorage && localStorage.getItem('user_locale');
-if(!_locale) {
-	if(window.navigator) {
-		_locale = navigator.language || navigator.userLanguage;
+if (!_locale) {
+    if (window.navigator) {
+        _locale = navigator.language || navigator.userLanguage;
 
-		//For now removing the dashes from the language.
-		let indexOfDash = _locale.indexOf('-');
-		if(-1 !== indexOfDash) {
-			_locale = _locale.substr(0, indexOfDash);
-		}
-	}
-	if(!_locale) {
-		_locale = 'en';
-	}
+        //For now removing the dashes from the language.
+        let indexOfDash = _locale.indexOf('-');
+        if (-1 !== indexOfDash) {
+            _locale = _locale.substr(0, indexOfDash);
+        }
+    }
+    if (!_locale) {
+        _locale = 'en';
+    }
 }
 
 var _localeUpper = _locale.toUpperCase();
 var i18n = {
+    _locale: _locale,
+    _localeUpper: _localeUpper,
+    _i18nData: i18nJson || {},
 
-	_locale: _locale,
-	_localeUpper: _localeUpper,
-	_i18nData: i18nJson || {},
+    number(num) {
+        return createFormatCache(Intl.NumberFormat)(this._locale).format(num);
+    },
 
-	number(num) {
-		return createFormatCache(Intl.NumberFormat)(this._locale).format(num);
-	},
+    date(date, options, relativeDates) {
+        if (undefined === relativeDates || relativeDates) {
+            return this.dateRelative(date, options);
+        } else {
+            return this.dateNormal(date, options);
+        }
+    },
 
-	date(date, options, relativeDates) {
-		if (undefined === relativeDates || relativeDates) {
-			return this.dateRelative(date, options);
-		} else {
-			return this.dateNormal(date, options);
-		}
-	},
+    dateNormal(date, options) {
+        return createFormatCache(Intl.DateTimeFormat)(
+            this._locale,
+            options
+        ).format(date);
+    },
 
-	dateNormal(date, options) {
-		return createFormatCache(Intl.DateTimeFormat)(this._locale, options).format(date);
-	},
-
-	dateRelative(date, options) {
-		return createFormatCache(IntlRelativeFormat)(this._locale, options).format(date);
-	},
-	message(messageId, options) {
-		let messageTxt = null;
-		if (i18nJson && i18nJson[messageId]) {
-			messageTxt = i18nJson[messageId];
-		} else {
-			messageTxt = String(messageId);
-		}
-		return createFormatCache(IntlMessageFormat)(messageTxt, this._locale).format(options);
-
-	},
-	getLocale() {
-		return this._locale;
-	},
-	getLocaleUpper() {
-		return this._localeUpper;
-	},
-	setLocale(locale) {
-		localStorage.setItem('user_locale', locale);
-		window.location.reload();
-	}
-
+    dateRelative(date, options) {
+        return createFormatCache(IntlRelativeFormat)(
+            this._locale,
+            options
+        ).format(date);
+    },
+    message(messageId, options) {
+        let messageTxt = null;
+        if (i18nJson && i18nJson[messageId]) {
+            messageTxt = i18nJson[messageId];
+        } else {
+            messageTxt = String(messageId);
+        }
+        return createFormatCache(IntlMessageFormat)(
+            messageTxt,
+            this._locale
+        ).format(options);
+    },
+    getLocale() {
+        return this._locale;
+    },
+    getLocaleUpper() {
+        return this._localeUpper;
+    },
+    setLocale(locale) {
+        localStorage.setItem('user_locale', locale);
+        window.location.reload();
+    }
 };
 function i18nWrapper() {
-	return i18nWrapper.message.apply(i18nWrapper, arguments);
+    return i18nWrapper.message.apply(i18nWrapper, arguments);
 }
 
 /*replace with some kind of extend method*/
 var prop, propKey;
 for (propKey in i18n) {
-	prop = i18n[propKey];
-	if (typeof prop === 'function') {
-		prop = prop.bind(i18nWrapper);
-	}
-	i18nWrapper[propKey] = prop;
+    prop = i18n[propKey];
+    if (typeof prop === 'function') {
+        prop = prop.bind(i18nWrapper);
+    }
+    i18nWrapper[propKey] = prop;
 }
 
 export default i18nWrapper;

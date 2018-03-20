@@ -13,32 +13,39 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, VERSION_CREATION_FORM_NAME, defaultState} from './VersionsPageCreationConstants.js';
+import {
+    actionTypes,
+    VERSION_CREATION_FORM_NAME,
+    defaultState
+} from './VersionsPageCreationConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.OPEN:
-			return {
-				...state,
-				formReady: null,
-				formName: VERSION_CREATION_FORM_NAME,
-				data: {...defaultState},
-				genericFieldInfo: {
-					description: {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 120}]
-					},
-					creationMethod: {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					}
-				}
-			};
-		case actionTypes.CLOSE:
-			return {};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.OPEN:
+            return {
+                ...state,
+                formReady: null,
+                formName: VERSION_CREATION_FORM_NAME,
+                data: { ...defaultState },
+                genericFieldInfo: {
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 120 }
+                        ]
+                    },
+                    creationMethod: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    }
+                }
+            };
+        case actionTypes.CLOSE:
+            return {};
+        default:
+            return state;
+    }
 };

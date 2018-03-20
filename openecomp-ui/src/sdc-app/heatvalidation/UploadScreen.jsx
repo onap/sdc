@@ -16,17 +16,14 @@
 import React from 'react';
 import SoftwareProductAttachmentsView from './Attachments.js';
 
-
-
 class UploadScreen extends React.Component {
-
-	render() {
-		return(
-			<div className='heat-validation-stand-alone'>
-				<SoftwareProductAttachmentsView />
-			</div>
-		);
-	}
+    render() {
+        return (
+            <div className="heat-validation-stand-alone">
+                <SoftwareProductAttachmentsView />
+            </div>
+        );
+    }
 }
 
-export default  UploadScreen;
+export default UploadScreen;

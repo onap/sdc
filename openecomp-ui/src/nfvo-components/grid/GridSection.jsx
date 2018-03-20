@@ -17,21 +17,32 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-const GridSection = ({title, children, className = '', titleClassName, hasLastColSet = false}) => {
-	return (
-		<div className={classnames('grid-section', className, {'has-last-col-set': hasLastColSet})}>
-			{title && <div className={`section-title ${titleClassName || ''}`}>{title}</div>}
-			<div className='grid-items'>
-				{children}
-			</div>
-		</div>
-	);
+const GridSection = ({
+    title,
+    children,
+    className = '',
+    titleClassName,
+    hasLastColSet = false
+}) => {
+    return (
+        <div
+            className={classnames('grid-section', className, {
+                'has-last-col-set': hasLastColSet
+            })}>
+            {title && (
+                <div className={`section-title ${titleClassName || ''}`}>
+                    {title}
+                </div>
+            )}
+            <div className="grid-items">{children}</div>
+        </div>
+    );
 };
 
 GridSection.propTypes = {
-	title: PropTypes.string,
-	titleClassName: PropTypes.string,
-	hasLastColSet: PropTypes.bool
+    title: PropTypes.string,
+    titleClassName: PropTypes.string,
+    hasLastColSet: PropTypes.bool
 };
 
 export default GridSection;

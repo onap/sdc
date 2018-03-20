@@ -19,50 +19,78 @@ import classnames from 'classnames';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import store from 'sdc-app/AppStore.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 
 class ListEditorItem extends React.Component {
-	static propTypes = {
-		onSelect:  PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-		onDelete:  PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-		onEdit:  PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-		children: PropTypes.node,
-		isReadOnlyMode: PropTypes.bool
-	};
+    static propTypes = {
+        onSelect: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+        onDelete: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+        onEdit: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+        children: PropTypes.node,
+        isReadOnlyMode: PropTypes.bool
+    };
 
-	render() {
-		let {onDelete, onSelect, onEdit, children, isReadOnlyMode} = this.props;
-		let isAbilityToDelete = isReadOnlyMode === undefined ? true : !isReadOnlyMode;
-		return (
-			<div className={classnames('list-editor-item-view', {'selectable': Boolean(onSelect)})} data-test-id='list-editor-item'>
-				<div className='list-editor-item-view-content' onClick={onSelect}>
-					{children}
-				</div>
-				{(onEdit || onDelete) && <div className='list-editor-item-view-controller'>
-					{onEdit && <SVGIcon name='sliders' onClick={() => this.onClickedItem(onEdit)}/>}
-					{onDelete && isAbilityToDelete && <SVGIcon name='trashO' data-test-id='delete-list-item' onClick={() => this.onClickedItem(onDelete)}/>}
-				</div>}
-			</div>
-		);
-	}
+    render() {
+        let {
+            onDelete,
+            onSelect,
+            onEdit,
+            children,
+            isReadOnlyMode
+        } = this.props;
+        let isAbilityToDelete =
+            isReadOnlyMode === undefined ? true : !isReadOnlyMode;
+        return (
+            <div
+                className={classnames('list-editor-item-view', {
+                    selectable: Boolean(onSelect)
+                })}
+                data-test-id="list-editor-item">
+                <div
+                    className="list-editor-item-view-content"
+                    onClick={onSelect}>
+                    {children}
+                </div>
+                {(onEdit || onDelete) && (
+                    <div className="list-editor-item-view-controller">
+                        {onEdit && (
+                            <SVGIcon
+                                name="sliders"
+                                onClick={() => this.onClickedItem(onEdit)}
+                            />
+                        )}
+                        {onDelete &&
+                            isAbilityToDelete && (
+                                <SVGIcon
+                                    name="trashO"
+                                    data-test-id="delete-list-item"
+                                    onClick={() => this.onClickedItem(onDelete)}
+                                />
+                            )}
+                    </div>
+                )}
+            </div>
+        );
+    }
 
-	onClickedItem(callBackFunc) {
-		if(typeof callBackFunc === 'function') {
-			let {isCheckedOut} = this.props;
-			if (isCheckedOut === false) {
-				store.dispatch({
-					type: modalActionTypes.GLOBAL_MODAL_WARNING,
-					data: {
-						title: i18n('Error'),
-						msg: i18n('This item is checkedin/submitted, Click Check Out to continue')
-					}
-				});
-			}
-			else {
-				callBackFunc();
-			}
-		}
-	}
+    onClickedItem(callBackFunc) {
+        if (typeof callBackFunc === 'function') {
+            let { isCheckedOut } = this.props;
+            if (isCheckedOut === false) {
+                store.dispatch({
+                    type: modalActionTypes.GLOBAL_MODAL_WARNING,
+                    data: {
+                        title: i18n('Error'),
+                        msg: i18n(
+                            'This item is checkedin/submitted, Click Check Out to continue'
+                        )
+                    }
+                });
+            } else {
+                callBackFunc();
+            }
+        }
+    }
 }
 
 export default ListEditorItem;

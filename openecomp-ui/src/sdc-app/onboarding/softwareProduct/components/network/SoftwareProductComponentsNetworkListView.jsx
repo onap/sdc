@@ -20,138 +20,203 @@ import Form from 'nfvo-components/input/validation/Form.jsx';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
-import Input from'nfvo-components/input/validation/Input.jsx';
-
+import Input from 'nfvo-components/input/validation/Input.jsx';
 
 class SoftwareProductComponentsNetworkView extends React.Component {
+    state = {
+        localFilter: ''
+    };
 
-	state = {
-		localFilter: ''
-	};
+    render() {
+        let {
+            dataMap,
+            qgenericFieldInfo,
+            onQDataChanged,
+            isReadOnlyMode
+        } = this.props;
 
-	render() {
-		let {dataMap, qgenericFieldInfo, onQDataChanged, isReadOnlyMode} = this.props;
+        return (
+            <div className="vsp-components-network">
+                <div className="network-data">
+                    <div>
+                        {qgenericFieldInfo && (
+                            <Form
+                                formReady={null}
+                                isValid={true}
+                                onSubmit={() => this.save()}
+                                isReadOnlyMode={isReadOnlyMode}
+                                hasButtons={false}>
+                                <h3 className="section-title">
+                                    {i18n('Network Capacity')}
+                                </h3>
+                                <div className="rows-section">
+                                    <div className="row-flex-components">
+                                        <div className="single-col">
+                                            <Input
+                                                data-test-id="protocolWithHighestTrafficProfileAcrossAllNICs"
+                                                label={i18n(
+                                                    'Protocol with Highest Traffic Profile across all NICs'
+                                                )}
+                                                type="select"
+                                                groupClassName="bootstrap-input-options"
+                                                className="input-options-select"
+                                                isValid={
+                                                    qgenericFieldInfo[
+                                                        'network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs'
+                                                    ].isValid
+                                                }
+                                                errorText={
+                                                    qgenericFieldInfo[
+                                                        'network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs'
+                                                    ].errorText
+                                                }
+                                                value={
+                                                    dataMap[
+                                                        'network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs'
+                                                    ]
+                                                }
+                                                onChange={e => {
+                                                    const selectedIndex =
+                                                        e.target.selectedIndex;
+                                                    const val =
+                                                        e.target.options[
+                                                            selectedIndex
+                                                        ].value;
+                                                    onQDataChanged({
+                                                        'network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs': val
+                                                    });
+                                                }}>
+                                                <option
+                                                    key="placeholder"
+                                                    value="">
+                                                    {i18n('Select...')}
+                                                </option>
+                                                {qgenericFieldInfo[
+                                                    'network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs'
+                                                ].enum.map(proto => (
+                                                    <option
+                                                        value={proto.enum}
+                                                        key={proto.enum}>
+                                                        {proto.title}
+                                                    </option>
+                                                ))}
+                                            </Input>
+                                        </div>
+                                        <div className="single-col add-line-break">
+                                            <Input
+                                                data-test-id="networkTransactionsPerSecond"
+                                                label={i18n(
+                                                    'Network Transactions per Second'
+                                                )}
+                                                type="number"
+                                                onChange={ntps =>
+                                                    onQDataChanged({
+                                                        'network/networkCapacity/networkTransactionsPerSecond': ntps
+                                                    })
+                                                }
+                                                isValid={
+                                                    qgenericFieldInfo[
+                                                        'network/networkCapacity/networkTransactionsPerSecond'
+                                                    ].isValid
+                                                }
+                                                errorText={
+                                                    qgenericFieldInfo[
+                                                        'network/networkCapacity/networkTransactionsPerSecond'
+                                                    ].errorText
+                                                }
+                                                value={
+                                                    dataMap[
+                                                        'network/networkCapacity/networkTransactionsPerSecond'
+                                                    ]
+                                                }
+                                            />
+                                        </div>
+                                        <div className="empty-two-col" />
+                                    </div>
+                                </div>
+                            </Form>
+                        )}
+                    </div>
+                    {this.renderNicList()}
+                </div>
+            </div>
+        );
+    }
 
-		return(
-			<div className='vsp-components-network'>
-				<div className='network-data'>
-					<div>
-{ qgenericFieldInfo && <Form
-	formReady={null}
-	isValid={true}
-	onSubmit={() => this.save()}
-	isReadOnlyMode={isReadOnlyMode}
-	hasButtons={false}>
-							<h3 className='section-title'>{i18n('Network Capacity')}</h3>
-							<div className='rows-section'>
-								<div className='row-flex-components'>
-									<div className='single-col'>
-										<Input
-											data-test-id='protocolWithHighestTrafficProfileAcrossAllNICs'
-											label={i18n('Protocol with Highest Traffic Profile across all NICs')}
-											type='select'
-											groupClassName='bootstrap-input-options'
-											className='input-options-select'
-											isValid={qgenericFieldInfo['network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs'].isValid}
-											errorText={qgenericFieldInfo['network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs'].errorText}
-											value={dataMap['network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs']}
-											onChange={(e) => {
-												const selectedIndex = e.target.selectedIndex;
-												const val = e.target.options[selectedIndex].value;
-												onQDataChanged({'network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs' : val});}
-											}>
-											<option key='placeholder' value=''>{i18n('Select...')}</option>
-											{ qgenericFieldInfo['network/networkCapacity/protocolWithHighestTrafficProfileAcrossAllNICs'].enum.map(proto =>
-												<option value={proto.enum} key={proto.enum}>{proto.title}</option>) }
-										</Input>
-									</div>
-									<div className='single-col add-line-break'>
-										<Input
-											data-test-id='networkTransactionsPerSecond'
-											label={i18n('Network Transactions per Second')}
-											type='number'
-											onChange={(ntps) => onQDataChanged({'network/networkCapacity/networkTransactionsPerSecond' : ntps})}
-											isValid={qgenericFieldInfo['network/networkCapacity/networkTransactionsPerSecond'].isValid}
-											errorText={qgenericFieldInfo['network/networkCapacity/networkTransactionsPerSecond'].errorText}
-											value={dataMap['network/networkCapacity/networkTransactionsPerSecond']} />
-									</div>
-									<div className='empty-two-col' />
-								</div>
-							</div>
+    renderNicList() {
+        const { localFilter } = this.state;
+        let { isReadOnlyMode, onAddNic, isManual } = this.props;
+        return (
+            <ListEditorView
+                title={i18n('Interfaces')}
+                filterValue={localFilter}
+                placeholder={i18n('Filter NICs by Name')}
+                isReadOnlyMode={isReadOnlyMode}
+                onFilter={value => this.setState({ localFilter: value })}
+                onAdd={isManual ? onAddNic : null}
+                plusButtonTitle={i18n('Add NIC')}
+                twoColumns>
+                {this.filterList().map(nic =>
+                    this.renderNicListItem(nic, isReadOnlyMode)
+                )}
+            </ListEditorView>
+        );
+    }
 
-						</Form> }
-					</div>
-					{this.renderNicList()}
-				</div>
+    renderNicListItem(nic, isReadOnlyMode) {
+        let { id, name, description, networkName = '' } = nic;
+        let { onEditNicClick, version, isManual, onDeleteNic } = this.props;
+        return (
+            <ListEditorItemView
+                key={id}
+                isReadOnlyMode={isReadOnlyMode}
+                onSelect={() => onEditNicClick(nic, version, isReadOnlyMode)}
+                onDelete={isManual ? () => onDeleteNic(nic, version) : null}>
+                <ListEditorItemViewField>
+                    <div className="name">{name}</div>
+                </ListEditorItemViewField>
+                <ListEditorItemViewField>
+                    <div className={isManual ? 'details-col' : 'details'}>
+                        <div className={isManual ? 'manual-title' : 'title'}>
+                            {i18n('Purpose of NIC')}
+                        </div>
+                        {description && (
+                            <div className={isManual ? 'description' : ''}>
+                                {description}
+                            </div>
+                        )}
+                    </div>
+                    {!isManual && (
+                        <div className="details">
+                            <div className="title">{i18n('Network')}</div>
+                            <div className="artifact-name">{networkName}</div>
+                        </div>
+                    )}
+                </ListEditorItemViewField>
+            </ListEditorItemView>
+        );
+    }
 
-			</div>
-		);
-	}
+    filterList() {
+        let { nicList } = this.props;
+        let { localFilter } = this.state;
+        if (localFilter.trim()) {
+            const filter = new RegExp(escape(localFilter), 'i');
+            return nicList.filter(({ name = '', description = '' }) => {
+                return (
+                    escape(name).match(filter) ||
+                    escape(description).match(filter)
+                );
+            });
+        } else {
+            return nicList;
+        }
+    }
 
-	renderNicList() {
-		const {localFilter} = this.state;
-		let {isReadOnlyMode, onAddNic, isManual} = this.props;
-		return (
-			<ListEditorView
-				title={i18n('Interfaces')}
-				filterValue={localFilter}
-				placeholder={i18n('Filter NICs by Name')}
-				isReadOnlyMode={isReadOnlyMode}
-				onFilter={value => this.setState({localFilter: value})}
-				onAdd={isManual ? onAddNic : null}
-				plusButtonTitle={i18n('Add NIC')}
-				twoColumns>
-				{this.filterList().map(nic => this.renderNicListItem(nic, isReadOnlyMode))}
-			</ListEditorView>
-		);
-	}
-
-	renderNicListItem(nic, isReadOnlyMode) {
-		let {id, name, description, networkName = ''} = nic;
-		let {onEditNicClick, version, isManual, onDeleteNic} =  this.props;
-		return (
-			<ListEditorItemView
-				key={id}
-				isReadOnlyMode={isReadOnlyMode}
-				onSelect={() => onEditNicClick(nic, version, isReadOnlyMode)}
-				onDelete={isManual ? () => onDeleteNic(nic, version) : null}>
-
-				<ListEditorItemViewField>
-					<div className='name'>{name}</div>
-				</ListEditorItemViewField>
-				<ListEditorItemViewField>
-					<div className={isManual ? 'details-col' : 'details'}>
-						<div className={isManual ? 'manual-title' : 'title'}>{i18n('Purpose of NIC')}</div>
-						{description && <div className={isManual ? 'description' : ''}>{description}</div>}
-					</div>
-					{!isManual && <div className='details'>
-						<div className='title'>{i18n('Network')}</div>
-						<div className='artifact-name'>{networkName}</div>
-					</div>}
-				</ListEditorItemViewField>
-
-			</ListEditorItemView>
-		);
-	}
-
-	filterList() {
-		let {nicList} = this.props;
-		let {localFilter} = this.state;
-		if (localFilter.trim()) {
-			const filter = new RegExp(escape(localFilter), 'i');
-			return nicList.filter(({name = '', description = ''}) => {
-				return escape(name).match(filter) || escape(description).match(filter);
-			});
-		}
-		else {
-			return nicList;
-		}
-	}
-
-	save() {
-		let {onSubmit, qdata, version} = this.props;
-		return onSubmit({qdata, version});
-	}
+    save() {
+        let { onSubmit, qdata, version } = this.props;
+        return onSubmit({ qdata, version });
+    }
 }
 
 export default SoftwareProductComponentsNetworkView;

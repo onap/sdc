@@ -16,23 +16,21 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	GLOBAL_MODAL_SHOW: null,
-	GLOBAL_MODAL_CLOSE: null,
-	GLOBAL_MODAL_ERROR: null,
-	GLOBAL_MODAL_WARNING: null,
-	GLOBAL_MODAL_SUCCESS: null,
-
+    GLOBAL_MODAL_SHOW: null,
+    GLOBAL_MODAL_CLOSE: null,
+    GLOBAL_MODAL_ERROR: null,
+    GLOBAL_MODAL_WARNING: null,
+    GLOBAL_MODAL_SUCCESS: null
 });
 
-
 export const typeEnum = {
-	DEFAULT: 'default',
-	ERROR: 'error',
-	WARNING: 'warning',
-	SUCCESS: 'success'
+    DEFAULT: 'default',
+    ERROR: 'error',
+    WARNING: 'warning',
+    SUCCESS: 'success'
 };
 
-export const modalSizes  = {
-	LARGE: 'large',
-	SMALL: 'small'	
+export const modalSizes = {
+    LARGE: 'large',
+    SMALL: 'small'
 };

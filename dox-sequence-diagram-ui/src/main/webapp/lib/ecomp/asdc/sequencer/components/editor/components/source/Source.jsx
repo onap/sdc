@@ -20,67 +20,69 @@ import PropTypes from 'prop-types';
  * Editor view, aggregating the designer, the code editor, the toolbar.
  */
 export default class Source extends React.Component {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Construct view.
-   */
-  constructor(props, context) {
-    super(props, context);
-    this.demo = this.props.application.getOptions().demo;
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Set JSON mode.
-   * @param json JSON (stringified) code.
-   */
-  setJSON(json = '') {
-    if (this.textarea) {
-      this.textarea.value = json;
+    /**
+     * Construct view.
+     */
+    constructor(props, context) {
+        super(props, context);
+        this.demo = this.props.application.getOptions().demo;
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Set YAML mode.
-   * @param yaml YAML code.
-   */
-  setYAML(yaml = '') {
-    if (this.textarea) {
-      this.textarea.value = yaml;
+    /**
+     * Set JSON mode.
+     * @param json JSON (stringified) code.
+     */
+    setJSON(json = '') {
+        if (this.textarea) {
+            this.textarea.value = json;
+        }
     }
-  }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  componentDidMount() {
-    /*
+    /**
+     * Set YAML mode.
+     * @param yaml YAML code.
+     */
+    setYAML(yaml = '') {
+        if (this.textarea) {
+            this.textarea.value = yaml;
+        }
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    componentDidMount() {
+        /*
     this.cm = CodeMirror.fromTextArea(this.textarea, {
       lineNumbers: true,
       readOnly: true,
     });
     */
-  }
+    }
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Render to DOM.
-   */
-  render() {
-    return (
-      <div className="asdcs-editor-code">
-        <textarea ref={(r) => { this.textarea = r; }}></textarea>
-      </div>
-    );
-  }
+    /**
+     * Render to DOM.
+     */
+    render() {
+        return (
+            <div className="asdcs-editor-code">
+                <textarea
+                    ref={r => {
+                        this.textarea = r;
+                    }}
+                />
+            </div>
+        );
+    }
 }
 
 Source.propTypes = {
-  application: PropTypes.object.isRequired,
+    application: PropTypes.object.isRequired
 };
-

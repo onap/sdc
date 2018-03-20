@@ -16,46 +16,41 @@
 
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import {actionTypes} from './UsersConstants.js';
+import { actionTypes } from './UsersConstants.js';
 
 function getUserId() {
-	let catalogApiHeaders = Configuration.get('CatalogApiHeaders');
-	let User = catalogApiHeaders && catalogApiHeaders.userId;
-	let userId = User && User.value ? User.value : '';
-	return userId;
+    let catalogApiHeaders = Configuration.get('CatalogApiHeaders');
+    let User = catalogApiHeaders && catalogApiHeaders.userId;
+    let userId = User && User.value ? User.value : '';
+    return userId;
 }
 
 function baseUrl() {
-	const restCatalogPrefix = Configuration.get('restCatalogPrefix');
-	return `${restCatalogPrefix}`;
+    const restCatalogPrefix = Configuration.get('restCatalogPrefix');
+    return `${restCatalogPrefix}`;
 }
-
 
 function fetchUsersList() {
-	const url = '/v1/user/users';
-	return  RestAPIUtil.fetch(`${baseUrl()}${url}`);
+    const url = '/v1/user/users';
+    return RestAPIUtil.fetch(`${baseUrl()}${url}`);
 }
 
-
-
 const UsersActionHelper = {
-	fetchUsersList(dispatch) {
-		fetchUsersList().then(response => {
-			dispatch({
-				type: actionTypes.USERS_LIST_LOADED,
-				usersList: response
-			});
+    fetchUsersList(dispatch) {
+        fetchUsersList().then(response => {
+            dispatch({
+                type: actionTypes.USERS_LIST_LOADED,
+                usersList: response
+            });
 
-			let userId = getUserId();
-			let userInfo = response.find(user => user.userId === userId);
-			dispatch({
-				type: actionTypes.GOT_USER_INFO,
-				userInfo
-			});
-
-		});
-
-	}
+            let userId = getUserId();
+            let userInfo = response.find(user => user.userId === userId);
+            dispatch({
+                type: actionTypes.GOT_USER_INFO,
+                userInfo
+            });
+        });
+    }
 };
 
 export default UsersActionHelper;

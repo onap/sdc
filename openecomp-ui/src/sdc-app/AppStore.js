@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-import {createStore, applyMiddleware, compose} from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import Reducers from './Reducers.js';
 const thunk = store => next => action =>
-	typeof action === 'function' ?
-		action(store.dispatch, store.getState) :
-		next(action);
-
+    typeof action === 'function'
+        ? action(store.dispatch, store.getState)
+        : next(action);
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-export const storeCreator = (initialState) => createStore(Reducers, initialState, composeEnhancers(applyMiddleware(thunk)));
-
+export const storeCreator = initialState =>
+    createStore(
+        Reducers,
+        initialState,
+        composeEnhancers(applyMiddleware(thunk))
+    );
 
 const store = storeCreator();
 
 if (module.hot) {
-	module.hot.accept('./Reducers.js', () =>
-		store.replaceReducer(require('./Reducers.js').default)
-	);
+    module.hot.accept('./Reducers.js', () =>
+        store.replaceReducer(require('./Reducers.js').default)
+    );
 }
 
 export default store;
