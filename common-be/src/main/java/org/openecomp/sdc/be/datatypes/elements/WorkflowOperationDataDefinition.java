@@ -16,19 +16,19 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.DESCRIPTION;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.UNIQUE_ID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.WO_INPUT_PARAMETERS;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.WO_OPERATION_TYPE;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.WO_OUTPUT_PARAMETERS;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.WO_TYPE;
 
+public class WorkflowOperationDataDefinition extends ToscaDataDefinition {
 
-import java.io.Serializable;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-public class WorkflowOperationDataDefinition extends ToscaDataDefinition implements Serializable {
-
+    @JsonCreator
     public WorkflowOperationDataDefinition() {
         super();
     }
@@ -40,27 +40,30 @@ public class WorkflowOperationDataDefinition extends ToscaDataDefinition impleme
         setOutputParams(wodd.getOutputParams());
         setDescription(wodd.getDescription());
         setToscaResourceName(wodd.getToscaResourceName());
-        setType(wodd.getType());
+        setOperationType(wodd.getOperationType());
     }
 
     public ListDataDefinition<WorkflowOperationParamDataDefinition> getInputParams() {
-        return (ListDataDefinition<WorkflowOperationParamDataDefinition>) getToscaPresentationValue(WO_INPUT_PARAMETERS);
+        return (ListDataDefinition<WorkflowOperationParamDataDefinition>)
+            getToscaPresentationValue(WO_INPUT_PARAMETERS);
+    }
+    public void setInputParams(ListDataDefinition<WorkflowOperationParamDataDefinition>
+        inputParams) {
+        setToscaPresentationValue(WO_INPUT_PARAMETERS, inputParams);
     }
 
-    public void setInputParams(ListDataDefinition<WorkflowOperationParamDataDefinition> pathElements) {
-        setToscaPresentationValue(WO_INPUT_PARAMETERS, pathElements);
-    }
     public ListDataDefinition<WorkflowOperationParamDataDefinition> getOutputParams() {
-        return (ListDataDefinition<WorkflowOperationParamDataDefinition>) getToscaPresentationValue(WO_OUTPUT_PARAMETERS);
+        return (ListDataDefinition<WorkflowOperationParamDataDefinition>)
+            getToscaPresentationValue(WO_OUTPUT_PARAMETERS);
+    }
+    public void setOutputParams(ListDataDefinition<WorkflowOperationParamDataDefinition>
+        outputParams) {
+        setToscaPresentationValue(WO_OUTPUT_PARAMETERS, outputParams);
     }
 
-    public void setOutputParams(ListDataDefinition<WorkflowOperationParamDataDefinition> pathElements) {
-        setToscaPresentationValue(WO_OUTPUT_PARAMETERS, pathElements);
-    }
     public String getUniqueId() {
         return (String) getToscaPresentationValue(UNIQUE_ID);
     }
-
     public void setUniqueId(String uid) {
         setToscaPresentationValue(UNIQUE_ID, uid);
     }
@@ -68,21 +71,20 @@ public class WorkflowOperationDataDefinition extends ToscaDataDefinition impleme
     public String getDescription() {
         return (String) getToscaPresentationValue(DESCRIPTION);
     }
-
     public void setDescription(String description) {
         setToscaPresentationValue(DESCRIPTION, description);
     }
-    public String getType() {
-        return (String) getToscaPresentationValue(WO_TYPE);
+
+    public String getOperationType() {
+        return (String) getToscaPresentationValue(WO_OPERATION_TYPE);
+    }
+    public void setOperationType(String operationType) {
+        setToscaPresentationValue(WO_OPERATION_TYPE, operationType);
     }
 
-    public void setType(String description) {
-        setToscaPresentationValue(WO_TYPE, description);
-    }
     public String getToscaResourceName() {
-           return (String) getToscaPresentationValue(TOSCA_RESOURCE_NAME);
+        return (String) getToscaPresentationValue(TOSCA_RESOURCE_NAME);
     }
-
     public void setToscaResourceName(String toscaResourceName) {
         setToscaPresentationValue(TOSCA_RESOURCE_NAME, toscaResourceName);
     }
