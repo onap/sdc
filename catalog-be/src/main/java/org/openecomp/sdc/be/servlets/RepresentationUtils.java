@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,23 +20,35 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter.SerializeExceptFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.datatypes.elements.WorkflowOperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class RepresentationUtils {
 
@@ -89,12 +101,14 @@ public class RepresentationUtils {
      * @throws IOException
      */
     public static <T> Object toRepresentation(T elementToRepresent) throws IOException {
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return mapper.writeValueAsString(elementToRepresent);
     }
+
+
+
 
     public static <T> T fromRepresentation(String json, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
@@ -110,6 +124,7 @@ public class RepresentationUtils {
 
         return object;
     }
+
 
     public static ArtifactDefinition convertJsonToArtifactDefinition(String content, Class<ArtifactDefinition> clazz) {
 
@@ -156,5 +171,32 @@ public class RepresentationUtils {
 
         return resourceInfo;
     }
+
+    public static <T> Object toFilteredRepresentation(T elementToRepresent) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setMixIns(IS_EMPTY_FILTER_MIXIN);
+        return mapper.writer(new SimpleFilterProvider().addFilter(REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER,
+            SerializeExceptFilter.serializeAllExcept(EMPTY))).writeValueAsString(elementToRepresent);
+    }
+
+    @JsonFilter(REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER)
+    private static class IsEmptyFilterMixIn {}
+
+    private static final String EMPTY = "empty";
+    private static final String REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER = "removeIsEmptyFromCollections";
+    private static final ImmutableMap<Class<?>,Class<?>> IS_EMPTY_FILTER_MIXIN =
+        ImmutableMap.<Class<?>,Class<?>>builder()
+            .put(Collection.class,IsEmptyFilterMixIn.class)
+            .put(List.class,IsEmptyFilterMixIn.class)
+            .put(Set.class,IsEmptyFilterMixIn.class)
+            .put(HashMap.class,IsEmptyFilterMixIn.class)
+            .put(ArrayList.class,IsEmptyFilterMixIn.class)
+            .put(HashSet.class,IsEmptyFilterMixIn.class)
+            .put(InterfaceDefinition.class,IsEmptyFilterMixIn.class)
+            .put(Operation.class,IsEmptyFilterMixIn.class)
+            .put(Resource.class,IsEmptyFilterMixIn.class)
+            .put(ToscaDataDefinition.class,IsEmptyFilterMixIn.class).build();
 
 }
