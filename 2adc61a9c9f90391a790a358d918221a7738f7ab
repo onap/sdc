@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_06f7db8d",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-20T08:01:56Z",
+      "side": 1,
+      "message": "this file should be configured and copyed by chef",
+      "range": {
+        "startLine": 11,
+        "startChar": 4,
+        "endLine": 11,
+        "endChar": 45
+      },
+      "revId": "2adc61a9c9f90391a790a358d918221a7738f7ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8cba2fbf",
         "filename": "sdc-os-chef/scripts/docker_run.sh",
         "patchSetId": 4
