@@ -286,9 +286,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openecomp.sdc.sdc-titan-cassandra</groupId>
+			<groupId>org.onap.sdc.sdc-titan-cassandra</groupId>
 			<artifactId>sdc-titan-cassandra</artifactId>
-			<version>${titan.version}</version>
+			<version>${sdc.titan.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
