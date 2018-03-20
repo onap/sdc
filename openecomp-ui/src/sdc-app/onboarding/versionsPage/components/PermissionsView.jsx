@@ -22,61 +22,108 @@ import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 
 const maxContributors = 6;
 
-function extraUsersTooltip (extraUsers) {
-	return (
-		<Tooltip className='extra-users-tooltip' id='extra-users-tooltip-id'>
-			{extraUsers.map(extraUser => <div key={extraUser.userId} className='extra-user'>{extraUser.fullName}</div>)}
-		</Tooltip>
-	);
+function extraUsersTooltip(extraUsers) {
+    return (
+        <Tooltip className="extra-users-tooltip" id="extra-users-tooltip-id">
+            {extraUsers.map(extraUser => (
+                <div key={extraUser.userId} className="extra-user">
+                    {extraUser.fullName}
+                </div>
+            ))}
+        </Tooltip>
+    );
 }
 
-const User = ({user, isCurrentUser, dataTestId}) => (
-	<SVGIcon className={`user-view ${isCurrentUser ? 'current-user' : ''}`} name='user' label={user.fullName} labelPosition='right' color='primary'
-		data-test-id={dataTestId}/>
+const User = ({ user, isCurrentUser, dataTestId }) => (
+    <SVGIcon
+        className={`user-view ${isCurrentUser ? 'current-user' : ''}`}
+        name="user"
+        label={user.fullName}
+        labelPosition="right"
+        color="primary"
+        data-test-id={dataTestId}
+    />
 );
 
-const Owner = ({owner, isCurrentUser}) => (
-	<div className='owner-view'>
-		<div className='permissions-view-title'>{i18n('Owner')}</div>
-		<User user={owner} isCurrentUser={isCurrentUser} dataTestId='owner'/>
-	</div>
+const Owner = ({ owner, isCurrentUser }) => (
+    <div className="owner-view">
+        <div className="permissions-view-title">{i18n('Owner')}</div>
+        <User user={owner} isCurrentUser={isCurrentUser} dataTestId="owner" />
+    </div>
 );
 
-const Contributors = ({contributors, owner, currentUser, onManagePermissions, isManual}) => {
-	let extraUsers = contributors.length - maxContributors;
-	return (
-		<div className='contributors-view'>
-			<div className='permissions-view-title'>{i18n('Contributors')}</div>
-			{contributors.slice(0, maxContributors).map(contributor =>
-				<User key={contributor.userId} user={contributor} isCurrentUser={contributor.userId === currentUser.userId} dataTestId='contributor'/>
-			)}
-			{extraUsers > 0 &&
-				<OverlayTrigger placement='bottom' overlay={extraUsersTooltip(contributors.slice(maxContributors))}>
-					<div className='extra-contributors'>{`+${extraUsers}`}</div>
-				</OverlayTrigger>
-			}
-			{currentUser.userId === owner.userId && !isManual &&
-				<span
-					className='manage-permissions'
-					onClick={onManagePermissions}
-					data-test-id='versions-page-manage-permissions'>
-					{i18n('Manage Permissions')}
-				</span>
-			}
-	</div>
-	);
+const Contributors = ({
+    contributors,
+    owner,
+    currentUser,
+    onManagePermissions,
+    isManual
+}) => {
+    let extraUsers = contributors.length - maxContributors;
+    return (
+        <div className="contributors-view">
+            <div className="permissions-view-title">{i18n('Contributors')}</div>
+            {contributors
+                .slice(0, maxContributors)
+                .map(contributor => (
+                    <User
+                        key={contributor.userId}
+                        user={contributor}
+                        isCurrentUser={
+                            contributor.userId === currentUser.userId
+                        }
+                        dataTestId="contributor"
+                    />
+                ))}
+            {extraUsers > 0 && (
+                <OverlayTrigger
+                    placement="bottom"
+                    overlay={extraUsersTooltip(
+                        contributors.slice(maxContributors)
+                    )}>
+                    <div className="extra-contributors">{`+${extraUsers}`}</div>
+                </OverlayTrigger>
+            )}
+            {currentUser.userId === owner.userId &&
+                !isManual && (
+                    <span
+                        className="manage-permissions"
+                        onClick={onManagePermissions}
+                        data-test-id="versions-page-manage-permissions">
+                        {i18n('Manage Permissions')}
+                    </span>
+                )}
+        </div>
+    );
 };
 
-const PermissionsView = ({owner, contributors, currentUser = {}, onManagePermissions, isManual}) => (
-	<div className='versions-page-permissions-view-wrapper'>
-		<div className='permissions-view-wrapper-title'>{i18n('Permissions')}</div>
-		<div className='permissions-view-content'>
-			<div className='permissions-view'>
-				<Owner owner={owner} isCurrentUser={owner.userId === currentUser.userId} />
-				<Contributors owner={owner} contributors={contributors} currentUser={currentUser} onManagePermissions={onManagePermissions} isManual={isManual}/>
-			</div>
-		</div>
-	</div>
+const PermissionsView = ({
+    owner,
+    contributors,
+    currentUser = {},
+    onManagePermissions,
+    isManual
+}) => (
+    <div className="versions-page-permissions-view-wrapper">
+        <div className="permissions-view-wrapper-title">
+            {i18n('Permissions')}
+        </div>
+        <div className="permissions-view-content">
+            <div className="permissions-view">
+                <Owner
+                    owner={owner}
+                    isCurrentUser={owner.userId === currentUser.userId}
+                />
+                <Contributors
+                    owner={owner}
+                    contributors={contributors}
+                    currentUser={currentUser}
+                    onManagePermissions={onManagePermissions}
+                    isManual={isManual}
+                />
+            </div>
+        </div>
+    </div>
 );
 
 export default PermissionsView;

@@ -26,88 +26,92 @@ import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/s
  * LHS lifeline row view.
  */
 class LifelineNew extends React.Component {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Construct view.
+     * @param props element properties.
+     * @param context react context.
+     */
+    constructor(props, context) {
+        super(props, context);
 
-  /**
-   * Construct view.
-   * @param props element properties.
-   * @param context react context.
-   */
-  constructor(props, context) {
-    super(props, context);
+        // Bindings.
 
-    // Bindings.
+        this.onClickAdd = this.onClickAdd.bind(this);
+    }
 
-    this.onClickAdd = this.onClickAdd.bind(this);
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Handle click event.
+     */
+    onClickAdd() {
+        this.props.designer.addLifeline();
+    }
 
-  /**
-   * Handle click event.
-   */
-  onClickAdd() {
-    this.props.designer.addLifeline();
-  }
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Render view.
-   * @returns {*}
-   */
-  render() {
-    const { connectDragSource } = this.props;
-    return connectDragSource(
-      <div className="asdcs-designer-lifeline asdcs-designer-lifeline-new">
-        <table className="asdcs-designer-layout asdcs-designer-lifeline-new">
-          <tbody>
-            <tr>
-              <td>
-                <div className="asdcs-designer-sort asdcs-designer-icon">
-                  <Icon glyph={iconHandle} />
-                </div>
-              </td>
-              <td>
-                <div className="asdcs-designer-label" onClick={this.onClickAdd}>
-                  Add Lifeline
-                </div>
-              </td>
-              <td>
-                <div className="asdcs-designer-icon" onClick={this.onClickAdd}>
-                  <Icon glyph={iconPlus} />
-                </div>
-              </td>
-              <td>&nbsp;</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+    /**
+     * Render view.
+     * @returns {*}
+     */
+    render() {
+        const { connectDragSource } = this.props;
+        return connectDragSource(
+            <div className="asdcs-designer-lifeline asdcs-designer-lifeline-new">
+                <table className="asdcs-designer-layout asdcs-designer-lifeline-new">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div className="asdcs-designer-sort asdcs-designer-icon">
+                                    <Icon glyph={iconHandle} />
+                                </div>
+                            </td>
+                            <td>
+                                <div
+                                    className="asdcs-designer-label"
+                                    onClick={this.onClickAdd}>
+                                    Add Lifeline
+                                </div>
+                            </td>
+                            <td>
+                                <div
+                                    className="asdcs-designer-icon"
+                                    onClick={this.onClickAdd}>
+                                    <Icon glyph={iconPlus} />
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
 }
 
 /** Element properties. */
 LifelineNew.propTypes = {
-  designer: PropTypes.object.isRequired,
-  lifelines: PropTypes.object.isRequired,
-  connectDragSource: PropTypes.func.isRequired,
+    designer: PropTypes.object.isRequired,
+    lifelines: PropTypes.object.isRequired,
+    connectDragSource: PropTypes.func.isRequired
 };
 
 /** DND. */
 const source = {
-  beginDrag(props) {
-    return { id: props.id };
-  },
+    beginDrag(props) {
+        return { id: props.id };
+    }
 };
 
 /** DND. */
 const collect = function collection(connect, monitor) {
-  return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-  };
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    };
 };
-
+/* eslint-disable new-cap */
 export default DragSource('lifeline-new', source, collect)(LifelineNew);
+/* eslint-enable new-cap */

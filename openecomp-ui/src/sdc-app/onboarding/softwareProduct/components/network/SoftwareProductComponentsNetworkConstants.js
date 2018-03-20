@@ -16,23 +16,23 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	NIC_LIST_EDIT: null,
-	NIC_LIST_UPDATE: null,
+    NIC_LIST_EDIT: null,
+    NIC_LIST_UPDATE: null,
 
-	NICEditor: {
-		FILL_DATA: null,
-		CLEAR_DATA: null,
-	},
-	NICCreation: {
-		OPEN: null,
-		CLEAR_DATA: null,
-		DATA_CHANGED: null
-	},
+    NICEditor: {
+        FILL_DATA: null,
+        CLEAR_DATA: null
+    },
+    NICCreation: {
+        OPEN: null,
+        CLEAR_DATA: null,
+        DATA_CHANGED: null
+    }
 });
 
 export const networkTypes = {
-	EXTERNAL: 'External',
-	INTERNAL: 'Internal'
+    EXTERNAL: 'External',
+    INTERNAL: 'Internal'
 };
 export const NIC_QUESTIONNAIRE = 'nic';
 export const NIC_CREATION_FORM_NAME = 'nicCreation';

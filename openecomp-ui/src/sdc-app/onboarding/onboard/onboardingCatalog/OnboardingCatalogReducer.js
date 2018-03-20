@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {actionTypes, tabsMapping} from './OnboardingCatalogConstants.js';
-import {combineReducers} from 'redux';
+import { actionTypes, tabsMapping } from './OnboardingCatalogConstants.js';
+import { combineReducers } from 'redux';
 import vendorCatalogReducer from './VendorCatalogReducer.js';
 
 const onboardingCatalogReducer = combineReducers({
-	vendorCatalog: vendorCatalogReducer,
-	activeTab: (state = tabsMapping.ACTIVE, action) => action.type === actionTypes.CHANGE_ACTIVE_CATALOG_TAB ? action.activeTab : state
+    vendorCatalog: vendorCatalogReducer,
+    activeTab: (state = tabsMapping.ACTIVE, action) =>
+        action.type === actionTypes.CHANGE_ACTIVE_CATALOG_TAB
+            ? action.activeTab
+            : state
 });
 
 export default (state, action) => {
-	if (action.type === actionTypes.RESET_ONBOARDING_CATALOG_STORE) {
-		state = undefined;
-	}
-	return onboardingCatalogReducer(state, action);
+    if (action.type === actionTypes.RESET_ONBOARDING_CATALOG_STORE) {
+        state = undefined;
+    }
+    return onboardingCatalogReducer(state, action);
 };

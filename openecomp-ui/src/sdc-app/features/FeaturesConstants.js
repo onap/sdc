@@ -16,10 +16,10 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	FEATURES_LIST_LOADED: null
+    FEATURES_LIST_LOADED: null
 });
 
 export const featureToggleNames = {
-	ARCHIVE_ITEM: 'ARCHIVE_ITEM',
-	FILTER: 'FILTER'
+    ARCHIVE_ITEM: 'ARCHIVE_ITEM',
+    FILTER: 'FILTER'
 };

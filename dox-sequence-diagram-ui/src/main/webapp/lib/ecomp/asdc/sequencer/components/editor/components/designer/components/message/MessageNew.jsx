@@ -26,82 +26,84 @@ import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/s
  * LHS lifeline row view.
  */
 class MessageNew extends React.Component {
+    /**
+     * Construct view.
+     * @param props element properties.
+     * @param context react context.
+     */
+    constructor(props, context) {
+        super(props, context);
+        this.onClickAdd = this.onClickAdd.bind(this);
+    }
 
-  /**
-   * Construct view.
-   * @param props element properties.
-   * @param context react context.
-   */
-  constructor(props, context) {
-    super(props, context);
-    this.onClickAdd = this.onClickAdd.bind(this);
-  }
+    /**
+     * Handle add.
+     */
+    onClickAdd() {
+        this.props.designer.addMessage();
+    }
 
-  /**
-   * Handle add.
-   */
-  onClickAdd() {
-    this.props.designer.addMessage();
-  }
-
-  /**
-   * Render view.
-   * @returns {*}
-   */
-  render() {
-    const { connectDragSource } = this.props;
-    return connectDragSource(
-      <div className="asdcs-designer-message asdcs-designer-message-new">
-        <table className="asdcs-designer-layout asdcs-designer-message-new">
-          <tbody>
-            <tr>
-              <td>
-                <div className="asdcs-designer-sort asdcs-designer-icon">
-                  <Icon glyph={iconHandle} />
-                </div>
-              </td>
-              <td>
-                <div className="asdcs-designer-label" onClick={this.onClickAdd}>
-                  Add Message
-                </div>
-              </td>
-              <td>
-                <div className="asdcs-designer-icon" onClick={this.onClickAdd}>
-                  <Icon glyph={iconPlus} />
-                </div>
-              </td>
-              <td>
-                &nbsp;
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  }
+    /**
+     * Render view.
+     * @returns {*}
+     */
+    render() {
+        const { connectDragSource } = this.props;
+        return connectDragSource(
+            <div className="asdcs-designer-message asdcs-designer-message-new">
+                <table className="asdcs-designer-layout asdcs-designer-message-new">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div className="asdcs-designer-sort asdcs-designer-icon">
+                                    <Icon glyph={iconHandle} />
+                                </div>
+                            </td>
+                            <td>
+                                <div
+                                    className="asdcs-designer-label"
+                                    onClick={this.onClickAdd}>
+                                    Add Message
+                                </div>
+                            </td>
+                            <td>
+                                <div
+                                    className="asdcs-designer-icon"
+                                    onClick={this.onClickAdd}>
+                                    <Icon glyph={iconPlus} />
+                                </div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
 }
 
 /** Element properties. */
 MessageNew.propTypes = {
-  designer: PropTypes.object.isRequired,
-  messages: PropTypes.object.isRequired,
-  connectDragSource: PropTypes.func.isRequired,
+    designer: PropTypes.object.isRequired,
+    messages: PropTypes.object.isRequired,
+    connectDragSource: PropTypes.func.isRequired
 };
 
 /** DND. */
 const source = {
-  beginDrag(props) {
-    return { id: props.id };
-  },
+    beginDrag(props) {
+        return { id: props.id };
+    }
 };
 
 /** DND. */
 const collect = function collection(connect, monitor) {
-  return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-  };
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    };
 };
 
+/* eslint-disable new-cap */
 export default DragSource('message-new', source, collect)(MessageNew);
-
+/* eslint-enable new-cap */

@@ -15,26 +15,30 @@
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import {actionTypes} from './FeaturesConstants.js';
-
+import { actionTypes } from './FeaturesConstants.js';
 
 function baseUrl() {
-	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/togglz`;
+    const restPrefix = Configuration.get('restPrefix');
+    return `${restPrefix}/v1.0/togglz`;
 }
 
 function fetchList() {
-	return RestAPIUtil.fetch(baseUrl());
+    return RestAPIUtil.fetch(baseUrl());
 }
 
 export default {
-	getFeaturesList(dispatch) {
-		return fetchList().then(response => {
-			dispatch({
-				type: actionTypes.FEATURES_LIST_LOADED,
-				features: response.features
-			});
-		}).catch(() => console.error('An exception occured while trying to fetch the toggleZ features.') );
-	}
+    getFeaturesList(dispatch) {
+        return fetchList()
+            .then(response => {
+                dispatch({
+                    type: actionTypes.FEATURES_LIST_LOADED,
+                    features: response.features
+                });
+            })
+            .catch(() =>
+                console.error(
+                    'An exception occured while trying to fetch the toggleZ features.'
+                )
+            );
+    }
 };
-

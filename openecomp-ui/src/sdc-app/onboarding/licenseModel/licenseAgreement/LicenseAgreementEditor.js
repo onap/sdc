@@ -13,66 +13,93 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import LicenseAgreementActionHelper from './LicenseAgreementActionHelper.js';
 import LicenseAgreementEditorView from './LicenseAgreementEditorView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
-export const mapStateToProps = ({licenseModel: {licenseAgreement, featureGroup}}) => {
+export const mapStateToProps = ({
+    licenseModel: { licenseAgreement, featureGroup }
+}) => {
+    let {
+        data,
+        selectedTab,
+        genericFieldInfo,
+        formReady
+    } = licenseAgreement.licenseAgreementEditor;
+    const list = licenseAgreement.licenseAgreementList;
+    const LANames = {};
 
+    let previousData;
+    const licenseAgreementId = data ? data.id : null;
+    if (licenseAgreementId) {
+        previousData = licenseAgreement.licenseAgreementList.find(
+            licenseAgreement => licenseAgreement.id === licenseAgreementId
+        );
+    }
 
-	let {data, selectedTab, genericFieldInfo, formReady} = licenseAgreement.licenseAgreementEditor;
-	const list = licenseAgreement.licenseAgreementList;
-	const LANames = {};
+    for (let i = 0; i < list.length; i++) {
+        LANames[list[i].name.toLowerCase()] = list[i].id;
+    }
 
-	let previousData;
-	const licenseAgreementId = data ? data.id : null;
-	if(licenseAgreementId) {
-		previousData = licenseAgreement.licenseAgreementList.find(licenseAgreement => licenseAgreement.id === licenseAgreementId);
-	}
+    const { featureGroupsList = [] } = featureGroup;
 
-	for (let i = 0; i < list.length; i++) {
-		LANames[list[i].name.toLowerCase()] = list[i].id;
-	}
+    let isFormValid = true;
+    let invalidTabs = [];
+    for (let field in genericFieldInfo) {
+        if (!genericFieldInfo[field].isValid) {
+            isFormValid = false;
+            let tabId = genericFieldInfo[field].tabId;
+            if (invalidTabs.indexOf(tabId) === -1) {
+                invalidTabs[invalidTabs.length] = genericFieldInfo[field].tabId;
+            }
+        }
+    }
 
-	const {featureGroupsList = []} = featureGroup;
-
-	let isFormValid = true;
-	let invalidTabs = [];
-	for (let field in genericFieldInfo) {
-		if (!genericFieldInfo[field].isValid) {
-			isFormValid = false;
-			let tabId = genericFieldInfo[field].tabId;
-			if (invalidTabs.indexOf(tabId) === -1) {
-				invalidTabs[invalidTabs.length] = genericFieldInfo[field].tabId;
-			}
-		}
-	}
-
-	return {
-		data,
-		previousData,
-		selectedTab,
-		featureGroupsList,
-		LANames,
-		genericFieldInfo,
-		isFormValid,
-		formReady,
-		invalidTabs
-	};
+    return {
+        data,
+        previousData,
+        selectedTab,
+        featureGroupsList,
+        LANames,
+        genericFieldInfo,
+        isFormValid,
+        formReady,
+        invalidTabs
+    };
 };
 
-export const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
-	return {
-		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
-		onTabSelect: tab => LicenseAgreementActionHelper.selectLicenseAgreementEditorTab(dispatch, {tab}),
-		onCancel: () => LicenseAgreementActionHelper.closeLicenseAgreementEditor(dispatch),
-		onSubmit: ({previousLicenseAgreement, licenseAgreement}) => {
-			LicenseAgreementActionHelper.closeLicenseAgreementEditor(dispatch);
-			LicenseAgreementActionHelper.saveLicenseAgreement(dispatch, {licenseModelId, previousLicenseAgreement, licenseAgreement, version});
-		},
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)
-	};
+export const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
+    return {
+        onDataChanged: (deltaData, formName, customValidations) =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName,
+                customValidations
+            }),
+        onTabSelect: tab =>
+            LicenseAgreementActionHelper.selectLicenseAgreementEditorTab(
+                dispatch,
+                {
+                    tab
+                }
+            ),
+        onCancel: () =>
+            LicenseAgreementActionHelper.closeLicenseAgreementEditor(dispatch),
+        onSubmit: ({ previousLicenseAgreement, licenseAgreement }) => {
+            LicenseAgreementActionHelper.closeLicenseAgreementEditor(dispatch);
+            LicenseAgreementActionHelper.saveLicenseAgreement(dispatch, {
+                licenseModelId,
+                previousLicenseAgreement,
+                licenseAgreement,
+                version
+            });
+        },
+        onValidateForm: formName =>
+            ValidationHelper.validateForm(dispatch, formName)
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(LicenseAgreementEditorView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    LicenseAgreementEditorView
+);

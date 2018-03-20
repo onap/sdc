@@ -16,27 +16,27 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const overviewItems = keyMirror({
-	LICENSE_AGREEMENTS: 'License Agreements',
-	FEATURE_GROUPS: 'Feature Groups',
-	ENTITLEMENT_POOLS: 'Entitlement Pools',
-	LICENSE_KEY_GROUPS: 'License Key Groups'
+    LICENSE_AGREEMENTS: 'License Agreements',
+    FEATURE_GROUPS: 'Feature Groups',
+    ENTITLEMENT_POOLS: 'Entitlement Pools',
+    LICENSE_KEY_GROUPS: 'License Key Groups'
 });
 
 export const overviewEditorHeaders = keyMirror({
-	LICENSE_AGREEMENT: 'License Agreement',
-	FEATURE_GROUP: 'Feature Group',
-	ENTITLEMENT_POOL: 'Entitlement Pool',
-	LICENSE_KEY_GROUP: 'License Key Group'
+    LICENSE_AGREEMENT: 'License Agreement',
+    FEATURE_GROUP: 'Feature Group',
+    ENTITLEMENT_POOL: 'Entitlement Pool',
+    LICENSE_KEY_GROUP: 'License Key Group'
 });
 
 export const actionTypes = keyMirror({
-	LICENSE_MODEL_OVERVIEW_TAB_SELECTED: null,
-	LM_DATA_CHANGED: null
+    LICENSE_MODEL_OVERVIEW_TAB_SELECTED: null,
+    LM_DATA_CHANGED: null
 });
 
 export const selectedButton = {
-	VLM_LIST_VIEW: 'VLM_LIST_VIEW',
-	NOT_IN_USE: 'NOT_IN_USE'
+    VLM_LIST_VIEW: 'VLM_LIST_VIEW',
+    NOT_IN_USE: 'NOT_IN_USE'
 };
 
 export const VLM_DESCRIPTION_FORM = 'VLMDEWSCRIPTIONFORM';

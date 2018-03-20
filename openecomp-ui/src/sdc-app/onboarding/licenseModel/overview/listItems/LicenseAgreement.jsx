@@ -13,44 +13,73 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
-import {optionsInputValues} from '../../licenseAgreement/LicenseAgreementConstants.js';
+import InputOptions, {
+    other as optionInputOther
+} from 'nfvo-components/input/validation/InputOptions.jsx';
+import { optionsInputValues } from '../../licenseAgreement/LicenseAgreementConstants.js';
 import ArrowCol from './listItemsComponents/ArrowCol.jsx';
 import ItemInfo from './listItemsComponents/ItemInfo.jsx';
 import IconCol from './listItemsComponents/IconCol.jsx';
-import {AdditionalDataCol, AdditionalDataElement} from './listItemsComponents/AdditionalDataCol.jsx';
+import {
+    AdditionalDataCol,
+    AdditionalDataElement
+} from './listItemsComponents/AdditionalDataCol.jsx';
 
 class LicenseAgreement extends Component {
-	render() {
-		let {laData: {name, description, licenseTerm, children = []}, isCollapsed, onClick, isOrphan} = this.props;
-		return (
-			<div 
-				onClick={e => onClick(e)} 
-				className={`vlm-list-item vlm-list-item-la ${isOrphan ? 'orphan-list-item' : ''} ${children.length && !isOrphan ? 'clickable' : ''} `} 
-				data-test-id='vlm-list-la-item'>
-				{!isOrphan && <ArrowCol isCollapsed={isCollapsed} length={children.length} />}
-				<IconCol className='la-icon' text='LA'/>
-				<ItemInfo name={name} description={description}>
-					<div className='children-count'>
-						<span className='count-value'>{i18n('Feature Groups: ')}<span data-test-id='vlm-list-fg-count-value'>{`${children.length}`}</span></span>
-					</div>
-				</ItemInfo>
-				<AdditionalDataCol>
-					<AdditionalDataElement
-						name={i18n('License Model Type')}
-						value={this.extractValue(licenseTerm)}/>
-				</AdditionalDataCol>
-			</div>
-		);
-	}
+    render() {
+        let {
+            laData: { name, description, licenseTerm, children = [] },
+            isCollapsed,
+            onClick,
+            isOrphan
+        } = this.props;
+        return (
+            <div
+                onClick={e => onClick(e)}
+                className={`vlm-list-item vlm-list-item-la ${
+                    isOrphan ? 'orphan-list-item' : ''
+                } ${children.length && !isOrphan ? 'clickable' : ''} `}
+                data-test-id="vlm-list-la-item">
+                {!isOrphan && (
+                    <ArrowCol
+                        isCollapsed={isCollapsed}
+                        length={children.length}
+                    />
+                )}
+                <IconCol className="la-icon" text="LA" />
+                <ItemInfo name={name} description={description}>
+                    <div className="children-count">
+                        <span className="count-value">
+                            {i18n('Feature Groups: ')}
+                            <span data-test-id="vlm-list-fg-count-value">{`${
+                                children.length
+                            }`}</span>
+                        </span>
+                    </div>
+                </ItemInfo>
+                <AdditionalDataCol>
+                    <AdditionalDataElement
+                        name={i18n('License Model Type')}
+                        value={this.extractValue(licenseTerm)}
+                    />
+                </AdditionalDataCol>
+            </div>
+        );
+    }
 
-	extractValue(item) {
-		if (item === undefined) {return '';} //TODO fix it later
+    extractValue(item) {
+        if (item === undefined) {
+            return '';
+        } //TODO fix it later
 
-		return  item ? item.choice === optionInputOther.OTHER ? item.other : InputOptions.getTitleByName(optionsInputValues, item.choice) : '';
-	}
+        return item
+            ? item.choice === optionInputOther.OTHER
+              ? item.other
+              : InputOptions.getTitleByName(optionsInputValues, item.choice)
+            : '';
+    }
 }
 
 export default LicenseAgreement;

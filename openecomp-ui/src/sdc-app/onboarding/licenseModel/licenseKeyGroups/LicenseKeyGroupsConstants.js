@@ -15,73 +15,88 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
+import InputOptions, {
+    other as optionInputOther
+} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
-
-	LICENSE_KEY_GROUPS_LIST_LOADED: null,
-	DELETE_LICENSE_KEY_GROUP: null,
-	EDIT_LICENSE_KEY_GROUP: null,
-	ADD_LICENSE_KEY_GROUP: null,
-	LICENSE_KEY_GROUPS_DELETE_CONFIRM: null,
-	licenseKeyGroupsEditor: {
-		OPEN: null,
-		CLOSE: null,
-		DATA_CHANGED: null,
-		LIMITS_LIST_LOADED: null
-	}
+    LICENSE_KEY_GROUPS_LIST_LOADED: null,
+    DELETE_LICENSE_KEY_GROUP: null,
+    EDIT_LICENSE_KEY_GROUP: null,
+    ADD_LICENSE_KEY_GROUP: null,
+    LICENSE_KEY_GROUPS_DELETE_CONFIRM: null,
+    licenseKeyGroupsEditor: {
+        OPEN: null,
+        CLOSE: null,
+        DATA_CHANGED: null,
+        LIMITS_LIST_LOADED: null
+    }
 });
 
 export const defaultState = {
-	licenseKeyGroupsEditor: {
-		type: '',
-		operationalScope: {choices: [], other: ''}
-	}
+    licenseKeyGroupsEditor: {
+        type: '',
+        operationalScope: { choices: [], other: '' }
+    }
 };
 
 export const LKG_FORM_NAME = 'LKGFORM';
 
 export const optionsInputValues = {
-	OPERATIONAL_SCOPE: [
-		{enum: '', title: i18n('please select…')},
-		{enum: 'Network_Wide', title: 'Network Wide'},
-		{enum: 'Availability_Zone', title: 'Availability Zone'},
-		{enum: 'Data_Center', title: 'Data Center'},
-		{enum: 'Tenant', title: 'Tenant'},
-		{enum: 'VM', title: 'VM'},
-		{enum: 'CPU', title: 'CPU'},
-		{enum: 'Core', title: 'Core'}
-	],
-	TYPE: [
-		{enum: '', title: i18n('please select…')},
-		{enum: 'Universal', title: 'Universal'},
-		{enum: 'Unique', title: 'Unique'},
-		{enum: 'One_Time', title: 'One Time'}
-	]
+    OPERATIONAL_SCOPE: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Network_Wide', title: 'Network Wide' },
+        { enum: 'Availability_Zone', title: 'Availability Zone' },
+        { enum: 'Data_Center', title: 'Data Center' },
+        { enum: 'Tenant', title: 'Tenant' },
+        { enum: 'VM', title: 'VM' },
+        { enum: 'CPU', title: 'CPU' },
+        { enum: 'Core', title: 'Core' }
+    ],
+    TYPE: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Universal', title: 'Universal' },
+        { enum: 'Unique', title: 'Unique' },
+        { enum: 'One_Time', title: 'One Time' }
+    ]
 };
 
-export const extractValue = (item) => {
-	if (item === undefined) {return '';} //TODO fix it later
+export const extractValue = item => {
+    if (item === undefined) {
+        return '';
+    } //TODO fix it later
 
-	return  item ? item === optionInputOther.OTHER ? item : InputOptions.getTitleByName(optionsInputValues, item) : '';
+    return item
+        ? item === optionInputOther.OTHER
+          ? item
+          : InputOptions.getTitleByName(optionsInputValues, item)
+        : '';
 };
 
-export const getOperationalScopes = (operationalScope) => {
-	if(operationalScope.choices.toString() === i18n(optionInputOther.OTHER) && operationalScope.other !== '') {
-		return operationalScope.other;
-	}
-	else {
-		let allOpScopes = '';
-		for (let opScope of operationalScope.choices) {
-			allOpScopes += allOpScopes === '' ? InputOptions.getTitleByName(optionsInputValues, opScope) : `, ${InputOptions.getTitleByName(optionsInputValues, opScope)}`;
-		}
-		return allOpScopes;
-	}
+export const getOperationalScopes = operationalScope => {
+    if (
+        operationalScope.choices.toString() === i18n(optionInputOther.OTHER) &&
+        operationalScope.other !== ''
+    ) {
+        return operationalScope.other;
+    } else {
+        let allOpScopes = '';
+        for (let opScope of operationalScope.choices) {
+            allOpScopes +=
+                allOpScopes === ''
+                    ? InputOptions.getTitleByName(optionsInputValues, opScope)
+                    : `, ${InputOptions.getTitleByName(
+                          optionsInputValues,
+                          opScope
+                      )}`;
+        }
+        return allOpScopes;
+    }
 };
 
 export const tabIds = {
-	GENERAL: 'GENERAL',
-	SP_LIMITS: 'SP_LIMITS',
-	VENDOR_LIMITS: 'VENDOR_LIMITS',
-	ADD_LIMIT_BUTTON: 'ADD_LIMIT_BUTTON'
+    GENERAL: 'GENERAL',
+    SP_LIMITS: 'SP_LIMITS',
+    VENDOR_LIMITS: 'VENDOR_LIMITS',
+    ADD_LIMIT_BUTTON: 'ADD_LIMIT_BUTTON'
 };

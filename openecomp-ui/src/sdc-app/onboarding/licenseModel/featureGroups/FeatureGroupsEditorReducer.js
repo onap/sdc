@@ -14,65 +14,82 @@
  * permissions and limitations under the License.
  */
 
-import {actionTypes, FG_EDITOR_FORM, state as FeatureGroupStateConstants} from './FeatureGroupsConstants.js';
-
-
+import {
+    actionTypes,
+    FG_EDITOR_FORM,
+    state as FeatureGroupStateConstants
+} from './FeatureGroupsConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.featureGroupsEditor.OPEN:
-			return {
-				...state,
-				data: action.featureGroup || {},
-				formReady: null,
-				formName: FG_EDITOR_FORM,
-				genericFieldInfo: {
-					'description': {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 1000}],
-						tabId: FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL
-					},
-					'partNumber': {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}],
-						tabId: FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL
-					},
-					'manufacturerReferenceNumber': {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 100}],
-						tabId: FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL
-					},
-					'name': {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 120}],
-						tabId: FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL
-					}
-				}
-			};
-		case actionTypes.featureGroupsEditor.CLOSE:
-			return {};
-		case actionTypes.featureGroupsEditor.SELECT_TAB:
-			return {
-				...state,
-				selectedTab: action.tab
-			};
+    switch (action.type) {
+        case actionTypes.featureGroupsEditor.OPEN:
+            return {
+                ...state,
+                data: action.featureGroup || {},
+                formReady: null,
+                formName: FG_EDITOR_FORM,
+                genericFieldInfo: {
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 1000 }],
+                        tabId:
+                            FeatureGroupStateConstants
+                                .SELECTED_FEATURE_GROUP_TAB.GENERAL
+                    },
+                    partNumber: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }],
+                        tabId:
+                            FeatureGroupStateConstants
+                                .SELECTED_FEATURE_GROUP_TAB.GENERAL
+                    },
+                    manufacturerReferenceNumber: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 100 }
+                        ],
+                        tabId:
+                            FeatureGroupStateConstants
+                                .SELECTED_FEATURE_GROUP_TAB.GENERAL
+                    },
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'maxLength', data: 120 }
+                        ],
+                        tabId:
+                            FeatureGroupStateConstants
+                                .SELECTED_FEATURE_GROUP_TAB.GENERAL
+                    }
+                }
+            };
+        case actionTypes.featureGroupsEditor.CLOSE:
+            return {};
+        case actionTypes.featureGroupsEditor.SELECT_TAB:
+            return {
+                ...state,
+                selectedTab: action.tab
+            };
 
-		case actionTypes.featureGroupsEditor.SELECTED_ENTITLEMENT_POOLS_BUTTONTAB:
-			return {
-				...state,
-				selectedEntitlementPoolsButtonTab: action.buttonTab
-			};
-		case actionTypes.featureGroupsEditor.SELECTED_LICENSE_KEY_GROUPS_BUTTONTAB:
-			return {
-				...state,
-				selectedLicenseKeyGroupsButtonTab: action.buttonTab
-			};
-		default:
-			return state;
-	}
-
+        case actionTypes.featureGroupsEditor
+            .SELECTED_ENTITLEMENT_POOLS_BUTTONTAB:
+            return {
+                ...state,
+                selectedEntitlementPoolsButtonTab: action.buttonTab
+            };
+        case actionTypes.featureGroupsEditor
+            .SELECTED_LICENSE_KEY_GROUPS_BUTTONTAB:
+            return {
+                ...state,
+                selectedLicenseKeyGroupsButtonTab: action.buttonTab
+            };
+        default:
+            return state;
+    }
 };

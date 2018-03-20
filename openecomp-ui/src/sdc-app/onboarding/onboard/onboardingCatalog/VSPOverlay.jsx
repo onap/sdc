@@ -16,36 +16,52 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {migrationStatusMapper} from './OnboardingCatalogConstants.js';
+import { migrationStatusMapper } from './OnboardingCatalogConstants.js';
 
-const VSPOverlay = ({VSPList, onSelectVSP, onSeeMore, onMigrate}) => (
-	<div className='vsp-overlay-wrapper' onClick={(e) => {
-		e.stopPropagation();
-		e.preventDefault();
-	}}>
-		<div className='vsp-overlay-arrow'></div>
-		<div className='vsp-overlay'>
-			<div className='vsp-overlay-title'>{i18n('Recently Edited')}</div>
-			<div className='vsp-overlay-list'>
-				{VSPList.slice(0, 5).map(vsp => <div key={vsp.id} className='vsp-overlay-detail' onClick={() => {
-					if (vsp.isOldVersion && vsp.isOldVersion === migrationStatusMapper.OLD_VERSION) {
-						onMigrate({
-							softwareProduct: vsp
-						});
-					} else {
-						onSelectVSP(vsp);
-					}
-				}
-				}>{i18n(vsp.name)}</div>)}
-			</div>
-			{VSPList.length > 5 && <div className='vsp-overlay-see-more' onClick={onSeeMore}>{i18n('See More')}</div>}
-		</div>
-	</div>
+const VSPOverlay = ({ VSPList, onSelectVSP, onSeeMore, onMigrate }) => (
+    <div
+        className="vsp-overlay-wrapper"
+        onClick={e => {
+            e.stopPropagation();
+            e.preventDefault();
+        }}>
+        <div className="vsp-overlay-arrow" />
+        <div className="vsp-overlay">
+            <div className="vsp-overlay-title">{i18n('Recently Edited')}</div>
+            <div className="vsp-overlay-list">
+                {VSPList.slice(0, 5).map(vsp => (
+                    <div
+                        key={vsp.id}
+                        className="vsp-overlay-detail"
+                        onClick={() => {
+                            if (
+                                vsp.isOldVersion &&
+                                vsp.isOldVersion ===
+                                    migrationStatusMapper.OLD_VERSION
+                            ) {
+                                onMigrate({
+                                    softwareProduct: vsp
+                                });
+                            } else {
+                                onSelectVSP(vsp);
+                            }
+                        }}>
+                        {i18n(vsp.name)}
+                    </div>
+                ))}
+            </div>
+            {VSPList.length > 5 && (
+                <div className="vsp-overlay-see-more" onClick={onSeeMore}>
+                    {i18n('See More')}
+                </div>
+            )}
+        </div>
+    </div>
 );
 
 VSPOverlay.PropTypes = {
-	VSPList: PropTypes.array,
-	onSelectVSP: PropTypes.func
+    VSPList: PropTypes.array,
+    onSelectVSP: PropTypes.func
 };
 
 export default VSPOverlay;

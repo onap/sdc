@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Dropzone from 'react-dropzone';
 
-
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 
@@ -26,192 +25,237 @@ import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import SoftwareProductComponentsList from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponents.js';
 
 const SoftwareProductPropType = PropTypes.shape({
-	name: PropTypes.string,
-	description: PropTypes.string,
-	version: PropTypes.string,
-	id: PropTypes.string,
-	categoryId: PropTypes.string,
-	vendorId: PropTypes.string,
-	status: PropTypes.string,
-	licensingData: PropTypes.object,
-	validationData: PropTypes.object
+    name: PropTypes.string,
+    description: PropTypes.string,
+    version: PropTypes.string,
+    id: PropTypes.string,
+    categoryId: PropTypes.string,
+    vendorId: PropTypes.string,
+    status: PropTypes.string,
+    licensingData: PropTypes.object,
+    validationData: PropTypes.object
 });
 
 const ComponentPropType = PropTypes.shape({
-	id: PropTypes.string,
-	name: PropTypes.string,
-	displayName: PropTypes.string,
-	description: PropTypes.string
+    id: PropTypes.string,
+    name: PropTypes.string,
+    displayName: PropTypes.string,
+    description: PropTypes.string
 });
 
 class SoftwareProductLandingPageView extends React.Component {
+    state = {
+        fileName: '',
+        dragging: false,
+        files: []
+    };
 
-	state = {
+    static propTypes = {
+        currentSoftwareProduct: SoftwareProductPropType,
+        isReadOnlyMode: PropTypes.bool,
+        componentsList: PropTypes.arrayOf(ComponentPropType),
+        version: PropTypes.object,
+        onDetailsSelect: PropTypes.func,
+        onUpload: PropTypes.func,
+        onUploadConfirmation: PropTypes.func,
+        onInvalidFileSizeUpload: PropTypes.func,
+        onComponentSelect: PropTypes.func,
+        onAddComponent: PropTypes.func
+    };
+    componentDidMount() {
+        const { onCandidateInProcess, currentSoftwareProduct } = this.props;
+        if (currentSoftwareProduct.candidateOnboardingOrigin) {
+            onCandidateInProcess(currentSoftwareProduct.id);
+        }
+    }
+    render() {
+        let {
+            currentSoftwareProduct,
+            isReadOnlyMode,
+            isManual,
+            onDetailsSelect
+        } = this.props;
+        return (
+            <div className="software-product-landing-wrapper">
+                <Dropzone
+                    className={classnames('software-product-landing-view', {
+                        'active-dragging': this.state.dragging
+                    })}
+                    onDrop={files =>
+                        this.handleImportSubmit(files, isReadOnlyMode, isManual)
+                    }
+                    onDragEnter={() =>
+                        this.handleOnDragEnter(isReadOnlyMode, isManual)
+                    }
+                    onDragLeave={() => this.setState({ dragging: false })}
+                    multiple={false}
+                    disableClick={true}
+                    ref="fileInput"
+                    name="fileInput"
+                    accept=".zip, .csar">
+                    <div className="draggable-wrapper">
+                        <div className="software-product-landing-view-top">
+                            <div className="row">
+                                <ProductSummary
+                                    currentSoftwareProduct={
+                                        currentSoftwareProduct
+                                    }
+                                    onDetailsSelect={onDetailsSelect}
+                                />
+                                {this.renderProductDetails(
+                                    isManual,
+                                    isReadOnlyMode
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </Dropzone>
+                <SoftwareProductComponentsList />
+            </div>
+        );
+    }
 
-		fileName: '',
-		dragging: false,
-		files: []
-	};
+    handleOnDragEnter(isReadOnlyMode, isManual) {
+        if (!isReadOnlyMode && !isManual) {
+            this.setState({ dragging: true });
+        }
+    }
 
-	static propTypes = {
-		currentSoftwareProduct: SoftwareProductPropType,
-		isReadOnlyMode: PropTypes.bool,
-		componentsList: PropTypes.arrayOf(ComponentPropType),
-		version: PropTypes.object,
-		onDetailsSelect: PropTypes.func,
-		onUpload: PropTypes.func,
-		onUploadConfirmation: PropTypes.func,
-		onInvalidFileSizeUpload: PropTypes.func,
-		onComponentSelect: PropTypes.func,
-		onAddComponent: PropTypes.func
-	};
-	componentDidMount() {
-		const {onCandidateInProcess, currentSoftwareProduct} = this.props;
-		if (currentSoftwareProduct.candidateOnboardingOrigin) {
-			onCandidateInProcess(currentSoftwareProduct.id);
-		}
-	}
-	render() {
-		let {currentSoftwareProduct, isReadOnlyMode, isManual, onDetailsSelect} =  this.props;
-		return (
-			<div className='software-product-landing-wrapper'>
-				<Dropzone
-					className={classnames('software-product-landing-view', {'active-dragging': this.state.dragging})}
-					onDrop={files => this.handleImportSubmit(files, isReadOnlyMode, isManual)}
-					onDragEnter={() => this.handleOnDragEnter(isReadOnlyMode, isManual)}
-					onDragLeave={() => this.setState({dragging:false})}
-					multiple={false}
-					disableClick={true}
-					ref='fileInput'
-					name='fileInput'
-					accept='.zip, .csar'>
-					<div className='draggable-wrapper'>
-						<div className='software-product-landing-view-top'>
-							<div className='row'>
-								<ProductSummary currentSoftwareProduct={currentSoftwareProduct} onDetailsSelect={onDetailsSelect} />
-								{this.renderProductDetails(isManual, isReadOnlyMode)}
-							</div>
-						</div>
-					</div>
-				</Dropzone>
-				<SoftwareProductComponentsList/>
-			</div>
-		);
-	}
+    renderProductDetails(isManual, isReadOnlyMode) {
+        return (
+            <div className="details-panel">
+                {!isManual && (
+                    <div>
+                        <div className="software-product-landing-view-heading-title">
+                            {i18n('Software Product Attachments')}
+                        </div>
+                        <DraggableUploadFileBox
+                            dataTestId="upload-btn"
+                            isReadOnlyMode={isReadOnlyMode}
+                            className={classnames(
+                                'software-product-landing-view-top-block-col-upl',
+                                { disabled: isReadOnlyMode }
+                            )}
+                            onClick={() => this.refs.fileInput.open()}
+                        />
+                    </div>
+                )}
+            </div>
+        );
+    }
 
-	handleOnDragEnter(isReadOnlyMode, isManual) {
-		if (!isReadOnlyMode && !isManual) {
-			this.setState({dragging: true});
-		}
-	}
+    handleImportSubmit(files, isReadOnlyMode, isManual) {
+        if (isReadOnlyMode || isManual) {
+            return;
+        }
+        if (files[0] && files[0].size) {
+            this.setState({
+                fileName: files[0].name,
+                dragging: false,
+                complete: '0'
+            });
+            this.startUploading(files);
+        } else {
+            this.setState({
+                dragging: false
+            });
+            this.props.onInvalidFileSizeUpload();
+        }
+    }
 
-	renderProductDetails(isManual, isReadOnlyMode) {
-		return (
-			<div className='details-panel'>
-				{ !isManual && <div>
-					<div className='software-product-landing-view-heading-title'>{i18n('Software Product Attachments')}</div>
-						<DraggableUploadFileBox
-							dataTestId='upload-btn'
-							isReadOnlyMode={isReadOnlyMode}
-							className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}
-							onClick={() => this.refs.fileInput.open()}/>
-					</div>
-				}
-			</div>
-		);
-	}
+    startUploading(files) {
+        let {
+            onUpload,
+            currentSoftwareProduct,
+            onUploadConfirmation
+        } = this.props;
 
-	handleImportSubmit(files, isReadOnlyMode, isManual) {
-		if (isReadOnlyMode || isManual) {
-			return;
-		}
-		if (files[0] && files[0].size) {
-			this.setState({
-				fileName: files[0].name,
-				dragging: false,
-				complete: '0',
-			});
-			this.startUploading(files);
-		}
-		else {
-			this.setState({
-				dragging: false
-			});
-			this.props.onInvalidFileSizeUpload();
-		}
+        let { validationData } = currentSoftwareProduct;
 
-	}
+        if (!(files && files.length)) {
+            return;
+        }
+        let file = files[0];
+        let formData = new FormData();
+        formData.append('upload', file);
+        this.refs.fileInput.value = '';
 
-	startUploading(files) {
-		let {onUpload, currentSoftwareProduct, onUploadConfirmation} = this.props;
-
-		let {validationData} = currentSoftwareProduct;
-
-		if (!(files && files.length)) {
-			return;
-		}
-		let file = files[0];
-		let formData = new FormData();
-		formData.append('upload', file);
-		this.refs.fileInput.value = '';
-
-		if (validationData) {
-			onUploadConfirmation(currentSoftwareProduct.id, formData);
-		}else {
-			onUpload(currentSoftwareProduct.id, formData);
-		}
-
-	}
+        if (validationData) {
+            onUploadConfirmation(currentSoftwareProduct.id, formData);
+        } else {
+            onUpload(currentSoftwareProduct.id, formData);
+        }
+    }
 }
 
-const ProductSummary = ({currentSoftwareProduct, onDetailsSelect}) => {
-	let {name = '', description = '', vendorName = '', fullCategoryDisplayName = '', licenseAgreementName = ''}  = currentSoftwareProduct;
-	return (
-		<div className='details-panel'>
-			<div className='software-product-landing-view-heading-title'>{i18n('Software Product Details')}</div>
-			<div
-				className='software-product-landing-view-top-block clickable'
-				onClick={() => onDetailsSelect(currentSoftwareProduct)}>
-				<div className='details-container'>
-					<div className='single-detail-section title-section'>
-						<div className='single-detail-section title-text'>
-							{name}
-						</div>
-					</div>
-					<div className='details-section'>
-						<div className='multiple-details-section'>
-							<div className='detail-col' >
-								<div className='title'>{i18n('Vendor')}</div>
-								<div className='description'>{vendorName}</div>
-							</div>
-							<div className='detail-col'>
-								<div className='title'>{i18n('Category')}</div>
-								<div className='description'>{fullCategoryDisplayName}</div>
-							</div>
-							<div className='detail-col'>
-								<div className='title extra-large'>{i18n('License Agreement')}</div>
-								<div className='description'>
-									<LicenseAgreement licenseAgreementName={licenseAgreementName}/>
-								</div>
-							</div>
-						</div>
-						<div className='single-detail-section'>
-							<div className='title'>{i18n('Description')}</div>
-							<div className='description'>{description}</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+const ProductSummary = ({ currentSoftwareProduct, onDetailsSelect }) => {
+    let {
+        name = '',
+        description = '',
+        vendorName = '',
+        fullCategoryDisplayName = '',
+        licenseAgreementName = ''
+    } = currentSoftwareProduct;
+    return (
+        <div className="details-panel">
+            <div className="software-product-landing-view-heading-title">
+                {i18n('Software Product Details')}
+            </div>
+            <div
+                className="software-product-landing-view-top-block clickable"
+                onClick={() => onDetailsSelect(currentSoftwareProduct)}>
+                <div className="details-container">
+                    <div className="single-detail-section title-section">
+                        <div className="single-detail-section title-text">
+                            {name}
+                        </div>
+                    </div>
+                    <div className="details-section">
+                        <div className="multiple-details-section">
+                            <div className="detail-col">
+                                <div className="title">{i18n('Vendor')}</div>
+                                <div className="description">{vendorName}</div>
+                            </div>
+                            <div className="detail-col">
+                                <div className="title">{i18n('Category')}</div>
+                                <div className="description">
+                                    {fullCategoryDisplayName}
+                                </div>
+                            </div>
+                            <div className="detail-col">
+                                <div className="title extra-large">
+                                    {i18n('License Agreement')}
+                                </div>
+                                <div className="description">
+                                    <LicenseAgreement
+                                        licenseAgreementName={
+                                            licenseAgreementName
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="single-detail-section">
+                            <div className="title">{i18n('Description')}</div>
+                            <div className="description">{description}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
-
-const LicenseAgreement = ({licenseAgreementName}) => {
-	if (!licenseAgreementName) {
-		return (<div className='missing-license'><SVGIcon color='warning' name='exclamationTriangleFull'/><div className='warning-text'>{i18n('Missing')}</div></div>);
-	}
-	return <div>{licenseAgreementName}</div>;
+const LicenseAgreement = ({ licenseAgreementName }) => {
+    if (!licenseAgreementName) {
+        return (
+            <div className="missing-license">
+                <SVGIcon color="warning" name="exclamationTriangleFull" />
+                <div className="warning-text">{i18n('Missing')}</div>
+            </div>
+        );
+    }
+    return <div>{licenseAgreementName}</div>;
 };
 
 export default SoftwareProductLandingPageView;

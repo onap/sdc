@@ -13,26 +13,26 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './OnboardingCatalogConstants.js';
+import { actionTypes } from './OnboardingCatalogConstants.js';
 
 export default (state = {}, action) => {
-	switch(action.type) {
-		case actionTypes.ONBOARDING_CATALOG_OPEN_VENDOR_PAGE:
-			return {
-				...state,
-				selectedVendor: action.selectedVendor
-			};
-		case actionTypes.CHANGE_VSP_OVERLAY:
-			return {
-				...state,
-				vspOverlay: action.vendorId
-			};
-		case actionTypes.CLOSE_VSP_OVERLAY:
-			return {
-				...state,
-				vspOverlay: null
-			};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.ONBOARDING_CATALOG_OPEN_VENDOR_PAGE:
+            return {
+                ...state,
+                selectedVendor: action.selectedVendor
+            };
+        case actionTypes.CHANGE_VSP_OVERLAY:
+            return {
+                ...state,
+                vspOverlay: action.vendorId
+            };
+        case actionTypes.CLOSE_VSP_OVERLAY:
+            return {
+                ...state,
+                vspOverlay: null
+            };
+        default:
+            return state;
+    }
 };

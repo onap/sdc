@@ -16,5 +16,5 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	ITEM_REVISIONS_LOADED: null
+    ITEM_REVISIONS_LOADED: null
 });

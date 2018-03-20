@@ -15,16 +15,18 @@
  */
 import React from 'react';
 
-import  {optionsInputValues as ProcessesOptionsInputValues} from './SoftwareProductProcessesConstants.js';
+import { optionsInputValues as ProcessesOptionsInputValues } from './SoftwareProductProcessesConstants.js';
 import SoftwareProductProcessesEditorForm from './SoftwareProductProcessesEditorForm.jsx';
 
-
 class SoftwareProductProcessesEditorView extends React.Component {
-	render() {
-		return (
-			<SoftwareProductProcessesEditorForm optionsInputValues={ProcessesOptionsInputValues} {...this.props}/>
-		);
-	}
+    render() {
+        return (
+            <SoftwareProductProcessesEditorForm
+                optionsInputValues={ProcessesOptionsInputValues}
+                {...this.props}
+            />
+        );
+    }
 }
 
 export default SoftwareProductProcessesEditorView;

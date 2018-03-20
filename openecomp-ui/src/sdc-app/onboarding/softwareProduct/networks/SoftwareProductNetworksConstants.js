@@ -16,5 +16,5 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	FETCH_SOFTWARE_PRODUCT_NETWORKS: null,
+    FETCH_SOFTWARE_PRODUCT_NETWORKS: null
 });

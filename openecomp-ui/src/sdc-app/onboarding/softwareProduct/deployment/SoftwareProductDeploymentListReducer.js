@@ -13,13 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductDeploymentConstants.js';
+import { actionTypes } from './SoftwareProductDeploymentConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.FETCH_SOFTWARE_PRODUCT_DEPLOYMENT_FLAVORS:
-			return [...action.deploymentFlavors];
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.FETCH_SOFTWARE_PRODUCT_DEPLOYMENT_FLAVORS:
+            return [...action.deploymentFlavors];
+        default:
+            return state;
+    }
 };

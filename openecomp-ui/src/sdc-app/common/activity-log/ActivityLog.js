@@ -13,16 +13,28 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import ActivityLogView from './ActivityLogView.jsx';
 
-export const mapStateToProps = ({users: {usersList}, licenseModel: {activityLog}}) => {
-
-	let activities = activityLog;
-	return {
-		activities: activities.map(activity => ({...activity, user: {id: activity.user, name: usersList.find(userObject => userObject.userId === activity.user).fullName}})),
-		usersList
-	};
+export const mapStateToProps = ({
+    users: { usersList },
+    licenseModel: { activityLog }
+}) => {
+    let activities = activityLog;
+    return {
+        activities: activities.map(activity => ({
+            ...activity,
+            user: {
+                id: activity.user,
+                name: usersList.find(
+                    userObject => userObject.userId === activity.user
+                ).fullName
+            }
+        })),
+        usersList
+    };
 };
 
-export default connect(mapStateToProps, undefined, null, {withRef: true})(ActivityLogView);
+export default connect(mapStateToProps, undefined, null, { withRef: true })(
+    ActivityLogView
+);

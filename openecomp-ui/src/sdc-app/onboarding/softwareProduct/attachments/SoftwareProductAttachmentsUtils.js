@@ -15,11 +15,11 @@
  */
 
 export function doesHeatDataExist(heatData) {
-	let result = false;
-	for (let key of Object.keys(heatData)) {
-		if(heatData[key].length > 0) {
-			result = true;
-		}
-	}
-	return result;
+    let result = false;
+    for (let key of Object.keys(heatData)) {
+        if (heatData[key].length > 0) {
+            result = true;
+        }
+    }
+    return result;
 }

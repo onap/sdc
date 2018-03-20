@@ -13,27 +13,26 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './HeatValidationConstants.js';
+import { actionTypes } from './HeatValidationConstants.js';
 
 export default {
+    toggleExpanded(dispatch, { path }) {
+        dispatch({
+            type: actionTypes.TOGGLE_EXPANDED,
+            path
+        });
+    },
 
-	toggleExpanded(dispatch, {path}) {
-		dispatch({
-			type: actionTypes.TOGGLE_EXPANDED,
-			path
-		});
-	},
+    onSelectNode(dispatch, { nodeName }) {
+        dispatch({
+            type: actionTypes.SELECTED_NODE,
+            nodeName
+        });
+    },
 
-	onSelectNode(dispatch, {nodeName}) {
-		dispatch({
-			type: actionTypes.SELECTED_NODE,
-			nodeName
-		});
-	},
-
-	onDeselectNode(dispatch) {
-		dispatch({
-			type: actionTypes.UNSELECTED_NODE
-		});
-	}
+    onDeselectNode(dispatch) {
+        dispatch({
+            type: actionTypes.UNSELECTED_NODE
+        });
+    }
 };

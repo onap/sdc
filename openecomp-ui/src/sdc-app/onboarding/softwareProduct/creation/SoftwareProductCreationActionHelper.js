@@ -17,68 +17,68 @@ import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
-import {actionTypes as modalActionTypes, modalSizes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
-import {actionTypes} from './SoftwareProductCreationConstants.js';
+import {
+    actionTypes as modalActionTypes,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
+import { actionTypes } from './SoftwareProductCreationConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function baseUrl() {
-	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-software-products/`;
+    const restPrefix = Configuration.get('restPrefix');
+    return `${restPrefix}/v1.0/vendor-software-products/`;
 }
 
 function createSoftwareProduct(softwareProduct) {
-	return RestAPIUtil.post(baseUrl(), {
-		...softwareProduct,
-		icon: 'icon',
-		licensingData: {}
-	});
+    return RestAPIUtil.post(baseUrl(), {
+        ...softwareProduct,
+        icon: 'icon',
+        licensingData: {}
+    });
 }
 
 const SoftwareProductCreationActionHelper = {
+    open(dispatch, vendorId) {
+        SoftwareProductActionHelper.loadSoftwareProductAssociatedData(dispatch);
+        dispatch({
+            type: actionTypes.OPEN,
+            selectedVendorId: vendorId
+        });
 
-	open(dispatch, vendorId) {
-		SoftwareProductActionHelper.loadSoftwareProductAssociatedData(dispatch);
-		dispatch({
-			type: actionTypes.OPEN,
-			selectedVendorId: vendorId
-		});
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_SHOW,
+            data: {
+                modalComponentName:
+                    modalContentMapper.SOFTWARE_PRODUCT_CREATION,
+                title: i18n('New Software Product'),
+                modalComponentProps: {
+                    vendorId,
+                    size: modalSizes.LARGE
+                }
+            }
+        });
+    },
 
-		dispatch({
-			type: modalActionTypes.GLOBAL_MODAL_SHOW,
-			data: {
-				modalComponentName: modalContentMapper.SOFTWARE_PRODUCT_CREATION,
-				title: i18n('New Software Product'),
-				modalComponentProps: {
-					vendorId,
-					size: modalSizes.LARGE
-				}
-			}
-		});
+    resetData(dispatch) {
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
+        });
 
-	},
+        dispatch({
+            type: actionTypes.RESET_DATA
+        });
+    },
 
-	resetData(dispatch) {
-
-		dispatch({
-			type: modalActionTypes.GLOBAL_MODAL_CLOSE
-		});
-
-		dispatch({
-			type: actionTypes.RESET_DATA
-		});
-	},
-
-	createSoftwareProduct(dispatch, {softwareProduct}) {
-		return createSoftwareProduct(softwareProduct).then(result => {
-			dispatch({
-				type: actionTypes.SOFTWARE_PRODUCT_CREATED,
-				result
-			});
-			return result;
-		});
-	}
-
+    createSoftwareProduct(dispatch, { softwareProduct }) {
+        return createSoftwareProduct(softwareProduct).then(result => {
+            dispatch({
+                type: actionTypes.SOFTWARE_PRODUCT_CREATED,
+                result
+            });
+            return result;
+        });
+    }
 };
 
 export default SoftwareProductCreationActionHelper;

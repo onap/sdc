@@ -14,44 +14,47 @@
  * permissions and limitations under the License.
  */
 const JSONPointer = {
+    extractParentPointer(pointer) {
+        return pointer.replace(/\/[^\/]+$/, '');
+    },
 
-	extractParentPointer(pointer) {
-		return pointer.replace(/\/[^\/]+$/, '');
-	},
+    extractLastPart(pointer) {
+        const [, lastPart] = pointer.match(/\/([^\/]+)$/) || [];
+        return lastPart;
+    },
 
-	extractLastPart(pointer) {
-		const [,lastPart] = pointer.match(/\/([^\/]+)$/) || [];
-		return lastPart;
-	},
+    extractParts(pointer = '') {
+        return pointer
+            .split('/')
+            .slice(1)
+            .map(part => part.replace(/~1/g, '/'))
+            .map(part => part.replace(/~0/g, '~'));
+    },
 
-	extractParts(pointer = '') {
-		return pointer.split('/').slice(1)
-			.map(part => part.replace(/~1/g, '/'))
-			.map(part => part.replace(/~0/g, '~'));
-	},
+    getValue(object, pointer) {
+        let parts = JSONPointer.extractParts(pointer);
+        return parts.reduce((object, part) => object && object[part], object);
+    },
 
-	getValue(object, pointer) {
-		let parts = JSONPointer.extractParts(pointer);
-		return parts.reduce((object, part) => object && object[part], object);
-	},
+    setValue(object, pointer, value) {
+        let clone = obj => (Array.isArray(obj) ? [...obj] : { ...obj });
 
-	setValue(object, pointer, value) {
-		let clone = obj => Array.isArray(obj) ? [...obj] : {...obj};
+        let parts = JSONPointer.extractParts(pointer),
+            newObject = clone(object),
+            subObject = object,
+            subNewObject = newObject;
 
-		let parts = JSONPointer.extractParts(pointer),
-			newObject = clone(object),
-			subObject = object,
-			subNewObject = newObject;
+        for (let i = 0, n = parts.length - 1; i < n; ++i) {
+            let nextSubObject = subObject && subObject[parts[i]];
+            subNewObject = subNewObject[parts[i]] = nextSubObject
+                ? clone(nextSubObject)
+                : {};
+            subObject = nextSubObject;
+        }
+        subNewObject[parts[parts.length - 1]] = value;
 
-		for(let i = 0, n = parts.length - 1; i < n; ++i) {
-			let nextSubObject = subObject && subObject[parts[i]];
-			subNewObject = subNewObject[parts[i]] = nextSubObject ? clone(nextSubObject) : {};
-			subObject = nextSubObject;
-		}
-		subNewObject[parts[parts.length - 1]] = value;
-
-		return newObject;
-	}
+        return newObject;
+    }
 };
 
 export default JSONPointer;

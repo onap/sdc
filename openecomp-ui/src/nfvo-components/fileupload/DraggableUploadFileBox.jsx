@@ -26,20 +26,33 @@
  * or
  * https://github.com/JedWatson/react-select
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Button from 'sdc-ui/lib/react/Button.js';
 
 class DraggableUploadFileBox extends Component {
-	render() {
-		let {className, onClick, dataTestId, isReadOnlyMode} = this.props;
-		return (
-			<div className={`file-upload-box ${className} ${isReadOnlyMode ? 'disabled' : ''}`}>
-				<div className={`drag-text ${isReadOnlyMode ? 'disabled' : ''}`}>{i18n('Drag & drop for upload')}</div>
-				<div className='or-text'>{i18n('or')}</div>
-				<Button type='button' data-test-id={dataTestId} btnType='outline' onClick={onClick} disabled={isReadOnlyMode}>{i18n('Select File')}</Button>
-			</div>
-		);
-	}
+    render() {
+        let { className, onClick, dataTestId, isReadOnlyMode } = this.props;
+        return (
+            <div
+                className={`file-upload-box ${className} ${
+                    isReadOnlyMode ? 'disabled' : ''
+                }`}>
+                <div
+                    className={`drag-text ${isReadOnlyMode ? 'disabled' : ''}`}>
+                    {i18n('Drag & drop for upload')}
+                </div>
+                <div className="or-text">{i18n('or')}</div>
+                <Button
+                    type="button"
+                    data-test-id={dataTestId}
+                    btnType="outline"
+                    onClick={onClick}
+                    disabled={isReadOnlyMode}>
+                    {i18n('Select File')}
+                </Button>
+            </div>
+        );
+    }
 }
 export default DraggableUploadFileBox;

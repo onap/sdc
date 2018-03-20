@@ -13,19 +13,27 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './FeatureGroupsConstants.js';
+import { actionTypes } from './FeatureGroupsConstants.js';
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.FEATURE_GROUPS_LIST_LOADED:
-			return [...action.response.results];
-		case actionTypes.ADD_FEATURE_GROUPS:
-			return [...state, action.featureGroup];
-		case actionTypes.EDIT_FEATURE_GROUPS:
-			const indexForEdit = state.findIndex(featureGroup => featureGroup.id === action.featureGroup.id);
-			return [...state.slice(0, indexForEdit), action.featureGroup, ...state.slice(indexForEdit + 1)];
-		case actionTypes.DELETE_FEATURE_GROUPS:
-			return state.filter(featureGroup => featureGroup.id !== action.featureGroupId);
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.FEATURE_GROUPS_LIST_LOADED:
+            return [...action.response.results];
+        case actionTypes.ADD_FEATURE_GROUPS:
+            return [...state, action.featureGroup];
+        case actionTypes.EDIT_FEATURE_GROUPS:
+            const indexForEdit = state.findIndex(
+                featureGroup => featureGroup.id === action.featureGroup.id
+            );
+            return [
+                ...state.slice(0, indexForEdit),
+                action.featureGroup,
+                ...state.slice(indexForEdit + 1)
+            ];
+        case actionTypes.DELETE_FEATURE_GROUPS:
+            return state.filter(
+                featureGroup => featureGroup.id !== action.featureGroupId
+            );
+        default:
+            return state;
+    }
 };

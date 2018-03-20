@@ -22,74 +22,82 @@ import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.js
 import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 
 export default class SoftwareProductDeployment extends React.Component {
-	state = {
-		localFilter: ''
-	};
+    state = {
+        localFilter: ''
+    };
 
-	static propTypes = {
-		onAddDeployment: PropTypes.func.isRequired,
-		onDeleteDeployment: PropTypes.func.isRequired,
-		onEditDeployment: PropTypes.func.isRequired,
-		isReadOnlyMode: PropTypes.bool.isRequired
-	};
+    static propTypes = {
+        onAddDeployment: PropTypes.func.isRequired,
+        onDeleteDeployment: PropTypes.func.isRequired,
+        onEditDeployment: PropTypes.func.isRequired,
+        isReadOnlyMode: PropTypes.bool.isRequired
+    };
 
-	render() {
-		return (
-			<div>
-				{this.renderList()}
-			</div>
-		);
-	}
+    render() {
+        return <div>{this.renderList()}</div>;
+    }
 
-	renderList() {
-		let {onAddDeployment, isReadOnlyMode, componentsList} = this.props;
-		return (
-			<ListEditorView
-				plusButtonTitle={i18n('Add Deployment Flavor')}
-				filterValue={this.state.localFilter}
-				placeholder={i18n('Filter Deployment')}
-				onAdd={() => onAddDeployment(componentsList)}
-				isReadOnlyMode={isReadOnlyMode}
-				title={i18n('Deployment Flavors')}
-				onFilter={value => this.setState({localFilter: value})}
-				twoColumns>
-				{this.filterList().map(deploymentFlavor => this.renderListItem(deploymentFlavor, isReadOnlyMode))}
-			</ListEditorView>
-		);
-	}
+    renderList() {
+        let { onAddDeployment, isReadOnlyMode, componentsList } = this.props;
+        return (
+            <ListEditorView
+                plusButtonTitle={i18n('Add Deployment Flavor')}
+                filterValue={this.state.localFilter}
+                placeholder={i18n('Filter Deployment')}
+                onAdd={() => onAddDeployment(componentsList)}
+                isReadOnlyMode={isReadOnlyMode}
+                title={i18n('Deployment Flavors')}
+                onFilter={value => this.setState({ localFilter: value })}
+                twoColumns>
+                {this.filterList().map(deploymentFlavor =>
+                    this.renderListItem(deploymentFlavor, isReadOnlyMode)
+                )}
+            </ListEditorView>
+        );
+    }
 
-	renderListItem(deploymentFlavor, isReadOnlyMode) {
-		let {id, model, description} = deploymentFlavor;
-		let {onEditDeployment, onDeleteDeployment, componentsList} =  this.props;
-		return (
-			<ListEditorItemView
-				key={id}
-				className='list-editor-item-view'
-				isReadOnlyMode={isReadOnlyMode}
-				onSelect={() => onEditDeployment(deploymentFlavor, componentsList)}
-				onDelete={() => onDeleteDeployment(deploymentFlavor)}>
-				<ListEditorItemViewField>
-					<div className='model'>{model}</div>
-				</ListEditorItemViewField>
-				<ListEditorItemViewField>
-					<div className='description'>{description}</div>
-				</ListEditorItemViewField>
-			</ListEditorItemView>
-		);
-	}
+    renderListItem(deploymentFlavor, isReadOnlyMode) {
+        let { id, model, description } = deploymentFlavor;
+        let {
+            onEditDeployment,
+            onDeleteDeployment,
+            componentsList
+        } = this.props;
+        return (
+            <ListEditorItemView
+                key={id}
+                className="list-editor-item-view"
+                isReadOnlyMode={isReadOnlyMode}
+                onSelect={() =>
+                    onEditDeployment(deploymentFlavor, componentsList)
+                }
+                onDelete={() => onDeleteDeployment(deploymentFlavor)}>
+                <ListEditorItemViewField>
+                    <div className="model">{model}</div>
+                </ListEditorItemViewField>
+                <ListEditorItemViewField>
+                    <div className="description">{description}</div>
+                </ListEditorItemViewField>
+            </ListEditorItemView>
+        );
+    }
 
-	filterList() {
-		let {deploymentFlavors} = this.props;
-		let {localFilter} = this.state;
+    filterList() {
+        let { deploymentFlavors } = this.props;
+        let { localFilter } = this.state;
 
-		if (localFilter.trim()) {
-			const filter = new RegExp(escape(localFilter), 'i');
-			return deploymentFlavors.filter(({model = '', description = ''}) => {
-				return escape(model).match(filter) || escape(description).match(filter);
-			});
-		}
-		else {
-			return deploymentFlavors;
-		}
-	}
+        if (localFilter.trim()) {
+            const filter = new RegExp(escape(localFilter), 'i');
+            return deploymentFlavors.filter(
+                ({ model = '', description = '' }) => {
+                    return (
+                        escape(model).match(filter) ||
+                        escape(description).match(filter)
+                    );
+                }
+            );
+        } else {
+            return deploymentFlavors;
+        }
+    }
 }

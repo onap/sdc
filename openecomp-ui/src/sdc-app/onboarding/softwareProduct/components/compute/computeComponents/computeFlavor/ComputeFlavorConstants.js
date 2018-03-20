@@ -19,14 +19,14 @@ import keyMirror from 'nfvo-utils/KeyMirror.js';
 export const COMPUTE_FLAVOR_FORM = 'COMPUTE_FLAVOR_FORM';
 
 export const actionTypes = keyMirror({
-	ADD_COMPUTE: null,
-	COMPUTE_FLAVORS_LIST_LOADED: null,
-	COMPUTE_LIST_EDIT: null,
-	EDIT_COMPUTE_FLAVOR: null,
-	DELETE_COMPUTE: null,
-	CONFIRM_DELETE_COMPUTE: null,
-	computeEditor: {
-		LOAD_EDITOR_DATA: null,
-		CLEAR_DATA: null
-	}
+    ADD_COMPUTE: null,
+    COMPUTE_FLAVORS_LIST_LOADED: null,
+    COMPUTE_LIST_EDIT: null,
+    EDIT_COMPUTE_FLAVOR: null,
+    DELETE_COMPUTE: null,
+    CONFIRM_DELETE_COMPUTE: null,
+    computeEditor: {
+        LOAD_EDITOR_DATA: null,
+        CLEAR_DATA: null
+    }
 });

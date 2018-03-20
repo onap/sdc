@@ -15,62 +15,71 @@
  */
 import store from 'sdc-app/AppStore.js';
 import React from 'react';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SubmitErrorResponse from 'nfvo-components/SubmitErrorResponse.jsx';
 
 function showVariablesInMessage(variables, msg) {
-	let regex;
-	variables.forEach((value, index) => {
-		value = value.replace(';', ',');
-		regex = new RegExp('\'\%' + (index + 1) + '\'');
-		msg = msg.replace(regex, value);
-	});
-	return msg;
+    let regex;
+    variables.forEach((value, index) => {
+        value = value.replace(';', ',');
+        regex = new RegExp("'%" + (index + 1) + "'");
+        msg = msg.replace(regex, value);
+    });
+    return msg;
 }
 
 function parseCatalogExceptionObject(responseJSON) {
-	let title, msg;
-	if (responseJSON.requestError && responseJSON.requestError.policyException) {
-		title = 'Error: ' + responseJSON.requestError.policyException.messageId;
-		msg = responseJSON.requestError.policyException.text;
-	}
-	else if (responseJSON.requestError && responseJSON.requestError.serviceException) {
-		title = 'Error: ' + responseJSON.requestError.serviceException.messageId;
-		msg = responseJSON.requestError.serviceException.text;
-		let {variables} = responseJSON.requestError.serviceException;
-		if (variables) {
-			msg = showVariablesInMessage(variables, msg);
-		}
-	}
-	else if (responseJSON.uploadDataErrors) {
-		title = i18n('Error: Upload Data Error');
-		msg = (<SubmitErrorResponse validationResponse={{uploadDataErrors: responseJSON.uploadDataErrors}} />);
-	}
-	else {
-		title = responseJSON.status;
-		msg = responseJSON.message;
-	}
-	return {title, msg};
+    let title, msg;
+    if (
+        responseJSON.requestError &&
+        responseJSON.requestError.policyException
+    ) {
+        title = 'Error: ' + responseJSON.requestError.policyException.messageId;
+        msg = responseJSON.requestError.policyException.text;
+    } else if (
+        responseJSON.requestError &&
+        responseJSON.requestError.serviceException
+    ) {
+        title =
+            'Error: ' + responseJSON.requestError.serviceException.messageId;
+        msg = responseJSON.requestError.serviceException.text;
+        let { variables } = responseJSON.requestError.serviceException;
+        if (variables) {
+            msg = showVariablesInMessage(variables, msg);
+        }
+    } else if (responseJSON.uploadDataErrors) {
+        title = i18n('Error: Upload Data Error');
+        msg = (
+            <SubmitErrorResponse
+                validationResponse={{
+                    uploadDataErrors: responseJSON.uploadDataErrors
+                }}
+            />
+        );
+    } else {
+        title = responseJSON.status;
+        msg = responseJSON.message;
+    }
+    return { title, msg };
 }
 
-var errorResponseHandler = (error) => {
-	let errorData;
-	if (error.data) {
-		errorData = parseCatalogExceptionObject(error.data);
-	}
-	else {
-		errorData = {
-			title: error.statusText,
-			msg: error.responseText ? error.responseText : i18n('GENERIC_ERROR'),
-		};
-	}
-	store.dispatch({
-		type: modalActionTypes.GLOBAL_MODAL_ERROR,
-		data: {
-			...errorData
-		}
-	});
+var errorResponseHandler = error => {
+    let errorData;
+    if (error.data) {
+        errorData = parseCatalogExceptionObject(error.data);
+    } else {
+        errorData = {
+            title: error.statusText,
+            msg: error.responseText ? error.responseText : i18n('GENERIC_ERROR')
+        };
+    }
+    store.dispatch({
+        type: modalActionTypes.GLOBAL_MODAL_ERROR,
+        data: {
+            ...errorData
+        }
+    });
 };
 
 export default errorResponseHandler;

@@ -16,8 +16,5 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export default keyMirror({
-
-	ACTIVITY_LOG_UPDATED: null
-
+    ACTIVITY_LOG_UPDATED: null
 });
-

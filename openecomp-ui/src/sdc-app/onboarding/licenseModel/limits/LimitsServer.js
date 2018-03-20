@@ -16,31 +16,29 @@
 
 // items/{itemId}/users
 
-let list = [
-	
-];
+let list = [];
 
 export default {
-	fetch() {
-		return Promise.resolve({
-			listCount: list.length,
-			results: list
-		});
-	},
+    fetch() {
+        return Promise.resolve({
+            listCount: list.length,
+            results: list
+        });
+    },
 
-	put(url, payload) {
-		// let {removedUsers, addedUsers} = payload;
-		// users = users.filter(user => !removedUsers.map(user => user.userId).includes(user.userId)).concat(addedUsers);
-		payload.id = Math.random() * (1000 - 1) + 1;
-		list.push(payload);
-		return Promise.resolve();
-	},
+    put(url, payload) {
+        // let {removedUsers, addedUsers} = payload;
+        // users = users.filter(user => !removedUsers.map(user => user.userId).includes(user.userId)).concat(addedUsers);
+        payload.id = Math.random() * (1000 - 1) + 1;
+        list.push(payload);
+        return Promise.resolve();
+    },
 
-	destroy(url) {
-		const parts = url.split('/');
-		const id = parts[parts.length - 1];
-		let newList  = list.filter(item => item.id !== id);
-		list = newList;
-		return Promise.resolve();
-	}
+    destroy(url) {
+        const parts = url.split('/');
+        const id = parts[parts.length - 1];
+        let newList = list.filter(item => item.id !== id);
+        list = newList;
+        return Promise.resolve();
+    }
 };

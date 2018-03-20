@@ -15,49 +15,54 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
+import InputOptions, {
+    other as optionInputOther
+} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
-	LICENSE_AGREEMENT_LIST_LOADED: null,
-	DELETE_LICENSE_AGREEMENT: null,
+    LICENSE_AGREEMENT_LIST_LOADED: null,
+    DELETE_LICENSE_AGREEMENT: null,
 
-	licenseAgreementEditor: {
-		OPEN: null,
-		CLOSE: null,
-		DATA_CHANGED: null,
-		SELECT_TAB: null
-	}
-
+    licenseAgreementEditor: {
+        OPEN: null,
+        CLOSE: null,
+        DATA_CHANGED: null,
+        SELECT_TAB: null
+    }
 });
 
 export const LA_EDITOR_FORM = 'LA_EDITOR_FORM';
 
 export const enums = keyMirror({
-	SELECTED_LICENSE_AGREEMENT_TAB: {
-		GENERAL: 1,
-		FEATURE_GROUPS: 2
-	}
+    SELECTED_LICENSE_AGREEMENT_TAB: {
+        GENERAL: 1,
+        FEATURE_GROUPS: 2
+    }
 });
 
 export const defaultState = {
-	LICENSE_AGREEMENT_EDITOR_DATA: {
-		licenseTerm: {choice: '', other: ''}
-	}
+    LICENSE_AGREEMENT_EDITOR_DATA: {
+        licenseTerm: { choice: '', other: '' }
+    }
 };
 
 export const optionsInputValues = {
-	LICENSE_MODEL_TYPE: [
-		{enum: '', title: i18n('please select…')},
-		{enum: 'Fixed_Term', title: 'Fixed Term'},
-		{enum: 'Perpetual', title: 'Perpetual'},
-		{enum: 'Unlimited', title: 'Unlimited'}
-	]
+    LICENSE_MODEL_TYPE: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Fixed_Term', title: 'Fixed Term' },
+        { enum: 'Perpetual', title: 'Perpetual' },
+        { enum: 'Unlimited', title: 'Unlimited' }
+    ]
 };
 
-export const extractValue = (item) => {
-	if (item === undefined) {
-		return '';
-	} //TODO fix it later
+export const extractValue = item => {
+    if (item === undefined) {
+        return '';
+    } //TODO fix it later
 
-	return item ? item.choice === optionInputOther.OTHER ? item.other : InputOptions.getTitleByName(optionsInputValues, item.choice) : '';
+    return item
+        ? item.choice === optionInputOther.OTHER
+          ? item.other
+          : InputOptions.getTitleByName(optionsInputValues, item.choice)
+        : '';
 };

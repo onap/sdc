@@ -22,73 +22,76 @@ import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.js
 import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 
 class SoftwareProductNetworksView extends React.Component {
+    static propTypes = {
+        networksList: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.string.isRequired,
+                name: PropTypes.string.isRequired,
+                dhcp: PropTypes.bool.isRequired
+            })
+        ).isRequired,
+        isReadOnlyMode: PropTypes.bool.isRequired
+    };
 
-	static propTypes = {
-		networksList: PropTypes.arrayOf(PropTypes.shape({
-			id: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			dhcp: PropTypes.bool.isRequired
-		})).isRequired,
-		isReadOnlyMode: PropTypes.bool.isRequired
-	};
+    state = {
+        localFilter: ''
+    };
 
-	state = {
-		localFilter: ''
-	};
+    render() {
+        const { localFilter } = this.state;
+        const { isReadOnlyMode } = this.props;
 
-	render() {
-		const {localFilter} = this.state;
-		const {isReadOnlyMode} = this.props;
+        return (
+            <div className="vsp-networks-page">
+                <ListEditorView
+                    title={i18n('Networks')}
+                    filterValue={localFilter}
+                    placeholder={i18n('Filter Networks')}
+                    onFilter={value => this.setState({ localFilter: value })}
+                    twoColumns>
+                    {this.filterList().map(network =>
+                        this.renderNetworksListItem({ network, isReadOnlyMode })
+                    )}
+                </ListEditorView>
+            </div>
+        );
+    }
 
-		return (
-			<div className='vsp-networks-page'>
-				<ListEditorView
-					title={i18n('Networks')}
-					filterValue={localFilter}
-					placeholder={i18n('Filter Networks')}
-					onFilter={value => this.setState({localFilter: value})}
-					twoColumns>
-					{this.filterList().map(network => this.renderNetworksListItem({network, isReadOnlyMode}))}
-				</ListEditorView>
-			</div>
-		);
-	}
+    renderNetworksListItem({ network, isReadOnlyMode }) {
+        let { id, name, dhcp } = network;
+        return (
+            <ListEditorItemView
+                key={id}
+                className="list-editor-item-view"
+                isReadOnlyMode={isReadOnlyMode}>
+                <ListEditorItemViewField>
+                    <div className="name">{name}</div>
+                </ListEditorItemViewField>
+                <ListEditorItemViewField>
+                    <div className="details">
+                        <div className="title">{i18n('DHCP')}</div>
+                        <div className="artifact-name">
+                            {dhcp ? i18n('YES') : i18n('NO')}
+                        </div>
+                    </div>
+                </ListEditorItemViewField>
+            </ListEditorItemView>
+        );
+    }
 
-	renderNetworksListItem({network, isReadOnlyMode}) {
-		let {id, name, dhcp} = network;
-		return (
-			<ListEditorItemView
-				key={id}
-				className='list-editor-item-view'
-				isReadOnlyMode={isReadOnlyMode}>
+    filterList() {
+        let { networksList } = this.props;
 
-				<ListEditorItemViewField>
-					<div className='name'>{name}</div>
-				</ListEditorItemViewField>
-				<ListEditorItemViewField>
-					<div className='details'>
-						<div className='title'>{i18n('DHCP')}</div>
-						<div className='artifact-name'>{dhcp ? i18n('YES') : i18n('NO')}</div>
-					</div>
-				</ListEditorItemViewField>
-			</ListEditorItemView>
-		);
-	}
-
-	filterList() {
-		let {networksList} = this.props;
-
-		let {localFilter} = this.state;
-		if (localFilter.trim()) {
-			const filter = new RegExp(escape(localFilter), 'i');
-			return networksList.filter(({name = ''}) => {
-				return escape(name).match(filter);
-			});
-		}
-		else {
-			return networksList;
-		}
-	}
+        let { localFilter } = this.state;
+        if (localFilter.trim()) {
+            const filter = new RegExp(escape(localFilter), 'i');
+            return networksList.filter(({ name = '' }) => {
+                return escape(name).match(filter);
+            });
+        } else {
+            return networksList;
+        }
+    }
 }
 
 export default SoftwareProductNetworksView;

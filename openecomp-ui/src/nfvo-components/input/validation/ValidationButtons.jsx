@@ -27,32 +27,63 @@ import Button from 'sdc-ui/lib/react/Button.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 
 class ValidationButtons extends React.Component {
+    static propTypes = {
+        labledButtons: PropTypes.bool.isRequired,
+        isReadOnlyMode: PropTypes.bool,
+        submitButtonText: PropTypes.string,
+        cancelButtonText: PropTypes.string
+    };
 
-	static propTypes = {
-		labledButtons: PropTypes.bool.isRequired,
-		isReadOnlyMode: PropTypes.bool,
-		submitButtonText: PropTypes.string,
-		cancelButtonText: PropTypes.string
-	};
+    state = {
+        isValid: this.props.formValid
+    };
 
-	state = {
-		isValid: this.props.formValid
-	};
-
-	render() {
-		let submitBtn = this.props.labledButtons ? this.props.submitButtonText ? this.props.submitButtonText : i18n('Save') : <SVGIcon className='check' name='check'/>;
-		let closeBtn = this.props.labledButtons ? this.props.cancelButtonText ? this.props.cancelButtonText : i18n('Cancel') : <SVGIcon className='close' name='close'/>;
-		return (
-			<div className='validation-buttons'>
-				{!this.props.isReadOnlyMode ?
-					<div>
-						<Button type='submit' data-test-id='form-submit-button' disabled={!this.state.isValid}>{submitBtn}</Button>
-						<Button btnType='outline' type='reset' data-test-id='form-close-button'>{closeBtn}</Button>
-					</div>
-					: <Button btnType='outline' type='reset' data-test-id='form-close-button'>{i18n('Close')}</Button>
-				}
-			</div>
-		);
-	}
+    render() {
+        let submitBtn = this.props.labledButtons ? (
+            this.props.submitButtonText ? (
+                this.props.submitButtonText
+            ) : (
+                i18n('Save')
+            )
+        ) : (
+            <SVGIcon className="check" name="check" />
+        );
+        let closeBtn = this.props.labledButtons ? (
+            this.props.cancelButtonText ? (
+                this.props.cancelButtonText
+            ) : (
+                i18n('Cancel')
+            )
+        ) : (
+            <SVGIcon className="close" name="close" />
+        );
+        return (
+            <div className="validation-buttons">
+                {!this.props.isReadOnlyMode ? (
+                    <div>
+                        <Button
+                            type="submit"
+                            data-test-id="form-submit-button"
+                            disabled={!this.state.isValid}>
+                            {submitBtn}
+                        </Button>
+                        <Button
+                            btnType="outline"
+                            type="reset"
+                            data-test-id="form-close-button">
+                            {closeBtn}
+                        </Button>
+                    </div>
+                ) : (
+                    <Button
+                        btnType="outline"
+                        type="reset"
+                        data-test-id="form-close-button">
+                        {i18n('Close')}
+                    </Button>
+                )}
+            </div>
+        );
+    }
 }
 export default ValidationButtons;

@@ -16,51 +16,54 @@
 import emptyModel from './emptyModel.json';
 
 function mergeLifelines(oldLifelines, newLifelines) {
-	let oldLifelinesMap = new Map(oldLifelines.map(lifeline => [lifeline.id, lifeline]));
-	let newLifelinesMap = new Map(newLifelines.map(lifeline => [lifeline.id, lifeline]));
+    let oldLifelinesMap = new Map(
+        oldLifelines.map(lifeline => [lifeline.id, lifeline])
+    );
+    let newLifelinesMap = new Map(
+        newLifelines.map(lifeline => [lifeline.id, lifeline])
+    );
 
-	let updatedLifelines = oldLifelines.map(lifeline => {
-		let newLifeline = newLifelinesMap.get(lifeline.id);
-		return {
-			...lifeline,
-			name: newLifeline ? newLifeline.name : lifeline.name
-		};
-	});
+    let updatedLifelines = oldLifelines.map(lifeline => {
+        let newLifeline = newLifelinesMap.get(lifeline.id);
+        return {
+            ...lifeline,
+            name: newLifeline ? newLifeline.name : lifeline.name
+        };
+    });
 
-	let addedLifelines = newLifelines.filter(lifeline => !oldLifelinesMap.has(lifeline.id));
+    let addedLifelines = newLifelines.filter(
+        lifeline => !oldLifelinesMap.has(lifeline.id)
+    );
 
-	return [
-		...updatedLifelines,
-		...addedLifelines
-	];
+    return [...updatedLifelines, ...addedLifelines];
 }
 
-
 const SequenceDiagramModelHelper = Object.freeze({
+    createModel(options) {
+        return SequenceDiagramModelHelper.updateModel(emptyModel, options);
+    },
 
-	createModel(options) {
-		return SequenceDiagramModelHelper.updateModel(emptyModel, options);
-	},
+    updateModel(model, options) {
+        const diagram = model.diagram;
+        const metadata = diagram.metadata || model.metadata;
+        const id = options.id || metadata.id;
+        const name = options.name || metadata.name;
+        const lifelines = options.lifelines
+            ? mergeLifelines(diagram.lifelines, options.lifelines)
+            : diagram.lifelines;
 
-	updateModel(model, options) {
-		const diagram = model.diagram;
-		const metadata = diagram.metadata || model.metadata;
-		const id = options.id || metadata.id;
-		const name = options.name || metadata.name;
-		const lifelines = options.lifelines ? mergeLifelines(diagram.lifelines, options.lifelines) : diagram.lifelines;
-
-		return {
-			diagram: {
-				...diagram,
-				metadata: {
-					...metadata,
-					id,
-					name
-				},
-				lifelines
-			}
-		};
-	}
+        return {
+            diagram: {
+                ...diagram,
+                metadata: {
+                    ...metadata,
+                    id,
+                    name
+                },
+                lifelines
+            }
+        };
+    }
 });
 
 export default SequenceDiagramModelHelper;

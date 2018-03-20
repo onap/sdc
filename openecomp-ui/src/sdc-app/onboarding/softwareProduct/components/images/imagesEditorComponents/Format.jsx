@@ -18,30 +18,34 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-
-const Format = ({isManual, dataMap, qgenericFieldInfo, onQDataChanged}) => {
-	return(
-		<GridItem colSpan={2}>
-			<Input
-				disabled={!isManual}
-				data-test-id='image-format'
-				type='select'
-				label={i18n('Format')}
-				className='input-options-select'
-				groupClassName='bootstrap-input-options'
-				isValid={qgenericFieldInfo['format'].isValid}
-				errorText={qgenericFieldInfo['format'].errorText}
-				value={dataMap['format']}
-				onChange={(e) => {
-					const selectedIndex = e.target.selectedIndex;
-					const val = e.target.options[selectedIndex].value;
-					onQDataChanged({'format' : val});}
-				}>
-				<option key='placeholder' value=''>{i18n('Select...')}</option>
-				{qgenericFieldInfo['format'].enum.map(hv => <option value={hv.enum} key={hv.enum}>{hv.title}</option>)}
-			</Input>
-		</GridItem>
-	);
+const Format = ({ isManual, dataMap, qgenericFieldInfo, onQDataChanged }) => {
+    return (
+        <GridItem colSpan={2}>
+            <Input
+                disabled={!isManual}
+                data-test-id="image-format"
+                type="select"
+                label={i18n('Format')}
+                className="input-options-select"
+                groupClassName="bootstrap-input-options"
+                isValid={qgenericFieldInfo['format'].isValid}
+                errorText={qgenericFieldInfo['format'].errorText}
+                value={dataMap['format']}
+                onChange={e => {
+                    const selectedIndex = e.target.selectedIndex;
+                    const val = e.target.options[selectedIndex].value;
+                    onQDataChanged({ format: val });
+                }}>
+                <option key="placeholder" value="">
+                    {i18n('Select...')}
+                </option>
+                {qgenericFieldInfo['format'].enum.map(hv => (
+                    <option value={hv.enum} key={hv.enum}>
+                        {hv.title}
+                    </option>
+                ))}
+            </Input>
+        </GridItem>
+    );
 };
 export default Format;
-

@@ -13,13 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './RevisionsConstants.js';
+import { actionTypes } from './RevisionsConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.ITEM_REVISIONS_LOADED:
-			return  action.response.results;
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.ITEM_REVISIONS_LOADED:
+            return action.response.results;
+        default:
+            return state;
+    }
 };

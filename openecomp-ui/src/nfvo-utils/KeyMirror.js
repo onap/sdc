@@ -13,27 +13,26 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-var keyMirror = function (obj) {
-	var ret = {};
-	var key;
-	var val;
-	if (!(obj instanceof Object && !Array.isArray(obj))) {
-		throw new Error('keyMirror(...): Argument must be an object.');
-	}
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			val = obj[key];
-			if (val instanceof Object) {
-				ret[key] = keyMirror(obj[key]);
-			} else if(val !== null && val !== undefined){
-				ret[key] = val;
-			}
-			else {
-				ret[key] = Symbol(key);
-			}
-		}
-	}
-	return Object.freeze(ret);
+var keyMirror = function(obj) {
+    var ret = {};
+    var key;
+    var val;
+    if (!(obj instanceof Object && !Array.isArray(obj))) {
+        throw new Error('keyMirror(...): Argument must be an object.');
+    }
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            val = obj[key];
+            if (val instanceof Object) {
+                ret[key] = keyMirror(obj[key]);
+            } else if (val !== null && val !== undefined) {
+                ret[key] = val;
+            } else {
+                ret[key] = Symbol(key);
+            }
+        }
+    }
+    return Object.freeze(ret);
 };
 
 export default keyMirror;

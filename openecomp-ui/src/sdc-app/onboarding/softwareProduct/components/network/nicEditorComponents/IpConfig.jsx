@@ -19,27 +19,37 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const IpConfig = ({dataMap, onQDataChanged}) => {
-	return (
-		<GridSection title={i18n('IP Configuration')}>
-				<GridItem>
-					<Input
-						label={i18n('IPv4 Required')}
-						type='checkbox'
-						onChange={value => onQDataChanged({'ipConfiguration/ipv4Required' : value})}
-						data-test-id='ipConfiguration-ipv4Required'
-						value={dataMap['ipConfiguration/ipv4Required']} />
-				</GridItem>
-				<GridItem>
-					<Input
-						label={i18n('IPv6 Required')}
-						type='checkbox'
-						data-test-id='ipConfiguration-ipv6Required'
-						onChange={value => onQDataChanged({'ipConfiguration/ipv6Required' : value})}
-						value={dataMap['ipConfiguration/ipv6Required']} />
-				</GridItem>
-		</GridSection>
-	);
+const IpConfig = ({ dataMap, onQDataChanged }) => {
+    return (
+        <GridSection title={i18n('IP Configuration')}>
+            <GridItem>
+                <Input
+                    label={i18n('IPv4 Required')}
+                    type="checkbox"
+                    onChange={value =>
+                        onQDataChanged({
+                            'ipConfiguration/ipv4Required': value
+                        })
+                    }
+                    data-test-id="ipConfiguration-ipv4Required"
+                    value={dataMap['ipConfiguration/ipv4Required']}
+                />
+            </GridItem>
+            <GridItem>
+                <Input
+                    label={i18n('IPv6 Required')}
+                    type="checkbox"
+                    data-test-id="ipConfiguration-ipv6Required"
+                    onChange={value =>
+                        onQDataChanged({
+                            'ipConfiguration/ipv6Required': value
+                        })
+                    }
+                    value={dataMap['ipConfiguration/ipv6Required']}
+                />
+            </GridItem>
+        </GridSection>
+    );
 };
 
 export default IpConfig;

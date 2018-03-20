@@ -13,41 +13,79 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import SoftwareProductComponentsGeneralView from './SoftwareProductComponentsGeneralView.jsx';
 import SoftwareProductComponentsActionHelper from '../SoftwareProductComponentsActionHelper.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 
-import {forms, COMPONENTS_QUESTIONNAIRE} from '../SoftwareProductComponentsConstants.js';
-import {onboardingMethod} from '../../SoftwareProductConstants.js';
+import {
+    forms,
+    COMPONENTS_QUESTIONNAIRE
+} from '../SoftwareProductComponentsConstants.js';
+import { onboardingMethod } from '../../SoftwareProductConstants.js';
 
-export const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductEditor: {data: currentVSP}, softwareProductComponents} = softwareProduct;
-	let {componentEditor: {data: componentData = {} , qdata, qgenericFieldInfo : qGenericFieldInfo, dataMap, genericFieldInfo}} = softwareProductComponents;
-	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
+export const mapStateToProps = ({ softwareProduct }) => {
+    let {
+        softwareProductEditor: { data: currentVSP },
+        softwareProductComponents
+    } = softwareProduct;
+    let {
+        componentEditor: {
+            data: componentData = {},
+            qdata,
+            qgenericFieldInfo: qGenericFieldInfo,
+            dataMap,
+            genericFieldInfo
+        }
+    } = softwareProductComponents;
+    let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
-	return {
-		componentData,
-		qdata,
-		isManual: currentVSP.onboardingMethod === onboardingMethod.MANUAL,
-		genericFieldInfo,
-		qGenericFieldInfo,
-		dataMap,
-		isFormValid
-	};
+    return {
+        componentData,
+        qdata,
+        isManual: currentVSP.onboardingMethod === onboardingMethod.MANUAL,
+        genericFieldInfo,
+        qGenericFieldInfo,
+        dataMap,
+        isFormValid
+    };
 };
 
-const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) => {
-	return {
-		onDataChanged: (deltaData) => ValidationHelper.dataChanged(dispatch, {deltaData, formName: forms.ALL_SPC_FORMS}),
-		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData, qName: COMPONENTS_QUESTIONNAIRE}),
-		onSubmit: ({componentData, qdata}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponent(dispatch,
-			{softwareProductId, version, vspComponentId: componentId, componentData, qdata});
-		},
-		onValidityChanged: isValidityData => SoftwareProductActionHelper.setIsValidityData(dispatch, {isValidityData})
-	};
-
+const mapActionsToProps = (
+    dispatch,
+    { softwareProductId, version, componentId }
+) => {
+    return {
+        onDataChanged: deltaData =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName: forms.ALL_SPC_FORMS
+            }),
+        onQDataChanged: deltaData =>
+            ValidationHelper.qDataChanged(dispatch, {
+                deltaData,
+                qName: COMPONENTS_QUESTIONNAIRE
+            }),
+        onSubmit: ({ componentData, qdata }) => {
+            return SoftwareProductComponentsActionHelper.updateSoftwareProductComponent(
+                dispatch,
+                {
+                    softwareProductId,
+                    version,
+                    vspComponentId: componentId,
+                    componentData,
+                    qdata
+                }
+            );
+        },
+        onValidityChanged: isValidityData =>
+            SoftwareProductActionHelper.setIsValidityData(dispatch, {
+                isValidityData
+            })
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(SoftwareProductComponentsGeneralView);
+export default connect(mapStateToProps, mapActionsToProps, null, {
+    withRef: true
+})(SoftwareProductComponentsGeneralView);

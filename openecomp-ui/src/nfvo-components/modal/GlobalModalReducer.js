@@ -14,37 +14,37 @@
  * permissions and limitations under the License.
  */
 
-import {actionTypes, typeEnum} from './GlobalModalConstants.js';
+import { actionTypes, typeEnum } from './GlobalModalConstants.js';
 
 export default (state = null, action) => {
-	switch (action.type) {
-		case actionTypes.GLOBAL_MODAL_SHOW:			
-			return {
-				...action.data
-			};
-		case actionTypes.GLOBAL_MODAL_ERROR:
-			return {
-				type: typeEnum.ERROR,
-				modalClassName: 'notification-modal',
-				...action.data
-			};
-		case actionTypes.GLOBAL_MODAL_WARNING:
-			return {
-				type: typeEnum.WARNING,
-				modalClassName: 'notification-modal',
-				...action.data
-			};
+    switch (action.type) {
+        case actionTypes.GLOBAL_MODAL_SHOW:
+            return {
+                ...action.data
+            };
+        case actionTypes.GLOBAL_MODAL_ERROR:
+            return {
+                type: typeEnum.ERROR,
+                modalClassName: 'notification-modal',
+                ...action.data
+            };
+        case actionTypes.GLOBAL_MODAL_WARNING:
+            return {
+                type: typeEnum.WARNING,
+                modalClassName: 'notification-modal',
+                ...action.data
+            };
 
-		case actionTypes.GLOBAL_MODAL_SUCCESS:
-			return {
-				type: typeEnum.SUCCESS,
-				modalClassName: 'notification-modal',
-				...action.data
-			};	
+        case actionTypes.GLOBAL_MODAL_SUCCESS:
+            return {
+                type: typeEnum.SUCCESS,
+                modalClassName: 'notification-modal',
+                ...action.data
+            };
 
-		case actionTypes.GLOBAL_MODAL_CLOSE:
-			return null;			
-		default:
-			return state;
-	}
+        case actionTypes.GLOBAL_MODAL_CLOSE:
+            return null;
+        default:
+            return state;
+    }
 };

@@ -15,10 +15,8 @@
  */
 import React from 'react';
 
-export const ListEditorItemViewField = ({children}) => (
-	<div className='list-editor-item-view-field'>
-		{children}
-	</div>
+export const ListEditorItemViewField = ({ children }) => (
+    <div className="list-editor-item-view-field">{children}</div>
 );
 
 export default ListEditorItemViewField;

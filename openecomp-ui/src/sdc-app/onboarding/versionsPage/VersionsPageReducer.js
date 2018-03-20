@@ -13,30 +13,34 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './VersionsPageConstants.js';
-import {combineReducers} from 'redux';
+import { actionTypes } from './VersionsPageConstants.js';
+import { combineReducers } from 'redux';
 import VersionsPageCreationReducer from './creation/VersionsPageCreationReducer.js';
 import PermissionsReducer from '../permissions/PermissionsReducer.js';
-import {createPlainDataReducer} from 'sdc-app/common/reducers/PlainDataReducer.js';
+import { createPlainDataReducer } from 'sdc-app/common/reducers/PlainDataReducer.js';
 
 function VersionsListReducer(state = {}, action) {
-	switch (action.type) {
-		case actionTypes.VERSIONS_LOADED:
-			let {versions, itemType = state.itemType, itemId} = action;
-			return {...state, versions, itemType, itemId};
-		case actionTypes.SELECT_VERSION:
-			return {...state, selectedVersion: action.versionId === state.selectedVersion ? null : action.versionId};
-		case actionTypes.SELECT_NONE:
-			return {...state, selectedVersion: null};
-		default:
-			return state;
-	}
-};
-
-
+    switch (action.type) {
+        case actionTypes.VERSIONS_LOADED:
+            let { versions, itemType = state.itemType, itemId } = action;
+            return { ...state, versions, itemType, itemId };
+        case actionTypes.SELECT_VERSION:
+            return {
+                ...state,
+                selectedVersion:
+                    action.versionId === state.selectedVersion
+                        ? null
+                        : action.versionId
+            };
+        case actionTypes.SELECT_NONE:
+            return { ...state, selectedVersion: null };
+        default:
+            return state;
+    }
+}
 
 export default combineReducers({
-	versionCreation: createPlainDataReducer(VersionsPageCreationReducer),
-	versionsList: VersionsListReducer,
-	permissions: PermissionsReducer
+    versionCreation: createPlainDataReducer(VersionsPageCreationReducer),
+    versionsList: VersionsListReducer,
+    permissions: PermissionsReducer
 });

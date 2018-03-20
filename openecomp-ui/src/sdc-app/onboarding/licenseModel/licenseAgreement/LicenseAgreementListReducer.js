@@ -13,15 +13,18 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes as licenseAgreementActionTypes} from './LicenseAgreementConstants';
+import { actionTypes as licenseAgreementActionTypes } from './LicenseAgreementConstants';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case licenseAgreementActionTypes.LICENSE_AGREEMENT_LIST_LOADED:
-			return [...action.response.results];
-		case licenseAgreementActionTypes.DELETE_LICENSE_AGREEMENT:
-			return state.filter(licenseAgreement => licenseAgreement.id !== action.licenseAgreementId);
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case licenseAgreementActionTypes.LICENSE_AGREEMENT_LIST_LOADED:
+            return [...action.response.results];
+        case licenseAgreementActionTypes.DELETE_LICENSE_AGREEMENT:
+            return state.filter(
+                licenseAgreement =>
+                    licenseAgreement.id !== action.licenseAgreementId
+            );
+        default:
+            return state;
+    }
 };

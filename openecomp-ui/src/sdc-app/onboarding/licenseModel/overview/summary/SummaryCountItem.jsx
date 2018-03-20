@@ -16,19 +16,43 @@
 import React from 'react';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 
-function  SummaryCountItem ({name, counter, onAdd, onNavigate, isReadOnlyMode}) {
-	//TODO check for buttons
-	return(
-		<div className='summary-count-item'>
-			<div className='summary-name-and-count' onClick={onNavigate}>
-				<span className='item-name' onClick={onNavigate}>{name}</span>
-				<span className='item-count' onClick={onNavigate} data-test-id={'vlm-summary-vendor-counter-' + name.toLowerCase().replace(/\s/g,'-')}>({counter})</span>
-			</div>
-			<SVGIcon name='plusCircle' disabled={isReadOnlyMode} className={isReadOnlyMode ? 'disabled' : ''}
-				color='secondary' onClick={onAdd} data-test-id={'vlm-summary-vendor-add-btn-' + name.toLowerCase().replace(/\s/g,'-')}/>
-		</div>
-	);
+function SummaryCountItem({
+    name,
+    counter,
+    onAdd,
+    onNavigate,
+    isReadOnlyMode
+}) {
+    //TODO check for buttons
+    return (
+        <div className="summary-count-item">
+            <div className="summary-name-and-count" onClick={onNavigate}>
+                <span className="item-name" onClick={onNavigate}>
+                    {name}
+                </span>
+                <span
+                    className="item-count"
+                    onClick={onNavigate}
+                    data-test-id={
+                        'vlm-summary-vendor-counter-' +
+                        name.toLowerCase().replace(/\s/g, '-')
+                    }>
+                    ({counter})
+                </span>
+            </div>
+            <SVGIcon
+                name="plusCircle"
+                disabled={isReadOnlyMode}
+                className={isReadOnlyMode ? 'disabled' : ''}
+                color="secondary"
+                onClick={onAdd}
+                data-test-id={
+                    'vlm-summary-vendor-add-btn-' +
+                    name.toLowerCase().replace(/\s/g, '-')
+                }
+            />
+        </div>
+    );
 }
 
 export default SummaryCountItem;
-

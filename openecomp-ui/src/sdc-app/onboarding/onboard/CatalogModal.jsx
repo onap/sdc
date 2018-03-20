@@ -14,49 +14,52 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import {modalMapper, catalogItemTypes, catalogItemTypeClasses } from './onboardingCatalog/OnboardingCatalogConstants.js';
+import {
+    modalMapper,
+    catalogItemTypes,
+    catalogItemTypeClasses
+} from './onboardingCatalog/OnboardingCatalogConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
 import LicenseModelCreation from '../licenseModel/creation/LicenseModelCreation.js';
 import SoftwareProductCreation from '../softwareProduct/creation/SoftwareProductCreation.js';
 
-class CatalogModal extends React.Component{
+class CatalogModal extends React.Component {
+    getModalDetails() {
+        const { modalToShow } = this.props;
+        switch (modalToShow) {
+            case catalogItemTypes.LICENSE_MODEL:
+                return {
+                    title: i18n('New License Model'),
+                    element: <LicenseModelCreation />
+                };
+            case catalogItemTypes.SOFTWARE_PRODUCT:
+                return {
+                    title: i18n('New Software Product'),
+                    element: <SoftwareProductCreation />
+                };
+        }
+    }
 
-	getModalDetails(){
-		const {modalToShow} = this.props;
-		switch (modalToShow) {
-			case catalogItemTypes.LICENSE_MODEL:
-				return {
-					title: i18n('New License Model'),
-					element: <LicenseModelCreation/>
-				};
-			case catalogItemTypes.SOFTWARE_PRODUCT:
-				return {
-					title: i18n('New Software Product'),
-					element: <SoftwareProductCreation/>
-				};
-		}
-	}
+    render() {
+        const { modalToShow } = this.props;
+        const modalDetails = this.getModalDetails(modalToShow);
 
-	render(){
-		const {modalToShow} = this.props;
-		const modalDetails = this.getModalDetails(modalToShow);
-
-		return (
-			<Modal
-				show={Boolean(modalDetails)}
-				className={`${catalogItemTypeClasses[modalMapper[modalToShow]]}-modal`}>
-				<Modal.Header>
-					<Modal.Title>{modalDetails && modalDetails.title}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					{
-						modalDetails && modalDetails.element
-					}
-				</Modal.Body>
-			</Modal>
-		);
-	}
+        return (
+            <Modal
+                show={Boolean(modalDetails)}
+                className={`${
+                    catalogItemTypeClasses[modalMapper[modalToShow]]
+                }-modal`}>
+                <Modal.Header>
+                    <Modal.Title>
+                        {modalDetails && modalDetails.title}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{modalDetails && modalDetails.element}</Modal.Body>
+            </Modal>
+        );
+    }
 }
 
 export default CatalogModal;

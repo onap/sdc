@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {actionTypes} from './FilterConstants.js';
+import { actionTypes } from './FilterConstants.js';
 
-export default (state = {}, action) => {	
-	switch (action.type) {
-		case actionTypes.FILTER_DATA_CHANGED:						
-			return {				
-				...state,
-				...action.deltaData
-			};			
-		default:
-			return state;
-	}   	
+export default (state = {}, action) => {
+    switch (action.type) {
+        case actionTypes.FILTER_DATA_CHANGED:
+            return {
+                ...state,
+                ...action.deltaData
+            };
+        default:
+            return state;
+    }
 };

@@ -16,47 +16,55 @@
 import configData from './config.json';
 
 class Configuration {
+    get(key) {
+        return configData[key];
+    }
 
-	get(key) {
-		return configData[key];
-	}
+    set(key, value) {
+        var prev = configData[key];
+        configData[key] = value;
+        return prev;
+    }
 
-	set(key, value) {
-		var prev = configData[key];
-		configData[key] = value;
-		return prev;
-	}
+    setCatalogApiRoot(CatalogApiRoot) {
+        let restCatalogPrefix = CatalogApiRoot,
+            restPrefix = CatalogApiRoot.replace(
+                /\/feProxy\b[^:]*$/,
+                '/feProxy/onboarding-api'
+            );
 
-	setCatalogApiRoot(CatalogApiRoot) {
-		let restCatalogPrefix = CatalogApiRoot,
-			restPrefix = CatalogApiRoot.replace(/\/feProxy\b[^:]*$/, '/feProxy/onboarding-api');
+        this.set('restPrefix', restPrefix);
+        this.set('restCatalogPrefix', restCatalogPrefix);
+    }
 
-		this.set('restPrefix', restPrefix);
-		this.set('restCatalogPrefix', restCatalogPrefix);
-	}
+    setCatalogApiHeaders(CatalogApiHeaders) {
+        this.set('CatalogApiHeaders', CatalogApiHeaders);
 
-	setCatalogApiHeaders(CatalogApiHeaders) {
-		this.set('CatalogApiHeaders', CatalogApiHeaders);
-
-		let {userId: {value: UserID} = {}} = CatalogApiHeaders;
-		this.set('UserID', UserID);
-	}
+        let { userId: { value: UserID } = {} } = CatalogApiHeaders;
+        this.set('UserID', UserID);
+    }
 }
 
 const configuration = new Configuration();
 
 (function setDefaultRestPrefixes(configuration) {
-	configuration.set('restPrefix', configuration.get('defaultRestPrefix'));
-	configuration.set('restCatalogPrefix', configuration.get('defaultRestCatalogPrefix'));
-	configuration.set('appContextPath', configuration.get('appContextPath'));
+    configuration.set('restPrefix', configuration.get('defaultRestPrefix'));
+    configuration.set(
+        'restCatalogPrefix',
+        configuration.get('defaultRestCatalogPrefix')
+    );
+    configuration.set('appContextPath', configuration.get('appContextPath'));
 })(configuration);
 (function setDefaultWebsocketConfig(configuration) {
-	let websocketPort = configuration.get('defaultWebsocketPort');
-	if (DEBUG) {
-		websocketPort = configuration.get('defaultDebugWebsocketPort');
-	}
-	configuration.set('websocketPort', websocketPort);
-	configuration.set('websocketPath', configuration.get('defaultWebsocketPath'));
+    let websocketPort = configuration.get('defaultWebsocketPort');
+    if (DEBUG) {
+        websocketPort = configuration.get('defaultDebugWebsocketPort');
+    }
+    configuration.set('websocketPort', websocketPort);
+    configuration.set(
+        'websocketPath',
+        configuration.get('defaultWebsocketPath')
+    );
 })(configuration);
 
 export default configuration;

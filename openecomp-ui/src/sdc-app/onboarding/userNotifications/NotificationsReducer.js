@@ -14,59 +14,66 @@
  * permissions and limitations under the License.
  */
 
-import {actionTypes} from './UserNotificationsConstants.js';
+import { actionTypes } from './UserNotificationsConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.NOTIFICATION:
-			let list = (state.notificationsList) ? state.notificationsList : [];
-			const {notifications, lastScanned} = action.data;
-			return {
-				...state,
-				lastScanned,
-				notificationsList: [...notifications, ...list],
-				numOfNotSeenNotifications: state.numOfNotSeenNotifications + notifications.length
-			};
-		case actionTypes.LOAD_NOTIFICATIONS:
-			return {
-				...state,
-				...action.result,
-				notificationsList: action.result.notifications,
-				notifications: undefined
-			};
-		case actionTypes.LOAD_PREV_NOTIFICATIONS:
-			const {notifications: prevNotifications, endOfPage: newEndOfPage} = action.result;
-			return {
-				...state,
-				notificationsList: [
-					...state.notificationsList,
-					...prevNotifications
-				],
-				endOfPage: newEndOfPage
-			};
-		case actionTypes.UPDATE_READ_NOTIFICATION:
-			let {notificationForUpdate} = action;
-			notificationForUpdate = {...notificationForUpdate, read: true};
-			const indexForEdit = state.notificationsList.findIndex(notification => notification.eventId === notificationForUpdate.eventId);
-			return {
-				...state,
-				notificationsList: [
-					...state.notificationsList.slice(0, indexForEdit),
-					notificationForUpdate,
-					...state.notificationsList.slice(indexForEdit + 1)
-				]
-			};
-		case actionTypes.RESET_NEW_NOTIFICATIONS:
-			return {
-				...state,
-				numOfNotSeenNotifications: 0
-			};
-		case actionTypes.TOGGLE_OVERLAY:
-			return {
-				...state,
-				showNotificationsOverlay: action.showNotificationsOverlay
-			};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.NOTIFICATION:
+            let list = state.notificationsList ? state.notificationsList : [];
+            const { notifications, lastScanned } = action.data;
+            return {
+                ...state,
+                lastScanned,
+                notificationsList: [...notifications, ...list],
+                numOfNotSeenNotifications:
+                    state.numOfNotSeenNotifications + notifications.length
+            };
+        case actionTypes.LOAD_NOTIFICATIONS:
+            return {
+                ...state,
+                ...action.result,
+                notificationsList: action.result.notifications,
+                notifications: undefined
+            };
+        case actionTypes.LOAD_PREV_NOTIFICATIONS:
+            const {
+                notifications: prevNotifications,
+                endOfPage: newEndOfPage
+            } = action.result;
+            return {
+                ...state,
+                notificationsList: [
+                    ...state.notificationsList,
+                    ...prevNotifications
+                ],
+                endOfPage: newEndOfPage
+            };
+        case actionTypes.UPDATE_READ_NOTIFICATION:
+            let { notificationForUpdate } = action;
+            notificationForUpdate = { ...notificationForUpdate, read: true };
+            const indexForEdit = state.notificationsList.findIndex(
+                notification =>
+                    notification.eventId === notificationForUpdate.eventId
+            );
+            return {
+                ...state,
+                notificationsList: [
+                    ...state.notificationsList.slice(0, indexForEdit),
+                    notificationForUpdate,
+                    ...state.notificationsList.slice(indexForEdit + 1)
+                ]
+            };
+        case actionTypes.RESET_NEW_NOTIFICATIONS:
+            return {
+                ...state,
+                numOfNotSeenNotifications: 0
+            };
+        case actionTypes.TOGGLE_OVERLAY:
+            return {
+                ...state,
+                showNotificationsOverlay: action.showNotificationsOverlay
+            };
+        default:
+            return state;
+    }
 };

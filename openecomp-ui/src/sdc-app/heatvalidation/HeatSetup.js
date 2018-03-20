@@ -13,16 +13,26 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
-import HeatSetupView  from '../onboarding/softwareProduct/attachments/setup/HeatSetupView.jsx';
+import { connect } from 'react-redux';
+import HeatSetupView from '../onboarding/softwareProduct/attachments/setup/HeatSetupView.jsx';
 import UploadScreenActionHelper from './UploadScreenActionHelper.js';
-import {mapStateToProps, mapActionsToProps} from '../onboarding/softwareProduct/attachments/setup/HeatSetup.js';
+import {
+    mapStateToProps,
+    mapActionsToProps
+} from '../onboarding/softwareProduct/attachments/setup/HeatSetup.js';
 
-const mapActionsToPropsExt = (dispatch) => {
-	return {
-		...mapActionsToProps(dispatch,{}),
-		onProcessAndValidate: (heatData, heatDataCache) => UploadScreenActionHelper.processAndValidateHeat(dispatch, heatData, heatDataCache)
-	};
+const mapActionsToPropsExt = dispatch => {
+    return {
+        ...mapActionsToProps(dispatch, {}),
+        onProcessAndValidate: (heatData, heatDataCache) =>
+            UploadScreenActionHelper.processAndValidateHeat(
+                dispatch,
+                heatData,
+                heatDataCache
+            )
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToPropsExt, null, {withRef: true})(HeatSetupView);
+export default connect(mapStateToProps, mapActionsToPropsExt, null, {
+    withRef: true
+})(HeatSetupView);

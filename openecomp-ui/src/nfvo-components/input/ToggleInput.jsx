@@ -16,55 +16,60 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default
-class ToggleInput extends React.Component {
+export default class ToggleInput extends React.Component {
+    static propTypes = {
+        label: PropTypes.node,
+        value: PropTypes.bool,
+        onChange: PropTypes.func,
+        disabled: PropTypes.bool
+    };
 
-	static propTypes = {
-		label: PropTypes.node,
-		value: PropTypes.bool,
-		onChange: PropTypes.func,
-		disabled: PropTypes.bool
-	}
+    static defaultProps = {
+        value: false,
+        label: ''
+    };
 
-	static defaultProps = {
-		value: false,
-		label: ''
-	}
+    state = {
+        value: this.props.value
+    };
 
-	state = {
-		value: this.props.value
-	}
+    status() {
+        return this.state.value ? 'on' : 'off';
+    }
 
-	status() {
-		return this.state.value ? 'on' : 'off';
-	}
+    render() {
+        let { label, disabled } = this.props;
+        let checked = this.status() === 'on';
+        //TODO check onclick
+        return (
+            <div
+                className="toggle-input-wrapper form-group"
+                onClick={!disabled && this.click}>
+                <div className="toggle-input-label">{label}</div>
+                <div className="toggle-switch">
+                    <input
+                        className="toggle toggle-round-flat"
+                        type="checkbox"
+                        checked={checked}
+                        readOnly
+                    />
+                    <label />
+                </div>
+            </div>
+        );
+    }
 
-	render() {
-		let {label, disabled} = this.props;
-		let checked = this.status() === 'on';
-		//TODO check onclick
-		return (
-			<div className='toggle-input-wrapper form-group' onClick={!disabled && this.click}>
-				<div className='toggle-input-label'>{label}</div>
-				<div className='toggle-switch'>
-					<input className='toggle toggle-round-flat' type='checkbox' checked={checked} readOnly/>
-					<label></label>
-				</div>
-			</div>
-		);
-	}
+    click = () => {
+        let value = !this.state.value;
+        this.setState({ value });
 
-	click = () => {
-		let value = !this.state.value;
-		this.setState({value});
+        let onChange = this.props.onChange;
+        if (onChange) {
+            onChange(value);
+        }
+    };
 
-		let onChange = this.props.onChange;
-		if (onChange) {
-			onChange(value);
-		}
-	}
-
-	getValue() {
-		return this.state.value;
-	}
+    getValue() {
+        return this.state.value;
+    }
 }

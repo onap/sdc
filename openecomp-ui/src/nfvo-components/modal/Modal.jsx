@@ -20,65 +20,63 @@ import BootstrapModal from 'react-bootstrap/lib/Modal.js';
 let nextModalId = 0;
 
 export default class Modal extends React.Component {
+    static Header = BootstrapModal.Header;
 
-	static Header = BootstrapModal.Header;
+    static Title = BootstrapModal.Title;
 
-	static Title = BootstrapModal.Title;
+    static Footer = BootstrapModal.Footer;
 
-	static Footer = BootstrapModal.Footer;
+    static Body = class ModalBody extends React.Component {
+        render() {
+            let { children, ...props } = this.props;
+            return (
+                <BootstrapModal.Body {...props}>{children}</BootstrapModal.Body>
+            );
+        }
 
-	static Body = class ModalBody extends React.Component {
+        componentDidMount() {
+            let element = ReactDOM.findDOMNode(this);
+            element.addEventListener('click', event => {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                }
+            });
+            ['wheel', 'mousewheel', 'DOMMouseScroll'].forEach(eventType =>
+                element.addEventListener(eventType, event =>
+                    event.stopPropagation()
+                )
+            );
+        }
+    };
 
-		render() {
-			let {children, ...props} = this.props;
-			return (
-				<BootstrapModal.Body {...props}>
-					{children}
-				</BootstrapModal.Body>
-			);
-		}
+    componentWillMount() {
+        this.modalId = `dox-ui-modal-${nextModalId++}`;
+    }
 
-		componentDidMount() {
-			let element = ReactDOM.findDOMNode(this);
-			element.addEventListener('click', event => {
-				if (event.target.tagName === 'A') {
-					event.preventDefault();
-				}
-			});
-			['wheel', 'mousewheel', 'DOMMouseScroll'].forEach(eventType =>
-				element.addEventListener(eventType, event => event.stopPropagation())
-			);
-		}
-	};
+    componentDidMount() {
+        this.ensureRootClass();
+    }
 
-	componentWillMount() {
-		this.modalId = `dox-ui-modal-${nextModalId++}`;
-	}
+    componentDidUpdate() {
+        this.ensureRootClass();
+    }
 
-	componentDidMount() {
-		this.ensureRootClass();
-	}
+    ensureRootClass() {
+        let element = document.getElementById(this.modalId);
+        while (element && !element.hasAttribute('data-reactroot')) {
+            element = element.parentElement;
+        }
+        if (element && !element.classList.contains('dox-ui')) {
+            element.classList.add('dox-ui');
+        }
+    }
 
-	componentDidUpdate() {
-		this.ensureRootClass();
-	}
-
-	ensureRootClass() {
-		let element = document.getElementById(this.modalId);
-		while(element && !element.hasAttribute('data-reactroot')) {
-			element = element.parentElement;
-		}
-		if (element && !element.classList.contains('dox-ui')) {
-			element.classList.add('dox-ui');
-		}
-	}
-
-	render() {
-		let {children, ...props} = this.props;
-		return (
-			<BootstrapModal {...props} id={this.modalId}>
-				{children}
-			</BootstrapModal>
-		);
-	}
+    render() {
+        let { children, ...props } = this.props;
+        return (
+            <BootstrapModal {...props} id={this.modalId}>
+                {children}
+            </BootstrapModal>
+        );
+    }
 }

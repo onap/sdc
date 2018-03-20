@@ -15,195 +15,279 @@
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import {actionTypes} from './LicenseModelConstants.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import {actionsEnum as vcActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
+import { actionTypes } from './LicenseModelConstants.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
+import { actionsEnum as vcActionsEnum } from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import LicenseAgreementActionHelper from './licenseAgreement/LicenseAgreementActionHelper.js';
 import FeatureGroupsActionHelper from './featureGroups/FeatureGroupsActionHelper.js';
 import EntitlementPoolsActionHelper from './entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from './licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
-import {default as ItemsHelper} from 'sdc-app/common/helpers/ItemsHelper.js';
+import { default as ItemsHelper } from 'sdc-app/common/helpers/ItemsHelper.js';
 import MergeEditorActionHelper from 'sdc-app/common/merge/MergeEditorActionHelper.js';
-import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
-import {CommitModalType} from 'nfvo-components/panel/versionController/components/CommitCommentModal.jsx';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
+import { CommitModalType } from 'nfvo-components/panel/versionController/components/CommitCommentModal.jsx';
 import versionPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
-import {itemTypes} from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
-import {catalogItemStatuses} from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
-import {actionsEnum as VersionControllerActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
+import { itemTypes } from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
+import { catalogItemStatuses } from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
+import { actionsEnum as VersionControllerActionsEnum } from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 
 function baseUrl() {
-	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-license-models/`;
+    const restPrefix = Configuration.get('restPrefix');
+    return `${restPrefix}/v1.0/vendor-license-models/`;
 }
 
 function fetchLicenseModels() {
-	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=${catalogItemStatuses.DRAFT}`);
+    return RestAPIUtil.fetch(
+        `${baseUrl()}?versionFilter=${catalogItemStatuses.DRAFT}`
+    );
 }
 
 function fetchFinalizedLicenseModels() {
-	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=${catalogItemStatuses.CERTIFIED}`);
+    return RestAPIUtil.fetch(
+        `${baseUrl()}?versionFilter=${catalogItemStatuses.CERTIFIED}`
+    );
 }
 function fetchArchivedLicenseModels() {
-	return RestAPIUtil.fetch(`${baseUrl()}?Status=${catalogItemStatuses.ARCHIVED}`);
+    return RestAPIUtil.fetch(
+        `${baseUrl()}?Status=${catalogItemStatuses.ARCHIVED}`
+    );
 }
 function fetchLicenseModelById(licenseModelId, version) {
-	const {id: versionId} = version;
-	return RestAPIUtil.fetch(`${baseUrl()}${licenseModelId}/versions/${versionId}`);
+    const { id: versionId } = version;
+    return RestAPIUtil.fetch(
+        `${baseUrl()}${licenseModelId}/versions/${versionId}`
+    );
 }
 
 function putLicenseModel(licenseModel) {
-	let {id, vendorName, description, iconRef, version: {id: versionId}} = licenseModel;
-	return RestAPIUtil.put(`${baseUrl()}${id}/versions/${versionId}`, {
-		vendorName,
-		description,
-		iconRef
-	});
+    let {
+        id,
+        vendorName,
+        description,
+        iconRef,
+        version: { id: versionId }
+    } = licenseModel;
+    return RestAPIUtil.put(`${baseUrl()}${id}/versions/${versionId}`, {
+        vendorName,
+        description,
+        iconRef
+    });
 }
 
-function putLicenseModelAction({itemId, action, version}) {
-	const {id: versionId} = version;
-	return RestAPIUtil.put(`${baseUrl()}${itemId}/versions/${versionId}/actions`, {action: action});
+function putLicenseModelAction({ itemId, action, version }) {
+    const { id: versionId } = version;
+    return RestAPIUtil.put(
+        `${baseUrl()}${itemId}/versions/${versionId}/actions`,
+        { action: action }
+    );
 }
 
 const LicenseModelActionHelper = {
+    fetchLicenseModels(dispatch) {
+        return fetchLicenseModels().then(response => {
+            dispatch({
+                type: actionTypes.LICENSE_MODELS_LIST_LOADED,
+                response
+            });
+        });
+    },
 
-	fetchLicenseModels(dispatch) {
-		return fetchLicenseModels().then(response => {
-			dispatch({
-				type: actionTypes.LICENSE_MODELS_LIST_LOADED,
-				response
-			});
-		});
-	},
+    fetchFinalizedLicenseModels(dispatch) {
+        return fetchFinalizedLicenseModels().then(response =>
+            dispatch({
+                type: actionTypes.FINALIZED_LICENSE_MODELS_LIST_LOADED,
+                response
+            })
+        );
+    },
 
-	fetchFinalizedLicenseModels(dispatch) {
-		return fetchFinalizedLicenseModels().then(response => dispatch({
-			type: actionTypes.FINALIZED_LICENSE_MODELS_LIST_LOADED,
-			response
-		}));
+    fetchArchivedLicenseModels(dispatch) {
+        return fetchArchivedLicenseModels().then(response =>
+            dispatch({
+                type: actionTypes.ARCHIVED_LICENSE_MODELS_LIST_LOADED,
+                response
+            })
+        );
+    },
 
-	},
+    fetchLicenseModelById(dispatch, { licenseModelId, version }) {
+        return fetchLicenseModelById(licenseModelId, version).then(response => {
+            dispatch({
+                type: actionTypes.LICENSE_MODEL_LOADED,
+                response: { ...response, version }
+            });
+        });
+    },
 
-	fetchArchivedLicenseModels(dispatch) {
-		return fetchArchivedLicenseModels().then(response => dispatch({
-			type: actionTypes.ARCHIVED_LICENSE_MODELS_LIST_LOADED,
-			response
-		}));
+    fetchLicenseModelItems(dispatch, { licenseModelId, version }) {
+        return Promise.all([
+            LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {
+                licenseModelId,
+                version
+            }),
+            FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {
+                licenseModelId,
+                version
+            }),
+            EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {
+                licenseModelId,
+                version
+            }),
+            LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {
+                licenseModelId,
+                version
+            })
+        ]);
+    },
 
-	},
+    manageSubmitAction(dispatch, { licenseModelId, version, isDirty }) {
+        if (isDirty) {
+            const onCommit = comment => {
+                return this.performVCAction(dispatch, {
+                    licenseModelId,
+                    action: vcActionsEnum.COMMIT,
+                    version,
+                    comment
+                }).then(() => {
+                    return this.performSubmitAction(dispatch, {
+                        licenseModelId,
+                        version
+                    });
+                });
+            };
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_SHOW,
+                data: {
+                    modalComponentName: modalContentMapper.COMMIT_COMMENT,
+                    modalComponentProps: {
+                        onCommit,
+                        type: CommitModalType.COMMIT_SUBMIT
+                    },
+                    title: i18n('Commit & Submit')
+                }
+            });
+            return Promise.reject();
+        }
+        return this.performSubmitAction(dispatch, { licenseModelId, version });
+    },
 
-	fetchLicenseModelById(dispatch, {licenseModelId, version}) {
+    performSubmitAction(dispatch, { licenseModelId, version }) {
+        return putLicenseModelAction({
+            itemId: licenseModelId,
+            action: vcActionsEnum.SUBMIT,
+            version
+        }).then(() => {
+            return ItemsHelper.checkItemStatus(dispatch, {
+                itemId: licenseModelId,
+                versionId: version.id
+            }).then(updatedVersion => {
+                dispatch({
+                    type: modalActionTypes.GLOBAL_MODAL_SUCCESS,
+                    data: {
+                        title: i18n('Submit Succeeded'),
+                        msg: i18n('This license model successfully submitted'),
+                        cancelButtonText: i18n('OK'),
+                        timeout: 2000
+                    }
+                });
+                versionPageActionHelper.fetchVersions(dispatch, {
+                    itemType: itemTypes.LICENSE_MODEL,
+                    itemId: licenseModelId
+                });
+                return Promise.resolve(updatedVersion);
+            });
+        });
+    },
 
-		return fetchLicenseModelById(licenseModelId, version).then(response => {
-			dispatch({
-				type: actionTypes.LICENSE_MODEL_LOADED,
-				response: {...response, version}
-			});
-		});
-	},
+    performVCAction(dispatch, { licenseModelId, action, version, comment }) {
+        return MergeEditorActionHelper.analyzeSyncResult(dispatch, {
+            itemId: licenseModelId,
+            version
+        }).then(({ inMerge, isDirty, updatedVersion }) => {
+            if (
+                (updatedVersion.status === catalogItemStatuses.CERTIFIED ||
+                    updatedVersion.archivedStatus ===
+                        catalogItemStatuses.ARCHIVED) &&
+                (action === VersionControllerActionsEnum.COMMIT ||
+                    action === VersionControllerActionsEnum.SYNC)
+            ) {
+                versionPageActionHelper.fetchVersions(dispatch, {
+                    itemType: itemTypes.LICENSE_MODEL,
+                    itemId: licenseModelId
+                });
+                const msg =
+                    updatedVersion.archivedStatus ===
+                    catalogItemStatuses.ARCHIVED
+                        ? i18n('Item was Archived')
+                        : i18n('Item version already Certified');
+                dispatch({
+                    type: modalActionTypes.GLOBAL_MODAL_WARNING,
+                    data: {
+                        title: i18n('Commit error'),
+                        msg,
+                        cancelButtonText: i18n('Cancel')
+                    }
+                });
+                return Promise.resolve(updatedVersion);
+            }
+            if (!inMerge) {
+                if (action === vcActionsEnum.SUBMIT) {
+                    return this.manageSubmitAction(dispatch, {
+                        licenseModelId,
+                        version,
+                        isDirty
+                    });
+                } else {
+                    return ItemsHelper.performVCAction({
+                        itemId: licenseModelId,
+                        action,
+                        version,
+                        comment
+                    }).then(() => {
+                        versionPageActionHelper.fetchVersions(dispatch, {
+                            itemType: itemTypes.LICENSE_MODEL,
+                            itemId: licenseModelId
+                        });
+                        if (action === vcActionsEnum.SYNC) {
+                            return MergeEditorActionHelper.analyzeSyncResult(
+                                dispatch,
+                                { itemId: licenseModelId, version }
+                            ).then(({ updatedVersion }) => {
+                                return Promise.resolve(updatedVersion);
+                            });
+                        } else {
+                            return ItemsHelper.checkItemStatus(dispatch, {
+                                itemId: licenseModelId,
+                                versionId: version.id
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    },
 
-	fetchLicenseModelItems(dispatch, {licenseModelId, version}) {
-		return Promise.all([
-			LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId, version}),
-			FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version}),
-			EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version}),
-			LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version})
-		]);
-	},
-
-	manageSubmitAction(dispatch, {licenseModelId, version, isDirty}) {
-		if(isDirty) {
-			const onCommit = comment => {
-				return this.performVCAction(dispatch, {licenseModelId, action: vcActionsEnum.COMMIT, version, comment}).then(() => {
-					return this.performSubmitAction(dispatch, {licenseModelId, version});
-				});
-			};
-			dispatch({
-				type: modalActionTypes.GLOBAL_MODAL_SHOW,
-				data: {
-					modalComponentName: modalContentMapper.COMMIT_COMMENT,
-					modalComponentProps: {
-						onCommit,
-						type: CommitModalType.COMMIT_SUBMIT
-					},
-					title: i18n('Commit & Submit')
-				}
-			});
-			return Promise.reject();
-		}
-		return this.performSubmitAction(dispatch, {licenseModelId, version});
-	},
-
-	performSubmitAction(dispatch, {licenseModelId, version}) {
-		return putLicenseModelAction({itemId: licenseModelId, action: vcActionsEnum.SUBMIT, version}).then(() => {
-			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id}).then(updatedVersion => {
-				dispatch({
-					type: modalActionTypes.GLOBAL_MODAL_SUCCESS,
-					data: {
-						title: i18n('Submit Succeeded'),
-						msg: i18n('This license model successfully submitted'),
-						cancelButtonText: i18n('OK'),
-						timeout: 2000
-					}
-				});
-				versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
-				return Promise.resolve(updatedVersion);
-			});
-		});
-	},
-
-	performVCAction(dispatch, {licenseModelId, action, version, comment}) {
-		return MergeEditorActionHelper.analyzeSyncResult(dispatch, {itemId: licenseModelId, version}).then(({inMerge, isDirty, updatedVersion}) => {
-			if ( (updatedVersion.status === catalogItemStatuses.CERTIFIED || updatedVersion.archivedStatus === catalogItemStatuses.ARCHIVED) && 
-				(action === VersionControllerActionsEnum.COMMIT || action === VersionControllerActionsEnum.SYNC)) {
-				versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
-				const msg = updatedVersion.archivedStatus === catalogItemStatuses.ARCHIVED ? i18n('Item was Archived') : i18n('Item version already Certified');
-				dispatch({
-					type: modalActionTypes.GLOBAL_MODAL_WARNING,
-					data: {
-						title: i18n('Commit error'),
-						msg,
-						cancelButtonText: i18n('Cancel')
-					}
-				});
-				return Promise.resolve(updatedVersion);
-			}
-			if (!inMerge) {
-				if(action === vcActionsEnum.SUBMIT) {
-					return this.manageSubmitAction(dispatch, {licenseModelId, version, isDirty});
-				}
-				else {
-					return ItemsHelper.performVCAction({itemId: licenseModelId, action, version, comment}).then(() => {
-						versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
-						if (action === vcActionsEnum.SYNC) {
-							return MergeEditorActionHelper.analyzeSyncResult(dispatch, {itemId: licenseModelId, version}).then(({updatedVersion}) => {
-								return Promise.resolve(updatedVersion);
-							});
-						} else {
-							return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
-						}
-					});
-				}
-			}
-		});
-	},
-
-	saveLicenseModel(dispatch, {licenseModel}) {
-		return putLicenseModel(licenseModel).then(() => {
-			dispatch({
-				type: actionTypes.LICENSE_MODEL_LOADED,
-				response: licenseModel
-			});
-			const {id, version: {id: versionId}} = licenseModel;
-			return ItemsHelper.checkItemStatus(dispatch, {itemId: id, versionId}).then(updatedVersion => {
-				if (updatedVersion.status !== licenseModel.version.status) {
-					versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModel.id});
-				}
-			});
-		});
-	}
-
+    saveLicenseModel(dispatch, { licenseModel }) {
+        return putLicenseModel(licenseModel).then(() => {
+            dispatch({
+                type: actionTypes.LICENSE_MODEL_LOADED,
+                response: licenseModel
+            });
+            const { id, version: { id: versionId } } = licenseModel;
+            return ItemsHelper.checkItemStatus(dispatch, {
+                itemId: id,
+                versionId
+            }).then(updatedVersion => {
+                if (updatedVersion.status !== licenseModel.version.status) {
+                    versionPageActionHelper.fetchVersions(dispatch, {
+                        itemType: itemTypes.LICENSE_MODEL,
+                        itemId: licenseModel.id
+                    });
+                }
+            });
+        });
+    }
 };
 
 export default LicenseModelActionHelper;

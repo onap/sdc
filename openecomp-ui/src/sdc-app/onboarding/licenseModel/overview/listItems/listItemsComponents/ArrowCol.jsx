@@ -17,20 +17,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-function ArrowCol ({isCollapsed, length}) {
-	return (
-		<div className='list-item-section list-item-arrow-col'>
-			<div className={classNames('arrow-icon', {'chevron': length > 0},
-				{'down': (length > 0 && isCollapsed)},
-				{'right': (length > 0 && (!isCollapsed))})} >
-			</div>
-		</div>
-	);
+function ArrowCol({ isCollapsed, length }) {
+    return (
+        <div className="list-item-section list-item-arrow-col">
+            <div
+                className={classNames(
+                    'arrow-icon',
+                    { chevron: length > 0 },
+                    { down: length > 0 && isCollapsed },
+                    { right: length > 0 && !isCollapsed }
+                )}
+            />
+        </div>
+    );
 }
 
 ArrowCol.propTypes = {
-	isCollapsed: PropTypes.bool,
-	length: PropTypes.number
+    isCollapsed: PropTypes.bool,
+    length: PropTypes.number
 };
 
 export default ArrowCol;

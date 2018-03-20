@@ -13,44 +13,57 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import FlowsEditorModalView from './FlowsEditorModalView.jsx';
 import FlowsActions from './FlowsActions.js';
-import {FLOWS_EDITOR_FORM} from './FlowsConstants.js';
+import { FLOWS_EDITOR_FORM } from './FlowsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
-export const mapStateToProps = ({flows}) => {
+export const mapStateToProps = ({ flows }) => {
+    let {
+        data = { artifactName: '', description: '' },
+        serviceID,
+        diagramType,
+        flowParticipants,
+        genericFieldInfo,
+        formReady
+    } = flows;
+    if (!data.serviceID) {
+        data.serviceID = serviceID;
+    }
+    if (!data.artifactType) {
+        data.artifactType = diagramType;
+    }
+    if (!data.participants) {
+        data.participants = flowParticipants;
+    }
+    let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
-	let {data = {artifactName: '', description: ''}, serviceID, diagramType, flowParticipants, genericFieldInfo, formReady} = flows;
-	if(!data.serviceID){
-		data.serviceID = serviceID;
-	}
-	if(!data.artifactType){
-		data.artifactType = diagramType;
-	}
-	if(!data.participants){
-		data.participants = flowParticipants;
-	}
-	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
-
-	return {
-		currentFlow: data,
-		genericFieldInfo,
-		isFormValid,
-		formReady
-	};
+    return {
+        currentFlow: data,
+        genericFieldInfo,
+        isFormValid,
+        formReady
+    };
 };
 
-const mapActionsToProps = (dispatch, {isNewArtifact}) => {
-	return {
-		onSubmit: flow => {
-			FlowsActions.closeFlowDetailsEditor(dispatch);
-			FlowsActions.createOrUpdateFlow(dispatch, {flow}, isNewArtifact);
-		},
-		onCancel: () => FlowsActions.closeFlowDetailsEditor(dispatch),
-		onDataChanged: deltaData => ValidationHelper.dataChanged(dispatch, {deltaData, formName: FLOWS_EDITOR_FORM}),
-		onValidateForm: () => ValidationHelper.validateForm(dispatch, FLOWS_EDITOR_FORM)
-	};
+const mapActionsToProps = (dispatch, { isNewArtifact }) => {
+    return {
+        onSubmit: flow => {
+            FlowsActions.closeFlowDetailsEditor(dispatch);
+            FlowsActions.createOrUpdateFlow(dispatch, { flow }, isNewArtifact);
+        },
+        onCancel: () => FlowsActions.closeFlowDetailsEditor(dispatch),
+        onDataChanged: deltaData =>
+            ValidationHelper.dataChanged(dispatch, {
+                deltaData,
+                formName: FLOWS_EDITOR_FORM
+            }),
+        onValidateForm: () =>
+            ValidationHelper.validateForm(dispatch, FLOWS_EDITOR_FORM)
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(FlowsEditorModalView);
+export default connect(mapStateToProps, mapActionsToProps)(
+    FlowsEditorModalView
+);

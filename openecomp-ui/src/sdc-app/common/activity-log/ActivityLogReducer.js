@@ -16,10 +16,10 @@
 import ActivityLogConstants from './ActivityLogConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case ActivityLogConstants.ACTIVITY_LOG_UPDATED:
-			return [...action.response.results];
-	}
+    switch (action.type) {
+        case ActivityLogConstants.ACTIVITY_LOG_UPDATED:
+            return [...action.response.results];
+    }
 
-	return state;
+    return state;
 };

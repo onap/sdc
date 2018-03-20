@@ -13,37 +13,40 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, NIC_CREATION_FORM_NAME} from '../SoftwareProductComponentsNetworkConstants.js';
+import {
+    actionTypes,
+    NIC_CREATION_FORM_NAME
+} from '../SoftwareProductComponentsNetworkConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.NICCreation.OPEN:
-			return {
-				...state,
-				data: {},
-				formName: NIC_CREATION_FORM_NAME,
-				formReady: null,
-				genericFieldInfo: {
-					'description' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 1000}]
-					},
-					'name' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data : true}]
-					},
-					'networkDescription' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'maxLength', data: 50}]
-					}
-				}
-			};
-		case actionTypes.NICCreation.CLEAR_DATA:
-			return {};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.NICCreation.OPEN:
+            return {
+                ...state,
+                data: {},
+                formName: NIC_CREATION_FORM_NAME,
+                formReady: null,
+                genericFieldInfo: {
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 1000 }]
+                    },
+                    name: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    },
+                    networkDescription: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 50 }]
+                    }
+                }
+            };
+        case actionTypes.NICCreation.CLEAR_DATA:
+            return {};
+        default:
+            return state;
+    }
 };

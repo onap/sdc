@@ -13,106 +13,134 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 import LandingPageView from './SoftwareProductLandingPageView.jsx';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import {onboardingMethod} from '../SoftwareProductConstants.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
+import { onboardingMethod } from '../SoftwareProductConstants.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
-import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
-
+import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 
 export const mapStateToProps = ({
-	softwareProduct,
-	licenseModel: {licenseAgreement},
+    softwareProduct,
+    licenseModel: { licenseAgreement }
 }) => {
-	let {softwareProductEditor: {data:currentSoftwareProduct = {}}, softwareProductComponents, softwareProductCategories = [], } = softwareProduct;
-	let {licensingData = {}} = currentSoftwareProduct;
-	let {licenseAgreementList} = licenseAgreement;
-	let {componentsList} = softwareProductComponents;
-	let licenseAgreementName = licenseAgreementList.find(la => la.id === licensingData.licenseAgreement);
-	if (licenseAgreementName) {
-		licenseAgreementName = licenseAgreementName.name;
-	} else if (licenseAgreementList.length === 0) { // otherwise the state of traingle svgicon will be updated post unmounting
-		licenseAgreementName = null;
-	}
+    let {
+        softwareProductEditor: { data: currentSoftwareProduct = {} },
+        softwareProductComponents,
+        softwareProductCategories = []
+    } = softwareProduct;
+    let { licensingData = {} } = currentSoftwareProduct;
+    let { licenseAgreementList } = licenseAgreement;
+    let { componentsList } = softwareProductComponents;
+    let licenseAgreementName = licenseAgreementList.find(
+        la => la.id === licensingData.licenseAgreement
+    );
+    if (licenseAgreementName) {
+        licenseAgreementName = licenseAgreementName.name;
+    } else if (licenseAgreementList.length === 0) {
+        // otherwise the state of traingle svgicon will be updated post unmounting
+        licenseAgreementName = null;
+    }
 
-	let categoryName = '', subCategoryName = '', fullCategoryDisplayName = '';
-	const category = softwareProductCategories.find(ca => ca.uniqueId === currentSoftwareProduct.category);
-	if (category) {
-		categoryName = category.name;
-		const subcategories = category.subcategories || [];
-		const subcat = subcategories.find(sc => sc.uniqueId === currentSoftwareProduct.subCategory);
-		subCategoryName = subcat && subcat.name ? subcat.name : '';
-	}
-	fullCategoryDisplayName = `${subCategoryName} (${categoryName})`;
+    let categoryName = '',
+        subCategoryName = '',
+        fullCategoryDisplayName = '';
+    const category = softwareProductCategories.find(
+        ca => ca.uniqueId === currentSoftwareProduct.category
+    );
+    if (category) {
+        categoryName = category.name;
+        const subcategories = category.subcategories || [];
+        const subcat = subcategories.find(
+            sc => sc.uniqueId === currentSoftwareProduct.subCategory
+        );
+        subCategoryName = subcat && subcat.name ? subcat.name : '';
+    }
+    fullCategoryDisplayName = `${subCategoryName} (${categoryName})`;
 
-
-	return {
-		currentSoftwareProduct: {
-			...currentSoftwareProduct,
-			licenseAgreementName,
-			fullCategoryDisplayName						
-		},		
-		componentsList,
-		isManual: currentSoftwareProduct.onboardingMethod === onboardingMethod.MANUAL
-	};
+    return {
+        currentSoftwareProduct: {
+            ...currentSoftwareProduct,
+            licenseAgreementName,
+            fullCategoryDisplayName
+        },
+        componentsList,
+        isManual:
+            currentSoftwareProduct.onboardingMethod === onboardingMethod.MANUAL
+    };
 };
 
-const mapActionsToProps = (dispatch, {version}) => {
-	return {
-		onDetailsSelect: ({id: softwareProductId}) =>
-			ScreensHelper.loadScreen(dispatch, {
-				screen: enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, screenType: screenTypes.SOFTWARE_PRODUCT,
-				props: {softwareProductId, version}
-			}),
-		onCandidateInProcess: (softwareProductId) => ScreensHelper.loadScreen(dispatch, {
-			screen: enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP, screenType: screenTypes.SOFTWARE_PRODUCT,
-			props: {softwareProductId, version}
-		}),	
-		onUpload: (softwareProductId, formData) =>
-			SoftwareProductActionHelper.uploadFile(dispatch, {
-				softwareProductId,
-				formData,
-				failedNotificationTitle: i18n('Upload validation failed'),
-				version
-			}),
+const mapActionsToProps = (dispatch, { version }) => {
+    return {
+        onDetailsSelect: ({ id: softwareProductId }) =>
+            ScreensHelper.loadScreen(dispatch, {
+                screen: enums.SCREEN.SOFTWARE_PRODUCT_DETAILS,
+                screenType: screenTypes.SOFTWARE_PRODUCT,
+                props: { softwareProductId, version }
+            }),
+        onCandidateInProcess: softwareProductId =>
+            ScreensHelper.loadScreen(dispatch, {
+                screen: enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP,
+                screenType: screenTypes.SOFTWARE_PRODUCT,
+                props: { softwareProductId, version }
+            }),
+        onUpload: (softwareProductId, formData) =>
+            SoftwareProductActionHelper.uploadFile(dispatch, {
+                softwareProductId,
+                formData,
+                failedNotificationTitle: i18n('Upload validation failed'),
+                version
+            }),
 
-		onUploadConfirmation: (softwareProductId, formData) =>
-			dispatch({
-				type: modalActionTypes.GLOBAL_MODAL_WARNING,
-				data:{
-					msg: i18n('Upload will erase existing data. Do you want to continue?'),
-					confirmationButtonText: i18n('Continue'),
-					title: i18n('Warning'),
-					onConfirmed: ()=>SoftwareProductActionHelper.uploadFile(dispatch, {
-						softwareProductId,
-						formData,
-						failedNotificationTitle: i18n('Upload validation failed'),
-						version
-					}),
-					onDeclined: () => dispatch({
-						type: modalActionTypes.GLOBAL_MODAL_CLOSE
-					})
-				}
-			}),
+        onUploadConfirmation: (softwareProductId, formData) =>
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: i18n(
+                        'Upload will erase existing data. Do you want to continue?'
+                    ),
+                    confirmationButtonText: i18n('Continue'),
+                    title: i18n('Warning'),
+                    onConfirmed: () =>
+                        SoftwareProductActionHelper.uploadFile(dispatch, {
+                            softwareProductId,
+                            formData,
+                            failedNotificationTitle: i18n(
+                                'Upload validation failed'
+                            ),
+                            version
+                        }),
+                    onDeclined: () =>
+                        dispatch({
+                            type: modalActionTypes.GLOBAL_MODAL_CLOSE
+                        })
+                }
+            }),
 
-		onInvalidFileSizeUpload: () => dispatch({
-			type: modalActionTypes.GLOBAL_MODAL_ERROR,
-			data: {
-				title: i18n('Upload Failed'),
-				confirmationButtonText: i18n('Continue'),
-				msg: i18n('no zip or csar file was uploaded or expected file doesn\'t exist')
-			}
-		}),
-		onComponentSelect: ({id: softwareProductId, componentId}) => ScreensHelper.loadScreen(dispatch, {
-			screen: screenTypes.SOFTWARE_PRODUCT_COMPONENT_DEFAULT_GENERAL, screenType: screenTypes.SOFTWARE_PRODUCT,
-			props: {softwareProductId, version, componentId}
-		}),
-		/** for the next version */
-		onAddComponent: () => SoftwareProductActionHelper.addComponent(dispatch)
-	};
+        onInvalidFileSizeUpload: () =>
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                data: {
+                    title: i18n('Upload Failed'),
+                    confirmationButtonText: i18n('Continue'),
+                    msg: i18n(
+                        "no zip or csar file was uploaded or expected file doesn't exist"
+                    )
+                }
+            }),
+        onComponentSelect: ({ id: softwareProductId, componentId }) =>
+            ScreensHelper.loadScreen(dispatch, {
+                screen: screenTypes.SOFTWARE_PRODUCT_COMPONENT_DEFAULT_GENERAL,
+                screenType: screenTypes.SOFTWARE_PRODUCT,
+                props: { softwareProductId, version, componentId }
+            }),
+        /** for the next version */
+        onAddComponent: () => SoftwareProductActionHelper.addComponent(dispatch)
+    };
 };
 
-export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(LandingPageView);
+export default connect(mapStateToProps, mapActionsToProps, null, {
+    withRef: true
+})(LandingPageView);

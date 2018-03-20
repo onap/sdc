@@ -16,12 +16,13 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
-	ITEM_USERS_LOADED: null
+    ITEM_USERS_LOADED: null
 });
 
 export const permissionTypes = {
-	OWNER: 'Owner',
-	CONTRIBUTOR: 'Contributor'
+    OWNER: 'Owner',
+    CONTRIBUTOR: 'Contributor'
 };
 
-export const changeOwnerMessage = 'You will no longer be able to manage the permissions of this item.\nYour permission level will be set to contributor.';
+export const changeOwnerMessage =
+    'You will no longer be able to manage the permissions of this item.\nYour permission level will be set to contributor.';

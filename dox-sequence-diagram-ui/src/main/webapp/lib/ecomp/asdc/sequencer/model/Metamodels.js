@@ -21,67 +21,64 @@ import Metamodel from './Metamodel';
  * A simple lookup for schemas by ID.
  */
 export default class Metamodels {
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Construct metamodels from provided JSON definitions.
+     * @param metamodels JSON metamodel definitions.
+     */
+    constructor(metamodels) {
+        Common.assertType(metamodels, 'Array');
 
-  /**
-   * Construct metamodels from provided JSON definitions.
-   * @param metamodels JSON metamodel definitions.
-   */
-  constructor(metamodels) {
+        this.lookup = {};
 
-    Common.assertType(metamodels, 'Array');
+        // Save each metamodel. It's up to the Metamodel class to make sense of
+        // potentially nonsense metamodel definitions.
 
-    this.lookup = {};
+        for (const json of metamodels) {
+            const metamodel = new Metamodel(json);
+            this.lookup[metamodel.getId()] = metamodel;
+        }
 
-    // Save each metamodel. It's up to the Metamodel class to make sense of
-    // potentially nonsense metamodel definitions.
+        // Set (or override) the default metamodel with the inlined one.
 
-    for (const json of metamodels) {
-      const metamodel = new Metamodel(json);
-      this.lookup[metamodel.getId()] = metamodel;
+        this.lookup.$ = Metamodel.getDefault();
+        Common.assertInstanceOf(this.lookup.$, Metamodel);
     }
 
-    // Set (or override) the default metamodel with the inlined one.
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    this.lookup.$ = Metamodel.getDefault();
-    Common.assertInstanceOf(this.lookup.$, Metamodel);
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get Metamodel by its @id.
-   * @param id identifier.
-   * @returns Metamodel, or undefined if no matching metamodel found.
-   */
-  getMetamodel(id) {
-    return this.lookup[id];
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get the default (permissive) metamodel.
-   * @returns default Metamodel.
-   */
-  getDefault() {
-    return this.lookup.$;
-  }
-
-  // ///////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Get metamodel by its @id, falling back to the default.
-   * @param id identifier.
-   * @returns matching metamodel, or default.
-   */
-  getMetamodelOrDefault(id) {
-    const metamodel = this.getMetamodel(id);
-    if (metamodel) {
-      return metamodel;
+    /**
+     * Get Metamodel by its @id.
+     * @param id identifier.
+     * @returns Metamodel, or undefined if no matching metamodel found.
+     */
+    getMetamodel(id) {
+        return this.lookup[id];
     }
-    return this.getDefault();
-  }
 
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Get the default (permissive) metamodel.
+     * @returns default Metamodel.
+     */
+    getDefault() {
+        return this.lookup.$;
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Get metamodel by its @id, falling back to the default.
+     * @param id identifier.
+     * @returns matching metamodel, or default.
+     */
+    getMetamodelOrDefault(id) {
+        const metamodel = this.getMetamodel(id);
+        if (metamodel) {
+            return metamodel;
+        }
+        return this.getDefault();
+    }
 }

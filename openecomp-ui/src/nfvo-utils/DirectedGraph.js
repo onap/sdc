@@ -15,31 +15,31 @@
  */
 
 export default class Graph {
-	constructor() {
-		this.nodes = {};
-	}
+    constructor() {
+        this.nodes = {};
+    }
 
-	addNode(node) {
-		this.nodes[node] = [];
-	}
+    addNode(node) {
+        this.nodes[node] = [];
+    }
 
-	hasNode(node) {
-		return this.nodes.hasOwnProperty(node);
-	}
+    hasNode(node) {
+        return this.nodes.hasOwnProperty(node);
+    }
 
-	addEdge(firstNode, secondNode, payload) {
-		if (!this.hasNode(firstNode)) {
-			this.addNode(firstNode);
-		}
+    addEdge(firstNode, secondNode, payload) {
+        if (!this.hasNode(firstNode)) {
+            this.addNode(firstNode);
+        }
 
-		if (!this.hasNode(secondNode)) {
-			this.addNode(secondNode);
-		}
+        if (!this.hasNode(secondNode)) {
+            this.addNode(secondNode);
+        }
 
-		this.nodes[firstNode].push({...payload, target: secondNode});
-	}
+        this.nodes[firstNode].push({ ...payload, target: secondNode });
+    }
 
-	getEdges(node) {
-		return this.nodes[node];
-	}
+    getEdges(node) {
+        return this.nodes[node];
+    }
 }

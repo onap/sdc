@@ -13,13 +13,14 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import SoftwareProductNetworksView from './SoftwareProductNetworksView.jsx';
 
-export const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductNetworks: {networksList = []}} = softwareProduct;
-	return {networksList};
+export const mapStateToProps = ({ softwareProduct }) => {
+    let { softwareProductNetworks: { networksList = [] } } = softwareProduct;
+    return { networksList };
 };
 
-export default connect(mapStateToProps, null, null, {withRef: true})(SoftwareProductNetworksView);
-
+export default connect(mapStateToProps, null, null, { withRef: true })(
+    SoftwareProductNetworksView
+);

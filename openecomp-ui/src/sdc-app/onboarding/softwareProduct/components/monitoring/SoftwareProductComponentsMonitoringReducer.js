@@ -13,23 +13,26 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, type2Name} from './SoftwareProductComponentsMonitoringConstants.js';
+import {
+    actionTypes,
+    type2Name
+} from './SoftwareProductComponentsMonitoringConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.MONITOR_FILES_DATA_CHANGE:
-			return action.data;
-		case actionTypes.MONITOR_UPLOADED:
-			return {
-				...state,
-				[type2Name[action.data.type]]: action.data.filename
-			};
-		case actionTypes.MONITOR_DELETED:
-			return {
-				...state,
-				[type2Name[action.data.type]]: undefined
-			};
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.MONITOR_FILES_DATA_CHANGE:
+            return action.data;
+        case actionTypes.MONITOR_UPLOADED:
+            return {
+                ...state,
+                [type2Name[action.data.type]]: action.data.filename
+            };
+        case actionTypes.MONITOR_DELETED:
+            return {
+                ...state,
+                [type2Name[action.data.type]]: undefined
+            };
+        default:
+            return state;
+    }
 };

@@ -16,25 +16,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function ItemInfo({name, description, children}) {
-	return (
-		<div className='list-item-section vlm-item-info'>
-			<div className='vlm-list-item-title'>
-				<div className='item-name' data-test-id='vlm-list-item-name'>{name}</div>
-				{children}
-			</div>
-			<div className='vlm-list-item-description'>{description}</div>
-		</div>
-	);
+function ItemInfo({ name, description, children }) {
+    return (
+        <div className="list-item-section vlm-item-info">
+            <div className="vlm-list-item-title">
+                <div className="item-name" data-test-id="vlm-list-item-name">
+                    {name}
+                </div>
+                {children}
+            </div>
+            <div className="vlm-list-item-description">{description}</div>
+        </div>
+    );
 }
 
 ItemInfo.propTypes = {
-	name: PropTypes.string,
-	description: PropTypes.string,
-	children: PropTypes.oneOfType([
-		PropTypes.arrayOf(PropTypes.node),
-		PropTypes.node
-	])
+    name: PropTypes.string,
+    description: PropTypes.string,
+    children: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.node),
+        PropTypes.node
+    ])
 };
 
 export default ItemInfo;

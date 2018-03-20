@@ -19,21 +19,22 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const ImageDetails = ({dataMap, qgenericFieldInfo, onQDataChanged}) => {
-	return(
-		<GridSection title={i18n('Image Details')}>
-			<GridItem colSpan={2}>
-				<Input
-					data-test-id='image-md5'
-					className='image-md5'
-					type='text'
-					label={i18n('md5')}
-					onChange={(md5) => onQDataChanged({'md5' : md5})}
-					isValid={qgenericFieldInfo['md5'].isValid}
-					errorText={qgenericFieldInfo['md5'].errorText}
-					value={dataMap['md5']}/>
-			</GridItem>
-		</GridSection>
-	);
+const ImageDetails = ({ dataMap, qgenericFieldInfo, onQDataChanged }) => {
+    return (
+        <GridSection title={i18n('Image Details')}>
+            <GridItem colSpan={2}>
+                <Input
+                    data-test-id="image-md5"
+                    className="image-md5"
+                    type="text"
+                    label={i18n('md5')}
+                    onChange={md5 => onQDataChanged({ md5: md5 })}
+                    isValid={qgenericFieldInfo['md5'].isValid}
+                    errorText={qgenericFieldInfo['md5'].errorText}
+                    value={dataMap['md5']}
+                />
+            </GridItem>
+        </GridSection>
+    );
 };
 export default ImageDetails;

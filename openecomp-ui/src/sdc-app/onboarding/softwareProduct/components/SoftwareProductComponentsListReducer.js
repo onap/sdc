@@ -13,18 +13,26 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductComponentsConstants.js';
+import { actionTypes } from './SoftwareProductComponentsConstants.js';
 
 export default (state = [], action) => {
-	switch (action.type) {
-		case actionTypes.COMPONENTS_LIST_UPDATE:
-			return [...action.componentsList];
-		case actionTypes.COMPONENTS_LIST_EDIT:
-			const indexForEdit = state.findIndex(component => component.id === action.component.id);
-			return [...state.slice(0, indexForEdit), action.component, ...state.slice(indexForEdit + 1)];
-		case actionTypes.COMPONENT_DELETE:
-			return state.filter(component => component.id !== action.componentId);
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case actionTypes.COMPONENTS_LIST_UPDATE:
+            return [...action.componentsList];
+        case actionTypes.COMPONENTS_LIST_EDIT:
+            const indexForEdit = state.findIndex(
+                component => component.id === action.component.id
+            );
+            return [
+                ...state.slice(0, indexForEdit),
+                action.component,
+                ...state.slice(indexForEdit + 1)
+            ];
+        case actionTypes.COMPONENT_DELETE:
+            return state.filter(
+                component => component.id !== action.componentId
+            );
+        default:
+            return state;
+    }
 };

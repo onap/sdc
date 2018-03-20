@@ -13,87 +13,91 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes, FLOWS_EDITOR_FORM} from './FlowsConstants.js';
+import { actionTypes, FLOWS_EDITOR_FORM } from './FlowsConstants.js';
 
 export default (state = {}, action) => {
-	switch (action.type) {
-		case actionTypes.FLOW_LIST_LOADED:
-			return {
-				...state,
-				flowList: action.results,
-				flowParticipants: action.participants,
-				serviceID: action.serviceID,
-				diagramType: action.diagramType,
-				readonly: action.readonly
-			};
-		case actionTypes.ADD_OR_UPDATE_FLOW:
-		case actionTypes.ARTIFACT_LOADED:
-			let flowList = state.flowList || [];
-			let index = flowList.findIndex(flow => flow.uniqueId === action.flow.uniqueId);
-			if (index === -1) {
-				index = flowList.length;
-			}
-			let flowToBeUpdated = flowList[index];
-			flowList = [
-				...flowList.slice(0, index),
-				{...flowToBeUpdated, ...action.flow},
-				...flowList.slice(index + 1)
-			];
-			return {
-				...state,
-				flowList,
-				serviceID: action.flow.serviceID,
-				diagramType: action.flow.artifactType || state.diagramType
-			};
-		case actionTypes.DELETE_FLOW:
-			return {
-				...state,
-				flowList: state.flowList.filter(flow => flow.uniqueId !== action.flow.uniqueId)
-			};
-		case actionTypes.OPEN_FLOW_DETAILS_EDITOR:
-			return {
-				...state,
-				formName: FLOWS_EDITOR_FORM,
-				formReady: null,
-				genericFieldInfo: {
-					artifactName : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					},
-					description: {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					}
-				},
-				data: action.flow,
-				isDisplayModal: true,
-				isModalInEditMode: Boolean(action.flow && action.flow.uniqueId)
-			};
+    switch (action.type) {
+        case actionTypes.FLOW_LIST_LOADED:
+            return {
+                ...state,
+                flowList: action.results,
+                flowParticipants: action.participants,
+                serviceID: action.serviceID,
+                diagramType: action.diagramType,
+                readonly: action.readonly
+            };
+        case actionTypes.ADD_OR_UPDATE_FLOW:
+        case actionTypes.ARTIFACT_LOADED:
+            let flowList = state.flowList || [];
+            let index = flowList.findIndex(
+                flow => flow.uniqueId === action.flow.uniqueId
+            );
+            if (index === -1) {
+                index = flowList.length;
+            }
+            let flowToBeUpdated = flowList[index];
+            flowList = [
+                ...flowList.slice(0, index),
+                { ...flowToBeUpdated, ...action.flow },
+                ...flowList.slice(index + 1)
+            ];
+            return {
+                ...state,
+                flowList,
+                serviceID: action.flow.serviceID,
+                diagramType: action.flow.artifactType || state.diagramType
+            };
+        case actionTypes.DELETE_FLOW:
+            return {
+                ...state,
+                flowList: state.flowList.filter(
+                    flow => flow.uniqueId !== action.flow.uniqueId
+                )
+            };
+        case actionTypes.OPEN_FLOW_DETAILS_EDITOR:
+            return {
+                ...state,
+                formName: FLOWS_EDITOR_FORM,
+                formReady: null,
+                genericFieldInfo: {
+                    artifactName: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    },
+                    description: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    }
+                },
+                data: action.flow,
+                isDisplayModal: true,
+                isModalInEditMode: Boolean(action.flow && action.flow.uniqueId)
+            };
 
-		case actionTypes.CLOSE_FLOW_DETAILS_EDITOR:
-			return {
-				...state,
-				data: undefined,
-				isDisplayModal: false,
-				isModalInEditMode: false
-			};
-		case actionTypes.OPEN_FLOW_DIAGRAM_EDITOR:
-			return {
-				...state,
-				data: action.flow,
-				shouldShowWorkflowsEditor: false
-			};
-		case actionTypes.CLOSE_FLOW_DIAGRAM_EDITOR:
-			return {
-				...state,
-				data: undefined,
-				shouldShowWorkflowsEditor: true
-			};
-		case actionTypes.RESET:
-			return {};
-	}
+        case actionTypes.CLOSE_FLOW_DETAILS_EDITOR:
+            return {
+                ...state,
+                data: undefined,
+                isDisplayModal: false,
+                isModalInEditMode: false
+            };
+        case actionTypes.OPEN_FLOW_DIAGRAM_EDITOR:
+            return {
+                ...state,
+                data: action.flow,
+                shouldShowWorkflowsEditor: false
+            };
+        case actionTypes.CLOSE_FLOW_DIAGRAM_EDITOR:
+            return {
+                ...state,
+                data: undefined,
+                shouldShowWorkflowsEditor: true
+            };
+        case actionTypes.RESET:
+            return {};
+    }
 
-	return state;
+    return state;
 };

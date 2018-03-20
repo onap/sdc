@@ -15,104 +15,112 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
+import InputOptions, {
+    other as optionInputOther
+} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
+    ENTITLEMENT_POOLS_LIST_LOADED: null,
+    ADD_ENTITLEMENT_POOL: null,
+    EDIT_ENTITLEMENT_POOL: null,
+    DELETE_ENTITLEMENT_POOL: null,
 
-	ENTITLEMENT_POOLS_LIST_LOADED: null,
-	ADD_ENTITLEMENT_POOL: null,
-	EDIT_ENTITLEMENT_POOL: null,
-	DELETE_ENTITLEMENT_POOL: null,
-
-	entitlementPoolsEditor: {
-		OPEN: null,
-		CLOSE: null,
-		DATA_CHANGED: null,
-		LIMITS_LIST_LOADED: null
-	}
-
+    entitlementPoolsEditor: {
+        OPEN: null,
+        CLOSE: null,
+        DATA_CHANGED: null,
+        LIMITS_LIST_LOADED: null
+    }
 });
 
 export const enums = keyMirror({
-	SELECTED_FEATURE_GROUP_TAB: {
-		GENERAL: 1,
-		ENTITLEMENT_POOLS: 2,
-		LICENCE_KEY_GROUPS: 3
-	},
-	SELECTED_ENTITLEMENT_POOLS_BUTTONTAB: {
-		ASSOCIATED_ENTITLEMENT_POOLS: 1,
-		AVAILABLE_ENTITLEMENT_POOLS: 2
-	}
+    SELECTED_FEATURE_GROUP_TAB: {
+        GENERAL: 1,
+        ENTITLEMENT_POOLS: 2,
+        LICENCE_KEY_GROUPS: 3
+    },
+    SELECTED_ENTITLEMENT_POOLS_BUTTONTAB: {
+        ASSOCIATED_ENTITLEMENT_POOLS: 1,
+        AVAILABLE_ENTITLEMENT_POOLS: 2
+    }
 });
 
 export const defaultState = {
-	ENTITLEMENT_POOLS_EDITOR_DATA: {
-		entitlementMetric: {choice: '', other: ''},
-		aggregationFunction: {choice: '', other: ''},
-		operationalScope: {choices: [], other: ''},
-		time: {choice: '', other: ''}
-	}
+    ENTITLEMENT_POOLS_EDITOR_DATA: {
+        entitlementMetric: { choice: '', other: '' },
+        aggregationFunction: { choice: '', other: '' },
+        operationalScope: { choices: [], other: '' },
+        time: { choice: '', other: '' }
+    }
 };
 
 export const thresholdUnitType = {
-	ABSOLUTE: 'Absolute',
-	PERCENTAGE: 'Percentage'
+    ABSOLUTE: 'Absolute',
+    PERCENTAGE: 'Percentage'
 };
 
 export const optionsInputValues = {
-	OPERATIONAL_SCOPE: [
-		{enum: '', title: i18n('please select…')},
-		{enum: 'Network_Wide', title: 'Network Wide'},
-		{enum: 'Availability_Zone', title: 'Availability Zone'},
-		{enum: 'Data_Center', title: 'Data Center'},
-		{enum: 'Tenant', title: 'Tenant'},
-		{enum: 'VM', title: 'VM'},
-		{enum: 'CPU', title: 'CPU'},
-		{enum: 'Core', title: 'Core'}
-	],
-	TIME: [
-		{enum: '', title: i18n('please select…')},
-		{enum: 'Hour', title: 'Hour'},
-		{enum: 'Day', title: 'Day'},
-		{enum: 'Month', title: 'Month'}
-	],
-	AGGREGATE_FUNCTION: [
-		{enum: '', title: i18n('please select…')},
-		{enum: 'Peak', title: 'Peak'},
-		{enum: 'Average', title: 'Average'}
-	],
-	ENTITLEMENT_METRIC: [
-		{enum: '', title: i18n('please select…')},
-		{enum: 'Software_Instances_Count', title: 'Software Instances'},
-		{enum: 'Core', title: 'Core'},
-		{enum: 'CPU', title: 'CPU'},
-		{enum: 'Trunks', title: 'Trunks'},
-		{enum: 'User', title: 'User'},
-		{enum: 'Subscribers', title: 'Subscribers'},
-		{enum: 'Tenants', title: 'Tenants'},
-		{enum: 'Tokens', title: 'Tokens'},
-		{enum: 'Seats', title: 'Seats'},
-		{enum: 'Units_TB', title: 'Units-TB'},
-		{enum: 'Units_GB', title: 'Units-GB'},
-		{enum: 'Units_MB', title: 'Units-MB'}
-	]
+    OPERATIONAL_SCOPE: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Network_Wide', title: 'Network Wide' },
+        { enum: 'Availability_Zone', title: 'Availability Zone' },
+        { enum: 'Data_Center', title: 'Data Center' },
+        { enum: 'Tenant', title: 'Tenant' },
+        { enum: 'VM', title: 'VM' },
+        { enum: 'CPU', title: 'CPU' },
+        { enum: 'Core', title: 'Core' }
+    ],
+    TIME: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Hour', title: 'Hour' },
+        { enum: 'Day', title: 'Day' },
+        { enum: 'Month', title: 'Month' }
+    ],
+    AGGREGATE_FUNCTION: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Peak', title: 'Peak' },
+        { enum: 'Average', title: 'Average' }
+    ],
+    ENTITLEMENT_METRIC: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Software_Instances_Count', title: 'Software Instances' },
+        { enum: 'Core', title: 'Core' },
+        { enum: 'CPU', title: 'CPU' },
+        { enum: 'Trunks', title: 'Trunks' },
+        { enum: 'User', title: 'User' },
+        { enum: 'Subscribers', title: 'Subscribers' },
+        { enum: 'Tenants', title: 'Tenants' },
+        { enum: 'Tokens', title: 'Tokens' },
+        { enum: 'Seats', title: 'Seats' },
+        { enum: 'Units_TB', title: 'Units-TB' },
+        { enum: 'Units_GB', title: 'Units-GB' },
+        { enum: 'Units_MB', title: 'Units-MB' }
+    ]
 };
 
-export const extractValue = (item) => {
-	if (item === undefined) {return '';} //TODO fix it later
-	return  item ? item.choice === optionInputOther.OTHER ? item.other : InputOptions.getTitleByName(optionsInputValues, item.choice) : '';
+export const extractValue = item => {
+    if (item === undefined) {
+        return '';
+    } //TODO fix it later
+    return item
+        ? item.choice === optionInputOther.OTHER
+          ? item.other
+          : InputOptions.getTitleByName(optionsInputValues, item.choice)
+        : '';
 };
 
-export const extractUnits = (units) => {
-	if (units === undefined) {return '';} //TODO fix it later
-	return units === 'Absolute' ? '' : '%';
+export const extractUnits = units => {
+    if (units === undefined) {
+        return '';
+    } //TODO fix it later
+    return units === 'Absolute' ? '' : '%';
 };
 
 export const tabIds = {
-	GENERAL: 'GENERAL',
-	SP_LIMITS: 'SP_LIMITS',
-	VENDOR_LIMITS: 'VENDOR_LIMITS',
-	ADD_LIMIT_BUTTON: 'ADD_LIMIT_BUTTON'
+    GENERAL: 'GENERAL',
+    SP_LIMITS: 'SP_LIMITS',
+    VENDOR_LIMITS: 'VENDOR_LIMITS',
+    ADD_LIMIT_BUTTON: 'ADD_LIMIT_BUTTON'
 };
 
 export const SP_ENTITLEMENT_POOL_FORM = 'SPENTITLEMENTPOOL';

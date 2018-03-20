@@ -16,37 +16,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function AdditionalDataCol({children}) {
-	return (
-		<div className='list-item-section list-item-additional-data-col'>
-			<div className='additional-data-col-border'></div>
-			<div className='additional-data'>
-				{children}
-			</div>
-		</div>
-	);
+function AdditionalDataCol({ children }) {
+    return (
+        <div className="list-item-section list-item-additional-data-col">
+            <div className="additional-data-col-border" />
+            <div className="additional-data">{children}</div>
+        </div>
+    );
 }
 
 AdditionalDataCol.propTypes = {
-	children: PropTypes.oneOfType([
-		PropTypes.arrayOf(PropTypes.node),
-		PropTypes.node
-	])
+    children: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.node),
+        PropTypes.node
+    ])
 };
 
-function AdditionalDataElement({className, name, value}) {
-	return (
-		<div className={className}>
-			<span className='additional-data-name'>{name}: </span>
-			<span className='additional-data-value'>{value}</span>
-		</div>
-	);
+function AdditionalDataElement({ className, name, value }) {
+    return (
+        <div className={className}>
+            <span className="additional-data-name">{name}: </span>
+            <span className="additional-data-value">{value}</span>
+        </div>
+    );
 }
 
 AdditionalDataElement.propTypes = {
-	name: PropTypes.string,
-	value: PropTypes.string,
-	className: PropTypes.string
+    name: PropTypes.string,
+    value: PropTypes.string,
+    className: PropTypes.string
 };
 
-export {AdditionalDataCol, AdditionalDataElement};
+export { AdditionalDataCol, AdditionalDataElement };

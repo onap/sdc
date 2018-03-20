@@ -21,55 +21,73 @@ import SoftwareProductProcessesEditor from './SoftwareProductComponentProcessesE
 import SoftwareProductProcessListView from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessListView.jsx';
 
 class SoftwareProductProcessesView extends React.Component {
+    state = {
+        localFilter: ''
+    };
 
-	state = {
-		localFilter: ''
-	};
+    static propTypes = {
+        onAddProcess: PropTypes.func,
+        onEditProcess: PropTypes.func,
+        onDeleteProcess: PropTypes.func,
+        isDisplayModal: PropTypes.bool,
+        isModalInEditMode: PropTypes.bool,
+        onStorageSelect: PropTypes.func,
+        componentId: PropTypes.string,
+        softwareProductId: PropTypes.string,
+        currentSoftwareProduct: PropTypes.object
+    };
 
-	static propTypes = {
-		onAddProcess: PropTypes.func,
-		onEditProcess: PropTypes.func,
-		onDeleteProcess: PropTypes.func,
-		isDisplayModal: PropTypes.bool,
-		isModalInEditMode: PropTypes.bool,
-		onStorageSelect: PropTypes.func,
-		componentId: PropTypes.string,
-		softwareProductId: PropTypes.string,
-		currentSoftwareProduct: PropTypes.object
-	};
+    render() {
+        return (
+            <div className="vsp-processes-page">
+                <div className="software-product-view">
+                    <div className="software-product-landing-view-right-side vsp-components-processes-page flex-column">
+                        {this.renderEditor()}
+                        <SoftwareProductProcessListView
+                            addButtonTitle={i18n(
+                                'Add Component Process Details'
+                            )}
+                            {...this.props}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-	render() {
-		return (
-			<div className='vsp-processes-page'>
-				<div className='software-product-view'>
-					<div className='software-product-landing-view-right-side vsp-components-processes-page flex-column'>
-						{this.renderEditor()}
-						<SoftwareProductProcessListView addButtonTitle={i18n('Add Component Process Details')} {...this.props}/>
-					</div>
-				</div>
-			</div>
-		);
-	}
-
-	renderEditor() {
-		let {softwareProductId, version, componentId, isReadOnlyMode, isDisplayModal, isModalInEditMode} = this.props;
-		return (
-			<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal'>
-				<Modal.Header>
-					<Modal.Title>{isModalInEditMode ? i18n('Edit Process Details') : i18n('Create New Process Details')}</Modal.Title>
-				</Modal.Header>
-				<Modal.Body className='edit-process-modal'>
-					<SoftwareProductProcessesEditor
-						componentId={componentId}
-						softwareProductId={softwareProductId}
-						version={version}
-						isReadOnlyMode={isReadOnlyMode}/>
-				</Modal.Body>
-			</Modal>
-
-		);
-	}
-
+    renderEditor() {
+        let {
+            softwareProductId,
+            version,
+            componentId,
+            isReadOnlyMode,
+            isDisplayModal,
+            isModalInEditMode
+        } = this.props;
+        return (
+            <Modal
+                show={isDisplayModal}
+                bsSize="large"
+                animation={true}
+                className="onborading-modal">
+                <Modal.Header>
+                    <Modal.Title>
+                        {isModalInEditMode
+                            ? i18n('Edit Process Details')
+                            : i18n('Create New Process Details')}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="edit-process-modal">
+                    <SoftwareProductProcessesEditor
+                        componentId={componentId}
+                        softwareProductId={softwareProductId}
+                        version={version}
+                        isReadOnlyMode={isReadOnlyMode}
+                    />
+                </Modal.Body>
+            </Modal>
+        );
+    }
 }
 
 export default SoftwareProductProcessesView;
