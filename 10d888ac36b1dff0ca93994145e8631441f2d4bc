@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_eee39da2",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConfigConstants.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-21T10:52:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_8eebf9af",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_3f0bfa7e",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
         "patchSetId": 10
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_aeed9590",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 961,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-21T10:52:31Z",
+      "side": 1,
+      "message": "This is not a performance session. Flatmap will make the  code more readable.",
+      "parentUuid": "5a93c517_cee101d2",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4b22c302",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
         "patchSetId": 10
@@ -101,6 +137,24 @@
       "side": 1,
       "message": "Cannot be done as the object to yaml notation does render Set as list in the yaml",
       "parentUuid": "5a93c517_4b22c302",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4efe513a",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-21T10:52:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_4ec6514b",
       "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
