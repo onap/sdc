@@ -131,7 +131,7 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
       return;
     }
     Optional<String> subInterfaceNetworkRole =
-        HeatToToscaUtil.getNetworkRoleFromResource(translateTo.getResource(), translateTo.getContext());
+        HeatToToscaUtil.getNetworkRoleFromSubInterfaceId(translateTo.getResource(), translateTo.getContext());
     subInterfaceNetworkRole.ifPresent(subInterfaceTemplateConsolidationData.get()::setNetworkRole);
     Object count = getSubInterfaceCountFromResourceProperties(translateTo);
     subInterfaceTemplateConsolidationData.get().setResourceGroupCount(count);
