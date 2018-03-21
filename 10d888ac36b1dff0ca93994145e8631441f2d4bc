@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_8eebf9af",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConfigConstants.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-21T10:04:43Z",
+      "side": 1,
+      "message": "This is an onboarding file which belongs to Amdocs from inception. Hence updated the copyright.",
+      "parentUuid": "5a93c517_4be3a305",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_3f0bfa7e",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
         "patchSetId": 10
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_cee101d2",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 961,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-21T10:04:43Z",
+      "side": 1,
+      "message": "Using flatMap has a significant performance impact as analyzed using a simple code to test performance. Should this still be changed ?",
+      "parentUuid": "5a93c517_3f0bfa7e",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4b22c302",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
         "patchSetId": 10
@@ -47,6 +83,24 @@
       "writtenOn": "2018-03-21T07:26:40Z",
       "side": 1,
       "message": "looks like members needs to be a set, not a list.",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4ec6514b",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-21T10:04:43Z",
+      "side": 1,
+      "message": "Cannot be done as the object to yaml notation does render Set as list in the yaml",
+      "parentUuid": "5a93c517_4b22c302",
       "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
