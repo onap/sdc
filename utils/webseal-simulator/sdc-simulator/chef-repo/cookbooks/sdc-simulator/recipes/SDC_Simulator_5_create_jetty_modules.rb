@@ -34,3 +34,9 @@ template "https-ini" do
    })
 end
 
+bash "echo status" do
+   code <<-EOH
+      echo "DOCKER STARTED"
+   EOH
+end
+

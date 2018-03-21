@@ -1,11 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.openecomp.sdc</groupId>
 	<artifactId>webseal-simulator</artifactId>
 	<packaging>war</packaging>
-	<version>0.1.0-SNAPSHOT</version>
+
+	<parent>
+		<groupId>org.openecomp.sdc</groupId>
+		<artifactId>sdc-main</artifactId>
+		<version>1.2.0-SNAPSHOT</version>
+                <relativePath>../../</relativePath>
+	</parent>
 
 	<properties>
 		<jetty-version>9.2.10.v20150310</jetty-version>
@@ -14,6 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
 		<docker.latest.tag>${project.version}-latest</docker.latest.tag>
+		<sonar.skip>true</sonar.skip>
 	</properties>
 
 	<dependencies>
@@ -206,7 +213,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.24.0</version>
+						<version>${fabric8.version}</version>
 
 						<configuration>
 							<verbose>true</verbose>
@@ -229,6 +236,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>

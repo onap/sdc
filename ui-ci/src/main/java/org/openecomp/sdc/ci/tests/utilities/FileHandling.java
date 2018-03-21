@@ -309,7 +309,7 @@ public class FileHandling {
 	public static void deleteDirectory(String directoryPath) {
 		File dir = new File(directoryPath);
 		try {
-			FileUtils.deleteDirectory(dir);
+			FileUtils.cleanDirectory(dir);
 		} catch (IOException e) {
 			System.out.println("Failed to delete " + dir);
 			SetupCDTest.getExtendTest().log(Status.INFO, "Failed to delete " + dir);

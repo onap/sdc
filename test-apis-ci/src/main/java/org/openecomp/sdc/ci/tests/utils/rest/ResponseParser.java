@@ -458,49 +458,49 @@ public class ResponseParser {
 		JsonArray jArrServices = jObject.getAsJsonArray("services");
 		JsonArray jArrProducts = jObject.getAsJsonArray("products");
 		
-		if (jArrReousrces != null && jArrServices != null && jArrProducts != null){
-			
-		
+
+
+
 		//////// RESOURCE/////////////////////////////
 		ArrayList<Component> restResponseArray = new ArrayList<>();
 		Component component = null;
-		for (int i = 0; i < jArrReousrces.size(); i++) {
-			String resourceString = (String) jArrReousrces.get(i).toString();
-			component = ResponseParser.convertResourceResponseToJavaObject(resourceString);
-			restResponseArray.add(component);
-		}
+			if (jArrReousrces != null) {
+				for (int i = 0; i < jArrReousrces.size(); i++) {
+				String resourceString = (String) jArrReousrces.get(i).toString();
+				component = ResponseParser.convertResourceResponseToJavaObject(resourceString);
+				restResponseArray.add(component);
+				}
 
-		map.put("resources", restResponseArray);
 
-		///////// SERVICE/////////////////////////////
+	 		} map.put("resources", restResponseArray);
 
+
+   		///////// SERVICE/////////////////////////////
 		restResponseArray = new ArrayList<>();
 		component = null;
-		for (int i = 0; i < jArrServices.size(); i++) {
-			String resourceString = (String) jArrServices.get(i).toString();
-			component = ResponseParser.convertServiceResponseToJavaObject(resourceString);
-			restResponseArray.add(component);
-		}
+			if (jArrServices != null ) {
+				for (int i = 0; i < jArrServices.size(); i++) {
+				String resourceString = (String) jArrServices.get(i).toString();
+				component = ResponseParser.convertServiceResponseToJavaObject(resourceString);
+				restResponseArray.add(component);
+				}
 
-		map.put("services", restResponseArray);
+
+			} map.put("services", restResponseArray);
+
 
 		///////// PRODUCT/////////////////////////////
 		restResponseArray = new ArrayList<>();
 		component = null;
-		for (int i = 0; i < jArrProducts.size(); i++) {
-			String resourceString = (String) jArrProducts.get(i).toString();
-			component = ResponseParser.convertProductResponseToJavaObject(resourceString);
-			restResponseArray.add(component);
-		}
+			if ( jArrProducts != null){
+				for (int i = 0; i < jArrProducts.size(); i++) {
+				String resourceString = (String) jArrProducts.get(i).toString();
+				component = ResponseParser.convertProductResponseToJavaObject(resourceString);
+				restResponseArray.add(component);
+				}
 
-		map.put("products", restResponseArray);
-		
-    	}
-		else {
-			map.put("resources", new ArrayList<>());
-			map.put("services", new ArrayList<>());
-			map.put("products", new ArrayList<>());
-		}
+			} map.put("products", restResponseArray);
+
 
 		return map;
 
