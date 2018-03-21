@@ -138,7 +138,7 @@ const ScreensHelper = {
 
                 let newVersion = updatedVersion ? updatedVersion : version;
 
-                const props = {
+                const vspProps = {
                     softwareProductId,
                     componentId,
                     version: newVersion,
@@ -150,131 +150,133 @@ const ScreensHelper = {
                 ) {
                     OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(
                         dispatch,
-                        props
+                        vspProps
                     );
                 }
 
                 switch (screen) {
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
-                        OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL:
-                        OnboardingActionHelper.navigateToSoftwareProductComponentGeneral(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
-                        OnboardingActionHelper.navigateToComponentCompute(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
-                        OnboardingActionHelper.navigateToComponentLoadBalancing(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
-                        OnboardingActionHelper.navigateToComponentNetwork(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
-                        OnboardingActionHelper.navigateToComponentStorage(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
-                        OnboardingActionHelper.navigateToSoftwareProductComponentProcesses(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
-                        OnboardingActionHelper.navigateToSoftwareProductComponentMonitoring(
-                            dispatch,
-                            props
-                        );
-                        break;
-                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
-                        OnboardingActionHelper.navigateToComponentImages(
-                            dispatch,
-                            props
-                        );
-                        break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE:
                         OnboardingActionHelper.navigateToSoftwareProductLandingPage(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_DETAILS:
                         OnboardingActionHelper.navigateToSoftwareProductDetails(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP:
                         OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_VALIDATION:
                         OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
                         OnboardingActionHelper.navigateToSoftwareProductProcesses(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
                         OnboardingActionHelper.navigateToSoftwareProductDeployment(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
                         OnboardingActionHelper.navigateToSoftwareProductNetworks(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
                         OnboardingActionHelper.navigateToSoftwareProductDependencies(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
                         OnboardingActionHelper.navigateToSoftwareProductActivityLog(
                             dispatch,
-                            props
+                            vspProps
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
-                        OnboardingActionHelper.navigateToSoftwareProductComponents(
+                        if (!componentId) {
+                            OnboardingActionHelper.navigateToSoftwareProductComponents(
+                                dispatch,
+                                vspProps
+                            );
+                            dispatch({
+                                type:
+                                    SoftwareProductActionTypes.TOGGLE_NAVIGATION_ITEM,
+                                mapOfExpandedIds: {
+                                    [enums.SCREEN
+                                        .SOFTWARE_PRODUCT_COMPONENTS]: true
+                                }
+                            });
+                        } else {
+                            OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(
+                                dispatch,
+                                vspProps
+                            );
+                        }
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL:
+                        OnboardingActionHelper.navigateToSoftwareProductComponentGeneral(
                             dispatch,
-                            props
+                            vspProps
                         );
-                        dispatch({
-                            type:
-                                SoftwareProductActionTypes.TOGGLE_NAVIGATION_ITEM,
-                            mapOfExpandedIds: {
-                                [enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS]: true
-                            }
-                        });
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
+                        OnboardingActionHelper.navigateToComponentCompute(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
+                        OnboardingActionHelper.navigateToComponentLoadBalancing(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
+                        OnboardingActionHelper.navigateToComponentNetwork(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
+                        OnboardingActionHelper.navigateToComponentStorage(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
+                        OnboardingActionHelper.navigateToSoftwareProductComponentProcesses(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
+                        OnboardingActionHelper.navigateToSoftwareProductComponentMonitoring(
+                            dispatch,
+                            vspProps
+                        );
+                        break;
+                    case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
+                        OnboardingActionHelper.navigateToComponentImages(
+                            dispatch,
+                            vspProps
+                        );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_VERSIONS_PAGE:
                     default:
