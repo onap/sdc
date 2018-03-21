@@ -323,7 +323,7 @@ function sdc-kbn {
 echo "docker run sdc-kibana..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-kibana:${RELEASE}
-docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
+docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --env NODE_OPTIONS="--max-old-space-size=200" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
 fi
 
 }
