@@ -27,7 +27,7 @@ import importCommon
 #       python upgradeNormative.py [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>] 		#
 #																																																#
 #																																		  	   													#
-# shortest activation (be host = localhost, be port = 8080, user = jh0003): 																				   									#	#												       																																			#
+# shortest activation (be host = localhost, be port = 8080, user = jh0003): 																				   									#
 #		python upgradeNormative.py												 				           																						#
 #																																		       													#
 #################################################################################################################################################################################################
@@ -123,13 +123,13 @@ def main(argv):
 	handleResults(resultsHeat)
 
 	resultsHeat = upgradeNfvTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
-    handleResults(resultsHeat)
+	handleResults(resultsHeat)
 
 	resultsHeat = upgradeOnapTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
 	handleResults(resultsHeat)
 
 	resultsHeat = upgradeSolTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
-    handleResults(resultsHeat)
+	handleResults(resultsHeat)
 
 	errorAndExit(0, None)
 
