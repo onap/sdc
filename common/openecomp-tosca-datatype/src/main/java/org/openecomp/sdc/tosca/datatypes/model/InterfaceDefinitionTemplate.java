@@ -16,12 +16,15 @@
 
 package org.openecomp.sdc.tosca.datatypes.model;
 
+import org.apache.commons.collections4.MapUtils;
+
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class InterfaceDefinitionTemplate extends InterfaceDefinition {
 
   private Map<String, Object> inputs;
+  private Map<String, OperationDefinitionTemplate> operations;
 
   public Map<String, Object> getInputs() {
     return inputs;
@@ -32,6 +35,23 @@ public class InterfaceDefinitionTemplate extends InterfaceDefinition {
     this.inputs = inputs;
   }
 
+  public Map<String, OperationDefinitionTemplate> getOperations() {
+    return operations;
+  }
+
+  public void setOperations(
+      Map<String, OperationDefinitionTemplate> operations) {
+    this.operations = operations;
+  }
+
+  public void addOperation(String operationName, OperationDefinitionTemplate operation) {
+    if(MapUtils.isEmpty(this.operations)) {
+      this.operations = new HashMap<>();
+    }
+
+    this.operations.put(operationName, operation);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -40,16 +60,25 @@ public class InterfaceDefinitionTemplate extends InterfaceDefinition {
     if (!(o instanceof InterfaceDefinitionTemplate)) {
       return false;
     }
-    if (!super.equals(o)) {
+
+    InterfaceDefinitionTemplate that = (InterfaceDefinitionTemplate) o;
+
+    if (getInputs() != null ? !getInputs().equals(that.getInputs()) : that.getInputs() != null) {
       return false;
     }
-    InterfaceDefinitionTemplate that = (InterfaceDefinitionTemplate) o;
-    return Objects.equals(inputs, that.inputs);
+    return getOperations() != null ? getOperations().equals(that.getOperations())
+        : that.getOperations() == null;
   }
 
   @Override
   public int hashCode() {
+    int result = getInputs() != null ? getInputs().hashCode() : 0;
+    result = 31 * result + (getOperations() != null ? getOperations().hashCode() : 0);
+    return result;
+  }
 
-    return Objects.hash(super.hashCode(), inputs);
+  @Override
+  public void addOperation(String operationName, OperationDefinition operationDefinition) {
+    addOperation(operationName, (OperationDefinitionTemplate)operationDefinition);
   }
 }
