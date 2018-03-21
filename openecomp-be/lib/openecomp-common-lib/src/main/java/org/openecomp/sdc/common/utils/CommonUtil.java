@@ -37,6 +37,7 @@ import org.openecomp.sdc.common.errors.Messages;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -176,9 +177,32 @@ public class CommonUtil {
 
     Map<String, Object> objectAsMap = getObjectAsMap(objectCandidate);
     T result = classToCreate.newInstance();
+
+    Field[] declaredFields = classToCreate.getDeclaredFields();
+    for( Field field : declaredFields){
+      if(isComplexClass(field)){
+        Optional<?> objectUsingSetters =
+            createObjectUsingSetters(objectAsMap.get(field.getName()), field.getType());
+        if( objectUsingSetters.isPresent()){
+          objectAsMap.remove(field.getName());
+          objectAsMap.put(field.getName(), objectUsingSetters.get());
+        }
+      }
+    }
     BeanUtils.populate(result, objectAsMap);
 
     return Optional.of(result);
+  }
+
+  private static boolean isComplexClass(Field field) {
+    return !field.getType().equals(Map.class)
+        && !field.getType().equals(String.class)
+        && !field.getType().equals(Integer.class)
+        && !field.getType().equals(Float.class)
+        && !field.getType().equals(Double.class)
+        && !field.getType().equals(Set.class)
+        && !field.getType().equals(Object.class)
+        && !field.getType().equals(List.class);
   }
 
   public static Map<String, Object> getObjectAsMap(Object obj) {

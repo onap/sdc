@@ -3,7 +3,7 @@ package org.openecomp.sdc.tosca.datatypes.model;
 import java.util.Map;
 import java.util.Objects;
 
-public class OperationDefinitionTemplate {
+public class OperationDefinitionTemplate extends OperationDefinition{
 
   private Implementation implementation;
   private Map<String, Object> inputs;
