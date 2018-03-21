@@ -42,7 +42,6 @@
     "GENERAL_LABEL_SYSTEM_NAME": "System Name:",
     "GENERAL_LABEL_SOURCE_SERVICE_NAME": "Source Service Name:",
     "GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID": "Resource Customization UUID:",
-    
 
     "=========== GENERAL_TAB ===========": "",
     "GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER":"Vendor Model Number",
@@ -445,6 +444,11 @@
 
     "=========== SERVICE PATH SELECTOR ===========": "",
     "SERVICE_PATH_SELECTOR_HIDE_ALL_VALUE" : "⚊ Hide all ⚊",
-    "SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE" : "⚊ Show all ⚊"
+    "SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE" : "⚊ Show all ⚊",
+
+    "=========== PLUGIN NOT CONNECTED ===========": "",
+    "PLUGIN_NOT_CONNECTED_ERROR_MAIN": "The \"{{pluginName}}\" plugin is currently unavailable.",
+    "PLUGIN_NOT_CONNECTED_ERROR_SUB": "Please try again later."
+
 
 }

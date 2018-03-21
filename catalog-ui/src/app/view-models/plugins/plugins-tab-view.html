@@ -1,6 +1,5 @@
 <div class="sdc-catalog-container plugins-tab-container">
     <loader display="isLoading"></loader>
     <top-nav [version]="version" [hide-search]="true"></top-nav>
-    <plugin-frame data-ng-if="plugin.isOnline" (on-loading-done)="onLoadingDone(plugin)" [plugin]="plugin" [query-params]="queryParams"></plugin-frame>
-    <div class="offline-plugin-message" data-ng-if="!plugin.isOnline">The plugin {{plugin.pluginId}} is offline. Please try again later</div>
+    <plugin-frame (on-loading-done)="onLoadingDone(plugin)" [plugin]="plugin" [query-params]="queryParams"></plugin-frame>
 </div>

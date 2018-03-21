@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,6 @@ import {ComponentServiceNg2} from "./ng2/services/component-services/component.s
 import {ComponentMetadata} from "./models/component-metadata";
 import {Categories} from "./models/categories";
 import {IUserProperties} from "./models/user";
-import {PluginFrameComponent} from "./ng2/components/ui/plugin/plugin-frame.component";
 
 let moduleName:string = 'sdcApp';
 let viewModelsModuleName:string = 'Sdc.ViewModels';
@@ -145,7 +144,6 @@ _.each(hostedApplications, (hostedApp)=> {
 // ===================== Hosted applications section ====================
 
 export const ng1appModule:ng.IModule = angular.module(moduleName, dependentModules);
-angular.module('sdcApp').directive('pluginFrame', downgradeComponent( {component: PluginFrameComponent, inputs: ['plugin', 'queryParams'], outputs: ['onLoadingDone']} ) as angular.IDirectiveFactory);
 
 ng1appModule.config([
     '$stateProvider',

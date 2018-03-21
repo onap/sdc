@@ -1,0 +1,38 @@
+@import '../../../../assets/styles/mixins';
+@import '../../../../assets/styles/variables';
+
+.plugin-not-connected {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .plugin-error-message {
+        line-height: 2em;
+    }
+
+    .icon-wrapper {
+        text-align: center;
+        margin-right: 10px;
+        line-height: 3em;
+    }
+
+    .plugin-message-text {
+        text-align: center;
+        color: #323943;
+        font-family: @font-opensans-medium;
+    }
+
+    .plugin-message-main-text {
+        font-size: 22px;
+    }
+
+    .plugin-message-sub-text {
+        font-size: 14px;
+    }
+}

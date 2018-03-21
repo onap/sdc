@@ -25,6 +25,12 @@ export class PluginFrameComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.plugin.isOnline) {
+            this.initPlugin();
+        }
+    }
+
+    private initPlugin() {
         this.pluginUrl = this.plugin.pluginSourceUrl;
         this.isClosed = false;
 
