@@ -102,45 +102,7 @@
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
                         <version>3.0.2</version>
-                        <executions>
-                            <execution>
-                                <id>copy-tests-suites</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/test-apis-ci/src/main/resources/ci/testSuites</directory>
-                                            <includes>
-                                                <include>*</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
 
-                            <execution>
-                                <id>copy-resources-test-apis-ci</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/sdc-sanity</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/test-apis-ci/target</directory>
-                                            <includes>
-                                                <include>test-apis-ci-${project.version}-jar-with-dependencies.jar</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
 
                     <plugin>
@@ -220,20 +182,7 @@
                                     </build>
                                 </image>
 
-                                <!-- Build sanity image -->
-                                <image>
-                                    <name>onap/sdc-sanity</name>
-                                    <alias>sdc-sanity</alias>
-                                    <build>
-                                        <cleanup>try</cleanup>
-                                        <dockerFileDir>${project.basedir}/sdc-sanity</dockerFileDir>
-                                        <tags>
-                                            <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
-                                        </tags>
-                                    </build>
-                                </image>
+
 
                             </images>
                         </configuration>
@@ -246,7 +195,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
+                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra</image>
                                 </configuration>
                             </execution>
 
@@ -265,7 +214,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
+                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra</image>
                                 </configuration>
                             </execution>
                         </executions>

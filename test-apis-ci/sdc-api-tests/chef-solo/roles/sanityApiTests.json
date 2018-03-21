@@ -1,0 +1,20 @@
+{
+  "name": "sanityApiTests",
+  "description": "Execute sanity api tests",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-api-tests::sanityApiTests_1_setup_env]",
+    "recipe[sdc-api-tests::sanityApiTests_2_setup_configuration]",
+    "recipe[sdc-api-tests::sanityApiTests_3_sanity_execution]"
+  ],
+  "env_run_lists": {
+  }
+}
+
