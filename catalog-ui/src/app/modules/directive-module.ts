@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -183,6 +183,7 @@ import { SearchWithAutoCompleteComponent } from "../ng2/components/ui/search-wit
 import { PalettePopupPanelComponent } from "../ng2/components/ui/palette-popup-panel/palette-popup-panel.component";
 import { ServicePathComponent } from '../ng2/components/logic/service-path/service-path.component';
 import { ServicePathSelectorComponent } from '../ng2/components/logic/service-path-selector/service-path-selector.component';
+import {PluginFrameComponent} from "../ng2/components/ui/plugin/plugin-frame.component";
 
 directiveModule.directive('menuListNg2', downgradeComponent({
     component: MenuListNg2Component,
@@ -239,4 +240,10 @@ directiveModule.directive('ng2ServicePathSelector', downgradeComponent({
     component: ServicePathSelectorComponent,
     inputs: ['drawPath', 'deletePaths', 'service', 'selectedPathId'],
     outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('pluginFrame', downgradeComponent( {
+    component: PluginFrameComponent,
+    inputs: ['plugin', 'queryParams'],
+    outputs: ['onLoadingDone']
 }) as angular.IDirectiveFactory);

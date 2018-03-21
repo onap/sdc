@@ -1,5 +1,6 @@
 <div class="plugin-frame">
     <div class="w-sdc-main-container">
-        <iframe class="plugin-iframe" [src]="pluginUrl | safeUrlSanitizer"></iframe>
+        <iframe *ngIf="plugin.isOnline" class="plugin-iframe" [src]="pluginUrl | safeUrlSanitizer"></iframe>
+        <plugin-not-connected [pluginName]="plugin.pluginId" *ngIf="!plugin.isOnline"></plugin-not-connected>
     </div>
 </div>
