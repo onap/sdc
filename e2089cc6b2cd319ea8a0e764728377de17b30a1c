@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0e728949",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1324,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-21T09:52:42Z",
+      "side": 1,
+      "message": "1. discard if.\n2. use createOperation(entry.getKey(), entry.getValue(), fieldNames, interfaceDefinition instanceof InterfaceDefinitionType ?             OperationDefinitionType.class : OperationDefinitionTemplate.class);",
+      "range": {
+        "startLine": 1318,
+        "startChar": 6,
+        "endLine": 1324,
+        "endChar": 7
+      },
+      "revId": "e2089cc6b2cd319ea8a0e764728377de17b30a1c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aeb595d1",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/test/java/org/openecomp/sdc/tosca/datatypes/ToscaModelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-21T09:52:42Z",
+      "side": 1,
+      "message": "rename to create",
+      "range": {
+        "startLine": 457,
+        "startChar": 34,
+        "endLine": 457,
+        "endChar": 38
+      },
+      "revId": "e2089cc6b2cd319ea8a0e764728377de17b30a1c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4e9f3151",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/test/java/org/openecomp/sdc/tosca/datatypes/ToscaModelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-21T09:52:42Z",
+      "side": 1,
+      "message": "rename functions names to create",
+      "range": {
+        "startLine": 465,
+        "startChar": 2,
+        "endLine": 491,
+        "endChar": 3
+      },
+      "revId": "e2089cc6b2cd319ea8a0e764728377de17b30a1c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
