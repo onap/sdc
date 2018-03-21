@@ -235,7 +235,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     VspDetailsDto vspDetailsDto =
         new MapVspDetailsToDto().applyMapping(vspDetails, VspDetailsDto.class);
-    addNetworkPackageInfo(vspId, version, vspDetailsDto);
+    addNetworkPackageInfo(vspId, vspDetails.getVersion(), vspDetailsDto);
 
     return Response.ok(vspDetailsDto).build();
   }
@@ -596,7 +596,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     } else {
       OrchestrationTemplateEntity orchestrationTemplateInfo =
           vendorSoftwareProductManager.getOrchestrationTemplateInfo(vspId, version);
-      if (Objects.nonNull(orchestrationTemplateInfo)) {
+      if (Objects.nonNull(orchestrationTemplateInfo) && Objects.nonNull(orchestrationTemplateInfo
+          .getFileSuffix())) {
         vspDetailsDto.setValidationData(orchestrationTemplateInfo.getValidationDataStructure());
         vspDetailsDto.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
         vspDetailsDto.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix());
