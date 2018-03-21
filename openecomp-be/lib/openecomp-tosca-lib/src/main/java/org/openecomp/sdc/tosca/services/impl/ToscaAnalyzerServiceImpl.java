@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
-import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
+import org.openecomp.sdc.tosca.datatypes.model.DefinitionOfDataType;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinitionType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
@@ -36,16 +37,17 @@ import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.errors.ToscaElementTypeNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidEntryNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstitutionServiceTemplateErrorBuilder;
-import org.openecomp.sdc.tosca.errors.ToscaNodeTypeNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,6 +60,13 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
+  private final String GET_NODE_TYPE_METHOD_NAME = "getNode_types";
+  private final String GET_DERIVED_FROM_METHOD_NAME = "getDerived_from";
+  private final String GET_TYPE_METHOD_NAME = "getType";
+  private final String GET_DATA_TYPE_METHOD_NAME = "getData_types";
+  private final String GET_INTERFACE_TYPE_METHOD_NAME = "getInterface_types";
+  private final String TOSCA_DOT = "tosca.";
+  private final String DOT_ROOT = ".Root";
 
   @Override
   public List<Map<String, RequirementDefinition>> calculateExposedRequirements(
@@ -145,7 +154,6 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
       for (Map.Entry<String, RequirementAssignment> fullFilledEntry : entry.getValue().entrySet()) {
 
         capability = fullFilledEntry.getValue().getCapability();
-        fullFilledEntry.getValue().getOccurrences();
         node = fullFilledEntry.getValue().getNode();
         capabilityKey = capability + "_" + node;
         CapabilityDefinition capabilityDefinition = nodeTypeCapabilitiesDefinition.get(
@@ -230,19 +238,8 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
   @Override
   public boolean isTypeOf(NodeTemplate nodeTemplate, String nodeType,
                           ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
-    if (nodeTemplate == null) {
-      return false;
-    }
-
-    if (isNodeTemplateOfTypeNodeType(nodeTemplate, nodeType)) {
-      return true;
-    }
-
-    Optional<Boolean> nodeTypeExistInServiceTemplateHierarchy =
-        isNodeTypeExistInServiceTemplateHierarchy(nodeType, nodeTemplate.getType(), serviceTemplate,
-            toscaServiceModel, null);
-    return nodeTypeExistInServiceTemplateHierarchy.orElseThrow(() -> new CoreException(
-        new ToscaNodeTypeNotFoundErrorBuilder(nodeTemplate.getType()).build()));
+    return isTypeOf(nodeTemplate, nodeType, GET_NODE_TYPE_METHOD_NAME, serviceTemplate,
+        toscaServiceModel);
   }
 
   @Override
@@ -410,7 +407,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
   private boolean isSameCapability(RequirementAssignment requirementAssignment, String capability) {
     return capability != null && (requirementAssignment.getCapability() == null
-       || !requirementAssignment.getCapability().equals(capability));
+        || !requirementAssignment.getCapability().equals(capability));
   }
 
   @Override
@@ -444,39 +441,46 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         .NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE);
   }
 
-  private Optional<Boolean> isNodeTypeExistInServiceTemplateHierarchy(
-      String nodeTypeToMatch,
-      String nodeTypeToSearch,
-      ServiceTemplate serviceTemplate,
-      ToscaServiceModel toscaServiceModel,
-      Set<String> analyzedImportFiles) {
-    Map<String, NodeType> searchableNodeTypes = serviceTemplate.getNode_types();
-    if (!MapUtils.isEmpty(searchableNodeTypes)) {
-      NodeType nodeType = searchableNodeTypes.get(nodeTypeToSearch);
-      if (Objects.nonNull(nodeType)) {
-        if (Objects.equals(nodeType.getDerived_from(), nodeTypeToMatch)) {
+  private <T> Optional<Boolean> isTypeExistInServiceTemplateHierarchy(String typeToMatch,
+                                                                      String typeToSearch,
+                                                                      String getTypesMethodName,
+                                                                      ServiceTemplate serviceTemplate,
+                                                                      ToscaServiceModel toscaServiceModel,
+                                                                      Set<String> analyzedImportFiles)
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    Map<String, T> searchableTypes =
+        (Map<String, T>) serviceTemplate.getClass().getMethod(getTypesMethodName)
+            .invoke(serviceTemplate);
+
+    if (!MapUtils.isEmpty(searchableTypes)) {
+      T typeObject = searchableTypes.get(typeToSearch);
+      if (Objects.nonNull(typeObject)) {
+        String derivedFromTypeVal =
+            (String) typeObject.getClass().getMethod(GET_DERIVED_FROM_METHOD_NAME).invoke(typeObject);
+        if (Objects.equals(derivedFromTypeVal, typeToMatch)) {
           return Optional.of(true);
-        } else if (isNodeTypeIsToscaRoot(nodeType)) {
+        } else if (Objects.isNull(derivedFromTypeVal) || isTypeIsToscaRoot(derivedFromTypeVal)) {
           return Optional.of(false);
         } else {
-          return isNodeTypeExistInServiceTemplateHierarchy(nodeTypeToMatch,
-              nodeType.getDerived_from(), serviceTemplate, toscaServiceModel, null);
+          return isTypeExistInServiceTemplateHierarchy(typeToMatch,
+              derivedFromTypeVal, getTypesMethodName, serviceTemplate, toscaServiceModel, null);
         }
       } else {
-        return isNodeTypeExistInImports(nodeTypeToMatch, nodeTypeToSearch, serviceTemplate,
-            toscaServiceModel, analyzedImportFiles);
+        return isTypeExistInImports(typeToMatch, typeToSearch, getTypesMethodName,
+            serviceTemplate, toscaServiceModel, analyzedImportFiles);
       }
     }
-    return isNodeTypeExistInImports(nodeTypeToMatch, nodeTypeToSearch, serviceTemplate,
+    return isTypeExistInImports(typeToMatch, typeToSearch, getTypesMethodName, serviceTemplate,
         toscaServiceModel, analyzedImportFiles);
-
   }
 
-  private Optional<Boolean> isNodeTypeExistInImports(String nodeTypeToMatch,
-                                                     String nodeTypeToSearch,
-                                                     ServiceTemplate serviceTemplate,
-                                                     ToscaServiceModel toscaServiceModel,
-                                                     Set<String> filesScanned) {
+  private Optional<Boolean> isTypeExistInImports(String typeToMatch,
+                                                 String typeToSearch,
+                                                 String getTypesMethodName,
+                                                 ServiceTemplate serviceTemplate,
+                                                 ToscaServiceModel toscaServiceModel,
+                                                 Set<String> filesScanned)
+      throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
     List<Map<String, Import>> imports = serviceTemplate.getImports();
     if (CollectionUtils.isEmpty(imports)) {
       return Optional.empty();
@@ -501,11 +505,11 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
       } else {
         createdFilesScanned.add(ToscaUtil.getServiceTemplateFileName(template));
       }
-      Optional<Boolean> nodeTypeExistInServiceTemplateHierarchy =
-          isNodeTypeExistInServiceTemplateHierarchy(nodeTypeToMatch, nodeTypeToSearch, template,
-              toscaServiceModel, createdFilesScanned);
-      if (nodeTypeExistInServiceTemplateHierarchy.isPresent()
-          && (nodeTypeExistInServiceTemplateHierarchy.get())) {
+      Optional<Boolean> typeExistInServiceTemplateHierarchy =
+          isTypeExistInServiceTemplateHierarchy(typeToMatch, typeToSearch, getTypesMethodName,
+              template, toscaServiceModel, createdFilesScanned);
+      if (typeExistInServiceTemplateHierarchy.isPresent()
+          && (typeExistInServiceTemplateHierarchy.get())) {
         createdFilesScanned.clear();
         return Optional.of(true);
       }
@@ -528,12 +532,8 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     return retFileScanned;
   }
 
-  private boolean isNodeTypeIsToscaRoot(NodeType stNodeType) {
-    return Objects.equals(stNodeType.getDerived_from(), ToscaNodeType.NATIVE_ROOT);
-  }
-
-  private boolean isNodeTemplateOfTypeNodeType(NodeTemplate nodeTemplate, String nodeType) {
-    return Objects.equals(nodeTemplate.getType(), nodeType);
+  private boolean isTypeIsToscaRoot(String type) {
+    return (type.contains(TOSCA_DOT) && type.contains(DOT_ROOT));
   }
 
   private boolean isSubstitutionServiceTemplate(String substituteServiceTemplateFileName,
@@ -558,7 +558,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
 
     boolean entityFound = enrichEntityFromCurrentServiceTemplate(elementType, typeId, entity,
-        serviceTemplate,toscaModel, filesScanned, rootScanStartInx);
+        serviceTemplate, toscaModel, filesScanned, rootScanStartInx);
     if (!entityFound) {
       List<Map<String, Import>> imports = serviceTemplate.getImports();
       if (CollectionUtils.isEmpty(imports)) {
@@ -570,7 +570,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
           return true;
         }
         found = isFlatEntity(importMap, entity, serviceTemplate, filesScanned,
-            toscaModel,elementType,typeId);
+            toscaModel, elementType, typeId);
       }
       return found;
     }
@@ -841,12 +841,48 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
                                                   RequirementAssignment requirementAssignment) {
     List<Map<String, RequirementAssignment>> nodeTemplateRequirements = nodeTemplate
         .getRequirements();
-    if (nodeTemplateRequirements != null) {
-      return nodeTemplateRequirements.stream()
-          .anyMatch(requirement -> requirement.containsKey(requirementId)
-              && DataModelUtil.compareRequirementAssignment(requirementAssignment,
-              requirement.get(requirementId)));
-    }
-    return false;
+    return nodeTemplateRequirements != null && nodeTemplateRequirements.stream().anyMatch(
+        requirement -> requirement.containsKey(requirementId) && DataModelUtil
+            .compareRequirementAssignment(requirementAssignment, requirement.get(requirementId)));
   }
+
+  @Override
+  public boolean isTypeOf(InterfaceDefinitionType interfaceDefinition, String interfaceType,
+                          ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
+    return isTypeOf(interfaceDefinition, interfaceType, GET_INTERFACE_TYPE_METHOD_NAME, serviceTemplate,
+        toscaServiceModel);
+  }
+
+  @Override
+  public boolean isTypeOf(DefinitionOfDataType parameterDefinition, String dataType,
+                          ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
+    return isTypeOf(parameterDefinition, dataType, GET_DATA_TYPE_METHOD_NAME, serviceTemplate,
+        toscaServiceModel);
+  }
+
+  private <T> boolean isTypeOf(T object, String type, String getTypesMethodName,
+                               ServiceTemplate serviceTemplate,
+                               ToscaServiceModel toscaServiceModel) {
+    if (object == null) {
+      return false;
+    }
+
+    try {
+      String objectType = (String) object.getClass().getMethod(GET_TYPE_METHOD_NAME).invoke(object);
+      if (Objects.equals(objectType, type)) {
+        return true;
+      }
+
+      Optional<Boolean> typeExistInServiceTemplateHierarchy =
+          isTypeExistInServiceTemplateHierarchy(type, objectType, getTypesMethodName,
+              serviceTemplate, toscaServiceModel, null);
+      return typeExistInServiceTemplateHierarchy.orElseThrow(() -> new CoreException(
+          new ToscaElementTypeNotFoundErrorBuilder(objectType).build()));
+
+    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+
 }
