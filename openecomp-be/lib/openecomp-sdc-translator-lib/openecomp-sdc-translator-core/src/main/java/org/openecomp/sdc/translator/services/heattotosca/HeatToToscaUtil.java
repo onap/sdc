@@ -109,11 +109,16 @@ public class HeatToToscaUtil {
   private static final String GET_ATTR = "get_attr";
   private static final String GET_RESOURCE = "get_resource";
   private static final String UNDERSCORE = "_";
-  private static final String PORT_RESOURCE_ID_REGEX_SUFFIX = "(_\\d)*";
+  private static final String WORDS_REGEX = "(\\w+)";
+  private static final String PORT_RESOURCE_ID_REGEX_SUFFIX = "(_\\d+)*";
   private static final String PORT_RESOURCE_ID_REGEX_PREFIX =
-      "(\\w+)" + PORT_RESOURCE_ID_REGEX_SUFFIX;
-  private static final String PORT_INT_RESOURCE_ID_REGEX_PREFIX =
-      PORT_RESOURCE_ID_REGEX_PREFIX + "_" + "int_(\\w+)_";
+      WORDS_REGEX + PORT_RESOURCE_ID_REGEX_SUFFIX;
+  private static final String PORT_INT_RESOURCE_ID_REGEX_PREFIX = PORT_RESOURCE_ID_REGEX_PREFIX
+      + UNDERSCORE + "int_"+ WORDS_REGEX + UNDERSCORE;
+  private static final String SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX =
+      PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "subint_"+ WORDS_REGEX + UNDERSCORE;
+  private static final String SUB_INTERFACE_REGEX = WORDS_REGEX + PORT_RESOURCE_ID_REGEX_SUFFIX
+      + "_subint_(\\w_+)*vmi" + PORT_RESOURCE_ID_REGEX_SUFFIX;
 
   /**
    * Load and translate template data translator output.
@@ -1485,8 +1490,8 @@ public class HeatToToscaUtil {
 
   //Method evaluate the  network role from sub interface node template id, designed considering
   // only single sub interface present in nested file else it will return null
-  public static Optional<String> getNetworkRoleFromResource(Resource resource,
-                                                            TranslationContext translationContext) {
+  public static Optional<String> getNetworkRoleFromSubInterfaceId(Resource resource,
+                                                   TranslationContext translationContext) {
     Optional<String> networkRole = Optional.empty();
     Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
 
@@ -1520,28 +1525,41 @@ public class HeatToToscaUtil {
                                                                    String resourceType) {
     if (resourceType.equals(
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
-      return Optional.ofNullable(extractNetworkRoleFromPortId(resourceId, PortType.VMI));
+      return Optional.ofNullable(extractNetworkRoleFromResourceId(resourceId, PortType.VMI));
     }
 
     if (resourceType.equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
-      return Optional.ofNullable(extractNetworkRoleFromPortId
-          (resourceId, PortType.PORT));
+      return Optional.ofNullable(extractNetworkRoleFromResourceId(resourceId, PortType.PORT));
     }
     return Optional.empty();
   }
 
-  private static String extractNetworkRoleFromPortId(String portResourceId, PortType portType) {
-    String portResourceIdRegex =
-        PORT_RESOURCE_ID_REGEX_PREFIX + "_(\\w+)_" + portType.getPortTypeName() +
-            PORT_RESOURCE_ID_REGEX_SUFFIX;
-    String portIntResourceIdRegex =
-        PORT_INT_RESOURCE_ID_REGEX_PREFIX + portType.getPortTypeName() +
-            PORT_RESOURCE_ID_REGEX_SUFFIX;
+  private static String extractNetworkRoleFromResourceId(String portResourceId, PortType portType) {
 
-    String portNetworkRole = getPortNetworkRole(portResourceId, portResourceIdRegex);
-    String portIntNetworkRole = getPortNetworkRole(portResourceId, portIntResourceIdRegex);
+    if (portResourceId.matches(SUB_INTERFACE_REGEX)) {
+      return extractNetworkRoleFromSubInterfaceId(portResourceId, portType);
+    }
+
+    String portResourceIdRegex =
+        PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + WORDS_REGEX + UNDERSCORE + portType.getPortTypeName()
+            + PORT_RESOURCE_ID_REGEX_SUFFIX;
+    String portIntResourceIdRegex =
+        PORT_INT_RESOURCE_ID_REGEX_PREFIX + portType.getPortTypeName()
+            + PORT_RESOURCE_ID_REGEX_SUFFIX;
+
+    String portNetworkRole = getNetworkRole(portResourceId, portResourceIdRegex);
+    String portIntNetworkRole = getNetworkRole(portResourceId, portIntResourceIdRegex);
 
     return Objects.nonNull(portNetworkRole) ? portNetworkRole : portIntNetworkRole;
+  }
+
+  private static String extractNetworkRoleFromSubInterfaceId(String  resourceId,
+                                                             PortType portType) {
+    String subInterfaceResourceIdRegex =
+        SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX + portType.getPortTypeName()
+            + PORT_RESOURCE_ID_REGEX_SUFFIX;
+
+    return getNetworkRole(resourceId, subInterfaceResourceIdRegex);
   }
 
   private enum PortType {
@@ -1559,7 +1577,7 @@ public class HeatToToscaUtil {
     }
   }
 
-  private static String getPortNetworkRole(String portResourceId, String portIdRegex) {
+  private static String getNetworkRole(String portResourceId, String portIdRegex) {
     Pattern pattern = Pattern.compile(portIdRegex);
     Matcher matcher = pattern.matcher(portResourceId);
     if (matcher.matches()) {

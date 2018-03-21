@@ -108,7 +108,7 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
     Resource targetResource = new Resource();
     targetResource.setType(NESTED_FILE_NAME_INOUT_ATTR_TEST);
 
-    Optional<String> networkRole = HeatToToscaUtil.getNetworkRoleFromResource(targetResource, this
+    Optional<String> networkRole = HeatToToscaUtil.getNetworkRoleFromSubInterfaceId(targetResource, this
         .translationContext);
 
     Assert.assertEquals(NETWORK_ROLE_INOUT_ATTR_TEST,networkRole.get());
@@ -131,6 +131,34 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
 
   }
 
+  @Test
+  public void testSubInterfaceResourceNetworkRolePositive() throws Exception {
+    List<String> subInterfaceResourceIds=Arrays.asList("vm_type_11_subint_networkrole_vmi_11",
+        "v_subint_networkrole_vmi", "v_1_subint_networkrole_vmi", "v_subint_networkrole_vmi_11",
+        "vm_type_subint_networkrole_vmi_11", "vm_type_11_subint_networkrole_vmi",
+        "vm_type_subint_networkrole_vmi");
+
+    subInterfaceResourceIds.forEach(resourceId -> {
+      Optional<String> networkRole=HeatToToscaUtil.evaluateNetworkRoleFromResourceId(resourceId,
+        HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
+      Assert.assertTrue(networkRole.isPresent()
+          && "networkrole".equals(networkRole.get()));
+      }
+    );
+  }
+
+  @Test
+  public void testSubInterfaceResourceNetworkRoleNegative() throws Exception {
+    List<String> subInterfaceResourceIds=Arrays.asList("vm_type_11_subint_vmi_11",
+        "vm_type_11_subint_11_vmi_11");
+
+    subInterfaceResourceIds.forEach(resourceId -> {
+        Optional<String> networkRole=HeatToToscaUtil.evaluateNetworkRoleFromResourceId(resourceId,
+          HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
+        Assert.assertFalse(networkRole.isPresent());
+      }
+    );
+  }
 
   @Test
   public void testIsSubInterfaceResourceUtil() throws Exception {
