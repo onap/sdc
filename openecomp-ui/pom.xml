@@ -55,14 +55,26 @@
                                     <directory>${basedir}/dist</directory>
                                 </fileset>
                                 <fileset>
-                                    <directory>${basedir}/node_modules</directory>
-                                </fileset>
-                                <fileset>
                                     <directory>${basedir}/coverage</directory>
                                 </fileset>
                                 <fileset>
                                     <directory>${basedir}/../dox-sequence-diagram-ui/dist
                                     </directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>clean.nodemodules.folder</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipModulesCleanup}</skip>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/node_modules</directory>
                                 </fileset>
                                 <fileset>
                                     <directory>${basedir}/../dox-sequence-diagram-ui/node_modules
