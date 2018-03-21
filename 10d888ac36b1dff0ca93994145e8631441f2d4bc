@@ -33,6 +33,23 @@
       "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4b22c302",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-21T07:26:40Z",
+      "side": 1,
+      "message": "looks like members needs to be a set, not a list.",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
