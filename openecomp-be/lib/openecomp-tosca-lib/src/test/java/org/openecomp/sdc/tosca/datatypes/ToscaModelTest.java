@@ -28,14 +28,17 @@ import org.openecomp.sdc.tosca.datatypes.model.CapabilityAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.Constraint;
 import org.openecomp.sdc.tosca.datatypes.model.Directive;
+import org.openecomp.sdc.tosca.datatypes.model.Implementation;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinitionTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinitionType;
 import org.openecomp.sdc.tosca.datatypes.model.InterfaceType;
 import org.openecomp.sdc.tosca.datatypes.model.NodeFilter;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.OperationDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.OperationDefinitionTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.OperationDefinitionType;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
@@ -64,13 +67,22 @@ public class ToscaModelTest {
   private YamlUtil yamlUtil = new YamlUtil();
   private static final String INTERFACE_ID = "inter_1";
   private static final String NODE_TEMPLATE_ID = "firstNodeTemplate";
+  private static final String NODE_TYPE_ID = "compute_node_type";
   private static final String BASE_DIR = "/mock/model";
   private static final String ST = "/serviceTemplate.yaml";
   private static final String ST_WITH_INTERFACE = "/serviceTemplateWithInterface.yaml";
   private static final String ST_WITH_OPERATIONS = "/serviceTemplateWithInterfaceAndOperation.yaml";
   private static final String ST_WITH_INTERFACE_DEF =
       "/serviceTemplateWithNodeTemplateInterface.yaml";
-
+  private static final String ST_WITH_NODE_INTERFACE_DEF =
+      "/serviceTemplateWithNodeTypeInterface.yaml";
+  private static final String INTERFACE_TYPE_VALUE = "tosca.interfaces.node.lifecycle.Standard";
+  private static final String OPERATION_START = "start";
+  private static final String OPERATION_DESC = "start operation";
+  private static final String IMPLEMENTATION_NAME = "startWorkFlow.json";
+  private static final String PRIMARY_IMPL = "myImpl.yaml";
+  private static final String DEPENDENCY_NAME = "script1.sh";
+  private static final String STRING_TYPE = "string";
 
   @Test
   public void testServiceTemplateJavaToYaml() {
@@ -306,7 +318,7 @@ public class ToscaModelTest {
         getServiceTemplate(BASE_DIR + ST_WITH_OPERATIONS);
     Assert.assertNotNull(serviceTemplateWithOperation);
 
-    InterfaceType expectedInterfaceType = getInterfaceType();
+    InterfaceType expectedInterfaceType = createInterfaceType();
 
     Map<String, InterfaceType> interfaceTypes =
         DataModelUtil.getInterfaceTypes(serviceTemplateWithOperation);
@@ -323,10 +335,10 @@ public class ToscaModelTest {
     ServiceTemplate serviceTemplateWithOperation =
         getServiceTemplate(BASE_DIR + ST_WITH_OPERATIONS);
 
-    OperationDefinition operationDefinition = getOperationDefinition();
+    OperationDefinition operationDefinition = createOperationDefinition();
 
     DataModelUtil
-        .addInterfaceOperation(serviceTemplateWithInterface, INTERFACE_ID, "start",
+        .addInterfaceOperation(serviceTemplateWithInterface, INTERFACE_ID, OPERATION_START,
             operationDefinition);
     String expectedServiceTemplate = yamlUtil.objectToYaml(serviceTemplateWithOperation);
     String actualServiceTemplate = yamlUtil.objectToYaml(serviceTemplateWithInterface);
@@ -339,7 +351,7 @@ public class ToscaModelTest {
         getServiceTemplate(BASE_DIR + ST_WITH_INTERFACE);
     ServiceTemplate serviceTemplateWithOperation =
         getServiceTemplate(BASE_DIR + ST_WITH_OPERATIONS);
-    InterfaceType interfaceType = getInterfaceType();
+    InterfaceType interfaceType = createInterfaceType();
 
     Optional<Object> interfaceAsObj = DataModelUtil.convertInterfaceTypeToObj(interfaceType);
     Assert.assertTrue(interfaceAsObj.isPresent());
@@ -363,35 +375,32 @@ public class ToscaModelTest {
         DataModelUtil.convertObjToInterfaceType(INTERFACE_ID, interfaceObj);
 
     Assert.assertTrue(actualInterfaceType.isPresent());
-    InterfaceType expectedInterfaceType = getInterfaceType();
+    InterfaceType expectedInterfaceType = createInterfaceType();
     Assert.assertEquals(expectedInterfaceType, actualInterfaceType.get());
   }
 
   @Test
-  public void testInterfaceDefinitionToObjConversion() throws IOException {
-    ServiceTemplate serviceTemplate =
-        getServiceTemplate(BASE_DIR + ST);
+  public void testObjToInterfaceDefinitionTypeConversion()
+      throws IOException, ReflectiveOperationException {
     ServiceTemplate serviceTemplateWithInterfaceDef =
-        getServiceTemplate(BASE_DIR + ST_WITH_INTERFACE_DEF);
+        getServiceTemplate(BASE_DIR + ST_WITH_NODE_INTERFACE_DEF);
+    NodeType nodeTypeWithInterface =
+        DataModelUtil.getNodeType(serviceTemplateWithInterfaceDef, NODE_TYPE_ID);
+    Map<String, Object> interfaces = nodeTypeWithInterface.getInterfaces();
+    Object interfaceObj = interfaces.get(INTERFACE_ID);
 
-    NodeTemplate nodeTemplate =
-        DataModelUtil.getNodeTemplate(serviceTemplate, NODE_TEMPLATE_ID);
-    InterfaceDefinitionType interfaceDefinitionType = getInterfaceDefinition();
-    Optional<Object> interfaceObj = DataModelUtil.convertInterfaceDefinitionToObj(
-        interfaceDefinitionType);
+    Optional<? extends InterfaceDefinition> actualInterfaceDefinition =
+        DataModelUtil.convertObjToInterfaceDefinition(INTERFACE_ID, interfaceObj,
+            InterfaceDefinitionType.class);
 
-    Assert.assertTrue(interfaceObj.isPresent());
-    Map<String, Object> interfaces = new HashMap<>();
-    interfaces.put(INTERFACE_ID, interfaceObj.get());
-    nodeTemplate.setInterfaces(interfaces);
+    Assert.assertTrue(actualInterfaceDefinition.isPresent());
 
-    String expectedServiceTemplate = yamlUtil.objectToYaml(serviceTemplateWithInterfaceDef);
-    String actualServiceTemplate = yamlUtil.objectToYaml(serviceTemplate);
-    Assert.assertEquals(expectedServiceTemplate, actualServiceTemplate);
+    InterfaceDefinitionType expectedInterfaceDefinitionType = createInterfaceDefinitionType();
+    Assert.assertEquals(expectedInterfaceDefinitionType, actualInterfaceDefinition.get());
   }
 
   @Test
-  public void testObjToInterfaceDefinitionConversion()
+  public void testObjToInterfaceDefinitionTemplateConversion()
       throws IOException, ReflectiveOperationException {
     ServiceTemplate serviceTemplateWithInterfaceDef =
         getServiceTemplate(BASE_DIR + ST_WITH_INTERFACE_DEF);
@@ -402,12 +411,11 @@ public class ToscaModelTest {
 
     Optional<? extends InterfaceDefinition> actualInterfaceDefinition =
         DataModelUtil.convertObjToInterfaceDefinition(INTERFACE_ID, interfaceObj,
-            InterfaceDefinitionType.class);
+            InterfaceDefinitionTemplate.class);
 
     Assert.assertTrue(actualInterfaceDefinition.isPresent());
-
-    InterfaceDefinitionType expectedInterfaceDefinitionType = getInterfaceDefinition();
-    Assert.assertEquals(expectedInterfaceDefinitionType, actualInterfaceDefinition.get());
+    InterfaceDefinitionTemplate expectedInterfaceDefinitionTemplate = createInterfaceDefinitionTemplate();
+    Assert.assertEquals(expectedInterfaceDefinitionTemplate, actualInterfaceDefinition.get());
   }
 
   @Test
@@ -432,28 +440,55 @@ public class ToscaModelTest {
     }
   }
 
-  private InterfaceType getInterfaceType() {
-    OperationDefinition operationDefinition = getOperationDefinition();
+  private InterfaceType createInterfaceType() {
+    OperationDefinition operationDefinition = createOperationDefinition();
     InterfaceType interfaceType = new InterfaceType();
     interfaceType.setDescription("test interface");
-    interfaceType.addOperation("start", operationDefinition);
+    interfaceType.addOperation(OPERATION_START, operationDefinition);
     return interfaceType;
   }
 
-  private OperationDefinition getOperationDefinition() {
+  private OperationDefinition createOperationDefinition() {
     OperationDefinition operationDefinition = new OperationDefinition();
-    operationDefinition.setDescription("start operation");
+    operationDefinition.setDescription(OPERATION_DESC);
     return operationDefinition;
   }
 
-  private InterfaceDefinitionType getInterfaceDefinition() {
-    OperationDefinition operationDefinition = getOperationDefinition();
+  private InterfaceDefinitionType createInterfaceDefinitionType() {
+    OperationDefinitionType operationDefinitionType = createOperationDefinitionType();
     InterfaceDefinitionType interfaceDefinitionType = new InterfaceDefinitionType();
-    interfaceDefinitionType.setType("test interface");
-    interfaceDefinitionType.addOperation("start", operationDefinition);
+    interfaceDefinitionType.setType(INTERFACE_TYPE_VALUE);
+    interfaceDefinitionType.addOperation(OPERATION_START, operationDefinitionType);
     return interfaceDefinitionType;
   }
 
+  private InterfaceDefinitionTemplate createInterfaceDefinitionTemplate() {
+    OperationDefinitionTemplate operationDefinitionTemplate = createOperationDefinitionTemplate();
+    InterfaceDefinitionTemplate interfaceDefinitionTemplate = new InterfaceDefinitionTemplate();
+    interfaceDefinitionTemplate.addOperation(OPERATION_START, operationDefinitionTemplate);
+    return interfaceDefinitionTemplate;
+  }
+
+  private OperationDefinitionTemplate createOperationDefinitionTemplate() {
+    OperationDefinitionTemplate operationDefinitionTemplate = new OperationDefinitionTemplate();
+    operationDefinitionTemplate.setDescription(OPERATION_DESC);
+    Implementation implementation = new Implementation();
+    implementation.setPrimary(PRIMARY_IMPL);
+    List<String> dependencies = new ArrayList<>();
+    dependencies.add(DEPENDENCY_NAME);
+    implementation.setDependencies(dependencies);
+    operationDefinitionTemplate.setImplementation(implementation);
+    return operationDefinitionTemplate;
+  }
+
+  private OperationDefinitionType createOperationDefinitionType() {
+    OperationDefinitionType operationDefinitionType = new OperationDefinitionType();
+    operationDefinitionType.setDescription(OPERATION_DESC);
+    operationDefinitionType.setImplementation(IMPLEMENTATION_NAME);
+    PropertyDefinition propertyDefinition = new PropertyDefinition();
+    propertyDefinition.setType(STRING_TYPE);
+    return operationDefinitionType;
+  }
 }
 
 

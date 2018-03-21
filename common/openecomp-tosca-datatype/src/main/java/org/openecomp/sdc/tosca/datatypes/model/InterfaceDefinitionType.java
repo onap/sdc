@@ -16,13 +16,16 @@
 
 package org.openecomp.sdc.tosca.datatypes.model;
 
+import org.apache.commons.collections4.MapUtils;
+
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class InterfaceDefinitionType extends InterfaceDefinition {
 
   private String type;
   private Map<String, PropertyDefinition> inputs;
+  protected Map<String, OperationDefinitionType> operations;
 
   public String getType() {
     return type;
@@ -41,6 +44,23 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
     this.inputs = inputs;
   }
 
+  public Map<String, OperationDefinitionType> getOperations() {
+    return operations;
+  }
+
+  public void setOperations(
+      Map<String, OperationDefinitionType> operations) {
+    this.operations = operations;
+  }
+
+  public void addOperation(String operationName, OperationDefinitionType operation) {
+    if(MapUtils.isEmpty(this.operations)) {
+      this.operations = new HashMap<>();
+    }
+
+    this.operations.put(operationName, operation);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -49,17 +69,29 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
     if (!(o instanceof InterfaceDefinitionType)) {
       return false;
     }
-    if (!super.equals(o)) {
+
+    InterfaceDefinitionType that = (InterfaceDefinitionType) o;
+
+    if (getType() != null ? !getType().equals(that.getType()) : that.getType() != null) {
       return false;
     }
-    InterfaceDefinitionType that = (InterfaceDefinitionType) o;
-    return Objects.equals(type, that.type) &&
-        Objects.equals(inputs, that.inputs);
+    if (getInputs() != null ? !getInputs().equals(that.getInputs()) : that.getInputs() != null) {
+      return false;
+    }
+    return getOperations() != null ? getOperations().equals(that.getOperations())
+        : that.getOperations() == null;
   }
 
   @Override
   public int hashCode() {
+    int result = getType() != null ? getType().hashCode() : 0;
+    result = 31 * result + (getInputs() != null ? getInputs().hashCode() : 0);
+    result = 31 * result + (getOperations() != null ? getOperations().hashCode() : 0);
+    return result;
+  }
 
-    return Objects.hash(super.hashCode(), type, inputs);
+  @Override
+  public void addOperation(String operationName, OperationDefinition operationDefinition) {
+    addOperation(operationName, (OperationDefinitionType)operationDefinition);
   }
 }
