@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4be3a305",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConfigConstants.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-21T06:17:11Z",
+      "side": 1,
+      "message": "We are not allowed to replace AT\u0026T copyright with ours.",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3f0bfa7e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 961,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-21T06:17:11Z",
+      "side": 1,
+      "message": "port collection should ber multilist?",
+      "revId": "10d888ac36b1dff0ca93994145e8631441f2d4bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
