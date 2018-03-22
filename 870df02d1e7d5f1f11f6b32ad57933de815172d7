@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_74fe7b3a",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-api-docs/css/ncso-style.css",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-22T08:04:11Z",
+      "side": 1,
+      "message": "Not sure. My suggestion would not be to change swagger ui",
+      "parentUuid": "5a93c517_54e6df17",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_74e3db05",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-api-docs/images/pet_store_api.png",
         "patchSetId": 5
@@ -47,6 +65,24 @@
       "writtenOn": "2018-03-22T07:31:20Z",
       "side": 1,
       "message": "Do we need this file?",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_34f8f348",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-api-docs/images/pet_store_api.png",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-22T08:04:11Z",
+      "side": 1,
+      "message": "Not sure. My suggestion would not be to change swagger ui",
+      "parentUuid": "5a93c517_74e3db05",
       "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_d4bbcf73",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/configuration.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-22T08:04:11Z",
+      "side": 1,
+      "message": "This is more like dev config.How should password be passed ?as envt varibale.",
+      "parentUuid": "5a93c517_f4be0bd4",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b402c36d",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
         "patchSetId": 5
@@ -81,6 +135,24 @@
       "writtenOn": "2018-03-22T07:31:20Z",
       "side": 1,
       "message": "Please don\u0027t forget to fix it.",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d4942fea",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-22T08:04:11Z",
+      "side": 1,
+      "message": "will handle this",
+      "parentUuid": "5a93c517_b402c36d",
       "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_f4cb6b1c",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-22T08:04:11Z",
+      "side": 1,
+      "message": "The url /activityspec-api is already documented in AID and communicated to Product Owners. Will you still suggest to change it",
+      "parentUuid": "5a93c517_14761707",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f42febf4",
         "filename": "services/activity-spec/pom.xml",
         "patchSetId": 5
@@ -115,6 +205,30 @@
       "writtenOn": "2018-03-22T07:31:20Z",
       "side": 1,
       "message": "Please check if all of these are required. Are all of them needed at the parent (this level), or can some of them be moved down to where they are actually used?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 75
+      },
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_949ea706",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-22T08:04:11Z",
+      "side": 1,
+      "message": "This is the minimized list",
+      "parentUuid": "5a93c517_f42febf4",
       "range": {
         "startLine": 13,
         "startChar": 0,
