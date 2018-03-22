@@ -124,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_14a93724",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/configuration.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-22T08:16:59Z",
+      "side": 1,
+      "message": "Ignore previous comment.How should be password passed then?",
+      "parentUuid": "5a93c517_d4bbcf73",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b402c36d",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
         "patchSetId": 5
