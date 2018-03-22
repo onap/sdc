@@ -94,7 +94,7 @@ public class ActivitySpecZusammenDaoImplTest {
     inputParams.setValue("localhost");
     List<ActivitySpecParameter> inputs = new ArrayList<>();
     inputs.add(inputParams);
-    entity.setInputParameters(inputs);
+    entity.setInputs(inputs);
   }
 
   @AfterMethod
@@ -130,8 +130,8 @@ public class ActivitySpecZusammenDaoImplTest {
         .getElement(context, elementContext, zusammenAdaptor.elementId);
     final InputStream data = testElement.get().getData();
     final ActivitySpecData activitySpecData = JsonUtil.json2Object(data, ActivitySpecData.class);
-    Assert.assertEquals(activitySpecData.getInputParameters().get(0).getName(),
-        entity.getInputParameters().get(0).getName());
+    Assert.assertEquals(activitySpecData.getInputs().get(0).getName(),
+        entity.getInputs().get(0).getName());
   }
 
   @Test

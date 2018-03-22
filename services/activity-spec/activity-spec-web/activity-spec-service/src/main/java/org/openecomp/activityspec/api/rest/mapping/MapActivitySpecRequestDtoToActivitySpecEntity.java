@@ -35,17 +35,19 @@ public class MapActivitySpecRequestDtoToActivitySpecEntity
     target.setDescription(source.getDescription());
     target.setCategoryList(source.getCategoryList() == null ? new ArrayList<String>()
         : source.getCategoryList());
-    if (Objects.nonNull(source.getInputParameters())) {
-      target.setInputParameters(source.getInputParameters().stream()
+    if (Objects.nonNull(source.getInputs())) {
+      target.setInputs(source.getInputs().stream()
           .map(activitySpecParameterDto -> new MapDtoToActivityParameter()
               .applyMapping(activitySpecParameterDto, ActivitySpecParameter.class))
                 .collect(Collectors.toList()));
     }
-    if (Objects.nonNull(source.getOutputParameters())) {
-      target.setOutputParameters(source.getOutputParameters().stream()
+    if (Objects.nonNull(source.getOutputs())) {
+      target.setOutputs(source.getOutputs().stream()
           .map(activitySpecParameterDto -> new MapDtoToActivityParameter()
               .applyMapping(activitySpecParameterDto, ActivitySpecParameter.class))
           .collect(Collectors.toList()));
     }
+    target.setType(source.getType());
+    target.setContent(source.getContent());
   }
 }

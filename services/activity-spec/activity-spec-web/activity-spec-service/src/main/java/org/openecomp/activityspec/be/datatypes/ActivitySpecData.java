@@ -21,7 +21,9 @@ import java.util.List;
 
 @lombok.Data
 public class ActivitySpecData {
-  private List<ActivitySpecParameter> inputParameters = Collections.emptyList();
-  private List<ActivitySpecParameter> outputParameters = Collections.emptyList();
+  private List<ActivitySpecParameter> inputs = Collections.emptyList();
+  private List<ActivitySpecParameter> outputs = Collections.emptyList();
+  private String type;
+  private String content;
 }
 
