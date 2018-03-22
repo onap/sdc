@@ -12,7 +12,6 @@
     </parent>
 
     <properties>
-        <swagger-ui-version>2.1.0-M2</swagger-ui-version>
     </properties>
 
     <dependencies>
