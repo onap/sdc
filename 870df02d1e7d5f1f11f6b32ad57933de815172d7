@@ -87,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_14761707",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-22T07:35:10Z",
+      "side": 1,
+      "message": "I think it makes sense to follow the convention activity-spec-*. So if this caused a problem, than it should be fixed somewhere else.",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f42febf4",
         "filename": "services/activity-spec/pom.xml",
         "patchSetId": 5
