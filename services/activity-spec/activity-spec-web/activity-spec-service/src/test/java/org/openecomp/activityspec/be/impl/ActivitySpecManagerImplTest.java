@@ -47,7 +47,7 @@ import java.util.List;
 public class ActivitySpecManagerImplTest {
 
   private static final String STRING_TYPE = "String";
-  ActivitySpecEntity activitySpec;
+  private ActivitySpecEntity activitySpec;
   private ActivitySpecEntity retrieved;
   private ActivitySpecEntity input;
   private ActivitySpecEntity activitySpecToCreate;
@@ -106,13 +106,13 @@ public class ActivitySpecManagerImplTest {
     List<ActivitySpecParameter> inputs = new ArrayList<>();
     inputs.add(inputParams);
     inputs.add(inputParams1);
-    activitySpecToCreate.setInputParameters(inputs);
+    activitySpecToCreate.setInputs(inputs);
 
     ActivitySpecParameter outputParams = new ActivitySpecParameter("status", STRING_TYPE);
     outputParams.setValue("started");
     List<ActivitySpecParameter> outputs = new ArrayList<>();
     outputs.add(outputParams);
-    activitySpecToCreate.setOutputParameters(outputs);
+    activitySpecToCreate.setOutputs(outputs);
 
     activitySpec = activitySpecManager.createActivitySpec
         (activitySpecToCreate);
@@ -239,7 +239,7 @@ public class ActivitySpecManagerImplTest {
     Assert.assertEquals(actual.getName(), expected.getName());
     Assert.assertEquals(actual.getDescription(), expected.getDescription());
     Assert.assertEquals(actual.getCategoryList(), expected.getCategoryList());
-    Assert.assertEquals(actual.getInputParameters(), expected.getInputParameters());
-    Assert.assertEquals(actual.getOutputParameters(), expected.getOutputParameters());
+    Assert.assertEquals(actual.getInputs(), expected.getInputs());
+    Assert.assertEquals(actual.getOutputs(), expected.getOutputs());
   }
 }

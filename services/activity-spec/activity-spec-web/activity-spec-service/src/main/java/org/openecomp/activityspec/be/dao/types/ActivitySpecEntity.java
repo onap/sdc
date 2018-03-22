@@ -29,8 +29,10 @@ public class ActivitySpecEntity {
   private String description;
 
   private List<String> categoryList;
-  private List<ActivitySpecParameter> inputParameters;
-  private List<ActivitySpecParameter> outputParameters;
+  private List<ActivitySpecParameter> inputs;
+  private List<ActivitySpecParameter> outputs;
+  private String type;
+  private String content;
 
   //Not to be maintained in activityspec element
   private String status;

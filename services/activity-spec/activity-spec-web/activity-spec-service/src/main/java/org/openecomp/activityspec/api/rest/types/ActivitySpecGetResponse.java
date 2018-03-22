@@ -23,7 +23,9 @@ public class ActivitySpecGetResponse  {
   private String name;
   private String description;
   private List<String> categoryList;
-  private List<ActivitySpecParameterDto> inputParameters;
-  private List<ActivitySpecParameterDto> outputParameters;
+  private List<ActivitySpecParameterDto> inputs;
+  private List<ActivitySpecParameterDto> outputs;
   private String status;
+  private String type;
+  private String content;
 }
