@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e6442fb9",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/CommonMethods.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-22T07:07:25Z",
+      "side": 1,
+      "message": "what is there is an overlapping object? is it acceptable that the value from the second map will over run the one from the first map?",
+      "range": {
+        "startLine": 357,
+        "startChar": 4,
+        "endLine": 362,
+        "endChar": 5
+      },
+      "revId": "9d28bd2b3cccc10670a26d04c644e6286a643a49",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
