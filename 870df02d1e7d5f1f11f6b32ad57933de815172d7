@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_57402135",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-api-docs/css/ncso-style.css",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-22T09:13:44Z",
+      "side": 1,
+      "message": "Rename the file. Find all places the name is used in activity spec.",
+      "parentUuid": "5a93c517_74fe7b3a",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_74e3db05",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-api-docs/images/pet_store_api.png",
         "patchSetId": 5
@@ -82,6 +100,24 @@
       "writtenOn": "2018-03-22T08:04:11Z",
       "side": 1,
       "message": "Not sure. My suggestion would not be to change swagger ui",
+      "parentUuid": "5a93c517_74e3db05",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_773d1dbb",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-api-docs/images/pet_store_api.png",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-22T09:13:44Z",
+      "side": 1,
+      "message": "Simple find in files can give you an answer.",
       "parentUuid": "5a93c517_74e3db05",
       "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -206,6 +242,24 @@
       "side": 1,
       "message": "The url /activityspec-api is already documented in AID and communicated to Product Owners. Will you still suggest to change it",
       "parentUuid": "5a93c517_14761707",
+      "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f7784d91",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-war/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-22T09:13:44Z",
+      "side": 1,
+      "message": "Yes I will.",
+      "parentUuid": "5a93c517_f4cb6b1c",
       "revId": "870df02d1e7d5f1f11f6b32ad57933de815172d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
