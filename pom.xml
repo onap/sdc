@@ -44,9 +44,9 @@
 		<jetty.version>9.2.10.v20150310</jetty.version>
 
 		<!-- JSON and YAML Parsing -->
-		<jackson.version>2.8.10</jackson.version>
-		<jackson.yaml.version>2.8.1</jackson.yaml.version>
-		<jackson.annotations.version>2.8.4</jackson.annotations.version>
+		<jackson.version>2.9.4</jackson.version>
+		<jackson.yaml.version>2.9.4</jackson.yaml.version>
+		<jackson.annotations.version>2.9.4</jackson.annotations.version>
 
 		<!-- Yaml for properties -->
 		<snakeyaml.version>1.14</snakeyaml.version>
