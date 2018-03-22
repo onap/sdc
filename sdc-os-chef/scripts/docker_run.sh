@@ -4,8 +4,8 @@ CS_PASSWORD="onap123#@!"
 SDC_USER="asdc_user"
 SDC_PASSWORD="Aa1234%^!"
 JETTY_BASE="/var/lib/jetty"
-BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx2g -Xms2g"
-FE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx512m -Xms512m"
+BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m -Xms1536m"
+FE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m -Xms256m"
 SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m"
 API_TESTS_JAVA_OPTIONS="-Xmx512m -Xms512m"
 UI_TESTS_JAVA_OPTIONS="-Xmx1024m -Xms1024m"
@@ -299,7 +299,7 @@ echo "docker run sdc-cassandra..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
 fi
-docker run -dit --name sdc-cs --env RELEASE="${RELEASE}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --env MAX_HEAP_SIZE="2024M" --env HEAP_NEWSIZE="512M" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${PREFIX}/sdc-cassandra:${RELEASE} /bin/sh
+docker run -dit --name sdc-cs --env RELEASE="${RELEASE}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --env MAX_HEAP_SIZE="1536M" --env HEAP_NEWSIZE="512M" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${PREFIX}/sdc-cassandra:${RELEASE} /bin/sh
 
 
 echo "please wait while CS is starting..."
