@@ -112,8 +112,10 @@ public class ActivitySpecDaoZusammenImpl implements ActivitySpecDao {
   private void enrichEntityFromElementData(ActivitySpecEntity entity, InputStream data) {
     ActivitySpecData activitySpecData = JsonUtil.json2Object(data, ActivitySpecData.class);
     if (Objects.nonNull(activitySpecData)) {
-      entity.setInputParameters(activitySpecData.getInputParameters());
-      entity.setOutputParameters(activitySpecData.getOutputParameters());
+      entity.setInputs(activitySpecData.getInputs());
+      entity.setOutputs(activitySpecData.getOutputs());
+      entity.setType(activitySpecData.getType());
+      entity.setContent(activitySpecData.getContent());
     }
   }
 
@@ -127,8 +129,10 @@ public class ActivitySpecDaoZusammenImpl implements ActivitySpecDao {
 
   private void enrichElementDataFromEntity(ZusammenElement element, ActivitySpecEntity entity) {
     ActivitySpecData activitySpecData = new ActivitySpecData();
-    activitySpecData.setInputParameters(entity.getInputParameters());
-    activitySpecData.setOutputParameters(entity.getOutputParameters());
+    activitySpecData.setInputs(entity.getInputs());
+    activitySpecData.setOutputs(entity.getOutputs());
+    activitySpecData.setType(entity.getType());
+    activitySpecData.setContent(entity.getContent());
     element.setData(new ByteArrayInputStream(JsonUtil.object2Json(activitySpecData).getBytes()));
   }
 

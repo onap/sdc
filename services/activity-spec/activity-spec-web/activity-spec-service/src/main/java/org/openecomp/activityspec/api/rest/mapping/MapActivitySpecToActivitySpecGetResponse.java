@@ -32,18 +32,20 @@ public class MapActivitySpecToActivitySpecGetResponse extends MappingBase<Activi
     target.setName(source.getName());
     target.setDescription(source.getDescription());
     target.setCategoryList(source.getCategoryList());
-    if (Objects.nonNull(source.getInputParameters())) {
-      target.setInputParameters(source.getInputParameters().stream().map(
+    if (Objects.nonNull(source.getInputs())) {
+      target.setInputs(source.getInputs().stream().map(
           activitySpecParameter -> new MapActivityParameterToDto()
               .applyMapping(activitySpecParameter, ActivitySpecParameterDto
                   .class)).collect(Collectors.toList()));
     }
-    if (Objects.nonNull(source.getOutputParameters())) {
-      target.setOutputParameters(source.getOutputParameters().stream().map(
+    if (Objects.nonNull(source.getOutputs())) {
+      target.setOutputs(source.getOutputs().stream().map(
           activitySpecParameter -> new MapActivityParameterToDto()
               .applyMapping(activitySpecParameter, ActivitySpecParameterDto
                   .class)).collect(Collectors.toList()));
     }
     target.setStatus(source.getStatus());
+    target.setType(source.getType());
+    target.setContent(source.getContent());
   }
 }

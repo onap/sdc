@@ -26,12 +26,6 @@
           "description" : "Currently supported values: 'Certified' - only activity specs with Certified status",
           "required" : false,
           "type" : "string"
-        }, {
-          "name" : "USER_ID",
-          "in" : "header",
-          "required" : false,
-          "type" : "string",
-          "default" : ""
         } ],
         "responses" : {
           "default" : {
@@ -53,12 +47,6 @@
           "schema" : {
             "$ref" : "#/definitions/ActivitySpecRequest"
           }
-        }, {
-          "name" : "USER_ID",
-          "in" : "header",
-          "required" : false,
-          "type" : "string",
-          "default" : ""
         } ],
         "responses" : {
           "default" : {
@@ -87,12 +75,6 @@
           "description" : "Version Id",
           "required" : true,
           "type" : "string"
-        }, {
-          "name" : "USER_ID",
-          "in" : "header",
-          "required" : false,
-          "type" : "string",
-          "default" : ""
         } ],
         "responses" : {
           "default" : {
@@ -126,12 +108,6 @@
           "description" : "Version Id",
           "required" : true,
           "type" : "string"
-        }, {
-          "name" : "USER_ID",
-          "in" : "header",
-          "required" : false,
-          "type" : "string",
-          "default" : ""
         } ],
         "responses" : {
           "default" : {
@@ -167,12 +143,6 @@
           "description" : "Version Id",
           "required" : true,
           "type" : "string"
-        }, {
-          "name" : "USER_ID",
-          "in" : "header",
-          "required" : false,
-          "type" : "string",
-          "default" : ""
         } ],
         "responses" : {
           "default" : {
@@ -188,7 +158,7 @@
       "properties" : {
         "action" : {
           "type" : "string",
-          "enum" : [ "Certify", "Deprecate", "Delete" ]
+          "enum" : [ "CERTIFY", "DEPRECATE", "DELETE" ]
         }
       }
     },
@@ -221,17 +191,23 @@
             "type" : "string"
           }
         },
-        "inputParameters" : {
+        "inputs" : {
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/ActivitySpecParameterDto"
           }
         },
-        "outputParameters" : {
+        "outputs" : {
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/ActivitySpecParameterDto"
           }
+        },
+        "type" : {
+          "type" : "string"
+        },
+        "content" : {
+          "type" : "string"
         }
       }
     }

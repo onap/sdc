@@ -77,19 +77,6 @@ Rest API Documentation
 
 </tr>
 
-<tr>
-    <th>USER_ID</th>
-    <td>header</td>
-    <td>no</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
 
 </table>
 
@@ -152,19 +139,6 @@ Rest API Documentation
     
     <a href="#/definitions/ActivitySpecRequest">ActivitySpecRequest</a> 
     </td>
-
-</tr>
-
-<tr>
-    <th>USER_ID</th>
-    <td>header</td>
-    <td>no</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
 
 </tr>
 
@@ -255,19 +229,6 @@ Rest API Documentation
 
 </tr>
 
-<tr>
-    <th>USER_ID</th>
-    <td>header</td>
-    <td>no</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
 
 </table>
 
@@ -348,19 +309,6 @@ Rest API Documentation
     <td>path</td>
     <td>yes</td>
     <td>Version Id</td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>USER_ID</th>
-    <td>header</td>
-    <td>no</td>
-    <td></td>
     <td> - </td>
 
     
@@ -465,19 +413,6 @@ Performs one of the following actions on a activity spec: |Submit: Finalize its 
     <td>path</td>
     <td>yes</td>
     <td>Version Id</td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>USER_ID</th>
-    <td>header</td>
-    <td>no</td>
-    <td></td>
     <td> - </td>
 
     
@@ -646,7 +581,7 @@ Performs one of the following actions on a activity spec: |Submit: Finalize its 
         </tr>
     
         <tr>
-            <td>inputParameters</td>
+            <td>inputs</td>
             <td>
                 
                 
@@ -661,13 +596,39 @@ Performs one of the following actions on a activity spec: |Submit: Finalize its 
         </tr>
     
         <tr>
-            <td>outputParameters</td>
+            <td>outputs</td>
             <td>
                 
                 
                     array[<a href="#/definitions/ActivitySpecParameterDto">ActivitySpecParameterDto</a>]
                 
                 
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>type</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>content</td>
+            <td>
+                
+                    
+                    string
                 
             </td>
             <td>optional</td>
