@@ -26,8 +26,8 @@ import java.util.List;
 @lombok.Data
 public class ActivitySpecRequestDto {
 
-  @NotBlank(message = "is mandatory and should not be empty")
-  @Pattern(regexp = "^[a-zA-Z0-9-]*$", message = "must match \"^[a-zA-Z0-9-]*$\"")
+  @NotBlank(message = "Mandatory %s field is missing/null")
+  @Pattern(regexp = "^[a-zA-Z0-9-]*$", message = "%s should match with \"^[a-zA-Z0-9-]*$\" pattern")
   private String name;
   private String description;
 
