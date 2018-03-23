@@ -16,13 +16,8 @@
 
 package org.openecomp.sdc.logging;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.prefs.BackingStoreException;
@@ -38,45 +33,20 @@ import java.util.prefs.Preferences;
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace", "squid:S106", "squid:S1148"})
 public class GlobalLoggingContext {
 
-    private static final String APPLICATION_ID_KEY = "ApplicationId";
-
-    private static final String CONFIGURATION_RESOURCE = "META-INF/logging/logger.properties";
+    // should be cashed to avoid low-level call, but with a timeout to account for IP or FQDN changes
+    private static final HostAddressCache HOST_ADDRESS_CACHE = new HostAddressCache();
 
     @SuppressWarnings("squid:S1075")
-    private static final String ID_PREFERENCES_PATH = "/logging/instance/uuid";
-
-    private static final String APP_DISTINGUISHER_KEY = "app.distinguisher";
-
-    // should be cashed to avoid low-level call, but with a timeout to account for IP or FQDN changes
-    private static final HostAddressCache HOST_ADDRESS = new HostAddressCache();
-
-    private static final String DISTINGUISHER;
-
-    private static final String APPLICATION_ID;
+    private static final String INSTANCE_UUID_PREFERENCES_PATH = "/logging/instance/uuid";
 
     private static final String INSTANCE_ID;
 
     static {
-        APPLICATION_ID = System.getProperty(APPLICATION_ID_KEY);
-        DISTINGUISHER = readDistinguisher();
         INSTANCE_ID = readInstanceId();
     }
 
-    private GlobalLoggingContext() { /* prevent instantiation */ }
-
-    public static String getApplicationId() {
-        return APPLICATION_ID;
-    }
-
-    /**
-     * A distinguisher to allow separation of logs created by applications running with the same configuration, but
-     * different class-loaders. For instance, when multiple web application are running in the same container and their
-     * logger configuration is passed at the JVM level.
-     *
-     * @return application distinguisher defined in a properties file
-     */
-    public static String getDistinguisher() {
-        return DISTINGUISHER;
+    private GlobalLoggingContext() {
+        // prevent instantiation
     }
 
     /**
@@ -96,25 +66,22 @@ public class GlobalLoggingContext {
      * @return local host address, may be null if could not be read for some reason
      */
     public static InetAddress getHostAddress() {
-        return HOST_ADDRESS.get();
+        return HOST_ADDRESS_CACHE.get();
     }
 
     private static String readInstanceId() {
 
-        String appId = System.getProperty(APPLICATION_ID_KEY);
-        String key = ID_PREFERENCES_PATH + (appId == null ? "" : "/" + appId);
-
         try {
 
-            // By default, this will be ~/.java/.userPrefs/prefs.xml
+            // On Linux, by default this will be ~/.java/.userPrefs/prefs.xml
             final Preferences preferences = Preferences.userRoot();
-            String existingId = preferences.get(key, null);
+            String existingId = preferences.get(INSTANCE_UUID_PREFERENCES_PATH, null);
             if (existingId != null) {
                 return existingId;
             }
 
             String newId = UUID.randomUUID().toString();
-            preferences.put(key, newId);
+            preferences.put(INSTANCE_UUID_PREFERENCES_PATH, newId);
             preferences.flush();
             return newId;
 
@@ -125,35 +92,6 @@ public class GlobalLoggingContext {
         }
     }
 
-    private static String readDistinguisher() {
-
-        try {
-            Properties properties = loadConfiguration();
-            return properties.getProperty(APP_DISTINGUISHER_KEY, "");
-        } catch (IOException e) {
-            e.printStackTrace(); // can't write to a log
-            return "";
-        }
-    }
-
-    private static Properties loadConfiguration() throws IOException {
-
-        Properties properties = new Properties();
-
-        try (InputStream is = Thread.currentThread().getContextClassLoader()
-            .getResourceAsStream(CONFIGURATION_RESOURCE)) {
-
-            if (is == null) {
-                return properties;
-            }
-
-            try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-                properties.load(reader);
-                return properties;
-            }
-        }
-    }
-
     private static class HostAddressCache {
 
         private static final long REFRESH_TIME = 60000L;
@@ -161,7 +99,7 @@ public class GlobalLoggingContext {
         private final AtomicLong lastUpdated = new AtomicLong(0L);
         private InetAddress hostAddress;
 
-        public InetAddress get() {
+        InetAddress get() {
 
             long current = System.currentTimeMillis();
             if (current - lastUpdated.get() > REFRESH_TIME) {

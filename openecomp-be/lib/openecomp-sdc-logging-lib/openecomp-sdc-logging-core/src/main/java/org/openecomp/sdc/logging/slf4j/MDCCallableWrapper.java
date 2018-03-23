@@ -18,30 +18,32 @@ package org.openecomp.sdc.logging.slf4j;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
-import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
 
 /**
- * @author EVITALIY
+ * Carries MDC values over to a Callable from the instantiating thread to the moment the callable will run.
+ *
+ * @author evitaliy
  * @since 08 Jan 18
  */
-class MDCCallableWrapper<V> extends BaseMDCCopyingWrapper implements Callable<V> {
+class MDCCallableWrapper<V> implements Callable<V> {
+
+    private final Context context = new Context();
 
     private final Callable<V> task;
 
     MDCCallableWrapper(Callable<V> task) {
-        super();
         this.task = task;
     }
 
     @Override
     public V call() throws Exception {
 
-        Map<ContextField, String> oldContext = replace();
+        Map<ContextField, String> oldContext = context.replace();
 
         try {
             return task.call();
         } finally {
-            revert(oldContext);
+            context.revert(oldContext);
         }
     }
 }

@@ -16,6 +16,19 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_EMPTY;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_EXCEPTION_FROM_INNER;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_INNER_RUN;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_NOT_COPIED;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_OUTER_RUN;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_POPULATED;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_PROPAGATED_TO_CHILD;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_REMAIN_EMPTY;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_REPLACED_WITH_STORED;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_RETAINED_IN_CURRENT;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_RETAINED_IN_PARENT;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_REVERTED_ON_EXCEPTION;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.IS_SUITABLE_LOGBACK_VERSION;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.assertContextEmpty;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.assertContextFields;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.putUniqueValues;
@@ -28,24 +41,28 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
 import org.openecomp.sdc.logging.spi.LoggingContextService;
 import org.testng.annotations.Test;
 
 /**
+ * Tests propagation of logging fields to Callable via the logging service.
+ * 
  * @author evitaliy
  * @since 08 Jan 18
  */
-public class CallableContextPropagationTest extends BaseContextPropagationTest {
+@SuppressWarnings("DefaultAnnotationParam") // see the comment to ENABLED
+public class CallableContextPropagationTest {
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void testContextPropagated(LoggingContextService ctx) throws Exception {
+    private final LoggingContextService ctxService = new SLF4JLoggingServiceProvider();
 
-        Map<ContextField, String> values = putUniqueValues(ctx);
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void testContextPropagated() throws Exception {
+
+        Map<ContextField, String> values = putUniqueValues();
         AtomicBoolean complete = new AtomicBoolean(false);
 
         // pass the callable to the context service first
-        execute(ctx.copyToCallable(() -> {
+        execute(ctxService.copyToCallable(() -> {
             assertContextFields(values, EXPECT_PROPAGATED_TO_CHILD);
             complete.set(true);
             return null;
@@ -55,14 +72,14 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(complete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void testContextReplacement(LoggingContextService ctx) throws Exception {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void testContextReplacement() throws Exception {
 
-        Map<ContextField, String> innerValues = putUniqueValues(ctx);
+        Map<ContextField, String> innerValues = putUniqueValues();
         AtomicBoolean innerComplete = new AtomicBoolean(false);
 
         // should run with the context of main thread
-        Callable inner = ctx.copyToCallable(() -> {
+        Callable inner = ctxService.copyToCallable(() -> {
             assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             return null;
@@ -71,7 +88,7 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         // pushes its own context, but the inner must run with its own context
         AtomicBoolean outerComplete = new AtomicBoolean(false);
         execute(() -> {
-            Map<ContextField, String> outerValues = putUniqueValues(ctx);
+            Map<ContextField, String> outerValues = putUniqueValues();
             inner.call();
             assertContextFields(outerValues, EXPECT_REPLACED_WITH_STORED);
             outerComplete.set(true);
@@ -83,14 +100,14 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void testContextRemainsEmpty(LoggingContextService ctx) throws Exception {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void testContextRemainsEmpty() throws Exception {
 
-        ctx.clear();
+        ctxService.clear();
         assertContextEmpty(EXPECT_EMPTY);
 
         final AtomicBoolean complete = new AtomicBoolean(false);
-        execute(ctx.copyToCallable(() -> {
+        execute(ctxService.copyToCallable(() -> {
             assertContextEmpty(EXPECT_EMPTY);
             complete.set(true);
             return null;
@@ -100,14 +117,14 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(complete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void testContextCleanedUp(LoggingContextService ctx) throws Exception {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void testContextCleanedUp() throws Exception {
 
-        Map<ContextField, String> innerValues = putUniqueValues(ctx);
+        Map<ContextField, String> innerValues = putUniqueValues();
 
         AtomicBoolean innerComplete = new AtomicBoolean(false);
         // should run with the context of main thread
-        Callable inner = ctx.copyToCallable((() -> {
+        Callable inner = ctxService.copyToCallable((() -> {
             assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             return null;
@@ -128,14 +145,14 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void testCleanupAfterError(LoggingContextService ctx) throws Exception {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void testCleanupAfterError() throws Exception {
 
-        Map<ContextField, String> innerValues = putUniqueValues(ctx);
+        Map<ContextField, String> innerValues = putUniqueValues();
 
         // should run with the context of main thread
         AtomicBoolean innerComplete = new AtomicBoolean(false);
-        Callable inner = ctx.copyToCallable(() -> {
+        Callable inner = ctxService.copyToCallable(() -> {
             assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             throw new IllegalArgumentException();
@@ -146,7 +163,7 @@ public class CallableContextPropagationTest extends BaseContextPropagationTest {
         AtomicBoolean exceptionThrown = new AtomicBoolean(false);
         execute(() -> {
 
-            Map<ContextField, String> outerValues = putUniqueValues(ctx);
+            Map<ContextField, String> outerValues = putUniqueValues();
             assertContextFields(outerValues, EXPECT_POPULATED);
 
             try {

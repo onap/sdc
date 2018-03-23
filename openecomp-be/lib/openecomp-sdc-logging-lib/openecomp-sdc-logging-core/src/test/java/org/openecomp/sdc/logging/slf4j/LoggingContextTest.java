@@ -16,21 +16,29 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import org.openecomp.sdc.logging.api.LoggingContext;
-import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
-import org.slf4j.MDC;
-import org.testng.annotations.Test;
-
-import java.util.UUID;
-
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
+import java.util.UUID;
+import org.openecomp.sdc.logging.api.ContextData;
+import org.openecomp.sdc.logging.api.LoggingContext;
+import org.slf4j.MDC;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+
 /**
+ * Unit-testing logging context service via its facade.
+ *
  * @author evitaliy
  * @since 12 Sep 2016
  */
 public class LoggingContextTest {
+
+    @AfterMethod
+    public void clearMdc() {
+        MDC.clear();
+    }
 
     @Test
     public void returnMdcWrapperWhenToRunnableCalled() {
@@ -57,18 +65,12 @@ public class LoggingContextTest {
 
         String value = UUID.randomUUID().toString();
 
-        try {
-            LoggingContext.putPartnerName(value);
-            LoggingContext.putServiceName(value);
-            LoggingContext.putRequestId(value);
-            LoggingContext.clear();
+        ContextData context = ContextData.builder().partnerName(value).requestId(value).serviceName(value).build();
+        LoggingContext.put(context);
+        LoggingContext.clear();
 
-            for (ContextField field : ContextField.values()) {
-                assertNull(MDC.get(field.asKey()));
-            }
-
-        } finally {
-            MDC.clear();
+        for (ContextField field : ContextField.values()) {
+            assertNull(MDC.get(field.asKey()));
         }
     }
 
@@ -78,68 +80,64 @@ public class LoggingContextTest {
         String randomValue = UUID.randomUUID().toString();
         String randomKey = "Key-" + randomValue;
 
-        try {
-
-            MDC.put(randomKey, randomValue);
-            LoggingContext.clear();
-            assertEquals(MDC.get(randomKey), randomValue);
-
-        } finally {
-            MDC.clear();
-        }
+        MDC.put(randomKey, randomValue);
+        LoggingContext.clear();
+        assertEquals(MDC.get(randomKey), randomValue);
     }
 
     @Test
     public void contextHasServiceNameWhenPut() {
 
         String random = UUID.randomUUID().toString();
-
-        try {
-            LoggingContext.putServiceName(random);
-            assertEquals(random, MDC.get(ContextField.SERVICE_NAME.asKey()));
-        } finally {
-            MDC.clear();
-        }
+        ContextData context = ContextData.builder().serviceName(random).build();
+        LoggingContext.put(context);
+        assertEquals(random, MDC.get(ContextField.SERVICE_NAME.asKey()));
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenServiceNameNull() {
-        LoggingContext.putServiceName(null);
+    public void throwNpeWhenContextDataNull() {
+        LoggingContext.put(null);
     }
 
     @Test
     public void contextHasRequestIdWhenPut() {
 
         String random = UUID.randomUUID().toString();
-
-        try {
-            LoggingContext.putRequestId(random);
-            assertEquals(random, MDC.get(ContextField.REQUEST_ID.asKey()));
-        } finally {
-            MDC.clear();
-        }
-    }
-
-    @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenRequestIdNull() {
-        LoggingContext.putRequestId(null);
+        ContextData context = ContextData.builder().requestId(random).build();
+        LoggingContext.put(context);
+        assertEquals(random, MDC.get(ContextField.REQUEST_ID.asKey()));
     }
 
     @Test
     public void contextHasPartnerNameWhenPut() {
 
         String random = UUID.randomUUID().toString();
-
-        try {
-            LoggingContext.putPartnerName(random);
-            assertEquals(random, MDC.get(ContextField.PARTNER_NAME.asKey()));
-        } finally {
-            MDC.clear();
-        }
+        ContextData context = ContextData.builder().partnerName(random).build();
+        LoggingContext.put(context);
+        assertEquals(random, MDC.get(ContextField.PARTNER_NAME.asKey()));
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenPartnerNameNull() {
-        LoggingContext.putPartnerName(null);
+    @Test
+    public void contextHasServerHostWhenPopulated() {
+
+        ContextData context = ContextData.builder().build();
+        LoggingContext.put(context);
+        assertNotNull(MDC.get(ContextField.SERVER.asKey()));
+    }
+
+    @Test
+    public void contextHasServerAddressWhenPopulated() {
+
+        ContextData context = ContextData.builder().build();
+        LoggingContext.put(context);
+        assertNotNull(MDC.get(ContextField.SERVER_IP_ADDRESS.asKey()));
+    }
+
+    @Test
+    public void contextHasInstanceIdWhenPopulated() {
+
+        ContextData context = ContextData.builder().build();
+        LoggingContext.put(context);
+        assertNotNull(MDC.get(ContextField.INSTANCE_ID.asKey()));
     }
 }

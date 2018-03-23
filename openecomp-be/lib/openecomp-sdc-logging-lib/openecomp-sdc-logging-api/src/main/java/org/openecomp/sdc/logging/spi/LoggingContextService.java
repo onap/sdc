@@ -17,6 +17,7 @@
 package org.openecomp.sdc.logging.spi;
 
 import java.util.concurrent.Callable;
+import org.openecomp.sdc.logging.api.ContextData;
 
 /**
  * Should be used to implement a framework-specific mechanism of managing a per-thread diagnostic context (for instance
@@ -33,14 +34,13 @@ import java.util.concurrent.Callable;
 
 public interface LoggingContextService {
 
-    void putRequestId(String requestId);
-
-    void putServiceName(String serviceName);
-
-    void putPartnerName(String partnerName);
+    /**
+     * Put logging data on the context.
+     */
+    void put(ContextData contextData);
 
     /**
-     * Clear logging thread context
+     * Clear logging thread context.
      */
     void clear();
 

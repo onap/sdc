@@ -24,7 +24,9 @@ import java.util.concurrent.Callable;
 import org.testng.annotations.Test;
 
 /**
- * @author EVITALIY
+ * Unit-testing default context service implementation.
+ *
+ * @author evitaliy
  * @since 08 Jan 18
  */
 public class LoggingContextTest {
@@ -39,18 +41,8 @@ public class LoggingContextTest {
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenPartnerNameIsNull() {
-        LoggingContext.putPartnerName(null);
-    }
-
-    @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenServiceNameIsNull() {
-        LoggingContext.putServiceName(null);
-    }
-
-    @Test(expectedExceptions = NullPointerException.class)
-    public void throwNpeWhenRequestIdIsNull() {
-        LoggingContext.putRequestId(null);
+    public void throwNpeWhenContextIsNull() {
+        LoggingContext.put(null);
     }
 
     @Test

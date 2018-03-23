@@ -16,10 +16,9 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.openecomp.sdc.logging.spi.LoggingContextService;
-
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
 
 /**
  * <p>Factory to hide a concrete, framework-specific implementation of diagnostic context.</p>
@@ -44,16 +43,8 @@ public class LoggingContext {
         // prevent instantiation
     }
 
-    public static void putRequestId(String requestId) {
-        SERVICE.putRequestId(requestId);
-    }
-
-    public static void putServiceName(String serviceName) {
-        SERVICE.putServiceName(serviceName);
-    }
-
-    public static void putPartnerName(String partnerName) {
-        SERVICE.putPartnerName(partnerName);
+    public static void put(ContextData contextData) {
+        SERVICE.put(contextData);
     }
 
     public static void clear() {
@@ -71,18 +62,8 @@ public class LoggingContext {
     private static class NoOpLoggingContextService implements LoggingContextService {
 
         @Override
-        public void putRequestId(String requestId) {
-            Objects.requireNonNull(requestId, "Request ID cannot be null");
-        }
-
-        @Override
-        public void putServiceName(String serviceName) {
-            Objects.requireNonNull(serviceName, "Service name cannot be null");
-        }
-
-        @Override
-        public void putPartnerName(String partnerName) {
-            Objects.requireNonNull(partnerName, "Partner name cannot be null");
+        public void put(ContextData contextData) {
+            Objects.requireNonNull(contextData, "Context data cannot be null");
         }
 
         @Override

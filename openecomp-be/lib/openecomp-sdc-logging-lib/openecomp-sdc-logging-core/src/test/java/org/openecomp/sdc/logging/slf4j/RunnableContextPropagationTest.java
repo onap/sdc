@@ -16,6 +16,19 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_EMPTY;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_EXCEPTION_FROM_INNER;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_INNER_RUN;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_NOT_COPIED;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_OUTER_RUN;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_POPULATED;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_PROPAGATED_TO_CHILD;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_REMAIN_EMPTY;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_REPLACED_WITH_STORED;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_RETAINED_IN_CURRENT;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_RETAINED_IN_PARENT;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_REVERTED_ON_EXCEPTION;
+import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.IS_SUITABLE_LOGBACK_VERSION;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.assertContextEmpty;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.assertContextFields;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.putUniqueValues;
@@ -23,27 +36,30 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.openecomp.sdc.logging.slf4j.SLF4JLoggingServiceProvider.ContextField;
 import org.openecomp.sdc.logging.spi.LoggingContextService;
 import org.testng.annotations.Test;
 
 /**
+ * Unit-testing logging context propagation to Runnable.
+ *
  * @author evitaliy
  * @since 08 Jan 18
  */
-public class RunnableContextPropagationTest extends BaseContextPropagationTest {
+@SuppressWarnings("DefaultAnnotationParam")
+public class RunnableContextPropagationTest {
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void contextNotCopiedToChildThreadByDefault(LoggingContextService ctx)
-            throws InterruptedException {
+    private final LoggingContextService ctxService = new SLF4JLoggingServiceProvider();
 
-        Map<ContextField, String> values = putUniqueValues(ctx);
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void contextNotCopiedToChildThreadByDefault() throws InterruptedException {
+
+        Map<ContextField, String> values = putUniqueValues();
         AtomicBoolean complete = new AtomicBoolean(false);
 
         // create thread right away without copying context
         Thread thread = new Thread(() -> {
-            assertContextEmpty("Data unexpectedly copied to a child thread. " +
-                    "Are you using an old version of SLF4J diagnostic context implementation (e.g. logback)?");
+            assertContextEmpty("Data unexpectedly copied to a child thread. "
+                    + "Are you using an old version of SLF4J diagnostic context implementation (e.g. logback)?");
             complete.set(true);
         });
 
@@ -54,15 +70,14 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(complete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void contextCopiedWhenToRunnableCalled(LoggingContextService ctx)
-            throws InterruptedException {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void contextCopiedWhenToRunnableCalled() throws InterruptedException {
 
-        Map<ContextField, String> values = putUniqueValues(ctx);
+        Map<ContextField, String> values = putUniqueValues();
         AtomicBoolean complete = new AtomicBoolean(false);
 
         // pass the runnable to the context service first
-        Thread thread = new Thread(ctx.copyToRunnable(() -> {
+        Thread thread = new Thread(ctxService.copyToRunnable(() -> {
             assertContextFields(values, EXPECT_PROPAGATED_TO_CHILD);
             complete.set(true);
         }));
@@ -74,15 +89,14 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(complete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void copiedContextRetainedEvenWhenAnotherPushed(LoggingContextService ctx)
-            throws InterruptedException {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void copiedContextRetainedEvenWhenAnotherPushed() throws InterruptedException {
 
-        Map<ContextField, String> innerValues = putUniqueValues(ctx);
+        Map<ContextField, String> innerValues = putUniqueValues();
         AtomicBoolean innerComplete = new AtomicBoolean(false);
 
         // should run with the context of main thread
-        Runnable inner = ctx.copyToRunnable(() -> {
+        Runnable inner = ctxService.copyToRunnable(() -> {
             assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
         });
@@ -90,7 +104,7 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         // pushes its context, but the inner must run with its own context
         AtomicBoolean outerComplete = new AtomicBoolean(false);
         Thread outer = new Thread(() -> {
-            Map<ContextField, String> outerValues = putUniqueValues(ctx);
+            Map<ContextField, String> outerValues = putUniqueValues();
             inner.run();
             assertContextFields(outerValues, EXPECT_REPLACED_WITH_STORED);
             outerComplete.set(true);
@@ -104,15 +118,14 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void contextRemainsEmptyWhenParentWasEmpty(LoggingContextService ctx)
-            throws InterruptedException {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void contextRemainsEmptyWhenParentWasEmpty() throws InterruptedException {
 
-        ctx.clear();
+        ctxService.clear();
         assertContextEmpty(EXPECT_EMPTY);
 
         final AtomicBoolean complete = new AtomicBoolean(false);
-        Runnable runnable = ctx.copyToRunnable(() -> {
+        Runnable runnable = ctxService.copyToRunnable(() -> {
             assertContextEmpty(EXPECT_EMPTY);
             complete.set(true);
         });
@@ -125,14 +138,13 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(complete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void childThreadCleanedUpAfterRunnableRuns(LoggingContextService ctx)
-            throws Exception {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void childThreadCleanedUpAfterRunnableRuns() throws Exception {
 
-        Map<ContextField, String> innerValues = putUniqueValues(ctx);
+        Map<ContextField, String> innerValues = putUniqueValues();
         AtomicBoolean innerComplete = new AtomicBoolean(false);
         // should run with the context of main thread
-        Runnable inner = ctx.copyToRunnable(() -> {
+        Runnable inner = ctxService.copyToRunnable(() -> {
             assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
         });
@@ -154,15 +166,14 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
     }
 
-    @Test(enabled = ENABLED, dataProvider = PROVIDER)
-    public void childThreadCleanedUpAfterException(LoggingContextService ctx)
-            throws Exception {
+    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    public void childThreadCleanedUpAfterException() throws Exception {
 
-        Map<ContextField, String> innerValues = putUniqueValues(ctx);
+        Map<ContextField, String> innerValues = putUniqueValues();
 
         // should run with the context of main thread
         AtomicBoolean innerComplete = new AtomicBoolean(false);
-        Runnable inner = ctx.copyToRunnable(() -> {
+        Runnable inner = ctxService.copyToRunnable(() -> {
             assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
             innerComplete.set(true);
             throw new IllegalArgumentException();
@@ -173,7 +184,7 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         AtomicBoolean exceptionThrown = new AtomicBoolean(false);
         Thread outer = new Thread(() -> {
 
-            Map<ContextField, String> outerValues = putUniqueValues(ctx);
+            Map<ContextField, String> outerValues = putUniqueValues();
             assertContextFields(outerValues, EXPECT_POPULATED);
 
             try {
@@ -194,6 +205,4 @@ public class RunnableContextPropagationTest extends BaseContextPropagationTest {
         assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
         assertTrue(exceptionThrown.get(), EXPECT_EXCEPTION_FROM_INNER);
     }
-
-
 }

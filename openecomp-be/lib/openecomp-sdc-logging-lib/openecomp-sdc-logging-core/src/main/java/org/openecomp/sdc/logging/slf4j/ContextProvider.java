@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,30 +19,11 @@ package org.openecomp.sdc.logging.slf4j;
 import java.util.Map;
 
 /**
- * Carries MDC values over to a Runnable from the instantiating thread to the moment the callable will run.
+ * Abstracts a source of MDC values.
  *
  * @author evitaliy
- * @since 08 Jan 18
+ * @since 23 Mar 2018
  */
-class MDCRunnableWrapper implements Runnable {
-
-    private final Context context = new Context();
-
-    private final Runnable task;
-
-    MDCRunnableWrapper(Runnable task) {
-        this.task = task;
-    }
-
-    @Override
-    public void run() {
-
-        Map<ContextField, String> oldContext = context.replace();
-
-        try {
-            task.run();
-        } finally {
-            context.revert(oldContext);
-        }
-    }
+interface ContextProvider {
+    Map<ContextField, String> values();
 }

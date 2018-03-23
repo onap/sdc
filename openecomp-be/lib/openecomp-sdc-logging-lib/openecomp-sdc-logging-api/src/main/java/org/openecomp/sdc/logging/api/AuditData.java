@@ -27,8 +27,9 @@ package org.openecomp.sdc.logging.api;
  */
 public class AuditData {
 
-    // A concrete implementation interface was chosen over an interface to enable to gracefully
-    // add new fields without affecting client code
+    // A concrete implementation interface was chosen over an interface to enable to gracefully add new fields without
+    // affecting client code. Also, the builder can be implemented differently if needed, without affecting client code.
+    // For instance, it may delegate the population and instantiation to a service provider.
 
     private final long startTime;
     private final long endTime;
@@ -37,7 +38,7 @@ public class AuditData {
     private final String responseDescription;
     private final String clientIpAddress;
 
-    AuditData(final AuditDataBuilder builder) {
+    private AuditData(final AuditDataBuilder builder) {
         this.startTime = builder.startTime;
         this.endTime = builder.endTime;
         this.statusCode = builder.statusCode;
@@ -47,7 +48,7 @@ public class AuditData {
     }
 
     /**
-     * Begin timestamp of an API invocation
+     * Begin timestamp of an API invocation.
      *
      * @return timestamp
      */
@@ -56,7 +57,7 @@ public class AuditData {
     }
 
     /**
-     * End timestamp of an API invocation
+     * End timestamp of an API invocation.
      *
      * @return timestamp
      */
@@ -65,7 +66,7 @@ public class AuditData {
     }
 
     /**
-     * Result status of an API invocation
+     * Result status of an API invocation.
      *
      * @return protocol and application agnostic status code
      */
@@ -74,7 +75,7 @@ public class AuditData {
     }
 
     /**
-     * Application/protocol specific response status of an API invocation
+     * Application/protocol specific response status of an API invocation.
      *
      * @return response code
      */
@@ -83,7 +84,7 @@ public class AuditData {
     }
 
     /**
-     * Application/protocol specific response in a human-friendly way
+     * Application/protocol specific response in a human-friendly way.
      *
      * @return human-friendly response description
      */
@@ -92,7 +93,7 @@ public class AuditData {
     }
 
     /**
-     * IP address of the invoking client when available
+     * IP address of the invoking client when available.
      *
      * @return IP address
      */
@@ -102,15 +103,18 @@ public class AuditData {
 
     @Override
     public String toString() {
-        return "AuditData{startTime=" + startTime + ", endTime=" + endTime + ", statusCode=" + statusCode +
-            ", responseCode='" + responseCode + ", responseDescription=" + responseDescription + ", clientIpAddress="
-            + clientIpAddress + '}';
+        return "AuditData{startTime=" + startTime + ", endTime=" + endTime + ", statusCode=" + statusCode
+                + ", responseCode=" + responseCode + ", responseDescription=" + responseDescription
+                + ", clientIpAddress=" + clientIpAddress + '}';
     }
 
     public static AuditDataBuilder builder() {
         return new AuditDataBuilder();
     }
 
+    /**
+     * Fluent API for building audit data.
+     */
     public static class AuditDataBuilder {
 
         private long startTime;
@@ -123,7 +127,7 @@ public class AuditData {
         AuditDataBuilder() { /* package-private default constructor to hide the public one */ }
 
         /**
-         * Begin timestamp of an activity being audited
+         * Begin timestamp of an activity being audited.
          *
          * @param startTime local timestamp, usually received from {@link System#currentTimeMillis()}
          * @return this builder for fluent API
@@ -134,7 +138,7 @@ public class AuditData {
         }
 
         /**
-         * End timestamp of an activity being audited
+         * End timestamp of an activity being audited.
          *
          * @param endTime local timestamp, usually received from {@link System#currentTimeMillis()}
          * @return this builder for fluent API
@@ -191,7 +195,7 @@ public class AuditData {
         }
 
         /**
-         * Create an instance of {@link AuditData}
+         * Create an instance of {@link AuditData}.
          *
          * @return a populated instance of audit data
          */

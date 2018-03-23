@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,26 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import static org.testng.Assert.assertNotNull;
+
 import java.util.Map;
+import org.testng.annotations.Test;
 
 /**
- * Carries MDC values over to a Runnable from the instantiating thread to the moment the callable will run.
+ * Tests data supplied by the global logging context.
  *
  * @author evitaliy
- * @since 08 Jan 18
+ * @since 23 Mar 2018
  */
-class MDCRunnableWrapper implements Runnable {
 
-    private final Context context = new Context();
+public class GlobalContextProviderTest {
 
-    private final Runnable task;
-
-    MDCRunnableWrapper(Runnable task) {
-        this.task = task;
-    }
-
-    @Override
-    public void run() {
-
-        Map<ContextField, String> oldContext = context.replace();
-
-        try {
-            task.run();
-        } finally {
-            context.revert(oldContext);
-        }
+    @Test
+    public void providedValuesPopulated() {
+        GlobalContextProvider provider = new GlobalContextProvider();
+        Map<ContextField, String> values = provider.values();
+        assertNotNull(values.get(ContextField.INSTANCE_ID));
+        assertNotNull(values.get(ContextField.SERVER));
+        assertNotNull(values.get(ContextField.SERVER_IP_ADDRESS));
     }
 }
