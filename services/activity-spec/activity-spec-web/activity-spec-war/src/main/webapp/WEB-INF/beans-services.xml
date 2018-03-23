@@ -38,7 +38,7 @@
 
         <jaxrs:providers>
             <ref bean="jsonProvider"/>
-            <bean class="org.openecomp.sdcrests.errors.DefaultExceptionMapper"/>
+            <bean class="org.openecomp.activityspec.errors.DefaultExceptionMapper"/>
         </jaxrs:providers>
 
     </jaxrs:server>
