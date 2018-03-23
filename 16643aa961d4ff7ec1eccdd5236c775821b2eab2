@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c75796c9",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/ActivitySpecErrorResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-03-23T11:16:53Z",
+      "side": 1,
+      "message": "this annotation gives you all neede constructors:\nhttps://projectlombok.org/api/lombok/Data.html\n\nBut it provides really a lot of things. Think if you need them all and if not replace with other annotations providing only necessary things.",
+      "revId": "16643aa961d4ff7ec1eccdd5236c775821b2eab2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e75c12f0",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-03-23T11:16:53Z",
+      "side": 1,
+      "message": "replace with:\nLoggerFactory.getLogger(DefaultExceptionMapper.class);",
+      "revId": "16643aa961d4ff7ec1eccdd5236c775821b2eab2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
