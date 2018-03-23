@@ -84,7 +84,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
   @Override
   public ActivitySpecEntity createActivitySpec(ActivitySpecEntity activitySpecEntity) {
 
-    uniqueValueUtil.validateUniqueValue(ACTIVITY_SPEC_NAME, activitySpecEntity.getName());
+    validateUniqueValue(activitySpecEntity);
 
     Item item = getActivitySpecItem(activitySpecEntity);
     item = itemManager.create(item);
@@ -97,6 +97,17 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
 
     uniqueValueUtil.createUniqueValue(ACTIVITY_SPEC_NAME, activitySpecEntity.getName());
     return activitySpecEntity;
+  }
+
+  private void validateUniqueValue(ActivitySpecEntity activitySpecEntity) {
+    try {
+      uniqueValueUtil.validateUniqueValue(ACTIVITY_SPEC_NAME, activitySpecEntity.getName());
+    } catch (CoreException exception) {
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder()
+          .withCategory(ErrorCategory.APPLICATION)
+          .withId(exception.code().id())
+          .withMessage("Name already in use").build());
+    }
   }
 
   private Version getActivitySpecVersion(ActivitySpecEntity activitySpecEntity) {
@@ -113,7 +124,8 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     try {
       retrieved = activitySpecDao.get(activitySpec);
     } catch (SdcRuntimeException runtimeException) {
-      LOGGER.error("Failed to retrieve activity spec for activitySpecId: " + activitySpec.getId() + " and version: "
+      LOGGER.error("Failed to retrieve activity spec for activitySpecId: " + activitySpec.getId()
+          + " and version: "
           + activitySpec.getVersion().getId(), runtimeException);
       validateActivitySpecExistence(activitySpec.getId(), activitySpec.getVersion());
     }
@@ -132,7 +144,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     ActivitySpecEntity previousActivitySpec = get(activitySpec);
 
     if (!activitySpec.getName().equals(previousActivitySpec.getName())) {
-      uniqueValueUtil.validateUniqueValue(ACTIVITY_SPEC_NAME, activitySpec.getName());
+      validateUniqueValue(activitySpec);
     }
 
     activitySpecDao.update(activitySpec);
@@ -175,8 +187,8 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     try {
       retrievedVersion = versioningManager.get(activitySpecId, version);
     } catch (SdcRuntimeException exception) {
-      LOGGER.error("Failed to get version for activitySpecId: " + activitySpecId + " and version: " + version.getId(),
-          exception);
+      LOGGER.error("Failed to get version for activitySpecId: " + activitySpecId
+              + " and version: " + version.getId(), exception);
       validateActivitySpecExistence(activitySpecId, version);
 
     }
@@ -184,7 +196,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     VersionStatus status = version.getStatus();
     Transition transition = TRANSITIONS.get(status);
     if (transition != null) {
-      String errMsg = String.format("%s ActivitySpec With Id %s failed since it is not in %s status",
+      String errMsg = String.format("Activity Spec is in an invalid state",
           transition.action, activitySpecId, transition.prevStatus);
       validateStatus(Objects.nonNull(retrievedVersion) ? retrievedVersion.getStatus() : null,
           transition.prevStatus, errMsg);
@@ -225,7 +237,8 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
       try {
         list = versioningManager.list(activitySpecId);
       } catch (SdcRuntimeException runtimeException) {
-        LOGGER.error("Failed to list versions for activitySpecId " + activitySpecId, runtimeException);
+        LOGGER.error("Failed to list versions for activitySpecId "
+            + activitySpecId, runtimeException);
         validateActivitySpecExistence(activitySpecId, version);
       }
       if (Objects.nonNull(list) && !list.isEmpty()) {
