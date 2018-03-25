@@ -15,7 +15,11 @@
  */
 package org.openecomp.sdc.tosca.datatypes.model;
 
-public abstract class InterfaceDefinition {
-  public abstract void addOperation(String operationName, OperationDefinition operationDefinition);
+import java.util.Map;
 
+public abstract class InterfaceDefinition {
+
+  protected Map<String, OperationDefinition> operations;
+
+  public abstract void addOperation(String operationName, OperationDefinition operationDefinition);
 }

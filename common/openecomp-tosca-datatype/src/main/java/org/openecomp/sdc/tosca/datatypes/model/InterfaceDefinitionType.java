@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package org.openecomp.sdc.tosca.datatypes.model;
 
 import org.apache.commons.collections4.MapUtils;
