@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.tosca.datatypes.model;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,12 +52,11 @@ public class Implementation {
     }
     Implementation that = (Implementation) o;
     return Objects.equals(primary, that.primary) &&
-        Objects.equals(dependencies, that.dependencies);
+        Objects.equals(new HashSet<>(dependencies), new HashSet<>(that.dependencies));
   }
 
   @Override
   public int hashCode() {
-
     return Objects.hash(primary, dependencies);
   }
 }

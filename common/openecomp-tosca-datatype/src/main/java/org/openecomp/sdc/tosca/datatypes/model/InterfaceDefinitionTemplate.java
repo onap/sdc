@@ -20,6 +20,7 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class InterfaceDefinitionTemplate extends InterfaceDefinition {
 
@@ -39,11 +40,6 @@ public class InterfaceDefinitionTemplate extends InterfaceDefinition {
     return operations;
   }
 
-  public void setOperations(
-      Map<String, OperationDefinitionTemplate> operations) {
-    this.operations = operations;
-  }
-
   public void addOperation(String operationName, OperationDefinitionTemplate operation) {
     if(MapUtils.isEmpty(this.operations)) {
       this.operations = new HashMap<>();
@@ -60,21 +56,15 @@ public class InterfaceDefinitionTemplate extends InterfaceDefinition {
     if (!(o instanceof InterfaceDefinitionTemplate)) {
       return false;
     }
-
     InterfaceDefinitionTemplate that = (InterfaceDefinitionTemplate) o;
-
-    if (getInputs() != null ? !getInputs().equals(that.getInputs()) : that.getInputs() != null) {
-      return false;
-    }
-    return getOperations() != null ? getOperations().equals(that.getOperations())
-        : that.getOperations() == null;
+    return Objects.equals(inputs, that.inputs) &&
+        Objects.equals(operations, that.operations);
   }
 
   @Override
   public int hashCode() {
-    int result = getInputs() != null ? getInputs().hashCode() : 0;
-    result = 31 * result + (getOperations() != null ? getOperations().hashCode() : 0);
-    return result;
+
+    return Objects.hash(inputs, operations);
   }
 
   @Override

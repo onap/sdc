@@ -20,8 +20,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.converter.errors.CreateToscaObjectErrorBuilder;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.CommonUtil;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Map;

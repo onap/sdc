@@ -1269,14 +1269,23 @@ public class DataModelUtil {
           CommonUtil.createObjectUsingSetters(interfaceObj, interfaceClass);
       interfaceDefinition.ifPresent(interfaceDefinitionType1 -> updateInterfaceDefinitionOperations(
           CommonUtil.getObjectAsMap(interfaceObj),
-          interfaceDefinitionType1));
+          interfaceDefinitionType1, getOperationClass(interfaceClass)));
       return interfaceDefinition;
     } catch (Exception ex) {
       throw new CoreException(
           new CreateInterfaceObjectErrorBuilder(InterfaceDefinitionType.class.getName(),
-              interfaceId, ex.getMessage()).build());
+              interfaceId,
+              ex.getMessage()).build());
     }
 
+  }
+
+  private static <T extends OperationDefinition, V extends InterfaceDefinition> Class<T> getOperationClass(
+      Class<V> interfaceClass) {
+    return interfaceClass.equals(InterfaceDefinitionType.class)
+        ? (Class<T>) OperationDefinitionType.class
+        :
+            (Class<T>) OperationDefinitionTemplate.class;
   }
 
   public static Optional<Object> convertInterfaceDefinitionToObj(
@@ -1351,21 +1360,35 @@ public class DataModelUtil {
     return Optional.empty();
   }
 
-  private static <T extends OperationDefinition> void updateInterfaceDefinitionOperations(
-      Map<String, Object> interfaceAsMap,
-      InterfaceDefinition interfaceDefinition) {
+  private static <T extends OperationDefinition> void updateInterfaceDefinitionOperations
+      (Map<String, Object> interfaceAsMap, InterfaceDefinition interfaceDefinition,
+       Class<T> operationClass) {
 
-    Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinitionType.class);
-    Optional<? extends OperationDefinition> operationDefinition = Optional.empty();
+    Set<String> fieldNames = CommonUtil.getClassFieldNames(interfaceDefinition.getClass());
+    Optional<? extends OperationDefinition> operationDefinition;
 
     for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
-      operationDefinition = createOperation(entry.getKey(), entry.getValue(), fieldNames,
-          interfaceDefinition instanceof InterfaceDefinitionType ? OperationDefinitionType.class :
-              OperationDefinitionTemplate.class);
+      operationDefinition =
+          createOperation(entry.getKey(), entry.getValue(), fieldNames, operationClass);
+      operationDefinition.ifPresent(operation -> addOperationToInterface(interfaceDefinition,
+          entry.getKey(), operation));
+    }
+  }
 
-      operationDefinition
-          .ifPresent(operation -> interfaceDefinition.addOperation(entry.getKey(), operation));
-
+  private static void addOperationToInterface(InterfaceDefinition interfaceDefinition,
+                                              String operationName,
+                                              OperationDefinition operationDefinition) {
+    if (interfaceDefinition instanceof InterfaceDefinitionType) {
+      InterfaceDefinitionType interfaceDefinitionType =
+          (InterfaceDefinitionType) interfaceDefinition;
+      interfaceDefinitionType.addOperation(operationName, (OperationDefinitionType)
+          operationDefinition);
+    }
+    if (interfaceDefinition instanceof InterfaceDefinitionTemplate) {
+      InterfaceDefinitionTemplate interfaceDefinitionTemplate =
+          (InterfaceDefinitionTemplate) interfaceDefinition;
+      interfaceDefinitionTemplate.addOperation(operationName, (OperationDefinitionTemplate)
+          operationDefinition);
     }
   }
 
