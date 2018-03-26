@@ -16,9 +16,8 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.openecomp.sdc.logging.spi.LoggerCreationService;
-
 import java.util.Objects;
+import org.openecomp.sdc.logging.spi.LoggerCreationService;
 
 /**
  * <a>Factory to hide a concrete, framework-specific implementation of logger creation.</a>
@@ -69,27 +68,7 @@ public class LoggerFactory {
             }
 
             @Override
-            public void metrics(String msg) {
-                // no-op
-            }
-
-            @Override
-            public void metrics(String msg, Object arg) {
-                // no-op
-            }
-
-            @Override
-            public void metrics(String msg, Object arg1, Object arg2) {
-                // no-op
-            }
-
-            @Override
-            public void metrics(String msg, Object... arguments) {
-                // no-op
-            }
-
-            @Override
-            public void metrics(String msg, Throwable t) {
+            public void metrics(MetricsData msg) {
                 // no-op
             }
 

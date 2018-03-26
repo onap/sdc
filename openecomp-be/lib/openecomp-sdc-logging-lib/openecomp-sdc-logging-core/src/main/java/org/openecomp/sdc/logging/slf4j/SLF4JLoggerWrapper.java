@@ -16,22 +16,16 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.BEGIN_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.CLIENT_IP_ADDRESS;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.ELAPSED_TIME;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.END_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_CODE;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_DESCRIPTION;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.STATUS_CODE;
-
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.MetricsData;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
+ * Delegates log calls to SLF4J API and MDC.
+ *
  * @author evitaliy
  * @since 08 Jan 18
  */
@@ -40,38 +34,15 @@ class SLF4JLoggerWrapper implements Logger {
     //The specified format presents time in UTC formatted per ISO 8601, as required by ONAP logging guidelines
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
-    private static final String PREFIX = "";
-
-    enum AuditField {
-
-        BEGIN_TIMESTAMP(PREFIX + "BeginTimestamp"),
-        END_TIMESTAMP(PREFIX + "EndTimestamp"),
-        ELAPSED_TIME(PREFIX + "ElapsedTime"),
-        STATUS_CODE(PREFIX + "StatusCode"),
-        RESPONSE_CODE(PREFIX + "ResponseCode"),
-        RESPONSE_DESCRIPTION(PREFIX + "ResponseDescription"),
-        CLIENT_IP_ADDRESS(PREFIX + "ClientIpAddress");
-
-        private final String key;
-
-        AuditField(String key) {
-            this.key = key;
-        }
-
-        public String asKey() {
-            return key;
-        }
-    }
-
     private final org.slf4j.Logger logger;
-
-    SLF4JLoggerWrapper(org.slf4j.Logger delegate) {
-        this.logger = delegate;
-    }
 
     // May cause http://www.slf4j.org/codes.html#loggerNameMismatch
     SLF4JLoggerWrapper(Class<?> clazz) {
         this(LoggerFactory.getLogger(clazz));
+    }
+
+    SLF4JLoggerWrapper(org.slf4j.Logger delegate) {
+        this.logger = delegate;
     }
 
     SLF4JLoggerWrapper(String className) {
@@ -89,28 +60,51 @@ class SLF4JLoggerWrapper implements Logger {
     }
 
     @Override
-    public void metrics(String msg) {
-        logger.info(Markers.METRICS, msg);
+    public void metrics(MetricsData data) {
+
+        if (data == null) {
+            return; // not going to fail because of null
+        }
+
+        try {
+            putMetricsOnMdc(data);
+            logger.info(Markers.METRICS, "");
+        } finally {
+            clearMetricsFromMdc();
+        }
     }
 
-    @Override
-    public void metrics(String msg, Object arg) {
-        logger.info(Markers.METRICS, msg, arg);
+    private void putMetricsOnMdc(MetricsData metrics) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
+        unsafePutOnMdc(MetricsField.BEGIN_TIMESTAMP, dateFormat.format(metrics.getStartTime()));
+        unsafePutOnMdc(MetricsField.END_TIMESTAMP, dateFormat.format(metrics.getEndTime()));
+        unsafePutOnMdc(MetricsField.ELAPSED_TIME, String.valueOf(metrics.getEndTime() - metrics.getStartTime()));
+        safePutOnMdc(MetricsField.RESPONSE_CODE, metrics.getResponseCode());
+        safePutOnMdc(MetricsField.RESPONSE_DESCRIPTION, metrics.getResponseDescription());
+        safePutOnMdc(MetricsField.CLIENT_IP_ADDRESS, metrics.getClientIpAddress());
+        safePutOnMdc(MetricsField.TARGET_ENTITY, metrics.getTargetEntity());
+        safePutOnMdc(MetricsField.TARGET_VIRTUAL_ENTITY, metrics.getTargetVirtualEntity());
+
+        if (metrics.getStatusCode() != null) {
+            unsafePutOnMdc(MetricsField.STATUS_CODE, metrics.getStatusCode().name());
+        }
     }
 
-    @Override
-    public void metrics(String msg, Object arg1, Object arg2) {
-        logger.info(Markers.METRICS, msg, arg1, arg2);
+    private void clearMetricsFromMdc() {
+        for (MetricsField f : MetricsField.values()) {
+            MDC.remove(f.asKey());
+        }
     }
 
-    @Override
-    public void metrics(String msg, Object... arguments) {
-        logger.info(Markers.METRICS, msg, arguments);
+    private static void unsafePutOnMdc(MDCField field, String value) {
+        MDC.put(field.asKey(), value);
     }
 
-    @Override
-    public void metrics(String msg, Throwable t) {
-        logger.info(Markers.METRICS, msg, t);
+    private static void safePutOnMdc(MDCField field, String value) {
+        if (value != null) {
+            unsafePutOnMdc(field, value);
+        }
     }
 
     @Override
@@ -125,36 +119,33 @@ class SLF4JLoggerWrapper implements Logger {
             return; // not failing if null
         }
 
-        putTimes(data);
-        putIfNotNull(RESPONSE_CODE.key, data.getResponseCode());
-        putIfNotNull(RESPONSE_DESCRIPTION.key, data.getResponseDescription());
-        putIfNotNull(CLIENT_IP_ADDRESS.key, data.getClientIpAddress());
-
-        if (data.getStatusCode() != null) {
-            MDC.put(STATUS_CODE.key, data.getStatusCode().name());
-        }
-
         try {
+            putAuditOnMdc(data);
             logger.info(Markers.AUDIT, "");
         } finally {
-            for (AuditField f : AuditField.values()) {
-                MDC.remove(f.key);
-            }
+            clearAuditFromMdc();
         }
     }
 
-    private void putIfNotNull(String key, String value) {
-        if (value != null) {
-            MDC.put(key, value);
+    private void putAuditOnMdc(AuditData audit) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
+        unsafePutOnMdc(AuditField.BEGIN_TIMESTAMP, dateFormat.format(audit.getStartTime()));
+        unsafePutOnMdc(AuditField.END_TIMESTAMP, dateFormat.format(audit.getEndTime()));
+        unsafePutOnMdc(AuditField.ELAPSED_TIME, String.valueOf(audit.getEndTime() - audit.getStartTime()));
+        safePutOnMdc(AuditField.RESPONSE_CODE, audit.getResponseCode());
+        safePutOnMdc(AuditField.RESPONSE_DESCRIPTION, audit.getResponseDescription());
+        safePutOnMdc(AuditField.CLIENT_IP_ADDRESS, audit.getClientIpAddress());
+
+        if (audit.getStatusCode() != null) {
+            unsafePutOnMdc(AuditField.STATUS_CODE, audit.getStatusCode().name());
         }
     }
 
-    private void putTimes(AuditData data) {
-        // SimpleDateFormat is not thread-safe and cannot be a constant
-        Format dateTimeFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
-        MDC.put(BEGIN_TIMESTAMP.key, dateTimeFormat.format(data.getStartTime()));
-        MDC.put(END_TIMESTAMP.key, dateTimeFormat.format(data.getEndTime()));
-        MDC.put(ELAPSED_TIME.key, String.valueOf(data.getEndTime() - data.getStartTime()));
+    private void clearAuditFromMdc() {
+        for (AuditField f : AuditField.values()) {
+            MDC.remove(f.asKey());
+        }
     }
 
     @Override

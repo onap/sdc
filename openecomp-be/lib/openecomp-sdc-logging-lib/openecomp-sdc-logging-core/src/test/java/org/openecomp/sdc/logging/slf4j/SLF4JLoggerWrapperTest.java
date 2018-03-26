@@ -16,13 +16,13 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.BEGIN_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.CLIENT_IP_ADDRESS;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.ELAPSED_TIME;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.END_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_CODE;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_DESCRIPTION;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.STATUS_CODE;
+import static org.openecomp.sdc.logging.slf4j.AuditField.BEGIN_TIMESTAMP;
+import static org.openecomp.sdc.logging.slf4j.AuditField.CLIENT_IP_ADDRESS;
+import static org.openecomp.sdc.logging.slf4j.AuditField.ELAPSED_TIME;
+import static org.openecomp.sdc.logging.slf4j.AuditField.END_TIMESTAMP;
+import static org.openecomp.sdc.logging.slf4j.AuditField.RESPONSE_CODE;
+import static org.openecomp.sdc.logging.slf4j.AuditField.RESPONSE_DESCRIPTION;
+import static org.openecomp.sdc.logging.slf4j.AuditField.STATUS_CODE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -147,7 +147,6 @@ public class SLF4JLoggerWrapperTest {
     }
 
     interface SpyLogger extends Logger {
-
         Map<String, String> mdc();
     }
 
@@ -168,13 +167,13 @@ public class SLF4JLoggerWrapperTest {
 
     private static class SpyingInvocationHandler implements InvocationHandler {
 
-        private Map<String, String> mdc;
+        private Map<String, String> lastMdc;
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
 
             if (isReturnMdcMethod(method)) {
-                return mdc;
+                return lastMdc;
             }
 
             if (!isAuditMethod(method, args)) {
@@ -191,7 +190,7 @@ public class SLF4JLoggerWrapperTest {
         }
 
         private void storeEffectiveMdc() {
-            mdc = MDC.getCopyOfContextMap();
+            lastMdc = MDC.getCopyOfContextMap();
         }
 
         private boolean isReturnMdcMethod(Method method) {

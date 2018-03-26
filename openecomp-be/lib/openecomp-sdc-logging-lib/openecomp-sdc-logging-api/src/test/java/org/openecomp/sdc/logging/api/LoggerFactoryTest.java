@@ -16,14 +16,15 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.testng.annotations.Test;
-
-import java.lang.reflect.Field;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.lang.reflect.Field;
+import org.testng.annotations.Test;
+
 /**
+ * Unit-test creation of a logger via factory, assuming not default binding.
+ *
  * @author evitaliy
  * @since 14/09/2016.
  */
@@ -71,6 +72,6 @@ public class LoggerFactoryTest {
         logger.info("");
         logger.debug("");
         logger.audit(null);
-        logger.metrics("");
+        logger.metrics(null);
     }
 }

@@ -31,15 +31,7 @@ public interface Logger {
 
     boolean isMetricsEnabled();
 
-    void metrics(String msg);
-
-    void metrics(String msg, Object arg);
-
-    void metrics(String msg, Object arg1, Object arg2);
-
-    void metrics(String msg, Object... arguments);
-
-    void metrics(String msg, Throwable t);
+    void metrics(MetricsData data);
 
     boolean isAuditEnabled();
 
