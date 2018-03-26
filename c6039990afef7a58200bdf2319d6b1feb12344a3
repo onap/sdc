@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c0b8d7e7",
+        "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-03-26T05:28:17Z",
+      "side": 1,
+      "message": "this is not needed since thsi is done by a chef recapie",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "c6039990afef7a58200bdf2319d6b1feb12344a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
