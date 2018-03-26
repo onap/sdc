@@ -17,23 +17,24 @@
 package org.openecomp.sdc.logging.slf4j;
 
 /**
- * MDC fields that represent context data.
+ * MDC fields that represent audit data.
  *
  * @author evitaliy
- * @since 23 Mar 2018
+ * @since 25 Mar 2018
  */
-enum ContextField implements MDCField {
+enum AuditField implements MDCField {
 
-    REQUEST_ID("RequestId"),
-    SERVICE_NAME("ServiceName"),
-    PARTNER_NAME("PartnerName"),
-    INSTANCE_ID("InstanceId"),
-    SERVER("Server"),
-    SERVER_IP_ADDRESS("ServerIpAddress");
+    BEGIN_TIMESTAMP("BeginTimestamp"),
+    END_TIMESTAMP("EndTimestamp"),
+    ELAPSED_TIME("ElapsedTime"),
+    STATUS_CODE("StatusCode"),
+    RESPONSE_CODE("ResponseCode"),
+    RESPONSE_DESCRIPTION("ResponseDescription"),
+    CLIENT_IP_ADDRESS("ClientIpAddress");
 
     private final String key;
 
-    ContextField(String key) {
+    AuditField(String key) {
         this.key = key;
     }
 

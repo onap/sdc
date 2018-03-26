@@ -25,7 +25,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.logging.api.annotations.Metrics;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
@@ -63,7 +62,6 @@ public class OrchestrationTemplateCandidateManagerImpl
   }
 
   @Override
-  @Metrics
   public UploadFileResponse upload(String vspId, Version version, InputStream fileToUpload,
                                    String fileSuffix, String networkPackageName) {
     OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
