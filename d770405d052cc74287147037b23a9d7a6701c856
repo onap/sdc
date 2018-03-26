@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_004f9f93",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/mocks/ItemManagerMock.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T06:41:31Z",
+      "side": 1,
+      "message": "Why was it removed? It indicated that the method was empty on purpose and not left empty by mistake. Even static analysis will complain about it.",
+      "revId": "d770405d052cc74287147037b23a9d7a6701c856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_605d4348",
+        "filename": "services/activity-spec/config/readme.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T06:41:31Z",
+      "side": 1,
+      "message": "Why were this directory + file re-added back? We don\u0027t need this placeholder as it\u0027s used nowhere.",
+      "revId": "d770405d052cc74287147037b23a9d7a6701c856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
