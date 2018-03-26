@@ -19,6 +19,52 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_19bf1ad2",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/Implementation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-26T12:13:26Z",
+      "side": 1,
+      "message": "do you care about the order of the items in the lists or you just want to make sure that all values from this.dependencies are exists in that.dependencied?\nList.equals will fail if all values in list A exist in list B but in different order. \nplease keep that in mind.\nif the order is not relevant for your comparison, create set of each list and then use set1.equals(set2)",
+      "range": {
+        "startLine": 41,
+        "startChar": 39,
+        "endLine": 41,
+        "endChar": 86
+      },
+      "revId": "6bc90bd78bdd9a24c7ba76d5856f650d4fcc050d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_39ac568c",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinitionTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-03-26T12:13:26Z",
+      "side": 1,
+      "message": "in order to use Objects.equals, you must get familiar with equals function of the first argument class.\n\nObjects.equals(operations, that.operations);\nthis will first do a comparison that all keys from this exist in that keys and for each key it will check if the value is of the same type regardless of the values in the members of OperationDefinitionTemplate.\n\nthis can give you bad behavior.\n\nmaybe you should use compare instead(but the your object should be comparable )",
+      "range": {
+        "startLine": 60,
+        "startChar": 11,
+        "endLine": 61,
+        "endChar": 52
+      },
+      "revId": "6bc90bd78bdd9a24c7ba76d5856f650d4fcc050d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_3919b622",
         "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinitionType.java",
         "patchSetId": 1
