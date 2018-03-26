@@ -89,6 +89,12 @@ spec:
               fieldPath: status.podIP
         - name: JAVA_OPTIONS
           value: ""
+        - name: SDC_USER
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_user}
+        - name: SDC_PASSWORD
+          valueFrom:
+            secretKeyRef: {name: sdc-cs-secret, key: sdc_password}
         lifecycle:
           postStart:
             exec:
