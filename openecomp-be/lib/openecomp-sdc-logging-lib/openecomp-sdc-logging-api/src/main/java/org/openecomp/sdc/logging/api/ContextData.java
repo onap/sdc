@@ -17,8 +17,9 @@
 package org.openecomp.sdc.logging.api;
 
 /**
- * Builder to populate logging context data. This includes only data known to an application, and not otherwise
- * available to the logging framework.
+ * Builder to populate logging <i>context</i> data, i.e. data that should be available to any log writing event
+ * throughout an application. This includes only data known at some point to the application (e.g. at an API call),
+ * and not otherwise available to the logging framework (e.g. information about local runtime, machine, etc.).
  *
  * @author evitaliy
  * @since Mar 22, 2018

@@ -19,7 +19,8 @@ package org.openecomp.sdc.logging.slf4j;
 import java.net.InetAddress;
 import java.util.EnumMap;
 import java.util.Map;
-import org.openecomp.sdc.logging.GlobalLoggingContext;
+import org.openecomp.sdc.logging.context.HostAddress;
+import org.openecomp.sdc.logging.context.InstanceId;
 
 /**
  * Maps global logging context to corresponding MDC fields.
@@ -29,13 +30,15 @@ import org.openecomp.sdc.logging.GlobalLoggingContext;
  */
 class GlobalContextProvider implements ContextProvider {
 
+    private static final HostAddress HOST_ADDRESS_CACHE = new HostAddress();
+
     @Override
     public Map<ContextField, String> values() {
 
         Map<ContextField, String> values = new EnumMap<>(ContextField.class);
-        values.put(ContextField.INSTANCE_ID, GlobalLoggingContext.getInstanceId());
+        values.put(ContextField.INSTANCE_ID, InstanceId.get());
 
-        InetAddress hostAddress = GlobalLoggingContext.getHostAddress();
+        InetAddress hostAddress = HOST_ADDRESS_CACHE.get();
         if (hostAddress != null) {
             values.put(ContextField.SERVER, hostAddress.getHostName());
             values.put(ContextField.SERVER_IP_ADDRESS, hostAddress.getHostAddress());

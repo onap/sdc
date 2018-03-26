@@ -17,15 +17,15 @@
 package org.openecomp.sdc.logging.api;
 
 /**
- * Builder to populate <i>audit</i> data. This includes only data known to an application, and not otherwise available
- * to the logging framework. As opposed, for example, to local runtime, host address, etc.
+ * Builder to populate <i>metrics</i> data. This includes only data known to an application, and not otherwise available
+ * to the logging framework.
  *
- * @author KATYR, evitaliy
- * @since February 15, 2018
+ * @author evitaliy
+ * @since 26 Mar 2018
  */
-public class AuditData {
+public class MetricsData {
 
-    // don't inherit from MetricsData because it has a very different meaning
+    // don't inherit from AuditData because it has a very different meaning
 
     private final long startTime;
     private final long endTime;
@@ -33,14 +33,18 @@ public class AuditData {
     private final String responseCode;
     private final String responseDescription;
     private final String clientIpAddress;
+    private final String targetVirtualEntity;
+    private final String targetEntity;
 
-    private AuditData(final AuditDataBuilder builder) {
+    private MetricsData(final MetricsDataBuilder builder) {
         this.startTime = builder.startTime;
         this.endTime = builder.endTime;
         this.statusCode = builder.statusCode;
         this.responseCode = builder.responseCode;
         this.responseDescription = builder.responseDescription;
         this.clientIpAddress = builder.clientIpAddress;
+        this.targetEntity = builder.targetEntity;
+        this.targetVirtualEntity = builder.targetVirtualEntity;
     }
 
     /**
@@ -97,6 +101,24 @@ public class AuditData {
         return clientIpAddress;
     }
 
+    /**
+     * External entity invoked by the local system.
+     *
+     * @return identifier of an external entity (system, component, sub-component)
+     */
+    public String getTargetEntity() {
+        return targetEntity;
+    }
+
+    /**
+     * External API invoked by the local system.
+     *
+     * @return name of an external API
+     */
+    public String getTargetVirtualEntity() {
+        return targetVirtualEntity;
+    }
+
     @Override
     public String toString() {
         return "AuditData{startTime=" + startTime + ", endTime=" + endTime + ", statusCode=" + statusCode
@@ -104,14 +126,14 @@ public class AuditData {
                 + ", clientIpAddress=" + clientIpAddress + '}';
     }
 
-    public static AuditDataBuilder builder() {
-        return new AuditDataBuilder();
+    public static MetricsDataBuilder builder() {
+        return new MetricsDataBuilder();
     }
 
     /**
-     * Fluent API for building audit data.
+     * Fluent API for building metrics data.
      */
-    public static class AuditDataBuilder {
+    public static class MetricsDataBuilder {
 
         private long startTime;
         private long endTime;
@@ -119,8 +141,10 @@ public class AuditData {
         private String responseCode;
         private String responseDescription;
         private String clientIpAddress;
+        private String targetEntity;
+        private String targetVirtualEntity;
 
-        AuditDataBuilder() { /* package-private default constructor to hide the public one */ }
+        MetricsDataBuilder() { /* package-private default constructor to hide the public one */ }
 
         /**
          * Begin timestamp of an activity being audited.
@@ -128,7 +152,7 @@ public class AuditData {
          * @param startTime local timestamp, usually received from {@link System#currentTimeMillis()}
          * @return this builder for fluent API
          */
-        public AuditDataBuilder startTime(final long startTime) {
+        public MetricsDataBuilder startTime(final long startTime) {
             this.startTime = startTime;
             return this;
         }
@@ -139,7 +163,7 @@ public class AuditData {
          * @param endTime local timestamp, usually received from {@link System#currentTimeMillis()}
          * @return this builder for fluent API
          */
-        public AuditDataBuilder endTime(final long endTime) {
+        public MetricsDataBuilder endTime(final long endTime) {
             this.endTime = endTime;
             return this;
         }
@@ -151,7 +175,7 @@ public class AuditData {
          * @param statusCode invocation status success/failure
          * @return this builder for fluent API
          */
-        public AuditDataBuilder statusCode(final StatusCode statusCode) {
+        public MetricsDataBuilder statusCode(final StatusCode statusCode) {
             this.statusCode = statusCode;
             return this;
         }
@@ -162,7 +186,7 @@ public class AuditData {
          * @param responseCode response code that depends on application and invocation protocol
          * @return this builder for fluent API
          */
-        public AuditDataBuilder responseCode(final String responseCode) {
+        public MetricsDataBuilder responseCode(final String responseCode) {
             this.responseCode = responseCode;
             return this;
         }
@@ -174,7 +198,7 @@ public class AuditData {
          * @param responseDescription human-friendly response description
          * @return this builder for fluent API
          */
-        public AuditDataBuilder responseDescription(final String responseDescription) {
+        public MetricsDataBuilder responseDescription(final String responseDescription) {
             this.responseDescription = responseDescription;
             return this;
         }
@@ -185,18 +209,40 @@ public class AuditData {
          * @param clientIpAddress IP address
          * @return this builder for fluent API
          */
-        public AuditDataBuilder clientIpAddress(final String clientIpAddress) {
+        public MetricsDataBuilder clientIpAddress(final String clientIpAddress) {
             this.clientIpAddress = clientIpAddress;
             return this;
         }
 
         /**
-         * Create an instance of {@link AuditData}.
+         * External entity at which the operation is invoked.
+         *
+         * @param targetEntity external entity identifier
+         * @return this builder for fluent API
+         */
+        public MetricsDataBuilder setTargetEntity(String targetEntity) {
+            this.targetEntity = targetEntity;
+            return this;
+        }
+
+        /**
+         * Name of the API or operation activities invoked at the external entity.
+         *
+         * @param targetVirtualEntity invoked external API
+         * @return this builder for fluent API
+         */
+        public MetricsDataBuilder setTargetVirtualEntity(String targetVirtualEntity) {
+            this.targetVirtualEntity = targetVirtualEntity;
+            return this;
+        }
+
+        /**
+         * Create an instance of {@link MetricsData}.
          *
          * @return a populated instance of audit data
          */
-        public AuditData build() {
-            return new AuditData(this);
+        public MetricsData build() {
+            return new MetricsData(this);
         }
     }
 }
