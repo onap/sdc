@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_791f3e0a",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/Implementation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T11:39:05Z",
+      "side": 1,
+      "message": "Why was the copyright header removed?",
+      "revId": "6bc90bd78bdd9a24c7ba76d5856f650d4fcc050d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3919b622",
+        "filename": "common/openecomp-tosca-datatype/src/main/java/org/openecomp/sdc/tosca/datatypes/model/InterfaceDefinitionType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T11:39:05Z",
+      "side": 1,
+      "message": "What is the reason for changing the header?",
+      "revId": "6bc90bd78bdd9a24c7ba76d5856f650d4fcc050d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f9d26e33",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1348,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T11:39:05Z",
+      "side": 1,
+      "message": "Looks like a smell due to incorrect use of object-oriented. Can we discuss it off-line?",
+      "range": {
+        "startLine": 1334,
+        "startChar": 0,
+        "endLine": 1348,
+        "endChar": 5
+      },
+      "revId": "6bc90bd78bdd9a24c7ba76d5856f650d4fcc050d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
