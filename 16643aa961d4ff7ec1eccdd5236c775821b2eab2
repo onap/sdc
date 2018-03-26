@@ -91,6 +91,23 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_63c30d8b",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T07:09:43Z",
+      "side": 1,
+      "message": "All of them entities have Status.EXPECTATION_FAILED, while the response status differs between responses. Is it a mistake or was done on purpose?",
+      "revId": "16643aa961d4ff7ec1eccdd5236c775821b2eab2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_e75c12f0",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
         "patchSetId": 1
@@ -108,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_e3e87d18",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T07:09:43Z",
+      "side": 1,
+      "message": "Good point, thanks!",
+      "parentUuid": "5a93c517_e75c12f0",
+      "revId": "16643aa961d4ff7ec1eccdd5236c775821b2eab2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_07057ec1",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
         "patchSetId": 1
@@ -119,6 +154,24 @@
       "writtenOn": "2018-03-23T11:21:34Z",
       "side": 1,
       "message": "there is a lot of code duplications in response creating. Please extract function and remove duplicates.",
+      "revId": "16643aa961d4ff7ec1eccdd5236c775821b2eab2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_23e66545",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T07:09:43Z",
+      "side": 1,
+      "message": "Excellent point. I think it must be fixed.",
+      "parentUuid": "5a93c517_07057ec1",
       "revId": "16643aa961d4ff7ec1eccdd5236c775821b2eab2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
