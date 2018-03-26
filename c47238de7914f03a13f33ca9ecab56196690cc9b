@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e3b5ddd0",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/CompositionEntityDataManagerImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T07:43:00Z",
+      "side": 1,
+      "message": "Please look into your Inbox. I sent an email to you regarding fixing Sonar violations.",
+      "revId": "c47238de7914f03a13f33ca9ecab56196690cc9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
