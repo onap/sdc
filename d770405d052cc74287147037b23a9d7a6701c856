@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_a31fd55a",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/mocks/ItemManagerMock.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-26T07:46:07Z",
+      "side": 1,
+      "message": "There was conflict in two reviews. Probabaly changes lost due to that. Also refactored the test and now this class will no longer be required. Raising different review for same.",
+      "parentUuid": "5a93c517_004f9f93",
+      "revId": "d770405d052cc74287147037b23a9d7a6701c856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_605d4348",
         "filename": "services/activity-spec/config/readme.txt",
         "patchSetId": 9
@@ -30,6 +48,24 @@
       "writtenOn": "2018-03-26T06:41:31Z",
       "side": 1,
       "message": "Why were this directory + file re-added back? We don\u0027t need this placeholder as it\u0027s used nowhere.",
+      "revId": "d770405d052cc74287147037b23a9d7a6701c856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6339cdd7",
+        "filename": "services/activity-spec/config/readme.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-26T07:46:07Z",
+      "side": 1,
+      "message": "Deleting it and resubmitting again",
+      "parentUuid": "5a93c517_605d4348",
       "revId": "d770405d052cc74287147037b23a9d7a6701c856",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
