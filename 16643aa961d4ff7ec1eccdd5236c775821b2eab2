@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_80508f5f",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/ActivitySpecErrorResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-26T06:25:19Z",
+      "side": 1,
+      "message": "This is only partially correct. These classes are used by another mechanism that relies on a default constructor and setters. So making the class immutable will break stuff. For now we are introducing Lombok in order to avoid writing setters/getters manually. Equals and toString are a bonus. We\u0027ll reconsider immutability as soon as the mechanism that relies on setters has been fixed.",
+      "parentUuid": "5a93c517_27c19ae4",
+      "revId": "16643aa961d4ff7ec1eccdd5236c775821b2eab2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_e75c12f0",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
         "patchSetId": 1
