@@ -16,13 +16,6 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.BEGIN_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.CLIENT_IP_ADDRESS;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.ELAPSED_TIME;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.END_TIMESTAMP;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_CODE;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.RESPONSE_DESCRIPTION;
-import static org.openecomp.sdc.logging.slf4j.SLF4JLoggerWrapper.AuditField.STATUS_CODE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -33,9 +26,11 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 import org.openecomp.sdc.logging.api.AuditData;
+import org.openecomp.sdc.logging.api.MetricsData;
 import org.openecomp.sdc.logging.api.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
+import org.slf4j.Marker;
 import org.testng.annotations.Test;
 
 /**
@@ -53,101 +48,209 @@ public class SLF4JLoggerWrapperTest {
     }
 
     @Test
-    public void beginTimeAvailableWhenPassed() {
+    public void metricsDoesNotFailWhenInputNull() {
+        new SLF4JLoggerWrapper(this.getClass()).metrics((MetricsData) null);
+    }
+
+    @Test
+    public void auditBeginTimeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         long start = System.currentTimeMillis();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().startTime(start).build());
-        assertNotNull(spy.mdc().get(BEGIN_TIMESTAMP.asKey()));
+        assertNotNull(spy.mdc().get(AuditField.BEGIN_TIMESTAMP.asKey()));
     }
 
     @Test
-    public void entTimeAvailableWhenPassed() {
+    public void metricsBeginTimeAvailableWhenPassed() {
+        SpyLogger spy = createSpy();
+        long start = System.currentTimeMillis();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().startTime(start).build());
+        assertNotNull(spy.mdc().get(MetricsField.BEGIN_TIMESTAMP.asKey()));
+    }
+
+    @Test
+    public void auditEndTimeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         long end = System.currentTimeMillis();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().endTime(end).build());
-        assertNotNull(spy.mdc().get(END_TIMESTAMP.asKey()));
+        assertNotNull(spy.mdc().get(AuditField.END_TIMESTAMP.asKey()));
     }
 
     @Test
-    public void elapsedTimeAvailableWhenPassed() {
+    public void metricsEndTimeAvailableWhenPassed() {
+        SpyLogger spy = createSpy();
+        long end = System.currentTimeMillis();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().endTime(end).build());
+        assertNotNull(spy.mdc().get(MetricsField.END_TIMESTAMP.asKey()));
+    }
+
+    @Test
+    public void auditElapsedTimeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         long start = System.currentTimeMillis();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder()
-            .startTime(start).endTime(start).build());
-        assertNotNull(spy.mdc().get(ELAPSED_TIME.asKey()));
+                                                   .startTime(start).endTime(start + 777).build());
+        assertEquals("777", spy.mdc().get(AuditField.ELAPSED_TIME.asKey()));
     }
 
     @Test
-    public void statusCodeAvailableWhenPassed() {
+    public void metricsElapsedTimeAvailableWhenPassed() {
+        SpyLogger spy = createSpy();
+        long start = System.currentTimeMillis();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder()
+                                                       .startTime(start).endTime(start + 1024).build());
+        assertEquals("1024", spy.mdc().get(MetricsField.ELAPSED_TIME.asKey()));
+    }
+
+    @Test
+    public void auditStatusCodeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().statusCode(StatusCode.COMPLETE).build());
-        assertEquals(spy.mdc().get(STATUS_CODE.asKey()), StatusCode.COMPLETE.name());
+        assertEquals(spy.mdc().get(AuditField.STATUS_CODE.asKey()), StatusCode.COMPLETE.name());
     }
 
     @Test
-    public void statusCodeEmptyWhenNotPassed() {
+    public void metricsStatusCodeAvailableWhenPassed() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().statusCode(StatusCode.COMPLETE).build());
+        assertEquals(spy.mdc().get(MetricsField.STATUS_CODE.asKey()), StatusCode.COMPLETE.name());
+    }
+
+    @Test
+    public void auditStatusCodeEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(STATUS_CODE.asKey()));
+        assertNull(spy.mdc().get(AuditField.STATUS_CODE.asKey()));
     }
 
     @Test
-    public void responseCodeAvailableWhenPassed() {
-        final String responseCode = "SpyResponse";
+    public void metricsStatusCodeEmptyWhenNotPassed() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().build());
+        assertNull(spy.mdc().get(MetricsField.STATUS_CODE.asKey()));
+    }
+
+    @Test
+    public void auditResponseCodeAvailableWhenPassed() {
+        final String responseCode = "AuditSpyResponse";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseCode(responseCode).build());
-        assertEquals(spy.mdc().get(RESPONSE_CODE.asKey()), responseCode);
+        assertEquals(spy.mdc().get(AuditField.RESPONSE_CODE.asKey()), responseCode);
     }
 
     @Test
-    public void responseCodeEmptyWhenNotPassed() {
+    public void metricsResponseCodeAvailableWhenPassed() {
+        final String responseCode = "MetricsSpyResponse";
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().responseCode(responseCode).build());
+        assertEquals(spy.mdc().get(MetricsField.RESPONSE_CODE.asKey()), responseCode);
+    }
+
+    @Test
+    public void auditResponseCodeEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(RESPONSE_CODE.asKey()));
+        assertNull(spy.mdc().get(AuditField.RESPONSE_CODE.asKey()));
     }
 
     @Test
-    public void responseDescriptionAvailableWhenPassed() {
-        final String responseDescription = "SpyDescription";
+    public void metricsResponseCodeEmptyWhenNotPassed() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().build());
+        assertNull(spy.mdc().get(MetricsField.RESPONSE_CODE.asKey()));
+    }
+
+    @Test
+    public void auditResponseDescriptionAvailableWhenPassed() {
+        final String responseDescription = "AuditSpyDescription";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseDescription(responseDescription).build());
-        assertEquals(spy.mdc().get(RESPONSE_DESCRIPTION.asKey()), responseDescription);
+        assertEquals(spy.mdc().get(AuditField.RESPONSE_DESCRIPTION.asKey()), responseDescription);
     }
 
     @Test
-    public void responseDescriptionEmptyWhenNotPassed() {
+    public void metricsResponseDescriptionAvailableWhenPassed() {
+        final String responseDescription = "MetricsSpyDescription";
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().responseDescription(responseDescription).build());
+        assertEquals(spy.mdc().get(MetricsField.RESPONSE_DESCRIPTION.asKey()), responseDescription);
+    }
+
+    @Test
+    public void auditResponseDescriptionEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(RESPONSE_DESCRIPTION.asKey()));
+        assertNull(spy.mdc().get(AuditField.RESPONSE_DESCRIPTION.asKey()));
     }
 
     @Test
-    public void clientIpAddressAvailableWhenPassed() {
+    public void metricsResponseDescriptionEmptyWhenNotPassed() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().build());
+        assertNull(spy.mdc().get(MetricsField.RESPONSE_DESCRIPTION.asKey()));
+    }
+
+    @Test
+    public void auditClientIpAddressAvailableWhenPassed() {
         final String ipAddress = "10.56.20.20";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().clientIpAddress(ipAddress).build());
-        assertEquals(spy.mdc().get(CLIENT_IP_ADDRESS.asKey()), ipAddress);
+        assertEquals(spy.mdc().get(AuditField.CLIENT_IP_ADDRESS.asKey()), ipAddress);
     }
 
     @Test
-    public void clientIpAddressEmptyWhenNotPassed() {
+    public void metricsClientIpAddressAvailableWhenPassed() {
+        final String ipAddress = "10.56.20.22";
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().clientIpAddress(ipAddress).build());
+        assertEquals(spy.mdc().get(MetricsField.CLIENT_IP_ADDRESS.asKey()), ipAddress);
+    }
+
+    @Test
+    public void auditClientIpAddressEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
-        assertNull(spy.mdc().get(CLIENT_IP_ADDRESS.asKey()));
+        assertNull(spy.mdc().get(AuditField.CLIENT_IP_ADDRESS.asKey()));
     }
 
     @Test
-    public void elapsedTimeEqualsDifferenceBetweenStartAndEnd() {
+    public void metricsClientIpAddressEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
-        final long diff = 1024;
-        long start = System.currentTimeMillis();
-        long end = start + diff;
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().startTime(start).endTime(end).build());
-        assertEquals(spy.mdc().get(ELAPSED_TIME.asKey()), Long.toString(diff));
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().build());
+        assertNull(spy.mdc().get(MetricsField.CLIENT_IP_ADDRESS.asKey()));
+    }
+
+    @Test
+    public void metricsTargetEntityAvailableWhenPassed() {
+        final String targetEntity = "MetricsTargetEntity";
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().targetEntity(targetEntity).build());
+        assertEquals(spy.mdc().get(MetricsField.TARGET_ENTITY.asKey()), targetEntity);
+    }
+
+    @Test
+    public void metricsTargetEntityEmptyWhenNotPassed() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().build());
+        assertNull(spy.mdc().get(MetricsField.TARGET_ENTITY.asKey()));
+    }
+
+    @Test
+    public void metricsTargetVirtualEntityAvailableWhenPassed() {
+        final String targetEntity = "MetricsTargetVirtualEntity";
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().targetVirtualEntity(targetEntity).build());
+        assertEquals(spy.mdc().get(MetricsField.TARGET_VIRTUAL_ENTITY.asKey()), targetEntity);
+    }
+
+    @Test
+    public void metricsTargetVirtualEntityEmptyWhenNotPassed() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().build());
+        assertNull(spy.mdc().get(MetricsField.TARGET_VIRTUAL_ENTITY.asKey()));
     }
 
     interface SpyLogger extends Logger {
-
         Map<String, String> mdc();
     }
 
@@ -168,16 +271,16 @@ public class SLF4JLoggerWrapperTest {
 
     private static class SpyingInvocationHandler implements InvocationHandler {
 
-        private Map<String, String> mdc;
+        private Map<String, String> lastMdc;
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
 
             if (isReturnMdcMethod(method)) {
-                return mdc;
+                return lastMdc;
             }
 
-            if (!isAuditMethod(method, args)) {
+            if (!isAuditMethod(method, args) && !isMetricsMethod(method, args)) {
                 throw new UnsupportedOperationException("Method " + method.getName() + " with arguments "
                         + Arrays.toString(args) + " wasn't supposed to be called");
             }
@@ -186,12 +289,20 @@ public class SLF4JLoggerWrapperTest {
             return null;
         }
 
+        private boolean isMetricsMethod(Method method, Object[] args) {
+            return isSpecialLogMethod(method, args, Markers.METRICS);
+        }
+
         private boolean isAuditMethod(Method method, Object[] args) {
-            return (method.getName().equals("info") && args.length > 0 && args[0].equals(Markers.AUDIT));
+            return isSpecialLogMethod(method, args, Markers.AUDIT);
+        }
+
+        private boolean isSpecialLogMethod(Method method, Object[] args, Marker marker) {
+            return method.getName().equals("info") && args.length > 0 && args[0].equals(marker);
         }
 
         private void storeEffectiveMdc() {
-            mdc = MDC.getCopyOfContextMap();
+            lastMdc = MDC.getCopyOfContextMap();
         }
 
         private boolean isReturnMdcMethod(Method method) {
