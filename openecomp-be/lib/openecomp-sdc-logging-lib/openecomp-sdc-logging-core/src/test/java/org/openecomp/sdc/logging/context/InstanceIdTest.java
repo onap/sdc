@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.logging.slf4j;
+package org.openecomp.sdc.logging.context;
+
+import static org.testng.Assert.assertNotNull;
+
+import org.testng.annotations.Test;
 
 /**
- * MDC fields that represent context data.
+ * Retrieval of instance ID.
  *
  * @author evitaliy
- * @since 23 Mar 2018
+ * @since 28 Mar 2018
  */
-enum ContextField implements MDCField {
+public class InstanceIdTest {
 
-    REQUEST_ID("RequestId"),
-    SERVICE_NAME("ServiceName"),
-    PARTNER_NAME("PartnerName"),
-    INSTANCE_ID("InstanceId"),
-    SERVER("Server"),
-    SERVER_IP_ADDRESS("ServerIpAddress");
-
-    private final String key;
-
-    ContextField(String key) {
-        this.key = key;
+    @Test
+    public void makeSureInstanceIdNotNull() {
+        assertNotNull(InstanceId.get());
     }
 
-    public String asKey() {
-        return key;
-    }
 }

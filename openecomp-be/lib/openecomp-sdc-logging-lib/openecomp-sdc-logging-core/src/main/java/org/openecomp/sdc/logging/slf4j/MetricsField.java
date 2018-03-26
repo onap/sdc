@@ -17,27 +17,31 @@
 package org.openecomp.sdc.logging.slf4j;
 
 /**
- * MDC fields that represent context data.
+ * DC fields that represent metrics data.
  *
  * @author evitaliy
- * @since 23 Mar 2018
+ * @since 26 Mar 2018
  */
-enum ContextField implements MDCField {
+public enum MetricsField implements MDCField {
 
-    REQUEST_ID("RequestId"),
-    SERVICE_NAME("ServiceName"),
-    PARTNER_NAME("PartnerName"),
-    INSTANCE_ID("InstanceId"),
-    SERVER("Server"),
-    SERVER_IP_ADDRESS("ServerIpAddress");
+    BEGIN_TIMESTAMP("BeginTimestamp"),
+    END_TIMESTAMP("EndTimestamp"),
+    ELAPSED_TIME("ElapsedTime"),
+    STATUS_CODE("StatusCode"),
+    RESPONSE_CODE("ResponseCode"),
+    RESPONSE_DESCRIPTION("ResponseDescription"),
+    CLIENT_IP_ADDRESS("ClientIpAddress"),
+    TARGET_VIRTUAL_ENTITY("TargetVirtualEntity"),
+    TARGET_ENTITY("TargetEntity");
 
     private final String key;
 
-    ContextField(String key) {
+    MetricsField(String key) {
         this.key = key;
     }
 
     public String asKey() {
         return key;
     }
+
 }

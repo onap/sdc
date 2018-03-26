@@ -31,15 +31,15 @@ public interface Logger {
 
     boolean isMetricsEnabled();
 
+    void metrics(MetricsData data);
+
+    /**
+     * Kept for backward compatibility. The {@link #metrics(MetricsData)} must be used instead.
+     *
+     * @param msg
+     */
+    @Deprecated
     void metrics(String msg);
-
-    void metrics(String msg, Object arg);
-
-    void metrics(String msg, Object arg1, Object arg2);
-
-    void metrics(String msg, Object... arguments);
-
-    void metrics(String msg, Throwable t);
 
     boolean isAuditEnabled();
 
