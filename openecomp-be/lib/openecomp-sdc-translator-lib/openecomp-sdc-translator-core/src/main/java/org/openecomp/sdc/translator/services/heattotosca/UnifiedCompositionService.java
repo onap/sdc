@@ -36,7 +36,6 @@ import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositi
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewComputeNodeTemplateId;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewPortNodeTemplateId;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewSubInterfaceNodeTemplateId;
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getSubInterfacePortTemplateConsolidationData;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getSubInterfaceTemplateConsolidationDataList;
 import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getSubInterfaceTypeSuffix;
 
@@ -282,46 +281,53 @@ public class UnifiedCompositionService {
     if (!TranslationContext.isVfcInstanceGroupingEnabled()) {
       return;
     }
-    for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
-      List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-          getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
-      if (CollectionUtils.isNotEmpty(subInterfaceTemplateConsolidationDataList)) {
-        createVfcInstanceGroupPerSubInterface(abstractNodeTemplateId, serviceTemplate,
-            subInterfaceTemplateConsolidationDataList, context);
+    UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(serviceTemplate, null,
+        unifiedCompositionDataList, context);
+    unifiedCompositionDataList.forEach(unifiedCompositionData ->
+        createSubInterfaceVfcInstanceGroup(abstractNodeTemplateId, unifiedCompositionTo, unifiedCompositionData));
+  }
+
+  private void createSubInterfaceVfcInstanceGroup(String abstractNodeTemplateId,
+                                                  UnifiedCompositionTo unifiedCompositionTo,
+                                                  UnifiedCompositionData unifiedCompositionData) {
+    List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
+        getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);
+    for (SubInterfaceTemplateConsolidationData subInterface : subInterfaceTemplateConsolidationDataList) {
+      Optional<String> parentPortNetworkRole;
+      if (Objects.isNull(unifiedCompositionTo.getSubstitutionServiceTemplate())) {
+        parentPortNetworkRole = subInterface.getParentPortNetworkRole(unifiedCompositionTo.getServiceTemplate(),
+            unifiedCompositionTo.getContext());
+      } else {
+        parentPortNetworkRole = subInterface.getParentPortNetworkRole(unifiedCompositionTo
+            .getSubstitutionServiceTemplate(), unifiedCompositionTo.getContext());
+      }
+      String subInterfaceNetworkRole = subInterface.getNetworkRole();
+      if (Objects.nonNull(subInterfaceNetworkRole) && parentPortNetworkRole.isPresent()) {
+        createVfcInstanceGroupPerSubInterfaceNetworkRole(abstractNodeTemplateId, subInterfaceNetworkRole,
+            parentPortNetworkRole.get(), unifiedCompositionTo.getServiceTemplate());
       }
     }
   }
 
-  private void createVfcInstanceGroupPerSubInterface(String abstractNodeTemplateId,
-                                                     ServiceTemplate serviceTemplate,
-                                                     List<SubInterfaceTemplateConsolidationData>
-                                                         subInterfaceList,
-                                                     TranslationContext context) {
-    for (SubInterfaceTemplateConsolidationData subInterface : subInterfaceList) {
-      PortTemplateConsolidationData subInterfacePortTemplateConsolidationData =
-          getSubInterfacePortTemplateConsolidationData(serviceTemplate, subInterface, context);
-      String subInterfaceNetworkRole = subInterface.getNetworkRole();
-      if (Objects.isNull(subInterfaceNetworkRole)
-          || Objects.isNull(subInterfacePortTemplateConsolidationData.getNetworkRole())) {
-        continue;
-      }
-      String vfcNetworkRoleGroupId = getVfcNetworkRoleGroupId(subInterfaceNetworkRole);
-      Map<String, GroupDefinition> groups = DataModelUtil.getGroups(serviceTemplate);
-      if (!groups.containsKey(vfcNetworkRoleGroupId)) {
-        createNewVfcInstanceGroup(serviceTemplate, subInterfacePortTemplateConsolidationData,
-            subInterfaceNetworkRole, vfcNetworkRoleGroupId);
-      }
-      DataModelUtil.addGroupMember(serviceTemplate, vfcNetworkRoleGroupId, abstractNodeTemplateId);
+  private void createVfcInstanceGroupPerSubInterfaceNetworkRole(String abstractNodeTemplateId,
+                                                                String subInterfaceNetworkRole,
+                                                                String parentPortNetworkRole,
+                                                                ServiceTemplate serviceTemplate) {
+    String vfcNetworkRoleGroupId = getVfcNetworkRoleGroupId(subInterfaceNetworkRole);
+    Map<String, GroupDefinition> groups = DataModelUtil.getGroups(serviceTemplate);
+    if (!groups.containsKey(vfcNetworkRoleGroupId)) {
+      createNewVfcInstanceGroup(serviceTemplate, parentPortNetworkRole, subInterfaceNetworkRole, vfcNetworkRoleGroupId);
     }
+    DataModelUtil.addGroupMember(serviceTemplate, vfcNetworkRoleGroupId, abstractNodeTemplateId);
   }
 
   private void createNewVfcInstanceGroup(ServiceTemplate serviceTemplate,
-                                         PortTemplateConsolidationData portTemplate,
+                                         String parentPortNetworkRole,
                                          String subInterfaceNetworkRole,
                                          String vfcNetworkRoleGroupId) {
     Map<String, Object> properties = new HashMap<>();
     properties.put(SUB_INTERFACE_ROLE, subInterfaceNetworkRole);
-    properties.put(VFC_PARENT_PORT_ROLE, portTemplate.getNetworkRole());
+    properties.put(VFC_PARENT_PORT_ROLE, parentPortNetworkRole);
 
     updateVfcInstanceGroupExposedProperties(subInterfaceNetworkRole,
         serviceTemplate, properties);
@@ -494,18 +500,15 @@ public class UnifiedCompositionService {
   /**
    * Handle unified nested definition.
    *
-   * @param mainServiceTemplate    the main service template
-   * @param nestedServiceTemplate  the nested service template
-   * @param unifiedCompositionData the unified composition data
-   * @param context                the context
+   * @param unifiedCompositionTo    the unified composition data transfer object
+   * @param unifiedCompositionData  the unified composition data
    */
-  public void handleUnifiedNestedDefinition(ServiceTemplate mainServiceTemplate,
-                                            ServiceTemplate nestedServiceTemplate,
-                                            UnifiedCompositionData unifiedCompositionData,
-                                            TranslationContext context) {
-    handleUnifiedNestedNodeType(mainServiceTemplate, nestedServiceTemplate, context);
-    updateUnifiedNestedTemplates(mainServiceTemplate, nestedServiceTemplate,
-            unifiedCompositionData, context);
+  public void handleUnifiedNestedDefinition(UnifiedCompositionTo unifiedCompositionTo,
+                                            UnifiedCompositionData unifiedCompositionData) {
+    handleUnifiedNestedNodeType(unifiedCompositionTo.getServiceTemplate(), unifiedCompositionTo
+        .getSubstitutionServiceTemplate(), unifiedCompositionTo.getContext());
+    updateUnifiedNestedTemplates(unifiedCompositionTo.getServiceTemplate(), unifiedCompositionTo
+        .getSubstitutionServiceTemplate(), unifiedCompositionData, unifiedCompositionTo.getContext());
   }
 
   private void handleGetAttrInConnectivity(ServiceTemplate serviceTemplate,
@@ -687,49 +690,53 @@ public class UnifiedCompositionService {
       return;
     }
     handleNestedNodeTemplateInMainServiceTemplate(
-            nestedTemplateConsolidationData.getNodeTemplateId(), mainServiceTemplate,
-            nestedServiceTemplate, context);
-
+        nestedTemplateConsolidationData.getNodeTemplateId(), mainServiceTemplate,
+        nestedServiceTemplate, context);
   }
 
   /**
    * Update connectivity for unified nested patterns.
    *
-   * @param serviceTemplate        the service template
-   * @param nestedServiceTemplate  the nested service template
-   * @param unifiedCompositionData the unified composition data
-   * @param context                the context
+   * @param unifiedCompositionTo    the unified composition data transfer object
+   * @param unifiedCompositionData  the unified composition data
    */
-  public void updateUnifiedNestedConnectivity(ServiceTemplate serviceTemplate,
-                                              ServiceTemplate nestedServiceTemplate,
-                                              UnifiedCompositionData unifiedCompositionData,
-                                              TranslationContext context) {
+  public void updateUnifiedNestedConnectivity(UnifiedCompositionTo unifiedCompositionTo,
+                                              UnifiedCompositionData unifiedCompositionData) {
 
-    updNestedCompositionNodesConnectedInConnectivity(serviceTemplate, unifiedCompositionData,
-            context);
-    updNestedCompositionNodesConnectedOutConnectivity(serviceTemplate, nestedServiceTemplate,
-            unifiedCompositionData, context);
-    updNestedCompositionNodesGetAttrInConnectivity(serviceTemplate, unifiedCompositionData,
-            context);
-    updNestedCompositionOutputParamGetAttrInConnectivity(serviceTemplate,
-            unifiedCompositionData, context);
+    updNestedCompositionNodesConnectedInConnectivity(unifiedCompositionTo.getServiceTemplate(), unifiedCompositionData,
+        unifiedCompositionTo.getContext());
+    updNestedCompositionNodesConnectedOutConnectivity(unifiedCompositionTo.getServiceTemplate(),
+        unifiedCompositionTo.getSubstitutionServiceTemplate(), unifiedCompositionData, unifiedCompositionTo
+            .getContext());
+    updNestedCompositionNodesGetAttrInConnectivity(unifiedCompositionTo.getServiceTemplate(), unifiedCompositionData,
+        unifiedCompositionTo.getContext());
+    updNestedCompositionOutputParamGetAttrInConnectivity(unifiedCompositionTo.getServiceTemplate(),
+        unifiedCompositionData, unifiedCompositionTo.getContext());
   }
 
 
   /**
    * Clean unified nested entities. Update the heat stack group with the new node template ids.
    *
-   * @param serviceTemplate        the service template
+   * @param unifiedCompositionTo        the unified composition data transfer object
    * @param unifiedCompositionData the unified composition data
-   * @param context                the context
    */
-  public void cleanUnifiedNestedEntities(ServiceTemplate serviceTemplate,
-                                         UnifiedCompositionData unifiedCompositionData,
-                                         TranslationContext context) {
+  public void cleanUnifiedNestedEntities(UnifiedCompositionTo unifiedCompositionTo,
+                                         UnifiedCompositionData unifiedCompositionData) {
     EntityConsolidationData entityConsolidationData =
-            unifiedCompositionData.getNestedTemplateConsolidationData();
-    updateHeatStackGroupNestedComposition(serviceTemplate, entityConsolidationData, context);
+        unifiedCompositionData.getNestedTemplateConsolidationData();
+    updateHeatStackGroupNestedComposition(unifiedCompositionTo.getServiceTemplate(), entityConsolidationData,
+        unifiedCompositionTo.getContext());
 
+  }
+
+  public void createNestedVfcInstanceGroup(String nestedNodeTemplateId,
+                                           UnifiedCompositionTo unifiedCompositionTo,
+                                           UnifiedCompositionData unifiedCompositionData) {
+    if (!TranslationContext.isVfcInstanceGroupingEnabled()) {
+      return;
+    }
+    createSubInterfaceVfcInstanceGroup(nestedNodeTemplateId, unifiedCompositionTo, unifiedCompositionData);
   }
 
   public void handleComplexVfcType(ServiceTemplate serviceTemplate, TranslationContext context) {
@@ -1936,18 +1943,17 @@ public class UnifiedCompositionService {
                                                                   subInterfaceTemplateConsolidationDataList) {
     SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData =
             subInterfaceTemplateConsolidationDataList.get(0);
-    PortTemplateConsolidationData portTemplateConsolidationData =
-            getSubInterfacePortTemplateConsolidationData(unifiedCompositionTo.getServiceTemplate(),
-                    subInterfaceTemplateConsolidationData, unifiedCompositionTo.getContext());
-
-    if (Objects.isNull(portTemplateConsolidationData)) {
+    Optional<PortTemplateConsolidationData> portTemplateConsolidationDataOptional =
+        subInterfaceTemplateConsolidationData.getParentPortTemplateConsolidationData(unifiedCompositionTo
+                .getServiceTemplate(), unifiedCompositionTo.getContext());
+    if (!portTemplateConsolidationDataOptional.isPresent()) {
       return;
     }
-
+    PortTemplateConsolidationData portTemplateConsolidationData = portTemplateConsolidationDataOptional.get();
     String originalSubInterfaceNodeTemplateId = subInterfaceTemplateConsolidationDataList.get(0)
             .getNodeTemplateId();
-    NodeTemplate originalSubInterfaceNodeTemplate =
-            DataModelUtil.getNodeTemplate(unifiedCompositionTo.getServiceTemplate(), originalSubInterfaceNodeTemplateId);
+    NodeTemplate originalSubInterfaceNodeTemplate = DataModelUtil.getNodeTemplate(unifiedCompositionTo
+            .getServiceTemplate(), originalSubInterfaceNodeTemplateId);
     if (Objects.isNull(originalSubInterfaceNodeTemplate)) {
       return;
     }

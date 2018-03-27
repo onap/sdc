@@ -16,6 +16,10 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
@@ -35,6 +39,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionEntity;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedSubstitutionData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to.UnifiedCompositionTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.EntityConsolidationData;
@@ -55,10 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 
 public class UnifiedCompositionServiceTest {
     private static final String BASE_DIRECTORY = "/mock/services/heattotosca/unifiedComposition/";
@@ -1003,9 +1004,11 @@ public class UnifiedCompositionServiceTest {
         context.getTranslatedServiceTemplates()
                 .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
 
-        UnifiedCompositionData unifiedComposition = createUnifiedCompositionOnlyNested("server_pcm_001");
-        unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
-                inputServiceTemplates.get(nestedFileName), unifiedComposition, context);
+    UnifiedCompositionData unifiedComposition = createUnifiedCompositionOnlyNested("server_pcm_001");
+    UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName), null,
+        context);
+    unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo, unifiedComposition);
 
         checkSTResults(expectedOutserviceTemplates, nestedFileName,
                 context.getTranslatedServiceTemplates().get(nestedFileName),
@@ -1044,13 +1047,15 @@ public class UnifiedCompositionServiceTest {
         context.getTranslatedServiceTemplates()
                 .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
 
-        UnifiedCompositionData unifiedComposition =
-                createUnifiedCompositionOnlyNested("server_pcm_001");
-        unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
-                inputServiceTemplates.get(nestedFileName1), unifiedComposition, context);
-        unifiedComposition = createUnifiedCompositionOnlyNested("server_oam_001");
-        unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
-                inputServiceTemplates.get(nestedFileName2), unifiedComposition, context);
+    UnifiedCompositionData unifiedComposition =
+        createUnifiedCompositionOnlyNested("server_pcm_001");
+    UnifiedCompositionTo unifiedCompositionTo1 = new UnifiedCompositionTo(inputServiceTemplates
+        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName1), null, context);
+    unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo1, unifiedComposition);
+    unifiedComposition = createUnifiedCompositionOnlyNested("server_oam_001");
+    UnifiedCompositionTo unifiedCompositionTo2 = new UnifiedCompositionTo(inputServiceTemplates
+        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName2), null, context);
+    unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo2, unifiedComposition);
 
         checkSTResults(expectedOutserviceTemplates, nestedFileName1,
                 context.getTranslatedServiceTemplates().get(nestedFileName1),

@@ -1,0 +1,110 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: vf_module_id
+      type: string
+      description: Unique ID for this VF Module instance
+    vnf_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: vnf_name
+      type: string
+      description: Unique name for this VF instance
+    tdcore_zone_0_count:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: tdcore_zone_0_count
+      type: float
+      description: |
+        Number of TD Core VMs to be deployed zone 0. This parameter is used to scale the TD Core instances.
+      constraints:
+      - in_range:
+        - 0
+        - 8
+    untr_network_collection_function:
+      type: string
+      required: true
+    untr_vfc_instance_group_function:
+      type: string
+      required: true
+    vf_module_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: vf_module_name
+      type: string
+      description: Unique name for this VF Module instance
+  node_templates:
+    tdcore_zone_0_RRG:
+      type: org.openecomp.resource.abstract.nodes.heat.vdbe
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        service_template_filter:
+          substitute_service_template: nested_pattern4ServiceTemplate.yaml
+          count:
+            get_input: tdcore_zone_0_count
+          mandatory: false
+        vnf_name:
+          get_input: vnf_name
+        vf_module_name:
+          get_input: vf_module_name
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - tdcore_zone_0_RRG
+    untr_group:
+      type: org.openecomp.groups.VfcInstanceGroup
+      properties:
+        vfc_parent_port_role: untr
+        network_collection_function:
+          get_input: untr_network_collection_function
+        vfc_instance_group_function:
+          get_input: untr_vfc_instance_group_function
+        subinterface_role: untr
+      members:
+      - tdcore_zone_0_RRG

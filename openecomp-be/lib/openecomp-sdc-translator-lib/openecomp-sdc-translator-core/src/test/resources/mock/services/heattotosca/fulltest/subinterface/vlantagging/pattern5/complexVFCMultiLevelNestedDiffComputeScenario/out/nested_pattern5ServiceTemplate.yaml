@@ -184,6 +184,7 @@ topology_template:
           get_input: Vlan_vfc_instance_group_function
         subinterface_role: Vlan
       members:
+      - test_nested_level2
       - abstract_pd_server_1b
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested_pattern5
