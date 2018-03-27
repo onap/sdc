@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_de0f4f2d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-27T06:42:29Z",
+      "side": 1,
+      "message": "This loop should be inside the flat map forEach functionality.",
+      "revId": "5e7b5dc3d2c6107f6a67b8ad2bbeba89f1a7c5cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
