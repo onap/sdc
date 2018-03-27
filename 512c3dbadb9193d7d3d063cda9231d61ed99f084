@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_78a96e23",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-27T10:53:12Z",
+      "side": 1,
+      "message": "You either don\u0027t need String.format and the arguments here, or forgot to include placeholders.",
+      "range": {
+        "startLine": 219,
+        "startChar": 1,
+        "endLine": 220,
+        "endChar": 45
+      },
+      "revId": "512c3dbadb9193d7d3d063cda9231d61ed99f084",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
