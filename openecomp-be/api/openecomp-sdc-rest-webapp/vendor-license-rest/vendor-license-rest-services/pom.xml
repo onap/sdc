@@ -110,7 +110,11 @@
 			<artifactId>item-rest-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.openecomp.sdc</groupId>
+			<artifactId>unique-type-rest-types</artifactId>
+			<version>${project.version}</version>
+		</dependency>
     </dependencies>
 
 	<build>

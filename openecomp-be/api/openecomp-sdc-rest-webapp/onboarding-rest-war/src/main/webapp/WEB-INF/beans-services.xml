@@ -41,6 +41,7 @@
     <bean id = "notifications" class="org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl"/>
     <bean id = "togglz" class="org.openecomp.sdcrests.togglz.rest.services.TogglzFeaturesImpl"/>
     <bean id = "items" class="org.openecomp.sdcrests.item.rest.services.ItemsImpl"/>
+    <bean id = "uniqueTypes" class="org.openecomp.sdcrests.uniquevalue.rest.services.UniqueTypesImpl"/>
 
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">
@@ -75,6 +76,7 @@
             <ref bean="notifications"/>
             <ref bean="togglz"/>
             <ref bean="items"/>
+            <ref bean="uniqueTypes"/>
         </jaxrs:serviceBeans>
 
         <jaxrs:providers>

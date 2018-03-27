@@ -29,6 +29,7 @@
 		<module>notifications-fe</module>
 		<module>notifications-rest</module>
 		<module>togglz-rest</module>
+		<module>unique-type-rest</module>
 	</modules>
 
 </project>
