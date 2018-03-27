@@ -34,15 +34,6 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    untrusted_num_vn:
-      hidden: false
-      immutable: false
-      type: float
-      description: Number of vDBE subinterface virtual Networks
-      constraints:
-      - in_range:
-        - 1
-        - 77
     subinterface_vlan1_counter:
       type: list
       required: true
@@ -189,6 +180,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    subinterface_vlan1_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     subinterface_vlan2_counter:
       type: list
       required: true
@@ -234,6 +230,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    subinterface_vlan2_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     subinterface_vlan1_aap_sec_untrusted_ip_prefix_len:
       type: list
       required: true
@@ -308,9 +309,11 @@ topology_template:
           - subinterface_vlan1_aap_address_mode
           - index_value
         service_template_filter:
-          substitute_service_template: vlan1ServiceTemplate.yaml
           count:
-            get_input: untrusted_num_vn
+            get_input:
+            - subinterface_vlan1_service_template_filter_count
+            - index_value
+          substitute_service_template: vlan1ServiceTemplate.yaml
           mandatory: false
         aap_untrusted_v6_ip_prefix:
           get_input:
@@ -427,8 +430,11 @@ topology_template:
           - subinterface_vlan2_aap_address_mode
           - index_value
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_vlan2_service_template_filter_count
+            - index_value
           substitute_service_template: vlan2ServiceTemplate.yaml
-          count: 5
           mandatory: true
         aap_untrusted_v6_ip_prefix:
           get_input:
@@ -672,4 +678,4 @@ topology_template:
       - dependency
       dependency_vdbe_untr_x_subport_vdbe_vdbe_untr_1_port_vlan1:
       - vdbe_vdbe_untr_1_port_vlan1
-      - dependency_vdbe_untr_x_subport
+      - dependency_vdbe_untr_x_subport

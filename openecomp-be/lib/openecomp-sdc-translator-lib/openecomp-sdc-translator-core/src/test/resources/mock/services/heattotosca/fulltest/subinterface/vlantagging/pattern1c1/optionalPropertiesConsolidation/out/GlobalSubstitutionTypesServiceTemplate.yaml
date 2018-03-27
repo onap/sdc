@@ -46,15 +46,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      untrusted_num_vn:
-        type: float
-        description: Number of vDBE subinterface virtual Networks
-        required: true
-        status: SUPPORTED
-        constraints:
-        - in_range:
-          - 1
-          - 77
       subinterface_vlan1_counter:
         type: list
         required: true
@@ -205,6 +196,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      subinterface_vlan1_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       subinterface_vlan1_parent_interface:
         type: list
         required: true
@@ -840,4 +837,4 @@ node_types:
         type: tosca.capabilities.Node
         occurrences:
         - 1
-        - UNBOUNDED
+        - UNBOUNDED

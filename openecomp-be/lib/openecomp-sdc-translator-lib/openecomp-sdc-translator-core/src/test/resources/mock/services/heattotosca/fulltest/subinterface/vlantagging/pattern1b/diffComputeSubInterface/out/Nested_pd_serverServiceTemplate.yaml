@@ -31,6 +31,11 @@ topology_template:
     port_pd01_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
+    subinterface_nested_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     vm_flavor_name:
       type: string
       required: true
@@ -93,8 +98,11 @@ topology_template:
           - subinterface_nested_p1
           - index_value
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_nested_service_template_filter_count
+            - index_value
           substitute_service_template: nestedServiceTemplate.yaml
-          count: 9
           mandatory: true
         net1:
           get_input:

@@ -1025,6 +1025,20 @@ public class DataModelUtil {
         .getProperties();
   }
 
+  public static void addNodeTemplateProperty(NodeTemplate nodeTemplate,
+                                               String propertyKey,
+                                               Object propertyValue) {
+    if (Objects.isNull(nodeTemplate)) {
+      return;
+    }
+
+    if(MapUtils.isEmpty(nodeTemplate.getProperties())) {
+      nodeTemplate.setProperties(new HashMap<>());
+    }
+
+    nodeTemplate.getProperties().put(propertyKey, propertyValue);
+  }
+
   /**
    * Gets substitution mappings in a service template.
    *

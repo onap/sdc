@@ -1267,6 +1267,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      subinterface_nested_vlan_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -2569,6 +2575,12 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
+      subinterface_nested_vlan_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       port_ps_server_1b_port_network_role_tag:
         type: string
         required: true

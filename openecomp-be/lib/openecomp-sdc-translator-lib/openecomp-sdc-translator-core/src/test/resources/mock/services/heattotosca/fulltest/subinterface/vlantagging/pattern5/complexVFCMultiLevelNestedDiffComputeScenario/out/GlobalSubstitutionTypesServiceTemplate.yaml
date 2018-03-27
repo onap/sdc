@@ -910,6 +910,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      subinterface_nested_vlan_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance

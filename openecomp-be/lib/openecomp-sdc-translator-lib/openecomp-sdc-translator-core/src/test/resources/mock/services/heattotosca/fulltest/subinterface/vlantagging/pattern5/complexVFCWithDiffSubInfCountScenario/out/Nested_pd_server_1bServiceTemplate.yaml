@@ -16,6 +16,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    subinterface_nested_vlan_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -94,8 +99,11 @@ topology_template:
       - substitutable
       properties:
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_nested_vlan_service_template_filter_count
+            - index_value
           substitute_service_template: nested_vlanServiceTemplate.yaml
-          count: 9
           mandatory: true
         parent_interface:
           get_input:
