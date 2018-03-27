@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_699a0316",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 945,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-27T07:03:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_e9cdb35e",
+      "revId": "cba9c9aebba166af13d786f6793a998ec3147fdb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_89c3cf37",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
         "patchSetId": 12
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_09e81f7b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 971,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-27T07:03:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_89c3cf37",
+      "revId": "cba9c9aebba166af13d786f6793a998ec3147fdb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_29ecfbc6",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
         "patchSetId": 12
@@ -47,6 +83,24 @@
       "writtenOn": "2018-03-27T06:42:29Z",
       "side": 1,
       "message": "This function was outside the loop. Why is it inisde the foreach now?",
+      "revId": "cba9c9aebba166af13d786f6793a998ec3147fdb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_29eddb8b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 977,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-03-27T07:03:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_29ecfbc6",
       "revId": "cba9c9aebba166af13d786f6793a998ec3147fdb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
