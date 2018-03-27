@@ -16,6 +16,24 @@
       "revId": "8e052dec9dfe4b2f4ceff901688663b0bcace298",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_18462a24",
+        "filename": "openecomp-bdd/features/ActivitySpec/TestCreate.feature",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-27T09:18:07Z",
+      "side": 1,
+      "message": "Basically this scenario tests full lifecycle for activity spec.Did not want to break them and add pre-requisite for each step",
+      "parentUuid": "5a93c517_943d31be",
+      "revId": "8e052dec9dfe4b2f4ceff901688663b0bcace298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
