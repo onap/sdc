@@ -42,15 +42,6 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    untrusted_num_vn:
-      hidden: false
-      immutable: false
-      type: float
-      description: Number of vDBE subinterface virtual Networks
-      constraints:
-      - in_range:
-        - 1
-        - 77
     subinterface_vlan1_counter:
       type: list
       required: true
@@ -172,6 +163,11 @@ topology_template:
     port_vdbe_untr_2_port_order:
       type: integer
       required: true
+    subinterface_vlan1_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     subinterface_vlan1_parent_interface:
       type: list
       required: true
@@ -324,9 +320,11 @@ topology_template:
           - subinterface_vlan1_aap_address_mode
           - index_value
         service_template_filter:
-          substitute_service_template: vlan1ServiceTemplate.yaml
           count:
-            get_input: untrusted_num_vn
+            get_input:
+            - subinterface_vlan1_service_template_filter_count
+            - index_value
+          substitute_service_template: vlan1ServiceTemplate.yaml
           mandatory: false
         aap_untrusted_v6_ip_prefix:
           get_input:
@@ -642,4 +640,4 @@ topology_template:
       - link_vdbe_untr_x_vlan1-Network-Role_vmi_subport
       dependency_vdbe:
       - vdbe
-      - dependency
+      - dependency

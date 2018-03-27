@@ -70,7 +70,6 @@ import org.openecomp.sdc.tosca.datatypes.model.RelationshipTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
-import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.PropertyTypeExt;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
@@ -1973,8 +1972,8 @@ public class UnifiedCompositionService {
               new ArrayList<>(subInterfaceTemplateConsolidationDataList);
       //Remove all the existing properties as we are going to create new based on the
       // naming convention for the substitution
-      handleSubInterfaceProperties(unifiedCompositionTo, newSubInterfaceNodeTemplate, entityConsolidationDataList,
-              portTemplateConsolidationData);
+      handleSubInterfaceProperties(unifiedCompositionTo, originalSubInterfaceNodeTemplateId,
+          newSubInterfaceNodeTemplate, entityConsolidationDataList, portTemplateConsolidationData);
       //Update requirements for relationships between the consolidation entities
       handleConsolidationEntitiesRequirementConnectivity(newSubInterfaceNodeTemplate, unifiedCompositionTo
               .getServiceTemplate(), unifiedCompositionTo.getContext());
@@ -1983,6 +1982,7 @@ public class UnifiedCompositionService {
   }
 
   private void handleSubInterfaceProperties(UnifiedCompositionTo unifiedCompositionTo,
+                                            String subInterfaceNodeTemplateId,
                                             NodeTemplate newSubInterfaceNodeTemplate,
                                             List<EntityConsolidationData>
                                                     entityConsolidationDataList,
@@ -2013,8 +2013,8 @@ public class UnifiedCompositionService {
         //Handle service_template_filter property for subinterface as we should not create inputs
         // for this property
         if (propertyEntry.getKey().equals(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)) {
-          handleSubInterfaceServiceTemplateFilterProperty(newSubInterfaceNodeTemplate,
-                  propertyEntry.getKey(), propertyEntry.getValue(), serviceTemplate,
+          handleSubInterfaceServiceTemplateFilterProperty(subInterfaceNodeTemplateId, newSubInterfaceNodeTemplate,
+                  propertyEntry.getKey(), propertyEntry.getValue(), portTemplateConsolidationData,
                   unifiedCompositionTo.getSubstitutionServiceTemplate());
         } else if (indexVarProperties.isPresent()
                 && indexVarProperties.get().contains(propertyEntry.getKey())) {
@@ -2211,45 +2211,35 @@ public class UnifiedCompositionService {
     nodeTemplate.getProperties().put(propertyKey, propertyValue);
   }
 
-  private void handleSubInterfaceServiceTemplateFilterProperty(NodeTemplate nodeTemplate,
+  private void handleSubInterfaceServiceTemplateFilterProperty(String subInterfaceNodeTemplateId,
+                                                               NodeTemplate nodeTemplate,
                                                                String propertyKey,
                                                                Object propertyValue,
-                                                               ServiceTemplate serviceTemplate,
+                                                               PortTemplateConsolidationData
+                                                                   portTemplateConsolidationData,
                                                                ServiceTemplate substitutionServiceTemplate) {
     //Retain service_template_filter (Can be present in a sub-interface resource-def)
-    nodeTemplate.getProperties().put(propertyKey, propertyValue);
-    Object serviceTemplateFilterProperty =
-            nodeTemplate.getProperties().get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
-    if (!(serviceTemplateFilterProperty instanceof Map)) {
-      return;
+    if (propertyValue instanceof Map) {
+      Map<String, Object> serviceTemplateFilterPropertyMap = new HashMap<>((Map<String, Object>) propertyValue);
+      handleCountProperty(subInterfaceNodeTemplateId, nodeTemplate, portTemplateConsolidationData,
+          substitutionServiceTemplate, serviceTemplateFilterPropertyMap);
+      DataModelUtil.addNodeTemplateProperty(nodeTemplate, propertyKey, serviceTemplateFilterPropertyMap);
     }
-    Map<String, Object> serviceTemplatePropertyMap = (Map<String, Object>)
-            serviceTemplateFilterProperty;
-    Object countPropertyVal = serviceTemplatePropertyMap.get(ToscaConstants.COUNT_PROPERTY_NAME);
-    //Check if the value of the count property is a tosca function
-    if (!isPropertyContainsToscaFunction(countPropertyVal)) {
-      return;
-    }
-    Map<String, Object> countPropertyValMap = (Map<String, Object>) countPropertyVal;
-    //If the value is in the form of get_input add an input parameter in current service
-    // template
-    if (countPropertyValMap.keySet().contains(ToscaFunctions.GET_INPUT.getDisplayName())) {
-      String countPropertyInputName = countPropertyValMap.get(ToscaFunctions.GET_INPUT
-              .getDisplayName()).toString();
-      //Get the input parameter definition from top level where the resource group was present
-      ParameterDefinitionExt parameterDefinition = (ParameterDefinitionExt)
-              DataModelUtil.getInputParameters(serviceTemplate).get(countPropertyInputName);
-      if (Objects.nonNull(parameterDefinition)) {
-        //Remove annotations if any for the nested service template
-        parameterDefinition.setAnnotations(null);
-        DataModelUtil.getInputParameters(substitutionServiceTemplate)
-                .put(countPropertyInputName, parameterDefinition);
-        if (Objects.nonNull(countPropertyInputName)) {
-          //Remove the input from top level
-          DataModelUtil.getInputParameters(serviceTemplate).remove(countPropertyInputName);
-        }
-      }
-    }
+  }
+
+  private void handleCountProperty(String subInterfaceNodeTemplateId, NodeTemplate nodeTemplate,
+                                   PortTemplateConsolidationData portTemplateConsolidationData,
+                                   ServiceTemplate substitutionServiceTemplate,
+                                   Map<String, Object> serviceTemplatePropertyMap) {
+    String countInputParameterId = getSubInterfaceInputParameterId(nodeTemplate.getType(), subInterfaceNodeTemplateId,
+            ToscaConstants.SERVICE_TEMPLATE_FILTER_COUNT, portTemplateConsolidationData);
+    EntrySchema entrySchema = new EntrySchema();
+    entrySchema.setType(PropertyType.FLOAT.getDisplayName());
+    addInputParameter(countInputParameterId, PropertyType.LIST.getDisplayName(), entrySchema,
+        substitutionServiceTemplate);
+    Map<String, List<String>> countPropertyValueInputParam = getPropertyValueInputParam(countInputParameterId);
+    serviceTemplatePropertyMap.remove(ToscaConstants.COUNT_PROPERTY_NAME);
+    serviceTemplatePropertyMap.put(ToscaConstants.COUNT_PROPERTY_NAME, countPropertyValueInputParam);
   }
 
   private void handleNodeTypeProperties(ServiceTemplate substitutionServiceTemplate,
@@ -2709,20 +2699,27 @@ public class UnifiedCompositionService {
         }
         break;
       case SUB_INTERFACE:
-        String subInterfaceType = getSubInterfaceTypeSuffix(nodeTemplate.getType());
-        if (Objects.isNull(portTemplateConsolidationData)
-                || portTemplateConsolidationData.isSubInterfaceNodeTemplateIdParameter(nodeTemplate.getType())) {
-          paramterId = UnifiedCompositionEntity.SUB_INTERFACE.getDisplayName().toLowerCase() + "_"
-                  + nodeTemplateId + "_" + propertyId;
-        } else {
-          paramterId = UnifiedCompositionEntity.SUB_INTERFACE.getDisplayName().toLowerCase() + "_"
-                  + subInterfaceType + "_" + propertyId;
-        }
+        paramterId = getSubInterfaceInputParameterId(nodeTemplate.getType(), nodeTemplateId, propertyId,
+                portTemplateConsolidationData);
         break;
       default:
         break;
     }
     return paramterId;
+  }
+
+  private String getSubInterfaceInputParameterId(String type,
+                                                 String nodeTemplateId,
+                                                 String propertyId,
+                                                 PortTemplateConsolidationData portTemplateConsolidationData) {
+    String subInterfaceType = getSubInterfaceTypeSuffix(type);
+    if (Objects.isNull(portTemplateConsolidationData)
+        || portTemplateConsolidationData.isSubInterfaceNodeTemplateIdParameter(type)) {
+      return UnifiedCompositionEntity.SUB_INTERFACE.getDisplayName().toLowerCase() + "_"
+          + nodeTemplateId + "_" + propertyId;
+    }
+    return UnifiedCompositionEntity.SUB_INTERFACE.getDisplayName().toLowerCase() + "_"
+        + subInterfaceType + "_" + propertyId;
   }
 
   private void removeConnectivityOut(EntityConsolidationData entityConsolidationData,
@@ -2825,7 +2822,7 @@ public class UnifiedCompositionService {
         continue;
       }
 
-      //Check if the input is of type compute or port
+      //Check if the input is of type compute, port or sub interface
       List<Object> abstractPropertyValue = new ArrayList<>();
       switch (inputUnifiedCompositionEntity) {
         case COMPUTE:
@@ -3725,11 +3722,31 @@ public class UnifiedCompositionService {
   private Object getPropertyValueFromNodeTemplate(String propertyName, NodeTemplate nodeTemplate) {
     Map<String, Object> nodeTemplateProperties = nodeTemplate.getProperties();
     if (nodeTemplateProperties != null) {
-      Object propertyValue = nodeTemplateProperties.get(propertyName);
-      propertyValue = getClonedObject(propertyValue);
+      Object propertyValue;
+      if (propertyName.startsWith(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)) {
+        propertyValue = getServiceTemplateFilterPropertyValue(propertyName, nodeTemplateProperties);
+      } else {
+        propertyValue = nodeTemplateProperties.get(propertyName);
+        propertyValue = getClonedObject(propertyValue);
+      }
       return propertyValue;
     }
     return null;
+  }
+
+  private Object getServiceTemplateFilterPropertyValue(String propertyName,
+                                                       Map<String, Object> nodeTemplateProperties) {
+    Object propertyValue = null;
+    Object serviceTemplateFilterProperties =
+        nodeTemplateProperties.get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+    String serviceTemplateFilterPropertyName =
+        propertyName.replace(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME + "_", "");
+
+    if (Objects.nonNull(serviceTemplateFilterProperties)
+        && serviceTemplateFilterProperties instanceof Map) {
+      propertyValue = ((Map<String, Object>) serviceTemplateFilterProperties).get(serviceTemplateFilterPropertyName);
+    }
+    return propertyValue;
   }
 
   private Map<String, UnifiedCompositionEntity> getAllConsolidationNodeTemplateIdAndType(
@@ -3740,9 +3757,7 @@ public class UnifiedCompositionService {
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
               unifiedCompositionData.getComputeTemplateConsolidationData();
       if (Objects.nonNull(computeTemplateConsolidationData)) {
-        consolidationNodeTemplateIdAndType
-                .put(computeTemplateConsolidationData.getNodeTemplateId(),
-                        COMPUTE);
+        consolidationNodeTemplateIdAndType.put(computeTemplateConsolidationData.getNodeTemplateId(), COMPUTE);
       }
       List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
               getSubInterfaceTemplateConsolidationDataList(unifiedCompositionData);

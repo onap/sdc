@@ -112,6 +112,11 @@ topology_template:
     port_vdbe_untr_port_network_role:
       type: string
       required: true
+    subinterface_nested2_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     subinterface_nested2_counter:
       type: list
       required: true
@@ -187,8 +192,11 @@ topology_template:
           - subinterface_nested2_aap_address_mode
           - index_value
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_nested2_service_template_filter_count
+            - index_value
           substitute_service_template: nested2ServiceTemplate.yaml
-          count: 5
           mandatory: true
         aap_untrusted_v6_ip_prefix:
           get_input:

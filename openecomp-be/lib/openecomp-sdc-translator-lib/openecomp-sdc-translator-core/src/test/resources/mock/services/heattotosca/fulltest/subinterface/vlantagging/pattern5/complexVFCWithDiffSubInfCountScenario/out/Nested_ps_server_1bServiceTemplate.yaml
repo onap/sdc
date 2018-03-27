@@ -19,6 +19,11 @@ topology_template:
     port_ps_server_1b_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
+    subinterface_nested_vlan_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     port_ps_server_1b_port_network_role_tag:
       type: string
       required: true
@@ -109,8 +114,11 @@ topology_template:
       - substitutable
       properties:
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_nested_vlan_service_template_filter_count
+            - index_value
           substitute_service_template: nested_vlanServiceTemplate.yaml
-          count: 19
           mandatory: true
         parent_interface:
           get_input:

@@ -40,6 +40,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      subinterface_nested_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       subinterface_nested_aap_untrusted_v6_ip_prefix_len:
         type: list
         required: true
@@ -673,4 +679,4 @@ node_types:
         type: tosca.capabilities.Node
         occurrences:
         - 1
-        - UNBOUNDED
+        - UNBOUNDED

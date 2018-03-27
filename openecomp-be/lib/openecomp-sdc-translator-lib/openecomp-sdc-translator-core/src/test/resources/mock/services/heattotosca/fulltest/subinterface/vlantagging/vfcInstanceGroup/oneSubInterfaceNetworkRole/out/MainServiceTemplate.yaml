@@ -86,6 +86,23 @@ topology_template:
             param_name: vdbe_aap_untrusted_ip_prefix_len
       type: string
       description: ip prefix length for the primary vDBE VM on the VAN untrusted network
+    untrusted_num_vn:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - main
+            source_type: HEAT
+            param_name: untrusted_num_vn
+      type: float
+      description: Number of vDBE subinterface virtual Networks
+      constraints:
+      - in_range:
+        - 1
+        - 77
     aap_address_mode:
       hidden: false
       immutable: false
@@ -451,6 +468,10 @@ topology_template:
             is_required: false
         subinterface_vdbe_untr_1_subports_parent_interface:
         - vdbe_1_untr_port_1
+        subinterface_vdbe_untr_2_subports_service_template_filter_count:
+        - 5
+        subinterface_vdbe_untr_1_subports_service_template_filter_count:
+        - get_input: untrusted_num_vn
         subinterface_vdbe_untr_1_subports_vn_network_list:
         - get_input: untrusted_vn_networks
         port_vdbe_untr_port_name:

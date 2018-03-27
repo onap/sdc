@@ -81,6 +81,8 @@ topology_template:
         port_ps_server_1b_port_mac_requirements:
           mac_count_required:
             is_required: false
+        subinterface_nested_vlan_service_template_filter_count:
+        - 9
         port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:
@@ -150,6 +152,8 @@ topology_template:
         port_ps_server_1b_port_mac_requirements:
           mac_count_required:
             is_required: false
+        subinterface_nested_vlan_service_template_filter_count:
+        - 19
         port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:

@@ -41,6 +41,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
+    subinterface_nested_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     vm_flavor_name:
       type: string
       required: true
@@ -93,6 +98,10 @@ topology_template:
           - subinterface_nested_p1
           - index_value
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_nested_service_template_filter_count
+            - index_value
           substitute_service_template: nestedServiceTemplate.yaml
         net1:
           get_input:

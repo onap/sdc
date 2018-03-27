@@ -113,6 +113,8 @@ topology_template:
         - get_input:
           - pd_server_1b_names
           - 0
+        subinterface_nested_vlan_service_template_filter_count:
+        - 9
         vm_flavor_name:
           get_input: pd_server_1b_flavor
         subinterface_nested_vlan_net1:

@@ -498,6 +498,9 @@ topology_template:
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
         - get_input: availability_zone_2
+        subinterface_nested_service_template_filter_count:
+        - 5
+        - 5
         subinterface_nested_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
@@ -603,4 +606,4 @@ topology_template:
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
       - control_int_net
-      - abstract_vdbe
+      - abstract_vdbe

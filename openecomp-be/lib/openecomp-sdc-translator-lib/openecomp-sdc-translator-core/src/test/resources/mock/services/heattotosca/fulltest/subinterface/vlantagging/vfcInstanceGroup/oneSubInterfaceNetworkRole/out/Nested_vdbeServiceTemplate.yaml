@@ -60,15 +60,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    untrusted_num_vn:
-      hidden: false
-      immutable: false
-      type: float
-      description: Number of vDBE subinterface virtual Networks
-      constraints:
-      - in_range:
-        - 1
-        - 77
     port_vdbe_untr_port_order:
       type: integer
       required: true
@@ -138,6 +129,16 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    subinterface_vdbe_untr_2_subports_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
+    subinterface_vdbe_untr_1_subports_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     subinterface_vdbe_untr_1_subports_vn_network_list:
       type: list
       required: true
@@ -272,9 +273,11 @@ topology_template:
           - subinterface_vdbe_untr_1_subports_aap_address_mode
           - index_value
         service_template_filter:
-          substitute_service_template: nestedServiceTemplate.yaml
           count:
-            get_input: untrusted_num_vn
+            get_input:
+            - subinterface_vdbe_untr_1_subports_service_template_filter_count
+            - index_value
+          substitute_service_template: nestedServiceTemplate.yaml
           mandatory: false
         aap_untrusted_v6_ip_prefix:
           get_input:
@@ -351,8 +354,11 @@ topology_template:
           - subinterface_vdbe_untr_2_subports_aap_address_mode
           - index_value
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_vdbe_untr_2_subports_service_template_filter_count
+            - index_value
           substitute_service_template: nestedServiceTemplate.yaml
-          count: 5
           mandatory: true
         aap_untrusted_v6_ip_prefix:
           get_input:

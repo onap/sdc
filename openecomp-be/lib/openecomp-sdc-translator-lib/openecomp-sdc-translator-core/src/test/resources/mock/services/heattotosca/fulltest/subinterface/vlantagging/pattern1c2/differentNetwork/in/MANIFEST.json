@@ -1,0 +1,23 @@
+{
+  "name": "vMME_Small",
+  "description": "HOT template with 2 compute",
+  "version": "2018-02-01",
+  "data": [
+    {
+      "file": "main.yml",
+      "type": "HEAT",
+      "isBase": "true",
+      "data": [
+        {
+          "file": "heat_env.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "nested.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    }
+  ]
+}
