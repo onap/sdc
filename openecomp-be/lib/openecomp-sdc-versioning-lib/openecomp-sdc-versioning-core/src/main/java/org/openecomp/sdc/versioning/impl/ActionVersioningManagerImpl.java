@@ -146,11 +146,11 @@ public class ActionVersioningManagerImpl implements ActionVersioningManager {
     }
     if (viewableVersions != null) {
       viewableVersions.forEach(version -> version.setStatus(status));
+      versionInfo.setViewableVersions(toSortedList(viewableVersions));
+      versionInfo.setFinalVersions(getFinalVersions(viewableVersions));
     }
     versionInfo.setActiveVersion(activeVersion);
     versionInfo.setLatestFinalVersion(latestFinalVersion);
-    versionInfo.setViewableVersions(toSortedList(viewableVersions));
-    versionInfo.setFinalVersions(getFinalVersions(viewableVersions));
     if (candidate != null) {
       candidate.getVersion().setStatus(status);
       versionInfo.setLockingUser(candidate.getUser());
