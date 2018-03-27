@@ -37,6 +37,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    subinterface_nested_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     subinterface_nested_aap_untrusted_v6_ip_prefix_len:
       type: list
       required: true
@@ -45,15 +50,6 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    untrusted_num_vn:
-      hidden: false
-      immutable: false
-      type: float
-      description: Number of vDBE subinterface virtual Networks
-      constraints:
-      - in_range:
-        - 1
-        - 77
     port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
       type: list
       required: true
@@ -264,9 +260,11 @@ topology_template:
           - subinterface_nested_aap_address_mode
           - index_value
         service_template_filter:
-          substitute_service_template: nestedServiceTemplate.yaml
           count:
-            get_input: untrusted_num_vn
+            get_input:
+            - subinterface_nested_service_template_filter_count
+            - index_value
+          substitute_service_template: nestedServiceTemplate.yaml
           mandatory: false
         aap_untrusted_v6_ip_prefix:
           get_input:

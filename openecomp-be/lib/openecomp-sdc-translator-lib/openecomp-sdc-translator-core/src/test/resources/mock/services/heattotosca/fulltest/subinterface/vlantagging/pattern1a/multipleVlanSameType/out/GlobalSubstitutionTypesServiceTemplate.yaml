@@ -48,15 +48,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      untrusted_num_vn:
-        type: float
-        description: Number of vDBE subinterface virtual Networks
-        required: true
-        status: SUPPORTED
-        constraints:
-        - in_range:
-          - 1
-          - 77
       subinterface_vdbe_untr_1_subports_mac_address:
         type: list
         required: true
@@ -237,6 +228,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      subinterface_vdbe_untr_2_subports_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
+      subinterface_vdbe_untr_1_subports_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       port_vdbe_untr_1_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -802,4 +805,4 @@ node_types:
         type: tosca.capabilities.Node
         occurrences:
         - 1
-        - UNBOUNDED
+        - UNBOUNDED

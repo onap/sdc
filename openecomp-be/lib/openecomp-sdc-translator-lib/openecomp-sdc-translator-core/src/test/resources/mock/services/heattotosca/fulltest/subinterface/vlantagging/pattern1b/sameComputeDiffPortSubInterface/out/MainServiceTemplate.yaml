@@ -714,6 +714,8 @@ topology_template:
         - get_input:
           - pd_server_names
           - 1
+        subinterface_nested_service_template_filter_count:
+        - 9
         vm_flavor_name:
           get_input: pd_flavor_name
         subinterface_nested_p1:
@@ -765,6 +767,8 @@ topology_template:
         - get_input:
           - pd_server_names
           - 0
+        subinterface_nested_service_template_filter_count:
+        - 9
         vm_flavor_name:
           get_input: pd_flavor_name
         subinterface_nested_p1:

@@ -31,6 +31,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    subinterface_nested_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
     subinterface_nested_aap_untrusted_v6_ip_prefix_len:
       type: list
       required: true
@@ -200,6 +205,10 @@ topology_template:
           - subinterface_nested_aap_address_mode
           - index_value
         service_template_filter:
+          count:
+            get_input:
+            - subinterface_nested_service_template_filter_count
+            - index_value
           substitute_service_template: nestedServiceTemplate.yaml
         aap_untrusted_v6_ip_prefix:
           get_input:
@@ -487,4 +496,4 @@ topology_template:
       - link
       dependency_vdbe:
       - vdbe
-      - dependency
+      - dependency

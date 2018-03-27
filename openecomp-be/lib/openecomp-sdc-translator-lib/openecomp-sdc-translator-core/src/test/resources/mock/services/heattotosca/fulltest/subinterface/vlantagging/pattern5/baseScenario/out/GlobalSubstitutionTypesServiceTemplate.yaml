@@ -1091,6 +1091,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      subinterface_nested_vlan_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       port_pd_server_2b_port_order:
         type: integer
         required: true

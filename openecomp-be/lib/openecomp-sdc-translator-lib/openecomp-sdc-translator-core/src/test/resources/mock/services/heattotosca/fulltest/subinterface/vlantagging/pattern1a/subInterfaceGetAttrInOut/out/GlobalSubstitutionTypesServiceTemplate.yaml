@@ -26,6 +26,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      subinterface_nested_service_template_filter_count:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: float
       subinterface_nested_aap_untrusted_v6_ip_prefix_len:
         type: list
         required: true
@@ -36,15 +42,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      untrusted_num_vn:
-        type: float
-        description: Number of vDBE subinterface virtual Networks
-        required: true
-        status: SUPPORTED
-        constraints:
-        - in_range:
-          - 1
-          - 77
       subinterface_nested_aap_untrusted_ip_prefix:
         type: list
         required: true

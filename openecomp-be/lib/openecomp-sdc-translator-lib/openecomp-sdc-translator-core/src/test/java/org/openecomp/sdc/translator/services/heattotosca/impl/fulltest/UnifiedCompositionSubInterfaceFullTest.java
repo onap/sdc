@@ -29,6 +29,8 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1b/";
   private static final String PATTERN_1C1_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1c1/";
+  private static final String PATTERN_1C2_BASE_DIRECTORY =
+      "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern1c2/";
   private static final String PATTERN_4_BASE_DIRECTORY =
       "/mock/services/heattotosca/fulltest/subinterface/vlantagging/pattern4/";
   private static final String PATTERN_5_BASE_DIRECTORY =
@@ -38,7 +40,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceComputePortNetworkWithGroup() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with only port
      * connected to network
      */
@@ -47,7 +49,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceNodesConnectedOut() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. Port connected to network
      * 2. Sub-interface connected to same network
@@ -58,7 +60,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceNodesConnectedIn() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. Port connected to network
      * 2. Sub-interface connected to different network
@@ -69,7 +71,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceGetAttrInOut() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. Port connected to network
      * 2. Sub-interface connected to different network
@@ -82,7 +84,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceMultipleVlanSameNestedFile() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and two subinterface resource groups with
      * 1. Port connected to network
      * 2. Sub-interfaces with same nested files
@@ -92,7 +94,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceMultipleVlanDiffNestedFile() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and two subinterface resource groups with
      * 1. Port connected to network
      * 2. Sub-interfaces with different nested files
@@ -102,7 +104,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceMultiplePortsMultipleVlans() throws IOException {
-    /**
+    /*
      * Heat file with one compute, two ports and two subinterface resource groups with
      * 1. Port connected to network
      * 2. Sub-interfaces each with different nested files
@@ -112,7 +114,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceRegularNested() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource represented through a
      * regular nested resource and not using a resource group
      */
@@ -121,7 +123,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceNotBoundToPort() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. Resource group missing virtual_machine_interface_refs property
      * 2. Resource group missing virtual_machine_interface_properties_sub_interface_vlan_tag
@@ -134,7 +136,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   //Pattern 1B test
   @Test
   public void testDiffComputeSubInterface() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. There are two compute both of different type
      */
@@ -143,7 +145,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testOnePortIsConnectedWithSubInf() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. Two compute of same type
      * 2. Two port of same type but only one of them is having sub interface binding
@@ -153,7 +155,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testRegularNestedSubInterface() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one sub interface without resource group
      * 1. Two compute of same type
      * 2. Two port are of different type
@@ -164,7 +166,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSameComputeDiffPortSubInterface() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. Two compute of same type
      * 2. Two port are of different type
@@ -175,21 +177,20 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSameComputeSamePortDiffSubInterfaceFile() throws IOException {
-    /**
+    /*
      * Heat file with one compute, one port and one subinterface resource group with
      * 1. Two compute of same type
      * 2. Two port are of same type connected with different sub interface nested file
      * 3. Sub interface property are same for both port
      */
-    testTranslationWithInit(PATTERN_1B_BASE_DIRECTORY
-        + "sameComputeSamePortDiffSubInterfaceFile");
+    testTranslationWithInit(PATTERN_1B_BASE_DIRECTORY + "sameComputeSamePortDiffSubInterfaceFile");
   }
 
   //****************** PATTERN 1C1 Tests ***************************
 
   @Test
   public void testSubInterfaceScalingOnePortVlanSameType() throws IOException {
-    /**
+    /*
      * Heat file with two computes of same type, two ports of same type and two subinterface resource groups of same
      * type with
      * 1. Compute has one port each
@@ -202,7 +203,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceScalingMultiplePortsMultipleVlansWithGroup() throws IOException {
-    /**
+    /*
      * Heat file with two computes of different type, four ports of two types each and four subinterface resource groups
      * of two types each
      * 1. Each compute has two ports, one of each type
@@ -215,7 +216,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceScalingOptionalPropertiesConsolidation() throws IOException {
-    /**
+    /*
      * Heat file with two computes of same type, four ports of two types each and two subinterface resource groups
      * of same type
      * 1. Each compute has two ports, one of each type
@@ -229,7 +230,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceScalingRegularNestedSubInterface() throws IOException {
-    /**
+    /*
      * Heat file with two computes, two ports of same type connected to network and two subinterface resource
      * represented through a regular nested resource and not using a resource group not connected to network
      */
@@ -238,7 +239,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceScalingAllConnectivities() throws IOException {
-    /**
+    /*
      * Heat file with two computes of same type, four ports of two types each and two subinterface resource groups
      * of same type
      * 1. Each compute has two ports, one of each type
@@ -250,10 +251,31 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
     testTranslationWithInit(PATTERN_1C1_BASE_DIRECTORY + "allConnectivities");
   }
 
+  @Test
+  public void testSubInterfaceWithDifferentResourceGroupCount() throws IOException {
+    /*
+     * Heat file with two computes of the same type, each one has one port with one sub interface
+     * (from same type)
+     * resource group have a different count which creates a catalog instance
+     * */
+
+    testTranslationWithInit(PATTERN_1C2_BASE_DIRECTORY + "differentResourceGroupCount");
+  }
+
+  @Test
+  public void testSubInterfaceDifferentNodesConnectedOutToResourceGroup() throws IOException {
+    testTranslationWithInit(PATTERN_1C2_BASE_DIRECTORY + "differentNodesConnectedOut");
+  }
+
+  @Test
+  public void testSubInterfaceDifferentNetwork() throws IOException {
+    testTranslationWithInit(PATTERN_1C2_BASE_DIRECTORY + "differentNetwork");
+  }
+
   //Pattern5 Test Cases
   @Test
   public void testBaseScenarioPattern5() throws IOException {
-    /**
+    /*
      * Base heat has only nested component and nested heat has reference to subinterface and
      * two VFCs of different type
      * 1. Each server connected with two port
@@ -266,7 +288,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testComplexVFCScalingScenarioPattern5() throws IOException {
-    /**
+    /*
      * 1. Base heat has only nested component and nested has reference to subinterface and
      * two VFCs of same type
      * 1. Each server connected with two port
@@ -279,7 +301,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testComplexVFCMultiLevelNestedScenarioPattern5() throws IOException {
-    /**
+    /*
      * 1. First level nested is having one VFC and one Port with Sub interface
      * 2. Second level nested is having one VFC and one Port with Sub interface which are of same
      * type as parent heat file
@@ -290,7 +312,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   @Test
   public void testComplexVFCMultiLevelNestedDiffComputeScenarioPattern5() throws
       IOException {
-    /**
+    /*
      * 1. First level nested is having one VFC and one Port with Sub interface
      * 2. Second level nested is having one VFC and one Port with Sub interface which are of
      * different type as parent heat file
@@ -301,7 +323,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   @Test
   public void testComplexVFCMultiComputeInAllHeatPattern5() throws
       IOException {
-    /**
+    /*
      * 1. Main is having 4 VFC of 2 type and 2 port and all having sub interface
      * 2. Second level nested is having 4 VFC of 2 type and 2 port and all having sub interface
      */
@@ -311,7 +333,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   @Test
   public void testComplexVFCMultiLevelNestedMultiComputeScenarioPattern5() throws
       IOException {
-    /**
+    /*
      * 1. First level nested is having one VFC and one Port with Sub interface
      * 2. Second level nested is having two VFC of same type and two Port with Sub interface
      */
@@ -319,9 +341,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   }
 
   @Test
-  public void testComplexVFCWithDiffSubInfConnectivityScenarioPattern5()
-      throws
-      IOException {
+  public void testComplexVFCWithDiffSubInfConnectivityScenarioPattern5() throws IOException {
     /*
      * 1. First level nested is having one VFC and one Port with Sub interface
      * 2. Second level nested is having two VFC of same type and one Port with only one port
@@ -330,11 +350,8 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
     testTranslationWithInit(PATTERN_5_BASE_DIRECTORY + "complexVFCWithDiffSubInfConnectivityScenario");
   }
 
-  //Catalog instance will start working with 1C2 changes in place
   @Test
-  public void testComplexVFCWithDiffSubInfCountScenarioPattern5()
-      throws
-      IOException {
+  public void testComplexVFCWithDiffSubInfCountScenarioPattern5() throws IOException {
     /*
      * 1. First level nested is having one VFC and one Port with Sub interface
      * 2. Second level nested is having two VFC of same type and connected to Sub interface but
@@ -346,7 +363,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   //Pattern 4 Test Cases
   @Test
   public void testSubInterfaceComputePortNetworkPattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, one port and one subinterface resource group with only
      * port connected to network
      */
@@ -355,7 +372,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceMultiplePortsMultipleVlansPattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, two ports and two subinterface resource groups with
      * 1. Port connected to network
      * 2. Sub-interfaces each with different nested files
@@ -365,7 +382,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceMultipleVlanDiffFilePattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, one port and two subinterface resource groups with
      * 1. Port connected to network
      * 2. Sub-interfaces with different nested files
@@ -375,7 +392,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceMultipleVlanSameFilePattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, one port and two subinterface resource groups with
      * 1. Port connected to network
      * 2. Sub-interfaces with same nested files
@@ -385,7 +402,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceRegularNestedPattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, one port and one subinterface resource represented
      * through a regular nested resource and not using a resource group
      */
@@ -394,7 +411,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceGetAttrInOutPattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, one port and one subinterface resource group with
      * 1. Port connected to network
      * 2. Sub-interface connected to different network
@@ -407,7 +424,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceNodesConnectedInPattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, one port and one subinterface resource group with
      * 1. Port connected to network
      * 2. Sub-interface connected to different network
@@ -418,7 +435,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
 
   @Test
   public void testSubInterfaceNodesConnectedOutPattern4() throws IOException {
-    /**
+    /*
      * Nested Heat file with one compute, one port and one subinterface resource group with
      * 1. Port connected to network
      * 2. Sub-interface connected to same network
@@ -455,4 +472,5 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      */
     testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "pattern4SubInterfaceNodesConnectedOut");
   }
+
 }

@@ -55,6 +55,7 @@ public class ToscaConstants {
   public static final String SERVICE_TEMPLATE_FILTER_PROPERTY_NAME = "service_template_filter";
   public static final String SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME =
       "substitute_service_template";
+  public static final String SERVICE_TEMPLATE_FILTER_COUNT = "service_template_filter_count";
   public static final String COUNT_PROPERTY_NAME = "count";
   public static final String MANDATORY_PROPERTY_NAME = "mandatory";
   public static final String INDEX_VALUE_PROPERTY_NAME = "index_value";
