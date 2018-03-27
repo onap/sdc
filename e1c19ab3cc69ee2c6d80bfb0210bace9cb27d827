@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_292b9b31",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-27T06:25:24Z",
+      "side": 1,
+      "message": "should it be removed?",
+      "revId": "e1c19ab3cc69ee2c6d80bfb0210bace9cb27d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e96e1396",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-27T06:25:24Z",
+      "side": 1,
+      "message": "Property not being used.",
+      "revId": "e1c19ab3cc69ee2c6d80bfb0210bace9cb27d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_090fbfe2",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-27T06:25:24Z",
+      "side": 1,
+      "message": "activitySpec mask filed declared at line 54",
+      "revId": "e1c19ab3cc69ee2c6d80bfb0210bace9cb27d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_896bcf84",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-27T06:25:24Z",
+      "side": 1,
+      "message": "make a constant of \n\"TEST ERROR\"",
+      "revId": "e1c19ab3cc69ee2c6d80bfb0210bace9cb27d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a9680b88",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-27T06:25:24Z",
+      "side": 1,
+      "message": "make a constant from \"ACTIVITYSPEC_NOT_FOUND\"",
+      "revId": "e1c19ab3cc69ee2c6d80bfb0210bace9cb27d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a9ffaba9",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-27T06:25:24Z",
+      "side": 1,
+      "message": "activitySpec mask attribute from line 54",
+      "revId": "e1c19ab3cc69ee2c6d80bfb0210bace9cb27d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
