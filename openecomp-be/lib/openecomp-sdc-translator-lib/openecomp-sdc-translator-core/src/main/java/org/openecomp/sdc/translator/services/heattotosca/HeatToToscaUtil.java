@@ -1514,7 +1514,7 @@ public class HeatToToscaUtil {
               .findFirst();
       if (vlanSubInterfaceResource.isPresent()) {
         Map.Entry<String, Resource> vlanSubInterfaceResourceEntry = vlanSubInterfaceResource.get();
-        networkRole = evaluateNetworkRoleFromResourceId(vlanSubInterfaceResourceEntry.getKey(),
+        networkRole = extractNetworkRoleFromSubInterfaceId(vlanSubInterfaceResourceEntry.getKey(),
             vlanSubInterfaceResourceEntry.getValue().getType());
       }
     }
@@ -1523,43 +1523,46 @@ public class HeatToToscaUtil {
 
   public static Optional<String> evaluateNetworkRoleFromResourceId(String resourceId,
                                                                    String resourceType) {
-    if (resourceType.equals(
-        HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
-      return Optional.ofNullable(extractNetworkRoleFromResourceId(resourceId, PortType.VMI));
-    }
+    Optional<PortType> portType = getPortType(resourceType);
+    if (portType.isPresent()) {
+      String portResourceIdRegex =
+          PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + WORDS_REGEX + UNDERSCORE
+              + portType.get().getPortTypeName() + PORT_RESOURCE_ID_REGEX_SUFFIX;
+      String portIntResourceIdRegex =
+          PORT_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName()
+              + PORT_RESOURCE_ID_REGEX_SUFFIX;
 
-    if (resourceType.equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
-      return Optional.ofNullable(extractNetworkRoleFromResourceId(resourceId, PortType.PORT));
+      String portNetworkRole = getNetworkRole(resourceId, portResourceIdRegex);
+      String portIntNetworkRole = getNetworkRole(resourceId, portIntResourceIdRegex);
+
+      return Optional.ofNullable(Objects.nonNull(portNetworkRole)
+          ? portNetworkRole : portIntNetworkRole);
     }
     return Optional.empty();
   }
 
-  private static String extractNetworkRoleFromResourceId(String portResourceId, PortType portType) {
-
-    if (portResourceId.matches(SUB_INTERFACE_REGEX)) {
-      return extractNetworkRoleFromSubInterfaceId(portResourceId, portType);
+  private static Optional<PortType> getPortType(String resourceType) {
+    if (resourceType.equals(
+        HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
+      return Optional.of(PortType.VMI);
+    } else if (resourceType.equals(
+        HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
+      return Optional.of(PortType.PORT);
     }
-
-    String portResourceIdRegex =
-        PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + WORDS_REGEX + UNDERSCORE + portType.getPortTypeName()
-            + PORT_RESOURCE_ID_REGEX_SUFFIX;
-    String portIntResourceIdRegex =
-        PORT_INT_RESOURCE_ID_REGEX_PREFIX + portType.getPortTypeName()
-            + PORT_RESOURCE_ID_REGEX_SUFFIX;
-
-    String portNetworkRole = getNetworkRole(portResourceId, portResourceIdRegex);
-    String portIntNetworkRole = getNetworkRole(portResourceId, portIntResourceIdRegex);
-
-    return Objects.nonNull(portNetworkRole) ? portNetworkRole : portIntNetworkRole;
+    return Optional.empty();
   }
 
-  private static String extractNetworkRoleFromSubInterfaceId(String  resourceId,
-                                                             PortType portType) {
-    String subInterfaceResourceIdRegex =
-        SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX + portType.getPortTypeName()
-            + PORT_RESOURCE_ID_REGEX_SUFFIX;
+  public static Optional<String> extractNetworkRoleFromSubInterfaceId(String  resourceId,
+                                                             String resourceType) {
+    Optional<PortType> portType = getPortType(resourceType);
+    if (portType.isPresent()) {
+      String subInterfaceResourceIdRegex =
+          SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName()
+              + PORT_RESOURCE_ID_REGEX_SUFFIX;
 
-    return getNetworkRole(resourceId, subInterfaceResourceIdRegex);
+      return Optional.ofNullable(getNetworkRole(resourceId, subInterfaceResourceIdRegex));
+    }
+    return Optional.empty();
   }
 
   private enum PortType {

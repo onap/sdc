@@ -46,12 +46,6 @@ topology_template:
             source_type: HEAT
             param_name: pd_server_1b_ips
       type: string
-    Vlan_network_collection_function:
-      type: string
-      required: true
-    Vlan_vfc_instance_group_function:
-      type: string
-      required: true
     pd_server_1b_names:
       hidden: false
       immutable: false
@@ -273,15 +267,4 @@ topology_template:
       - packet_internalmain_network
       - test_nested_level1
       - packet_externalmain_network
-      - abstract_pd_server_1b_1
-    Vlan_group:
-      type: org.openecomp.groups.VfcInstanceGroup
-      properties:
-        vfc_parent_port_role: 1b
-        network_collection_function:
-          get_input: Vlan_network_collection_function
-        vfc_instance_group_function:
-          get_input: Vlan_vfc_instance_group_function
-        subinterface_role: Vlan
-      members:
       - abstract_pd_server_1b_1

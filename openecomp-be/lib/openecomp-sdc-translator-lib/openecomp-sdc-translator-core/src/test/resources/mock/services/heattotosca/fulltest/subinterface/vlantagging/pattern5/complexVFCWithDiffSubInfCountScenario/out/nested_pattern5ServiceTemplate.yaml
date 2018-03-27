@@ -145,7 +145,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+      - link_template_subint_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
           capability: tosca.capabilities.network.Linkable
           node: packet_external_network
           relationship: tosca.relationships.network.LinksTo
@@ -276,6 +276,9 @@ topology_template:
       disk.latency_server_1b_ps_1_test_nested_level2:
       - test_nested_level2
       - disk.latency_server_1b_ps_1
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
+      - test_nested_level2
+      - feature_template_subint_Vlan_vmi_1_test_resourceGroup_1
       disk.device.read.bytes.rate_server_1b_pd_0:
       - abstract_pd_server_1b
       - disk.device.read.bytes.rate_pd_server_1b
@@ -375,9 +378,6 @@ topology_template:
       disk.iops_server_1b_pd_0:
       - abstract_pd_server_1b
       - disk.iops_pd_server_1b
-      feature_template_Vlan_vmi_1_test_resourceGroup_0:
-      - test_resourceGroup_0
-      - feature_template_Vlan_vmi_1
       end_point_packet_external_network:
       - packet_external_network
       - end_point
@@ -408,12 +408,6 @@ topology_template:
       disk.device.iops_server_1b_ps_2_test_nested_level2:
       - test_nested_level2
       - disk.device.iops_server_1b_ps_2
-      feature_template_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
-      - test_nested_level2
-      - feature_template_Vlan_vmi_1_test_resourceGroup_2
-      feature_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
-      - test_nested_level2
-      - feature_template_Vlan_vmi_1_test_resourceGroup_1
       network.outgoing.bytes_pd_server_1b_port_0:
       - abstract_pd_server_1b
       - network.outgoing.bytes_pd_server_1b_pd_server_1b_port
@@ -513,6 +507,9 @@ topology_template:
       network.incoming.packets.rate_ps_server_1b_port_1_test_nested_level2:
       - test_nested_level2
       - network.incoming.packets.rate_ps_server_1b_port_1
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_0:
+      - test_resourceGroup_0
+      - feature_template_subint_Vlan_vmi_1
       disk.device.read.requests_server_1b_ps_1_test_nested_level2:
       - test_nested_level2
       - disk.device.read.requests_server_1b_ps_1
@@ -555,6 +552,9 @@ topology_template:
       network.incoming.bytes.rate_ps_server_1b_port_1_test_nested_level2:
       - test_nested_level2
       - network.incoming.bytes.rate_ps_server_1b_port_1
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
+      - test_nested_level2
+      - feature_template_subint_Vlan_vmi_1_test_resourceGroup_2
       binding_ps_server_1b_port_1_test_nested_level2:
       - test_nested_level2
       - binding_ps_server_1b_port_1
@@ -727,24 +727,24 @@ topology_template:
       dependency_server_1b_ps_1_test_nested_level2:
       - test_nested_level2
       - dependency_server_1b_ps_1
+      dependency_template_subint_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
+      - test_nested_level2
+      - dependency_template_subint_Vlan_vmi_1_test_resourceGroup_1
+      dependency_template_subint_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
+      - test_nested_level2
+      - dependency_template_subint_Vlan_vmi_1_test_resourceGroup_2
       dependency_ps_server_1b_port_1_test_nested_level2:
       - test_nested_level2
       - dependency_ps_server_1b_port_1
       dependency_pd_server_1b_port_0:
       - abstract_pd_server_1b
       - dependency_pd_server_1b_pd_server_1b_port
-      dependency_template_Vlan_vmi_1_test_resourceGroup_0:
-      - test_resourceGroup_0
-      - dependency_template_Vlan_vmi_1
       dependency_ps_server_1b_port_2_test_nested_level2:
       - test_nested_level2
       - dependency_ps_server_1b_port_2
       dependency_test_resourceGroup_2_test_nested_level2:
       - test_nested_level2
       - dependency_test_resourceGroup_2
-      dependency_template_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
-      - test_nested_level2
-      - dependency_template_Vlan_vmi_1_test_resourceGroup_2
       dependency_test_resourceGroup_0:
       - test_resourceGroup_0
       - dependency
@@ -769,12 +769,12 @@ topology_template:
       dependency_server_1b_pd_0:
       - abstract_pd_server_1b
       - dependency_pd_server_1b
-      dependency_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
-      - test_nested_level2
-      - dependency_template_Vlan_vmi_1_test_resourceGroup_1
       dependency_packet_ext_network_test_nested_level2:
       - test_nested_level2
       - dependency_packet_ext_network
+      dependency_template_subint_Vlan_vmi_1_test_resourceGroup_0:
+      - test_resourceGroup_0
+      - dependency_template_subint_Vlan_vmi_1
       dependency_test_nested_level2:
       - test_nested_level2
       - dependency

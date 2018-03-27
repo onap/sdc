@@ -101,7 +101,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_template_Vlan_vmi_1_test_resourceGroup_0:
+    - dependency_template_subint_Vlan_vmi_1_test_resourceGroup_0:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -143,7 +143,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
+    - dependency_template_subint_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -157,7 +157,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_template_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
+    - dependency_template_subint_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -399,6 +399,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.bytes.rate_server_1b_pd_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -590,11 +595,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_template_Vlan_vmi_1_test_resourceGroup_0:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       end_point_packet_external_network:
         type: tosca.capabilities.Endpoint
         occurrences:
@@ -649,16 +649,6 @@ node_types:
       disk.device.iops_server_1b_ps_2_test_nested_level2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_template_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
-        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -853,6 +843,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.requests_server_1b_ps_1_test_nested_level2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -931,6 +926,11 @@ node_types:
       network.incoming.bytes.rate_ps_server_1b_port_1_test_nested_level2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_2_test_nested_level2:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -1363,14 +1363,14 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+    - dependency_template_subint_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+    - link_template_subint_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -1592,11 +1592,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.write.bytes.rate_pd_server_1b:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1652,6 +1647,11 @@ node_types:
         - UNBOUNDED
       binding_pd_server_1b:
         type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_template_subint_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -1808,7 +1808,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_template_Vlan_vmi_1_test_resourceGroup_1:
+    - dependency_template_subint_Vlan_vmi_1_test_resourceGroup_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -1822,7 +1822,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_template_Vlan_vmi_1_test_resourceGroup_2:
+    - dependency_template_subint_Vlan_vmi_1_test_resourceGroup_2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -2127,16 +2127,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_template_Vlan_vmi_1_test_resourceGroup_1:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_template_Vlan_vmi_1_test_resourceGroup_2:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.capacity_server_1b_ps_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2332,6 +2322,16 @@ node_types:
       vcpus_server_1b_ps_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_1:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -2675,14 +2675,14 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+    - dependency_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+    - link_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -2873,6 +2873,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      feature_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_ps_server_1b:
         type: tosca.capabilities.network.Bindable
         occurrences:
@@ -3019,11 +3024,6 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-      feature_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
   org.openecomp.resource.abstract.nodes.heat.subinterface.nested_vlan:
     derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
     properties:
@@ -3065,20 +3065,20 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
-    - dependency_template_Vlan_vmi_1:
+    - dependency_template_subint_Vlan_vmi_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_vmi_1:
+    - link_template_subint_Vlan_vmi_1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
         - 1
-    - binding_template_Vlan_vmi_1:
+    - binding_template_subint_Vlan_vmi_1:
         capability: tosca.capabilities.network.Bindable
         node: org.openecomp.resource.cp.nodes.network.Port
         relationship: tosca.relationships.network.BindsTo
@@ -3086,7 +3086,7 @@ node_types:
         - 1
         - 1
     capabilities:
-      feature_template_Vlan_vmi_1:
+      feature_template_subint_Vlan_vmi_1:
         type: tosca.capabilities.Node
         occurrences:
         - 1

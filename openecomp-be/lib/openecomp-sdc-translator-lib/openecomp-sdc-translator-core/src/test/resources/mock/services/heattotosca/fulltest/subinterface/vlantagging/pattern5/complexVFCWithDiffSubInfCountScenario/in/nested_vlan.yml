@@ -24,7 +24,7 @@ parameters:
     type: number
 resources:
 
-  template_Vlan_vmi_1:
+  template_subint_Vlan_vmi_1:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:

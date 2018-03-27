@@ -298,12 +298,6 @@ topology_template:
       description: List of subinterface vlan tags
       entry_schema:
         type: string
-    untr_network_collection_function:
-      type: string
-      required: true
-    untr_vfc_instance_group_function:
-      type: string
-      required: true
     vdbe_flavor_name:
       hidden: false
       immutable: false
@@ -469,15 +463,4 @@ topology_template:
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
       - control_int_net
-      - abstract_vdbe
-    untr_group:
-      type: org.openecomp.groups.VfcInstanceGroup
-      properties:
-        vfc_parent_port_role: untr
-        network_collection_function:
-          get_input: untr_network_collection_function
-        vfc_instance_group_function:
-          get_input: untr_vfc_instance_group_function
-        subinterface_role: untr
-      members:
       - abstract_vdbe

@@ -46,7 +46,7 @@ topology_template:
       immutable: false
       type: float
   node_templates:
-    template_Vlan_vmi_1:
+    template_subint_Vlan_vmi_1:
       type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
       properties:
         virtual_machine_interface_refs:
@@ -92,20 +92,20 @@ topology_template:
         heat_file: ../Artifacts/nested_vlan.yml
         description: cmaui server template for vMMSC
       members:
-      - template_Vlan_vmi_1
+      - template_subint_Vlan_vmi_1
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested_vlan
     capabilities:
-      feature_template_Vlan_vmi_1:
-      - template_Vlan_vmi_1
+      feature_template_subint_Vlan_vmi_1:
+      - template_subint_Vlan_vmi_1
       - feature
     requirements:
-      link_template_Vlan_vmi_1:
-      - template_Vlan_vmi_1
-      - link
-      dependency_template_Vlan_vmi_1:
-      - template_Vlan_vmi_1
-      - dependency
-      binding_template_Vlan_vmi_1:
-      - template_Vlan_vmi_1
+      binding_template_subint_Vlan_vmi_1:
+      - template_subint_Vlan_vmi_1
       - binding
+      dependency_template_subint_Vlan_vmi_1:
+      - template_subint_Vlan_vmi_1
+      - dependency
+      link_template_subint_Vlan_vmi_1:
+      - template_subint_Vlan_vmi_1
+      - link
