@@ -834,7 +834,7 @@ public class ConsolidationService {
     if (substitutionConsolidationRuleResult) {
       List<UnifiedCompositionData> unifiedCompositionDataList =
           createSubstitutionUnifiedCompositionDataList(substituteNodeTemplateId,
-              serviceTemplate, consolidationData);
+              serviceTemplate, substitutionServiceTemplate, consolidationData);
       unifiedCompositionService
           .createUnifiedComposition(serviceTemplate, substitutionServiceTemplate,
               unifiedCompositionDataList, UnifiedCompositionMode.NestedSingleCompute,
@@ -939,33 +939,22 @@ public class ConsolidationService {
 
     for (ComputeTemplateConsolidationData computeTemplateConsolidationData : typeComputeConsolidationData
         .getAllComputeTemplateConsolidationData()) {
-
       UnifiedCompositionData unifiedCompositionData = new UnifiedCompositionData();
       unifiedCompositionData.setComputeTemplateConsolidationData(computeTemplateConsolidationData);
-
-      Collection<List<String>> portCollection =
-          computeTemplateConsolidationData.getPorts() == null ? Collections.emptyList()
-              : computeTemplateConsolidationData.getPorts().values();
-
       FilePortConsolidationData filePortConsolidationData =
           consolidationData.getPortConsolidationData().getFilePortConsolidationData(ToscaUtil
               .getServiceTemplateFileName(serviceTemplate));
-      List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList = new ArrayList<>();
-      portCollection.stream()
-          .flatMap(Collection::stream)
-          .forEach(portId -> setUnifiedCompositionDataWithPortTemplateData(filePortConsolidationData, portId,
-              unifiedCompositionData, subInterfaceTemplateConsolidationDataList));
-      unifiedCompositionData.setSubInterfaceTemplateConsolidationDataList(
-          subInterfaceTemplateConsolidationDataList);
+      setUnifiedCompositionDataWithPortTemplateData(computeTemplateConsolidationData, filePortConsolidationData,
+          unifiedCompositionData);
       unifiedCompositionDataList.add(unifiedCompositionData);
     }
     return unifiedCompositionDataList;
   }
 
-  private void setUnifiedCompositionDataWithPortTemplateData(FilePortConsolidationData filePortConsolidationData,
-                                                             String portId,
-                                                             UnifiedCompositionData unifiedCompositionData,
-                                                             List<SubInterfaceTemplateConsolidationData>
+  private void setPortTemplateConsolidationData(FilePortConsolidationData filePortConsolidationData,
+                                                String portId,
+                                                UnifiedCompositionData unifiedCompositionData,
+                                                List<SubInterfaceTemplateConsolidationData>
                                                                  subInterfaceTemplateConsolidationDataList) {
     if (Objects.isNull(filePortConsolidationData)) {
       return;
@@ -981,6 +970,7 @@ public class ConsolidationService {
   private List<UnifiedCompositionData> createSubstitutionUnifiedCompositionDataList(
       String substituteNodeTemplateId,
       ServiceTemplate serviceTemplate,
+      ServiceTemplate substitutionServiceTemplate,
       ConsolidationData consolidationData) {
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     FileNestedConsolidationData fileNestedConsolidationData =
@@ -993,10 +983,49 @@ public class ConsolidationService {
       UnifiedCompositionData unifiedCompositionData = new UnifiedCompositionData();
       unifiedCompositionData.setNestedTemplateConsolidationData(nestedTemplateConsolidationData);
       unifiedCompositionDataList.add(unifiedCompositionData);
-      return unifiedCompositionDataList;
+      addSubInterfaceDataToNestedCompositionData(substitutionServiceTemplate, consolidationData,
+          unifiedCompositionData);
     }
 
     return unifiedCompositionDataList;
+  }
+
+  private void addSubInterfaceDataToNestedCompositionData(ServiceTemplate substitutionServiceTemplate,
+                                                          ConsolidationData consolidationData,
+                                                          UnifiedCompositionData unifiedCompositionData) {
+    FileComputeConsolidationData nestedFileComputeConsolidationData = consolidationData.getComputeConsolidationData()
+        .getFileComputeConsolidationData(ToscaUtil.getServiceTemplateFileName(substitutionServiceTemplate));
+    FilePortConsolidationData nestedFilePortConsolidationData = consolidationData.getPortConsolidationData()
+        .getFilePortConsolidationData(ToscaUtil.getServiceTemplateFileName(substitutionServiceTemplate));
+    if (Objects.isNull(nestedFileComputeConsolidationData)
+        || Objects.isNull(nestedFilePortConsolidationData)) {
+      return;
+    }
+    TypeComputeConsolidationData computeType =
+        nestedFileComputeConsolidationData.getAllTypeComputeConsolidationData().iterator().next();
+    if (Objects.isNull(computeType)) {
+      return;
+    }
+    ComputeTemplateConsolidationData computeTemplateConsolidationData =
+        computeType.getAllComputeTemplateConsolidationData().iterator().next();
+    setUnifiedCompositionDataWithPortTemplateData(computeTemplateConsolidationData, nestedFilePortConsolidationData,
+        unifiedCompositionData);
+  }
+
+  private void setUnifiedCompositionDataWithPortTemplateData(ComputeTemplateConsolidationData
+                                                                 computeTemplateConsolidationData,
+                                                             FilePortConsolidationData filePortConsolidationData,
+                                                             UnifiedCompositionData unifiedCompositionData) {
+    Collection<List<String>> portCollection =
+        computeTemplateConsolidationData.getPorts() == null ? Collections.emptyList()
+            : computeTemplateConsolidationData.getPorts().values();
+    List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList = new ArrayList<>();
+    portCollection.stream()
+        .flatMap(Collection::stream)
+        .forEach(portId -> setPortTemplateConsolidationData(filePortConsolidationData, portId,
+            unifiedCompositionData, subInterfaceTemplateConsolidationDataList));
+    unifiedCompositionData.setSubInterfaceTemplateConsolidationDataList(
+        subInterfaceTemplateConsolidationDataList);
   }
 
   private boolean consolidationPreCondition(

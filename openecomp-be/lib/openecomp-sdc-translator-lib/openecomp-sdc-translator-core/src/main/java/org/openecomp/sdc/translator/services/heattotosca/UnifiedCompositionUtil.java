@@ -19,32 +19,28 @@ package org.openecomp.sdc.translator.services.heattotosca;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FilePortConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Utility class for consolidation data collection helper methods.
  */
 public class UnifiedCompositionUtil {
-
-  protected static Logger logger = LoggerFactory.getLogger(UnifiedCompositionUtil.class);
 
   private UnifiedCompositionUtil() {
     //Hiding the implicit public constructor
@@ -155,34 +151,17 @@ public class UnifiedCompositionUtil {
     StringBuilder newSubInterfaceNodeTemplateId = new StringBuilder();
     newSubInterfaceNodeTemplateId.append(getNewPortNodeTemplateId(subInterfaceTemplateConsolidationData
         .getParentPortNodeTemplateId(), connectedComputeNodeType, computeTemplateConsolidationData));
-    PortTemplateConsolidationData portTemplateConsolidationData =
-        getSubInterfacePortTemplateConsolidationData(serviceTemplate, subInterfaceTemplateConsolidationData, context);
+    Optional<PortTemplateConsolidationData> portTemplateConsolidationData =
+        subInterfaceTemplateConsolidationData.getParentPortTemplateConsolidationData(serviceTemplate, context);
     NodeTemplate subInterfaceNodeTemplate =
         DataModelUtil.getNodeTemplate(serviceTemplate, subInterfaceTemplateConsolidationData.getNodeTemplateId());
-    if (Objects.nonNull(portTemplateConsolidationData)) {
-        String subInterfaceSuffix = (portTemplateConsolidationData.isSubInterfaceNodeTemplateIdParameter(subInterfaceNodeTemplate.getType()))?
-              //If there are more than one subinterfaces with same type use node template id
-              subInterfaceTemplateConsolidationData.getNodeTemplateId():
-                    //Add sub interface type since we have only one subinterface per type
-                     getSubInterfaceTypeSuffix(subInterfaceNodeTemplate.getType());
-        newSubInterfaceNodeTemplateId.append("_").append(subInterfaceSuffix);
-        return newSubInterfaceNodeTemplateId.toString();
-      }
-    return subInterfaceTemplateConsolidationData.getNodeTemplateId();
-  }
-
-  static PortTemplateConsolidationData getSubInterfacePortTemplateConsolidationData(ServiceTemplate serviceTemplate,
-                                                                               SubInterfaceTemplateConsolidationData
-                                                                                   subInterfaceTemplateConsolidationData,
-                                                                                     TranslationContext context) {
-    FilePortConsolidationData filePortConsolidationData = context.getConsolidationData().getPortConsolidationData()
-        .getFilePortConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
-    PortTemplateConsolidationData portTemplateConsolidationData = null;
-    if (filePortConsolidationData != null) {
-      portTemplateConsolidationData = filePortConsolidationData
-          .getPortTemplateConsolidationData(subInterfaceTemplateConsolidationData.getParentPortNodeTemplateId());
+    if (portTemplateConsolidationData.isPresent()) {
+      String subInterfaceSuffix = getSubInterfaceSuffix(portTemplateConsolidationData.get(),
+          subInterfaceNodeTemplate, subInterfaceTemplateConsolidationData);
+      newSubInterfaceNodeTemplateId.append("_").append(subInterfaceSuffix);
+      return newSubInterfaceNodeTemplateId.toString();
     }
-    return portTemplateConsolidationData;
+    return subInterfaceTemplateConsolidationData.getNodeTemplateId();
   }
 
   static String getSubInterfaceTypeSuffix(String nodeType) {
@@ -191,8 +170,19 @@ public class UnifiedCompositionUtil {
 
   public static List<SubInterfaceTemplateConsolidationData> getSubInterfaceTemplateConsolidationDataList(
       UnifiedCompositionData unifiedCompositionData) {
-    return unifiedCompositionData.getSubInterfaceTemplateConsolidationDataList() == null ? new
-        ArrayList<>() : unifiedCompositionData.getSubInterfaceTemplateConsolidationDataList();
+    return unifiedCompositionData.getSubInterfaceTemplateConsolidationDataList() == null ? Collections.emptyList() :
+        unifiedCompositionData.getSubInterfaceTemplateConsolidationDataList();
   }
 
+  private static String getSubInterfaceSuffix(PortTemplateConsolidationData portTemplateConsolidationData,
+                                              NodeTemplate subInterfaceNodeTemplate,
+                                              SubInterfaceTemplateConsolidationData
+                                                  subInterfaceTemplateConsolidationData) {
+    if (portTemplateConsolidationData.isSubInterfaceNodeTemplateIdParameter(subInterfaceNodeTemplate.getType())) {
+      //If there are more than one subinterfaces with same type use node template id
+      return subInterfaceTemplateConsolidationData.getNodeTemplateId();
+    }
+    //Add sub interface type since we have only one subinterface per type
+    return getSubInterfaceTypeSuffix(subInterfaceNodeTemplate.getType());
+  }
 }

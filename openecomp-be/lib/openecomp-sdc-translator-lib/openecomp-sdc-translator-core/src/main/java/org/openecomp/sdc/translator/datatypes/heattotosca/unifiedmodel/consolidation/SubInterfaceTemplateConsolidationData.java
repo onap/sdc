@@ -16,6 +16,12 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+
+import java.util.Optional;
+
 public class SubInterfaceTemplateConsolidationData extends EntityConsolidationData {
 
   //Value of the property count in the resource group representing the sub-interface
@@ -48,4 +54,27 @@ public class SubInterfaceTemplateConsolidationData extends EntityConsolidationDa
   public void setParentPortNodeTemplateId(String parentPortNodeTemplateId) {
     this.parentPortNodeTemplateId = parentPortNodeTemplateId;
   }
+
+  public Optional<PortTemplateConsolidationData> getParentPortTemplateConsolidationData(ServiceTemplate serviceTemplate,
+                                                                                        TranslationContext context) {
+    FilePortConsolidationData filePortConsolidationData = context.getConsolidationData().getPortConsolidationData()
+        .getFilePortConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
+    PortTemplateConsolidationData portTemplateConsolidationData = null;
+    if (filePortConsolidationData != null) {
+      portTemplateConsolidationData = filePortConsolidationData
+          .getPortTemplateConsolidationData(parentPortNodeTemplateId);
+    }
+    return Optional.ofNullable(portTemplateConsolidationData);
+  }
+
+  public Optional<String> getParentPortNetworkRole(ServiceTemplate serviceTemplate,
+                                                                TranslationContext context) {
+    Optional<PortTemplateConsolidationData> subInterfacePortTemplateConsolidationData =
+        getParentPortTemplateConsolidationData(serviceTemplate, context);
+    if (!subInterfacePortTemplateConsolidationData.isPresent()) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(subInterfacePortTemplateConsolidationData.get().getNetworkRole());
+  }
+
 }

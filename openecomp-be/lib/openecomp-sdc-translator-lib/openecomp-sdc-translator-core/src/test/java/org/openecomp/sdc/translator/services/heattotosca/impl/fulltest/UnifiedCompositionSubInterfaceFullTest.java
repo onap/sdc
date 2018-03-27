@@ -350,8 +350,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
      * Nested Heat file with one compute, one port and one subinterface resource group with only
      * port connected to network
      */
-    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY +
-        "computePortNetworkSubInterface");
+    testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "computePortNetworkSubInterface");
   }
 
   @Test
@@ -428,6 +427,7 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
     testTranslationWithInit(PATTERN_4_BASE_DIRECTORY + "subInterfaceNodesConnectedOut");
   }
 
+
   //****************** VFC Instance Group Tests ***************************
 
   @Test
@@ -443,5 +443,16 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
   @Test
   public void testGroupingTwoSubInterfaceTypeAndTwoAbstractNodes() throws IOException {
     testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "twoSubInterfaceNetworkRoleAndTwoAbstractNodes");
+  }
+
+  @Test
+  public void testSubInterfacePattern4WithGroup() throws IOException {
+    /*
+     * Nested Heat file with one compute, one port and one subinterface resource group with
+     * 1. Port connected to network
+     * 2. Sub-interface connected to same network
+     * 3. Sub-interface has depends on (out) connectivity with network resource
+     */
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "pattern4SubInterfaceNodesConnectedOut");
   }
 }
