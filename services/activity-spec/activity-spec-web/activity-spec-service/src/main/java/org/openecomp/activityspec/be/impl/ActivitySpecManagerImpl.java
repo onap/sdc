@@ -106,7 +106,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
       throw new CoreException(new ErrorCode.ErrorCodeBuilder()
           .withCategory(ErrorCategory.APPLICATION)
           .withId(exception.code().id())
-          .withMessage("Name already in use").build());
+          .withMessage("name already in use").build());
     }
   }
 
@@ -216,8 +216,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     throw new CoreException(new ErrorCode.ErrorCodeBuilder()
         .withCategory(ErrorCategory.APPLICATION)
         .withId("ACTIVITYSPEC_NOT_FOUND")
-        .withMessage(String.format("Activity Spec With Id %s and version %s not found",
-            activitySpecId, version.getId()))
+        .withMessage("No Activity Spec found for the given identifiers")
         .build());
   }
 
