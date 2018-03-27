@@ -128,7 +128,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_int_network
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      - link_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
           capability: tosca.capabilities.network.Linkable
           node: packet_ext_network
           relationship: tosca.relationships.network.LinksTo
@@ -197,7 +197,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_int_network
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      - link_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
           capability: tosca.capabilities.network.Linkable
           node: packet_ext_network
           relationship: tosca.relationships.network.LinksTo
@@ -356,12 +356,6 @@ topology_template:
       instance_server_1b_ps_2:
       - abstract_ps_server_1b_1
       - instance_ps_server_1b
-      feature_template_Vlan_vmi_1_test_resourceGroup_1:
-      - test_resourceGroup_1
-      - feature_template_Vlan_vmi_1
-      feature_template_Vlan_vmi_1_test_resourceGroup_2:
-      - test_resourceGroup_2
-      - feature_template_Vlan_vmi_1
       disk.device.capacity_server_1b_ps_1:
       - abstract_ps_server_1b_0
       - disk.device.capacity_ps_server_1b
@@ -464,6 +458,12 @@ topology_template:
       vcpus_server_1b_ps_2:
       - abstract_ps_server_1b_1
       - vcpus_ps_server_1b
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_2:
+      - test_resourceGroup_2
+      - feature_template_subint_Vlan_vmi_1
+      feature_template_subint_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - feature_template_subint_Vlan_vmi_1
       disk.read.bytes.rate_server_1b_ps_2:
       - abstract_ps_server_1b_1
       - disk.read.bytes.rate_ps_server_1b
@@ -603,18 +603,18 @@ topology_template:
       dependency_packet_ext_network:
       - packet_ext_network
       - dependency
-      dependency_template_Vlan_vmi_1_test_resourceGroup_2:
-      - test_resourceGroup_2
-      - dependency_template_Vlan_vmi_1
-      dependency_template_Vlan_vmi_1_test_resourceGroup_1:
-      - test_resourceGroup_1
-      - dependency_template_Vlan_vmi_1
       local_storage_server_1b_ps_2:
       - abstract_ps_server_1b_1
       - local_storage_ps_server_1b
       dependency_server_1b_ps_1:
       - abstract_ps_server_1b_0
       - dependency_ps_server_1b
+      dependency_template_subint_Vlan_vmi_1_test_resourceGroup_2:
+      - test_resourceGroup_2
+      - dependency_template_subint_Vlan_vmi_1
       dependency_server_1b_ps_2:
       - abstract_ps_server_1b_1
       - dependency_ps_server_1b
+      dependency_template_subint_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - dependency_template_subint_Vlan_vmi_1

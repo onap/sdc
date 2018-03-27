@@ -121,7 +121,7 @@ topology_template:
           - subinterface_nested_vlan_net1
           - index_value
       requirements:
-      - binding_template_Vlan_vmi_1:
+      - binding_template_subint_Vlan_vmi_1:
           capability: tosca.capabilities.network.Bindable
           node: ps_server_1b_ps_server_1b_port
           relationship: tosca.relationships.network.BindsTo
@@ -251,6 +251,9 @@ topology_template:
       disk.root.size_ps_server_1b:
       - ps_server_1b
       - disk.root.size
+      feature_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_nested_vlan
+      - feature_template_subint_Vlan_vmi_1
       binding_ps_server_1b:
       - ps_server_1b
       - binding
@@ -326,13 +329,7 @@ topology_template:
       binding_ps_server_1b_ps_server_1b_port:
       - ps_server_1b_ps_server_1b_port
       - binding
-      feature_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
-      - feature_template_Vlan_vmi_1
     requirements:
-      dependency_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
-      - dependency_template_Vlan_vmi_1
       local_storage_ps_server_1b:
       - ps_server_1b
       - local_storage
@@ -345,9 +342,12 @@ topology_template:
       link_ps_server_1b_ps_server_1b_port:
       - ps_server_1b_ps_server_1b_port
       - link
-      link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      dependency_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
       - ps_server_1b_ps_server_1b_port_nested_vlan
-      - link_template_Vlan_vmi_1
+      - dependency_template_subint_Vlan_vmi_1
       dependency_ps_server_1b:
       - ps_server_1b
       - dependency
+      link_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_nested_vlan
+      - link_template_subint_Vlan_vmi_1
