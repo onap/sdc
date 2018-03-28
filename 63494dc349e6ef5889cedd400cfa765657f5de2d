@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8f01816c",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-28T10:24:23Z",
+      "side": 1,
+      "message": "As discussed, just ignoring/cleaning up illegal values is not a good solution. Please either fail so that we know when an illegal value has made it into the collection, or refactor the code to protect against illegal values.",
+      "revId": "63494dc349e6ef5889cedd400cfa765657f5de2d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
