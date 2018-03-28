@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_d8ac4238",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-28T05:16:06Z",
+      "side": 1,
+      "message": "Does this text",
+      "revId": "512c3dbadb9193d7d3d063cda9231d61ed99f084",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_78a96e23",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
         "patchSetId": 1
