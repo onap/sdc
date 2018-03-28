@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0fed71b7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-28T11:28:38Z",
+      "side": 1,
+      "message": "I don\u0027t see any functional difference from the initial version of the code. What were you trying to solve?",
+      "revId": "13c6044436281ec4f4a5f3d633f5c0ffcbfa2dd3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4ff3799f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-28T11:28:38Z",
+      "side": 1,
+      "message": "Why is it needed if the returned value is available as a member anyway? Also, validVspGetter() is not a good name for a Java method.",
+      "range": {
+        "startLine": 343,
+        "startChar": 0,
+        "endLine": 345,
+        "endChar": 3
+      },
+      "revId": "13c6044436281ec4f4a5f3d633f5c0ffcbfa2dd3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
