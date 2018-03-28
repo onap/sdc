@@ -397,7 +397,6 @@
 				<module>ui-ci</module>
 				<module>sdc-os-chef</module>
 				<module>utils/webseal-simulator</module>
-				<module>services/activity-spec</module>
 			</modules>
 
 		</profile>
