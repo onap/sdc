@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_574d4671",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/MetricsData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-29T13:13:32Z",
+      "side": 1,
+      "message": "I did it on purpose. This is a shared library, so the API must be very stable. I don\u0027t want it to change automatically when a field is added/removed/renamed. On the contrary, a person changing this class must now exactly what she/he is doing.",
+      "parentUuid": "5a93c517_0c681120",
+      "revId": "44e5b0d054879f9702ee3b77dbacc4f7f6b8ee48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ac4d5dc6",
         "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/context/HostAddress.java",
         "patchSetId": 3
@@ -64,6 +82,42 @@
       "writtenOn": "2018-03-29T12:20:48Z",
       "side": 1,
       "message": "cash? this is a typo",
+      "parentUuid": "5a93c517_ac4d5dc6",
+      "revId": "44e5b0d054879f9702ee3b77dbacc4f7f6b8ee48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b717ea44",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/context/HostAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-29T13:13:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_ac923df4",
+      "revId": "44e5b0d054879f9702ee3b77dbacc4f7f6b8ee48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f70d7236",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/context/HostAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-29T13:13:32Z",
+      "side": 1,
+      "message": "Please explain. I don\u0027t think it\u0027s important in this case, and even may hurt performance a bit. The only method that reads from/writes to it is synchronized.",
       "parentUuid": "5a93c517_ac4d5dc6",
       "revId": "44e5b0d054879f9702ee3b77dbacc4f7f6b8ee48",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
