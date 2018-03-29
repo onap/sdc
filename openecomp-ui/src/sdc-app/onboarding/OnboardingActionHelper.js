@@ -45,7 +45,7 @@ import SoftwareProductComponentsImageActionHelper from './softwareProduct/compon
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import { tabsMapping as attachmentsTabsMapping } from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsConstants.js';
 import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
-
+import { actionTypes as filterActionTypes } from './onboard/filter/FilterConstants.js';
 function setCurrentScreen(dispatch, screen, props = {}) {
     dispatch({
         type: actionTypes.SET_CURRENT_SCREEN,
@@ -66,6 +66,10 @@ export function updateCurrentScreenProps(dispatch, props = {}) {
 
 const OnboardingActionHelper = {
     loadItemsLists(dispatch) {
+        dispatch({
+            type: filterActionTypes.FILTER_DATA_CHANGED,
+            deltaData: {}
+        });
         LicenseModelActionHelper.fetchLicenseModels(dispatch);
         LicenseModelActionHelper.fetchFinalizedLicenseModels(dispatch);
         LicenseModelActionHelper.fetchArchivedLicenseModels(dispatch);

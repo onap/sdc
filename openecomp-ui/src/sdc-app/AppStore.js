@@ -16,17 +16,20 @@
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import Reducers from './Reducers.js';
+import filterUpdater from 'sdc-app/onboarding/onboard/filter/FilterMiddleware.js';
+
 const thunk = store => next => action =>
     typeof action === 'function'
         ? action(store.dispatch, store.getState)
         : next(action);
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 export const storeCreator = initialState =>
     createStore(
         Reducers,
         initialState,
-        composeEnhancers(applyMiddleware(thunk))
+        composeEnhancers(applyMiddleware(thunk, filterUpdater))
     );
 
 const store = storeCreator();

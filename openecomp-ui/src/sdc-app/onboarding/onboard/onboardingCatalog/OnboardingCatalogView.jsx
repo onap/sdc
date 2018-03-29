@@ -22,6 +22,7 @@ import { tabsMapping } from './OnboardingCatalogConstants.js';
 import { tabsMapping as WCTabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 import featureToggle from 'sdc-app/features/featureToggle.js';
 import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
+import { functionToggle } from 'sdc-app/features/featureToggleUtils.js';
 
 const Separator = () => <div className="tab-separator" />;
 
@@ -90,11 +91,12 @@ const FeaturedCatalogHeader = featureToggle(featureToggleNames.FILTER)({
 class OnboardingCatalogView extends React.Component {
     renderViewByTab(activeTab) {
         const {
-            finalizedLicenseModelList: licenseModelList,
-            fullLicenseModelList,
             users,
             vspOverlay,
-            finalizedSoftwareProductList: softwareProductList,
+            archivedLicenseModelList,
+            archivedSoftwareProductList,
+            finalizedSoftwareProductList,
+            finalizedLicenseModelList,
             onSelectLicenseModel,
             onSelectSoftwareProduct,
             onAddLicenseModelClick,
@@ -104,16 +106,28 @@ class OnboardingCatalogView extends React.Component {
             selectedVendor,
             searchValue,
             onMigrate,
-            archivedSoftwareProductList,
-            archivedLicenseModelList
+            filteredItems
         } = this.props;
 
         switch (activeTab) {
             case tabsMapping.ARCHIVE:
+                const toggledfilteredItemsArchive = functionToggle(
+                    featureToggleNames.FILTER,
+                    {
+                        aFunction: () => ({
+                            vlmList: filteredItems.vlmList,
+                            vspList: filteredItems.vspList
+                        }),
+                        bFunction: () => ({
+                            vlmList: archivedLicenseModelList,
+                            vspList: archivedSoftwareProductList
+                        })
+                    }
+                );
                 return (
                     <DetailsCatalogView
-                        VLMList={archivedLicenseModelList}
-                        VSPList={archivedSoftwareProductList}
+                        VLMList={toggledfilteredItemsArchive.vlmList}
+                        VSPList={toggledfilteredItemsArchive.vspList}
                         users={users}
                         onSelectVLM={(item, users) =>
                             onSelectLicenseModel(
@@ -134,10 +148,24 @@ class OnboardingCatalogView extends React.Component {
                     />
                 );
             case tabsMapping.ACTIVE:
+                const toggledfilteredItems = functionToggle(
+                    featureToggleNames.FILTER,
+                    {
+                        aFunction: () => ({
+                            vlmList: filteredItems.vlmList,
+                            vspList: filteredItems.vspList
+                        }),
+                        bFunction: () => ({
+                            vlmList: finalizedLicenseModelList,
+                            vspList: finalizedSoftwareProductList
+                        })
+                    }
+                );
+
                 return (
                     <DetailsCatalogView
-                        VLMList={licenseModelList}
-                        VSPList={softwareProductList}
+                        VLMList={toggledfilteredItems.vlmList}
+                        VSPList={toggledfilteredItems.vspList}
                         users={users}
                         onAddVLM={onAddLicenseModelClick}
                         onAddVSP={onAddSoftwareProductClick}
@@ -161,9 +189,22 @@ class OnboardingCatalogView extends React.Component {
                 );
             case tabsMapping.BY_VENDOR:
             default:
+                const toggledfilteredItemsVendor = functionToggle(
+                    featureToggleNames.FILTER,
+                    {
+                        aFunction: () => ({
+                            vlmList: filteredItems.vlmList,
+                            vspList: filteredItems.vspList
+                        }),
+                        bFunction: () => ({
+                            vlmList: finalizedLicenseModelList,
+                            vspList: finalizedSoftwareProductList
+                        })
+                    }
+                );
                 return (
                     <VendorCatalogView
-                        licenseModelList={fullLicenseModelList}
+                        licenseModelList={toggledfilteredItemsVendor.vlmList}
                         users={users}
                         onAddVSP={onAddSoftwareProductClick}
                         onAddVLM={onAddLicenseModelClick}

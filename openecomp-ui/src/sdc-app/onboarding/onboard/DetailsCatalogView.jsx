@@ -13,12 +13,39 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+import isEqual from 'lodash/isEqual.js';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { catalogItemTypes } from './onboardingCatalog/OnboardingCatalogConstants.js';
 import { filterCatalogItemsByType } from './onboardingCatalog/OnboardingCatalogUtils.js';
 import CatalogList from './CatalogList.jsx';
 import CatalogItemDetails from './CatalogItemDetails.jsx';
+
+const FilteredCatalogItems = ({
+    items,
+    type,
+    filter,
+    onSelect,
+    onMigrate,
+    users
+}) => {
+    const filteredItems = items.length
+        ? filterCatalogItemsByType({ items, filter })
+        : [];
+    return (
+        <div>
+            {filteredItems.map(item => (
+                <CatalogItemDetails
+                    key={item.id}
+                    catalogItemData={item}
+                    catalogItemTypeClass={type}
+                    onMigrate={onMigrate}
+                    onSelect={() => onSelect(item, users)}
+                />
+            ))}
+        </div>
+    );
+};
 
 class DetailsCatalogView extends React.Component {
     static propTypes = {
@@ -31,18 +58,14 @@ class DetailsCatalogView extends React.Component {
         filter: PropTypes.string.isRequired
     };
 
-    renderCatalogItems({ items, type, filter, onSelect, onMigrate, users }) {
-        return filterCatalogItemsByType({ items, filter }).map(item => (
-            <CatalogItemDetails
-                key={item.id}
-                catalogItemData={item}
-                catalogItemTypeClass={type}
-                onMigrate={onMigrate}
-                onSelect={() => onSelect(item, users)}
-            />
-        ));
+    shouldComponentUpdate(nextProps) {
+        const shouldUpdate =
+            isEqual(nextProps.VLMList, this.props.VLMList) &&
+            isEqual(nextProps.VSPList, this.props.VSPList) &&
+            isEqual(nextProps.users, this.props.users) &&
+            isEqual(nextProps.filter, this.props.filter);
+        return !shouldUpdate;
     }
-
     render() {
         let {
             VLMList,
@@ -57,22 +80,22 @@ class DetailsCatalogView extends React.Component {
         } = this.props;
         return (
             <CatalogList onAddVLM={onAddVLM} onAddVSP={onAddVSP}>
-                {this.renderCatalogItems({
-                    items: VLMList,
-                    type: catalogItemTypes.LICENSE_MODEL,
-                    filter,
-                    onSelect: onSelectVLM,
-                    onMigrate,
-                    users
-                })}
-                {this.renderCatalogItems({
-                    items: VSPList,
-                    type: catalogItemTypes.SOFTWARE_PRODUCT,
-                    filter,
-                    onSelect: onSelectVSP,
-                    onMigrate,
-                    users
-                })}
+                <FilteredCatalogItems
+                    items={VLMList}
+                    type={catalogItemTypes.LICENSE_MODEL}
+                    filter={filter}
+                    onSelect={onSelectVLM}
+                    onMigrate={onMigrate}
+                    users={users}
+                />
+                <FilteredCatalogItems
+                    items={VSPList}
+                    type={catalogItemTypes.SOFTWARE_PRODUCT}
+                    filter={filter}
+                    onSelect={onSelectVSP}
+                    onMigrate={onMigrate}
+                    users={users}
+                />
             </CatalogList>
         );
     }

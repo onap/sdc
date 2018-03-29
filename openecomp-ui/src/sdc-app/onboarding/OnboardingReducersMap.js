@@ -28,7 +28,7 @@ import usersReducer from './users/UsersReducers.js';
 import mergeEditorReducer from 'sdc-app/common/merge/MergeEditorReducer.js';
 import revisionsReducer from './revisions/RevisionsReducer.js';
 import featuresReducer from 'sdc-app/features/FeaturesReducer.js';
-
+import filteredItemsReducer from 'sdc-app/onboarding/onboard/filter/filteredItemsReducer.js';
 export default {
     currentScreen: currentScreenReducer,
     licenseModel: licenseModelReducer,
@@ -44,5 +44,6 @@ export default {
     users: usersReducer,
     versionsPage: versionsPageReducer,
     revisions: revisionsReducer,
-    features: featuresReducer
+    features: featuresReducer,
+    filteredItems: filteredItemsReducer
 };

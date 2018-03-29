@@ -22,7 +22,7 @@ import LicenseModelCreationActionHelper from '../licenseModel/creation/LicenseMo
 import SoftwareProductCreationActionHelper from '../softwareProduct/creation/SoftwareProductCreationActionHelper.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import { tabsMapping } from './onboardingCatalog/OnboardingCatalogConstants.js';
-import { itemsType } from './filter/FilterConstants.js';
+import { itemStatus } from './filter/FilterConstants.js';
 
 export const mapStateToProps = ({
     onboard: { onboardingCatalog, activeTab, searchValue, filter },
@@ -32,7 +32,8 @@ export const mapStateToProps = ({
     archivedSoftwareProductList,
     finalizedLicenseModelList,
     softwareProductList,
-    finalizedSoftwareProductList
+    finalizedSoftwareProductList,
+    filteredItems
 }) => {
     const fullSoftwareProducts = softwareProductList
         .filter(
@@ -48,6 +49,23 @@ export const mapStateToProps = ({
         );
         accum.push({ ...vlm, softwareProductList: currentSoftwareProductList });
         return accum;
+    };
+
+    const reduceFilteredLicenseModelList = (accum, vlm) => {
+        let currentSoftwareProductList = sortByStringProperty(
+            filteredItems.vspList.filter(vsp => vsp.vendorId === vlm.id),
+            'name'
+        );
+        accum.push({ ...vlm, softwareProductList: currentSoftwareProductList });
+        return accum;
+    };
+
+    const updatedFilteredItems = {
+        vspList: [...filteredItems.vspList],
+        vlmList: sortByStringProperty(
+            filteredItems.vlmList.reduce(reduceFilteredLicenseModelList, []),
+            'name'
+        )
     };
 
     licenseModelList = sortByStringProperty(
@@ -72,7 +90,7 @@ export const mapStateToProps = ({
     } = onboardingCatalog;
     if (filter.byVendorView) {
         catalogActiveTab = tabsMapping.BY_VENDOR;
-    } else if (filter.itemsType && filter.itemsType === itemsType.ARCHIVED) {
+    } else if (filter.itemStatus && filter.itemStatus === itemStatus.ARCHIVED) {
         catalogActiveTab = tabsMapping.ARCHIVE;
     }
 
@@ -89,7 +107,8 @@ export const mapStateToProps = ({
         searchValue,
         vspOverlay,
         selectedVendor,
-        users: users.usersList
+        users: users.usersList,
+        filteredItems: updatedFilteredItems
     };
 };
 
