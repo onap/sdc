@@ -35,6 +35,8 @@
         <jersey.multipart.version>1.18.1</jersey.multipart.version>
         <javax.servlet.version>2.5</javax.servlet.version>
         <org.codehaus.jackson.version>1.9.13</org.codehaus.jackson.version>
+        <nexus.proxy>https://nexus.onap.org</nexus.proxy>
+        <sitePath>/content/sites/site/org/openecomp/activity-spec/${project.version}</sitePath>
 
     </properties>
 
@@ -96,5 +98,22 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>ecomp-releases</id>
+            <name>Release Repository</name>
+            <url>${nexus.proxy}/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ecomp-snapshots</id>
+            <name>Snapshot Repository</name>
+            <url>${nexus.proxy}/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <site>
+            <id>ecomp-site</id>
+            <url>dav:${nexus.proxy}${sitePath}</url>
+        </site>
+    </distributionManagement>
 
 </project>
