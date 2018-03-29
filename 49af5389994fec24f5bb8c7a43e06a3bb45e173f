@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_574a2684",
+        "filename": "openecomp-bdd/resources/json/createActivitySpec.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-03-29T14:31:48Z",
+      "side": 1,
+      "message": "Do you think acceptance tests for the activity spec should be separated from SDC?",
+      "revId": "49af5389994fec24f5bb8c7a43e06a3bb45e173f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
