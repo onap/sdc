@@ -24,6 +24,7 @@ import NICCreation from 'sdc-app/onboarding/softwareProduct/components/network/N
 import SoftwareProductComponentsNICEditor from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNICEditor.js';
 import ComponentCreation from 'sdc-app/onboarding/softwareProduct/components/creation/SoftwareProductComponentCreation.js';
 import SoftwareProductDeploymentEditor from 'sdc-app/onboarding/softwareProduct/deployment/editor/SoftwareProductDeploymentEditor.js';
+import VNFImport from 'sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImport.js';
 import PermissionsManager from 'sdc-app/onboarding/permissions/PermissionsManager.js';
 import CommitCommentModal from 'nfvo-components/panel/versionController/components/CommitCommentModal.jsx';
 import Tree from 'nfvo-components/tree/Tree.jsx';
@@ -48,7 +49,8 @@ export const modalContentMapper = {
     VERSION_TREE: 'VERSION_TREE',
     MERGE_EDITOR: 'MERGE_EDITOR',
     REVISIONS_LIST: 'REVISIONS_LIST',
-    VENDOR_SELECTOR: 'VENDOR_SELECTOR'
+    VENDOR_SELECTOR: 'VENDOR_SELECTOR',
+    VNF_IMPORT: 'VNF_IMPORT'
 };
 
 export const modalContentComponents = {
@@ -67,5 +69,6 @@ export const modalContentComponents = {
     VERSION_TREE: Tree,
     MERGE_EDITOR: MergeEditor,
     REVISIONS_LIST: Revisions,
-    VENDOR_SELECTOR: VendorSelector
+    VENDOR_SELECTOR: VendorSelector,
+    VNF_IMPORT: VNFImport
 };

@@ -19,7 +19,9 @@ import classnames from 'classnames';
 import Dropzone from 'react-dropzone';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import Configuration from 'sdc-app/config/Configuration.js';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
+import VnfRepositorySearchBox from 'nfvo-components/vnfMarketPlace/VnfRepositorySearchBox.jsx';
 
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import SoftwareProductComponentsList from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponents.js';
@@ -122,26 +124,55 @@ class SoftwareProductLandingPageView extends React.Component {
     }
 
     renderProductDetails(isManual, isReadOnlyMode) {
-        return (
-            <div className="details-panel">
-                {!isManual && (
-                    <div>
-                        <div className="software-product-landing-view-heading-title">
-                            {i18n('Software Product Attachments')}
+        let { onBrowseVNF, currentSoftwareProduct } = this.props;
+
+        if (Configuration.get('showBrowseVNF')) {
+            return (
+                <div className="details-panel">
+                    {!isManual && (
+                        <div>
+                            <div className="software-product-landing-view-heading-title">
+                                {i18n('Software Product Attachments')}
+                            </div>
+                            <VnfRepositorySearchBox
+                                dataTestId="upload-btn"
+                                isReadOnlyMode={isReadOnlyMode}
+                                className={classnames(
+                                    'software-product-landing-view-top-block-col-upl showVnf',
+                                    { disabled: isReadOnlyMode }
+                                )}
+                                onClick={() => this.refs.fileInput.open()}
+                                onBrowseVNF={() =>
+                                    onBrowseVNF(currentSoftwareProduct)
+                                }
+                            />
                         </div>
-                        <DraggableUploadFileBox
-                            dataTestId="upload-btn"
-                            isReadOnlyMode={isReadOnlyMode}
-                            className={classnames(
-                                'software-product-landing-view-top-block-col-upl',
-                                { disabled: isReadOnlyMode }
-                            )}
-                            onClick={() => this.refs.fileInput.open()}
-                        />
-                    </div>
-                )}
-            </div>
-        );
+                    )}
+                </div>
+            );
+        } else {
+            return (
+                <div className="details-panel">
+                    {!isManual && (
+                        <div>
+                            <div className="software-product-landing-view-heading-title">
+                                {i18n('Software Product Attachments')}
+                            </div>
+                            <DraggableUploadFileBox
+                                dataTestId="upload-btn"
+                                isReadOnlyMode={isReadOnlyMode}
+                                className={classnames(
+                                    'software-product-landing-view-top-block-col-upl',
+                                    { disabled: isReadOnlyMode }
+                                )}
+                                onClick={() => this.refs.fileInput.open()}
+                                onBrowseVNF={() => onBrowseVNF()}
+                            />
+                        </div>
+                    )}
+                </div>
+            );
+        }
     }
 
     handleImportSubmit(files, isReadOnlyMode, isManual) {
