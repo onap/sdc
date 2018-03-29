@@ -1,6 +1,15 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
 
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,15 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
 
 
 public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest {
@@ -155,6 +155,59 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
 
     when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
 
+    when(utilMock.getSourceToTargetComponent()).thenReturn(map);
+    when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
+
+    Map<String, List<ErrorMessage>> errors =
+        toscaEnricher.enrich(toscaServiceModel, vspId, version );
+
+    compareActualAndExpectedModel(toscaServiceModel);
+
+    Assert.assertEquals(errors.size(), 0);
+  }
+
+  @Test
+  public void testEnrichComponentAddDependencies() throws Exception {
+    outputFilesPath = "/mock/enrichComponentAddDependencies/out";
+    ToscaServiceModel toscaServiceModel =
+        loadToscaServiceModel("/mock/enrichComponentAddDependencies/in",
+            "/mock/toscaGlobalServiceTemplates/",
+            "MainServiceTemplate.yaml");
+
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+    List<String> targets = new ArrayList<>();
+    targets.add("ps_server");
+    sourceToTargetDependencies.put("pd_server", targets);
+
+    when(utilMock.getSourceToTargetComponent()).thenReturn(map);
+
+    when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
+    when(utilMock.getSourceToTargetComponent()).thenReturn(map);
+    when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
+
+    Map<String, List<ErrorMessage>> errors =
+        toscaEnricher.enrich(toscaServiceModel, vspId, version );
+
+    compareActualAndExpectedModel(toscaServiceModel);
+
+    Assert.assertEquals(errors.size(), 0);
+  }
+
+  @Test
+  public void testEnrichComponentNoDependencies() throws Exception {
+    outputFilesPath = "/mock/enrichComponentNoDependencies/out";
+    ToscaServiceModel toscaServiceModel =
+        loadToscaServiceModel("/mock/enrichComponentNoDependencies/in",
+            "/mock/toscaGlobalServiceTemplates/",
+            "MainServiceTemplate.yaml");
+
+    Map<String,String> map = new HashMap<>();
+    Map<String, List<String>> sourceToTargetDependencies = new HashMap<>();
+
+    when(utilMock.getSourceToTargetComponent()).thenReturn(map);
+
+    when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
     when(utilMock.getSourceToTargetComponent()).thenReturn(map);
     when(utilMock.populateDependencies(vspId,version,map)).thenReturn(sourceToTargetDependencies);
 

@@ -1,21 +1,5 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
-import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
@@ -29,6 +13,29 @@ import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_ABSTRACT_SUBST
 import static org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType.NATIVE_DEPENDS_ON;
 import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.NodeType;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
+import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
+import org.openecomp.sdc.versioning.dao.types.Version;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class AbstractSubstituteToscaEnricher {
   private ToscaAnalyzerService toscaAnalyzerService ;
@@ -123,7 +130,7 @@ public class AbstractSubstituteToscaEnricher {
             }
 
             enrichRequirements(sourceToTargetDependencies, componentDisplayName, nodeTemplate,
-                componentDisplayNameToNodeTempalteIds);
+                componentDisplayNameToNodeTempalteIds, serviceTemplate, toscaModel);
           }
         });
     return errors;
@@ -168,35 +175,51 @@ public class AbstractSubstituteToscaEnricher {
 
   private void enrichRequirements(Map<String, List<String>> sourceToTargetDependencies,
                                   String componentDisplayName, NodeTemplate nodeTemplate,
-                                  Map<String, List<String>> componentDisplayNameToNodeTempalteIds) {
-    List<Map<String, RequirementAssignment>> requirements =
-        nodeTemplate.getRequirements();
-
-    if(requirements == null) {
-      requirements = new ArrayList<Map<String, RequirementAssignment>>();
+                                  Map<String, List<String>> componentDisplayNameToNodeTempalteIds,
+                                  ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
+    final List<String> targets = sourceToTargetDependencies.get(componentDisplayName);
+    if (CollectionUtils.isEmpty(targets)) {
+      return;
     }
 
-    final List<String> targets = sourceToTargetDependencies.get(componentDisplayName);
-    if(targets != null) {
-      for (String target : targets) {
-        List<String> targetNodeTemplateIds = componentDisplayNameToNodeTempalteIds.get(target);
-        if(targetNodeTemplateIds != null) {
-          for (String targetNodeTemplateId : targetNodeTemplateIds) {
-            Map<String, RequirementAssignment> requirement = new HashMap<String,
-                RequirementAssignment>();
-            RequirementAssignment requirementAssignment = new RequirementAssignment();
-            requirementAssignment.setCapability(NATIVE_NODE);
-            requirementAssignment.setRelationship(NATIVE_DEPENDS_ON);
-            requirementAssignment.setNode(targetNodeTemplateId);
-            requirement.put("dependency", requirementAssignment);
-            requirements.add(requirement);
-          }
+    for (String target : targets) {
+      List<String> targetNodeTemplateIds = componentDisplayNameToNodeTempalteIds.get(target);
+      if (CollectionUtils.isEmpty(targetNodeTemplateIds)) {
+        continue;
+      }
+      for (String targetNodeTemplateId : targetNodeTemplateIds) {
+        Optional<String> dependencyRequirementKey =
+            getDependencyRequirementKey(serviceTemplate, componentDisplayName, nodeTemplate, toscaServiceModel);
+        if (dependencyRequirementKey.isPresent()) {
+          RequirementAssignment requirementAssignment = new RequirementAssignment();
+          requirementAssignment.setCapability(NATIVE_NODE);
+          requirementAssignment.setRelationship(NATIVE_DEPENDS_ON);
+          requirementAssignment.setNode(targetNodeTemplateId);
+          DataModelUtil.addRequirementAssignment(nodeTemplate, dependencyRequirementKey.get(), requirementAssignment);
         }
       }
     }
+  }
 
-    if (!requirements.isEmpty())
-      nodeTemplate.setRequirements(requirements);
+  private Optional<String> getDependencyRequirementKey(ServiceTemplate serviceTemplate,
+                                                       String componentDisplayName,
+                                                       NodeTemplate nodeTemplate,
+                                                       ToscaServiceModel toscaServiceModel) {
+    String nodeType = nodeTemplate.getType();
+    NodeType flatNodeType = (NodeType) toscaAnalyzerService
+        .getFlatEntity(ToscaElementTypes.NODE_TYPE, nodeType, serviceTemplate, toscaServiceModel);
+    List<Map<String, RequirementDefinition>> flatNodeTypeRequirements = flatNodeType.getRequirements();
+    if (Objects.isNull(flatNodeTypeRequirements)) {
+      return Optional.empty() ;
+    }
+    for (Map<String, RequirementDefinition> requirementDefinitionMap : flatNodeTypeRequirements) {
+      String requirementKey = requirementDefinitionMap.keySet().iterator().next();
+      String expectedKey = ToscaConstants.DEPENDS_ON_REQUIREMENT_ID + "_" + componentDisplayName;
+      if (requirementKey.equals(expectedKey)) {
+        return Optional.of(requirementKey);
+      }
+    }
+    return Optional.empty();
   }
 
   private String getComponentDisplayName(String nodeTemplateId, NodeTemplate nodeTemplate) {
