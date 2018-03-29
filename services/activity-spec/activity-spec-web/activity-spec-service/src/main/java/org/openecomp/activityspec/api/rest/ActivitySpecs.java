@@ -67,8 +67,9 @@ public interface ActivitySpecs {
   @Path("/{id}/versions/{versionId}/actions")
   @ApiOperation(value = "Actions on a activity spec",
       notes = "Performs one of the following actions on a activity spec: |"
-          + "Submit: Finalize its active version.|"
-          + "Deprecate: Deprecate activity spec.|")
+          + "CERTIFY: Certifies activity spec.|"
+          + "DEPRECATE: Deprecates activity spec.|"
+          + "DELETE: Deletes activity spec.")
   Response actOnActivitySpec(ActivitySpecActionRequestDto request,
       @ApiParam(value = "Activity Spec Id") @PathParam("id") String id,
       @ApiParam(value = "Version Id") @PathParam("versionId") String versionId);
@@ -78,6 +79,6 @@ public interface ActivitySpecs {
   @ApiOperation(value = "Get list of activity specs ",
       responseContainer = "List")
   Response list(@ApiParam(
-      value = "Currently supported values: 'Certified' - only activity specs with Certified status")
+      value = "List activity specs based on status filter")
                     @QueryParam("status") String versionStatus);
 }

@@ -4,14 +4,16 @@
   "categoryList": [
     "Server"
   ],
-  "inputParameters": [{
+  "inputs": [{
     "name": "host",
     "type": "string",
     "value": "10.1.2.3"
   }],
-  "outputParameters": [{
+  "outputs": [{
     "name": "status",
     "type": "string",
     "value": "started"
-  }]
+  }],
+  "type": "string",
+  "content": "test"
 }
