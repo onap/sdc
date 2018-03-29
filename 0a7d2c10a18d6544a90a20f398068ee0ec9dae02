@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_29585ff9",
+        "filename": "services/activity-spec/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-03-29T07:59:14Z",
+      "side": 1,
+      "message": "Tested below changes. PSB output for same. DistributionManagement duplicated and added from sdc main pom.\n\nWithout distributionManagement in POM before change\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy (default-deploy) on project activity-spec: Deployment failed: repository element was not specified in the POM inside distributionManagement element or in -DaltDeploymentRepository\u003did::layout::url parameter -\u003e [Help 1]\n\nAfter adding distributionManagement in POM with change\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy (default-deploy) on project activity-spec: Failed to deploy artifacts: Could not transfer artifact org.openecomp.activityspec:activity-spec:pom:1.2.0-20180329.064316-1 from/to ecomp-snapshots (https://nexus.onap.org/content/repositories/snapshots/): Failed to transfer file: https://nexus.onap.org/content/repositories/snapshots/org/openecomp/activityspec/activity-spec/1.2.0-SNAPSHOT/activity-spec-1.2.0-20180329.064316-1.pom. Return code is: 401, ReasonPhrase: Unauthorized. -\u003e [Help 1]",
+      "revId": "0a7d2c10a18d6544a90a20f398068ee0ec9dae02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
