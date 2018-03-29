@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4c8619dd",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/Logger.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-29T12:17:45Z",
+      "side": 1,
+      "message": "Add @deprecated to javadoc. (sonar suggestion)",
+      "revId": "44e5b0d054879f9702ee3b77dbacc4f7f6b8ee48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0c681120",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/MetricsData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-29T12:17:45Z",
+      "side": 1,
+      "message": "Why not Lombok",
+      "revId": "44e5b0d054879f9702ee3b77dbacc4f7f6b8ee48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ac4d5dc6",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/context/HostAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-29T12:17:45Z",
+      "side": 1,
+      "message": "Should be volatile. This is a multi threaded code.",
+      "revId": "44e5b0d054879f9702ee3b77dbacc4f7f6b8ee48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
