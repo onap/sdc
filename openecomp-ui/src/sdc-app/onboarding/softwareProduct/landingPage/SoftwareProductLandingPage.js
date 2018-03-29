@@ -21,6 +21,7 @@ import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalMod
 import { onboardingMethod } from '../SoftwareProductConstants.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
+import VNFImportActionHelper from '../vnfMarketPlace/VNFImportActionHelper.js';
 
 export const mapStateToProps = ({
     softwareProduct,
@@ -137,7 +138,12 @@ const mapActionsToProps = (dispatch, { version }) => {
                 props: { softwareProductId, version, componentId }
             }),
         /** for the next version */
-        onAddComponent: () => SoftwareProductActionHelper.addComponent(dispatch)
+        onAddComponent: () =>
+            SoftwareProductActionHelper.addComponent(dispatch),
+
+        onBrowseVNF: currentSoftwareProduct => {
+            VNFImportActionHelper.open(dispatch, currentSoftwareProduct);
+        }
     };
 };
 

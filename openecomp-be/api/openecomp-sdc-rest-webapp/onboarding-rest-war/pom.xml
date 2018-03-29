@@ -35,6 +35,11 @@
             <artifactId>openecomp-sdc-notification-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+	<dependency>
+            <groupId>org.openecomp.sdc.onboarding</groupId>
+            <artifactId>vnf-repository-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>vendor-software-products-rest-services</artifactId>

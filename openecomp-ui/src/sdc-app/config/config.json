@@ -7,5 +7,6 @@
 	"defaultRestCatalogPrefix": "/sdc1/feProxy/rest",
 	"defaultWebsocketPort" : "8181",
 	"defaultDebugWebsocketPort" : "9000",
-	"defaultWebsocketPath" : "notification-api/ws/notificationHandler"
+	"defaultWebsocketPath" : "notification-api/ws/notificationHandler",
+	"showBrowseVNF" : true
 }
