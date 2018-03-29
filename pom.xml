@@ -399,7 +399,6 @@
 				<module>utils/webseal-simulator</module>
 				<module>services/activity-spec</module>
 			</modules>
-
 		</profile>
 
 		<profile>
