@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8c15019d",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/AbstractSubstituteToscaEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-03-29T11:55:33Z",
+      "side": 1,
+      "message": "Is it by design, Each map has only one key.Why not use tupple?",
+      "revId": "187b26cd4647377d311f92a3ba2350b2b25d7779",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
