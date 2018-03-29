@@ -1,0 +1,109 @@
+$message-info-icon-size: 16px;
+
+.vnf-creation-page {
+	.list-editor-view-header {
+		border-bottom: none;
+	}
+	.vnfBrowse-list-item {
+		display: flex;
+		height: 36px;
+		@extend .body-1;
+		&.header {
+			@extend .body-1-semibold;
+			background-color: $tlv-light-gray;
+			color: $text-black;
+		}
+		&.selectedRow {
+			background-color: $blue;
+			color: $white;
+			.svg-icon-wrapper {
+				&.__positive {
+					fill: $white;
+					color: $white;
+				}
+			}
+		}
+		.svg-icon-wrapper {
+			&.__positive {
+				fill: $dark-gray;
+				color: $dark-gray;
+			}
+		}
+	}
+
+  	.activity-action {
+		.svg-icon-wrapper {
+			float: left;
+		}
+  	}
+
+	.message-further-info-icon {
+		background-color: $gray;
+	}
+
+	.table-cell {
+	border-right: 1px solid $light-gray;
+	border-bottom: 1px solid $light-gray;
+	&:last-child {
+  		border-right: none;
+	}
+	flex-basis: 22%;
+	display: flex;
+	padding: 0 20px;
+	justify-content: center;
+	flex-direction: column;
+
+	&.vnftable-action {
+		flex-basis: 12%;
+		span {
+			margin: auto;
+		}
+	}
+}
+
+  .vnf-table-header {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	.header-sort-arrow {
+	  width: 0;
+	  height: 0;
+	  border-left: 5px solid transparent;
+	  border-right: 5px solid transparent;
+	  margin-left: 9px;
+	  &.up {
+		border-bottom: 5px solid $black;
+	  }
+	  &.down {
+		border-top: 5px solid $black;
+	  }
+
+	}
+  }
+
+  .vnf-table-cell {
+	display: flex;
+	justify-content: space-between;
+	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+  } 
+  .vnftable-name {
+  	max-width: 22%;
+  }
+
+  .vnf-grid-section {
+  	margin: 20px 20px 20px 50px;
+  }
+
+  .vnf-modal {
+  	text-align: right;
+  	margin-top: 22px;
+  }
+ 
+  .vnf-submit {
+  	margin-right: 15px;
+  }
+
+}

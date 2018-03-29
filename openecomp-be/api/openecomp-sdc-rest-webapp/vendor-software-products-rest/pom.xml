@@ -17,5 +17,6 @@
     <modules>
         <module>/vendor-software-products-rest-services</module>
         <module>/vendor-software-products-rest-types</module>
+	<module>/vnf-repository-rest-services</module>
     </modules>
 </project>

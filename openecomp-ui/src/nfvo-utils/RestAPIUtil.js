@@ -41,6 +41,9 @@ const CONTENT_MD5_HEADER = 'Content-MD5';
 
 function applySecurity(options, data) {
     let headers = options.headers || (options.headers = {});
+    if (options.isAnonymous) {
+        return;
+    }
 
     let authToken = localStorage.getItem(STORAGE_AUTH_KEY);
     if (authToken) {
