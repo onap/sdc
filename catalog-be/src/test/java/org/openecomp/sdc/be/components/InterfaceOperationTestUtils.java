@@ -18,8 +18,6 @@ package org.openecomp.sdc.be.components;
 
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
-import org.openecomp.sdc.be.datatypes.elements.WorkflowOperationDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.WorkflowOperationParamDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;

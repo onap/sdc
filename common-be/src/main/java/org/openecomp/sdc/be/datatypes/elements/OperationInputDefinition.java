@@ -33,6 +33,12 @@ public class OperationInputDefinition extends InputDataDefinition {
         setName(name);
     }
 
+    public OperationInputDefinition(String paramName, String paramId) {
+        super();
+        setName(paramName);
+        setInputId(paramId);
+    }
+
     public String getLabel() {
         return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL);
     }

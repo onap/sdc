@@ -27,11 +27,10 @@ import java.util.Map;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.WorkflowOperationDataDefinition;
-import static java.util.stream.Collectors.groupingBy;
+
 public class Resource extends Component implements Serializable {
 
 	private static final long serialVersionUID = -6811540567661368482L;
@@ -60,7 +59,7 @@ public class Resource extends Component implements Serializable {
 
 	private List<String> defaultCapabilities;
 
-	private Map<String, WorkflowOperationDataDefinition> workflowOperations;
+	private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
 
 //	private List<AdditionalInformationDefinition> additionalInformation;
 
@@ -155,12 +154,12 @@ public class Resource extends Component implements Serializable {
 				.setLicenseType(licenseType);
 	}
 
-	public Map<String, WorkflowOperationDataDefinition> getWorkflowOperations() {
-		return workflowOperations;
+	public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
+		return interfaceOperations;
 	}
 
-	public void setWorkflowOperations(Map<String, WorkflowOperationDataDefinition> workflowOperations) {
-		this.workflowOperations = workflowOperations;
+	public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
+		this.interfaceOperations = interfaceOperations;
 	}
 
 	@Override
@@ -177,7 +176,7 @@ public class Resource extends Component implements Serializable {
 		result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
 		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result + ((derivedList == null) ? 0 : derivedList.hashCode());
-		result = prime * result + ((workflowOperations == null) ? 0 : workflowOperations.hashCode());
+		result = prime * result + ((interfaceOperations == null) ? 0 : interfaceOperations.hashCode());
 		// result = prime * result + ((requirements == null) ? 0 :
 		// requirements.hashCode());
 		return result;
@@ -223,10 +222,10 @@ public class Resource extends Component implements Serializable {
 				return false;
 		} else if (!properties.equals(other.properties))
 			return false;
-		if (workflowOperations == null) {
-			if (other.workflowOperations != null)
+		if (interfaceOperations == null) {
+			if (other.interfaceOperations != null)
 				return false;
-		} else if (!workflowOperations.equals(other.workflowOperations))
+		} else if (!interfaceOperations.equals(other.interfaceOperations))
 			return false;
 		return super.equals(obj);
 	}
@@ -238,7 +237,7 @@ public class Resource extends Component implements Serializable {
 				// + ", capabilities=" + capabilities + ", requirements=" +
 				// requirements
 				+ ", defaultCapabilities=" + defaultCapabilities + ", additionalInformation=" + additionalInformation
-			+ ", workflowOperations=" + workflowOperations
+			+ ", interfaceOperations=" + interfaceOperations
 				+ "Metadata [" + getComponentMetadataDefinition().getMetadataDataDefinition().toString() + "]";
 	}
 
