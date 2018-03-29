@@ -196,13 +196,14 @@ public enum JsonPresentationFields {
 
 	//External Refs
 	EXTERNAL_REF					("externalRef", null),
-	
-	//Workflow Operation
-	WO_TYPE ("operationType",null),
-	WO_INPUT_PARAMETERS ("inputParams",null),
-	WO_OUTPUT_PARAMETERS ("outputParams",null),
-	WO_PARAM_NAME("paramName", null),
-	WO_PARAM_ID("paramId", null),
+
+	//Interface Operation
+	IO_OPERATION_TYPE("operationType",null),
+	IO_INPUT_PARAMETERS("inputParams",null),
+	IO_OUTPUT_PARAMETERS("outputParams",null),
+	IO_PARAM_NAME("paramName", null),
+	IO_PARAM_ID("paramId", null),
+
 
 	//Interface
 	INTERFACE ("interface", null),
