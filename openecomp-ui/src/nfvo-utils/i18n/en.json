@@ -612,5 +612,14 @@
   "VSPQuestionnaire/general/storageDataReplication/storageReplicationFrequency" : "Storage Replication Frequency",
   "VSPQuestionnaire/general/storageDataReplication/storageReplicationDestination" : "Storage Replication Destination",
 
+  "VNF List Title": "VNF List",
+  "VNF import failed title" : "VNF import failed",
+  "VNF import failed msg" : "VNF Repository Server is not responding or not reachable. Please check server address in configuration file.",
+  "VNF Header Name" : "Name",
+  "VNF Header Version" : "Version",
+  "VNF Header Vendor" : "Vendor",
+  "VNF Header Desc" : "Description",
+  "VNF Header Action" : "Action",
+  
   "GENERIC_ERROR": "An error has occurred. Please contact your System Administrator for further assistance."
 }
