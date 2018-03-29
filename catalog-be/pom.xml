@@ -967,6 +967,7 @@
                                                 <include>error-configuration.yaml</include>
                                                 <include>ecomp-error-configuration.yaml</include>
                                                 <include>logback.xml</include>
+                                                <include>config-vnfrepo</include>
                                             </includes>
                                         </resource>
                                     </resources>
