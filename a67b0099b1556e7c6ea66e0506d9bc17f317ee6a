@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_400fb5e1",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/context/HostAddress.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-01T05:36:47Z",
+      "side": 1,
+      "message": "This is very tricky. Does reference change will requires volatile keyword?\nSuch problems will probably be visible only under stress testing. And will be very hard to debug.\nThere are few stackoverflow on this issue. I personally prefer to be on the safe side when it comes to multithreading.\nhttps://stackoverflow.com/questions/11963972/in-java-can-i-depend-on-reference-assignment-being-atomic-to-implement-copy-on-w\nI would even prefer the use of AtomicReference class in this case.\nhttps://docs.oracle.com/javase/7/docs/api/java/util/concurrent/atomic/AtomicReference.html",
+      "revId": "a67b0099b1556e7c6ea66e0506d9bc17f317ee6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
