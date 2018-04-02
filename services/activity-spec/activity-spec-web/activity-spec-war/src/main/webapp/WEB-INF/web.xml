@@ -21,6 +21,23 @@
         <filter-class>org.openecomp.sdc.logging.servlet.LoggingFilter</filter-class>
     </filter>
 
+    <filter>
+        <filter-name>AuthN</filter-name>
+        <filter-class>org.openecomp.activityspec.api.server.filters.AuthenticationFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>AuthZ</filter-name>
+        <filter-class>org.openecomp.activityspec.api.server.filters.AuthorizationFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AuthN</filter-name>
+        <url-pattern>/v1.0/activity-specs/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthZ</filter-name>
+        <url-pattern>/v1.0/activity-specs/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>LoggingServletFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -32,8 +49,7 @@
     <filter-mapping>
         <filter-name>SessionContextFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <!-- Spring WS Mapping -->
+    </filter-mapping>    <!-- Spring WS Mapping -->
     <servlet>
         <servlet-name>spring-mapper</servlet-name>
         <servlet-class>

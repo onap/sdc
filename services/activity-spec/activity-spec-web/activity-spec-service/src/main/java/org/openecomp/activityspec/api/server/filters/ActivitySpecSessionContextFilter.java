@@ -23,22 +23,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
-import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.common.session.SessionContextProvider;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 
 import static org.openecomp.activityspec.utils.ActivitySpecConstant.TENANT;
 import static org.openecomp.activityspec.utils.ActivitySpecConstant.USER;
-import static org.openecomp.activityspec.utils.ActivitySpecConstant.USER_ID_HEADER_PARAM;
 
 public class ActivitySpecSessionContextFilter implements Filter {
-
-  private static final String MESSAGE_USER_MAY_NOT_BE_NULL = "{\"message\": \"User ID can not be null\"}";
 
   @Override
   public void init(FilterConfig filterConfig) {
@@ -49,15 +40,6 @@ public class ActivitySpecSessionContextFilter implements Filter {
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
       FilterChain filterChain) throws IOException, ServletException {
 
-    final String userHeader = ((HttpServletRequest) servletRequest).getHeader(USER_ID_HEADER_PARAM);
-
-    // Not a real security, just make sure the request
-    // has passed some authentication gateway
-    if (StringUtils.isEmpty(userHeader)) {
-      sendErrorResponse(servletResponse);
-      return;
-    }
-
     SessionContextProvider contextProvider = SessionContextProviderFactory.getInstance().createInterface();
 
     try {
@@ -67,13 +49,6 @@ public class ActivitySpecSessionContextFilter implements Filter {
     } finally {
       contextProvider.close();
     }
-  }
-
-  private void sendErrorResponse(ServletResponse servletResponse) throws IOException {
-    HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-    httpServletResponse.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-    httpServletResponse.setStatus(Status.UNAUTHORIZED.getStatusCode());
-    servletResponse.getOutputStream().write(MESSAGE_USER_MAY_NOT_BE_NULL.getBytes());
   }
 
   @Override
