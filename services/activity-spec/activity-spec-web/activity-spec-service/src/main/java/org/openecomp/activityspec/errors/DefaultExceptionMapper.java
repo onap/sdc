@@ -29,6 +29,9 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.GET_NOT_FOUND_ERR_PREFIX;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.NOT_FOUND_ERR_SUFFIX;
+
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionMapper.class);
@@ -51,8 +54,14 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
   private Response transform(CoreException coreException) {
     LOGGER.error("Transforming CoreException to Error Response  :", coreException);
-    return generateResponse(Status.EXPECTATION_FAILED, new ActivitySpecErrorResponse(Status.EXPECTATION_FAILED, coreException.code().id(),
-        coreException.getMessage()) );
+    final String id = coreException.code().id();
+    final Status responseStatus;
+    if (id != null && (GET_NOT_FOUND_ERR_PREFIX + NOT_FOUND_ERR_SUFFIX).equals(id)) {
+      responseStatus = Status.NOT_FOUND;
+    } else {
+      responseStatus =  Status.BAD_REQUEST;
+    }
+    return generateResponse(responseStatus, new ActivitySpecErrorResponse(coreException.getMessage()));
   }
 
   private Response transform(ConstraintViolationException validationException) {
@@ -72,22 +81,17 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     } else {
       message = validationException.getMessage();
     }
-    return generateResponse(Status.EXPECTATION_FAILED, new ActivitySpecErrorResponse(Status.EXPECTATION_FAILED,
-        "FIELD_VALIDATION_ERROR_ERR_ID",
-        String.format(message,fieldName)));
+    return generateResponse(Status.BAD_REQUEST, new ActivitySpecErrorResponse(String.format(message,fieldName)));
     }
 
   private Response transform(Exception exception) {
     LOGGER.error("Transforming Exception to Error Response " + exception);
-    return generateResponse(Status.INTERNAL_SERVER_ERROR, new ActivitySpecErrorResponse(Status.INTERNAL_SERVER_ERROR,
-        "GENERAL_ERROR_REST_ID",
-        "An error has occurred: " + exception.getMessage()));
+    return generateResponse(Status.INTERNAL_SERVER_ERROR, new ActivitySpecErrorResponse(exception.getMessage()));
   }
 
   private Response transform(JsonMappingException jsonMappingException) {
     LOGGER.error("Transforming JsonMappingException to Error Response " + jsonMappingException);
-    return generateResponse(Status.EXPECTATION_FAILED, new ActivitySpecErrorResponse(Status.EXPECTATION_FAILED,"JSON_MAPPING_ERROR_ERR_ID",
-        "Invalid Json Input"));
+    return generateResponse(Status.BAD_REQUEST, new ActivitySpecErrorResponse("Invalid Json Input"));
   }
 
   private Response generateResponse(Response.Status status, ActivitySpecErrorResponse

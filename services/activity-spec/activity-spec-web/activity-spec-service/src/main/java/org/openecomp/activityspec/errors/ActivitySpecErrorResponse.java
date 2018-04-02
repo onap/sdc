@@ -16,21 +16,15 @@
 
 package org.openecomp.activityspec.errors;
 
-import javax.ws.rs.core.Response;
-
 @lombok.Data
 public class ActivitySpecErrorResponse {
-  private Response.Status status;
-  private String errorCode;
   private String message;
 
   public ActivitySpecErrorResponse() {
     //default constructor
   }
 
-  public ActivitySpecErrorResponse(Response.Status status, String errorCode, String message) {
-    this.status = status;
-    this.errorCode = errorCode;
+  public ActivitySpecErrorResponse(String message) {
     this.message = message;
   }
 }

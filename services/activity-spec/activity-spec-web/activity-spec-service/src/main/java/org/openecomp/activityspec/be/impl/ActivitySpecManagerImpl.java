@@ -19,6 +19,9 @@ package org.openecomp.activityspec.be.impl;
 import static org.openecomp.activityspec.api.rest.types.ActivitySpecAction.CERTIFY;
 import static org.openecomp.activityspec.api.rest.types.ActivitySpecAction.DELETE;
 import static org.openecomp.activityspec.api.rest.types.ActivitySpecAction.DEPRECATE;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.GET_NOT_FOUND_ERR_PREFIX;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.NOT_FOUND_ERR_SUFFIX;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.UPDATE_NOT_FOUND_ERR_PREFIX;
 import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Certified;
 import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Deleted;
 import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Deprecated;
@@ -118,8 +121,8 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
 
   @Override
   public ActivitySpecEntity get(ActivitySpecEntity activitySpec) {
-    activitySpec.setVersion(calculateLatestVersion(activitySpec.getId(),activitySpec.getVersion()
-        ));
+    activitySpec.setVersion(calculateLatestVersion(activitySpec.getId(),activitySpec.getVersion(),
+        GET_NOT_FOUND_ERR_PREFIX));
     ActivitySpecEntity retrieved = null;
     try {
       retrieved = activitySpecDao.get(activitySpec);
@@ -127,7 +130,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
       LOGGER.error("Failed to retrieve activity spec for activitySpecId: " + activitySpec.getId()
           + " and version: "
           + activitySpec.getVersion().getId(), runtimeException);
-      validateActivitySpecExistence(activitySpec.getId(), activitySpec.getVersion());
+      validateActivitySpecExistence(GET_NOT_FOUND_ERR_PREFIX);
     }
     if (retrieved != null) {
       final Version retrievedVersion = versioningManager.get(activitySpec.getId(),
@@ -159,7 +162,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
   @Override
   public void actOnAction(String activitySpecId, String versionId, ActivitySpecAction action) {
     Version version = new Version(versionId);
-    version = calculateLatestVersion(activitySpecId, version);
+    version = calculateLatestVersion(activitySpecId, version, UPDATE_NOT_FOUND_ERR_PREFIX);
     if (action == CERTIFY) {
       version.setStatus(Certified);
     }
@@ -189,15 +192,14 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     } catch (SdcRuntimeException exception) {
       LOGGER.error("Failed to get version for activitySpecId: " + activitySpecId
               + " and version: " + version.getId(), exception);
-      validateActivitySpecExistence(activitySpecId, version);
+      validateActivitySpecExistence(UPDATE_NOT_FOUND_ERR_PREFIX);
 
     }
 
     VersionStatus status = version.getStatus();
     Transition transition = TRANSITIONS.get(status);
     if (transition != null) {
-      String errMsg = String.format("Activity Spec is in an invalid state",
-          transition.action, activitySpecId, transition.prevStatus);
+      String errMsg = "Activity Spec is in an invalid state";
       validateStatus(Objects.nonNull(retrievedVersion) ? retrievedVersion.getStatus() : null,
           transition.prevStatus, errMsg);
       prevVersionStatus = transition.prevStatus;
@@ -212,10 +214,10 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     }
   }
 
-  private void validateActivitySpecExistence(String activitySpecId, Version version) {
+  private void validateActivitySpecExistence(String action) {
     throw new CoreException(new ErrorCode.ErrorCodeBuilder()
         .withCategory(ErrorCategory.APPLICATION)
-        .withId("ACTIVITYSPEC_NOT_FOUND")
+        .withId(action + NOT_FOUND_ERR_SUFFIX)
         .withMessage("No Activity Spec found for the given identifiers")
         .build());
   }
@@ -230,7 +232,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
     }
   }
 
-  private Version calculateLatestVersion(String activitySpecId, Version version) {
+  private Version calculateLatestVersion(String activitySpecId, Version version, String action) {
     if (ActivitySpecConstant.VERSION_ID_DEFAULT_VALUE.equalsIgnoreCase(version.getId())) {
       List<Version> list = null;
       try {
@@ -238,7 +240,7 @@ public class ActivitySpecManagerImpl implements ActivitySpecManager {
       } catch (SdcRuntimeException runtimeException) {
         LOGGER.error("Failed to list versions for activitySpecId "
             + activitySpecId, runtimeException);
-        validateActivitySpecExistence(activitySpecId, version);
+        validateActivitySpecExistence(action);
       }
       if (Objects.nonNull(list) && !list.isEmpty()) {
         return list.get(0);

@@ -47,12 +47,14 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.GET_NOT_FOUND_ERR_PREFIX;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.UPDATE_NOT_FOUND_ERR_PREFIX;
 import static org.openecomp.activityspec.utils.ActivitySpecConstant.VERSION_ID_DEFAULT_VALUE;
 
 public class ActivitySpecManagerImplTest {
 
   private static final String STRING_TYPE = "String";
-  private static final String ACTIVITYSPEC_NOT_FOUND = "ACTIVITYSPEC_NOT_FOUND";
+  private static final String ACTIVITYSPEC_NOT_FOUND = "_ACTIVITYSPEC_NOT_FOUND";
   private static final String TEST_ERROR_MSG = "Test Error";
   private static final String ERROR_MSG_PREFIX = "STATUS_NOT_";
   private ActivitySpecEntity input;
@@ -189,7 +191,7 @@ public class ActivitySpecManagerImplTest {
       activitySpecManager.get(input);
       Assert.fail();
     } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ACTIVITYSPEC_NOT_FOUND);
+      Assert.assertEquals(exception.code().id(), GET_NOT_FOUND_ERR_PREFIX + ACTIVITYSPEC_NOT_FOUND);
     }
   }
 
@@ -204,7 +206,7 @@ public class ActivitySpecManagerImplTest {
       activitySpecManager.get(input);
       Assert.fail();
     } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ACTIVITYSPEC_NOT_FOUND);
+      Assert.assertEquals(exception.code().id(), GET_NOT_FOUND_ERR_PREFIX + ACTIVITYSPEC_NOT_FOUND);
     }
   }
 
@@ -266,7 +268,7 @@ public class ActivitySpecManagerImplTest {
           VERSION01.getId(), ActivitySpecAction.CERTIFY);
       Assert.fail();
     } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ACTIVITYSPEC_NOT_FOUND);
+      Assert.assertEquals(exception.code().id(), UPDATE_NOT_FOUND_ERR_PREFIX + ACTIVITYSPEC_NOT_FOUND);
     }
   }
 
