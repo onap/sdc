@@ -35,9 +35,9 @@
 #    And I want to get the ActivitySpec for the current item
 #    And I want to check property "status" for value "Deleted"
 #
-#    #Pass Invalid Id to Get and verify error code
+#    #Pass Invalid Id to Get and verify error message
 #    Then I want to set property "item.id" to value "invalidId"
-#    Then I want the following to fail with error code "ACTIVITYSPEC_NOT_FOUND"
+#    Then I want the following to fail with error message "No Activity Spec found for the given identifiers"
 #    And I want to get the ActivitySpec for the current item
 #
 #  # SDC-6353
@@ -49,22 +49,22 @@
 #    Then I want to check property "id" exists
 #    And I want to check property "versionId" exists
 #
-#    #Again Create ActivitySpec with name "test" and verify error code
+#    #Again Create ActivitySpec with name "test" and verify error message
 #    When I want to set the input data to file "resources/json/createActivitySpec.json"
 #    Then I want to update the input property "name" with value "test"
-#    Then I want the following to fail with error code "UNIQUE_VALUE_VIOLATION"
+#    Then I want the following to fail with error message "name already in use"
 #    When I want to create an ActivitySpec
 #
 #  # SDC-6354
 #  Scenario: Test Create Activity Spec With Invalid Name Format
 #    When I want to set the input data to file "resources/json/createActivitySpec.json"
 #    Then I want to update the input property "name" with value "test!@"
-#    Then I want the following to fail with error code "FIELD_VALIDATION_ERROR_ERR_ID"
+#    Then I want the following to fail with error message "name should match with \"^[a-zA-Z0-9-]*$\" pattern"
 #    When I want to create an ActivitySpec
 #
 #  # SDC-6355
 #  Scenario: Test Create Activity Spec With Null/Blank Name
 #    When I want to set the input data to file "resources/json/createActivitySpec.json"
 #    Then I want to update the input property "name" with value ""
-#    Then I want the following to fail with error code "FIELD_VALIDATION_ERROR_ERR_ID"
+#    Then I want the following to fail with error message "Mandatory name field is missing/null"
 #    When I want to create an ActivitySpec

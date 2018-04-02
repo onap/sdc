@@ -23,6 +23,8 @@ public class ActivitySpecConstant {
   public static final String TENANT = "activity_spec";
   public static final String USER = "activity_spec_USER";
   public static final String USER_ID_HEADER_PARAM = "USER_ID";
+  public static final String ACTIVITY_SPEC_NOT_FOUND = "No Activity Spec found for the given identifiers";
+  public static final String INVALID_STATE = "Activity Spec is in an invalid state";
 
   private ActivitySpecConstant(){
     //Utility Class declaring constants does not require instantiation.
