@@ -214,6 +214,15 @@
             </plugin>-->
 
         </plugins>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <excludes>
+                    <exclude>**/*</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
     </build>
 
     <!--Added to resolve blackduck operational risks for indirect dependencies referred -->

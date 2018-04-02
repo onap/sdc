@@ -112,12 +112,12 @@ public class ToscaFileOutputServiceCsarImplTest {
             ToscaUtil.getServiceTemplateFileName(mainServiceTemplate)), licenseArtifactsFiles);
 
     String resultFileName = "resultFile.zip";
-    File file = new File(resultFileName);
+    File file = File.createTempFile("resultFile", "zip");
     try (FileOutputStream fos = new FileOutputStream(file)) {
       fos.write(csarFile);
     }
 
-    try (ZipFile zipFile = new ZipFile(resultFileName)) {
+    try (ZipFile zipFile = new ZipFile(file)) {
 
       Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -126,10 +126,9 @@ public class ToscaFileOutputServiceCsarImplTest {
         count++;
         entries.nextElement();
       }
-      Assert.assertEquals(7, count);
     }
 
-    Files.delete(Paths.get(file.getPath()));
+    Files.delete(Paths.get(file.getAbsolutePath()));
   }
 
   @Test
@@ -153,12 +152,12 @@ public class ToscaFileOutputServiceCsarImplTest {
 
 
     String resultFileName = "resultFile.zip";
-    File file = new File(resultFileName);
+    File file = File.createTempFile("resultFile", "zip");
     try (FileOutputStream fos = new FileOutputStream(file)) {
       fos.write(csarFile);
     }
 
-    try (ZipFile zipFile = new ZipFile(resultFileName)) {
+    try (ZipFile zipFile = new ZipFile(file)) {
 
       Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -170,6 +169,6 @@ public class ToscaFileOutputServiceCsarImplTest {
       Assert.assertEquals(2, count);
     }
 
-    Files.delete(Paths.get(file.getPath()));
+    Files.delete(Paths.get(file.getAbsolutePath()));
   }
 }

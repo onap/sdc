@@ -55,7 +55,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.version}</version>
                 <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.build.directory}/../src/test/resources</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <forkCount>0</forkCount>
                     <systemPropertyVariables>
                         <config.location>${project.basedir}/configuration</config.location>
                     </systemPropertyVariables>
