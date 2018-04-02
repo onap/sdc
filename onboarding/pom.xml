@@ -163,6 +163,16 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${mvn.surefire.version}</version>
+                <configuration>
+                    <forkCount>0</forkCount>
+                    <systemPropertyVariables>
+                        <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

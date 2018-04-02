@@ -42,5 +42,21 @@
     <artifactId>openecomp-tosca-converter-core</artifactId>
     <version>1.2.0-SNAPSHOT</version>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${mvn.surefire.version}</version>
+                <configuration>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.build.directory}/../src/test/resources</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <forkCount>0</forkCount>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
