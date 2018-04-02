@@ -38,6 +38,8 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     Response response;
     if (exception instanceof CoreException) {
       response = transform(CoreException.class.cast(exception));
+    } else if (exception instanceof ActivitySpecNotFoundException) {
+      response = transform(ActivitySpecNotFoundException.class.cast(exception));
     } else if (exception instanceof ConstraintViolationException) {
       response = transform(ConstraintViolationException.class.cast(exception));
     } else if (exception instanceof JsonMappingException) {
@@ -49,10 +51,14 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     return response;
   }
 
+  private Response transform(ActivitySpecNotFoundException notFoundException) {
+    LOGGER.error("Transforming ActivitySpecNotFoundException to Error Response  :", notFoundException);
+    return generateResponse(Status.NOT_FOUND, new ActivitySpecErrorResponse(notFoundException.getMessage()));
+  }
+
   private Response transform(CoreException coreException) {
     LOGGER.error("Transforming CoreException to Error Response  :", coreException);
-    return generateResponse(Status.EXPECTATION_FAILED, new ActivitySpecErrorResponse(Status.EXPECTATION_FAILED, coreException.code().id(),
-        coreException.getMessage()) );
+    return generateResponse(Status.BAD_REQUEST, new ActivitySpecErrorResponse(coreException.getMessage()));
   }
 
   private Response transform(ConstraintViolationException validationException) {
@@ -72,22 +78,17 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     } else {
       message = validationException.getMessage();
     }
-    return generateResponse(Status.EXPECTATION_FAILED, new ActivitySpecErrorResponse(Status.EXPECTATION_FAILED,
-        "FIELD_VALIDATION_ERROR_ERR_ID",
-        String.format(message,fieldName)));
-    }
+    return generateResponse(Status.BAD_REQUEST, new ActivitySpecErrorResponse(String.format(message,fieldName)));
+  }
 
   private Response transform(Exception exception) {
     LOGGER.error("Transforming Exception to Error Response " + exception);
-    return generateResponse(Status.INTERNAL_SERVER_ERROR, new ActivitySpecErrorResponse(Status.INTERNAL_SERVER_ERROR,
-        "GENERAL_ERROR_REST_ID",
-        "An error has occurred: " + exception.getMessage()));
+    return generateResponse(Status.INTERNAL_SERVER_ERROR, new ActivitySpecErrorResponse(exception.getMessage()));
   }
 
   private Response transform(JsonMappingException jsonMappingException) {
     LOGGER.error("Transforming JsonMappingException to Error Response " + jsonMappingException);
-    return generateResponse(Status.EXPECTATION_FAILED, new ActivitySpecErrorResponse(Status.EXPECTATION_FAILED,"JSON_MAPPING_ERROR_ERR_ID",
-        "Invalid Json Input"));
+    return generateResponse(Status.BAD_REQUEST, new ActivitySpecErrorResponse("Invalid Json Input"));
   }
 
   private Response generateResponse(Response.Status status, ActivitySpecErrorResponse

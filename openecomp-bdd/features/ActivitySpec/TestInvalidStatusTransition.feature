@@ -14,16 +14,16 @@
 #    When I want to get the ActivitySpec for the current item
 #    Then I want to check property "status" for value "Draft"
 #
-#    #Deprecate "Draft" activity status and verify error code
-#    Then I want the following to fail with error code "STATUS_NOT_CERTIFIED"
+#    #Deprecate "Draft" activity status and verify error message
+#    Then I want the following to fail with error message "Activity Spec is in an invalid state"
 #    When I want to call action "DEPRECATE" on this ActivitySpec item
 #
 #    #Delete "Draft" activity spec and verify error code
-#    Then I want the following to fail with error code "STATUS_NOT_DEPRECATED"
+#    Then I want the following to fail with error message "Activity Spec is in an invalid state"
 #    When I want to call action "DELETE" on this ActivitySpec item
 #
 #    #Certify activity spec
 #    When I want to call action "CERTIFY" on this ActivitySpec item
 #    #Certify "certified" activity spec and verify error code
-#    Then I want the following to fail with error code "STATUS_NOT_DRAFT"
+#    Then I want the following to fail with error message "Activity Spec is in an invalid state"
 #    When I want to call action "CERTIFY" on this ActivitySpec item

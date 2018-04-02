@@ -26,6 +26,7 @@ import org.openecomp.activityspec.api.rest.types.ActivitySpecAction;
 import org.openecomp.activityspec.be.dao.ActivitySpecDao;
 import org.openecomp.activityspec.be.dao.types.ActivitySpecEntity;
 import org.openecomp.activityspec.be.datatypes.ActivitySpecParameter;
+import org.openecomp.activityspec.errors.ActivitySpecNotFoundException;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
@@ -47,14 +48,14 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.ACTIVITY_SPEC_NOT_FOUND;
+import static org.openecomp.activityspec.utils.ActivitySpecConstant.INVALID_STATE;
 import static org.openecomp.activityspec.utils.ActivitySpecConstant.VERSION_ID_DEFAULT_VALUE;
 
 public class ActivitySpecManagerImplTest {
 
   private static final String STRING_TYPE = "String";
-  private static final String ACTIVITYSPEC_NOT_FOUND = "ACTIVITYSPEC_NOT_FOUND";
   private static final String TEST_ERROR_MSG = "Test Error";
-  private static final String ERROR_MSG_PREFIX = "STATUS_NOT_";
   private ActivitySpecEntity input;
   private static final Version VERSION01 = new Version("12345");
   private static final String ID = "ID1";
@@ -188,8 +189,8 @@ public class ActivitySpecManagerImplTest {
     try {
       activitySpecManager.get(input);
       Assert.fail();
-    } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ACTIVITYSPEC_NOT_FOUND);
+    } catch (ActivitySpecNotFoundException exception) {
+      Assert.assertEquals(exception.getMessage(), ACTIVITY_SPEC_NOT_FOUND);
     }
   }
 
@@ -203,8 +204,8 @@ public class ActivitySpecManagerImplTest {
     try {
       activitySpecManager.get(input);
       Assert.fail();
-    } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ACTIVITYSPEC_NOT_FOUND);
+    } catch (ActivitySpecNotFoundException exception) {
+      Assert.assertEquals(exception.getMessage(), ACTIVITY_SPEC_NOT_FOUND);
     }
   }
 
@@ -215,8 +216,7 @@ public class ActivitySpecManagerImplTest {
           VERSION01.getId(), ActivitySpecAction.DEPRECATE);
     }
     catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ERROR_MSG_PREFIX +VersionStatus.Certified.name()
-          .toUpperCase());
+      Assert.assertEquals(exception.getMessage(), INVALID_STATE);
     }
   }
 
@@ -227,8 +227,7 @@ public class ActivitySpecManagerImplTest {
           VERSION01.getId(), ActivitySpecAction.DELETE);
     }
     catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ERROR_MSG_PREFIX+VersionStatus.Deprecated.name()
-          .toUpperCase());
+      Assert.assertEquals(exception.getMessage(), INVALID_STATE);
     }
   }
 
@@ -252,8 +251,7 @@ public class ActivitySpecManagerImplTest {
           VERSION01.getId(), ActivitySpecAction.CERTIFY);
     }
     catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ERROR_MSG_PREFIX+VersionStatus.Draft.name()
-          .toUpperCase());
+      Assert.assertEquals(exception.getMessage(), INVALID_STATE);
     }
   }
 
@@ -265,8 +263,8 @@ public class ActivitySpecManagerImplTest {
       activitySpecManager.actOnAction(ID,
           VERSION01.getId(), ActivitySpecAction.CERTIFY);
       Assert.fail();
-    } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), ACTIVITYSPEC_NOT_FOUND);
+    } catch (ActivitySpecNotFoundException exception) {
+      Assert.assertEquals(exception.getMessage(), ACTIVITY_SPEC_NOT_FOUND);
     }
   }
 
