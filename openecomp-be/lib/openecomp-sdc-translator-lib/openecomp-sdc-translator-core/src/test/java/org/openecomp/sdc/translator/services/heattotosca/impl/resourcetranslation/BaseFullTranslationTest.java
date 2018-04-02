@@ -143,8 +143,7 @@ public class BaseFullTranslationTest {
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
 
-    File file = new File(path + "/VSP.zip");
-    file.createNewFile();
+    File file = File.createTempFile("VSP", "zip");
 
     try (FileOutputStream fos = new FileOutputStream(file)) {
       ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
