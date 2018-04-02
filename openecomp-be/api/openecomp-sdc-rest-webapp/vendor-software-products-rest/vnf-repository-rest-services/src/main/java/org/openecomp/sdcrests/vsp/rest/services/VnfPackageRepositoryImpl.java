@@ -15,26 +15,8 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import org.apache.http.HttpStatus;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-
-import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
-import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
-import org.openecomp.sdcrests.vsp.rest.VnfPackageRepository;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFileResponseDto;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-import org.openecomp.sdc.common.rest.api.IRestClient;
-import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
-import org.openecomp.sdc.common.rest.api.RestResponse;
-import org.openecomp.sdc.common.rest.impl.RestClientServiceFactory;
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
+import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
+import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -45,8 +27,22 @@ import java.nio.charset.StandardCharsets;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
-import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
-import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
+import org.apache.http.HttpStatus;
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.common.http.client.api.HttpRequest;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
+import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
+import org.openecomp.sdcrests.vsp.rest.VnfPackageRepository;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFileResponseDto;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -63,9 +59,9 @@ import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
 public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VnfPackageRepositoryImpl.class);
-	private static IRestClient iRestClnt = null;
+	
 	private static boolean initFlag = false;
-	public static final Version VERSION01 = new Version(0, 1);
+	public static final Version VERSION01 = new Version("0.1");
 
 	// Default VNF Repository configuration
 	private static final String CONFIG_NAMESPACE = "vnfsdk";
@@ -90,9 +86,9 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 		// Step 1: Create REST client and configuration and prepare URI
 		init();
 
-		// Step 2: Build URI based on the IP address and port allocated
-		RestResponse rsp = iRestClnt.doGET(getVnfPkgUri, null);
-		if (HttpStatus.SC_OK != rsp.getHttpStatusCode()) {
+		// Step 2: Build URI based on the IP address and port allocated		
+		HttpResponse<String> rsp  = HttpRequest.get(getVnfPkgUri);
+		if (HttpStatus.SC_OK != rsp.getStatusCode()) {
 			LOGGER.error("Failed to query VNF package metadata:uri={}, Response={}", getVnfPkgUri, rsp);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
@@ -113,8 +109,8 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
 		// Step 2: Build URI based on the IP address and port allocated
 		String uri = String.format(downldPkgUri, csarId);
-		RestResponse rsp = iRestClnt.doGET(getVnfPkgUri, null);
-		if (HttpStatus.SC_OK != rsp.getHttpStatusCode()) {
+		HttpResponse<String> rsp  = HttpRequest.get(uri);
+		if (HttpStatus.SC_OK != rsp.getStatusCode()) {
 			LOGGER.error("Failed to download package from VNF Repository:uri={}, Response={}", uri, rsp);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
@@ -152,8 +148,8 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
 		// Step 2: Build URI based on the IP address and port allocated
 		String uri = String.format(downldPkgUri, csarId);
-		RestResponse rsp = iRestClnt.doGET(uri, null);
-		if (HttpStatus.SC_OK != rsp.getHttpStatusCode()) {
+		HttpResponse<String> rsp  = HttpRequest.get(uri);
+		if (HttpStatus.SC_OK != rsp.getStatusCode()) {
 			LOGGER.error("Failed to download package from VNF Repository:uri={}, Response={}", uri, rsp);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
@@ -166,18 +162,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 		LOGGER.debug("Response from VNF Repository for download package is success ");
 
 		return response.build();
-	}
-
-	private static void setRestClient() {
-
-		if (null == iRestClnt) {
-			RestConfigurationInfo restInfo = new RestConfigurationInfo();
-			iRestClnt = RestClientServiceFactory.createRestClientService(restInfo);
-			if (null == iRestClnt) {
-				return;
-			}
-		}
-	}
+	}	
 
 	private static void setVnfRepoConfig() {
 
@@ -219,14 +204,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 	private static synchronized void init() throws Exception {
 		if (!initFlag) {
 			// Step 1: Initialize configuration
-			setVnfRepoConfig();
-
-			// Step 2: Initialize rest client
-			setRestClient();
-			if (null == iRestClnt) {
-				LOGGER.error("REST initialization error, Rest client is null");
-				throw new Exception("Rest Initializer error, Rest client is null");
-			}
+			setVnfRepoConfig();			
 
 			initFlag = true;
 		}
