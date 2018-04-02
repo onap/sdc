@@ -96,7 +96,7 @@ function getFileName(xhr, defaultFilename) {
 
 function uploadVNFData(csarId, currSoftwareProduct, dispatch) {
     let softwareProductId = currSoftwareProduct.id;
-    let version = currSoftwareProduct.version;
+    let version = { id: currSoftwareProduct.version };
 
     SoftwareProductActionHelper.uploadVNFFile(dispatch, {
         csarId,

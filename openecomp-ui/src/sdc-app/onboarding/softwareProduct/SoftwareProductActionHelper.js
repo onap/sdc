@@ -79,10 +79,9 @@ function uploadFile(vspId, formData, version) {
 }
 
 function uploadVNFFile(csarId, softwareProductId, version) {
+    let verId = typeof version === 'object' ? version.id : version;
     return RestAPIUtil.post(
-        `${baseUrl()}${softwareProductId}/versions/${
-            version.id
-        }/vnfrepository/vnfpackage/${csarId}/import`
+        `${baseUrl()}${softwareProductId}/versions/${verId}/vnfrepository/vnfpackage/${csarId}/import`
     );
 }
 function putSoftwareProduct({ softwareProduct, version }) {
