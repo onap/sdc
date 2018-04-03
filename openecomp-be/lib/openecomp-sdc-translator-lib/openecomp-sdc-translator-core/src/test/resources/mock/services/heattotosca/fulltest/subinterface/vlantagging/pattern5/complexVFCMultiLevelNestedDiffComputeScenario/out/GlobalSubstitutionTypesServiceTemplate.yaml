@@ -699,6 +699,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -794,6 +795,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -928,6 +930,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pd_server_1b_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_pd_server_1b_port_vlan_requirements:
         type: list
         required: true
@@ -1019,7 +1027,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+    - subinterface_link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -1127,6 +1135,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1573,6 +1582,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1932,7 +1942,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_vmi_1:
+    - subinterface_link_template_Vlan_vmi_1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:

@@ -115,7 +115,7 @@ resources:
       virtual_network_refs: [{ get_param: p2 },{ get_param: p1 }]
       virtual_machine_interface_refs: [{ get_resource: template_VMInt_OAM_lb_4 }]
 
-  server_cmaui:
+  server_cmaui_2:
     type: OS::Nova::Server
     properties:
       name: { get_param: [cmaui_names, 0]}

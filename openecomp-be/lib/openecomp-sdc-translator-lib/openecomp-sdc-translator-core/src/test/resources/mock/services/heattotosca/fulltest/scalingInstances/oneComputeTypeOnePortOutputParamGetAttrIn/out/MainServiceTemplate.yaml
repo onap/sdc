@@ -122,6 +122,9 @@ topology_template:
         port_pd01_port_network:
         - Network-1
         - Network-0
+        port_pd01_port_subinterface_indicator:
+        - true
+        - true
         compute_pd_server_user_data_format:
         - RAW_SERVER_PD_2
         - RAW_SERVER_PD_1

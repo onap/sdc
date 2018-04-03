@@ -173,6 +173,9 @@ topology_template:
         port_pd01_port_network:
         - Network-PD-1
         - Network-PD-0
+        port_pd01_port_subinterface_indicator:
+        - true
+        - true
         compute_pd_server_user_data_format:
         - null
         - get_attribute:
@@ -208,6 +211,9 @@ topology_template:
         - null
         vm_flavor_name:
           get_input: ps_flavor_name
+        port_ps01_port_subinterface_indicator:
+        - true
+        - true
         vm_image_name:
           get_input: ps_image_name
         port_ps01_port_replacement_policy:

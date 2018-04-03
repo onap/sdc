@@ -42,6 +42,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_pd01_port_0_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_pd01_port_0_replacement_policy:
       type: list
       required: true
@@ -93,6 +98,11 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_pd01_port_1_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_pd01_port_1_order:
       type: integer
       required: true
@@ -148,26 +158,30 @@ topology_template:
     pd_server_pd01_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        replacement_policy:
+          get_input:
+          - port_pd01_port_1_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_pd01_port_1_mac_requirements
+        order:
+          get_input: port_pd01_port_1_order
         security_groups:
           get_input:
           - port_pd01_port_1_security_groups
           - index_value
         exCP_naming:
           get_input: port_pd01_port_1_exCP_naming
-        replacement_policy:
-          get_input:
-          - port_pd01_port_1_replacement_policy
-          - index_value
         vlan_requirements:
           get_input: port_pd01_port_1_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_pd01_port_1_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_pd01_port_1_ip_requirements
         network_role_tag:
           get_input: port_pd01_port_1_network_role_tag
-        mac_requirements:
-          get_input: port_pd01_port_1_mac_requirements
-        order:
-          get_input: port_pd01_port_1_order
         network_role:
           get_input: port_pd01_port_1_network_role
         subnetpoolid:
@@ -184,26 +198,30 @@ topology_template:
     pd_server_pd01_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        replacement_policy:
+          get_input:
+          - port_pd01_port_0_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_pd01_port_0_mac_requirements
+        order:
+          get_input: port_pd01_port_0_order
         security_groups:
           get_input:
           - port_pd01_port_0_security_groups
           - index_value
         exCP_naming:
           get_input: port_pd01_port_0_exCP_naming
-        replacement_policy:
-          get_input:
-          - port_pd01_port_0_replacement_policy
-          - index_value
         vlan_requirements:
           get_input: port_pd01_port_0_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_pd01_port_0_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_pd01_port_0_ip_requirements
         network_role_tag:
           get_input: port_pd01_port_0_network_role_tag
-        mac_requirements:
-          get_input: port_pd01_port_0_mac_requirements
-        order:
-          get_input: port_pd01_port_0_order
         network_role:
           get_input: port_pd01_port_0_network_role
         subnetpoolid:

@@ -424,6 +424,8 @@ topology_template:
             is_required: true
         vm_image_name:
           get_input: pd_image_name
+        port_pd01_port_subinterface_indicator:
+        - true
         port_pd01_port_device_id:
         - PORT_PD_DEVICE_ID
         port_pd01_port_admin_state_up:
@@ -494,6 +496,8 @@ topology_template:
             - fq_name
         port_template_VMInt_OAM_lb_virtual_machine_interface_mac_addresses:
         - - get_input: mac_address
+        port_template_VMInt_OAM_lb_subinterface_indicator:
+        - true
         port_template_VMInt_OAM_lb_name:
         - template_VMInt_OAM_lb_NAME
         port_pd01_port_port_security_enabled:

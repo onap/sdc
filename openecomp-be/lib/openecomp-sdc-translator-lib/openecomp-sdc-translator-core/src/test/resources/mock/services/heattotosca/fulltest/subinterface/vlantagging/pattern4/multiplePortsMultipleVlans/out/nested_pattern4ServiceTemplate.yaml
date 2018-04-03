@@ -291,7 +291,7 @@ topology_template:
         aap_untrusted_ip_prefix_len:
           get_input: vdbe_aap_untrusted_ip_prefix_len
       requirements:
-      - link_vdbe_untr_x_subport_another:
+      - subinterface_link_vdbe_untr_x_subport_another:
           capability: tosca.capabilities.network.Linkable
           node: fabric_int_net
           relationship: tosca.relationships.network.LinksTo
@@ -773,9 +773,6 @@ topology_template:
       dependency_vdbe_untr_x_subport_vdbe_untr_1_subports:
       - vdbe_untr_1_subports
       - dependency_vdbe_untr_x_subport
-      link_vdbe_untr_x_subport_vdbe_untr_1_subports:
-      - vdbe_untr_1_subports
-      - link_vdbe_untr_x_subport
       dependency_vdbe_untr_2_port:
       - vdbe_untr_2_port
       - dependency
@@ -797,6 +794,9 @@ topology_template:
       dependency_vdbe_untr_x_subport_another_vdbe_untr_2_subports:
       - vdbe_untr_2_subports
       - dependency_vdbe_untr_x_subport_another
+      subinterface_link_vdbe_untr_x_subport_vdbe_untr_1_subports:
+      - vdbe_untr_1_subports
+      - subinterface_link_vdbe_untr_x_subport
       dependency_vdbe_untr_1_subports:
       - vdbe_untr_1_subports
       - dependency

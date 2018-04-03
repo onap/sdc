@@ -115,6 +115,8 @@ topology_template:
         - get_input:
           - cmaui_names
           - 0
+        port_cmaui_port_5_subinterface_indicator:
+        - true
         compute_cmaui_availability_zone:
         - get_input: availability_zone_0
         vm_image_name:
@@ -159,6 +161,8 @@ topology_template:
         port_cmaui_port_5_mac_requirements:
           mac_count_required:
             is_required: false
+        port_cmaui_port_6_subinterface_indicator:
+        - true
         port_cmaui_port_6_mac_requirements:
           mac_count_required:
             is_required: false

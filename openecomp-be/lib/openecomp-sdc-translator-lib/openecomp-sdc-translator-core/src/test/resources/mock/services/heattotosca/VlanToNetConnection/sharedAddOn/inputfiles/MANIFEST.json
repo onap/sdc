@@ -12,6 +12,11 @@
       "file": "addOn.yml",
       "type": "HEAT",
       "isBase": "false"
+    },
+    {
+      "file": "vlan.yml",
+      "type": "HEAT",
+      "isBase": "false"
     }
   ]
 }

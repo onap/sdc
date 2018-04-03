@@ -8,29 +8,17 @@ node_types:
   org.openecomp.resource.abstract.nodes.FSB1:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_FSB1_Internal_mac_address:
-        type: string
-        required: true
-        status: SUPPORTED
       port_FSB1_Internal_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_FSB2_Internal_2_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_FSB1_Internal_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
       port_FSB2_Internal_2_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_FSB1_OAM_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
@@ -40,10 +28,102 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_FSB1_OAM_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_FSB2_Internal_2_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_OAM_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_FSB1_Internal_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_FSB1_Internal_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal_1_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_2_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_FSB1_OAM_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal_1_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal_2_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_OAM_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_1_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_2_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_1_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_2_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_FSB1_OAM_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
       port_FSB2_Internal_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_FSB2_Internal_1_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_FSB1_OAM_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -54,15 +134,7 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_FSB2_Internal_2_order:
-        type: integer
-        required: true
-        status: SUPPORTED
       port_FSB2_Internal_1_mac_address:
-        type: string
-        required: true
-        status: SUPPORTED
-      vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
@@ -86,18 +158,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_FSB1_OAM_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
-      port_FSB1_Internal_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       port_FSB1_Internal_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -114,13 +174,13 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-      compute_FSB1_availability_zone:
+      port_FSB1_Internal_subinterface_indicator:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
-      port_FSB1_Internal_network:
+          type: boolean
+      compute_FSB1_availability_zone:
         type: list
         required: true
         status: SUPPORTED
@@ -134,16 +194,12 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_FSB2_Internal_1_order:
-        type: integer
-        required: true
-        status: SUPPORTED
-      port_FSB2_Internal_2_ip_requirements:
+      port_FSB2_Internal_2_subinterface_indicator:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
+          type: boolean
       port_FSB1_OAM_order:
         type: integer
         required: true
@@ -154,42 +210,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      port_FSB1_OAM_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_FSB2_Internal_1_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB2_Internal_2_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB2_Internal_2_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
       port_FSB2_Internal_1_network_role_tag:
         type: string
         required: true
         status: SUPPORTED
       port_FSB1_Internal_order:
         type: integer
-        required: true
-        status: SUPPORTED
-      port_FSB1_OAM_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_FSB2_Internal_1_network_role:
-        type: string
         required: true
         status: SUPPORTED
       port_FSB1_OAM_network_role_tag:
@@ -212,16 +244,8 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_FSB2_Internal_2_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
       port_FSB2_Internal_2_exCP_naming:
         type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_FSB2_Internal_1_subnetpoolid:
-        type: string
         required: true
         status: SUPPORTED
     requirements:
@@ -326,6 +350,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -333,6 +358,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -522,6 +548,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -581,6 +608,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED

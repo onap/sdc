@@ -50,6 +50,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pd01_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_template_VMInt_OAM_lb_virtual_machine_interface_properties:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
         required: true
@@ -260,6 +266,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_template_VMInt_OAM_lb_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_template_VMInt_OAM_lb_name:
         type: list
         required: true
@@ -672,6 +684,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -774,6 +787,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED

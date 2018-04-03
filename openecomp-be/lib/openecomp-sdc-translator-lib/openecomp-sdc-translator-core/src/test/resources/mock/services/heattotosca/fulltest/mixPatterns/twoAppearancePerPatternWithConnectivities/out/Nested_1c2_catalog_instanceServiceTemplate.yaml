@@ -11,6 +11,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_2c202_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     compute_1c2_catalog_instance_availability_zone:
       type: list
       required: true
@@ -88,6 +93,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
+    port_1c201_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_1c201_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
@@ -154,6 +164,10 @@ topology_template:
           get_input: port_1c201_port_exCP_naming
         vlan_requirements:
           get_input: port_1c201_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_1c201_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_1c201_port_ip_requirements
         network_role_tag:
@@ -182,6 +196,10 @@ topology_template:
           get_input: port_2c202_port_exCP_naming
         vlan_requirements:
           get_input: port_2c202_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_2c202_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_2c202_port_ip_requirements
         network_role_tag:

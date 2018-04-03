@@ -395,6 +395,8 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_vdbe_untr_1_port_subinterface_indicator:
+        - true
         subinterface_nested_parent_interface:
         - vdbe_untr_1_port
         subinterface_nested_aap_address_mode:
@@ -482,4 +484,4 @@ topology_template:
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
       - control_int_net
-      - abstract_vdbe
+      - abstract_vdbe

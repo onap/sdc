@@ -488,6 +488,9 @@ topology_template:
         subinterface_vlan1_counter:
         - get_input: counter
         - get_input: counter
+        port_vdbe_untr_2_port_subinterface_indicator:
+        - true
+        - true
         vm_image_name:
           get_input: vdbe_image_name
         compute_vdbe_metadata:
@@ -518,6 +521,9 @@ topology_template:
         compute_vdbe_name:
         - get_input: vdbe_name_1
         - get_input: vdbe_name_1
+        port_vdbe_untr_1_port_subinterface_indicator:
+        - true
+        - true
         subinterface_vlan1_ip_v6_address:
         - get_input: vdbe_untrusted_v6_ip_1
         - get_input: vdbe_untrusted_v6_ip_1

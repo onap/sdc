@@ -47,6 +47,11 @@ topology_template:
     port_1b_t2_port_order:
       type: integer
       required: true
+    port_1b_t2_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_1b_t2_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -86,6 +91,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_1b_t1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     compute_b_single_2b_user_data_format:
       type: list
       required: true
@@ -145,6 +155,10 @@ topology_template:
           get_input: port_1b_t1_port_exCP_naming
         vlan_requirements:
           get_input: port_1b_t1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_1b_t1_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_1b_t1_port_ip_requirements
         network_role_tag:
@@ -173,6 +187,10 @@ topology_template:
           get_input: port_1b_t2_port_exCP_naming
         vlan_requirements:
           get_input: port_1b_t2_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_1b_t2_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_1b_t2_port_ip_requirements
         network_role_tag:

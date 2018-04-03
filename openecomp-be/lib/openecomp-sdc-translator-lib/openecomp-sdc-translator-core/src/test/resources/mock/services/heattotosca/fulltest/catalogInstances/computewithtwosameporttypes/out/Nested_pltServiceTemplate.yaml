@@ -48,6 +48,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_plt_oam_0_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     vm_image_name:
       type: string
       required: true
@@ -82,6 +87,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.network.AddressPair
+    port_plt_internal_0_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_plt_internal_0_port_subnetpoolid:
       type: string
       required: true
@@ -200,6 +210,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_plt_data_0_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_plt_oam_0_port_replacement_policy:
       type: list
       required: true
@@ -245,6 +260,10 @@ topology_template:
           get_input: port_plt_internal_0_port_exCP_naming
         vlan_requirements:
           get_input: port_plt_internal_0_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_plt_internal_0_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_plt_internal_0_port_ip_requirements
         network_role_tag:
@@ -287,6 +306,10 @@ topology_template:
           get_input: port_plt_data_0_port_exCP_naming
         vlan_requirements:
           get_input: port_plt_data_0_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_plt_data_0_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_plt_data_0_port_ip_requirements
         network_role_tag:
@@ -364,6 +387,10 @@ topology_template:
           get_input: port_plt_oam_0_port_exCP_naming
         vlan_requirements:
           get_input: port_plt_oam_0_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_plt_oam_0_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_plt_oam_0_port_ip_requirements
         network_role_tag:

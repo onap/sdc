@@ -944,43 +944,6 @@ public class UnifiedCompositionServiceTest {
         checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
     }
 
-    @Ignore
-    public void testThreeNovaOfSameTypePreConditionFalse() throws IOException {
-        loadInputAndOutputData(BASE_DIRECTORY + "pattern1b/noConsolidation");
-
-        List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
-        List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-        portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL_1));
-        portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL_2));
-
-        UnifiedCompositionData unifiedCompositionData1 =
-                createCompositionData(FSB1_template, portTypeToIdList1);
-        addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData1);
-        addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData1);
-        unifiedCompositionDataList.add(unifiedCompositionData1);
-
-        UnifiedCompositionData unifiedCompositionData2 =
-                createCompositionData(FSB2_template, portTypeToIdList1);
-        addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData2);
-        addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData2);
-        unifiedCompositionDataList.add(unifiedCompositionData2);
-
-        portTypeToIdList1.remove(1);
-        UnifiedCompositionData unifiedCompositionData3 =
-                createCompositionData(FSB3_template, portTypeToIdList1);
-        addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData3);
-        addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData3);
-        unifiedCompositionDataList.add(unifiedCompositionData3);
-
-        UnifiedCompositionSingleSubstitution unifiedCompositionSingleSubstitution =
-                new UnifiedCompositionSingleSubstitution();
-        unifiedCompositionSingleSubstitution
-                .createUnifiedComposition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), null,
-                        unifiedCompositionDataList, context);
-
-        checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
-    }
-
     @Test
     public void testUnifiedNestedCompositionOneComputeInNested() throws IOException {
         loadInputAndOutputData(BASE_DIRECTORY + "pattern4/oneNestedNode");
@@ -1007,7 +970,7 @@ public class UnifiedCompositionServiceTest {
     UnifiedCompositionData unifiedComposition = createUnifiedCompositionOnlyNested("server_pcm_001");
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(
         inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName), null,
-        context);
+        context, null);
     unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo, unifiedComposition);
 
         checkSTResults(expectedOutserviceTemplates, nestedFileName,
@@ -1050,11 +1013,13 @@ public class UnifiedCompositionServiceTest {
     UnifiedCompositionData unifiedComposition =
         createUnifiedCompositionOnlyNested("server_pcm_001");
     UnifiedCompositionTo unifiedCompositionTo1 = new UnifiedCompositionTo(inputServiceTemplates
-        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName1), null, context);
+        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName1), null,
+        context, null);
     unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo1, unifiedComposition);
     unifiedComposition = createUnifiedCompositionOnlyNested("server_oam_001");
     UnifiedCompositionTo unifiedCompositionTo2 = new UnifiedCompositionTo(inputServiceTemplates
-        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName2), null, context);
+        .get(MAIN_SERVICE_TEMPLATE_YAML), inputServiceTemplates.get(nestedFileName2), null,
+        context, null);
     unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo2, unifiedComposition);
 
         checkSTResults(expectedOutserviceTemplates, nestedFileName1,

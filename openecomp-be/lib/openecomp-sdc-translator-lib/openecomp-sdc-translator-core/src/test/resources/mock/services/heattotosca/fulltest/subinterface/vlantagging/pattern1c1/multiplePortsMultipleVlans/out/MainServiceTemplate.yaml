@@ -581,6 +581,9 @@ topology_template:
         subinterface_vlan2_vmac_address:
         - get_input: vdbe_untrusted_vmac_address
         - get_input: vdbe_untrusted_vmac_address
+        port_vdbe_untr_vmi_subinterface_indicator:
+        - true
+        - true
         subinterface_vlan1_aap_untrusted_ip_prefix:
         - get_input: vdbe_aap_untrusted_ip_prefix
         - get_input: vdbe_aap_untrusted_ip_prefix
@@ -650,6 +653,9 @@ topology_template:
         subinterface_vlan2_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        port_vdbe_oam_vmi_subinterface_indicator:
+        - true
+        - true
         subinterface_vlan2_service_template_filter_count:
         - 5
         - 5
@@ -676,7 +682,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: fabric_int_net
           relationship: tosca.relationships.network.LinksTo
-      - link_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
+      - subinterface_link_vdbe_1_subint_oam_vmi_1_vdbe_vdbe_oam_vmi_vlan2:
           capability: tosca.capabilities.network.Linkable
           node: fabric_int_net
           relationship: tosca.relationships.network.LinksTo

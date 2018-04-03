@@ -98,7 +98,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_0_subint_untr_vmi_0:
+    - subinterface_link_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:

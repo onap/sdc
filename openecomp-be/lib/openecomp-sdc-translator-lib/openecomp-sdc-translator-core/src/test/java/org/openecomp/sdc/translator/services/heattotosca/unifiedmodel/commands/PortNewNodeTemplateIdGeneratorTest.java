@@ -58,7 +58,7 @@ public class PortNewNodeTemplateIdGeneratorTest extends BaseResourceTranslationT
   @Test
   public void testGenerateNewPortNodeTemplateId() {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestPortServiceTemplate(), null,
-        getUnifiedCompositionDataListWithOnePort(), null);
+        getUnifiedCompositionDataListWithOnePort(), null, null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, PCM_PORT_0);
     if (nodeTemplateId.isPresent()) {
@@ -71,7 +71,7 @@ public class PortNewNodeTemplateIdGeneratorTest extends BaseResourceTranslationT
   @Test
   public void testGeneratePortIdNotBoundToServer() {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestInitPortServiceTemplate(), null,
-        getInitUnifiedCompositionDataList(), null);
+        getInitUnifiedCompositionDataList(), null, null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, PCM_PORT_0);
     Assert.assertEquals(false, nodeTemplateId.isPresent());
@@ -81,7 +81,7 @@ public class PortNewNodeTemplateIdGeneratorTest extends BaseResourceTranslationT
   public void testGeneratePortIdMultiplePortsSameTypeToOneServer() {
     UnifiedCompositionTo unifiedCompositionTo =
         new UnifiedCompositionTo(getTestPortServiceTemplateWithTwoPortsOfSameType(), null,
-            getUnifiedCompositionDataListWithTwoPortsOfSameType(), null);
+            getUnifiedCompositionDataListWithTwoPortsOfSameType(), null, null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, PCM_PORT_0);
     if (nodeTemplateId.isPresent()) {
@@ -101,7 +101,7 @@ public class PortNewNodeTemplateIdGeneratorTest extends BaseResourceTranslationT
   @Test
   public void testGenerateInvalidOriginalNodeTemplateId() {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestPortServiceTemplate(), null,
-        getUnifiedCompositionDataListWithOnePort(), null);
+        getUnifiedCompositionDataListWithOnePort(), null, null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo,
         PCM_PORT_0 + "_Invalid");

@@ -330,6 +330,8 @@ topology_template:
         - get_attribute:
           - server_pcm_001
           - oam_net_gw
+        port_compute_port_subinterface_indicator:
+        - true
         compute_compute_name:
         - compute_name: null
         vm_flavor_name:

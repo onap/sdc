@@ -28,24 +28,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port1_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_pd01_port2_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      index_value:
-        type: integer
-        description: Index value of this substitution service template runtime instance
-        required: false
-        default: 0
-        status: SUPPORTED
-        constraints:
-        - greater_or_equal: 0
       compute_pd_server_availability_zone:
         type: list
         required: true
@@ -58,28 +46,10 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port1_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_pd01_port2_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_pd01_port2_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port1_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port2_network_role_tag:
         type: string
         required: true
@@ -88,28 +58,20 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
-      port_pd01_port1_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_pd01_port2_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_pd01_port2_order:
         type: integer
         required: true
         status: SUPPORTED
-      port_pd01_port1_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
+      port_pd01_port2_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_pd01_port2_vlan_requirements:
         type: list
         required: true
@@ -126,6 +88,56 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port1_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_pd01_port1_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port2_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port2_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_pd01_port1_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port2_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_pd01_port1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_pd01_port1_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
     requirements:
     - dependency_pd_server_pd01_port1:
         capability: tosca.capabilities.Node
@@ -421,6 +433,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -428,6 +441,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED

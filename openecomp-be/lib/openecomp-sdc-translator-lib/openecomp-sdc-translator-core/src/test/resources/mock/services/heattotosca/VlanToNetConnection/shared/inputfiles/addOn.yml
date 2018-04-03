@@ -4,6 +4,10 @@ description: >
   Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
 
 parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+
   shared_network_id1:
     type: string
     description: network name of jsa log network
@@ -14,11 +18,21 @@ parameters:
 
 resources:
 
+  test_net3:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+
   test_nested1:
     type: nested1.yml
     properties:
       shared_network_id1: { get_param: shared_network_id1}
       p2: { get_param: shared_network_id2}
+      p3: { get_param: template_VMInt_OAM_lb_1}
+      p4: { get_param: template_VMInt_OAM_lb_2}
+      p5: { get_param: template_VMInt_OAM_lb_3}
+
 
   test_nested2:
     type: nested2.yml
@@ -30,3 +44,37 @@ resources:
     properties:
       shared_network_id1: { get_param: shared_network_id1}
       p2: { get_param: shared_network_id2}
+
+  template_VMInt_OAM_lb_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: jsa_net_name },
+        }
+      virtual_network_refs: [{ get_resource: test_net3 }]
+      port_tuple_refs: [{ get_param: jsa_net_name }]
+      security_group_refs: [{ get_param: jsa_net_name}]
+
+
+  template_VMInt_OAM_lb_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: jsa_net_name },
+        }
+      virtual_network_refs: [{ get_resource: test_net3 }]
+      port_tuple_refs: [{ get_param: jsa_net_name }]
+      security_group_refs: [{ get_param: jsa_net_name}]
+
+  template_VMInt_OAM_lb_3:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: jsa_net_name },
+        }
+      virtual_network_refs: [{ get_resource: test_net3 }]
+      port_tuple_refs: [{ get_param: jsa_net_name }]
+      security_group_refs: [{ get_param: jsa_net_name}]

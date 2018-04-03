@@ -401,6 +401,8 @@ topology_template:
         - get_input: aap_address_mode
         subinterface_nested_vlan_tag_list:
         - get_input: untrusted_vlan_tags
+        port_vdbe_untr_vmi_subinterface_indicator:
+        - true
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
         subinterface_nested_service_template_filter_count:

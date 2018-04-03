@@ -455,6 +455,8 @@ topology_template:
         - get_input: vdbe_name_1
         subinterface_vlan2_aap_untrusted_ip_prefix:
         - get_input: vdbe_aap_untrusted_ip_prefix
+        port_vdbe_untr_1_port_subinterface_indicator:
+        - true
         subinterface_vlan1_ip_v6_address:
         - get_input: vdbe_untrusted_v6_ip_1
         subinterface_vlan2_vmac_address:

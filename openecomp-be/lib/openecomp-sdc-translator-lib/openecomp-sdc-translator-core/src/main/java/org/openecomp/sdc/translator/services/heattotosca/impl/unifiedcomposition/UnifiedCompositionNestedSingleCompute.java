@@ -27,7 +27,7 @@ public class UnifiedCompositionNestedSingleCompute implements UnifiedComposition
     }
 
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(serviceTemplate, nestedServiceTemplate,
-        unifiedCompositionDataList, context);
+        unifiedCompositionDataList, context, null);
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
       unifiedCompositionService.handleUnifiedNestedDefinition(unifiedCompositionTo, unifiedCompositionData);
       String nestedNodeTemplateId = unifiedCompositionData.getNestedTemplateConsolidationData().getNodeTemplateId();

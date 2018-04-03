@@ -14,6 +14,11 @@ topology_template:
     port_pcm_port_0_network_role:
       type: string
       required: true
+    port_pcm_port_0_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_pcm_port_1_network_role_tag:
       type: string
       required: true
@@ -64,6 +69,11 @@ topology_template:
     port_pcm_port_1_network_role:
       type: string
       required: true
+    port_pcm_port_1_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_pcm_port_1_network:
       type: list
       required: true
@@ -157,6 +167,10 @@ topology_template:
     pcma_server_pcm_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        mac_requirements:
+          get_input: port_pcm_port_0_mac_requirements
+        order:
+          get_input: port_pcm_port_0_order
         security_groups:
           get_input:
           - port_pcm_port_0_security_groups
@@ -165,22 +179,22 @@ topology_template:
           get_input: port_pcm_port_0_exCP_naming
         vlan_requirements:
           get_input: port_pcm_port_0_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_pcm_port_0_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_pcm_port_0_ip_requirements
         network_role_tag:
           get_input: port_pcm_port_0_network_role_tag
-        mac_requirements:
-          get_input: port_pcm_port_0_mac_requirements
-        order:
-          get_input: port_pcm_port_0_order
         network_role:
           get_input: port_pcm_port_0_network_role
-        subnetpoolid:
-          get_input: port_pcm_port_0_subnetpoolid
         fixed_ips:
           get_input:
           - port_pcm_port_0_fixed_ips
           - index_value
+        subnetpoolid:
+          get_input: port_pcm_port_0_subnetpoolid
         network:
           get_input:
           - port_pcm_port_0_network
@@ -193,6 +207,10 @@ topology_template:
     pcma_server_pcm_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        mac_requirements:
+          get_input: port_pcm_port_1_mac_requirements
+        order:
+          get_input: port_pcm_port_1_order
         security_groups:
           get_input:
           - port_pcm_port_1_security_groups
@@ -201,22 +219,22 @@ topology_template:
           get_input: port_pcm_port_1_exCP_naming
         vlan_requirements:
           get_input: port_pcm_port_1_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_pcm_port_1_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_pcm_port_1_ip_requirements
         network_role_tag:
           get_input: port_pcm_port_1_network_role_tag
-        mac_requirements:
-          get_input: port_pcm_port_1_mac_requirements
-        order:
-          get_input: port_pcm_port_1_order
         network_role:
           get_input: port_pcm_port_1_network_role
-        subnetpoolid:
-          get_input: port_pcm_port_1_subnetpoolid
         fixed_ips:
           get_input:
           - port_pcm_port_1_fixed_ips
           - index_value
+        subnetpoolid:
+          get_input: port_pcm_port_1_subnetpoolid
         network:
           get_input:
           - port_pcm_port_1_network

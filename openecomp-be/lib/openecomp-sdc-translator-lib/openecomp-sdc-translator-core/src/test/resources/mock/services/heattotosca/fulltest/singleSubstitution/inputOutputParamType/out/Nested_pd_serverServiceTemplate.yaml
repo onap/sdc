@@ -45,6 +45,11 @@ topology_template:
     vm_image_name:
       type: string
       required: true
+    port_pd01_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_template_VMInt_OAM_lb_virtual_machine_interface_properties:
       type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
       required: true
@@ -217,6 +222,11 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_template_VMInt_OAM_lb_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_template_VMInt_OAM_lb_name:
       type: list
       required: true
@@ -359,6 +369,10 @@ topology_template:
           get_input:
           - port_template_VMInt_OAM_lb_virtual_machine_interface_properties
           - index_value
+        subinterface_indicator:
+          get_input:
+          - port_template_VMInt_OAM_lb_subinterface_indicator
+          - index_value
         security_group_refs:
           get_input:
           - port_template_VMInt_OAM_lb_security_group_refs
@@ -427,6 +441,10 @@ topology_template:
           get_input: port_pd01_port_exCP_naming
         vlan_requirements:
           get_input: port_pd01_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_pd01_port_subinterface_indicator
+          - index_value
         qos_policy:
           get_input:
           - port_pd01_port_qos_policy

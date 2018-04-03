@@ -120,6 +120,8 @@ topology_template:
         - 9
         vm_flavor_name:
           get_input: pd_server_1b_flavor
+        port_pd_server_1b_port_subinterface_indicator:
+        - true
         subinterface_nested_vlan_net1:
         - get_input: sub_inf_net
         vm_image_name:
@@ -505,21 +507,18 @@ topology_template:
       - test_nested_level2
       - disk.write.requests_server_1b_pd_1
     requirements:
-      link_template_Vlan_vmi_1_test_resourceGroup_0:
-      - test_resourceGroup_0
-      - link_template_Vlan_vmi_1
       dependency_pd_server_1b_port_0:
       - abstract_pd_server_1b
       - dependency_pd_server_1b_pd_server_1b_port
-      link_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
-      - test_nested_level2
-      - link_template_Vlan_vmi_1_test_resourceGroup_1
       dependency_server_1b_pd_1_test_nested_level2:
       - test_nested_level2
       - dependency_server_1b_pd_1
       link_pd_server_1b_port_0:
       - abstract_pd_server_1b
       - link_pd_server_1b_pd_server_1b_port
+      subinterface_link_template_Vlan_vmi_1_test_resourceGroup_0:
+      - test_resourceGroup_0
+      - subinterface_link_template_Vlan_vmi_1
       dependency_template_Vlan_vmi_1_test_resourceGroup_0:
       - test_resourceGroup_0
       - dependency_template_Vlan_vmi_1
@@ -544,6 +543,9 @@ topology_template:
       dependency_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
       - test_nested_level2
       - dependency_template_Vlan_vmi_1_test_resourceGroup_1
+      subinterface_link_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
+      - test_nested_level2
+      - subinterface_link_template_Vlan_vmi_1_test_resourceGroup_1
       dependency_test_nested_level2:
       - test_nested_level2
       - dependency

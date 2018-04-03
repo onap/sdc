@@ -445,6 +445,8 @@ topology_template:
         port_vdbe_untr_port_mac_requirements:
           mac_count_required:
             is_required: false
+        port_vdbe_untr_port_subinterface_indicator:
+        - true
         subinterface_nested_vmac_address:
         - get_input: vdbe_untrusted_vmac_address
         subinterface_nested_vn_network_list:
@@ -547,6 +549,8 @@ topology_template:
         port_vdbe_untr_port_mac_requirements:
           mac_count_required:
             is_required: false
+        port_vdbe_untr_port_subinterface_indicator:
+        - true
         subinterface_nested_vmac_address:
         - get_input: vdbe_untrusted_vmac_address
         subinterface_nested_vn_network_list:

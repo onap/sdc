@@ -165,6 +165,8 @@ topology_template:
         - get_input: availability_zone_0
         vm_flavor_name:
           get_input: ps_server_main_1b_flavor
+        port_ps_server_main_1b_port_subinterface_indicator:
+        - true
         vm_image_name:
           get_input: ps_server_main_1b_image
         compute_ps_server_main_1b_name:
@@ -238,6 +240,9 @@ topology_template:
         compute_cmaui_1c1_main_availability_zone:
         - get_input: availability_zone_0
         - get_input: availability_zone_0
+        port_cmaui_port_subinterface_indicator:
+        - true
+        - true
         compute_cmaui_1c1_main_name:
         - get_input:
           - cmaui_1c1_main_names
@@ -258,6 +263,8 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pd_server_main_1b_port_subinterface_indicator:
+        - true
         compute_pd_server_main_1b_availability_zone:
         - get_input: availability_zone_0
         port_pd_server_main_1b_port_replacement_policy:

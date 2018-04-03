@@ -603,15 +603,9 @@ topology_template:
       dependency_vdbe_untr_x_subport_vdbe_untr_1_subports:
       - vdbe_untr_1_subports
       - dependency_vdbe_untr_x_subport
-      link_vdbe_untr_x_subport_vdbe_untr_1_subports:
-      - vdbe_untr_1_subports
-      - link_vdbe_untr_x_subport
       dependency_vdbe_node_1:
       - vdbe_node_1
       - dependency
-      link_vdbe_untr_x_subport_vdbe_untr_2_subports:
-      - vdbe_untr_2_subports
-      - link_vdbe_untr_x_subport
       local_storage_vdbe_node_1:
       - vdbe_node_1
       - local_storage
@@ -624,6 +618,12 @@ topology_template:
       dependency_vdbe_untr_x_subport_vdbe_untr_2_subports:
       - vdbe_untr_2_subports
       - dependency_vdbe_untr_x_subport
+      subinterface_link_vdbe_untr_x_subport_vdbe_untr_2_subports:
+      - vdbe_untr_2_subports
+      - subinterface_link_vdbe_untr_x_subport
+      subinterface_link_vdbe_untr_x_subport_vdbe_untr_1_subports:
+      - vdbe_untr_1_subports
+      - subinterface_link_vdbe_untr_x_subport
       dependency_vdbe_untr_1_subports:
       - vdbe_untr_1_subports
       - dependency

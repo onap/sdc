@@ -38,6 +38,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
+    port_oam_oam_1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_oam_oam_1_port_network_role_tag:
       type: string
       required: true
@@ -136,6 +141,11 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_oam_internal_1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     compute_oam_availability_zone:
       type: list
       required: true
@@ -178,6 +188,10 @@ topology_template:
           get_input: port_oam_internal_1_port_exCP_naming
         vlan_requirements:
           get_input: port_oam_internal_1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_oam_internal_1_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_oam_internal_1_port_ip_requirements
         network_role_tag:
@@ -220,6 +234,10 @@ topology_template:
           get_input: port_oam_oam_1_port_exCP_naming
         vlan_requirements:
           get_input: port_oam_oam_1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_oam_oam_1_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_oam_oam_1_port_ip_requirements
         network_role_tag:

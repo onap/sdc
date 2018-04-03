@@ -365,7 +365,7 @@ topology_template:
         aap_untrusted_ip_prefix_len:
           get_input: vdbe_aap_untrusted_ip_prefix_len
       requirements:
-      - link_vdbe_untr_x_subport:
+      - subinterface_link_vdbe_untr_x_subport:
           capability: tosca.capabilities.network.Linkable
           node: control_int_net
           relationship: tosca.relationships.network.LinksTo

@@ -59,7 +59,7 @@ topology_template:
       type: string
   node_templates:
     template_Vlan_2:
-      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      type: org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
       properties:
         virtual_machine_interface_refs:
         - get_input: port2
@@ -98,7 +98,7 @@ topology_template:
           mac_address:
           - get_input: mac_address
     template_Vlan_1:
-      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      type: org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
       properties:
         virtual_machine_interface_refs:
         - get_input: port1
@@ -198,6 +198,12 @@ topology_template:
       - test_nested2Level
       - feature_template_Vlan_6_test_nested3Level
     requirements:
+      subinterface_link_template_Vlan_2:
+      - template_Vlan_2
+      - subinterface_link
+      subinterface_link_template_Vlan_4_test_nested2Level:
+      - test_nested2Level
+      - subinterface_link_template_Vlan_4
       dependency_template_Vlan_5_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - dependency_template_Vlan_5_test_nested3Level
@@ -207,24 +213,27 @@ topology_template:
       dependency_template_Vlan_4_test_nested2Level:
       - test_nested2Level
       - dependency_template_Vlan_4
+      subinterface_link_template_Vlan_1:
+      - template_Vlan_1
+      - subinterface_link
       dependency_test_nested2Level:
       - test_nested2Level
       - dependency
-      link_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
+      subinterface_link_template_Vlan_6_test_nested3Level_test_nested2Level:
       - test_nested2Level
-      - link_template_Vlan_7_test_nested4Level_test_nested3Level
+      - subinterface_link_template_Vlan_6_test_nested3Level
       dependency_template_Vlan_2:
       - template_Vlan_2
       - dependency
       binding_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - binding_template_Vlan_7_test_nested4Level_test_nested3Level
-      link_template_Vlan_4_test_nested2Level:
-      - test_nested2Level
-      - link_template_Vlan_4
       dependency_template_Vlan_1:
       - template_Vlan_1
       - dependency
+      subinterface_link_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - subinterface_link_template_Vlan_7_test_nested4Level_test_nested3Level
       binding_template_Vlan_2:
       - template_Vlan_2
       - binding
@@ -234,9 +243,6 @@ topology_template:
       dependency_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - dependency_template_Vlan_8_test_nested4Level_test_nested3Level
-      link_template_Vlan_6_test_nested3Level_test_nested2Level:
-      - test_nested2Level
-      - link_template_Vlan_6_test_nested3Level
       dependency_template_Vlan_6_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - dependency_template_Vlan_6_test_nested3Level
@@ -249,33 +255,27 @@ topology_template:
       binding_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - binding_template_Vlan_8_test_nested4Level_test_nested3Level
+      subinterface_link_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - subinterface_link_template_Vlan_8_test_nested4Level_test_nested3Level
       binding_template_Vlan_6_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - binding_template_Vlan_6_test_nested3Level
       dependency_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - dependency_template_Vlan_7_test_nested4Level_test_nested3Level
-      link_template_Vlan_1:
-      - template_Vlan_1
-      - link
-      link_template_Vlan_2:
-      - template_Vlan_2
-      - link
+      subinterface_link_template_Vlan_3_test_nested2Level:
+      - test_nested2Level
+      - subinterface_link_template_Vlan_3
       dependency_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - dependency_test_nested4Level_test_nested3Level
-      link_template_Vlan_5_test_nested3Level_test_nested2Level:
+      subinterface_link_template_Vlan_5_test_nested3Level_test_nested2Level:
       - test_nested2Level
-      - link_template_Vlan_5_test_nested3Level
+      - subinterface_link_template_Vlan_5_test_nested3Level
       dependency_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - dependency_test_nested3Level
-      link_template_Vlan_3_test_nested2Level:
-      - test_nested2Level
-      - link_template_Vlan_3
       binding_template_Vlan_4_test_nested2Level:
       - test_nested2Level
       - binding_template_Vlan_4
-      link_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
-      - test_nested2Level
-      - link_template_Vlan_8_test_nested4Level_test_nested3Level

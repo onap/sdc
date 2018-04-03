@@ -54,6 +54,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_ps01_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_ps01_port_order:
       type: integer
       required: true
@@ -139,6 +144,10 @@ topology_template:
           get_input: port_ps01_port_exCP_naming
         vlan_requirements:
           get_input: port_ps01_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_ps01_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_ps01_port_ip_requirements
         network_role_tag:
@@ -329,6 +338,9 @@ topology_template:
       - ps_server_ps01_port
       - network.outgoing.bytes
     requirements:
+      subinterface_link_template_Vlan_1_ps_server_ps01_port_nested:
+      - ps_server_ps01_port_nested
+      - subinterface_link_template_Vlan_1
       dependency_ps_server:
       - ps_server
       - dependency
@@ -344,9 +356,6 @@ topology_template:
       dependency_template_Vlan_1_ps_server_ps01_port_nested:
       - ps_server_ps01_port_nested
       - dependency_template_Vlan_1
-      link_template_Vlan_1_ps_server_ps01_port_nested:
-      - ps_server_ps01_port_nested
-      - link_template_Vlan_1
       local_storage_ps_server:
       - ps_server
       - local_storage

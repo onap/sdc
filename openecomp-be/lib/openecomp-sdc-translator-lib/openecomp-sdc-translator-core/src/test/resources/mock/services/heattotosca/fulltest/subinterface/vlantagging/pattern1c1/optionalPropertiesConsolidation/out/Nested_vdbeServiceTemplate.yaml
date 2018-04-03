@@ -47,6 +47,11 @@ topology_template:
       required: true
       entry_schema:
         type: float
+    port_vdbe_untr_2_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     vm_image_name:
       type: string
       required: true
@@ -119,6 +124,11 @@ topology_template:
     port_vdbe_untr_1_port_network_role_tag:
       type: string
       required: true
+    port_vdbe_untr_1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     subinterface_vlan1_ip_v6_address:
       type: list
       required: true
@@ -261,6 +271,10 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_vdbe_untr_2_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_vdbe_untr_2_port_subinterface_indicator
+          - index_value
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_2_port_virtual_network_refs
@@ -390,6 +404,10 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_vdbe_untr_1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_vdbe_untr_1_port_subinterface_indicator
+          - index_value
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_1_port_virtual_network_refs
@@ -635,9 +653,9 @@ topology_template:
       link_vdbe_vdbe_untr_1_port:
       - vdbe_vdbe_untr_1_port
       - link
-      link_vdbe_untr_x_vlan1-Network-Role_vmi_subport_vdbe_vdbe_untr_1_port_vlan1:
-      - vdbe_vdbe_untr_1_port_vlan1
-      - link_vdbe_untr_x_vlan1-Network-Role_vmi_subport
       dependency_vdbe:
       - vdbe
       - dependency
+      subinterface_link_vdbe_untr_x_vlan1-Network-Role_vmi_subport_vdbe_vdbe_untr_1_port_vlan1:
+      - vdbe_vdbe_untr_1_port_vlan1
+      - subinterface_link_vdbe_untr_x_vlan1-Network-Role_vmi_subport

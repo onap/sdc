@@ -720,6 +720,8 @@ topology_template:
           get_input: pd_flavor_name
         subinterface_nested_p1:
         - ps01_port_0
+        port_ps01_port_subinterface_indicator:
+        - true
         vm_image_name:
           get_input: pd_image_name
         port_ps01_port_mac_requirements:
@@ -752,7 +754,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_template_Vlan_vmi_1_pd_server_ps01_port_nested:
+      - subinterface_link_template_Vlan_vmi_1_pd_server_ps01_port_nested:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
@@ -791,6 +793,8 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
+        port_pd01_port_subinterface_indicator:
+        - true
         subinterface_nested_net1:
         - test_net1
         port_pd01_port_network_role_tag: oam
@@ -805,7 +809,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_template_Vlan_vmi_1_pd_server_pd01_port_nested:
+      - subinterface_link_template_Vlan_vmi_1_pd_server_pd01_port_nested:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo

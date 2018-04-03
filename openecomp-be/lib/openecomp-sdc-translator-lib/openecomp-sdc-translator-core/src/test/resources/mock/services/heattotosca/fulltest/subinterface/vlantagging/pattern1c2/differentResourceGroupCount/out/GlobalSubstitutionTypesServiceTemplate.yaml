@@ -8,6 +8,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.vdbe:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_vdbe_untr_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       subinterface_nested_parent_interface:
         type: list
         required: true
@@ -217,7 +223,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_untr_x_subport_vdbe_vdbe_untr_1_port_nested:
+    - subinterface_link_vdbe_untr_x_subport_vdbe_vdbe_untr_1_port_nested:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -406,6 +412,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -661,7 +668,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_vdbe_untr_x_subport:
+    - subinterface_link_vdbe_untr_x_subport:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
