@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9f1bd7c9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-03T14:58:34Z",
+      "side": 1,
+      "message": "According to ONAP style guide, 4 spaces must be used instead of a tab",
+      "revId": "312911628667b2a337ba77a9f04272c582d8ab3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5f7d4fe6",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-03T14:58:34Z",
+      "side": 1,
+      "message": "This excludes any unit-tests under the standard Maven test directory. Please delete.",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 20
+      },
+      "revId": "312911628667b2a337ba77a9f04272c582d8ab3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ff83fbc9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/VnfPackageRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-03T14:58:34Z",
+      "side": 1,
+      "message": "This class doesn\u0027t follow the ONAP Java Style guide.",
+      "revId": "312911628667b2a337ba77a9f04272c582d8ab3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5fcb0f1e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-03T14:58:34Z",
+      "side": 1,
+      "message": "Please format according to ONAP style guide.",
+      "revId": "312911628667b2a337ba77a9f04272c582d8ab3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5f646f48",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-03T14:58:34Z",
+      "side": 1,
+      "message": "Didn\u0027t we change it to something neutral? And \"vnfsdk\" to \"vnfrepo\" for that matter?\n\nhttps://gerrit.onap.org/r/gitweb?p\u003dsdc.git;a\u003dcommitdiff;h\u003deb0c5ea6c688d26d53876b2ee73cb8d14d2b71bb",
+      "range": {
+        "startLine": 72,
+        "startChar": 59,
+        "endLine": 72,
+        "endChar": 69
+      },
+      "revId": "312911628667b2a337ba77a9f04272c582d8ab3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3fc88321",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-03T14:58:34Z",
+      "side": 1,
+      "message": "See if you can use the javax.ws.rs.core.HttpHeaders#CONTENT_DISPOSITION constant.",
+      "range": {
+        "startLine": 164,
+        "startChar": 24,
+        "endLine": 164,
+        "endChar": 45
+      },
+      "revId": "312911628667b2a337ba77a9f04272c582d8ab3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
