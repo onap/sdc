@@ -218,35 +218,35 @@ topology_template:
         port1: template_VMInt_OAM_lb_1
         port2: cmaui_port_2
       requirements:
-      - link_template_Vlan_2:
+      - subinterface_link_template_Vlan_2:
           capability: tosca.capabilities.network.Linkable
           node: test_contrailV2_net2
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_1:
+      - subinterface_link_template_Vlan_1:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
+      - subinterface_link_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
+      - subinterface_link_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_6_test_nested3Level_test_nested2Level:
+      - subinterface_link_template_Vlan_6_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_5_test_nested3Level_test_nested2Level:
+      - subinterface_link_template_Vlan_5_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_4_test_nested2Level:
+      - subinterface_link_template_Vlan_4_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_contrailV2_net2
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_3_test_nested2Level:
+      - subinterface_link_template_Vlan_3_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_contrailV2_net2
           relationship: tosca.relationships.network.LinksTo
@@ -330,11 +330,11 @@ topology_template:
           - index_value
         port1: cmaui_port_2
       requirements:
-      - link_template_Vlan_7_test_nested4Level:
+      - subinterface_link_template_Vlan_7_test_nested4Level:
           capability: tosca.capabilities.network.Linkable
           node: test_contrailV2_net2
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_6:
+      - subinterface_link_template_Vlan_6:
           capability: tosca.capabilities.network.Linkable
           node: test_contrailV2_net2
           relationship: tosca.relationships.network.LinksTo

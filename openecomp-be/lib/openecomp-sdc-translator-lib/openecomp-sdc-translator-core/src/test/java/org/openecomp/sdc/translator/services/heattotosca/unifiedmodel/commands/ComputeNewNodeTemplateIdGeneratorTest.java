@@ -46,7 +46,7 @@ public class ComputeNewNodeTemplateIdGeneratorTest extends BaseResourceTranslati
   @Test
   public void testGenerateNewComputeNodeTemplateId() {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestComputeServiceTemplate(), null, null,
-        null);
+        null, null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, SERVER_PCM);
     if (nodeTemplateId.isPresent()) {
@@ -60,7 +60,7 @@ public class ComputeNewNodeTemplateIdGeneratorTest extends BaseResourceTranslati
   public void testGenerateInvalidOriginalNodeTemplateId() {
     //node template with id is not present in the service template
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestComputeServiceTemplate(), null, null,
-        null);
+        null, null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, SERVER_PCM +
         "_invalid");
@@ -70,7 +70,7 @@ public class ComputeNewNodeTemplateIdGeneratorTest extends BaseResourceTranslati
   @Test
   public void testGenerateNullOriginalNodeTemplateId() {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestComputeServiceTemplate(), null, null,
-        null);
+        null, null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, null);
     Assert.assertEquals(nodeTemplateId.isPresent(), false);

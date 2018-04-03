@@ -109,6 +109,11 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_vdbe_untr_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     subinterface_nested_vmac_address:
       type: list
       required: true
@@ -184,6 +189,10 @@ topology_template:
           get_input: port_vdbe_untr_port_exCP_naming
         vlan_requirements:
           get_input: port_vdbe_untr_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_vdbe_untr_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_vdbe_untr_port_ip_requirements
         network_role_tag:
@@ -467,9 +476,9 @@ topology_template:
       dependency_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_port_nested:
       - vdbe_vdbe_untr_port_nested
       - dependency_vdbe_0_subint_untr_vmi_0
-      link_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_port_nested:
+      subinterface_link_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_port_nested:
       - vdbe_vdbe_untr_port_nested
-      - link_vdbe_0_subint_untr_vmi_0
+      - subinterface_link_vdbe_0_subint_untr_vmi_0
       dependency_vdbe_vdbe_untr_port_nested:
       - vdbe_vdbe_untr_port_nested
       - dependency

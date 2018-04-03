@@ -11,6 +11,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_vdbe_untr_1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_vdbe_untr_1_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
@@ -120,6 +125,10 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_vdbe_untr_1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_vdbe_untr_1_port_subinterface_indicator
+          - index_value
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_1_port_virtual_network_refs
@@ -316,4 +325,4 @@ topology_template:
       - link
       dependency_vdbe:
       - vdbe
-      - dependency
+      - dependency

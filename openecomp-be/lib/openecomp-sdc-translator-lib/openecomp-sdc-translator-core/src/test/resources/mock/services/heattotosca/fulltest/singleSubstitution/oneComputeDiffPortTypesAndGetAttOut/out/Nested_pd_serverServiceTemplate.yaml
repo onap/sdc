@@ -11,13 +11,6 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    index_value:
-      type: integer
-      description: Index value of this substitution service template runtime instance
-      required: false
-      default: 0
-      constraints:
-      - greater_or_equal: 0
     compute_pd_server_availability_zone:
       type: list
       required: true
@@ -28,32 +21,20 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_pd02_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_pd01_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
     vm_flavor_name:
-      type: string
-      required: true
-    port_pd02_port_order:
-      type: integer
-      required: true
-    port_pd02_port_subnetpoolid:
       type: string
       required: true
     port_pd02_port_network_role_tag:
       type: string
       required: true
-    port_pd01_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_pd02_port_vlan_requirements:
+    port_pd02_port_subinterface_indicator:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
+        type: boolean
+    port_pd01_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
     vm_image_name:
       type: string
       required: true
@@ -62,14 +43,53 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
+    port_pd02_port_network_role:
+      type: string
+      required: true
+    port_pd01_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_pd01_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_pd_server_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_pd02_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pd01_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pd02_port_order:
+      type: integer
+      required: true
+    port_pd02_port_subnetpoolid:
+      type: string
+      required: true
+    port_pd02_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     port_pd01_port_network:
       type: list
       required: true
       entry_schema:
         type: string
-    port_pd02_port_network_role:
-      type: string
-      required: true
     port_pd01_port_order:
       type: integer
       required: true
@@ -90,17 +110,7 @@ topology_template:
     port_pd01_port_network_role_tag:
       type: string
       required: true
-    port_pd01_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
     port_pd02_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    compute_pd_server_user_data_format:
       type: list
       required: true
       entry_schema:
@@ -132,6 +142,10 @@ topology_template:
           get_input: port_pd01_port_exCP_naming
         vlan_requirements:
           get_input: port_pd01_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_pd01_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_pd01_port_ip_requirements
         network_role_tag:
@@ -160,6 +174,10 @@ topology_template:
           get_input: port_pd02_port_exCP_naming
         vlan_requirements:
           get_input: port_pd02_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_pd02_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_pd02_port_ip_requirements
         network_role_tag:

@@ -488,6 +488,8 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_vdbe_untr_1_port_subinterface_indicator:
+        - true
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
         vm_flavor_name:
@@ -539,4 +541,4 @@ topology_template:
       - suport_missing_vlan_tag_property
       - control_int_net
       - subport_get_param_parent
-      - abstract_vdbe
+      - abstract_vdbe

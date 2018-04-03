@@ -36,6 +36,11 @@ topology_template:
     port_cdi_ims_core_1_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
+    port_cdi_ims_core_1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     vm_image_name:
       type: string
       required: true
@@ -146,6 +151,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
+    port_cdi_internal_1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     compute_cdi_metadata:
       type: list
       required: true
@@ -178,6 +188,10 @@ topology_template:
           get_input: port_cdi_internal_1_port_exCP_naming
         vlan_requirements:
           get_input: port_cdi_internal_1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_cdi_internal_1_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_cdi_internal_1_port_ip_requirements
         network_role_tag:
@@ -251,6 +265,10 @@ topology_template:
           get_input: port_cdi_ims_core_1_port_exCP_naming
         vlan_requirements:
           get_input: port_cdi_ims_core_1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_cdi_ims_core_1_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_cdi_ims_core_1_port_ip_requirements
         network_role_tag:

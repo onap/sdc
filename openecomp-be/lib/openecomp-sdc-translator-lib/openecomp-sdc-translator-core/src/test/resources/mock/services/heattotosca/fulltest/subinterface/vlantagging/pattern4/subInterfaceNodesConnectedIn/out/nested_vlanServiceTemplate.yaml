@@ -92,7 +92,7 @@ topology_template:
       description: ip prefix length for the primary vDBE VM on the VAN untrusted network
   node_templates:
     vdbe_untr_x_subport:
-      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      type: org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
       properties:
         virtual_machine_interface_refs:
         - get_input: parent_interface
@@ -160,12 +160,12 @@ topology_template:
       - vdbe_untr_x_subport
       - feature
     requirements:
-      link_vdbe_untr_x_subport:
-      - vdbe_untr_x_subport
-      - link
       dependency_vdbe_untr_x_subport:
       - vdbe_untr_x_subport
       - dependency
       binding_vdbe_untr_x_subport:
       - vdbe_untr_x_subport
       - binding
+      subinterface_link_vdbe_untr_x_subport:
+      - vdbe_untr_x_subport
+      - subinterface_link

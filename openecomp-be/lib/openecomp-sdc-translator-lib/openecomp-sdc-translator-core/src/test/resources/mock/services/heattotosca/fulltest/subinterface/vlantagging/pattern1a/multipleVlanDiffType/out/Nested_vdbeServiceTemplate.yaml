@@ -132,6 +132,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_untr_1_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     subinterface_vlan1_ip_v6_address:
       type: list
       required: true
@@ -371,6 +376,10 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_vdbe_untr_1_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_vdbe_untr_1_port_subinterface_indicator
+          - index_value
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_1_port_virtual_network_refs
@@ -649,21 +658,21 @@ topology_template:
       - vdbe
       - disk.read.bytes
     requirements:
-      link_vdbe_untr_x_subport_another_vdbe_vdbe_untr_1_port_vlan2:
+      subinterface_link_vdbe_untr_x_subport_another_vdbe_vdbe_untr_1_port_vlan2:
       - vdbe_vdbe_untr_1_port_vlan2
-      - link_vdbe_untr_x_subport_another
+      - subinterface_link_vdbe_untr_x_subport_another
       dependency_vdbe_vdbe_untr_1_port:
       - vdbe_vdbe_untr_1_port
       - dependency
+      subinterface_link_vdbe_untr_x_subport_vdbe_vdbe_untr_1_port_vlan1:
+      - vdbe_vdbe_untr_1_port_vlan1
+      - subinterface_link_vdbe_untr_x_subport
       local_storage_vdbe:
       - vdbe
       - local_storage
       dependency_vdbe_vdbe_untr_1_port_vlan1:
       - vdbe_vdbe_untr_1_port_vlan1
       - dependency
-      link_vdbe_untr_x_subport_vdbe_vdbe_untr_1_port_vlan1:
-      - vdbe_vdbe_untr_1_port_vlan1
-      - link_vdbe_untr_x_subport
       dependency_vdbe_vdbe_untr_1_port_vlan2:
       - vdbe_vdbe_untr_1_port_vlan2
       - dependency

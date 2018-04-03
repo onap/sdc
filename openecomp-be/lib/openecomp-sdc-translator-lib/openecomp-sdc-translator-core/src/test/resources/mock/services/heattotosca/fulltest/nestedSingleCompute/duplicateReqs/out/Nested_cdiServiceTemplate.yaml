@@ -108,7 +108,17 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cdi_ims_core_0_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     compute_cdi_config_drive:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_cdi_internal_0_port_subinterface_indicator:
       type: list
       required: true
       entry_schema:
@@ -178,6 +188,10 @@ topology_template:
           get_input: port_cdi_ims_core_0_port_exCP_naming
         vlan_requirements:
           get_input: port_cdi_ims_core_0_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_cdi_ims_core_0_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_cdi_ims_core_0_port_ip_requirements
         network_role_tag:
@@ -251,6 +265,10 @@ topology_template:
           get_input: port_cdi_internal_0_port_exCP_naming
         vlan_requirements:
           get_input: port_cdi_internal_0_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_cdi_internal_0_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_cdi_internal_0_port_ip_requirements
         network_role_tag:

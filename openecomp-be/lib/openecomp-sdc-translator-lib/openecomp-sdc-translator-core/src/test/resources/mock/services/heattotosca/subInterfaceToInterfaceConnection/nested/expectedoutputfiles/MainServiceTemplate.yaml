@@ -294,11 +294,11 @@ topology_template:
         net2: test_net2
         net1: test_net1
       requirements:
-      - link_template_Vlan_2:
+      - subinterface_link_template_Vlan_2:
           capability: tosca.capabilities.network.Linkable
           node: test_net2
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_1:
+      - subinterface_link_template_Vlan_1:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
@@ -400,11 +400,11 @@ topology_template:
         net2: test_net2
         net1: test_net1
       requirements:
-      - link_template_Vlan_2:
+      - subinterface_link_template_Vlan_2:
           capability: tosca.capabilities.network.Linkable
           node: test_net2
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_1:
+      - subinterface_link_template_Vlan_1:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo

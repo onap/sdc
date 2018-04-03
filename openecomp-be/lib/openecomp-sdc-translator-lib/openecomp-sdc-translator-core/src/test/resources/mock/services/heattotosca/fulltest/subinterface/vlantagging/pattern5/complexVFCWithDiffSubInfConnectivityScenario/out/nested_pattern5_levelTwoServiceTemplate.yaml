@@ -85,6 +85,8 @@ topology_template:
         port_ps_server_1b_port_mac_requirements:
           mac_count_required:
             is_required: false
+        port_ps_server_1b_port_subinterface_indicator:
+        - true
         port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:
@@ -138,6 +140,8 @@ topology_template:
             is_required: false
         subinterface_nested_vlan_service_template_filter_count:
         - 9
+        port_ps_server_1b_port_subinterface_indicator:
+        - true
         port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:
@@ -185,7 +189,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_int_network
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      - subinterface_link_template_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
           capability: tosca.capabilities.network.Linkable
           node: packet_ext_network
           relationship: tosca.relationships.network.LinksTo

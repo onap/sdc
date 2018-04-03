@@ -24,6 +24,11 @@ topology_template:
       required: true
       entry_schema:
         type: float
+    port_ps_server_1b_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_ps_server_1b_port_network_role_tag:
       type: string
       required: true
@@ -136,30 +141,34 @@ topology_template:
     ps_server_1b_ps_server_1b_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
-        exCP_naming:
-          get_input: port_ps_server_1b_port_exCP_naming
         replacement_policy:
           get_input:
           - port_ps_server_1b_port_replacement_policy
           - index_value
-        vlan_requirements:
-          get_input: port_ps_server_1b_port_vlan_requirements
-        ip_requirements:
-          get_input: port_ps_server_1b_port_ip_requirements
-        network_role_tag:
-          get_input: port_ps_server_1b_port_network_role_tag
         mac_requirements:
           get_input: port_ps_server_1b_port_mac_requirements
         order:
           get_input: port_ps_server_1b_port_order
+        exCP_naming:
+          get_input: port_ps_server_1b_port_exCP_naming
+        vlan_requirements:
+          get_input: port_ps_server_1b_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_ps_server_1b_port_subinterface_indicator
+          - index_value
+        ip_requirements:
+          get_input: port_ps_server_1b_port_ip_requirements
+        network_role_tag:
+          get_input: port_ps_server_1b_port_network_role_tag
         network_role:
           get_input: port_ps_server_1b_port_network_role
-        subnetpoolid:
-          get_input: port_ps_server_1b_port_subnetpoolid
         fixed_ips:
           get_input:
           - port_ps_server_1b_port_fixed_ips
           - index_value
+        subnetpoolid:
+          get_input: port_ps_server_1b_port_subnetpoolid
         network:
           get_input:
           - port_ps_server_1b_port_network
@@ -353,9 +362,9 @@ topology_template:
       dependency_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
       - ps_server_1b_ps_server_1b_port_nested_vlan
       - dependency_template_subint_Vlan_vmi_1
+      subinterface_link_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
+      - ps_server_1b_ps_server_1b_port_nested_vlan
+      - subinterface_link_template_subint_Vlan_vmi_1
       dependency_ps_server_1b:
       - ps_server_1b
       - dependency
-      link_template_subint_Vlan_vmi_1_ps_server_1b_ps_server_1b_port_nested_vlan:
-      - ps_server_1b_ps_server_1b_port_nested_vlan
-      - link_template_subint_Vlan_vmi_1

@@ -22,6 +22,11 @@ topology_template:
     port_oam_internal_0_port_subnetpoolid:
       type: string
       required: true
+    port_oam_internal_0_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_oam_oam_0_port_fixed_ips:
       type: list
       required: true
@@ -85,6 +90,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_oam_oam_0_port_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_oam_oam_0_port_network_role_tag:
       type: string
       required: true
@@ -178,6 +188,10 @@ topology_template:
           get_input: port_oam_oam_0_port_exCP_naming
         vlan_requirements:
           get_input: port_oam_oam_0_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_oam_oam_0_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_oam_oam_0_port_ip_requirements
         network_role_tag:
@@ -220,6 +234,10 @@ topology_template:
           get_input: port_oam_internal_0_port_exCP_naming
         vlan_requirements:
           get_input: port_oam_internal_0_port_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_oam_internal_0_port_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_oam_internal_0_port_ip_requirements
         network_role_tag:

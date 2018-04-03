@@ -2,38 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested3
 imports:
-- CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-- NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-- NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-- NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-- NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-- CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-- ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-- ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-- AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-- ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
-- ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-- ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-- ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-- ContrailV2VirtualNetworkGlobalType:
-    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
-- ContrailV2NetworkRuleGlobalType:
-    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
-- ContrailV2VLANSubInterfaceGlobalType:
-    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
@@ -138,17 +108,17 @@ topology_template:
         virtual_network_refs:
         - get_input: p2
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_cmaui
+          node: server_cmaui_3
           relationship: tosca.relationships.network.BindsTo
     test_nested4Level:
-      type: org.openecomp.resource.abstract.nodes.heat.nested4
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested4
       directives:
       - substitutable
       properties:
@@ -158,6 +128,12 @@ topology_template:
           substitute_service_template: nested4ServiceTemplate.yaml
         p2:
           get_input: p2
+        p3: template_VMInt_OAM_lb_8
+      requirements:
+      - binding_template_subint_oam_vmi_4:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_8
+          relationship: tosca.relationships.network.BindsTo
     template_VMInt_OAM_lb_6:
       type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
@@ -167,16 +143,16 @@ topology_template:
         - get_input: p1
         - get_input: p2
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_cmaui
+          node: server_cmaui_3
           relationship: tosca.relationships.network.BindsTo
-    server_cmaui:
+    server_cmaui_3:
       type: org.openecomp.resource.vfc.nodes.heat.cmaui
       properties:
         flavor:
@@ -190,50 +166,18 @@ topology_template:
           get_input:
           - cmaui_names
           - 0
-    template_Vlan_3:
-      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+    template_VMInt_OAM_lb_8:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
-        virtual_machine_interface_refs:
-        - template_VMInt_OAM_lb_5
-        name:
-          str_replace:
-            template: $NAME$VLAN
-            params:
-              $NAME:
-                get_input: subinterface_name_prefix
-              $VLAN:
-                get_input:
-                - vlan_ids
-                - get_input: subinterface_instance_index
+        security_group_refs:
+        - get_input: oam_sec_group_name
         virtual_network_refs:
-        - get_input: p2
+        - get_input: p1
         virtual_machine_interface_properties:
-          sub_interface_vlan_tag:
-            get_input: lb_st_vlan_type_oam
-        virtual_machine_interface_allowed_address_pairs:
-          allowed_address_pair:
-          - address_mode: active-standby
-            ip:
-              ip_prefix:
-                get_input: virtual_ip_address
-              ip_prefix_len: 32
-            mac:
-              get_input: mac_address
-          - address_mode: active-standby
-            ip:
-              ip_prefix:
-                get_input: virtual_ipv6_address
-              ip_prefix_len: 128
-            mac:
-              get_input: mac_address
-        virtual_machine_interface_mac_addresses:
-          mac_address:
-          - get_input: mac_address
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: template_VMInt_OAM_lb_5
-          relationship: tosca.relationships.network.BindsTo
+          service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
   groups:
     nested3_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -244,75 +188,273 @@ topology_template:
       - template_VMInt_OAM_lb_5
       - test_nested4Level
       - template_VMInt_OAM_lb_6
-      - server_cmaui
-      - template_Vlan_3
+      - server_cmaui_3
+      - template_VMInt_OAM_lb_8
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested3
     capabilities:
-      scalable_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - scalable_server_cmaui
-      os_server_cmaui:
-      - server_cmaui
-      - os
-      scalable_server_cmaui:
-      - server_cmaui
-      - scalable
-      binding_template_VMInt_OAM_lb_7_test_nested4Level:
-      - test_nested4Level
-      - binding_template_VMInt_OAM_lb_7
-      endpoint_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - endpoint_server_cmaui
-      host_server_cmaui:
-      - server_cmaui
-      - host
-      os_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - os_server_cmaui
-      host_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - host_server_cmaui
-      endpoint_server_cmaui:
-      - server_cmaui
-      - endpoint
-      binding_server_cmaui:
-      - server_cmaui
+      disk.write.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.write.bytes.rate
+      forwarder_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - forwarder
+      disk.device.write.bytes_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.bytes
+      forwarder_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - forwarder
+      feature_server_cmaui_3:
+      - server_cmaui_3
+      - feature
+      disk.device.usage_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.usage
+      disk.device.latency_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.latency
+      disk.write.bytes_server_cmaui_3:
+      - server_cmaui_3
+      - disk.write.bytes
+      disk.allocation_server_cmaui_3:
+      - server_cmaui_3
+      - disk.allocation
+      binding_server_cmaui_3:
+      - server_cmaui_3
       - binding
+      vcpus_server_cmaui_3:
+      - server_cmaui_3
+      - vcpus
+      disk.root.size_server_cmaui_3:
+      - server_cmaui_3
+      - disk.root.size
+      disk.device.write.requests.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.requests.rate
       binding_template_VMInt_OAM_lb_6:
       - template_VMInt_OAM_lb_6
       - binding
       binding_template_VMInt_OAM_lb_5:
       - template_VMInt_OAM_lb_5
       - binding
-      binding_template_VMInt_OAM_lb_8_test_nested4Level:
+      scalable_server_cmaui_3:
+      - server_cmaui_3
+      - scalable
+      forwarder_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - forwarder
+      disk.read.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.read.requests
+      binding_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - binding
+      network.incoming.bytes_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.incoming.bytes
+      disk.write.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.write.requests
+      network.incoming.bytes_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.incoming.bytes
+      network.incoming.bytes_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.incoming.bytes
+      disk.usage_server_cmaui_3:
+      - server_cmaui_3
+      - disk.usage
+      disk.device.iops_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.iops
+      disk.device.capacity_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.capacity
+      network.incoming.packets.rate_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.incoming.packets.rate
+      feature_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - feature
+      disk.device.read.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.bytes.rate
+      network.incoming.packets.rate_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.incoming.packets.rate
+      feature_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - feature
+      network.incoming.packets.rate_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.incoming.packets.rate
+      feature_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - feature
+      endpoint_server_cmaui_3:
+      - server_cmaui_3
+      - endpoint
+      disk.read.bytes_server_cmaui_3:
+      - server_cmaui_3
+      - disk.read.bytes
+      os_server_cmaui_3:
+      - server_cmaui_3
+      - os
+      disk.write.requests.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.write.requests.rate
+      disk.device.read.bytes_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.bytes
+      memory_server_cmaui_3:
+      - server_cmaui_3
+      - memory
+      disk.device.allocation_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.allocation
+      cpu_server_cmaui_3:
+      - server_cmaui_3
+      - cpu
+      host_server_cmaui_3:
+      - server_cmaui_3
+      - host
+      network.outpoing.packets_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.outpoing.packets
+      network.outgoing.packets.rate_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.outgoing.packets.rate
+      disk.ephemeral.size_server_cmaui_3:
+      - server_cmaui_3
+      - disk.ephemeral.size
+      network.outgoing.packets.rate_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.outgoing.packets.rate
+      disk.capacity_server_cmaui_3:
+      - server_cmaui_3
+      - disk.capacity
+      network.outgoing.packets.rate_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.outgoing.packets.rate
+      network.outgoing.bytes_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.outgoing.bytes
+      network.outgoing.bytes_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.outgoing.bytes
+      feature_test_nested4Level:
       - test_nested4Level
-      - binding_template_VMInt_OAM_lb_8
-      binding_server_cmaui_test_nested4Level:
+      - feature
+      feature_template_subint_oam_vmi_4_test_nested4Level:
       - test_nested4Level
-      - binding_server_cmaui
+      - feature_template_subint_oam_vmi_4
+      network.outpoing.packets_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.outpoing.packets
+      instance_server_cmaui_3:
+      - server_cmaui_3
+      - instance
+      network.outpoing.packets_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.outpoing.packets
+      network.outgoing.bytes_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.outgoing.bytes
+      network.outgoing.bytes.rate_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.outgoing.bytes.rate
+      disk.read.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.read.bytes.rate
+      disk.device.write.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.requests
+      network.outgoing.bytes.rate_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.incoming.bytes.rate
+      disk.iops_server_cmaui_3:
+      - server_cmaui_3
+      - disk.iops
+      disk.device.read.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.requests
+      network.incoming.bytes.rate_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.incoming.bytes.rate
+      network.incoming.packets_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - network.incoming.packets
+      network.incoming.packets_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - network.incoming.packets
+      disk.device.read.requests.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.requests.rate
+      network.incoming.packets_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - network.incoming.packets
+      cpu.delta_server_cmaui_3:
+      - server_cmaui_3
+      - cpu.delta
+      memory.resident_server_cmaui_3:
+      - server_cmaui_3
+      - memory.resident
+      disk.latency_server_cmaui_3:
+      - server_cmaui_3
+      - disk.latency
+      memory.usage_server_cmaui_3:
+      - server_cmaui_3
+      - memory.usage
+      cpu_util_server_cmaui_3:
+      - server_cmaui_3
+      - cpu_util
+      disk.device.write.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.bytes.rate
     requirements:
-      link_template_VMInt_OAM_lb_8_test_nested4Level:
+      dependency_test_nested4Level:
       - test_nested4Level
-      - link_template_VMInt_OAM_lb_8
-      local_storage_server_cmaui:
-      - server_cmaui
-      - local_storage
+      - dependency
+      dependency_template_subint_oam_vmi_4_test_nested4Level:
+      - test_nested4Level
+      - dependency_template_subint_oam_vmi_4
+      link_template_subint_oam_vmi_4_test_nested4Level:
+      - test_nested4Level
+      - link_template_subint_oam_vmi_4
+      dependency_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - dependency
+      dependency_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - dependency
       link_template_VMInt_OAM_lb_5:
       - template_VMInt_OAM_lb_5
       - link
-      link_template_Vlan_3:
-      - template_Vlan_3
-      - link
+      dependency_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - dependency
       link_template_VMInt_OAM_lb_6:
       - template_VMInt_OAM_lb_6
       - link
-      local_storage_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - local_storage_server_cmaui
-      link_template_Vlan_4_test_nested4Level:
-      - test_nested4Level
-      - link_template_Vlan_4
-      link_template_VMInt_OAM_lb_7_test_nested4Level:
-      - test_nested4Level
-      - link_template_VMInt_OAM_lb_7
+      link_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - link
+      dependency_server_cmaui_3:
+      - server_cmaui_3
+      - dependency
+      local_storage_server_cmaui_3:
+      - server_cmaui_3
+      - local_storage
+      binding_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - binding

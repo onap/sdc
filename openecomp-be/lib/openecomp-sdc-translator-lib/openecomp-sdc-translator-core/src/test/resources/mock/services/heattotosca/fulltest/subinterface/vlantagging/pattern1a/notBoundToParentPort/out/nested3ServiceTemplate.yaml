@@ -195,4 +195,4 @@ topology_template:
       - binding
       link_vdbe_untr_x_subport_missing_vlan_tag:
       - vdbe_untr_x_subport_missing_vlan_tag
-      - link
+      - link

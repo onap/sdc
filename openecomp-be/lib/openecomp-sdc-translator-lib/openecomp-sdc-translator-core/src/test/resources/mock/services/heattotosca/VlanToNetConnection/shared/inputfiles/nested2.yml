@@ -43,15 +43,7 @@ parameters:
     type: number
 resources:
 
-  cmaui_port_1:
-    type: OS::Neutron::Port
-    properties:
-      network: { get_param: p1 }
-      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
-      security_groups: [{get_param: security_group_name}]
-      replacement_policy: AUTO
-
-  template_Vlan_3:
+  template_subint_oam_vmi_1:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:
@@ -92,14 +84,4 @@ resources:
           ]
         }
       virtual_network_refs: [{ get_param: p1 }]
-      virtual_machine_interface_refs: [{ get_resource: cmaui_port_1 }]
-
-  server_cmaui:
-    type: OS::Nova::Server
-    properties:
-      name: { get_param: [cmaui_names, 0]}
-      image: { get_param: cmaui_image }
-      availability_zone: { get_param: availability_zone_0 }
-      flavor: { get_param: cmaui_flavor }
-      networks:
-      - port: { get_resource: cmaui_port_1 }
+      virtual_machine_interface_refs: [{ get_param: p2 }]

@@ -72,9 +72,8 @@ public class ToscaNodeType {
       CP_NODE_TYPE_PREFIX + "heat.contrailV2.VirtualMachineInterface";
   public static final String CONTRAIL_PORT = CP_NODE_TYPE_PREFIX + "heat.network.contrail.Port";
   public static final String NETWORK_PORT = CP_NODE_TYPE_PREFIX + "network.Port";
-  public static final String NETWORK_SUB_INTERFACE = CP_NODE_TYPE_PREFIX + "network.SubInterface";
   public static final String CONTRAILV2_VLAN_SUB_INTERFACE = CP_NODE_TYPE_PREFIX
-      + "heat.network.contrailV2.VLANSubInterface";
+      + "heat.network.v2.contrailV2.VLANSubInterface";
   public static final String NESTED_HEAT_RESOURCE_TYPE_PREFIX = ABSTRACT_NODE_TYPE_PREFIX + "heat.";
   public static final String VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX =
       NESTED_HEAT_RESOURCE_TYPE_PREFIX + "subinterface.";

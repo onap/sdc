@@ -174,6 +174,8 @@ topology_template:
         - AUTO
         vm_flavor_name:
           get_input: pd_flavor_name
+        port_pd02_port_subinterface_indicator:
+        - true
         port_pd01_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -192,6 +194,8 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
+        port_pd01_port_subinterface_indicator:
+        - true
         compute_pd_server_user_data_format:
         - RAW
         port_pd02_port_mac_requirements:

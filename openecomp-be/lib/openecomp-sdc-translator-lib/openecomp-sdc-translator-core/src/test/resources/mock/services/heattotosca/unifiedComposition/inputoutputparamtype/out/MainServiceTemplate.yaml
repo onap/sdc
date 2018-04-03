@@ -259,12 +259,16 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_VMI_subinterface_indicator:
+        - true
         port_FSB1_Port_network:
         - Internal1-net
         vm_flavor_name:
           get_input: fsb1-flavor
         port_FSB1_Port_mac_address:
           get_input: fsb1-Internal1-mac
+        port_FSB1_Port_subinterface_indicator:
+        - true
         compute_FSB1_availability_zone:
         - get_input: fsb_zone
         port_VMI_port_tuple_refs:

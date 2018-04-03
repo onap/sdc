@@ -60,7 +60,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest extends BaseResourceTran
   @Test
   public void testGenerateNewSubInterfaceNodeTemplateId() throws IOException {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestInitSubInterfaceServiceTemplate(), null,
-        getUnifiedCompositionDataListWithOnePortAndSubInterface(), getContext(false));
+        getUnifiedCompositionDataListWithOnePortAndSubInterface(), getContext(false), null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, VDBE_UNTR_1_SUBPORTS);
     if (nodeTemplateId.isPresent()) {
@@ -74,7 +74,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest extends BaseResourceTran
   public void testGeneratePortIdMultipleSubInterfacesOfSameTypeToOnePort() throws IOException {
     UnifiedCompositionTo unifiedCompositionTo =
         new UnifiedCompositionTo(getTestSubInterfaceServiceTemplateMultipleVlan(), null,
-            getUnifiedCompositionDataListWithTwoSubInterfacesOfSameType(), getContext(true));
+            getUnifiedCompositionDataListWithTwoSubInterfacesOfSameType(), getContext(true), null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo, VDBE_UNTR_1_SUBPORTS);
     if (nodeTemplateId.isPresent()) {
@@ -94,7 +94,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest extends BaseResourceTran
   @Test
   public void testGenerateInvalidOriginalNodeTemplateId() throws IOException {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestInitSubInterfaceServiceTemplate(), null,
-        getUnifiedCompositionDataListWithOnePortAndSubInterface(), getContext(false));
+        getUnifiedCompositionDataListWithOnePortAndSubInterface(), getContext(false), null);
     Optional<String>
         nodeTemplateId = unifiedSubstitutionNodeTemplateIdGenerator.generate(unifiedCompositionTo,
         VDBE_UNTR_1_SUBPORTS + "_Invalid");

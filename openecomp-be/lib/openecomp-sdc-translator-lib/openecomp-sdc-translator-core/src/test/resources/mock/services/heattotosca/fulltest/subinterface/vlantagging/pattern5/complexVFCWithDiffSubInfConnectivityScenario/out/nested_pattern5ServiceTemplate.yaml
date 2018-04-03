@@ -97,6 +97,8 @@ topology_template:
         - 9
         vm_flavor_name:
           get_input: pd_server_1b_flavor
+        port_pd_server_1b_port_subinterface_indicator:
+        - true
         subinterface_nested_vlan_net1:
         - packet_external_network
         vm_image_name:
@@ -141,7 +143,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
+      - subinterface_link_template_Vlan_vmi_1_pd_server_1b_pd_server_1b_port_nested_vlan:
           capability: tosca.capabilities.network.Linkable
           node: packet_external_network
           relationship: tosca.relationships.network.LinksTo

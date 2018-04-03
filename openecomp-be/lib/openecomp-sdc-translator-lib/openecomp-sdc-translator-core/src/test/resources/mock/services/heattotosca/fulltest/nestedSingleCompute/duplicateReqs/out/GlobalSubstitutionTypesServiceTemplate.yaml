@@ -128,7 +128,19 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_cdi_ims_core_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       compute_cdi_config_drive:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_cdi_internal_0_port_subinterface_indicator:
         type: list
         required: true
         status: SUPPORTED
@@ -456,6 +468,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -578,6 +591,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -619,12 +633,6 @@ node_types:
   org.openecomp.resource.abstract.nodes.lbd:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_lbd_internal_1_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       port_lbd_ims_core_1_port_allowed_address_pairs:
         type: list
         required: true
@@ -637,12 +645,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      compute_lbd_config_drive:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_lbd_internal_1_port_name:
         type: list
         required: true
@@ -655,22 +657,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
-      port_lbd_ims_core_1_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_lbd_ims_core_1_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
-      port_lbd_dpdk_1_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_lbd_dpdk_1_port_subnetpoolid:
         type: string
         required: true
@@ -701,26 +687,16 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
-      port_lbd_internal_1_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_lbd_internal_1_port_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_ims_core_1_port_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
+      port_lbd_dpdk_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_lbd_dpdk_1_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -746,6 +722,92 @@ node_types:
         required: true
         status: SUPPORTED
       port_lbd_ims_core_1_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_lbd_scheduler_hints:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_dpdk_1_port_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_ims_core_1_port_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_lbd_internal_1_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_internal_1_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      compute_lbd_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_ims_core_1_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_internal_1_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      compute_lbd_config_drive:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_lbd_ims_core_1_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_lbd_ims_core_1_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_lbd_dpdk_1_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_lbd_ims_core_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_lbd_internal_1_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_lbd_internal_1_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_ims_core_1_port_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
@@ -789,18 +851,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      compute_lbd_scheduler_hints:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_dpdk_1_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_lbd_dpdk_1_port_security_groups:
         type: list
         required: true
@@ -813,16 +863,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_lbd_ims_core_1_port_exCP_naming:
-        type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_lbd_internal_1_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_lbd_internal_1_port_network_role:
         type: string
         required: true
@@ -839,26 +879,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_lbd_internal_1_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_lbd_dpdk_1_port_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      compute_lbd_name:
+      port_lbd_internal_1_port_subinterface_indicator:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
-      port_lbd_ims_core_1_port_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
+          type: boolean
       port_lbd_dpdk_1_port_network_role:
         type: string
         required: true
@@ -994,6 +1026,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1255,6 +1288,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1349,6 +1383,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1407,6 +1442,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_oam_oam_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_oam_oam_1_port_network_role_tag:
         type: string
         required: true
@@ -1527,6 +1568,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_oam_internal_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       compute_oam_availability_zone:
         type: list
         required: true
@@ -1656,6 +1703,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1932,6 +1980,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1988,6 +2037,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam_oam_2_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_oam_oam_2_port_security_groups:
         type: list
         required: true
@@ -2086,6 +2141,12 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
+      port_oam_internal_2_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -2424,6 +2485,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -2496,6 +2558,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -2894,6 +2957,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -3171,6 +3235,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -3279,6 +3344,12 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
+      port_cdi_ims_core_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       vm_image_name:
         type: string
         required: true
@@ -3413,6 +3484,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_cdi_internal_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       compute_cdi_metadata:
         type: list
         required: true
@@ -3624,6 +3701,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -3631,6 +3709,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -3868,18 +3947,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      compute_lbd_config_drive:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
-      port_lbd_dpdk_0_port_fixed_ips:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_lbd_internal_0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -3892,22 +3959,10 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_lbd_internal_0_port_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
-      port_lbd_dpdk_0_port_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       compute_lbd_availability_zone:
         type: list
         required: true
@@ -3924,23 +3979,7 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_lbd_dpdk_0_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       vm_image_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_lbd_dpdk_0_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_internal_0_port_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
@@ -3954,26 +3993,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
-      port_lbd_ims_core_0_port_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
       port_lbd_ims_core_0_port_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_lbd_dpdk_0_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_dpdk_0_port_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
       port_lbd_ims_core_0_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -3990,6 +4015,136 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_lbd_internal_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_lbd_ims_core_0_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_lbd_scheduler_hints:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_internal_0_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_lbd_dpdk_0_port_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_lbd_ims_core_0_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_lbd_ims_core_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_lbd_internal_0_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_dpdk_0_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      compute_lbd_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_ims_core_0_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_ims_core_0_port_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_internal_0_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      compute_lbd_config_drive:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_lbd_dpdk_0_port_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_lbd_internal_0_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_dpdk_0_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_dpdk_0_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_lbd_dpdk_0_port_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_internal_0_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_ims_core_0_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_dpdk_0_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_dpdk_0_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_dpdk_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_lbd_internal_0_port_order:
         type: integer
         required: true
@@ -4016,36 +4171,12 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_lbd_ims_core_0_port_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
-      compute_lbd_scheduler_hints:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_internal_0_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_lbd_ims_core_0_port_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_lbd_dpdk_0_port_order:
-        type: integer
-        required: true
-        status: SUPPORTED
-      port_lbd_ims_core_0_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_ims_core_0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -4056,52 +4187,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_lbd_internal_0_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_dpdk_0_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       compute_lbd_metadata:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      compute_lbd_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_lbd_internal_0_port_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_lbd_ims_core_0_port_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_ims_core_0_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_internal_0_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
     requirements:
     - dependency_lbd_lbd_ims_core_0_port:
         capability: tosca.capabilities.Node
@@ -4287,6 +4384,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -4417,6 +4515,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -4436,6 +4535,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -4648,10 +4748,22 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cif_internal_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_oam_1_port_3_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
+      port_cif_ims_core_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       vm_image_name:
         type: string
         required: true
@@ -4662,6 +4774,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_cif_ims_li_1_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_oam_1_port_3_allowed_address_pairs:
         type: list
         required: true
@@ -4746,6 +4864,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cif_oam_1_port_1_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_ims_core_1_port_order:
         type: integer
         required: true
@@ -4960,6 +5084,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_cif_oam_1_port_3_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_oam_1_port_3_name:
         type: list
         required: true
@@ -5483,6 +5613,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -5540,6 +5671,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -5552,6 +5684,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -5588,6 +5721,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -5625,6 +5759,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -6075,6 +6210,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -6207,6 +6343,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam_internal_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_oam_oam_0_port_fixed_ips:
         type: list
         required: true
@@ -6285,6 +6427,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_oam_oam_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_oam_oam_0_port_network_role_tag:
         type: string
         required: true
@@ -6440,6 +6588,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -6465,6 +6614,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -7088,6 +7238,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -7365,6 +7516,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -7479,6 +7631,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_cif_oam_0_port_3_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_oam_0_port_1_order:
         type: integer
         required: true
@@ -7633,6 +7791,18 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_cif_ims_core_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_cif_ims_li_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_oam_0_port_3_security_groups:
         type: list
         required: true
@@ -7649,6 +7819,12 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
+      port_cif_oam_0_port_1_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_oam_0_port_1_network:
         type: list
         required: true
@@ -7725,6 +7901,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cif_internal_0_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cif_internal_0_port_network_role_tag:
         type: string
         required: true
@@ -8101,6 +8283,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -8256,6 +8439,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -8269,6 +8453,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -8328,6 +8513,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -8389,6 +8575,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -8889,6 +9076,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED

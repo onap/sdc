@@ -1033,8 +1033,12 @@ topology_template:
           get_input:
           - sbg_internal_mac_addresses
           - 0
+        port_sbg_sc_management_1_port_subinterface_indicator:
+        - true
         compute_sbg_sc_availability_zone:
         - get_input: availability_zone_0
+        port_sbg_sc_internal_0_port_subinterface_indicator:
+        - true
         service_template_filter:
           substitute_service_template: Nested_sbg_scServiceTemplate.yaml
           count: 1

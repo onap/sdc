@@ -97,6 +97,8 @@ topology_template:
         - - get_input: p2
         port_cmaui02_port_network:
         - get_input: net
+        port_cmaui02_port_subinterface_indicator:
+        - true
         service_template_filter:
           substitute_service_template: Nested_cmauiServiceTemplate.yaml
           count: 1
@@ -121,6 +123,8 @@ topology_template:
         - get_input:
           - cmaui_names
           - 0
+        port_cmaui01_port_subinterface_indicator:
+        - true
         compute_cmaui_availability_zone:
         - get_input: availability_zone_0
         vm_image_name:

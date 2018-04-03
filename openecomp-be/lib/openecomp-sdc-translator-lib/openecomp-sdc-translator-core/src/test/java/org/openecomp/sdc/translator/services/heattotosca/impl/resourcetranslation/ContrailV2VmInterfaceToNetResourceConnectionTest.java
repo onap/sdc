@@ -43,8 +43,6 @@ public class ContrailV2VmInterfaceToNetResourceConnectionTest extends BaseResour
     testTranslation();
   }
 
-  //todo - remove the ignore once we will support VMI as sub port
-  @Ignore
   @Test
   public void testTranslateVlanToNetNestedConnection() throws Exception {
     inputFilesPath = "/mock/services/heattotosca/VlanToNetConnection/nested/inputfiles";
@@ -64,8 +62,6 @@ public class ContrailV2VmInterfaceToNetResourceConnectionTest extends BaseResour
     testTranslation();
   }
 
-  //todo - remove the ignore once we will support VMI as sub port
-  @Ignore
   @Test
   public void testTranslateVlanToNetMultiNestedConnection() throws Exception {
     inputFilesPath =
@@ -85,8 +81,6 @@ public class ContrailV2VmInterfaceToNetResourceConnectionTest extends BaseResour
     testTranslation();
   }
 
-  //todo - remove the ignore once we will support VMI as sub port
-  @Ignore
   @Test
   public void testTranslateVlanToSharedNetNestedConnection() throws Exception {
     inputFilesPath = "/mock/services/heattotosca/VlanToNetConnection/shared/inputfiles";
@@ -115,8 +109,6 @@ public class ContrailV2VmInterfaceToNetResourceConnectionTest extends BaseResour
     testTranslation();
   }
 
-  //todo - remove the ignore once we will support VMI as sub port
-  @Ignore
   @Test
   public void testTranslateVlanToNetSharedAddOnConnection() throws Exception {
     inputFilesPath = "/mock/services/heattotosca/VlanToNetConnection/sharedAddOn/inputfiles";

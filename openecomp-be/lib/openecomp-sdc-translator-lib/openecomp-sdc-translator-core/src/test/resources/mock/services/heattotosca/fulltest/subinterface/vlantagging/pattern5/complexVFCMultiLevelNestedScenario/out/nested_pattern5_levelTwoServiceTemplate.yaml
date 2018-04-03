@@ -357,15 +357,15 @@ topology_template:
       dependency_test_resourceGroup_1:
       - test_resourceGroup_1
       - dependency
-      link_template_Vlan_vmi_1_test_resourceGroup_1:
-      - test_resourceGroup_1
-      - link_template_Vlan_vmi_1
       dependency_template_Vlan_vmi_1_test_resourceGroup_1:
       - test_resourceGroup_1
       - dependency_template_Vlan_vmi_1
       local_storage_server_1b_pd_1:
       - server_1b_pd_1
       - local_storage
+      subinterface_link_template_Vlan_vmi_1_test_resourceGroup_1:
+      - test_resourceGroup_1
+      - subinterface_link_template_Vlan_vmi_1
       link_pd_server_1b_port_1:
       - pd_server_1b_port_1
       - link

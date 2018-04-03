@@ -75,11 +75,11 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_vmi_1_test_resourceGroup_0:
+      - subinterface_link_template_Vlan_vmi_1_test_resourceGroup_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_external_network
           relationship: tosca.relationships.network.LinksTo
-      - link_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
+      - subinterface_link_template_Vlan_vmi_1_test_resourceGroup_1_test_nested_level2:
           capability: tosca.capabilities.network.Linkable
           node: packet_external_network
           relationship: tosca.relationships.network.LinksTo

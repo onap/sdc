@@ -64,6 +64,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_oam_port_vlan_requirements:
         type: list
         required: true
@@ -354,6 +360,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -452,6 +459,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pd_server_1b_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_pd_server_1b_port_vlan_requirements:
         type: list
         required: true
@@ -619,6 +632,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1412,6 +1426,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1419,6 +1434,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1757,6 +1773,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1857,6 +1874,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1882,6 +1900,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -1907,6 +1926,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -3053,6 +3073,12 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
+      port_ps_server_1b_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_ps_server_1b_port_network_role_tag:
         type: string
         required: true
@@ -3463,6 +3489,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -3547,6 +3574,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_cmaui_port_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_cmaui_port_subnetpoolid:
         type: string
         required: true
@@ -3584,6 +3617,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED

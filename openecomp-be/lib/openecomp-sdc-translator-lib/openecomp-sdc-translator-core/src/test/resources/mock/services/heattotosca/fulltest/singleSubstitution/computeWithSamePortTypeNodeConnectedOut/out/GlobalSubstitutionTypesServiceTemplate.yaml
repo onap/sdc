@@ -40,6 +40,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_0_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_pd01_port_0_replacement_policy:
         type: list
         required: true
@@ -104,6 +110,12 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_pd01_port_1_subinterface_indicator:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
       port_pd01_port_1_order:
         type: integer
         required: true
@@ -184,6 +196,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED
@@ -202,6 +215,7 @@ node_types:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
         occurrences:
         - 0
         - UNBOUNDED

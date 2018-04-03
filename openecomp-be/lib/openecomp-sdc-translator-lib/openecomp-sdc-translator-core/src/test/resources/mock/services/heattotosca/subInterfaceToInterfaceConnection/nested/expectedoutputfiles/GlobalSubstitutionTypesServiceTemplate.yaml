@@ -61,7 +61,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_3_arrayParameter:
+    - subinterface_link_template_Vlan_3_arrayParameter:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -81,7 +81,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_2:
+    - subinterface_link_template_Vlan_2:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -101,7 +101,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - link_template_Vlan_1:
+    - subinterface_link_template_Vlan_1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:

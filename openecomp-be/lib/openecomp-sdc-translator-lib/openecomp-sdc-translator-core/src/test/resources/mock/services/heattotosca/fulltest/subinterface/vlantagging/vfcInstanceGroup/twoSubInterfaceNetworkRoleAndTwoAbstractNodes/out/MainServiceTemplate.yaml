@@ -458,6 +458,8 @@ topology_template:
             is_required: false
         subinterface_nested2_ip_address:
         - get_input: vdbe_untrusted_ip_1
+        port_vdbe_untr_port_subinterface_indicator:
+        - true
         port_vdbe_untr_port_name:
         - str_replace:
             template: VM_NAMEDBE001p1n004
@@ -554,6 +556,8 @@ topology_template:
         port_vdbe_untr_port_mac_requirements:
           mac_count_required:
             is_required: false
+        port_vdbe_untr_port_subinterface_indicator:
+        - true
         port_vdbe_untr_port_name:
         - str_replace:
             template: VM_NAMEDBE001p1n004

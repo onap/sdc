@@ -530,9 +530,6 @@ topology_template:
       dependency_vdbe_untr_x_subport_vdbe_untr_1_subports:
       - vdbe_untr_1_subports
       - dependency_vdbe_untr_x_subport
-      link_vdbe_untr_x_subport_vdbe_untr_1_subports:
-      - vdbe_untr_1_subports
-      - link_vdbe_untr_x_subport
       dependency_vdbe_node_1:
       - vdbe_node_1
       - dependency
@@ -545,6 +542,9 @@ topology_template:
       dependency_control_int_net:
       - control_int_net
       - dependency
+      subinterface_link_vdbe_untr_x_subport_vdbe_untr_1_subports:
+      - vdbe_untr_1_subports
+      - subinterface_link_vdbe_untr_x_subport
       dependency_vdbe_untr_1_subports:
       - vdbe_untr_1_subports
       - dependency

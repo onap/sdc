@@ -36,6 +36,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_cmaui_port_5_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     compute_cmaui_availability_zone:
       type: list
       required: true
@@ -108,6 +113,11 @@ topology_template:
     port_cmaui_port_5_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
+    port_cmaui_port_6_subinterface_indicator:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
     port_cmaui_port_5_vlan_requirements:
       type: list
       required: true
@@ -150,18 +160,22 @@ topology_template:
           get_input: port_cmaui_port_5_exCP_naming
         vlan_requirements:
           get_input: port_cmaui_port_5_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_cmaui_port_5_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_cmaui_port_5_ip_requirements
         network_role_tag:
           get_input: port_cmaui_port_5_network_role_tag
         network_role:
           get_input: port_cmaui_port_5_network_role
+        subnetpoolid:
+          get_input: port_cmaui_port_5_subnetpoolid
         fixed_ips:
           get_input:
           - port_cmaui_port_5_fixed_ips
           - index_value
-        subnetpoolid:
-          get_input: port_cmaui_port_5_subnetpoolid
         network:
           get_input:
           - port_cmaui_port_5_network
@@ -190,18 +204,22 @@ topology_template:
           get_input: port_cmaui_port_6_exCP_naming
         vlan_requirements:
           get_input: port_cmaui_port_6_vlan_requirements
+        subinterface_indicator:
+          get_input:
+          - port_cmaui_port_6_subinterface_indicator
+          - index_value
         ip_requirements:
           get_input: port_cmaui_port_6_ip_requirements
         network_role_tag:
           get_input: port_cmaui_port_6_network_role_tag
         network_role:
           get_input: port_cmaui_port_6_network_role
+        subnetpoolid:
+          get_input: port_cmaui_port_6_subnetpoolid
         fixed_ips:
           get_input:
           - port_cmaui_port_6_fixed_ips
           - index_value
-        subnetpoolid:
-          get_input: port_cmaui_port_6_subnetpoolid
         network:
           get_input:
           - port_cmaui_port_6_network

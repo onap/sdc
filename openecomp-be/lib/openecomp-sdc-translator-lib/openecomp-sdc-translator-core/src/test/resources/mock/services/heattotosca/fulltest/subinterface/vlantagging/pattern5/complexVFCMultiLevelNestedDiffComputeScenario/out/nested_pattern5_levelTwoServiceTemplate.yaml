@@ -123,7 +123,7 @@ topology_template:
         parent_interface: ps_server_1b_port_1
         net1: packet_ext_network
       requirements:
-      - link_template_Vlan_vmi_1:
+      - subinterface_link_template_Vlan_vmi_1:
           capability: tosca.capabilities.network.Linkable
           node: packet_ext_network
           relationship: tosca.relationships.network.LinksTo

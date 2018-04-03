@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to;
 
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
@@ -27,15 +28,18 @@ public class UnifiedCompositionTo {
   private ServiceTemplate substitutionServiceTemplate;
   private List<UnifiedCompositionData> unifiedCompositionDataList;
   private TranslationContext context;
+  private NodeTemplate nodeTemplate;
 
   public UnifiedCompositionTo(ServiceTemplate serviceTemplate,
                               ServiceTemplate substitutionServiceTemplate,
                               List<UnifiedCompositionData> unifiedCompositionDataList,
-                              TranslationContext context) {
+                              TranslationContext context,
+                              NodeTemplate nodeTemplate) {
     this.serviceTemplate = serviceTemplate;
     this.substitutionServiceTemplate = substitutionServiceTemplate;
     this.unifiedCompositionDataList = unifiedCompositionDataList;
     this.context = context;
+    this.nodeTemplate = nodeTemplate;
   }
 
   public ServiceTemplate getServiceTemplate() {
@@ -69,5 +73,13 @@ public class UnifiedCompositionTo {
 
   public void setContext(TranslationContext context) {
     this.context = context;
+  }
+
+  public NodeTemplate getNodeTemplate() {
+    return nodeTemplate;
+  }
+
+  public void setNodeTemplate(NodeTemplate nodeTemplate) {
+    this.nodeTemplate=nodeTemplate;
   }
 }

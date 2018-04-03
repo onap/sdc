@@ -471,6 +471,8 @@ topology_template:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
         subinterface_vdbe_untr_1_subports_vlan_tag_list:
         - get_input: untrusted_vlan_tags
+        port_vdbe_untr_1_port_subinterface_indicator:
+        - true
         subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix:
         - get_input: vdbe_aap_untrusted_ip_prefix
         subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix:
