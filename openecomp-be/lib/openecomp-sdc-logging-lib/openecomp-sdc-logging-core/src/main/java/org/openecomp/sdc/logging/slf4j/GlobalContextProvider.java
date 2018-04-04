@@ -19,7 +19,7 @@ package org.openecomp.sdc.logging.slf4j;
 import java.net.InetAddress;
 import java.util.EnumMap;
 import java.util.Map;
-import org.openecomp.sdc.logging.context.HostAddress;
+import org.openecomp.sdc.logging.context.HostAddressCache;
 import org.openecomp.sdc.logging.context.InstanceId;
 
 /**
@@ -30,7 +30,7 @@ import org.openecomp.sdc.logging.context.InstanceId;
  */
 class GlobalContextProvider implements ContextProvider {
 
-    private static final HostAddress HOST_ADDRESS_CACHE = new HostAddress();
+    private static final HostAddressCache HOST_ADDRESS_CACHE = new HostAddressCache();
 
     @Override
     public Map<ContextField, String> values() {

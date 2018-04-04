@@ -29,22 +29,22 @@ import java.net.UnknownHostException;
  * @since 26 Mar 2018
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace", "squid:S106", "squid:S1148"})
-public class HostAddress {
+public class HostAddressCache {
 
     private static final long DEFAULT_REFRESH_INTERVAL = 60000L; // 1 min
 
     private final long interval;
 
-    private CacheEntry cachedAddress;
+    private volatile CacheEntry cachedAddress;
 
-    public HostAddress() {
+    public HostAddressCache() {
         this(DEFAULT_REFRESH_INTERVAL);
     }
 
     /**
      * Creates a cache for host address with a custom refresh interval.
      */
-    public HostAddress(long refreshInterval) {
+    public HostAddressCache(long refreshInterval) {
         this.interval = refreshInterval;
         this.cachedAddress = new CacheEntry(System.currentTimeMillis(), read());
     }
