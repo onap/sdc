@@ -15,16 +15,6 @@
         <listener-class>org.openecomp.activityspec.api.server.listeners.ActivitySpecAppStartupListener</listener-class>
     </listener>
 
-
-    <filter>
-        <filter-name>LoggingServletFilter</filter-name>
-        <filter-class>org.openecomp.sdc.logging.servlet.LoggingFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>LoggingServletFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
     <filter>
         <filter-name>SessionContextFilter</filter-name>
         <filter-class>org.openecomp.activityspec.api.server.filters.ActivitySpecSessionContextFilter</filter-class>

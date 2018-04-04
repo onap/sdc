@@ -39,6 +39,11 @@
         <jaxrs:providers>
             <ref bean="jsonProvider"/>
             <bean class="org.openecomp.activityspec.errors.DefaultExceptionMapper"/>
+            <bean class="org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter">
+                <property name="requestIdHeaders" value="X-ECOMP-RequestID,X-ONAP-RequestID"/>
+                <property name="partnerNameHeaders" value="USER_ID"/>
+            </bean>
+            <bean class="org.openecomp.sdc.logging.servlet.jaxrs.LoggingResponseFilter"/>
         </jaxrs:providers>
 
     </jaxrs:server>

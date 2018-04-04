@@ -6,6 +6,8 @@ EXPOSE 5005
 
 ARG ARTIFACT_VERSION
 
+ENV LOGBACK_FILE_PATH /etc/onap/activity-spec/be/logback.xml
+
 # See https://hub.docker.com/_/jetty/
 ARG WEBAPPS_DIR=${JETTY_BASE}/webapps/
 
@@ -15,6 +17,7 @@ COPY activity-spec-war/target/activity-spec-war-${ARTIFACT_VERSION}.war ${WEBAPP
 
 COPY activity-spec-assembly/configuration.yaml .
 COPY activity-spec-assembly/start.sh .
+COPY activity-spec-assembly/logback.xml /etc/onap/activity-spec/be/
 
 USER root
 
