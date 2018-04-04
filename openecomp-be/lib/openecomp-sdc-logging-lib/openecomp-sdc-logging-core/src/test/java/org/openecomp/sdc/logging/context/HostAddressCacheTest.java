@@ -33,17 +33,17 @@ import org.testng.annotations.Test;
  * @since 28 Mar 2018
  */
 @PrepareForTest(InetAddress.class)
-public class HostAddressTest extends PowerMockTestCase {
+public class HostAddressCacheTest extends PowerMockTestCase {
 
     @Test
     public void hostAddressIsAlwaysPopulated() {
-        assertNotNull(new HostAddress().get());
+        assertNotNull(new HostAddressCache().get());
     }
 
     @Test
     public void cachedAddressRemainsTheSameWhenGotWithingRefreshInterval() throws UnknownHostException {
         mockInetAddress(1);
-        HostAddress addressCache = new HostAddress(1000);
+        HostAddressCache addressCache = new HostAddressCache(1000);
         addressCache.get();
         addressCache.get();
     }
@@ -51,7 +51,7 @@ public class HostAddressTest extends PowerMockTestCase {
     @Test
     public void cachedAddressReplacedWhenGotAfterRefreshInterval() throws UnknownHostException {
         mockInetAddress(2);
-        HostAddress addressCache = new HostAddress(-1);
+        HostAddressCache addressCache = new HostAddressCache(-1);
         addressCache.get();
         addressCache.get();
     }
