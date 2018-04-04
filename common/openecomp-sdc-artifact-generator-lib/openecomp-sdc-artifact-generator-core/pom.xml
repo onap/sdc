@@ -87,16 +87,6 @@
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${mvn.surefire.version}</version>
-                    <configuration>
-                        <systemPropertyVariables>
-                            <artifactgenerator.config>${project.basedir}/src/test/resources/config/Artifact-Generator.properties</artifactgenerator.config>
-                        </systemPropertyVariables>
-                    </configuration>
-                </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

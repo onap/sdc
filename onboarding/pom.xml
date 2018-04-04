@@ -127,6 +127,8 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.8</version>
                 <configuration>
+                    <analysisCache>true</analysisCache>
+                    <analysisCacheLocation>${project.build.directory}/pmd/pmd.cache</analysisCacheLocation>
                     <aggregate>false</aggregate>
                     <includeTests>true</includeTests>
                     <linkXRef>false</linkXRef>

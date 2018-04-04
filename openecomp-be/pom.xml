@@ -24,7 +24,9 @@
         <module>/tools/zusammen-tools</module>
         <module>/backend</module>
     </modules>
-
+    <properties>
+        <mvn.compiler.version>3.7.0</mvn.compiler.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -61,6 +63,24 @@
                 <configuration>
                     <source>${java.source}</source>
                     <target>${java.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.build.directory}</directory>
+                            <excludes>
+                                <exclude>test-classes/**</exclude>
+                                <exclude>pmd/**</exclude>
+                                <exclude>maven-status/**</exclude>
+                            </excludes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
             <!-- blackduck maven plugin -->
@@ -212,8 +232,35 @@
                     </dependency>
                 </dependencies>
             </plugin>-->
-
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${mvn.surefire.version}</version>
+                <configuration>
+                    <forkCount>0</forkCount>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.build.directory}/../src/test/resources</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <systemPropertyVariables>
+                        <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
+                    </systemPropertyVariables>
+                    <includes>
+                        <include>${project.build.directory}/../src/test/core/unittest/offline/**</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <config.location>${project.basedir}/configuration</config.location>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <excludes>
+                    <exclude>**/*</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
     </build>
 
     <!--Added to resolve blackduck operational risks for indirect dependencies referred -->
