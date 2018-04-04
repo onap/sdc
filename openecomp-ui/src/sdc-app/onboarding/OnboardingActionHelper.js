@@ -45,6 +45,8 @@ import SoftwareProductComponentsImageActionHelper from './softwareProduct/compon
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import { tabsMapping as attachmentsTabsMapping } from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsConstants.js';
 import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
+import { actionTypes as filterActionTypes } from './onboard/filter/FilterConstants.js';
+import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
     dispatch({
@@ -75,10 +77,16 @@ const OnboardingActionHelper = {
     },
 
     navigateToOnboardingCatalog(dispatch) {
-        UsersActionHelper.fetchUsersList(dispatch);
-        this.loadItemsLists(dispatch);
-        OnboardActionHelper.resetOnboardStore(dispatch);
-        setCurrentScreen(dispatch, enums.SCREEN.ONBOARDING_CATALOG);
+        FeaturesActionHelper.getFeaturesList(dispatch).then(() => {
+            UsersActionHelper.fetchUsersList(dispatch);
+            this.loadItemsLists(dispatch);
+            OnboardActionHelper.resetOnboardStore(dispatch);
+            setCurrentScreen(dispatch, enums.SCREEN.ONBOARDING_CATALOG);
+            dispatch({
+                type: filterActionTypes.FILTER_DATA_CHANGED,
+                deltaData: {}
+            });
+        });
     },
 
     autoSaveBeforeNavigate(

@@ -16,9 +16,16 @@
 
 import store from 'sdc-app/AppStore.js';
 
-export default ({ featureName, restFunction, mockResult }) => {
+export const restToggle = ({ featureName, restFunction, mockResult }) => {
     const { features } = store.getState();
     return !!features.find(el => el.name === featureName && el.active)
         ? restFunction()
         : Promise.resolve(mockResult);
+};
+
+export const functionToggle = (featureName, { aFunction, bFunction }) => {
+    const { features } = store.getState();
+    return !!features.find(el => el.name === featureName && el.active)
+        ? aFunction()
+        : bFunction();
 };
