@@ -19,6 +19,8 @@ package org.openecomp.sdc.logging.servlet.jaxrs;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_PARTNER_NAME_HEADER;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_REQUEST_ID_HEADER;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.UUID;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -26,6 +28,8 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 import org.openecomp.sdc.logging.api.ContextData;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.LoggingContext;
 import org.openecomp.sdc.logging.servlet.HttpHeader;
 
@@ -60,6 +64,8 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
 
     static final String START_TIME_KEY = "audit.start.time";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingRequestFilter.class);
+
     private ResourceInfo resource;
 
     private HttpHeader requestIdHeader = new HttpHeader(DEFAULT_REQUEST_ID_HEADER);
@@ -79,6 +85,7 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
      * Configuration parameter for request ID HTTP header.
      */
     public void setRequestIdHeaders(String requestIdHeaders) {
+        LOGGER.debug("Valid request ID headers: {}", requestIdHeaders);
         this.requestIdHeader = new HttpHeader(requestIdHeaders.split(MULTI_VALUE_SEPARATOR));
     }
 
@@ -86,6 +93,7 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
      * Configuration parameter for partner name HTTP header.
      */
     public void setPartnerNameHeaders(String partnerNameHeaders) {
+        LOGGER.debug("Valid partner name headers: {}", partnerNameHeaders);
         this.partnerNameHeader = new HttpHeader(partnerNameHeaders.split(MULTI_VALUE_SEPARATOR));
     }
 
@@ -95,6 +103,12 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
         if (resource == null) {
             // JAX-RS could not find a mapping this response, probably due to HTTP 404 (not found),
             // 405 (method not allowed), 415 (unsupported media type), etc. with a message in Web server log
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No matching resource was found for URI '{}' and method '{}'",
+                        containerRequestContext.getUriInfo().getPath(), containerRequestContext.getMethod());
+            }
+
             return;
         }
 
@@ -103,7 +117,7 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
         LoggingContext.clear();
 
         ContextData.ContextDataBuilder contextData = ContextData.builder();
-        contextData.serviceName(resource.getResourceClass().getName() + "." + resource.getResourceMethod().getName());
+        contextData.serviceName(getServiceName());
 
         String partnerName = partnerNameHeader.getAny(containerRequestContext::getHeaderString);
         if (partnerName != null) {
@@ -114,5 +128,51 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
         contextData.requestId(requestId == null ? UUID.randomUUID().toString() : requestId);
 
         LoggingContext.put(contextData.build());
+    }
+
+    private String getServiceName() {
+
+        Class<?> resourceClass = resource.getResourceClass();
+        Method resourceMethod = resource.getResourceMethod();
+
+        if (Proxy.isProxyClass(resourceClass)) {
+            LOGGER.debug("Proxy class injected for JAX-RS resource");
+            return getServiceNameFromJavaProxy(resourceClass, resourceMethod);
+        }
+
+        return formatServiceName(resourceClass, resourceMethod);
+    }
+
+    private String getServiceNameFromJavaProxy(Class<?> proxyType, Method resourceMethod) {
+
+        for (Class<?> interfaceType : proxyType.getInterfaces()) {
+
+            if (isMatchingInterface(interfaceType, resourceMethod)) {
+                return formatServiceName(interfaceType, resourceMethod);
+            }
+        }
+
+        LOGGER.debug("Failed to find method '{}' in interfaces implemented by injected Java proxy", resourceMethod);
+        return formatServiceName(proxyType, resourceMethod);
+    }
+
+    private String formatServiceName(Class<?> resourceClass, Method resourceMethod) {
+        return resourceClass.getName() + "#" + resourceMethod.getName();
+    }
+
+    private boolean isMatchingInterface(Class<?> candidateType, Method requestedMethod) {
+
+        try {
+
+            Method candidate = candidateType.getDeclaredMethod(requestedMethod.getName(),
+                    requestedMethod.getParameterTypes());
+            return candidate != null;
+
+        } catch (NoSuchMethodException ignored) {
+            // ignore and move on to the next
+            LOGGER.debug("Failed to find method '{}' in interface '{}'", requestedMethod, candidateType);
+        }
+
+        return false;
     }
 }
