@@ -158,6 +158,7 @@ public class BaseResourceTranslationTest {
       }
     }
     assertEquals(0, expectedResultFileNameSet.size());
+    translatedZipFile.delete();
   }
 
   private File translateZipFile() throws IOException {
@@ -173,8 +174,7 @@ public class BaseResourceTranslationTest {
           "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
-    File file = new File(path + "/" + zipFilename);
-    file.createNewFile();
+    File file = File.createTempFile("VSP", "zip");
 
     try (FileOutputStream fos = new FileOutputStream(file)) {
       ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
