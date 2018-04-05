@@ -15,7 +15,7 @@
 
 	<properties>
 		<jetty-version>9.2.10.v20150310</jetty-version>
-		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
+		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
 		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
