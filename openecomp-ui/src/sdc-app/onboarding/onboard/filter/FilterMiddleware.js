@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { actionTypes } from './FilterConstants.js';
-import {
-    itemStatus,
-    versionStatus
-} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 
-const defaultState = {
-    itemStatus: itemStatus.ACTIVE,
-    versionStatus: versionStatus.DRAFT,
-    entityType: {},
-    permission: {},
-    onboardingMethod: {}
-};
-export default (state = defaultState, action) => {
-    switch (action.type) {
-        case actionTypes.FILTER_DATA_CHANGED:
-            return {
-                ...state,
-                ...action.deltaData
-            };
-        default:
-            return state;
+import FilterActionHelper from './FilterActionHelper.js';
+import { actionTypes } from './FilterConstants.js';
+
+const filterUpdater = store => next => action => {
+    if (action.type === actionTypes.FILTER_DATA_CHANGED) {
+        const filter = store.getState().onboard.filter;
+
+        FilterActionHelper.updateFilteredItems(store.dispatch, {
+            ...filter,
+            ...action.deltaData
+        });
     }
+    return next(action);
 };
+
+export default filterUpdater;

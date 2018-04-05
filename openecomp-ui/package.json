@@ -11,13 +11,17 @@
         "static-keys-bundle": "gulp static-keys-bundle",
         "check-keys-against-bundles": "gulp static-keys-bundle-with-report",
         "test": "jest",
-        "test-failedTestReport": "jest --json | node test-utils/failedTestReport.js",
+        "test-failedTestReport":
+            "jest --json | node test-utils/failedTestReport.js",
         "test-dev": "jest --watch",
-        "test-coverage": "jest --coverage && start ./coverage/lcov-report/index.html",
+        "test-coverage":
+            "jest --coverage && start ./coverage/lcov-report/index.html",
         "test-build": "jest --coverage",
-        "storybook": "start-storybook -p 9090 -c .storybook -s .storybook/fonts",
+        "storybook":
+            "start-storybook -p 9090 -c .storybook -s .storybook/fonts",
         "storyshots": "jest storyshots.test.js",
-        "build-storybook": "build-storybook -c .storybook -o .storybook-dist && gulp copy-storybook-fonts",
+        "build-storybook":
+            "build-storybook -c .storybook -o .storybook-dist && gulp copy-storybook-fonts",
         "lint-fix": "eslint --fix  --ext .js --ext .jsx src"
     },
     "dependencies": {
@@ -49,7 +53,7 @@
         "react-show-more": "^1.1.1",
         "react-sortable": "^1.2.0",
         "redux": "^3.7.2",
-        "sdc-ui": "1.6.24",
+        "sdc-ui": "1.6.27",
         "uuid-js": "^0.7.5",
         "validator": "^4.3.0"
     },
@@ -121,10 +125,12 @@
     },
     "jest": {
         "moduleNameMapper": {
-            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test-utils/fileMock.js",
+            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+                "<rootDir>/test-utils/fileMock.js",
             "\\.(css|scss)$": "<rootDir>/test-utils/styleMock.js",
             "^nfvo-utils/RestAPIUtil.js$": "<rootDir>/test-utils/MockRest.js",
-            "^sdc-ui/lib/react/SVGIcon.js$": "<rootDir>/test-utils/MockSVGIcon.js",
+            "^sdc-ui/lib/react/SVGIcon.js$":
+                "<rootDir>/test-utils/MockSVGIcon.js",
             "^react-show-more$": "<rootDir>/test-utils/ShowMore.js",
             "^nfvo-utils(.*)$": "<rootDir>/src/nfvo-utils$1",
             "^nfvo-components(.*)$": "<rootDir>/src/nfvo-components$1",
@@ -136,23 +142,14 @@
         "globals": {
             "DEBUG": false
         },
-        "setupFiles": [
-            "<rootDir>/test-utils/test-env-setup.js"
-        ],
+        "setupFiles": ["<rootDir>/test-utils/test-env-setup.js"],
         "setupTestFrameworkScriptFile": "<rootDir>/test-utils/test-setup.js",
         "testPathIgnorePatterns": [
             "<rootDir>/node_modules/",
             "<rootDir>/test/nfvo-components/storyshots.test.js"
         ],
-        "collectCoverageFrom": [
-            "src/**/*.{js,jsx}"
-        ],
-        "coveragePathIgnorePatterns": [
-            "/node_modules/",
-            "(.)*.stories.js"
-        ],
-        "coverageReporters": [
-            "lcov"
-        ]
+        "collectCoverageFrom": ["src/**/*.{js,jsx}"],
+        "coveragePathIgnorePatterns": ["/node_modules/", "(.)*.stories.js"],
+        "coverageReporters": ["lcov"]
     }
 }

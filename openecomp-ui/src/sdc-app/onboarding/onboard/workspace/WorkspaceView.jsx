@@ -17,28 +17,40 @@ import React from 'react';
 import DetailsCatalogView from '../DetailsCatalogView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { tabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
+import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
+import { functionToggle } from 'sdc-app/features/featureToggleUtils.js';
 
 const WorkspaceView = props => {
     let {
-        licenseModelList,
-        softwareProductList,
         onAddLicenseModelClick,
         users,
         onAddSoftwareProductClick,
         onSelectLicenseModel,
         onSelectSoftwareProduct,
         searchValue,
-        onMigrate
+        onMigrate,
+        softwareProductList,
+        licenseModelList,
+        filteredItems
     } = props;
-
+    const toggledfilteredItems = functionToggle(featureToggleNames.FILTER, {
+        aFunction: () => ({
+            vlmList: filteredItems.vlmList,
+            vspList: filteredItems.vspList
+        }),
+        bFunction: () => ({
+            vlmList: licenseModelList,
+            vspList: softwareProductList
+        })
+    });
     return (
         <div className="catalog-wrapper workspace-view">
             <div className="catalog-header workspace-header">
                 {i18n('WORKSPACE')}
             </div>
             <DetailsCatalogView
-                VLMList={licenseModelList}
-                VSPList={softwareProductList}
+                VLMList={toggledfilteredItems.vlmList}
+                VSPList={toggledfilteredItems.vspList}
                 users={users}
                 onAddVLM={onAddLicenseModelClick}
                 onAddVSP={onAddSoftwareProductClick}

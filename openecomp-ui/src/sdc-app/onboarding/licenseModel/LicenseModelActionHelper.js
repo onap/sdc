@@ -29,9 +29,11 @@ import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 import { CommitModalType } from 'nfvo-components/panel/versionController/components/CommitCommentModal.jsx';
 import versionPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
 import { itemTypes } from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
-import { catalogItemStatuses } from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
 import { actionsEnum as VersionControllerActionsEnum } from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
-
+import {
+    itemStatus,
+    versionStatus
+} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 function baseUrl() {
     const restPrefix = Configuration.get('restPrefix');
     return `${restPrefix}/v1.0/vendor-license-models/`;
@@ -39,19 +41,17 @@ function baseUrl() {
 
 function fetchLicenseModels() {
     return RestAPIUtil.fetch(
-        `${baseUrl()}?versionFilter=${catalogItemStatuses.DRAFT}`
+        `${baseUrl()}?versionFilter=${versionStatus.DRAFT}`
     );
 }
 
 function fetchFinalizedLicenseModels() {
     return RestAPIUtil.fetch(
-        `${baseUrl()}?versionFilter=${catalogItemStatuses.CERTIFIED}`
+        `${baseUrl()}?versionFilter=${versionStatus.CERTIFIED}`
     );
 }
 function fetchArchivedLicenseModels() {
-    return RestAPIUtil.fetch(
-        `${baseUrl()}?Status=${catalogItemStatuses.ARCHIVED}`
-    );
+    return RestAPIUtil.fetch(`${baseUrl()}?Status=${itemStatus.ARCHIVED}`);
 }
 function fetchLicenseModelById(licenseModelId, version) {
     const { id: versionId } = version;
@@ -206,9 +206,8 @@ const LicenseModelActionHelper = {
             version
         }).then(({ inMerge, isDirty, updatedVersion }) => {
             if (
-                (updatedVersion.status === catalogItemStatuses.CERTIFIED ||
-                    updatedVersion.archivedStatus ===
-                        catalogItemStatuses.ARCHIVED) &&
+                (updatedVersion.status === versionStatus.CERTIFIED ||
+                    updatedVersion.archivedStatus === versionStatus.ARCHIVED) &&
                 (action === VersionControllerActionsEnum.COMMIT ||
                     action === VersionControllerActionsEnum.SYNC)
             ) {
@@ -217,8 +216,7 @@ const LicenseModelActionHelper = {
                     itemId: licenseModelId
                 });
                 const msg =
-                    updatedVersion.archivedStatus ===
-                    catalogItemStatuses.ARCHIVED
+                    updatedVersion.archivedStatus === versionStatus.ARCHIVED
                         ? i18n('Item was Archived')
                         : i18n('Item version already Certified');
                 dispatch({
