@@ -267,6 +267,7 @@ public class ProcessManagerImplTest {
     File actual =
         processManager.getProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     Assert.assertNotNull(actual);
+    actual.delete();
   }
 
   @Test
