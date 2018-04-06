@@ -383,7 +383,6 @@
 			</activation>
 			<modules>
 				<module>build-tools</module>
-				<module>onboarding</module>
 				<module>security-utils</module>
 				<module>common-app-api</module>
 				<module>common-be</module>
@@ -397,6 +396,7 @@
 				<module>ui-ci</module>
 				<module>sdc-os-chef</module>
 				<module>utils/webseal-simulator</module>
+				<module>onboarding</module>
 			</modules>
 
 		</profile>
