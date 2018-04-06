@@ -27,23 +27,4 @@
     </repository>
 </repositories>
 
-    <build>
-        <plugins>
-
-            <!-- ================================================== -->
-            <!-- Set the JDK compiler version.                      -->
-            <!-- ================================================== -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${mvn.compiler.version}</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>${java.source}</source>
-                    <target>${java.target}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

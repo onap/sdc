@@ -82,20 +82,6 @@
     <build>
         <plugins>
 
-            <!-- ================================================== -->
-            <!-- Set the JDK compiler version.                      -->
-            <!-- ================================================== -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -193,17 +179,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
-            </plugin>
-
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
