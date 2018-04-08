@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_968410b2",
+        "filename": "openecomp-ui/src/nfvo-utils/objectPropsToUrlString.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-08T13:40:21Z",
+      "side": 1,
+      "message": "Please encode URI",
+      "revId": "293d7778adbcafd46c20822d6f5d758b4f39795b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f6bc746e",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/OnboardingActionHelper.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-08T13:40:21Z",
+      "side": 1,
+      "message": "async await",
+      "revId": "293d7778adbcafd46c20822d6f5d758b4f39795b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_16c000df",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-08T13:40:21Z",
+      "side": 1,
+      "message": "please add another return after the imports",
+      "revId": "293d7778adbcafd46c20822d6f5d758b4f39795b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b6b6ec88",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/CatalogItemDetails.stories.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-08T13:40:21Z",
+      "side": 1,
+      "message": "space the imports from code using linebreak",
+      "revId": "293d7778adbcafd46c20822d6f5d758b4f39795b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d6b9387a",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/DetailsCatalogView.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-08T13:40:21Z",
+      "side": 1,
+      "message": "rename back to render....",
+      "revId": "293d7778adbcafd46c20822d6f5d758b4f39795b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_76b0648b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/filter/FilterReducer.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-08T13:40:21Z",
+      "side": 1,
+      "message": "add defaultState to constants",
+      "revId": "293d7778adbcafd46c20822d6f5d758b4f39795b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f6631418",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogView.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-08T13:40:21Z",
+      "side": 1,
+      "message": "try to separate the new features to another file and see if looks better",
+      "revId": "293d7778adbcafd46c20822d6f5d758b4f39795b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
