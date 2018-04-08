@@ -35,6 +35,7 @@ import org.json.simple.JSONObject;
 import org.littleshoot.proxy.impl.ClientToProxyConnection;
 import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.config.UserCredentialsFromFile;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestManager;
 import org.openecomp.sdc.ci.tests.api.SomeInterface;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -105,7 +106,7 @@ public abstract class SetupCDTest extends DriverFactory {
 	private static boolean uiSimulator;
 	private static boolean localEnv = true;
 	private static OnboardCSVReport csvReport;
-	private static Map<?, ?> credentials;
+	private final UserCredentialsFromFile credentialsIns = UserCredentialsFromFile.getInstance();
 	
     protected static ITestContext myContext;
 	
@@ -313,33 +314,6 @@ public abstract class SetupCDTest extends DriverFactory {
 		return url;
 	}
 
-	public static void loadCredentialsFile() throws Exception {
-		if (credentials != null){
-			return;
-		}
-		File credentialsFileRemote = new File(FileHandling.getBasePath() + File.separator + "conf" + File.separator + CREDENTIALS_FILE);
-//		File credentialsFileLocal = new File(FileHandling.getConfFilesPath() + CREDENTIALS_FILE);
-		File credentialsFileLocal = new File(FileHandling.getSdcVnfsPath() + File.separator + "conf" 
-				+ File.separator + CREDENTIALS_FILE);
-		File[] credentialFiles = {credentialsFileRemote, credentialsFileLocal};
-		for (File credentialsFile : credentialFiles){
-			if (credentialsFile.exists()){
-				credentials = FileHandling.parseYamlFile(credentialsFile.getAbsolutePath());
-				break;
-			}
-		}
-	}
-
-	private UserCredentials getUserCredentialsFromFile(String userRole) throws Exception {
-		@SuppressWarnings("unchecked")
-		Map<String, String> credentialsMap = (Map<String, String>) credentials.get(userRole);
-		String user = (String) credentialsMap.get("username");
-		String password = (String) credentialsMap.get("password");
-		String firstname = (String) credentialsMap.get("firstname");
-		String lastname = (String) credentialsMap.get("lastname");
-
-		return new UserCredentials(user, password, firstname, lastname, userRole);
-	}
 
 
 	public static void navigateToUrl(String url) throws Exception {
@@ -385,13 +359,11 @@ public abstract class SetupCDTest extends DriverFactory {
 	}
 	
 	protected void loginToSystem(UserRoleEnum role) throws Exception {
-		UserCredentials credentials;
+		UserCredentials credentials = new UserCredentials(role.getUserId(), role.getPassword(), role.getFirstName(), role.getLastName(), role.name());
 		if (localEnv){
 			loginToSimulator(role);
-			credentials = new UserCredentials(role.getUserId(), WEB_SEAL_PASSWORD, role.getFirstName(), role.getLastName(), role.name());
 		}
 		else{
-			credentials = getUserFromFileByRole(role);
 			sendUserAndPasswordKeys(credentials);
 			WebElement submitButton = GeneralUIUtils.getWebElementBy(By.name("btnSubmit"), 30);
 			submitButton.click();
@@ -402,10 +374,7 @@ public abstract class SetupCDTest extends DriverFactory {
 		GeneralUIUtils.ultimateWait();                   
 		getWindowTest().setUser(credentials);
 	}
-	protected UserCredentials getUserFromFileByRole(UserRoleEnum role) throws Exception {
-		loadCredentialsFile();
-		return getUserCredentialsFromFile(role.name().toLowerCase());
-	}
+
 	private void goToHomePage(UserRoleEnum role) throws Exception {
 		try {
 			getWindowTest().setRefreshAttempts(getWindowTest().getRefreshAttempts() == 0 ? NUM_OF_ATTEMPTS_TO_REFTRESH : getWindowTest().getRefreshAttempts());

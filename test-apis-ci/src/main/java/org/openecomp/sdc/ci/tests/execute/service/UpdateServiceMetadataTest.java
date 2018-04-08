@@ -89,7 +89,7 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		sdncDesignerDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		sdncDesignerDetails2 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER2);
 		sdncAdminDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-		sdncAdminDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN4);
+		sdncAdminDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN2);
 		sdncGovernorDeatails = ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR);
 		sdncTesterDetails = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
 		sdncOpsDetails = ElementFactory.getDefaultUser(UserRoleEnum.OPS);

@@ -405,6 +405,25 @@
 							</execution>
 
 							<execution>
+								<id>copy-csar-files</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files/VNFs</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/Files/VNFs</directory>
+											<includes>
+												<include>*</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+
+							<execution>
 								<id>copy-resources-ui-ci</id>
 								<phase>verify</phase>
 								<goals>
