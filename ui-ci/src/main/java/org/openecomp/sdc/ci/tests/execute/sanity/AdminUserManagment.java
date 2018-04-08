@@ -280,12 +280,12 @@ public class AdminUserManagment extends SetupCDTest {
 	
 	private User getUserByEnv(UserRoleEnum userRole) {
 		try{
-			if (!getConfig().getUrl().contains("localhost") && !getConfig().getUrl().contains("127.0.0.1")) {
-				return getUserFromFileByRole(userRole);
-			}
-			else{
+//			if (!getConfig().getUrl().contains("localhost") && !getConfig().getUrl().contains("127.0.0.1")) {
+//				return getUserFromFileByRole(userRole);
+//			}
+//			else{
 				return getUser(userRole);
-			}
+//			}
 		}
 		catch (Exception e){
 			throw new RuntimeException(e);

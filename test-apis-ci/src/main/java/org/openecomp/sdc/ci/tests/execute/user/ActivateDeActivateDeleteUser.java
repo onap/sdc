@@ -591,7 +591,7 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 			// resource---------------------------------------------------------------------------------
 
 			// import new resource with CERTIFIED state
-			User importer = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN4);
+			User importer = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN2);
 			RestResponse importResponse = ImportRestUtils.importResourceByName(resourceDetails, importer);
 
 			assertNotNull("check response object is not null after create user", importResponse);

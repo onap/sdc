@@ -262,3 +262,5 @@ utils/DmaapPublisher/logs/*
 
 
 /openecomp-ui/yarn.lock
+
+/ui-ci/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files/VNFs/*
