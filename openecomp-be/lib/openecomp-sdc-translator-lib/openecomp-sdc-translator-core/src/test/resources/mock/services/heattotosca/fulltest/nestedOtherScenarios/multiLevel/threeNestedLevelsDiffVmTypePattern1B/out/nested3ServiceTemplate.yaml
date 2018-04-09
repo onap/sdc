@@ -73,7 +73,7 @@ topology_template:
         vm_flavor_name:
           get_input: cmaui_flavor
         port_pd02_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: cmaui_image
         port_pd02_port_security_groups:
@@ -149,7 +149,7 @@ topology_template:
           - ps_names
           - 0
         port_pd01_port_subinterface_indicator:
-        - true
+        - false
         service_template_filter:
           substitute_service_template: Nested_ps_1ServiceTemplate.yaml
           count: 1

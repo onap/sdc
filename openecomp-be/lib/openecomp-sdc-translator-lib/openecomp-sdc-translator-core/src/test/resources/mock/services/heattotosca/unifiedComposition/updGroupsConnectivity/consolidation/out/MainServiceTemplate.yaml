@@ -104,7 +104,7 @@ topology_template:
         mac_address:
           get_input: fsb2-Internal2-mac
         network: Internal2-net-fsb2-Internal2
-        subinterface_indicator: true
+        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -120,7 +120,7 @@ topology_template:
         mac_address:
           get_input: fsb2-Internal1-mac
         network: Internal2-net-fsb2-Internal1
-        subinterface_indicator: true
+        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -136,7 +136,7 @@ topology_template:
         mac_address:
           get_input: fsb1-Internal2-mac
         network: Internal1-net-fsb1-Internal2
-        subinterface_indicator: true
+        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -152,7 +152,7 @@ topology_template:
         mac_address:
           get_input: fsb1-Internal1-mac
         network: Internal1-net-fsb1-Internal1
-        subinterface_indicator: true
+        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -254,8 +254,8 @@ topology_template:
         - OPTIONAL-DATA-FSB1
         - null
         port_FSB1_Internal_subinterface_indicator:
-        - true
-        - true
+        - false
+        - false
         port_FSB1_Internal_network:
         - Internal1-net-fsb1-Internal1
         - Internal1-net-fsb1-Internal2
@@ -272,8 +272,8 @@ topology_template:
           - path: /path3/etc/sysconfig/network-scripts/ifcfg-eth0
           - path: /path4/etc/sysconfig/network-scripts/ifcfg-eth1
         port_FSB2_Internal_subinterface_indicator:
-        - true
-        - true
+        - false
+        - false
         compute_FSB_availability_zone:
         - get_input: fsb1_zone
         - get_input: fsb2_zone

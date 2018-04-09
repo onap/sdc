@@ -331,7 +331,7 @@ topology_template:
           - server_pcm_001
           - oam_net_gw
         port_compute_port_subinterface_indicator:
-        - true
+        - false
         compute_compute_name:
         - compute_name: null
         vm_flavor_name:

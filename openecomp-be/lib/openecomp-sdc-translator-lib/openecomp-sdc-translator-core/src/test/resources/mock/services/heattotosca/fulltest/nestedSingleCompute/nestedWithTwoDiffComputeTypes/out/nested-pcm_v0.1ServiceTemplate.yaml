@@ -137,7 +137,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_pcm_port_subinterface_indicator:
-        - true
+        - false
         compute_pcm_server_user_data_format:
         - RAW
         vm_image_name:
@@ -186,7 +186,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_pcm_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: pd_image_name
         compute_pd_server_config_drive:

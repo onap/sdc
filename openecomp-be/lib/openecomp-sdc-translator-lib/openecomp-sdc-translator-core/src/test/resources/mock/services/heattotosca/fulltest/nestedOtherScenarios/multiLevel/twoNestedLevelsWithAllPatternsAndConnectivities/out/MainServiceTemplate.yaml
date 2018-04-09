@@ -322,7 +322,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_ps_server_1b_port_subinterface_indicator:
-        - true
+        - false
         port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:
@@ -389,7 +389,7 @@ topology_template:
         compute_rd_server_1b_availability_zone:
         - get_input: availability_zone_0
         port_rd_server_1b_port_subinterface_indicator:
-        - true
+        - false
         vm_flavor_name:
           get_input: rd_server_1b_flavor
         port_rd_server_1b_port_ip_requirements:
@@ -522,7 +522,7 @@ topology_template:
         port_osm_port_replacement_policy:
         - AUTO
         port_osm_port_subinterface_indicator:
-        - true
+        - false
         port_osm_port_network:
         - packet_internal_network_2
         compute_osm_server_1c2_name:
@@ -575,7 +575,7 @@ topology_template:
         port_osm_port_replacement_policy:
         - AUTO
         port_osm_port_subinterface_indicator:
-        - true
+        - false
         port_osm_port_network:
         - packet_external_network_2
         compute_osm_server_1c2_name:
@@ -706,8 +706,8 @@ topology_template:
         - AUTO
         - AUTO
         port_BE_port_subinterface_indicator:
-        - true
-        - true
+        - false
+        - false
         service_template_filter:
           substitute_service_template: Nested_BE_1c1ServiceTemplate.yaml
           count: 2

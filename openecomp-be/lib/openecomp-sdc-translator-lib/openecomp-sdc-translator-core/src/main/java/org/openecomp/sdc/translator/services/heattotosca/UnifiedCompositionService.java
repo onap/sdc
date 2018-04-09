@@ -2165,9 +2165,10 @@ public class UnifiedCompositionService {
         continue;
       }
 
-      if(unifiedCompositionEntity == UnifiedCompositionEntity.PORT
+      if (unifiedCompositionEntity == UnifiedCompositionEntity.PORT
           && entityConsolidationData instanceof PortTemplateConsolidationData) {
-        properties.put(SUB_INTERFACE_INDICATOR_PROPERTY, true);
+        properties.put(SUB_INTERFACE_INDICATOR_PROPERTY,
+            ((PortTemplateConsolidationData) entityConsolidationData).isPortBoundToSubInterface());
       }
 
       for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {

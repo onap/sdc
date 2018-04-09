@@ -860,7 +860,7 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port2_subinterface_indicator:
-        - true
+        - false
         compute_pd_server_user_data_format:
         - RAW
         port_pd01_port1_mac_requirements:
@@ -881,7 +881,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_pd01_port1_subinterface_indicator:
-        - true
+        - false
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1

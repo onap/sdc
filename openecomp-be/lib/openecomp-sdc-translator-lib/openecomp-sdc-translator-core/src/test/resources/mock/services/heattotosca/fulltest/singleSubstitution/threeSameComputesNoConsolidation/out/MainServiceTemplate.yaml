@@ -356,7 +356,7 @@ topology_template:
         port_pd01_port_network:
         - get_input: oam_net_name
         port_pd01_port_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
@@ -400,7 +400,7 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_2_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_2_network:
         - get_input: oam_net_name
         port_pd01_port_2_mac_requirements:
@@ -423,7 +423,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_pd01_port_3_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_3_network_role_tag: oam
         service_template_filter:
           substitute_service_template: Nested_pd_server_2ServiceTemplate.yaml
@@ -474,7 +474,7 @@ topology_template:
           - network_policy_server
           - name
         port_pd01_port_subinterface_indicator:
-        - true
+        - false
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:

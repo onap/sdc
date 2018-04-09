@@ -841,13 +841,13 @@ topology_template:
           - pd_server_names
           - 0
         port_pd_2_port_1_subinterface_indicator:
-        - true
+        - false
         port_pd_2_port_1_network:
         - get_input: oam_net_name
         vm_flavor_name:
           get_input: pd_flavor_name
         port_pd_1_port_0_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: pd_image_name
         port_pd_1_port_0_mac_requirements:

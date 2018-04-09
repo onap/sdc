@@ -858,7 +858,7 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd_oam1_port_1_subinterface_indicator:
-        - true
+        - false
         port_pd_oam1_port_1_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
@@ -876,7 +876,7 @@ topology_template:
         port_pd_oam1_port_1_network:
         - get_input: oam_net_name
         port_pd_oam1_port_0_subinterface_indicator:
-        - true
+        - false
         port_pd_oam1_port_0_network:
         - get_input: oam_net_name
         port_pd_oam1_port_0_mac_requirements:

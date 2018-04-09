@@ -74,7 +74,7 @@ topology_template:
         mac_address:
           get_input: fsb1-Internal2-mac
         network: Internal2-net
-        subinterface_indicator: true
+        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -86,7 +86,7 @@ topology_template:
         mac_address:
           get_input: fsb1-Internal1-mac
         network: Internal1-net
-        subinterface_indicator: true
+        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -103,7 +103,7 @@ topology_template:
         - ip_address:
             get_input: fsb1-oam-ip
         network: jsa_net1
-        subinterface_indicator: true
+        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -185,7 +185,7 @@ topology_template:
         port_FSB1_Internal_mac_address:
           get_input: fsb1-Internal1-mac
         port_FSB1_OAM_subinterface_indicator:
-        - true
+        - false
         vm_flavor_name:
           get_input: fsb-flavor
         vm_image_name:
@@ -193,7 +193,7 @@ topology_template:
         compute_FSB_admin_pass:
         - STATIC-DATA-FSB1
         port_FSB1_Internal_subinterface_indicator:
-        - true
+        - false
         port_FSB1_Internal_network:
         - Internal1-net
         port_FSB2_Internal_mac_address:
@@ -207,7 +207,7 @@ topology_template:
           - path: /path1/etc/sysconfig/network-scripts/ifcfg-eth0
           - path: /path2/etc/sysconfig/network-scripts/ifcfg-eth1
         port_FSB2_Internal_subinterface_indicator:
-        - true
+        - false
         compute_FSB_availability_zone:
         - get_input: fsb1_zone
         port_FSB1_OAM_fixed_ips:
