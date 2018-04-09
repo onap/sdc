@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_934f3dbe",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "Added to distinguish between not found error originated during GET Request or POST/PUT request",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_53e0d595",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "Since it is GET request send GET Error Prefix",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d3eb8576",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "Send update error prefix for actOnAction which is PUT",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_53f77559",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "send update error prefix for updateversion status",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3393c9fb",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "action is the error prefix sent from calling method based on error originated in GET or PUT. This is set in CoreException so that in exception mapper based on error code different response codes can be set",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_73b0718b",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/ActivitySpecErrorResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "Remove code and message .just keep message in error response",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f34a4182",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "Set response code to NOT_FOUND if id has GET Error prefix else set it to BAD_REQUEST. id is set in ActivitySpecManagerImpl based on originator of error is GET or UPdate",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_134ecd96",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/openecomp/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "set only message. remove status and code",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b344b974",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/openecomp/activityspec/be/impl/ActivitySpecManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1891
+      },
+      "writtenOn": "2018-04-09T17:07:12Z",
+      "side": 1,
+      "message": "change error code in test",
+      "revId": "9f58a2001a3f9feb38f204f91c76aa9b7d694226",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
