@@ -189,6 +189,7 @@
                 <version>${mvn.surefire.version}</version>
                 <configuration>
                     <forkCount>0</forkCount>
+                    <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
                         <additionalClasspathElement>${project.build.directory}/../src/test/resources</additionalClasspathElement>
