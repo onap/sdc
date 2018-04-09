@@ -84,7 +84,7 @@ topology_template:
           get_input: pd_flavor_name
         port_pd02_port_network_role_tag: oam
         port_pd02_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: pd_image_name
         port_pd02_port_ip_requirements:
@@ -142,7 +142,7 @@ topology_template:
         port_pd01_port_network:
         - get_input: oam_net_name
         port_pd01_port_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW

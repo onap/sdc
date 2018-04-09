@@ -50,6 +50,10 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
     this.networkRole = networkRole;
   }
 
+  public boolean isPortBoundToSubInterface() {
+    return !subInterfaceConsolidationData.isEmpty();
+  }
+
   public SubInterfaceTemplateConsolidationData getSubInterfaceResourceTemplateConsolidationData(Resource resource,
                                                                                     String subInterfaceNodeTemplateId,
                                                                                     String parentPortNodeTemplateId) {

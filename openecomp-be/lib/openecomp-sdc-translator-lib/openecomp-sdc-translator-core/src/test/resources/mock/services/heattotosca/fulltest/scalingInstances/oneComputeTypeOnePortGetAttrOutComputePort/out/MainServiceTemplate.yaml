@@ -120,8 +120,8 @@ topology_template:
         - Network-1
         - Network-0
         port_pd01_port_subinterface_indicator:
-        - true
-        - true
+        - false
+        - false
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 2

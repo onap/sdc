@@ -142,7 +142,7 @@ topology_template:
         port_sm_server_port_network:
         - get_input: net1
         port_sm_server_port_subinterface_indicator:
-        - true
+        - false
         compute_sm_server_name:
         - get_input:
           - sm_server_names
@@ -193,7 +193,7 @@ topology_template:
         port_oam_server_port_security_groups:
         - - get_input: p1
         port_oam_server_port_subinterface_indicator:
-        - true
+        - false
         port_oam_server_port_replacement_policy:
         - AUTO
         vm_flavor_name:

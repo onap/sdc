@@ -489,8 +489,8 @@ topology_template:
         - get_input: counter
         - get_input: counter
         port_vdbe_untr_2_port_subinterface_indicator:
-        - true
-        - true
+        - false
+        - false
         vm_image_name:
           get_input: vdbe_image_name
         compute_vdbe_metadata:

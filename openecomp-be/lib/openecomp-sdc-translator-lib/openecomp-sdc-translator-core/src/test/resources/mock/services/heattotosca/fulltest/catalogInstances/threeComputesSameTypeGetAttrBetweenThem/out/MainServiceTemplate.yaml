@@ -354,7 +354,7 @@ topology_template:
         port_pd01_port_network:
         - get_input: oam_net_name
         port_pd01_port_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
@@ -405,7 +405,7 @@ topology_template:
         port_pd01_port_network:
         - get_input: oam_net_name
         port_pd01_port_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
@@ -451,7 +451,7 @@ topology_template:
         port_pd01_port_network:
         - get_input: oam_net_name
         port_pd01_port_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW

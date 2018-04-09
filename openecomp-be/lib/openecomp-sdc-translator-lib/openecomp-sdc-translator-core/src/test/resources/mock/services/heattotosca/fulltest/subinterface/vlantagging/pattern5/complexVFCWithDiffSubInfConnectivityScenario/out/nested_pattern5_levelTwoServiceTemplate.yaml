@@ -86,7 +86,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_ps_server_1b_port_subinterface_indicator:
-        - true
+        - false
         port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:

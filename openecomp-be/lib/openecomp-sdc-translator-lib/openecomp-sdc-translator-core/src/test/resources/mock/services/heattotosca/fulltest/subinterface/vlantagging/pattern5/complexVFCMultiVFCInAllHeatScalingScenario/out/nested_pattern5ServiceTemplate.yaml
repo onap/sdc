@@ -103,8 +103,8 @@ topology_template:
         vm_flavor_name:
           get_input: pd_server_1b_flavor
         port_pd_server_1b_port_subinterface_indicator:
-        - true
-        - true
+        - false
+        - false
         vm_image_name:
           get_input: pd_server_1b_image
         port_pd_server_1b_port_replacement_policy:

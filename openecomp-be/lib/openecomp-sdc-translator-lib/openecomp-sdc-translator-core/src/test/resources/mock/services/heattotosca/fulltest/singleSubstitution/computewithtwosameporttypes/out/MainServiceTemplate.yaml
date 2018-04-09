@@ -855,7 +855,7 @@ topology_template:
           - pd_server_names
           - 0
         port_pd01_port_0_subinterface_indicator:
-        - true
+        - false
         vm_flavor_name:
           get_input: pd_flavor_name
         vm_image_name:
@@ -878,7 +878,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_pd01_port_1_subinterface_indicator:
-        - true
+        - false
         port_pd01_port_1_mac_requirements:
           mac_count_required:
             is_required: false

@@ -2095,7 +2095,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_cdi_ims_core_1_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: cdi_image_name
         compute_cdi_scheduler_hints:
@@ -2171,7 +2171,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_cdi_internal_1_port_subinterface_indicator:
-        - true
+        - false
         compute_cdi_metadata:
         - vf_module_id:
             get_input: vf_module_id
@@ -2576,7 +2576,7 @@ topology_template:
         vm_image_name:
           get_input: lbd_image_name
         port_lbd_dpdk_1_port_subinterface_indicator:
-        - true
+        - false
         port_lbd_dpdk_1_port_network:
         - cscf_internal_dpdk_network_0
         port_lbd_ims_core_1_port_name:
@@ -2622,7 +2622,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_lbd_ims_core_1_port_subinterface_indicator:
-        - true
+        - false
         port_lbd_internal_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -2673,7 +2673,7 @@ topology_template:
           vf_module_name:
             get_input: vf_module_name
         port_lbd_internal_1_port_subinterface_indicator:
-        - true
+        - false
         service_template_filter:
           substitute_service_template: Nested_lbdServiceTemplate.yaml
           count: 1
@@ -2932,11 +2932,11 @@ topology_template:
         - ip_address:
             get_input: cdi_internal_v6_ip_0
         port_cdi_ims_core_0_port_subinterface_indicator:
-        - true
+        - false
         compute_cdi_config_drive:
         - true
         port_cdi_internal_0_port_subinterface_indicator:
-        - true
+        - false
         port_cdi_internal_0_port_security_groups:
         - - cscf_RSG
         port_cdi_ims_core_0_port_security_groups:
@@ -3032,7 +3032,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_oam_oam_1_port_subinterface_indicator:
-        - true
+        - false
         port_oam_oam_1_port_network_role_tag: oam
         port_oam_oam_1_port_security_groups:
         - - cscf_RSG
@@ -3087,7 +3087,7 @@ topology_template:
         compute_oam_scheduler_hints:
         - group: oam_server_group_group
         port_oam_internal_1_port_subinterface_indicator:
-        - true
+        - false
         compute_oam_availability_zone:
         - get_input: availability_zone_1
         compute_oam_metadata:
@@ -3132,7 +3132,7 @@ topology_template:
       properties:
         port_oam_oam_2_port_network_role_tag: oam
         port_oam_oam_2_port_subinterface_indicator:
-        - true
+        - false
         port_oam_oam_2_port_security_groups:
         - - cscf_RSG
         port_oam_oam_2_port_name:
@@ -3177,7 +3177,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_oam_internal_2_port_subinterface_indicator:
-        - true
+        - false
         port_oam_oam_2_port_network:
         - get_input: oam_net_id
         compute_oam_user_data_format:
@@ -3331,7 +3331,7 @@ topology_template:
               $DEL:
                 get_input: vcscf_name_delimeter
         port_oam_internal_0_port_subinterface_indicator:
-        - true
+        - false
         port_oam_oam_0_port_fixed_ips:
         - ip_address:
             get_input: oam_oam_ip_0
@@ -3374,7 +3374,7 @@ topology_template:
         - ip_address:
             get_input: oam_internal_ip_0
         port_oam_oam_0_port_subinterface_indicator:
-        - true
+        - false
         port_oam_oam_0_port_network_role_tag: oam
         compute_oam_user_data_format:
         - RAW
@@ -3480,7 +3480,7 @@ topology_template:
               $DEL:
                 get_input: vcscf_name_delimeter
         port_lbd_internal_0_port_subinterface_indicator:
-        - true
+        - false
         port_lbd_ims_core_0_port_network_role_tag: ims_core
         compute_lbd_scheduler_hints:
         - group: lbd_server_group_group
@@ -3499,7 +3499,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_lbd_ims_core_0_port_subinterface_indicator:
-        - true
+        - false
         port_lbd_internal_0_port_network:
         - cscf_internal_network_0
         port_lbd_dpdk_0_port_mac_requirements:
@@ -3537,7 +3537,7 @@ topology_template:
         port_lbd_dpdk_0_port_network:
         - cscf_internal_dpdk_network_0
         port_lbd_dpdk_0_port_subinterface_indicator:
-        - true
+        - false
         port_lbd_ims_core_0_port_fixed_ips:
         - ip_address:
             get_input: lbd_ims_core_v6_ip_0
@@ -3811,7 +3811,7 @@ topology_template:
               $DEL:
                 get_input: vcscf_name_delimeter
         port_cif_oam_0_port_3_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: cif_image_name
         compute_cif_user_data_format:
@@ -3880,9 +3880,9 @@ topology_template:
         port_cif_internal_0_port_network:
         - cscf_internal_network_0
         port_cif_ims_core_0_port_subinterface_indicator:
-        - true
+        - false
         port_cif_ims_li_0_port_subinterface_indicator:
-        - true
+        - false
         port_cif_oam_0_port_3_security_groups:
         - - cscf_RSG
         port_cif_ims_core_0_port_ip_requirements:
@@ -3900,7 +3900,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_cif_oam_0_port_1_subinterface_indicator:
-        - true
+        - false
         port_cif_oam_0_port_1_network:
         - get_input: oam_net_id
         port_cif_ims_li_0_port_security_groups:
@@ -3924,7 +3924,7 @@ topology_template:
         - ip_address:
             get_input: cif_ims_li_v6_vip_0
         port_cif_internal_0_port_subinterface_indicator:
-        - true
+        - false
         port_cif_internal_0_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -4024,15 +4024,15 @@ topology_template:
         vm_flavor_name:
           get_input: cif_flavor_name
         port_cif_internal_1_port_subinterface_indicator:
-        - true
+        - false
         port_cif_ims_core_1_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: cif_image_name
         compute_cif_user_data_format:
         - RAW
         port_cif_ims_li_1_port_subinterface_indicator:
-        - true
+        - false
         port_cif_oam_1_port_3_allowed_address_pairs:
         - ip_address:
             get_input: cif_oam_vip_1
@@ -4075,7 +4075,7 @@ topology_template:
           vf_module_name:
             get_input: vf_module_name
         port_cif_oam_1_port_1_subinterface_indicator:
-        - true
+        - false
         port_cif_oam_1_port_1_fixed_ips:
         - ip_address:
             get_input: cif_oam_ip_1
@@ -4190,7 +4190,7 @@ topology_template:
         compute_cif_config_drive:
         - true
         port_cif_oam_1_port_3_subinterface_indicator:
-        - true
+        - false
         port_cif_oam_1_port_3_name:
         - str_replace:
             template: $PREFIX$DELeth3

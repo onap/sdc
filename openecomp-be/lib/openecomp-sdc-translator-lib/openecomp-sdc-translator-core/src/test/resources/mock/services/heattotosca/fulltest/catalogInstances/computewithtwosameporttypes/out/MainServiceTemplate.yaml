@@ -919,7 +919,7 @@ topology_template:
       - substitutable
       properties:
         port_iox_oam_0_port_subinterface_indicator:
-        - true
+        - false
         port_iox_data_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -940,11 +940,11 @@ topology_template:
               $vnf_name:
                 get_input: vnf_name
         port_iox_internal_0_port_subinterface_indicator:
-        - true
+        - false
         vm_flavor_name:
           get_input: iox_flavor_name
         port_iox_data_0_port_subinterface_indicator:
-        - true
+        - false
         port_iox_data_0_port_allowed_address_pairs:
         - ip_address:
             get_attribute:
@@ -1079,7 +1079,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_app_internal_0_port_subinterface_indicator:
-        - true
+        - false
         compute_app_scheduler_hints:
         - group: app_server_group_group
         port_app_internal_0_port_ip_requirements:
@@ -1094,7 +1094,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_app_data_0_port_subinterface_indicator:
-        - true
+        - false
         port_app_oam_0_port_replacement_policy:
         - AUTO
         port_app_oam_0_port_network:
@@ -1117,7 +1117,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_app_oam_0_port_subinterface_indicator:
-        - true
+        - false
         port_app_data_0_port_network:
         - get_input: data_net_id
         port_app_data_0_port_network_role_tag: data
@@ -1251,7 +1251,7 @@ topology_template:
       - substitutable
       properties:
         port_iox_oam_0_port_subinterface_indicator:
-        - true
+        - false
         port_iox_data_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -1272,11 +1272,11 @@ topology_template:
               $vnf_name:
                 get_input: vnf_name
         port_iox_internal_0_port_subinterface_indicator:
-        - true
+        - false
         vm_flavor_name:
           get_input: iox_flavor_name
         port_iox_data_0_port_subinterface_indicator:
-        - true
+        - false
         port_iox_data_0_port_allowed_address_pairs:
         - ip_address:
             get_attribute:
@@ -1406,7 +1406,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_app_internal_0_port_subinterface_indicator:
-        - true
+        - false
         compute_app_scheduler_hints:
         - group: app_server_group_group
         port_app_internal_0_port_ip_requirements:
@@ -1421,7 +1421,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_app_data_0_port_subinterface_indicator:
-        - true
+        - false
         port_app_oam_0_port_replacement_policy:
         - AUTO
         port_app_oam_0_port_network:
@@ -1449,7 +1449,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_app_oam_0_port_subinterface_indicator:
-        - true
+        - false
         port_app_data_0_port_network:
         - get_input: data_net_id
         port_app_data_0_port_network_role_tag: data
@@ -1551,7 +1551,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_app_internal_0_port_subinterface_indicator:
-        - true
+        - false
         compute_app_scheduler_hints:
         - group: app_server_group_group
         port_app_internal_0_port_ip_requirements:
@@ -1566,7 +1566,7 @@ topology_template:
           floating_ip_count_required:
             is_required: false
         port_app_data_0_port_subinterface_indicator:
-        - true
+        - false
         port_app_oam_0_port_replacement_policy:
         - AUTO
         port_app_oam_0_port_network:
@@ -1594,7 +1594,7 @@ topology_template:
           mac_count_required:
             is_required: false
         port_app_oam_0_port_subinterface_indicator:
-        - true
+        - false
         port_app_data_0_port_network:
         - get_input: data_net_id
         port_app_data_0_port_network_role_tag: data
@@ -1724,7 +1724,7 @@ topology_template:
             - plt_data_v6_ips
             - 1
         port_plt_oam_0_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: plt_image_name
         compute_plt_availability_zone:
@@ -1759,7 +1759,7 @@ topology_template:
             - 0
             - ip_address
         port_plt_internal_0_port_subinterface_indicator:
-        - true
+        - false
         port_plt_data_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -1831,7 +1831,7 @@ topology_template:
         port_plt_oam_0_port_network:
         - get_input: oam_net_id
         port_plt_data_0_port_subinterface_indicator:
-        - true
+        - false
         port_plt_oam_0_port_replacement_policy:
         - AUTO
         port_plt_data_0_port_replacement_policy:
@@ -1876,7 +1876,7 @@ topology_template:
             - plt_data_v6_ips
             - 0
         port_plt_oam_0_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: plt_image_name
         compute_plt_availability_zone:
@@ -1911,7 +1911,7 @@ topology_template:
             - 0
             - ip_address
         port_plt_internal_0_port_subinterface_indicator:
-        - true
+        - false
         port_plt_data_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -1988,7 +1988,7 @@ topology_template:
         port_plt_oam_0_port_network:
         - get_input: oam_net_id
         port_plt_data_0_port_subinterface_indicator:
-        - true
+        - false
         port_plt_oam_0_port_replacement_policy:
         - AUTO
         port_plt_data_0_port_replacement_policy:

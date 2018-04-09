@@ -133,6 +133,18 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
     testTranslationWithInit(PATTERN_1A_BASE_DIRECTORY + "notBoundToParentPort");
   }
 
+  @Test
+  public void testIfSubInfNotPresentPortPropShouldBeFalse() throws IOException {
+    /*
+     * Nested Heat file with one compute, two port and one subinterface resource group with
+     * 1. Port connected with compute
+     * 2. Sub-interface connected to only on Port
+     * 3. Need to verify if sub interface resource is not bind with Port then
+     * subinterface_indicator property under port value should be false
+     */
+    testTranslationWithInit(PATTERN_1A_BASE_DIRECTORY + "twoPortOnlyOneConnectedWithSubInf");
+  }
+
   //Pattern 1B test
   @Test
   public void testDiffComputeSubInterface() throws IOException {

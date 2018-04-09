@@ -260,7 +260,7 @@ topology_template:
       - substitutable
       properties:
         port_VMI_subinterface_indicator:
-        - true
+        - false
         port_FSB1_Port_network:
         - Internal1-net
         vm_flavor_name:
@@ -268,7 +268,7 @@ topology_template:
         port_FSB1_Port_mac_address:
           get_input: fsb1-Internal1-mac
         port_FSB1_Port_subinterface_indicator:
-        - true
+        - false
         compute_FSB1_availability_zone:
         - get_input: fsb_zone
         port_VMI_port_tuple_refs:

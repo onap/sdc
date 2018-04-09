@@ -86,7 +86,7 @@ topology_template:
         vm_flavor_name:
           get_input: cmaui_flavor
         port_oam01_port_subinterface_indicator:
-        - true
+        - false
         vm_image_name:
           get_input: cmaui_image
         port_oam01_port_fixed_ips:
@@ -149,7 +149,7 @@ topology_template:
           - oam_names
           - 0
         port_oam02_port_subinterface_indicator:
-        - true
+        - false
         service_template_filter:
           substitute_service_template: Nested_oamServiceTemplate.yaml
           count: 1

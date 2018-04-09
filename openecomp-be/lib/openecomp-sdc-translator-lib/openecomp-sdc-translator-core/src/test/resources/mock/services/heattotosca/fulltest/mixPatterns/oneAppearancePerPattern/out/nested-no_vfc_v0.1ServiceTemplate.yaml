@@ -109,7 +109,7 @@ topology_template:
       - substitutable
       properties:
         port_pcm_port_0_subinterface_indicator:
-        - true
+        - false
         port_pcm_port_1_network_role_tag: oam
         port_pcm_port_0_fixed_ips:
         - ip_address:
@@ -124,7 +124,7 @@ topology_template:
           get_input: pcma_image_name
         port_pcm_port_0_network_role_tag: cps
         port_pcm_port_1_subinterface_indicator:
-        - true
+        - false
         port_pcm_port_1_network:
         - get_input: oam_net_name
         port_pcm_port_0_ip_requirements:
@@ -188,7 +188,7 @@ topology_template:
         - ip_address:
             get_input: cps_net_ip
         port_pcm_port_2_subinterface_indicator:
-        - true
+        - false
         vm_flavor_name:
           get_input: pcma_flavor_name
         port_pcm_port_3_security_groups:
@@ -222,7 +222,7 @@ topology_template:
         compute_pcma_server_user_data_format:
         - RAW
         port_pcm_port_3_subinterface_indicator:
-        - true
+        - false
         port_pcm_port_2_network:
         - get_input: cps_net_name
         port_pcm_port_2_ip_requirements:
