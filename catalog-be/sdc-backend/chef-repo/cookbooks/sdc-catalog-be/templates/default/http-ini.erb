@@ -1,6 +1,6 @@
 # ---------------------------------------
 # Module: http
---module=http
+<%= @http_option %>
 
 ### HTTP Connector Configuration
 
@@ -8,7 +8,7 @@
 # jetty.http.host=0.0.0.0
 
 ## Connector port to listen on
-jetty.http.port=<%= @FE_http_port %>
+jetty.http.port=<%= @http_port %>
 
 ## Connector idle timeout in milliseconds
 jetty.http.idleTimeout=30000
