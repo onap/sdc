@@ -60,8 +60,8 @@ class VendorItem extends React.Component {
                     </TileInfoLine>
                     <TileInfoLine>
                         <Button
-                            btnType="outline-rounded"
-                            color="dark-gray"
+                            btnType="secondary"
+                            className="venodor-tile-btn"
                             onClick={e => this.handleVspCountClick(e)}
                             data-test-id="catalog-vsp-count"
                             disabled={!softwareProductList.length}>
