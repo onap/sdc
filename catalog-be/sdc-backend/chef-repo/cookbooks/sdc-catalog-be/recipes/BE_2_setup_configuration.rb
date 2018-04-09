@@ -12,7 +12,9 @@ template "titan.properties" do
       :CASSANDRA_USR            => node['cassandra'][:cassandra_user],
       :rep_factor               => replication_factor,
       :DC_NAME                  => node['cassandra'][:cluster_name]+node.chef_environment,
-      :titan_connection_timeout => node['cassandra']['titan_connection_timeout']
+      :titan_connection_timeout => node['cassandra']['titan_connection_timeout'],
+      :cassandra_traststore_password => node['cassandra'][:truststore_password],
+      :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}"
    })
 end
 
@@ -34,8 +36,9 @@ template "catalog-be-config" do
       :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
       :socket_read_timeout    => node['cassandra']['socket_read_timeout'],
       :cassandra_pwd          => node['cassandra'][:cassandra_password],
-      :cassandra_usr          => node['cassandra'][:cassandra_user]
-
+      :cassandra_usr          => node['cassandra'][:cassandra_user],
+      :cassandra_traststore_password => node['cassandra'][:truststore_password],
+      :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}"
    })
 end
 
