@@ -77,9 +77,9 @@ cassandraConfig:
     authenticate: true
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
-    ssl: false
-    truststorePath : /config/.truststore
-    truststorePassword : Aa123456
+    ssl: <%= @cassandra_ssl_enabled %>
+    truststorePath : /config/truststore
+    truststorePassword : <%= @cassandra_traststore_password %>
     keySpaces:
         - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
