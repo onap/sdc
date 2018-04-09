@@ -21,7 +21,6 @@
 package org.openecomp.sdcrests.health.rest.services;
 
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
-import org.openecomp.sdc.common.session.SessionContext;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.health.HealthCheckManager;
 import org.openecomp.sdc.health.HealthCheckManagerFactory;
@@ -58,21 +57,17 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
   public Response checkHealth() {
     HealthCheckResult healthCheckResult = new HealthCheckResult();
 
-    SessionContext context =
-        SessionContextProviderFactory.getInstance().createInterface().get();
-
-    SessionContextProviderFactory.getInstance().createInterface().create("public",
-        context.getTenant());
+    SessionContextProviderFactory.getInstance().createInterface().create("public", "dox");
 
     try {
       Collection<HealthInfo> healthInfos = healthCheckManager.checkHealth();
       healthCheckResult.setComponentsInfo(healthInfos);
       boolean someIsDown = healthInfos.stream()
           .anyMatch(healthInfo -> healthInfo.getHealthCheckStatus().equals(HealthCheckStatus.DOWN));
-      healthInfos.stream().
-          filter(healthInfo -> healthInfo.getHealthCheckComponent()
-              .equals(org.openecomp.sdc.health.data.MonitoredModules.BE)).
-          findFirst()
+      healthInfos.stream()
+          .filter(healthInfo -> healthInfo.getHealthCheckComponent()
+              .equals(org.openecomp.sdc.health.data.MonitoredModules.BE))
+          .findFirst()
           .ifPresent(healthInfo -> healthCheckResult.setSdcVersion(healthInfo.getVersion()));
       if (someIsDown) {
         Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
