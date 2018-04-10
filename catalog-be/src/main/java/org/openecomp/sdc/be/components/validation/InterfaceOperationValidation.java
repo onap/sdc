@@ -20,6 +20,7 @@ import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.common.Strings;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -53,12 +54,12 @@ public class InterfaceOperationValidation {
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceOperationValidation.class);
 
     public Either<Boolean, ResponseFormat> validateInterfaceOperations(
-        Collection<Operation> interfaceOperations,
-        String resourceId, boolean isUpdate) {
+            Collection<Operation> interfaceOperations,
+            String resourceId, boolean isUpdate) {
 
         for(Operation interfaceOperation : interfaceOperations) {
             Either<Boolean, ResponseFormat> interfaceOperationValidatorResponse = validateInterfaceOperation(
-                interfaceOperation, resourceId, isUpdate);
+                    interfaceOperation, resourceId, isUpdate);
             if (interfaceOperationValidatorResponse.isRight()) {
                 return interfaceOperationValidatorResponse;
             }
@@ -70,105 +71,106 @@ public class InterfaceOperationValidation {
                                                                        String resourceId, boolean isUpdate) {
         ResponseFormatManager responseFormatManager = getResponseFormatManager();
 
-        Either<Boolean, ResponseFormat> interfaceOperationTypeResponse = validateInterfaceOperationType(interfaceOperation,
-            responseFormatManager, resourceId, isUpdate);
-        if (interfaceOperationTypeResponse != null) {
-            return interfaceOperationTypeResponse;
+        Either<Boolean, ResponseFormat> interfaceOperationTypeResponse = isInterfaceOperationTypeValid(interfaceOperation,
+                responseFormatManager, resourceId, isUpdate);
+        if (interfaceOperationTypeResponse.isRight()) {
+            return Either.right(interfaceOperationTypeResponse.right().value());
         }
 
-        Either<Boolean, ResponseFormat> descriptionResponseEither = validateDescription(responseFormatManager,
-            interfaceOperation.getDescription());
-        if (descriptionResponseEither != null) {
-            return descriptionResponseEither;
+        Either<Boolean, ResponseFormat> descriptionResponseEither = isValidDescription(responseFormatManager,
+                interfaceOperation.getDescription());
+        if (descriptionResponseEither.isRight()) {
+            return Either.right(descriptionResponseEither.right().value());
         }
 
         Either<Boolean, ResponseFormat> inputParametersResponse = validateInputParameters(interfaceOperation,
                 responseFormatManager);
-        if(inputParametersResponse != null) {
-            return inputParametersResponse;
+        if(inputParametersResponse.isRight()) {
+            return Either.right(inputParametersResponse.right().value());
         }
-        return Either.left(true);
+        return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> validateInterfaceOperationType(Operation interfaceOperation,
-                                                                           ResponseFormatManager responseFormatManager,
-                                                                           String resourceId, boolean isUpdate) {
+    private Either<Boolean, ResponseFormat> isInterfaceOperationTypeValid(Operation interfaceOperation,
+                                                                          ResponseFormatManager responseFormatManager,
+                                                                          String resourceId, boolean isUpdate) {
 
         Either<Boolean, ResponseFormat> operationTypeEmptyEither = isOperationTypeEmpty(responseFormatManager,
-            interfaceOperation.getName());  // treating name as type for now
-        if (operationTypeEmptyEither != null) {
-            return operationTypeEmptyEither;
+                interfaceOperation.getName());  // treating name as type for now
+        if (operationTypeEmptyEither.isRight()) {
+            return Either.right(operationTypeEmptyEither.right().value());
         }
 
         Either<Boolean, ResponseFormat> operationTypeRegexValidationResponse =
-            validateOperationTypeRegex(responseFormatManager, interfaceOperation.getName());
-        if (operationTypeRegexValidationResponse != null) {
-            return operationTypeRegexValidationResponse;
+                isOperationTypeRegexValid(responseFormatManager, interfaceOperation.getName());
+        if (operationTypeRegexValidationResponse.isRight()) {
+            return Either.right(operationTypeRegexValidationResponse.right().value());
         }
 
         Either<Boolean, ResponseFormat> operationTypeUniqueResponse = validateOperationTypeUnique(interfaceOperation,
-            resourceId, isUpdate, responseFormatManager );
+                resourceId, isUpdate, responseFormatManager );
         if(operationTypeUniqueResponse.isRight()) {
             return Either.right(operationTypeUniqueResponse.right().value());
         }
         if (!operationTypeUniqueResponse.left().value()) {
-            LOGGER.debug("Interface Operation type  {} already in use ", interfaceOperation.getName());
+            LOGGER.error("Interface Operation type  {} already in use ", interfaceOperation.getName());
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_TYPE_ALREADY_IN_USE, interfaceOperation.getName());
+                    .INTERFACE_OPERATION_TYPE_ALREADY_IN_USE, interfaceOperation.getName());
             return Either.right(errorResponse);
         }
-        return null;
+        return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> validateOperationTypeRegex(ResponseFormatManager responseFormatManager,
-                                                                       String operationType) {
+    private Either<Boolean, ResponseFormat> isOperationTypeRegexValid(ResponseFormatManager responseFormatManager,
+                                                                      String operationType) {
         if (!isValidOperationType(operationType)) {
-            LOGGER.debug("Interface Operation type {} is invalid, Operation type should not contain" +
-                "Special character, space and  should not be greater than 200 characters", operationType);
+            LOGGER.error("Interface Operation type {} is invalid, Operation type should not contain" +
+                    "Special character, space, numbers and  should not be greater than 200 characters", operationType);
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_TYPE_INVALID, operationType);
+                    .INTERFACE_OPERATION_TYPE_INVALID, operationType);
             return Either.right(errorResponse);
         }
-        return null;
+        return Either.left(Boolean.TRUE);
     }
 
     private Either<Boolean, ResponseFormat> isOperationTypeEmpty(ResponseFormatManager responseFormatManager,
                                                                  String operationType) {
         if (StringUtils.isEmpty(operationType)) {
-            LOGGER.debug("Interface Operation type is mandatory,  it can't be empty");
+            LOGGER.error("Interface Operation type is mandatory");
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_TYPE_MANDATORY);
+                    .INTERFACE_OPERATION_TYPE_MANDATORY);
             return Either.right(errorResponse);
         }
-        return null;
+        return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> validateDescription(ResponseFormatManager responseFormatManager,
-                                                                String description) {
-        if (description.length() > DESCRIPTION_MAX_LENGTH) {
-            LOGGER.debug("Interface Operation description {} is invalid, maximum 200 characters allowed", description);
+    private Either<Boolean, ResponseFormat> isValidDescription(ResponseFormatManager responseFormatManager,
+                                                               String description) {
+        if (!Strings.isNullOrEmpty(description) && description.length() > DESCRIPTION_MAX_LENGTH) {
+            LOGGER.error("Interface Operation description {} is invalid, maximum 200 characters allowed", description);
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_DESCRIPTION_MAX_LENGTH);
+                    .INTERFACE_OPERATION_DESCRIPTION_MAX_LENGTH);
             return Either.right(errorResponse);
         }
-        return null;
+        return Either.left(Boolean.TRUE);
     }
 
     private boolean isValidOperationType(String operationType) {
         return Pattern.matches(TYPE_VALIDATION_REGEX, operationType);
     }
 
-    private Either<Boolean, ResponseFormat> validateOperationTypeUnique(Operation interfaceOperation,
-                                                                        String resourceId,
-                                                                        boolean isUpdate,
-                                                                        ResponseFormatManager responseFormatManager) {
+    private Either<Boolean, ResponseFormat> validateOperationTypeUnique(
+            Operation interfaceOperation,
+            String resourceId,
+            boolean isUpdate,
+            ResponseFormatManager responseFormatManager) {
         boolean isOperationTypeUnique = false;
         ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnoreInterfaces(false);
         Either<Resource, StorageOperationStatus> interfaceOperationOrigin = toscaOperationFacade
-            .getToscaElement(resourceId, filter);
+                .getToscaElement(resourceId, filter);
         if (interfaceOperationOrigin.isRight()){
-            LOGGER.debug("Failed to fetch interface operation information by resource id {} ", resourceId);
+            LOGGER.error("Failed to fetch interface operation information by resource id {} ", resourceId);
             return Either.right(responseFormatManager.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
 
@@ -189,7 +191,7 @@ public class InterfaceOperationValidation {
 
         Map<String, String> operationTypes = new HashMap<>();
         allOperations.forEach(operationType -> operationTypes.put(operationType.getUniqueId(),
-            operationType.getName()) );
+                operationType.getName()) );
 
         if (isUpdate){
             isOperationTypeUnique = validateOperationTypeUniqueForUpdate(interfaceOperation, operationTypes);
@@ -202,25 +204,25 @@ public class InterfaceOperationValidation {
     }
     private Either<Boolean, ResponseFormat> validateInputParameters(Operation interfaceOperation,
                                                                     ResponseFormatManager responseFormatManager) {
-        Either<Boolean, Set<String>> validateInputParametersUniqueResponse = validateInputParametersUnique(interfaceOperation);
+        Either<Boolean, Set<String>> validateInputParametersUniqueResponse = isInputParametersUnique(interfaceOperation);
         if(validateInputParametersUniqueResponse.isRight()) {
-            LOGGER.debug("Interface operation input  parameter names {} are invalid, Input parameter names should be unique",
+            LOGGER.error("Interface operation input  parameter names {} are invalid, Input parameter names should be unique",
                     validateInputParametersUniqueResponse.right().value().toString());
             ResponseFormat inputResponse = responseFormatManager.getResponseFormat(ActionStatus
                     .INTERFACE_OPERATION_INPUT_NAME_INVALID, validateInputParametersUniqueResponse.right().value().toString());
             return Either.right(inputResponse);
         }
-        return  null;
+        return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, Set<String>> validateInputParametersUnique(Operation operationDataDefinition) {
+    private Either<Boolean, Set<String>> isInputParametersUnique(Operation operationDataDefinition) {
 
         Set<String> inputParamNamesSet = new HashSet<>();
         Set<String> duplicateParamNamesToReturn = new HashSet<>();
         operationDataDefinition.getInputs().getListToscaDataDefinition()
                 .forEach(inputParam -> {
-                    if(!inputParamNamesSet.add(inputParam.getLabel())) {
-                        duplicateParamNamesToReturn.add(inputParam.getLabel());
+                    if(!inputParamNamesSet.add(inputParam.getName())) {
+                        duplicateParamNamesToReturn.add(inputParam.getName());
                     }
                 });
         if(!duplicateParamNamesToReturn.isEmpty()) {
@@ -235,12 +237,12 @@ public class InterfaceOperationValidation {
         boolean isOperationTypeUnique = false;
         for(Map.Entry<String, String> entry : operationTypes.entrySet()){
             if (entry.getKey().equals(interfaceOperation.getUniqueId()) && entry.getValue().
-                equals(interfaceOperation.getName())) {
+                    equals(interfaceOperation.getName())) {
                 isOperationTypeUnique = true;
             }
 
             if(entry.getKey().equals(interfaceOperation.getUniqueId()) && !operationTypes.values()
-                .contains(interfaceOperation.getName())){
+                    .contains(interfaceOperation.getName())){
                 isOperationTypeUnique = true;
             }
         }

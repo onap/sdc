@@ -192,22 +192,6 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
         return interfaceDefinitionMap;
     }
 
-    private Map<String, Operation> createMockOperationMap() {
-        Operation operation = new Operation();
-        operation.setDefinition(false);
-        operation.setName("CREATE");
-        Map<String, Operation> operationMap = new HashMap<>();
-        operationMap.put("op1", operation);
-        return operationMap;
-    }
-
-
-    private OperationInputDefinition createMockOperationInputDefinition(String label) {
-        OperationInputDefinition operationInputDefinition = new OperationInputDefinition();
-        operationInputDefinition.setLabel(label);
-        return operationInputDefinition;
-    }
-
     private class InterfaceOperationValidationUtilTest extends InterfaceOperationValidation {
 
         protected ResponseFormatManager getResponseFormatManager() {

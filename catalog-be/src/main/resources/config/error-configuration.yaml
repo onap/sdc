@@ -2043,7 +2043,7 @@ errors:
     INTERFACE_OPERATION_TYPE_INVALID: {
       code: 400,
       message: "Error: Interface Operation type %1 is Invalid, Operation type should not contain
-                	Special character, space and  should not be greater than 200 characters ",
+                	special character, space, numbers  and  should not be greater than 200 characters ",
       messageId: "SVC4696"
     }
 #---------SVC4697-----------------------------

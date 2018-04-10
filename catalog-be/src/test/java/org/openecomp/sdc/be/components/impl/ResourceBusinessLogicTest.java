@@ -29,8 +29,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
-import org.openecomp.sdc.be.auditing.impl.AuditingLogFormatUtil;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.InterfaceOperationTestUtils;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -39,6 +39,9 @@ import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -48,18 +51,22 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
@@ -98,11 +105,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-public class ResourceBusinessLogicTest {
+public class ResourceBusinessLogicTest implements InterfaceOperationTestUtils{
 
     private static final Logger log = LoggerFactory.getLogger(ResourceBusinessLogicTest.class);
     public static final String RESOURCE_CATEGORY = "Network Layer 2-3/Router";
@@ -111,6 +121,10 @@ public class ResourceBusinessLogicTest {
 
     public static final String UPDATED_CATEGORY = "Network Layer 2-3/Gateway";
     public static final String UPDATED_SUBCATEGORY = "Gateway";
+
+    private String resourceId = "resourceId1";
+    private String operationId = "uniqueId1";
+    Resource resourceUpdate;
 
     public static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
@@ -133,7 +147,9 @@ public class ResourceBusinessLogicTest {
     WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     UserValidations userValidations = Mockito.mock(UserValidations.class);
     WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-    AuditingLogFormatUtil auditingLogFormatter = Mockito.mock(AuditingLogFormatUtil.class);
+    IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
+    InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
+
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic();
     ResponseFormatManager responseManager = null;
@@ -201,7 +217,7 @@ public class ResourceBusinessLogicTest {
         /*when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
         when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.PNF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
         when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);*/
-
+        when(interfaceOperation.updateInterface(anyString(), anyObject())).thenReturn(Either.left(mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
         when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
 
@@ -218,6 +234,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(eitherValidate);
         Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
+        when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
 
         // BL object
         artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
@@ -239,6 +256,9 @@ public class ResourceBusinessLogicTest {
         toscaOperationFacade.setTopologyTemplateOperation(topologyTemplateOperation);
         bl.setToscaOperationFacade(toscaOperationFacade);
         bl.setUserValidations(userValidations);
+        bl.setInterfaceTypeOperation(interfaceTypeOperation);
+        bl.setInterfaceOperation(interfaceOperation);
+
         Resource resourceCsar = createResourceObjectCsar(true);
         setCanWorkOnResource(resourceCsar);
         Either<Component, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
@@ -334,7 +354,8 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(), resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
         Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
         when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
-
+        Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+        when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
         Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         Either<Resource, ResponseFormat> updateResponse = bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
@@ -868,6 +889,7 @@ public class ResourceBusinessLogicTest {
     @Test
     public void testResourceNameWrongFormat_UPDATE() {
         Resource resource = createResourceObject(true);
+        resource.setInterfaces(createMockInterfaceDefinition(RESOURCE_NAME));
         Resource updatedResource = createResourceObject(true);
 
         // this is in order to prevent failing with 403 earlier
@@ -889,6 +911,7 @@ public class ResourceBusinessLogicTest {
     @Test
     public void testResourceNameAfterCertify_UPDATE() {
         Resource resource = createResourceObject(true);
+        resource.setInterfaces(createMockInterfaceDefinition(RESOURCE_NAME));
         Resource updatedResource = createResourceObject(true);
 
         // this is in order to prevent failing with 403 earlier
@@ -932,6 +955,8 @@ public class ResourceBusinessLogicTest {
     @Test
     public void testResourceNameAlreadyExist_UPDATE() {
         Resource resource = createResourceObject(true);
+        resource.setInterfaces(createMockInterfaceDefinition(RESOURCE_NAME));
+
         Resource updatedResource = createResourceObject(true);
 
         // this is in order to prevent failing with 403 earlier
@@ -1815,6 +1840,4 @@ public class ResourceBusinessLogicTest {
         List<Role> listOfRoles = Stream.of(roles).collect(Collectors.toList());
         when(userValidations.validateUserRole(user, listOfRoles)).thenReturn(Either.left(true));
     }
-
-
 }
