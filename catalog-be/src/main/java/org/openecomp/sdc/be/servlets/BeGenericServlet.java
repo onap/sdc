@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
@@ -144,6 +145,9 @@ public class BeGenericServlet extends BasicServlet {
 
     protected ResourceBusinessLogic getResourceBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
+    }
+    protected InterfaceOperationBusinessLogic getInterfaceOperationBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> InterfaceOperationBusinessLogic.class);
     }
 
     protected ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {

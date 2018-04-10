@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -196,6 +197,7 @@ public class RepresentationUtils {
             .put(InterfaceDefinition.class,IsEmptyFilterMixIn.class)
             .put(Operation.class,IsEmptyFilterMixIn.class)
             .put(Resource.class,IsEmptyFilterMixIn.class)
-            .put(ToscaDataDefinition.class,IsEmptyFilterMixIn.class).build();
+            .put(ToscaDataDefinition.class,IsEmptyFilterMixIn.class)
+            .put(InterfaceOperationDataDefinition.class,IsEmptyFilterMixIn.class).build();
 
 }

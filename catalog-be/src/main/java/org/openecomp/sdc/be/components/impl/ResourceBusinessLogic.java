@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
@@ -39,6 +40,7 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.components.merge.resource.MergeResourceBLFactory;
 import org.openecomp.sdc.be.components.merge.resource.MergeResourceBusinessLogic;
+import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -92,6 +94,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
@@ -131,8 +135,17 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.parser.ParserException;
 
 import javax.servlet.ServletContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -203,7 +216,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     @Autowired
     private CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
 
+    @Autowired
+    private InterfaceOperation interfaceOperation;
+
     private Gson gson = new Gson();
+
+    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
+        this.interfaceOperation = interfaceOperation;
+    }
 
     public CsarOperation getCsarOperation() {
         return csarOperation;
@@ -263,6 +283,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
         this.applicationDataTypeCache = applicationDataTypeCache;
+    }
+
+    public void setInterfaceTypeOperation(IInterfaceLifecycleOperation interfaceTypeOperation) {
+        this.interfaceTypeOperation = interfaceTypeOperation;
     }
 
     /**
@@ -5181,6 +5205,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 newResource.setDerivedFrom(null);
             }
 
+            Either<Boolean, ResponseFormat> validateAndUpdateInterfacesEither = validateAndUpdateInterfaces(resourceIdToUpdate, newResource);
+            if (validateAndUpdateInterfacesEither.isRight()) {
+                log.error("failed to validate and update Interfaces !!!");
+                rollbackNeeded = true;
+                return Either.right(validateAndUpdateInterfacesEither.right().value());
+            }
+
             Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource,
                     user, currentResource, false, true);
             if (dataModelResponse.isRight()) {
@@ -5652,7 +5683,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                  ResponseFormat errorResponse = componentsUtils
                          .getResponseFormat(ActionStatus.RESOURCE_VENDOR_NAME_CANNOT_BE_CHANGED);
                  return Either.right(errorResponse);
-               
+
             }
             else {
                 Either<Boolean, ResponseFormat> validateVendorName = validateVendorName(null, updateInfoResource, null);
@@ -5660,7 +5691,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     ResponseFormat errorResponse = validateVendorName.right().value();
                     return Either.right(errorResponse);
                 }
-            } 
+            }
         }
         return Either.left(true);
     }
@@ -6759,5 +6790,65 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
+    private Either<Boolean, ResponseFormat> validateAndUpdateInterfaces(String resourceId, Resource resourceUpdate) {
+        Either<Resource, StorageOperationStatus> resourceStorageOperationStatusEither =
+                toscaOperationFacade.getToscaElement(resourceId);
+        if (resourceStorageOperationStatusEither.isRight()) {
+            StorageOperationStatus errorStatus = resourceStorageOperationStatusEither.right().value();
+            log.error("Failed to fetch resource information by resource id {}, error {}", resourceId, errorStatus);
+            return Either.right(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
+        }
 
+        Resource storedResource = resourceStorageOperationStatusEither.left().value();
+        Map<String, InterfaceDefinition> storedResourceInterfaces = storedResource.getInterfaces();
+
+        if(!storedResource.getName().equals(resourceUpdate.getName()) ) {
+            Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName = InterfaceUtils
+                    .getInterfaceDefinitionListFromToscaName(storedResource.getInterfaces().values(),
+                            storedResource.getName());
+
+            for (InterfaceDefinition interfaceDefinition : storedResourceInterfaces.values()) {
+                Either<InterfaceDefinition, ResponseFormat> updateInterfaceDefinitionEither = updateInterfaceDefinition(resourceUpdate,
+                        interfaceDefinition,
+                        interfaceDefinitionListFromToscaName);
+                if(updateInterfaceDefinitionEither.isRight()) {
+                    return Either.right(updateInterfaceDefinitionEither.right().value());
+                }
+            }
+        }
+
+        return  Either.left(Boolean.TRUE);
+    }
+
+    private Either<InterfaceDefinition, ResponseFormat > updateInterfaceDefinition(Resource resourceUpdate,
+                                                                                   InterfaceDefinition interfaceDefinition,
+                                                                                   Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName) {
+        interfaceDefinitionListFromToscaName.forEach(interfaceDefinitionFromList -> {
+            if(interfaceDefinitionFromList.getToscaResourceName().equals(interfaceDefinition
+                    .getToscaResourceName())) {
+                log.info("Going to Update interface definition toscaResourceName {} to {}",
+                        interfaceDefinitionFromList.getToscaResourceName(),
+                        InterfaceUtils.createInterfaceToscaResourceName(resourceUpdate.getName()));
+                interfaceDefinition.setToscaResourceName(InterfaceUtils
+                        .createInterfaceToscaResourceName(resourceUpdate.getName()));
+            }
+        } );
+        try {
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation
+                    .updateInterface(resourceUpdate.getUniqueId(), interfaceDefinition);
+            if (interfaceUpdate.isRight()) {
+                log.error("Failed to Update interface {}. Response is {}. ", resourceUpdate.getName(), interfaceUpdate.right().value());
+                titanDao.rollback();
+                return Either.right(componentsUtils
+                        .getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
+            }
+        } catch (Exception e) {
+            log.error("Exception occurred during update interface toscaResourceName  : {}", e.getMessage(), e);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+
+        return Either.left( interfaceDefinition);
+
+    }
 }
