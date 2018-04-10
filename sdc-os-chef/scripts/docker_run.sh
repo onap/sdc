@@ -42,6 +42,7 @@ function dir_perms {
 	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport
 	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
+	mkdir -p ${WORKSPACE}/data/logs/WS
     chmod -R 777 ${WORKSPACE}/data/logs
 }
 
@@ -415,7 +416,7 @@ fi
 probe_sim
 if [ sim_stat=false ]; then
 
-docker run --detach --name sdc-sim  --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" --env ENVNAME="${DEP_ENV}" --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/WS/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 8285:8080 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
+docker run --detach --name sdc-sim  --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" --env ENVNAME="${DEP_ENV}" --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8285:8080 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
 echo "please wait while SDC-WEB-SIMULATOR is starting....."
 monitor_docker sdc-sim
 
