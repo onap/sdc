@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1f032cb9",
+        "filename": "catalog-be/src/main/resources/config/config-vnfrepo.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-10T09:01:49Z",
+      "side": 1,
+      "message": "What is the purpose of this file? How is it loaded? It seems to be packaged with catalog-be, but the VNF SDK client runs as part of the onboarding and therefore never sees this resource. On the other hand, a configuration file is created in the right location from the BE-vnfrepo-configuration.yaml.erb template. So it looks like this file is never used.",
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bf38f83d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-10T09:01:49Z",
+      "side": 1,
+      "message": "If rsp.getResponse() is a heavy operation, consider wrapping the call with LOGGER.isDebugEnabled(). Or at least store the result in a local variable because it\u0027s used later in Response.ok() anyway (line 101).",
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bf0f9887",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-10T09:01:49Z",
+      "side": 1,
+      "message": "I think .orElse(new Version(versionId)) could save you null check in line 176. In which case you could return right from this line.",
+      "range": {
+        "startLine": 174,
+        "startChar": 112,
+        "endLine": 174,
+        "endChar": 116
+      },
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
