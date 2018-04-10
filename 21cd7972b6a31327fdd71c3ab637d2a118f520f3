@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5f7774d4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3467
+      },
+      "writtenOn": "2018-04-10T11:02:07Z",
+      "side": 1,
+      "message": "please, move all logic related to the interfaces/operation in a separate class (for example InterfaceBL/InterfaceUtil)",
+      "revId": "21cd7972b6a31327fdd71c3ab637d2a118f520f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
