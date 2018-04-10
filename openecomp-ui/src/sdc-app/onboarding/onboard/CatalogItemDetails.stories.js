@@ -2,11 +2,9 @@ import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
 import { select, withKnobs } from '@kadira/storybook-addon-knobs';
 import CatalogItemDetails from './CatalogItemDetails.jsx';
-import {
-    catalogItemTypes,
-    catalogItemStatuses
-} from './onboardingCatalog/OnboardingCatalogConstants.js';
+import { catalogItemTypes } from './onboardingCatalog/OnboardingCatalogConstants.js';
 import { FinalizedLicenseModelFactory } from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
+import { versionStatus } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 
 const stories = storiesOf('CatalogTiles', module);
 stories.addDecorator(withKnobs);
@@ -22,9 +20,9 @@ function selectType() {
 
 let vlm = {
     ...FinalizedLicenseModelFactory.build({ name: 'Test-VLM' }),
-    itemStatus: catalogItemStatuses.DRAFT
+    itemStatus: versionStatus.DRAFT
 };
-let certifiedVlm = { ...vlm, itemStatus: catalogItemStatuses.CERTIFIED };
+let certifiedVlm = { ...vlm, itemStatus: versionStatus.CERTIFIED };
 
 stories.add('preview', () => (
     <div className="catalog-view">

@@ -24,6 +24,14 @@
 	  display: block;
 	  width: 100%;
 	}
+	.venodor-tile-btn {
+		border: 1px solid $light-gray;
+		color: $black;
+		line-height: 20px;
+		&:hover {
+				background-color: $light-gray;
+		}
+	}
   }
 
   // Bottom spacing - cross browser solution

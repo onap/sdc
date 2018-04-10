@@ -45,8 +45,11 @@ import { CommitModalType } from 'nfvo-components/panel/versionController/compone
 import { actionTypes as commonActionTypes } from 'sdc-app/common/reducers/PlainDataReducerConstants.js';
 import versionPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
 import { itemTypes } from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
-import { catalogItemStatuses } from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
 import getValue from 'nfvo-utils/getValue.js';
+import {
+    itemStatus,
+    versionStatus
+} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 
 function getLicensingData(licensingData = {}) {
     const { licenseAgreement, featureGroups } = licensingData;
@@ -112,19 +115,17 @@ function putSoftwareProductAction(id, action, version) {
 
 function fetchSoftwareProductList() {
     return RestAPIUtil.fetch(
-        `${baseUrl()}?versionFilter=${catalogItemStatuses.DRAFT}`
+        `${baseUrl()}?versionFilter=${versionStatus.DRAFT}`
     );
 }
 
 function fetchArchivedSoftwareProductList() {
-    return RestAPIUtil.fetch(
-        `${baseUrl()}?Status=${catalogItemStatuses.ARCHIVED}`
-    );
+    return RestAPIUtil.fetch(`${baseUrl()}?Status=${itemStatus.ARCHIVED}`);
 }
 
 function fetchFinalizedSoftwareProductList() {
     return RestAPIUtil.fetch(
-        `${baseUrl()}?versionFilter=${catalogItemStatuses.CERTIFIED}`
+        `${baseUrl()}?versionFilter=${versionStatus.CERTIFIED}`
     );
 }
 
@@ -664,9 +665,8 @@ const SoftwareProductActionHelper = {
             version
         }).then(({ inMerge, isDirty, updatedVersion }) => {
             if (
-                (updatedVersion.status === catalogItemStatuses.CERTIFIED ||
-                    updatedVersion.archivedStatus ===
-                        catalogItemStatuses.ARCHIVED) &&
+                (updatedVersion.status === versionStatus.CERTIFIED ||
+                    updatedVersion.archivedStatus === itemStatus.ARCHIVED) &&
                 (action === VersionControllerActionsEnum.COMMIT ||
                     action === VersionControllerActionsEnum.SYNC)
             ) {
@@ -675,8 +675,7 @@ const SoftwareProductActionHelper = {
                     itemId: softwareProductId
                 });
                 const msg =
-                    updatedVersion.archivedStatus ===
-                    catalogItemStatuses.ARCHIVED
+                    updatedVersion.archivedStatus === itemStatus.ARCHIVED
                         ? i18n('Item was Archived')
                         : i18n('Item version already Certified');
                 dispatch({

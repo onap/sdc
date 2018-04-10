@@ -38,12 +38,14 @@ import { connect } from 'react-redux';
 
 export const FeatureComponent = props => {
     const { features = [], featureName, InnerComponent, ...otherProps } = props;
-    const AComp = InnerComponent.AComp ? InnerComponent.AComp : InnerComponent;
+    const OnComp = InnerComponent.OnComp
+        ? InnerComponent.OnComp
+        : InnerComponent;
 
     return !!features.find(el => el.name === featureName && el.active) ? (
-        <AComp {...otherProps} />
-    ) : InnerComponent.BComp ? (
-        <InnerComponent.BComp {...otherProps} />
+        <OnComp {...otherProps} />
+    ) : InnerComponent.OffComp ? (
+        <InnerComponent.OffComp {...otherProps} />
     ) : null;
 };
 

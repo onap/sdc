@@ -356,7 +356,12 @@
   "Granted": "Granted",
   "Taken": "Taken",
   "Permission": "Permission",
-  
+  "By Vendor View": "By Vendor View",
+  "PERMISSIONS": "PERMISSIONS",
+  "Contributor": "Contributor",
+  "Active Items": "Active Items",
+  "Archived Items": "Archived Items",
+
   "VendorSoftwareProduct": "VSP",
   "VendorSoftwareProduct/category": "Category",
   "VendorSoftwareProduct/description": "Description",
