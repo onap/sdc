@@ -58,6 +58,11 @@ committers:
         company: 'AMDOCS'
         id: 'vempo'
         timezone: 'Israel/Aviv'
+    - name: 'ELI LEVY'
+        email: 'el489u@intl.att.com'
+        company: 'ATT'
+        id: 'el489u'
+        timezone: 'Israel/Lod'
 tsc:
     approval: 'https://lists.onap.org/pipermail/onap-tsc'
     changes:
