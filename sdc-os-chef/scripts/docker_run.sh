@@ -409,7 +409,7 @@ fi
 function sdc-sim {
 echo "docker run sdc-webSimulator..."
 if [ ${LOCAL} = false ]; then
-        docker pull ${PREFIX}/sdc-sim:${RELEASE}
+        docker pull ${PREFIX}/sdc-simulator:${RELEASE}
 fi
 
 probe_sim
