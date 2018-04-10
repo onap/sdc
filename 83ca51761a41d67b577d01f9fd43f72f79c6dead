@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5a02223f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-10T15:05:58Z",
+      "side": 1,
+      "message": "You could be more specific because it\u0027s the validation VSP you were trying to create. A more specific message may be more helpful in a log.",
+      "range": {
+        "startLine": 335,
+        "startChar": 30,
+        "endLine": 335,
+        "endChar": 50
+      },
+      "revId": "83ca51761a41d67b577d01f9fd43f72f79c6dead",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
