@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
@@ -39,6 +40,7 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.components.merge.resource.MergeResourceBLFactory;
 import org.openecomp.sdc.be.components.merge.resource.MergeResourceBusinessLogic;
+import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -92,6 +94,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
@@ -203,6 +207,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     @Autowired
     private CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
 
+    @Autowired
+    private InterfaceOperationValidation interfaceOperationValidation;
+
+    @Autowired
+    private InterfaceOperation interfaceOperation;
+
     private Gson gson = new Gson();
 
     public CsarOperation getCsarOperation() {
@@ -263,6 +273,27 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
         this.applicationDataTypeCache = applicationDataTypeCache;
+    }
+
+    public InterfaceOperationValidation getInterfaceOperationValidation() {
+        return interfaceOperationValidation;
+    }
+
+    public void setInterfaceOperationValidation(
+            InterfaceOperationValidation interfaceOperationValidation) {
+        this.interfaceOperationValidation = interfaceOperationValidation;
+    }
+
+    public InterfaceOperation getInterfaceOperation() {
+        return interfaceOperation;
+    }
+
+    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
+        this.interfaceOperation = interfaceOperation;
+    }
+
+    public void setInterfaceTypeOperation(IInterfaceLifecycleOperation interfaceTypeOperation) {
+        this.interfaceTypeOperation = interfaceTypeOperation;
     }
 
     /**
@@ -5181,6 +5212,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 newResource.setDerivedFrom(null);
             }
 
+            Either<Boolean, ResponseFormat> validateAndUpdateInterfacesEither = validateAndUpdateInterfaces(resourceIdToUpdate, newResource);
+            if (validateAndUpdateInterfacesEither.isRight()) {
+                log.error("failed to validate and update Interfaces !!!");
+                rollbackNeeded = true;
+                return Either.right(validateAndUpdateInterfacesEither.right().value());
+            }
+
             Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource,
                     user, currentResource, false, true);
             if (dataModelResponse.isRight()) {
@@ -6757,6 +6795,356 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         } else {
             return super.shouldUpgradeToLatestDerived(clonedComponent);
         }
+    }
+    public Either<Resource, ResponseFormat> deleteInterfaceOperation(String resourceId, Set<String> interfaceOperationToDelete, User user, boolean lock) {
+        Resource resourceToDelete = initResourceToDeleteWFOp(resourceId, interfaceOperationToDelete);
+        Either<Resource, ResponseFormat> eitherDelete = validateUserAndRole(resourceToDelete, user, "deleteInterfaceOperation");
+        if (eitherDelete != null)
+            return eitherDelete;
+
+        Either<Resource, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(resourceId);
+        if (storageStatus.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.RESOURCE),""));
+        }
+        Resource resource = storageStatus.left().value();
+        if (lock) {
+            Either<Boolean, ResponseFormat> lockResult = lockComponent(resource.getUniqueId(), resource, "Delete interface Operation on a resource");
+            if (lockResult.isRight()) {
+                log.debug("Failed to lock resource {}. Response is {}. ", resource.getName(), lockResult.right().value().getFormattedMessage());
+                titanDao.rollback();
+                return Either.right(lockResult.right().value());
+            }
+        }
+
+        try {
+            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils
+                    .getInterfaceDefinitionFromToscaName(resource.getInterfaces().values(), resource.getName());
+            Either<InterfaceDefinition, ResponseFormat> sValue = getInterfaceDefinition(resource, optionalInterface.orElse(null));
+            if (sValue.isRight()) {
+                return Either.right(sValue.right().value());
+            }
+            InterfaceDefinition interfaceDefinition = sValue.left().value();
+            Either<InterfaceDefinition, ResponseFormat> deleteEither;
+
+            for(String operationToDelete : interfaceOperationToDelete) {
+                deleteEither = deleteOperationFromInterface(interfaceDefinition, operationToDelete);
+                if (deleteEither.isRight()){
+                    return Either.right(deleteEither.right().value());
+                }
+                interfaceDefinition = deleteEither.left().value();
+            }
+
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation.updateInterface(resource.getUniqueId(), interfaceDefinition);
+            if (interfaceUpdate.isRight()) {
+                log.debug("Failed to delete interface operation from resource {}. Response is {}. ", resource.getName(), interfaceUpdate.right().value());
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
+            }
+
+            InterfaceDefinition interfaceDef = interfaceUpdate.left().value();
+            if(interfaceDef.getOperationsMap().isEmpty()){
+                Either<Set<String>, StorageOperationStatus> deleteInterface = interfaceOperation.deleteInterface(resource, Sets.newHashSet(interfaceDef.getUniqueId()));
+                if (deleteInterface.isRight()) {
+                    log.debug("Failed to delete interface from resource {}. Response is {}. ", resource.getName(), deleteInterface.right().value());
+                    titanDao.rollback();
+                    return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteInterface.right().value(), ComponentTypeEnum.RESOURCE)));
+                }
+            }
+
+            titanDao.commit();
+
+        } catch (Exception e){
+            log.error("Exception occurred during delete interface operation : {}", e.getMessage(), e);
+            titanDao.rollback();
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        } finally {
+            graphLockOperation.unlockComponent(resource.getUniqueId(), NodeTypeEnum.Resource);
+        }
+        return Either.left(resource);
+    }
+
+    public Either<InterfaceDefinition, ResponseFormat> getInterfaceDefinition(Resource resource,
+                                                                              InterfaceDefinition interfaceDef) {
+        if (interfaceDef != null){
+            return Either.left(interfaceDef);
+        } else {
+            InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+            interfaceDefinition.setToscaResourceName(InterfaceUtils.createInterfaceToscaResourceName(resource.getName()));
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceCreateEither = interfaceOperation
+                    .addInterface(resource.getUniqueId(), interfaceDefinition);
+            if (interfaceCreateEither.isRight()){
+                StorageOperationStatus sValue = interfaceCreateEither.right().value();
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(sValue,
+                        ComponentTypeEnum.RESOURCE), ""));
+
+            }
+            return Either.left(interfaceCreateEither.left().value());
+        }
+    }
+
+    private Either<InterfaceDefinition,ResponseFormat> deleteOperationFromInterface(InterfaceDefinition interfaceDefinition, String operationId){
+        Optional<Entry<String, Operation>> operationToRemove = interfaceDefinition.getOperationsMap().entrySet().stream()
+                .filter(entry -> entry.getValue().getUniqueId().equals(operationId)).findAny();
+        if (operationToRemove.isPresent()){
+            Entry<String, Operation> stringOperationEntry = operationToRemove.get();
+            Map<String, Operation> tempMap = interfaceDefinition.getOperationsMap();
+            tempMap.remove(stringOperationEntry.getKey());
+            interfaceDefinition.setOperationsMap(tempMap);
+            return Either.left(interfaceDefinition);
+        }
+        log.debug("Failed to delete interface operation");
+        return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND));
+    }
+
+    private Either<InterfaceDefinition,ResponseFormat> addOperationToInterface(InterfaceDefinition interfaceDefinition, Operation interfaceOperation){
+        if(interfaceOperation.getUniqueId() == null)
+            interfaceOperation.setUniqueId(UUID.randomUUID().toString());
+        if (interfaceOperation.getImplementationArtifact() == null){
+            initNewOperation(interfaceOperation);
+        }
+        Map<String, Operation> tempMap = interfaceDefinition.getOperationsMap();
+        tempMap.put(interfaceOperation.getUniqueId(), interfaceOperation);
+        interfaceDefinition.setOperationsMap(tempMap);
+        return Either.left(interfaceDefinition);
+    }
+
+    private Either<InterfaceDefinition,ResponseFormat> updateOperationInInterface(InterfaceDefinition interfaceDefinition, Operation interfaceOperation){
+        Optional<Entry<String, Operation>> operationToUpdate = interfaceDefinition.getOperationsMap().entrySet().stream()
+                .filter(entry -> entry.getValue().getUniqueId().equals(interfaceOperation.getUniqueId())).findAny();
+        if (operationToUpdate.isPresent()){
+            Operation updatedOperation = updateOperation(operationToUpdate.get().getValue(),interfaceOperation);
+            Map<String, Operation> tempMap = interfaceDefinition.getOperationsMap();
+            tempMap.remove(updatedOperation.getUniqueId());
+            tempMap.put(updatedOperation.getUniqueId(), updatedOperation);
+            interfaceDefinition.setOperationsMap(tempMap);
+            return Either.left(interfaceDefinition);
+        }
+        log.debug("Failed to update interface operation");
+        return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND));
+    }
+
+    private Operation updateOperation(Operation dbOperation, Operation updatedOperation) {
+        dbOperation.setName(updatedOperation.getName());
+        dbOperation.setDescription(updatedOperation.getDescription());
+        dbOperation.setInputs(updatedOperation.getInputs());
+        return dbOperation;
+    }
+
+    public Either<Resource, ResponseFormat> updateInterfaceOperation(String resourceId, Resource resourceUpdate, User user, boolean lock) {
+        return createOrUpdateInterfaceOperation(resourceId, resourceUpdate, user, true, "updateInterfaceOperation", lock);
+    }
+
+    public Either<Resource, ResponseFormat> createInterfaceOperation(String resourceId, Resource resourceUpdate, User user, boolean lock) {
+        return createOrUpdateInterfaceOperation(resourceId, resourceUpdate, user, false, "createInterfaceOperation", lock);
+    }
+
+    private Either<Resource, ResponseFormat> createOrUpdateInterfaceOperation(String resourceId, Resource resourceUpdate, User user, boolean isUpdate, String errorContext, boolean lock) {
+        Either<Resource, ResponseFormat> eitherCreator = validateUserAndRole(resourceUpdate, user, errorContext);
+        if (eitherCreator != null)
+            return eitherCreator;
+
+        Either<Resource, ResponseFormat> resourceEither = getResourceDetails(resourceId);
+        Resource storedResource = resourceEither.left().value();
+
+        Map<String, Operation> interfaceOperations = InterfaceUtils
+                .getInterfaceOperationsFromInterfaces(resourceUpdate.getInterfaces(), storedResource);
+        if(MapUtils.isEmpty(interfaceOperations) ) {
+            log.debug("Failed to fetch interface operations from resource {}, error {}",resourceUpdate.getUniqueId(),
+                    ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND,
+                    resourceUpdate.getUniqueId()));
+        }
+
+        Either<Boolean, ResponseFormat> interfaceOperationValidationResponseEither = interfaceOperationValidation
+                .validateInterfaceOperations( interfaceOperations.values(), resourceId, isUpdate);
+
+        if(interfaceOperationValidationResponseEither.isRight()) {
+            return 	Either.right(interfaceOperationValidationResponseEither.right().value());
+        }
+
+        Either<Boolean, ResponseFormat> lockResult = null;
+        if (lock) {
+            lockResult = lockComponent(storedResource.getUniqueId(), storedResource,
+                    "Create or Update interface Operation on Resource");
+            if (lockResult.isRight()) {
+                log.debug("Failed to lock resource {}. Response is {}. ", storedResource.getName(), lockResult.right().value().getFormattedMessage());
+                titanDao.rollback();
+                return Either.right(lockResult.right().value());
+            } else {
+                log.debug("The resource with system name {} locked. ", storedResource.getSystemName());
+            }
+        }
+
+        Either<InterfaceDefinition, ResponseFormat> result;
+        Map<String, InterfaceDefinition> resultMap = new HashMap<>();
+
+        try {
+            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils
+                    .getInterfaceDefinitionFromToscaName(storedResource.getInterfaces().values(), storedResource.getName());
+            Either<InterfaceDefinition, ResponseFormat> sValue = getInterfaceDefinition(storedResource, optionalInterface.orElse(null));
+            if (sValue.isRight()) {
+                return Either.right(sValue.right().value());
+            }
+            InterfaceDefinition interfaceDefinition = sValue.left().value();
+
+            for (Operation interfaceOperation : interfaceOperations.values()) {
+                if (isUpdate) {
+                    result = updateOperationInInterface(interfaceDefinition, interfaceOperation);
+                } else {
+                    result = addOperationToInterface(interfaceDefinition, interfaceOperation);
+                }
+                if (result.isRight()) {
+                    titanDao.rollback();
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+                } else {
+                    interfaceDefinition = result.left().value();
+                    resultMap.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
+                }
+            }
+
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation
+                    .updateInterface(storedResource.getUniqueId(), interfaceDefinition);
+            if (interfaceUpdate.isRight()) {
+                log.debug("Failed to add or update interface operation on resource {}. Response is {}. ", storedResource.getName(), interfaceUpdate.right().value());
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
+            }
+
+            titanDao.commit();
+
+            Resource resource = createVFWithInterfaceOperationForResponse(resourceId, resultMap);
+            return Either.left(resource);
+        }
+        catch (Exception e) {
+            titanDao.rollback();
+            log.error("Exception occurred during add or update interface operation property values:{}",
+                    e.getMessage(), e);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        finally {
+            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+                graphLockOperation.unlockComponent(storedResource.getUniqueId(), NodeTypeEnum.Resource);
+            }
+        }
+    }
+
+    private void initNewOperation(Operation operation){
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        String artifactUUID = UUID.randomUUID().toString();
+        artifactDefinition.setArtifactUUID(artifactUUID);
+        artifactDefinition.setUniqueId(artifactUUID);
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.PLAN.getType());
+        artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.LIFE_CYCLE);
+        operation.setImplementation(artifactDefinition);
+    }
+
+    private Resource initResourceToDeleteWFOp(String resourceId, Collection<String> interfaceOperationsToDelete) {
+        InterfaceDefinition id = new InterfaceDefinition();
+        id.setUniqueId(UUID.randomUUID().toString());
+        interfaceOperationsToDelete.forEach(interfaceOpToDelete -> id.getOperationsMap().put(interfaceOpToDelete, new Operation()));
+        Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
+        interfaceDefinitionMap.put(id.getUniqueId(), id);
+
+        Resource resourceToDelete = new Resource();
+        resourceToDelete.setUniqueId(resourceId);
+        resourceToDelete.setInterfaces(interfaceDefinitionMap);
+
+        return resourceToDelete;
+    }
+
+    private Either<Resource, ResponseFormat> validateUserAndRole(Resource resourceUpdate, User user, String errorContext) {
+        Either<User, ResponseFormat> userEither = validateUser(user, errorContext, resourceUpdate, null, false);
+        if (userEither.isRight()) {
+            return Either.right(userEither.right().value());
+        }
+        user = userEither.left().value();
+
+        Either<Boolean, ResponseFormat> userRoleEither = validateUserRole(user, resourceUpdate, new ArrayList<>(), null, null);
+        if (userRoleEither.isRight()) {
+            return Either.right(userRoleEither.right().value());
+        }
+        return null;
+    }
+
+    private Either<Boolean, ResponseFormat> validateAndUpdateInterfaces(String resourceId, Resource resourceUpdate) {
+        Either<Resource, StorageOperationStatus> resourceStorageOperationStatusEither =
+                toscaOperationFacade.getToscaElement(resourceId);
+        if (resourceStorageOperationStatusEither.isRight()) {
+            StorageOperationStatus errorStatus = resourceStorageOperationStatusEither.right().value();
+            log.error("Failed to fetch resource information by resource id {}, error {}", resourceId, errorStatus);
+            return Either.right(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
+        }
+
+        Resource storedResource = resourceStorageOperationStatusEither.left().value();
+        Map<String, InterfaceDefinition> storedResourceInterfaces = storedResource.getInterfaces();
+
+        if(!storedResource.getName().equals(resourceUpdate.getName()) ) {
+            Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName = InterfaceUtils
+                    .getInterfaceDefinitionListFromToscaName(storedResource.getInterfaces().values(),
+                            storedResource.getName());
+
+            for (InterfaceDefinition interfaceDefinition : storedResourceInterfaces.values()) {
+                Either<InterfaceDefinition, ResponseFormat> updateInterfaceDefinitionEither = updateInterfaceDefinition(resourceUpdate,
+                        interfaceDefinition,
+                        interfaceDefinitionListFromToscaName);
+                if(updateInterfaceDefinitionEither.isRight()) {
+                    return Either.right(updateInterfaceDefinitionEither.right().value());
+                }
+            }
+        }
+
+        return  Either.left(Boolean.TRUE);
+    }
+
+    private Either<InterfaceDefinition, ResponseFormat > updateInterfaceDefinition(Resource resourceUpdate,
+                                                                                   InterfaceDefinition interfaceDefinition,
+                                                                                   Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName) {
+        interfaceDefinitionListFromToscaName.forEach(interfaceDefinitionFromList -> {
+            if(interfaceDefinitionFromList.getToscaResourceName().equals(interfaceDefinition
+                    .getToscaResourceName())) {
+                log.info("Going to Update interface definition toscaResourceName {} to {}",
+                        interfaceDefinitionFromList.getToscaResourceName(),
+                        InterfaceUtils.createInterfaceToscaResourceName(resourceUpdate.getName()));
+                interfaceDefinition.setToscaResourceName(InterfaceUtils
+                        .createInterfaceToscaResourceName(resourceUpdate.getName()));
+            }
+        } );
+        try {
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation
+                    .updateInterface(resourceUpdate.getUniqueId(), interfaceDefinition);
+            if (interfaceUpdate.isRight()) {
+                log.error("Failed to Update interface {}. Response is {}. ", resourceUpdate.getName(), interfaceUpdate.right().value());
+                titanDao.rollback();
+                return Either.right(componentsUtils
+                        .getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
+            }
+        } catch (Exception e) {
+            log.error("Exception occurred during update interface toscaResourceName  : {}", e.getMessage(), e);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+
+        return Either.left( interfaceDefinition);
+
+    }
+
+    private Resource createVFWithInterfaceOperationForResponse(String resourceId, Map<String, InterfaceDefinition> interfaceDefinitionMap) {
+        Resource resource = new Resource();
+        resource.setUniqueId(resourceId);
+        resource.setInterfaces(interfaceDefinitionMap);
+        return resource;
+    }
+
+    public Either<Resource, ResponseFormat> getResourceDetails(String resourceId){
+        Either<Resource, StorageOperationStatus> resourceStorageOperationStatusEither =
+                toscaOperationFacade.getToscaElement(resourceId);
+        if (resourceStorageOperationStatusEither.isRight()) {
+            StorageOperationStatus errorStatus = resourceStorageOperationStatusEither.right().value();
+            log.error("Failed to fetch resource information by resource id {}, error {}", resourceId, errorStatus);
+            return Either.right(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
+        }
+        return Either.left(resourceStorageOperationStatusEither.left().value());
     }
 
 
