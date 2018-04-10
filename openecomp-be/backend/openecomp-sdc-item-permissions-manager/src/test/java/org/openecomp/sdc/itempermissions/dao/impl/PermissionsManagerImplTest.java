@@ -51,7 +51,7 @@ import org.testng.annotations.Test;
 /**
  * Created by ayalaben on 7/6/2017
  */
-public class ItemPermissionsManagerImplTest {
+public class PermissionsManagerImplTest {
 
   private static final String ITEM1_ID = "1";
   private static final String PERMISSION = "Contributor";
@@ -74,7 +74,7 @@ public class ItemPermissionsManagerImplTest {
   private ArgumentCaptor<Event> eventArgumentCaptor;
 
   @InjectMocks
-  private ItemPermissionsManagerImpl permissionsManager;
+  private PermissionsManagerImpl permissionsManager;
 
 
   @BeforeMethod
@@ -116,6 +116,15 @@ public class ItemPermissionsManagerImplTest {
     for (String removedUsersId : removedUsersIds) {
       verifyCallsToNotificationsFramework(removedUsersId, false);
     }
+  }
+
+  @Test
+  public void testListUserPermittedItems(){
+    permissionsManager.listUserPermittedItems(AFFECTED_USER1,PERMISSION);
+
+    verify(permissionsServicesMock)
+            .listUserPermittedItems(AFFECTED_USER1, PERMISSION);
+
   }
 
   private void verifyCallsToNotificationsFramework(String affectedUser, boolean permissionGranted) {

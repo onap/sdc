@@ -32,7 +32,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
+import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
@@ -47,9 +47,9 @@ import org.openecomp.sdc.versioning.types.Item;
 /**
  * Created by ayalaben on 6/18/2017.
  */
-public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
+public class PermissionsManagerImpl implements PermissionsManager {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ItemPermissionsManagerImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsManagerImpl.class);
   private static final String CHANGE_PERMISSIONS = "Change_Item_Permissions";
 
   private PermissionsServices permissionsServices;
@@ -57,10 +57,10 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
   private NotificationPropagationManager notifier;
   private SubscriptionService subscriptionService;
 
-  public ItemPermissionsManagerImpl(PermissionsServices permissionsServices,
-                                    AsdcItemManager asdcItemManager,
-                                    NotificationPropagationManager notificationPropagationManager,
-                                    SubscriptionService subscriptionService) {
+  public PermissionsManagerImpl(PermissionsServices permissionsServices,
+                                AsdcItemManager asdcItemManager,
+                                NotificationPropagationManager notificationPropagationManager,
+                                SubscriptionService subscriptionService) {
     this.permissionsServices = permissionsServices;
     this.asdcItemManager = asdcItemManager;
     this.notifier = notificationPropagationManager;
@@ -71,6 +71,11 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
   public Collection<ItemPermissionsEntity> listItemPermissions(String itemId) {
 
     return permissionsServices.listItemPermissions(itemId);
+  }
+
+  @Override
+  public Set<String> listUserPermittedItems(String userId, String permission) {
+    return permissionsServices.listUserPermittedItems(userId,permission);
   }
 
   @Override
@@ -145,7 +150,7 @@ public class ItemPermissionsManagerImpl implements ItemPermissionsManager {
   }
 
   @Override
-  public String getUserItemPermiission(String itemId, String userId) {
+  public String getUserItemPermission(String itemId, String userId) {
     return permissionsServices.getUserItemPermiission(itemId, userId);
   }
 

@@ -2,6 +2,7 @@ package org.openecomp.core.tools.main;
 
 import org.openecomp.core.tools.commands.AddContributorCommand;
 import org.openecomp.core.tools.commands.HealAll;
+import org.openecomp.core.tools.commands.PopulateUserPermissions;
 import org.openecomp.core.tools.commands.SetHealingFlag;
 import org.openecomp.core.tools.exportinfo.ExportDataCommand;
 import org.openecomp.core.tools.importinfo.ImportDataCommand;
@@ -59,6 +60,9 @@ public class ZusammenMainTool {
       case HEAL_ALL:
         HealAll.healAll(ToolsUtil.getParam("t", args));
         break;
+      case POPULATE_USER_PERMISSIONS:
+        PopulateUserPermissions.execute();
+        break;
       case ADD_CONTRIBUTOR:
         AddContributorCommand.add(ToolsUtil.getParam("p", args), ToolsUtil.getParam("u", args));
 
@@ -93,6 +97,7 @@ public class ZusammenMainTool {
     EXPORT,
     IMPORT,
     HEAL_ALL,
+    POPULATE_USER_PERMISSIONS,
     ADD_CONTRIBUTOR
   }
 }

@@ -28,8 +28,8 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
+import org.openecomp.sdc.itempermissions.PermissionsManager;
+import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -91,7 +91,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   private static final String SUBMIT_HEALED_VERSION_ERROR =
       "VLM Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
   private static final Logger LOGGER = LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
-  private ItemPermissionsManager permissionsManager = ItemPermissionsManagerFactory.getInstance()
+  private PermissionsManager permissionsManager = PermissionsManagerFactory.getInstance()
       .createInterface();
   private NotificationPropagationManager notifier =
       NotificationPropagationManagerFactory.getInstance().createInterface();
@@ -114,7 +114,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     MapItemToDto mapper = new MapItemToDto();
     asdcItemManager.list(itemPredicate).stream()
         .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-        .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, ItemDto.class)));
+        .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
     return Response.ok(results).build();
   }
 
@@ -320,7 +320,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   }
 
   private boolean userHasPermission(String itemId, String userId) {
-    String permission = permissionsManager.getUserItemPermiission(itemId, userId);
+    String permission = permissionsManager.getUserItemPermission(itemId, userId);
     return (permission != null && permission
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name()));
   }

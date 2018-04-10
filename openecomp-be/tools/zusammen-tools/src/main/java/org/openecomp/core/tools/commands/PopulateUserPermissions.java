@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openecomp.sdc.itempermissions.dao;
 
+package org.openecomp.core.tools.commands;
+
+import org.openecomp.core.tools.store.PermissionHandler;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
-/**
- * Created by ayalaben on 6/18/2017.
- */
-public interface ItemPermissionsDao {
 
-  Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
+public class PopulateUserPermissions {
 
-  void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
-                             Set<String> removedUsersIds);
+    private static PermissionHandler permissionHandler = new PermissionHandler();
 
-  String getUserItemPermission(String itemId, String userId);
+    public static void execute(){
 
-  void deleteItemPermissions(String itemId);
+        List<ItemPermissionsEntity> permissions = permissionHandler.getAll();
+
+        permissions.forEach(itemPermissionsEntity ->
+            permissionHandler.addItem
+                    (Collections.singleton(itemPermissionsEntity.getItemId()),
+                            itemPermissionsEntity.getUserId(),itemPermissionsEntity.getPermission()));
+
+        System.exit(0);
+
+    }
 }
