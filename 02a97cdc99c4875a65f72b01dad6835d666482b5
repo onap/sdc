@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_dfff0400",
+        "filename": "openecomp-ui/resources/scss/modules/onboardingCatalog/_catalogList.scss",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "something went wrong with the alignment here",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ff020008",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "what is the \":\" instead of \",\" ???\nWhat\u0027s with the double entries???",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7f0ef033",
+        "filename": "openecomp-ui/src/nfvo-utils/objectPropsToUrlString.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "it\u0027s weird that you are encoding the key... why not key and value?",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bf2318a6",
+        "filename": "openecomp-ui/src/sdc-app/features/featureToggleUtils.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "can we rename aFunction and bFunction to something less generic, maybe onFunction and offFunction so it will be clear which is used when toggle is on and which when toggle is off ?",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3f186874",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/OnboardingPunchOut.jsx",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "don\u0027t comment out. remove code.",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7f3590d9",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/OnboardView.jsx",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "can we rename aComp and bComp to onComp and offComp? it will make more sense to understand which component is used when the feature is on and which when it is off",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1f348cdc",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/filter/FilterReducer.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "didn\u0027t u want to put default state in a constant?",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ff50c00b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogViewWithFilter.jsx",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "consider if it might be better to have the same file name as the original and maybe just move it under a filter folder in onboardingCatalog. I\u0027m not sure it\u0027s better so think about it and we can discuss offline",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bf5a3828",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/workspace/WorkspaceViewWithFilter.jsx",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-10T07:32:32Z",
+      "side": 1,
+      "message": "same question about file name.",
+      "revId": "02a97cdc99c4875a65f72b01dad6835d666482b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
