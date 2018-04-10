@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5f5e9446",
+        "filename": "ui-ci/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-10T11:21:23Z",
+      "side": 1,
+      "message": "Please don\u0027t leave commented out code! Any non-functional code should be removed right away.",
+      "range": {
+        "startLine": 350,
+        "startChar": 0,
+        "endLine": 372,
+        "endChar": 14
+      },
+      "revId": "0ebace5621e54b8102b0371f0500340adedf7f75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
