@@ -99,11 +99,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         vm_image_name:
           get_input: sm_server_image
         compute_sm_server_availability_zone:
@@ -159,11 +154,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         service_template_filter:

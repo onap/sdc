@@ -104,6 +104,21 @@ topology_template:
       type: string
       description: mmsc traffic end IP
       default: 172.26.2.254
+    eca_traffic_net_local_ip_2:
+      label: eca traffic network local ip_2
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_net_local_ip_2
+      type: string
+      description: the local ip2 of the eca traffic network
+      default: 172.26.5.4
     nems_traffic_end:
       label: nems traffic end
       hidden: false
@@ -119,6 +134,21 @@ topology_template:
       type: string
       description: nems traffic end
       default: 172.26.3.254
+    eca_traffic_net_local_ip_1:
+      label: eca traffic network local ip1
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: eca_traffic_net_local_ip_1
+      type: string
+      description: the local ip1 of the eca traffic network
+      default: 172.26.5.3
     mmsc_cinder_volume_size:
       label: MMSC Cinder volume size
       hidden: false
@@ -427,21 +457,6 @@ topology_template:
       type: string
       description: nems imap end
       default: 172.26.7.254
-    eca_traffic_net_local_ip1:
-      label: eca traffic network local ip1
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - MMSC_Capacity_Line
-            source_type: HEAT
-            param_name: eca_traffic_net_local_ip1
-      type: string
-      description: the local ip1 of the eca traffic network
-      default: 172.26.5.3
     cmaui_image:
       hidden: false
       immutable: false
@@ -456,21 +471,6 @@ topology_template:
       type: string
       description: Image for CMAUI server
       default: cmaui-5.0.2.5_v25
-    eca_traffic_net_local_ip2:
-      label: eca traffic network local ip2
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - MMSC_Capacity_Line
-            source_type: HEAT
-            param_name: eca_traffic_net_local_ip2
-      type: string
-      description: the local ip2 of the eca traffic network
-      default: 172.26.5.4
     nems_volume_size:
       label: nems fe volume size
       hidden: false
@@ -899,6 +899,34 @@ topology_template:
       type: string
       description: ha_failover network name
       default: int_mms_ha_net_2
+    mms_traffic_net_local_ip_1:
+      label: mmsc traffic network local ip1
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_local_ip_1
+      type: string
+      description: the local ip1 of the mmsc traffic network
+    mms_traffic_net_local_ip_2:
+      label: mmsc traffic network local ip2
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - MMSC_Capacity_Line
+            source_type: HEAT
+            param_name: mms_traffic_net_local_ip_2
+      type: string
+      description: the local ip2 of the mmsc traffic network
     arb_names:
       label: arbiter server names
       hidden: false
@@ -1256,36 +1284,6 @@ topology_template:
       type: string
       description: NEMS user web network subnet mask
       default: 255.255.255.0
-    mms_traffic_net_local_ip1:
-      label: mmsc traffic network local ip1
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - MMSC_Capacity_Line
-            source_type: HEAT
-            param_name: mms_traffic_net_local_ip1
-      type: string
-      description: the local ip1 of the mmsc traffic network
-      default: 172.26.2.3
-    mms_traffic_net_local_ip2:
-      label: mmsc traffic network local ip2
-      hidden: false
-      immutable: false
-      annotations:
-        source:
-          type: org.openecomp.annotations.Source
-          properties:
-            vf_module_label:
-            - MMSC_Capacity_Line
-            source_type: HEAT
-            param_name: mms_traffic_net_local_ip2
-      type: string
-      description: the local ip2 of the mmsc traffic network
-      default: 172.26.2.4
     oam_image_name:
       label: image name
       hidden: false
@@ -2468,11 +2466,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2501,16 +2494,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
-            get_input: mms_traffic_net_local_ip2
+            get_input: mms_traffic_net_local_ip_2
         mac_requirements:
           mac_count_required:
             is_required: false
@@ -2535,11 +2523,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2570,11 +2553,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2623,11 +2601,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2656,11 +2629,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2693,11 +2661,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2728,11 +2691,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2761,11 +2719,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2792,11 +2745,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2829,11 +2777,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2862,11 +2805,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -2944,16 +2882,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
-            get_input: eca_traffic_net_local_ip2
+            get_input: eca_traffic_net_local_ip_2
         mac_requirements:
           mac_count_required:
             is_required: false
@@ -2978,11 +2911,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3011,11 +2939,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3060,11 +2983,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3123,11 +3041,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3154,11 +3067,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3191,11 +3099,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3222,11 +3125,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3257,11 +3155,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3288,11 +3181,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3323,11 +3211,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3380,11 +3263,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3411,11 +3289,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3446,11 +3319,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3489,11 +3357,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3520,11 +3383,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3555,11 +3413,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3586,11 +3439,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3621,11 +3469,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3654,11 +3497,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3685,11 +3523,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3722,11 +3555,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3755,11 +3583,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3792,11 +3615,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3823,11 +3641,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3860,11 +3673,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3891,11 +3699,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -3932,11 +3735,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3965,11 +3763,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4022,11 +3815,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4053,11 +3841,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4094,11 +3877,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4127,11 +3905,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4158,11 +3931,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4238,11 +4006,6 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
             is_required: false
         security_groups:
         - get_input: security_group_name
@@ -4301,16 +4064,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
-            get_input: eca_traffic_net_local_ip1
+            get_input: eca_traffic_net_local_ip_1
         mac_requirements:
           mac_count_required:
             is_required: false
@@ -4335,11 +4093,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4399,16 +4152,11 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
-            get_input: mms_traffic_net_local_ip1
+            get_input: mms_traffic_net_local_ip_1
         mac_requirements:
           mac_count_required:
             is_required: false
@@ -4449,11 +4197,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4567,11 +4310,6 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
             is_required: false
         security_groups:
         - get_input: security_group_name
@@ -4630,11 +4368,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4661,11 +4394,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4698,11 +4426,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4729,11 +4452,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4764,11 +4482,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4795,11 +4508,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4830,11 +4538,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4882,11 +4585,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4915,11 +4613,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -4952,11 +4645,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4988,11 +4676,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5021,11 +4704,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5052,11 +4730,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5125,11 +4798,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5154,11 +4822,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5211,11 +4874,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5244,11 +4902,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5275,11 +4928,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5332,11 +4980,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5363,11 +5006,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5398,11 +5036,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5449,11 +5082,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5534,11 +5162,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5565,11 +5188,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5600,11 +5218,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5633,11 +5246,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5697,11 +5305,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5728,11 +5331,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5765,11 +5363,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5796,11 +5389,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5833,11 +5421,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5868,11 +5451,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5899,11 +5477,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -5950,11 +5523,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -5981,11 +5549,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6046,11 +5609,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6117,11 +5675,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6218,11 +5771,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6249,11 +5797,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6284,11 +5827,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6315,11 +5853,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6352,11 +5885,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6385,11 +5913,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6416,11 +5939,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6453,11 +5971,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6486,11 +5999,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6569,11 +6077,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6602,11 +6105,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6633,11 +6131,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6670,11 +6163,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6704,11 +6192,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6757,11 +6240,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6788,11 +6266,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -6844,11 +6317,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -6875,11 +6343,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:

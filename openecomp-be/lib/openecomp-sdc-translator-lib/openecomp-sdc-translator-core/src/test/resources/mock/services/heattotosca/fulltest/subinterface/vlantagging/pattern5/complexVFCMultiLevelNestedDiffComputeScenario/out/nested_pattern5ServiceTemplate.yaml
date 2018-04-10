@@ -90,11 +90,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_ps_server_1b_port_1_mac_requirements:
           mac_count_required:
             is_required: false
@@ -137,11 +132,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         service_template_filter:

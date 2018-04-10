@@ -704,11 +704,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         mac_requirements:
           mac_count_required:
             is_required: false
@@ -752,4 +747,4 @@ topology_template:
           Version 2.0 02-09-2016 (Authors: Paul Phillips, pp2854 PROD)
       members:
       - VMI1
-      - FSB1
+      - FSB1

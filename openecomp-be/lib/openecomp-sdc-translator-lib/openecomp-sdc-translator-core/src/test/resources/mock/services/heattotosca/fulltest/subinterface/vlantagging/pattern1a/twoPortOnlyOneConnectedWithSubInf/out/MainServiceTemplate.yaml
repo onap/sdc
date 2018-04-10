@@ -448,11 +448,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         service_template_filter:
           substitute_service_template: Nested_vdbe_1ServiceTemplate.yaml
           count: 1
@@ -534,11 +529,6 @@ topology_template:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
         port_vdbe_untr_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:

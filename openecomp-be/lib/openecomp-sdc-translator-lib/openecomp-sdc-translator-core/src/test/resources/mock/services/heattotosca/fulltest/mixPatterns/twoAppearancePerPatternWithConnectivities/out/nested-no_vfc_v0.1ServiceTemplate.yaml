@@ -137,11 +137,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_pcm_port_1_security_groups:
         - - get_input: security_group_name
         compute_pcma_server_config_drive:
@@ -165,11 +160,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         service_template_filter:
@@ -209,11 +199,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_pcm_port_2_mac_requirements:
           mac_count_required:
             is_required: false
@@ -233,11 +218,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         port_pcm_port_2_network_role_tag: cps

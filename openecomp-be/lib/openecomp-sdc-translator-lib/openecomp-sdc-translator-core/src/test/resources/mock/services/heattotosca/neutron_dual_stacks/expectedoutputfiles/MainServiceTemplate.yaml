@@ -37,6 +37,36 @@ topology_template:
       description: DNS Bearer IP list
       entry_schema:
         type: string
+    dns_oam_protected_floating_v6_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_oam_protected_floating_v6_ip
+      type: list
+      description: floating IPv6 assignment for VM's on the oam_protected
+      entry_schema:
+        type: string
+    dns_int_bearer_floating_v6_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_int_bearer_floating_v6_ip
+      type: list
+      description: floating IPv6 assignment for VM's on the Bearer network
+      entry_schema:
+        type: string
     vnf_name:
       hidden: false
       immutable: false
@@ -135,6 +165,21 @@ topology_template:
       description: server name
       entry_schema:
         type: string
+    dns_oam_protected_floating_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_oam_protected_floating_ip
+      type: list
+      description: floating IPv4 assignment for VM's on the oam_protected
+      entry_schema:
+        type: string
     vnf_id:
       hidden: false
       immutable: false
@@ -217,6 +262,21 @@ topology_template:
       type: string
       description: server flavor
       default: nv.c4r4d80
+    dns_int_bearer_floating_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - Use_Case_1_module
+            source_type: HEAT
+            param_name: dns_int_bearer_floating_ip
+      type: list
+      description: floating IPv4 assignment for VM's on the Bearer network
+      entry_schema:
+        type: string
   node_templates:
     dns_0_oam_protected_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -239,17 +299,11 @@ topology_template:
             is_required: false
         allowed_address_pairs:
         - ip_address:
-            get_input:
-            - dns_oam_protected_ips
-            - 5
+            get_input: dns_oam_protected_floating_ip
         - ip_address:
-            get_input:
-            - dns_oam_protected_floating_v6_ip
-            - 5
+            get_input: dns_oam_protected_floating_v6_ip
         - ip_address:
-            get_input:
-            - dns_oam_protected_ips
-            - 5
+            get_input: dns_oam_protected_floating_ip
         name:
           str_replace:
             template: VNF_NAME_dns_0_oam_protected_port_0
@@ -268,11 +322,6 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -283,7 +332,7 @@ topology_template:
         fixed_ips:
         - ip_address:
             get_input:
-            - dns_int_bearer_ips_v6_ips
+            - dns_int_bearer_v6_ips
             - 0
         mac_requirements:
           mac_count_required:
@@ -310,7 +359,7 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: false
+            is_required: true
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -332,13 +381,9 @@ topology_template:
             is_required: false
         allowed_address_pairs:
         - ip_address:
-            get_input:
-            - dns_int_bearer_floating_v6_ip
-            - 0
+            get_input: dns_int_bearer_floating_v6_ip
         - ip_address:
-            get_input:
-            - dns_int_bearer_floating_v6_ip
-            - 0
+            get_input: dns_int_bearer_floating_ip
         name:
           str_replace:
             template: VNF_NAME_dns_bearer_port
@@ -461,7 +506,7 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: false
+            is_required: true
         security_groups:
         - get_input: security_group
         fixed_ips:
@@ -478,13 +523,9 @@ topology_template:
             is_required: false
         allowed_address_pairs:
         - ip_address:
-            get_input:
-            - dns_int_bearer
-            - 0
+            get_input: dns_int_bearer_floating_v6_ip
         - ip_address:
-            get_input:
-            - dns_int_bearer
-            - 0
+            get_input: dns_int_bearer_floating_ip
         name:
           str_replace:
             template: VNF_NAME_dns_bearer_port
@@ -528,11 +569,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: true
         security_groups:
         - get_input: security_group
         fixed_ips:
@@ -553,17 +589,9 @@ topology_template:
             is_required: false
         allowed_address_pairs:
         - ip_address:
-            get_input:
-            - dns_oam_protected_ips
-            - 5
+            get_input: dns_oam_protected_floating_ip
         - ip_address:
-            get_input:
-            - dns_oam_protected_floating_v6_ip
-            - 5
-        - ip_address:
-            get_input:
-            - dns_oam_protected_ips
-            - 5
+            get_input: dns_oam_protected_floating_ip
         name:
           str_replace:
             template: VNF_NAME_dns_1_oam_protected_port_0
@@ -582,12 +610,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
-        - ip_version: 4
+        - ip_version: 6
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: true
-        - ip_version: 6
+        - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
@@ -612,17 +640,11 @@ topology_template:
             is_required: false
         allowed_address_pairs:
         - ip_address:
-            get_input:
-            - dns_oam_protected_floating_v6_ip
-            - 4
+            get_input: dns_oam_protected_floating_v6_ip
         - ip_address:
-            get_input:
-            - dns_oam_protected_ips
-            - 5
+            get_input: dns_oam_protected_floating_ip
         - ip_address:
-            get_input:
-            - dns_oam_protected_floating_v6_ip
-            - 5
+            get_input: dns_oam_protected_floating_v6_ip
         name:
           str_replace:
             template: VNF_NAME_dns_1_oam_protected_port_1
