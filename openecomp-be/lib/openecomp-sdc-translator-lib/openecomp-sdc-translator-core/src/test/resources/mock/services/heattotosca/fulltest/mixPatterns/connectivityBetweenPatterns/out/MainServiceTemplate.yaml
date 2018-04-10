@@ -224,11 +224,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1b_t2_port_subinterface_indicator:
@@ -244,11 +239,6 @@ topology_template:
         - group: BE_Affinity_group
         port_1b_t2_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -322,19 +312,9 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
-          - ip_version: 6
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         - - ip_version: 4
             ip_count_required:
               is_required: true
-            floating_ip_count_required:
-              is_required: false
-          - ip_version: 6
-            ip_count_required:
-              is_required: false
             floating_ip_count_required:
               is_required: false
         vm_image_name:
@@ -379,19 +359,9 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
-          - ip_version: 6
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         - - ip_version: 4
             ip_count_required:
               is_required: true
-            floating_ip_count_required:
-              is_required: false
-          - ip_version: 6
-            ip_count_required:
-              is_required: false
             floating_ip_count_required:
               is_required: false
         port_1c1_t1_port_mac_requirements:
@@ -471,11 +441,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         server_group: BE_Affinity_group
         connectivityChk:
           connectivityTo1C2_1:
@@ -521,11 +486,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_pcm_port_00_network_role_tag: cps
         pcm_flavor_name:
           get_input: pcm_flavor_name
@@ -560,11 +520,6 @@ topology_template:
           get_input: pd_image_name
         port_1c2_t2_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -623,11 +578,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         compute_1c2_catalog_instance_scheduler_hints:
         - group: BE_Affinity_group
         service_template_filter:
@@ -662,11 +612,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_1c2_t2_port_subinterface_indicator:
         - false
         port_1c2_t1_port_mac_requirements:
@@ -690,11 +635,6 @@ topology_template:
         port_1c2_t1_port_network_role_tag: oam
         port_1c2_t1_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -885,11 +825,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_1a_t2_port_network_role_tag: ppds
         vm_flavor_name:
           get_input: pd_flavor_name
@@ -904,11 +839,6 @@ topology_template:
           get_input: pd_image_name
         port_1a_t2_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1116,11 +1046,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1b_t2_port_subinterface_indicator:
@@ -1136,11 +1061,6 @@ topology_template:
         - group: BE_Affinity_group
         port_1b_t2_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:

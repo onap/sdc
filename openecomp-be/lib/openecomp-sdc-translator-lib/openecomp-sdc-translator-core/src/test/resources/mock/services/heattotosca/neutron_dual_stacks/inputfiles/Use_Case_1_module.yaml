@@ -29,6 +29,18 @@ parameters:
   dns_int_bearer_v6_ips:
     type: comma_delimited_list
     description: fixed IPv6 assignment for VM's on the Bearer network
+  dns_int_bearer_floating_v6_ip:
+    type: comma_delimited_list
+    description: floating IPv6 assignment for VM's on the Bearer network
+  dns_int_bearer_floating_ip:
+    type: comma_delimited_list
+    description: floating IPv4 assignment for VM's on the Bearer network
+  dns_oam_protected_floating_v6_ip:
+    type: comma_delimited_list
+    description: floating IPv6 assignment for VM's on the oam_protected
+  dns_oam_protected_floating_ip:
+    type: comma_delimited_list
+    description: floating IPv4 assignment for VM's on the oam_protected
   dns_names:
     type: comma_delimited_list
     description: server name
@@ -53,7 +65,7 @@ parameters:
     type: string
     description: Unique ID for this VF module instance
 #   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
-    
+
 resources:
 
   dns_0_oam_protected_port_0:
@@ -65,7 +77,7 @@ resources:
            params:
                VNF_NAME: {get_param: vnf_name}
       network: { get_param: oam_protected_net_name }
-      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: dns_oam_protected_floating_ip}}, { "ip_address": { get_param: dns_oam_protected_floating_v6_ip}}, { "ip_address": { get_param: dns_oam_protected_floating_ip}}]
       security_groups: [{ get_param: security_group }]
 
   dns_0_oam_protected_port_1:
@@ -77,9 +89,9 @@ resources:
            params:
                VNF_NAME: {get_param: vnf_name}
       network: { get_param: oam_protected_net_name }
-      fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_ips_v6_ips, 0 ]}}]
+      fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_v6_ips, 0 ]}}]
       security_groups: [{ get_param: security_group }]
- 
+
   dns_0_int_bearer_port:
     type: OS::Neutron::Port
     properties:
@@ -90,7 +102,7 @@ resources:
               VNF_NAME: {get_param: vnf_name}
       network: { get_param: int_bearer_net_name }
       fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_ips, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer_v6_ips, 0 ]}}]
-      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_int_bearer, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer, 0 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: dns_int_bearer_floating_v6_ip}}, { "ip_address": { get_param: dns_int_bearer_floating_ip}}]
       security_groups: [{ get_param: security_group }]
 
   dns_server_0:
@@ -107,7 +119,7 @@ resources:
       metadata:
         vnf_id: { get_param: vnf_id }
         vf_module_id: { get_param: vf_module_id }
-        vnf_name:  {get_param: vnf_name }  
+        vnf_name:  {get_param: vnf_name }
 
   dns_1_oam_protected_port_0:
     type: OS::Neutron::Port
@@ -119,7 +131,7 @@ resources:
                VNF_NAME: {get_param: vnf_name}
       network: { get_param: oam_protected_net_name }
       fixed_ips: [{ "ip_address": { get_param: [ dns_oam_protected_ips, 6 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 7 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
-      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: dns_oam_protected_floating_ip}}, { "ip_address": { get_param: dns_oam_protected_floating_ip}}]
       security_groups: [{ get_param: security_group }]
 
   dns_1_oam_protected_port_1:
@@ -132,9 +144,9 @@ resources:
                VNF_NAME: {get_param: vnf_name}
       network: { get_param: oam_protected_net_name }
       fixed_ips: [{ "ip_address": { get_param: [ dns_oam_protected_v6_ips, 6 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 7 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}]
-      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 4 ]}}, { "ip_address": { get_param: [ dns_oam_protected_ips, 5 ]}}, { "ip_address": { get_param: [ dns_oam_protected_floating_v6_ip, 5 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: dns_oam_protected_floating_v6_ip}}, { "ip_address": { get_param: dns_oam_protected_floating_ip}}, { "ip_address": { get_param: dns_oam_protected_floating_v6_ip}}]
       security_groups: [{ get_param: security_group }]
- 
+
   dns_1_int_bearer_port:
     type: OS::Neutron::Port
     properties:
@@ -145,7 +157,7 @@ resources:
               VNF_NAME: {get_param: vnf_name}
       network: { get_param: int_bearer_net_name }
       fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_ips, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer_v6_ips, 0 ]}}]
-      allowed_address_pairs: [{ "ip_address": { get_param: [ dns_int_bearer_floating_v6_ip, 0 ]}}, { "ip_address": { get_param: [ dns_int_bearer_floating_v6_ip, 0 ]}}]
+      allowed_address_pairs: [{ "ip_address": { get_param: dns_int_bearer_floating_v6_ip}}, { "ip_address": { get_param: dns_int_bearer_floating_ip}}]
       security_groups: [{ get_param: security_group }]
 
   dns_server_1:
@@ -162,6 +174,6 @@ resources:
       metadata:
         vnf_id: { get_param: vnf_id }
         vf_module_id: { get_param: vf_module_id }
-        vnf_name:  {get_param: vnf_name }  
+        vnf_name:  {get_param: vnf_name }
 
 

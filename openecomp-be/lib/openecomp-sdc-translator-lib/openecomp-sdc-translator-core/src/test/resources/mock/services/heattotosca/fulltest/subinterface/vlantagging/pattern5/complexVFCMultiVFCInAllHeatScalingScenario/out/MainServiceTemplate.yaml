@@ -197,9 +197,9 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
-          - ip_version: 6
+        - - ip_version: 4
             ip_count_required:
-              is_required: false
+              is_required: true
             floating_ip_count_required:
               is_required: false
         - - ip_version: 4
@@ -207,29 +207,9 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
-          - ip_version: 6
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         - - ip_version: 4
             ip_count_required:
               is_required: true
-            floating_ip_count_required:
-              is_required: false
-          - ip_version: 6
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-          - ip_version: 6
-            ip_count_required:
-              is_required: false
             floating_ip_count_required:
               is_required: false
         service_template_filter:

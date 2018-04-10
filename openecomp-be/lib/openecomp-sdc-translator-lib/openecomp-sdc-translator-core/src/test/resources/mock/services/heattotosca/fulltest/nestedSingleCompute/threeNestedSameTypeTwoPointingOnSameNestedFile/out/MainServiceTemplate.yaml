@@ -128,11 +128,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         pcm_image_name:
           get_input: pcm_image_name
         port_pcm_port_01_mac_requirements:
@@ -142,11 +137,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         port_pcm_port_11_mac_requirements:
@@ -175,11 +165,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         pcm_image_name:
           get_input: pcm_image_name
         port_pcm_port_01_mac_requirements:
@@ -189,11 +174,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         port_pcm_port_11_mac_requirements:
@@ -222,11 +202,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         pcm_image_name:
           get_input: pcm_image_name
         port_pcm_port_1_mac_requirements:
@@ -236,11 +211,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         port_pcm_port_0_network_role_tag: cps
@@ -256,11 +226,6 @@ topology_template:
       properties:
         ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:

@@ -491,11 +491,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         subinterface_vdbe_untr_1_subports_vlan_tag_list:
         - get_input: untrusted_vlan_tags
         subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix:

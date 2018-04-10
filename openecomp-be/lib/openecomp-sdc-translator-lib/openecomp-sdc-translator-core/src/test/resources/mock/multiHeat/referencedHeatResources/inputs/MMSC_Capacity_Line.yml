@@ -81,11 +81,11 @@ parameters:
     type: string
     label: mmsc traffic end IP
     description: mmsc traffic end IP
-  mms_traffic_net_local_ip1:
+  mms_traffic_net_local_ip_1:
     type: string
     label: mmsc traffic network local ip1
     description: the local ip1 of the mmsc traffic network
-  mms_traffic_net_local_ip2:
+  mms_traffic_net_local_ip_2:
     type: string
     label: mmsc traffic network local ip2
     description: the local ip2 of the mmsc traffic network
@@ -237,11 +237,11 @@ parameters:
     type: string
     label: eca_traffic network gateway
     description: eca_traffic network gateway  
-  eca_traffic_net_local_ip1:
+  eca_traffic_net_local_ip_1:
     type: string
     label: eca traffic network local ip1
     description: the local ip1 of the eca traffic network
-  eca_traffic_net_local_ip2:
+  eca_traffic_net_local_ip_2:
     type: string
     label: eca traffic network local ip2
     description: the local ip2 of the eca traffic network
@@ -265,11 +265,11 @@ parameters:
     type: string
     label: ha net cidr
     description: ha net cidr
-  ha_net_local_ip1:
+  ha_net_local_ip_1:
     type: string
     label: ha net network local ip1
     description: the local ip1 of the ha network
-  ha_net_local_ip2:
+  ha_net_local_ip_2:
     type: string
     label: ha net network local ip2
     description: the local ip2 of the ha network
@@ -573,7 +573,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       network_id: {get_resource: mms_traffic_net}
-      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip1}}]
+      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip_1}}]
       allowed_address_pairs: [{"ip_address": {get_param: mms_traffic_net_floating_ip} }]
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
@@ -618,7 +618,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       network_id: {get_resource: ha_net}
-      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip1}}]
+      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip_1}}]
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
 
@@ -626,7 +626,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       network_id: {get_resource: eca_traffic_net}
-      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip1}}]
+      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip_1}}]
       allowed_address_pairs: [{"ip_address": {get_param: eca_traffic_net_floating_ip} }]
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
@@ -662,7 +662,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       network_id: {get_resource: mms_traffic_net}
-      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip2}}]
+      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip_2}}]
       allowed_address_pairs: [{"ip_address": {get_param: mms_traffic_net_floating_ip}}]
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
@@ -707,7 +707,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       network_id: {get_resource: ha_net}
-      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip2}}]
+      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip_2}}]
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
 
@@ -715,7 +715,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       network_id: {get_resource: eca_traffic_net}
-      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip2}}]
+      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip_2}}]
       allowed_address_pairs: [{"ip_address": {get_param: eca_traffic_net_floating_ip} }]
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO

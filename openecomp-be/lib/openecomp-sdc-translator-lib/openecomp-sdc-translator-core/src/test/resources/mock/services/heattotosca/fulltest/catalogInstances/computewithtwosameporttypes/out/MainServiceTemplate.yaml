@@ -767,11 +767,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         security_groups:
           get_input: data_security_groups
         fixed_ips:
@@ -797,11 +792,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -839,11 +829,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
@@ -921,11 +906,6 @@ topology_template:
         port_iox_oam_0_port_subinterface_indicator:
         - false
         port_iox_data_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -954,11 +934,6 @@ topology_template:
             - ip_address
         port_iox_internal_0_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1051,11 +1026,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_iox_data_0_port_network_role_tag: data
         service_template_filter:
           substitute_service_template: Nested_ioxServiceTemplate.yaml
@@ -1084,11 +1054,6 @@ topology_template:
         - group: app_server_group_group
         port_app_internal_0_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1138,11 +1103,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_app_internal_0_port_allowed_address_pairs:
         - ip_address:
             get_input: internal_subnet_cidr
@@ -1156,11 +1116,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         port_app_internal_0_port_network:
@@ -1219,11 +1174,6 @@ topology_template:
           ip_count_required:
             is_required: false
           floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
             is_required: false
         security_groups:
           get_input: plt_security_groups
@@ -1253,11 +1203,6 @@ topology_template:
         port_iox_oam_0_port_subinterface_indicator:
         - false
         port_iox_data_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -1286,11 +1231,6 @@ topology_template:
             - ip_address
         port_iox_internal_0_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1378,11 +1318,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_iox_data_0_port_network_role_tag: data
         service_template_filter:
           substitute_service_template: Nested_ioxServiceTemplate.yaml
@@ -1411,11 +1346,6 @@ topology_template:
         - group: app_server_group_group
         port_app_internal_0_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1465,11 +1395,6 @@ topology_template:
           vf_module_name:
             get_input: vf_module_name
         port_app_data_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -1488,11 +1413,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         port_app_internal_0_port_network:
@@ -1559,11 +1479,6 @@ topology_template:
           ip_count_required:
             is_required: false
           floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
             is_required: false
         port_app_data_0_port_subinterface_indicator:
         - false
@@ -1610,11 +1525,6 @@ topology_template:
           vf_module_name:
             get_input: vf_module_name
         port_app_data_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -1631,11 +1541,6 @@ topology_template:
                 get_input: vnf_name
         port_app_oam_0_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1743,11 +1648,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_plt_data_0_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -1761,11 +1661,6 @@ topology_template:
         port_plt_internal_0_port_subinterface_indicator:
         - false
         port_plt_data_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -1791,11 +1686,6 @@ topology_template:
         port_plt_data_0_port_network_role_tag: data
         port_plt_internal_0_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -1895,11 +1785,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         port_plt_data_0_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -1913,11 +1798,6 @@ topology_template:
         port_plt_internal_0_port_subinterface_indicator:
         - false
         port_plt_data_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         - ip_version: 6
           ip_count_required:
             is_required: true
@@ -1943,11 +1823,6 @@ topology_template:
         port_plt_data_0_port_network_role_tag: data
         port_plt_internal_0_port_ip_requirements:
         - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: true
-        - ip_version: 6
           ip_count_required:
             is_required: false
           floating_ip_count_required:
@@ -2021,11 +1896,6 @@ topology_template:
         - ip_version: 4
           ip_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: false
-        - ip_version: 6
-          ip_count_required:
-            is_required: false
           floating_ip_count_required:
             is_required: false
         security_groups:
