@@ -1,0 +1,226 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5a41c237",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-permissions-rest/item-permissions-rest-services/src/main/java/org/openecomp/sdcrests/itempermissions/rest/services/ItemPermissionsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "Add copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1a4b3a5a",
+        "filename": "openecomp-be/backend/openecomp-sdc-item-permissions-manager/src/main/java/org/openecomp/sdc/itempermissions/PermissionsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3a463650",
+        "filename": "openecomp-be/backend/openecomp-sdc-item-permissions-manager/src/main/java/org/openecomp/sdc/itempermissions/PermissionsManagerFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5a68e2b9",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-api/src/main/java/org/openecomp/sdc/itempermissions/PermissionsServices.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7a635edd",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-api/src/main/java/org/openecomp/sdc/itempermissions/dao/ItemPermissionsDao.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_da9b92c7",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/ItemPermissionsDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_baa806dc",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/PermissionsServicesImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5aaf82e3",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/PrmissionsServicesFactoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1a349adc",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/UserPermissionsDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "Collections.singleton(itemId) - define it once above and use in both lines",
+      "range": {
+        "startLine": 52,
+        "startChar": 33,
+        "endLine": 52,
+        "endChar": 78
+      },
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3a2f168a",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/UserPermissionsDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "not used - remove",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 52
+      },
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1ab9fa2d",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-impl/src/main/java/org/openecomp/sdc/itempermissions/impl/PermissionsRulesImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_da4dd273",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-impl/src/main/java/org/openecomp/sdc/itempermissions/impl/PermissionsRulesImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-10T12:54:54Z",
+      "side": 1,
+      "message": "can be private?",
+      "range": {
+        "startLine": 134,
+        "startChar": 4,
+        "endLine": 134,
+        "endChar": 13
+      },
+      "revId": "8fd7c3f6bf50db7c76e9f0bb70b25d32c8feb9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
