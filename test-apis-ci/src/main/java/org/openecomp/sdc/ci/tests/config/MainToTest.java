@@ -20,17 +20,17 @@ public class MainToTest {
 
     private static final String CREDENTIALS_FILE = "credentials.yaml";
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("Hello World!"); // Display the string.
-        System.out.println("user.dir: " + System.getProperty("user.dir"));
-        System.out.println(UserRoleEnum.DESIGNER.getFirstName());
-        String file = readFile();
-        convertToJson(file);
-        Either<Service, RestResponse> createDefaultService1e = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
-
-
-
-    }
+//    public static void main(String[] args) throws Exception {
+//        System.out.println("Hello World!"); // Display the string.
+//        System.out.println("user.dir: " + System.getProperty("user.dir"));
+//        System.out.println(UserRoleEnum.DESIGNER.getFirstName());
+//        String file = readFile();
+//        convertToJson(file);
+//        Either<Service, RestResponse> createDefaultService1e = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+//
+//
+//
+//    }
 
     private static String convertToJson(String yamlString) {
         Yaml yaml = new Yaml();
