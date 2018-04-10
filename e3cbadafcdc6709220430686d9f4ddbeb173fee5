@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7f6d9098",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/logback.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-10T08:06:21Z",
+      "side": 1,
+      "message": "it\u0027s a tab character",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 3
+      },
+      "revId": "e3cbadafcdc6709220430686d9f4ddbeb173fee5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
