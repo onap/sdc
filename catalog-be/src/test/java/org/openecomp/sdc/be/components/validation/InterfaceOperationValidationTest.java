@@ -202,9 +202,9 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     }
 
 
-    private OperationInputDefinition createMockOperationInputDefinition(String label) {
+    private OperationInputDefinition createMockOperationInputDefinition(String name) {
         OperationInputDefinition operationInputDefinition = new OperationInputDefinition();
-        operationInputDefinition.setLabel(label);
+        operationInputDefinition.setName(name);
         return operationInputDefinition;
     }
 
