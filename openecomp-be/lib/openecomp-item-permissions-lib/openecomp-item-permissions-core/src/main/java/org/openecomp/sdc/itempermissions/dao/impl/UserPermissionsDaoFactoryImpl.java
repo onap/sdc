@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openecomp.sdc.itempermissions.dao;
 
-import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
+package org.openecomp.sdc.itempermissions.dao.impl;
 
-import java.util.Collection;
-import java.util.Set;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsDaoFactory;
 
-/**
- * Created by ayalaben on 6/18/2017.
- */
-public interface ItemPermissionsDao {
+public class UserPermissionsDaoFactoryImpl extends UserPermissionsDaoFactory {
 
-  Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
+    private static UserPermissionsDao INSTANCE =new UserPermissionsDaoImpl();
 
-  void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
-                             Set<String> removedUsersIds);
-
-  String getUserItemPermission(String itemId, String userId);
-
-  void deleteItemPermissions(String itemId);
+    @Override
+    public UserPermissionsDao createInterface() {
+        return INSTANCE;
+    }
 }

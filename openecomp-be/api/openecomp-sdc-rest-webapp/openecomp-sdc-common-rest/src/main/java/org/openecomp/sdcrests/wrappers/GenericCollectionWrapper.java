@@ -38,12 +38,11 @@ public class GenericCollectionWrapper<T> implements Serializable {
    * Instantiates a new Generic collection wrapper.
    *
    * @param list      the list
-   * @param listCount the list count
    */
-  public GenericCollectionWrapper(List<T> list, int listCount) {
+  public GenericCollectionWrapper(List<T> list) {
     if (!list.isEmpty()) {
       this.results = list;
-      this.listCount = listCount;
+      this.listCount = list.size();
     }
   }
 

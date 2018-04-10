@@ -28,8 +28,8 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
+import org.openecomp.sdc.itempermissions.PermissionsManager;
+import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -67,11 +67,9 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
@@ -91,7 +89,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   private static final String SUBMIT_HEALED_VERSION_ERROR =
       "VLM Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
   private static final Logger LOGGER = LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
-  private ItemPermissionsManager permissionsManager = ItemPermissionsManagerFactory.getInstance()
+  private PermissionsManager permissionsManager = PermissionsManagerFactory.getInstance()
       .createInterface();
   private NotificationPropagationManager notifier =
       NotificationPropagationManagerFactory.getInstance().createInterface();
@@ -110,11 +108,11 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   public Response listLicenseModels(String versionStatus,String itemStatus, String user) {
     Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
 
-    GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
     MapItemToDto mapper = new MapItemToDto();
-    asdcItemManager.list(itemPredicate).stream()
-        .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-        .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, ItemDto.class)));
+    GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>(asdcItemManager.list(itemPredicate)
+            .stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+            .map(item ->mapper.applyMapping(item, ItemDto.class)).collect(Collectors.toList()));
+
     return Response.ok(results).build();
   }
 
@@ -320,7 +318,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
   }
 
   private boolean userHasPermission(String itemId, String userId) {
-    String permission = permissionsManager.getUserItemPermiission(itemId, userId);
+    String permission = permissionsManager.getUserItemPermission(itemId, userId);
     return (permission != null && permission
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name()));
   }
