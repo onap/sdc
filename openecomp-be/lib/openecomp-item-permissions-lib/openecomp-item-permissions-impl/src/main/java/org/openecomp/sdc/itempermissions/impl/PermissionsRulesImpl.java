@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openecomp.sdc.itempermissions.impl;
 
 import org.openecomp.sdc.common.errors.CoreException;
@@ -7,6 +22,7 @@ import org.openecomp.sdc.itempermissions.errors.PermissionsErrorMessagesBuilder;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionActionTypes;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -112,22 +128,30 @@ public class PermissionsRulesImpl implements PermissionsRules {
         }
 
         if (permission.equals(PermissionTypes.Owner.name())) {
-
-            HashSet<String> currentOwner = new HashSet<>();
-            currentOwner.add(currentUserId);
-
-            PermissionsServicesFactory.getInstance().createInterface()
-                    .updateItemPermissions(itemId, PermissionTypes.Contributor.name(),
-                            currentOwner, new HashSet<String>());
+          makeCurrentUserContributor(itemId,currentUserId);
         }
     }
 
-    protected void caseCreateItem(String userId, String itemId) {
+    private void makeCurrentUserContributor(String itemId, String currentUserId) {
+
+        String currentPermission = PermissionsServicesFactory.getInstance().createInterface().
+                getUserItemPermiission(itemId,currentUserId);
+
+        if(currentPermission != null) {
+
+            PermissionsServicesFactory.getInstance().createInterface()
+                    .updateItemPermissions(itemId, PermissionTypes.Contributor.name(),
+                            Collections.singleton(currentUserId), new HashSet<>());
+    }
+
+}
+
+    private void caseCreateItem(String userId, String itemId) {
         HashSet<String> ownerId = new HashSet<>();
         ownerId.add(userId);
         PermissionsServicesFactory.getInstance().createInterface()
                 .updateItemPermissions(itemId, PermissionTypes.Owner.name(), ownerId,
-                        new HashSet<String>());
+                        new HashSet<>());
     }
 
 }

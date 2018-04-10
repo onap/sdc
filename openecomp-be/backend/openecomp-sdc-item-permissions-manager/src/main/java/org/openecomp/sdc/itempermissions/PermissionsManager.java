@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Created by ayalaben on 6/22/2017
+ * Created by ayalaben on 6/18/2017.
  */
-public interface PermissionsServices {
+public interface PermissionsManager {
 
   Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
 
@@ -34,10 +34,9 @@ public interface PermissionsServices {
 
   boolean isAllowed(String itemId,String userId,String action);
 
-  void execute(String itemId,String userId,String action);
+  String getUserItemPermission(String itemId, String userId);
 
-  String getUserItemPermiission(String itemId, String userId);
+  void deleteItemPermissions(String itemId);
 
 
-    void deleteItemPermissions(String itemId);
 }
