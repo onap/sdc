@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
+import org.openecomp.sdc.itempermissions.PermissionsManager;
+import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.factories.SubscriptionServiceFactory;
@@ -26,16 +26,16 @@ import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 /**
  * Created by ayalaben on 6/18/2017
  */
-public class ItemPermissionsManagerFactoryImpl extends ItemPermissionsManagerFactory {
+public class PermissionsManagerFactoryImpl extends PermissionsManagerFactory {
 
-    private static final ItemPermissionsManager INSTANCE =
-        new ItemPermissionsManagerImpl(PermissionsServicesFactory.getInstance().createInterface(),
+    private static final PermissionsManager INSTANCE =
+        new PermissionsManagerImpl(PermissionsServicesFactory.getInstance().createInterface(),
             AsdcItemManagerFactory.getInstance().createInterface(),
             NotificationPropagationManagerFactory.getInstance().createInterface(),
             SubscriptionServiceFactory.getInstance().createInterface());
 
     @Override
-    public ItemPermissionsManager createInterface() {
+    public PermissionsManager createInterface() {
         return INSTANCE;
     }
 }

@@ -1,9 +1,8 @@
-//package org.openecomp.sdcrests.itempermissions.rest.mapping.mapping.services;
 package org.openecomp.sdcrests.itempermissions.rest.services;
 
 
-import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
+import org.openecomp.sdc.itempermissions.PermissionsManager;
+import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
 import org.openecomp.sdcrests.itempermissions.rest.ItemPermissions;
 import org.openecomp.sdcrests.itempermissions.rest.mapping.MapItemPermissionsToItemPermissionsDto;
 import org.openecomp.sdcrests.itempermissions.types.ItemPermissionsDto;
@@ -24,8 +23,8 @@ import javax.ws.rs.core.Response;
 @Scope(value = "prototype")
 public class ItemPermissionsImpl implements ItemPermissions {
 
-  private ItemPermissionsManager itemPermissionsManager =
-      ItemPermissionsManagerFactory.getInstance().createInterface();
+  private PermissionsManager permissionsManager =
+      PermissionsManagerFactory.getInstance().createInterface();
 
   @Override
   public Response list(String itemId, String user) {
@@ -33,7 +32,7 @@ public class ItemPermissionsImpl implements ItemPermissions {
     GenericCollectionWrapper<ItemPermissionsDto> results = new GenericCollectionWrapper<>();
     MapItemPermissionsToItemPermissionsDto mapper = new MapItemPermissionsToItemPermissionsDto();
 
-    itemPermissionsManager.listItemPermissions(itemId)
+    permissionsManager.listItemPermissions(itemId)
         .forEach(itemPermission -> results.add(mapper.applyMapping
             (itemPermission, ItemPermissionsDto.class)));
 
@@ -44,7 +43,7 @@ public class ItemPermissionsImpl implements ItemPermissions {
   public Response updatePermissions(ItemPermissionsRequestDto request, String itemId,
                                     String permission, String user) {
 
-    itemPermissionsManager.updateItemPermissions(itemId,permission,request.getAddedUsersIds(),
+    permissionsManager.updateItemPermissions(itemId,permission,request.getAddedUsersIds(),
         request.getRemovedUsersIds());
 
     return Response.ok().build();

@@ -4,6 +4,7 @@ import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.itempermissions.PermissionsRules;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
 import java.util.Collection;
@@ -15,22 +16,30 @@ import java.util.Set;
  */
 public class PermissionsServicesImpl implements PermissionsServices {
 
-  private ItemPermissionsDao permissionsDao;
+  private ItemPermissionsDao itemPermissionsDao;
+
+  private UserPermissionsDao userPermissionsDao;
 
   private PermissionsRules permissionsRules;
 
   private static final String CHANGE_PERMISSIONS = "Change_Item_Permissions";
 
   public PermissionsServicesImpl(PermissionsRules permissionsRules,
-                                 ItemPermissionsDao permissionsDao) {
-    this.permissionsDao = permissionsDao;
+                                 ItemPermissionsDao itemPermissionsDao,UserPermissionsDao userPermissionsDao) {
+    this.itemPermissionsDao = itemPermissionsDao;
     this.permissionsRules = permissionsRules;
+    this.userPermissionsDao = userPermissionsDao;
   }
 
 
   @Override
   public Collection<ItemPermissionsEntity> listItemPermissions(String itemId) {
-    return permissionsDao.listItemPermissions(itemId);
+    return itemPermissionsDao.listItemPermissions(itemId);
+  }
+
+  @Override
+  public Set<String> listUserPermittedItems(String userId, String permission) {
+    return userPermissionsDao.listUserPermittedItems(userId,permission);
   }
 
   @Override
@@ -45,15 +54,18 @@ public class PermissionsServicesImpl implements PermissionsServices {
     permissionsRules.updatePermission(itemId,currentUserId,permission,addedUsersIds,
           removedUsersIds);
 
-    permissionsDao.updateItemPermissions(itemId, permission,
+    itemPermissionsDao.updateItemPermissions(itemId, permission,
           addedUsersIds, removedUsersIds);
+
+    userPermissionsDao.updatePermissions(itemId, permission,
+            addedUsersIds, removedUsersIds);
 
   }
 
   @Override
   public boolean isAllowed(String itemId,String userId,String action) {
 
-    String userPermission = permissionsDao.getUserItemPermission(itemId,userId);
+    String userPermission = itemPermissionsDao.getUserItemPermission(itemId,userId);
     return permissionsRules.isAllowed(userPermission,action);
   }
 
@@ -64,12 +76,12 @@ public class PermissionsServicesImpl implements PermissionsServices {
 
   @Override
   public String getUserItemPermiission(String itemId, String userId) {
-    return permissionsDao.getUserItemPermission(itemId,userId);
+    return itemPermissionsDao.getUserItemPermission(itemId,userId);
   }
 
   @Override
   public void deleteItemPermissions(String itemId) {
-    permissionsDao.deleteItemPermissions(itemId);
+    itemPermissionsDao.deleteItemPermissions(itemId);
   }
 
 }

@@ -28,13 +28,8 @@ public class ItemPermissionsDaoImpl implements ItemPermissionsDao {
   @Override
   public void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
                                     Set<String> removedUsersIds) {
-    addedUsersIds.forEach(userId -> accessor.addPermission(itemId,userId,permission));
+    addedUsersIds.forEach(userId ->  accessor.addPermission(itemId,userId,permission));
     removedUsersIds.forEach(userId -> accessor.deletePermission(itemId,userId));
-  }
-
-  @Override
-  public void addUserPermission(String itemId, String userId, String permission){
-    accessor.addPermission(itemId,userId,permission);
   }
 
   @Override
@@ -69,7 +64,6 @@ public class ItemPermissionsDaoImpl implements ItemPermissionsDao {
 
     @Query("delete from dox.item_permissions where item_id=?")
     void deleteItemPermissions(String itemId);
-
 
   }
 }

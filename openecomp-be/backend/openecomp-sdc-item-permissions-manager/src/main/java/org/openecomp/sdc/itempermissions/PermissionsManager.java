@@ -8,16 +8,18 @@ import java.util.Set;
 /**
  * Created by ayalaben on 6/18/2017.
  */
-public interface ItemPermissionsManager {
+public interface PermissionsManager {
 
   Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
+
+  Set<String> listUserPermittedItems(String userId, String permission);
 
   void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
                              Set<String> removedUsersIds);
 
   boolean isAllowed(String itemId,String userId,String action);
 
-  String getUserItemPermiission(String itemId, String userId);
+  String getUserItemPermission(String itemId, String userId);
 
   void deleteItemPermissions(String itemId);
 

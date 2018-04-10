@@ -12,6 +12,8 @@ public interface PermissionsServices {
 
   Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
 
+  Set<String> listUserPermittedItems(String userId, String permission);
+
   void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
                              Set<String> removedUsersIds);
 

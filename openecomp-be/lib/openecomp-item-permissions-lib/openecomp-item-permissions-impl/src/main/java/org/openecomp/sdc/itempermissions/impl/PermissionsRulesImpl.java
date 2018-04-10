@@ -7,6 +7,7 @@ import org.openecomp.sdc.itempermissions.errors.PermissionsErrorMessagesBuilder;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionActionTypes;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -112,22 +113,30 @@ public class PermissionsRulesImpl implements PermissionsRules {
         }
 
         if (permission.equals(PermissionTypes.Owner.name())) {
+          makeCurrentUserContributor(itemId,currentUserId);
+        }
+    }
 
-            HashSet<String> currentOwner = new HashSet<>();
-            currentOwner.add(currentUserId);
+    private void makeCurrentUserContributor(String itemId, String currentUserId) {
+
+        String currentPermission = PermissionsServicesFactory.getInstance().createInterface().
+                getUserItemPermiission(itemId,currentUserId);
+
+        if(currentPermission != null) {
 
             PermissionsServicesFactory.getInstance().createInterface()
                     .updateItemPermissions(itemId, PermissionTypes.Contributor.name(),
-                            currentOwner, new HashSet<String>());
-        }
+                            Collections.singleton(currentUserId), new HashSet<>());
     }
+
+}
 
     protected void caseCreateItem(String userId, String itemId) {
         HashSet<String> ownerId = new HashSet<>();
         ownerId.add(userId);
         PermissionsServicesFactory.getInstance().createInterface()
                 .updateItemPermissions(itemId, PermissionTypes.Owner.name(), ownerId,
-                        new HashSet<String>());
+                        new HashSet<>());
     }
 
 }

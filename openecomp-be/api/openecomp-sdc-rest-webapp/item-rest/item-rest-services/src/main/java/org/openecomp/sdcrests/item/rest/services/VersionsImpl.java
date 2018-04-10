@@ -36,8 +36,8 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.conflicts.ConflictsManager;
 import org.openecomp.sdc.conflicts.ConflictsManagerFactory;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
+import org.openecomp.sdc.itempermissions.PermissionsManager;
+import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.dtos.Event;
@@ -76,8 +76,8 @@ public class VersionsImpl implements Versions {
   private static final String COMMIT_ITEM_ACTION = "Commit_Item";
   private static final Logger LOGGER = LoggerFactory.getLogger(VersionsImpl.class);
 
-  private ItemPermissionsManager permissionsManager =
-      ItemPermissionsManagerFactory.getInstance().createInterface();
+  private PermissionsManager permissionsManager =
+      PermissionsManagerFactory.getInstance().createInterface();
   private AsdcItemManager asdcItemManager =
       AsdcItemManagerFactory.getInstance().createInterface();
   private VersioningManager versioningManager =

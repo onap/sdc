@@ -4,6 +4,7 @@ import org.openecomp.sdc.itempermissions.PermissionsRulesFactory;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsDaoFactory;
 
 /**
  * Created by ayalaben on 6/22/2017
@@ -11,8 +12,8 @@ import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
 public class PrmissionsServicesFactoryImpl  extends PermissionsServicesFactory {
 
   private static final PermissionsServices INSTANCE =
-      new org.openecomp.sdc.itempermissions.dao.impl.PermissionsServicesImpl(PermissionsRulesFactory.getInstance().createInterface(),
-          ItemPermissionsDaoFactory.getInstance().createInterface());
+      new PermissionsServicesImpl(PermissionsRulesFactory.getInstance().createInterface(),
+          ItemPermissionsDaoFactory.getInstance().createInterface(), UserPermissionsDaoFactory.getInstance().createInterface());
 
   @Override
   public PermissionsServices createInterface() {

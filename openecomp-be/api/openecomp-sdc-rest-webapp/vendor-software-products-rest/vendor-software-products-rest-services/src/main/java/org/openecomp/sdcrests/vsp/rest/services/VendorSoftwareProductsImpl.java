@@ -52,8 +52,8 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManager;
-import org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory;
+import org.openecomp.sdc.itempermissions.PermissionsManager;
+import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -124,8 +124,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   private final AsdcItemManager itemManager = AsdcItemManagerFactory.getInstance()
       .createInterface();
-  private final ItemPermissionsManager permissionsManager =
-      ItemPermissionsManagerFactory.getInstance().createInterface();
+  private final PermissionsManager permissionsManager =
+      PermissionsManagerFactory.getInstance().createInterface();
   private final VersioningManager versioningManager =
       VersioningManagerFactory.getInstance().createInterface();
   private final VendorSoftwareProductManager vendorSoftwareProductManager =
@@ -606,7 +606,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   }
 
   private boolean userHasPermission(String itemId, String userId) {
-    String permission = permissionsManager.getUserItemPermiission(itemId, userId);
+    String permission = permissionsManager.getUserItemPermission(itemId, userId);
     return permission != null && permission
         .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name());
   }

@@ -15,8 +15,6 @@ public interface ItemPermissionsDao {
   void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
                              Set<String> removedUsersIds);
 
-  void addUserPermission(String itemId, String userId, String permission);
-
   String getUserItemPermission(String itemId, String userId);
 
   void deleteItemPermissions(String itemId);
