@@ -30,9 +30,9 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseResourceTranslationTest;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class SubInterfaceNewNodeTemplateIdGeneratorTest extends BaseResourceTranslationTest {
+public class SubInterfaceNewNodeTemplateIdGeneratorTest {
 
   private static final String VDBE_UNTR_1_PORT = "vdbe_untr_1_port";
   private static final String VDBE_UNTR_1_SUBPORTS = "vdbe_untr_1_subports";
@@ -50,10 +50,10 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest extends BaseResourceTran
   private static final String SUBINTERFACE_TYPE_NESTED =
       "org.openecomp.resource.abstract.nodes.heat.subinterface.nested";
 
-  private UnifiedSubstitutionNodeTemplateIdGenerator unifiedSubstitutionNodeTemplateIdGenerator;
+  private static UnifiedSubstitutionNodeTemplateIdGenerator unifiedSubstitutionNodeTemplateIdGenerator;
 
   @BeforeClass
-  public void setUp(){
+  public static void setItUp(){
     unifiedSubstitutionNodeTemplateIdGenerator = new SubInterfaceNewNodeTemplateIdGenerator();
   }
 

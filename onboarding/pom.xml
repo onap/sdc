@@ -13,6 +13,7 @@
     </parent>
 
     <modules>
+        <module>../openecomp-be/tools/build-helper</module>
         <module>../common</module>
         <module>../openecomp-be</module>
         <module>../openecomp-ui</module>
@@ -31,7 +32,7 @@
         <mvn.license.version>1.10</mvn.license.version>
         <mvn.shade.version>2.3</mvn.shade.version>
         <mvn.surefire.version>2.19.1</mvn.surefire.version>
-        <mvn.swagger.version>3.1.0</mvn.swagger.version>
+        <mvn.swagger.version>3.1.5</mvn.swagger.version>
         <mvn.war.version>2.1.1</mvn.war.version>
         <mvn.antrun.version>1.8</mvn.antrun.version>
 
@@ -175,7 +176,7 @@
                         <fileset>
                             <directory>${project.build.directory}</directory>
                             <excludes>
-                                <exclude>test-classes/**</exclude>
+                                <exclude>test-classes/**/*.class</exclude>
                                 <exclude>pmd/**</exclude>
                                 <exclude>maven-status/**</exclude>
                             </excludes>
@@ -192,13 +193,16 @@
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>${project.build.directory}/../src/test/resources</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/src/test/resources</additionalClasspathElement>
                     </additionalClasspathElements>
                     <systemPropertyVariables>
                         <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
                         <artifactgenerator.config>${project.basedir}/src/test/resources/config/Artifact-Generator.properties</artifactgenerator.config>
                         <config.location>${project.basedir}/configuration</config.location>
                     </systemPropertyVariables>
+                    <dependenciesToScan>
+                        org.openecomp.sdc:build-helper
+                    </dependenciesToScan>
                 </configuration>
             </plugin>
         </plugins>
