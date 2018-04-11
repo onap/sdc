@@ -14,36 +14,11 @@
 
     <properties>
         <plugin.name>api-docs</plugin.name>
-        <package.dir>${basedir}/${plugin.name}</package.dir>
         <rest.api.dir>${basedir}/../../api/openecomp-sdc-rest-webapp/onboarding-rest-war</rest.api.dir>
         <api.json.file>api.json</api.json.file>
-        <api.html.file>api.html</api.html.file>
     </properties>
     <build>
         <plugins>
-            <!-- ============================================= -->
-            <!-- Clean api-docs folder -->
-            <!-- ============================================= -->
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.6.1</version>
-                <executions>
-                    <execution>
-                        <id>clean.dist.folder</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${basedir}/api-docs</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -72,9 +47,7 @@
                         <configuration>
                             <tasks>
                                 <echo message="Copy api json files"/>
-                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${basedir}/target/${api.json.file}"/>
-                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${package.dir}/${api.json.file}"/>
-                                <copy file="${rest.api.dir}/target/generated/${api.html.file}" tofile="${package.dir}/${api.html.file}"/>
+                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${basedir}/target/${plugin.name}/${api.json.file}"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -90,7 +63,7 @@
                 <configuration>
                     <descriptor>assembly/swagger.xml</descriptor>
                     <finalName>${plugin.name}</finalName>
-                    <outputDirectory>${package.dir}</outputDirectory>
+                    <outputDirectory>${basedir}/target/${plugin.name}</outputDirectory>
 					<appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>

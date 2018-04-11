@@ -64,6 +64,12 @@
             <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <artifactId>openecomp-zusammen-tools</artifactId>
     <groupId>org.openecomp.sdc.core.tools</groupId>
@@ -130,7 +136,6 @@
                 </executions>
             </plugin>
 
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -157,26 +162,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathLayoutType>custom</classpathLayoutType>
-                            <customClasspathLayout>
-                                lib/${artifact.artifactId}-${baseVersion}.${artifact.extension}
-                            </customClasspathLayout>
-                            <mainClass>org.openecomp.core.tools.main.ZusammenMainTool
-                            </mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Class-Path>lib/</Class-Path>
-                        </manifestEntries>
-                    </archive>
+                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
                 </configuration>
             </plugin>
 
@@ -192,10 +179,6 @@
                                 <fixcrlf srcdir="./" eol="unix"
                                          includes="zusammenMainTool.sh"/>
                             </tasks>
-                            <tasks>
-                                <replace file="src/main/resources/zusammenMainTool.sh" token="1.0-SNAPSHOT" value="${project.version}"/>
-                            </tasks>
-
                         </configuration>
                         <goals>
                             <goal>run</goal>
