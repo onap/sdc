@@ -31,10 +31,8 @@ import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidati
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateVolumeInConsolidationData;
 
 import org.apache.commons.collections4.MapUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.*;
+import org.junit.rules.TestName;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -76,6 +74,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -86,9 +85,15 @@ public class BaseResourceTranslationTest {
   protected String outputFilesPath;
   protected TranslationContext translationContext;
 
+  @Rule
+  public TestName name = new TestName();
+
   private String zipFilename = "VSP.zip";
   private TranslationService translationService;
   private File translatedZipFile;
+
+  private static AtomicInteger fileNameRandomizer = new AtomicInteger(0);
+  private static File tempDir = new File(System.getProperty("java.io.tmpdir"));
 
   private Map<String, byte[]> expectedResultMap = new HashMap<>();
   private Set<String> expectedResultFileNameSet = new HashSet<>();
@@ -101,7 +106,6 @@ public class BaseResourceTranslationTest {
     manager.enableAll();
   }
 
-  @AfterClass
   public static void disableToggleableFeatures() {
     manager.disableAll();
     manager = null;
@@ -134,8 +138,8 @@ public class BaseResourceTranslationTest {
       }
     }
 
-    try (FileInputStream fis = new FileInputStream(translatedZipFile);
-         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
+    try (FileInputStream fis = new FileInputStream(translatedZipFile);BufferedInputStream bis = new BufferedInputStream(fis);
+         ZipInputStream zis = new ZipInputStream(bis)) {
       ZipEntry entry;
       String name;
       String expected;
@@ -174,7 +178,10 @@ public class BaseResourceTranslationTest {
           "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
-    File file = File.createTempFile("VSP", "zip");
+    File file = new File(tempDir, "VSP"+name.getMethodName()+".zip");
+    if (file.exists()){
+      file = new File(tempDir, "VSP"+name.getMethodName()+System.nanoTime()+".zip");
+    }
 
     try (FileOutputStream fos = new FileOutputStream(file)) {
       ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
@@ -184,6 +191,7 @@ public class BaseResourceTranslationTest {
 
     return file;
   }
+
 
   private String getErrorAsString(Map<String, List<ErrorMessage>> errorMessages) {
     StringBuilder sb = new StringBuilder();
