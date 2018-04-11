@@ -63,7 +63,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_1_vson_mon_volume
+            - module_1_vson_mon
             source_type: HEAT
             param_name: vson_mon_volume_name_0
       type: string
@@ -78,7 +78,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
             source_type: HEAT
             param_name: vson_dbs_volume_name_0
       type: string
@@ -92,7 +92,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
             source_type: HEAT
             param_name: vson_dbs_volume_size_1
       type: float
@@ -121,7 +121,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_0_vson_mgt_volume
+            - module_0_vson_mgt
             source_type: HEAT
             param_name: vson_mgt_volume_name_0
       type: string
@@ -136,7 +136,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
             source_type: HEAT
             param_name: vson_dbs_volume_name_1
       type: string
@@ -150,7 +150,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_6_vson_dbs_volume
+            - module_6_vson_dbs
             source_type: HEAT
             param_name: vson_dbs_volume_size_0
       type: float
@@ -179,7 +179,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_1_vson_mon_volume
+            - module_1_vson_mon
             source_type: HEAT
             param_name: vson_mon_volume_size_0
       type: float
@@ -194,7 +194,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_1_vson_mon_volume
+            - module_1_vson_mon
             source_type: HEAT
             param_name: vson_mon_image_name
       type: string
@@ -302,7 +302,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_7_vson_app_volume
+            - module_7_vson_app
             source_type: HEAT
             param_name: vson_app_volume_size_0
       type: float
@@ -357,7 +357,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_0_vson_mgt_volume
+            - module_0_vson_mgt
             source_type: HEAT
             param_name: vson_mgt_volume_size_0
       type: float
@@ -429,7 +429,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_0_vson_mgt_volume
+            - module_0_vson_mgt
             source_type: HEAT
             param_name: vson_mgt_image_name
       type: string
@@ -643,7 +643,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_5_vson_dbg_volume
+            - module_5_vson_dbg
             source_type: HEAT
             param_name: vson_dbg_volume_size_0
       type: float
@@ -783,24 +783,15 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_0_vson_mgt_volume
             - module_0_vson_mgt
-            - module_1_vson_mon_volume
             - module_1_vson_mon
-            - module_4_vson_dbc_volume
             - module_4_vson_dbc
-            - module_7_vson_app_volume
             - module_7_vson_app
-            - module_3_vson_cll_volume
             - module_3_vson_cll
-            - module_2_vson_mdr_volume
             - module_2_vson_mdr
             - module_9_vson_clm
-            - module_5_vson_dbg_volume
             - module_5_vson_dbg
-            - module_6_vson_dbs_volume
             - module_6_vson_dbs
-            - module_8_vson_dcl_volume
             - module_8_vson_dcl
             - base_vson
             source_type: HEAT
@@ -858,24 +849,15 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_0_vson_mgt_volume
             - module_0_vson_mgt
-            - module_1_vson_mon_volume
             - module_1_vson_mon
-            - module_4_vson_dbc_volume
             - module_4_vson_dbc
-            - module_7_vson_app_volume
             - module_7_vson_app
-            - module_3_vson_cll_volume
             - module_3_vson_cll
-            - module_2_vson_mdr_volume
             - module_2_vson_mdr
             - module_9_vson_clm
-            - module_5_vson_dbg_volume
             - module_5_vson_dbg
-            - module_6_vson_dbs_volume
             - module_6_vson_dbs
-            - module_8_vson_dcl_volume
             - module_8_vson_dcl
             - base_vson
             source_type: HEAT
@@ -937,24 +919,15 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_0_vson_mgt_volume
             - module_0_vson_mgt
-            - module_1_vson_mon_volume
             - module_1_vson_mon
-            - module_4_vson_dbc_volume
             - module_4_vson_dbc
-            - module_7_vson_app_volume
             - module_7_vson_app
-            - module_3_vson_cll_volume
             - module_3_vson_cll
-            - module_2_vson_mdr_volume
             - module_2_vson_mdr
             - module_9_vson_clm
-            - module_5_vson_dbg_volume
             - module_5_vson_dbg
-            - module_6_vson_dbs_volume
             - module_6_vson_dbs
-            - module_8_vson_dcl_volume
             - module_8_vson_dcl
             - base_vson
             source_type: HEAT
@@ -970,11 +943,8 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_3_vson_cll_volume
             - module_3_vson_cll
-            - module_6_vson_dbs_volume
             - module_6_vson_dbs
-            - module_8_vson_dcl_volume
             - module_8_vson_dcl
             source_type: HEAT
             param_name: availability_zone_1
@@ -1004,7 +974,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_4_vson_dbc_volume
+            - module_4_vson_dbc
             source_type: HEAT
             param_name: vson_dbc_volume_name_0
       type: string
@@ -1018,7 +988,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_2_vson_mdr_volume
+            - module_2_vson_mdr
             source_type: HEAT
             param_name: vson_mdr_image_name
       type: string
@@ -1359,7 +1329,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_8_vson_dcl_volume
+            - module_8_vson_dcl
             source_type: HEAT
             param_name: vson_dcl_volume_size_1
       type: float
@@ -1375,7 +1345,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_8_vson_dcl_volume
+            - module_8_vson_dcl
             source_type: HEAT
             param_name: vson_dcl_volume_size_0
       type: float
@@ -1391,7 +1361,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_8_vson_dcl_volume
+            - module_8_vson_dcl
             source_type: HEAT
             param_name: vson_dcl_volume_size_2
       type: float
@@ -1500,7 +1470,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_4_vson_dbc_volume
+            - module_4_vson_dbc
             source_type: HEAT
             param_name: vson_dbc_volume_size_0
       type: float
@@ -1726,7 +1696,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_2_vson_mdr_volume
+            - module_2_vson_mdr
             source_type: HEAT
             param_name: vson_mdr_volume_size_0
       type: float
@@ -1795,7 +1765,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_2_vson_mdr_volume
+            - module_2_vson_mdr
             source_type: HEAT
             param_name: vson_mdr_volume_name_0
       type: string
@@ -1810,7 +1780,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_5_vson_dbg_volume
+            - module_5_vson_dbg
             source_type: HEAT
             param_name: vson_dbg_volume_name_0
       type: string
@@ -1996,7 +1966,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_3_vson_cll_volume
+            - module_3_vson_cll
             source_type: HEAT
             param_name: vson_cll_volume_size_2
       type: float
@@ -2011,7 +1981,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_3_vson_cll_volume
+            - module_3_vson_cll
             source_type: HEAT
             param_name: vson_cll_volume_size_1
       type: float
@@ -2026,7 +1996,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_3_vson_cll_volume
+            - module_3_vson_cll
             source_type: HEAT
             param_name: vson_cll_volume_size_0
       type: float
@@ -2055,7 +2025,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - module_7_vson_app_volume
+            - module_7_vson_app
             source_type: HEAT
             param_name: vson_app_volume_name_0
       type: string

@@ -16,7 +16,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_vIECCF_volume
+            - base_vIECCF
             source_type: HEAT
             param_name: app_volume_size_0
       type: float
@@ -190,7 +190,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_vIECCF_volume
+            - base_vIECCF
             source_type: HEAT
             param_name: plt_servicedata2_volume_size_0
       type: float
@@ -221,7 +221,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_vIECCF_volume
+            - base_vIECCF
             source_type: HEAT
             param_name: plt_servicedata1_volume_size_0
       type: float
@@ -389,7 +389,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_vIECCF_volume
             - base_vIECCF
             source_type: HEAT
             param_name: vnf_name

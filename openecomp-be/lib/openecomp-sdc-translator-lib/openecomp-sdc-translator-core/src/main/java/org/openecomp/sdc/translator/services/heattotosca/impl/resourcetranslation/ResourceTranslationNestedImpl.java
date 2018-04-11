@@ -182,7 +182,7 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
         .addNestedHeatFileName(ToscaUtil.getServiceTemplateFileName(templateName),
             translateTo.getResource().getType());
     new TranslationService().translateHeatFile(nestedSubstitutionServiceTemplate, nestedFileData,
-        translateTo.getContext());
+            null, translateTo.getContext());
     return nestedSubstitutionServiceTemplate;
   }
 
