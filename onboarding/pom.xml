@@ -175,7 +175,7 @@
                         <fileset>
                             <directory>${project.build.directory}</directory>
                             <excludes>
-                                <exclude>test-classes/**</exclude>
+                                <exclude>test-classes/**/*.class</exclude>
                                 <exclude>pmd/**</exclude>
                                 <exclude>maven-status/**</exclude>
                             </excludes>
@@ -192,7 +192,7 @@
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>${project.build.directory}/../src/test/resources</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/src/test/resources</additionalClasspathElement>
                     </additionalClasspathElements>
                     <systemPropertyVariables>
                         <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
