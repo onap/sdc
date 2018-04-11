@@ -76,6 +76,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -84,11 +85,14 @@ public class BaseResourceTranslationTest {
 
   protected String inputFilesPath;
   protected String outputFilesPath;
-  protected TranslationContext translationContext;
+  protected static ThreadLocal<TranslationContext> translationContext = new ThreadLocal<>();
 
   private String zipFilename = "VSP.zip";
-  private TranslationService translationService;
-  private File translatedZipFile;
+  private static ThreadLocal<TranslationService> translationService = new ThreadLocal<>();
+  private static ThreadLocal<File> translatedZipFile = new ThreadLocal<>();
+
+  private static AtomicInteger fileNameRandomizer = new AtomicInteger(0);
+  private static File tempDir = new File(System.getProperty("java.io.tmpdir"));
 
   private Map<String, byte[]> expectedResultMap = new HashMap<>();
   private Set<String> expectedResultFileNameSet = new HashSet<>();
@@ -101,7 +105,6 @@ public class BaseResourceTranslationTest {
     manager.enableAll();
   }
 
-  @AfterClass
   public static void disableToggleableFeatures() {
     manager.disableAll();
     manager = null;
@@ -114,9 +117,9 @@ public class BaseResourceTranslationTest {
   }
 
   protected void initTranslatorAndTranslate() throws IOException {
-    translationService = new TranslationService();
-    translationContext = new TranslationContext();
-    translatedZipFile = translateZipFile();
+    translationService.set(new TranslationService());
+    translationContext.set(new TranslationContext());
+    translatedZipFile.set(translateZipFile());
   }
 
   protected void testTranslation() throws IOException {
@@ -134,8 +137,8 @@ public class BaseResourceTranslationTest {
       }
     }
 
-    try (FileInputStream fis = new FileInputStream(translatedZipFile);
-         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
+    try (FileInputStream fis = new FileInputStream(translatedZipFile.get());BufferedInputStream bis = new BufferedInputStream(fis);
+         ZipInputStream zis = new ZipInputStream(bis)) {
       ZipEntry entry;
       String name;
       String expected;
@@ -158,14 +161,14 @@ public class BaseResourceTranslationTest {
       }
     }
     assertEquals(0, expectedResultFileNameSet.size());
-    translatedZipFile.delete();
+    translatedZipFile.get().delete();
   }
 
   private File translateZipFile() throws IOException {
     URL inputFilesUrl = this.getClass().getResource(inputFilesPath);
     String path = inputFilesUrl.getPath();
-    addFilesToTranslator(translationContext, path);
-    TranslatorOutput translatorOutput = translationService.translateHeatFiles(translationContext);
+    addFilesToTranslator(translationContext.get(), path);
+    TranslatorOutput translatorOutput = translationService.get().translateHeatFiles(translationContext.get());
     Assert.assertNotNull(translatorOutput);
     if (MapUtils.isNotEmpty(translatorOutput.getErrorMessages()) && MapUtils.isNotEmpty(
         MessageContainerUtil
@@ -174,7 +177,7 @@ public class BaseResourceTranslationTest {
           "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
-    File file = File.createTempFile("VSP", "zip");
+    File file = new File(tempDir, "RTVSP"+fileNameRandomizer.getAndIncrement()+".zip");
 
     try (FileOutputStream fos = new FileOutputStream(file)) {
       ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
@@ -253,7 +256,7 @@ public class BaseResourceTranslationTest {
   }
 
   public void validateNodeTemplateIdInNestedConsolidationData(){
-    ConsolidationData consolidationData = translationContext.getConsolidationData();
+    ConsolidationData consolidationData = translationContext.get().getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
     Assert.assertNotNull(consolidationData);
@@ -263,7 +266,7 @@ public class BaseResourceTranslationTest {
   public void validateComputeTemplateConsolidationData(ConsolidationDataValidationType
                                                            validationType,
                                                        String testName) {
-    ConsolidationData consolidationData = translationContext.getConsolidationData();
+    ConsolidationData consolidationData = translationContext.get().getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
     Assert.assertNotNull(consolidationData);
@@ -328,17 +331,17 @@ public class BaseResourceTranslationTest {
   public void validateGetAttribute(String testName){
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
-    validateGetAttr(translationContext,expectedServiceTemplateModels,testName);
+    validateGetAttr(translationContext.get(),expectedServiceTemplateModels,testName);
   }
 
   public void validateNestedTemplateConsolidationData(String testName){
-    validateNestedConsolidationData(translationContext, testName);
+    validateNestedConsolidationData(translationContext.get(), testName);
   }
 
   public void validatePortTemplateConsolidationData(ConsolidationDataValidationType
                                                         validationType,
                                                     String testName) {
-    ConsolidationData consolidationData = translationContext.getConsolidationData();
+    ConsolidationData consolidationData = translationContext.get().getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
     Assert.assertNotNull(consolidationData);

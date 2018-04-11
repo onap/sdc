@@ -45,7 +45,7 @@ public class SecurityRulesToPortResourceConnectionTest extends BaseResourceTrans
     initTranslatorAndTranslate();
     testTranslation();
     validateNestedNodesConnectedInSecurityRuleToPort(TestConstants
-        .TEST_SECURITY_RULE_PORT_NESTED_CONNECTION, translationContext);
+        .TEST_SECURITY_RULE_PORT_NESTED_CONNECTION, translationContext.get());
   }
 
   @Test
@@ -57,7 +57,7 @@ public class SecurityRulesToPortResourceConnectionTest extends BaseResourceTrans
     initTranslatorAndTranslate();
     testTranslation();
     validateNestedNodesConnectedInSecurityRuleToPort(TestConstants
-        .TEST_SECURITY_RULE_PORT_NESTED_SHARED_PORT, translationContext);
+        .TEST_SECURITY_RULE_PORT_NESTED_SHARED_PORT, translationContext.get());
   }
 
   @Test
@@ -90,7 +90,7 @@ public class SecurityRulesToPortResourceConnectionTest extends BaseResourceTrans
     initTranslatorAndTranslate();
     testTranslation();
     validateNestedNodesConnectedInSecurityRuleToPort(TestConstants
-        .TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION, translationContext);
+        .TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION, translationContext.get());
   }
 
   @Test
@@ -103,7 +103,7 @@ public class SecurityRulesToPortResourceConnectionTest extends BaseResourceTrans
     initTranslatorAndTranslate();
     testTranslation();
     validateNestedNodesConnectedInSecurityRuleToPort(TestConstants
-        .TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT, translationContext);
+        .TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT, translationContext.get());
   }
 
 }

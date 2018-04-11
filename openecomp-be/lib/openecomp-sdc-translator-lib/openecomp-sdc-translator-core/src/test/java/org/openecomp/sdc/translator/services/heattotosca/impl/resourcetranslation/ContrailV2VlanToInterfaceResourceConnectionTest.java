@@ -75,12 +75,12 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
     initTranslatorAndTranslate();
     testTranslation();
 
-    Assert.assertNotNull(this.translationContext.getConsolidationData().getPortConsolidationData()
+    Assert.assertNotNull(this.translationContext.get().getConsolidationData().getPortConsolidationData()
         .getFilePortConsolidationData(MAIN_SERVICE_TEMPLATE_YAML)
         .getPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_FOR_ATTR_TEST));
 
     PortTemplateConsolidationData portTemplateConsolidationData =
-        this.translationContext.getConsolidationData().getPortConsolidationData()
+        this.translationContext.get().getConsolidationData().getPortConsolidationData()
             .getFilePortConsolidationData(MAIN_SERVICE_TEMPLATE_YAML)
             .getPortTemplateConsolidationData(PORT_NODE_TEMPLATE_ID_FOR_ATTR_TEST);
     ListMultimap<String, SubInterfaceTemplateConsolidationData> subInfMap = ArrayListMultimap.create();
@@ -109,7 +109,7 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
     targetResource.setType(NESTED_FILE_NAME_INOUT_ATTR_TEST);
 
     Optional<String> networkRole = HeatToToscaUtil.getNetworkRoleFromSubInterfaceId(targetResource, this
-        .translationContext);
+        .translationContext.get());
 
     Assert.assertEquals(NETWORK_ROLE_INOUT_ATTR_TEST,networkRole.get());
   }
@@ -175,7 +175,7 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
     targetResource.setProperties(propetyMap);
 
     Assert.assertTrue(HeatToToscaUtil.isSubInterfaceResource(targetResource, this
-        .translationContext));
+        .translationContext.get()));
   }
 
   @Test
@@ -191,7 +191,7 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
 
   private void validatePortNetworkRole(List<String> portNodeTemplateIds, String expectedNetworkRole) {
     FilePortConsolidationData filePortConsolidationData =
-        translationContext.getConsolidationData().getPortConsolidationData()
+        translationContext.get().getConsolidationData().getPortConsolidationData()
             .getFilePortConsolidationData(MAIN_SERVICE_TEMPLATE_YAML);
     for (String portNodeTemplateId : portNodeTemplateIds) {
       PortTemplateConsolidationData portTemplateConsolidationData =

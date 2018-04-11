@@ -25,21 +25,21 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.compositi
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl.ComputeNewNodeTemplateIdGenerator;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to.UnifiedCompositionTo;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseResourceTranslationTest;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ComputeNewNodeTemplateIdGeneratorTest extends BaseResourceTranslationTest {
+public class ComputeNewNodeTemplateIdGeneratorTest  {
 
   private static final String SERVER_PCM = "server_pcm";
-  private UnifiedSubstitutionNodeTemplateIdGenerator unifiedSubstitutionNodeTemplateIdGenerator;
+  private static UnifiedSubstitutionNodeTemplateIdGenerator unifiedSubstitutionNodeTemplateIdGenerator;
 
   @BeforeClass
-  public void setUp(){
+  public static void setItUp(){
     unifiedSubstitutionNodeTemplateIdGenerator = new ComputeNewNodeTemplateIdGenerator();
   }
 
