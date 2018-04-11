@@ -76,6 +76,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -89,6 +90,9 @@ public class BaseResourceTranslationTest {
   private String zipFilename = "VSP.zip";
   private TranslationService translationService;
   private File translatedZipFile;
+
+  private static AtomicInteger fileNameRandomizer = new AtomicInteger(0);
+  private static File tempDir = new File(System.getProperty("java.io.tmpdir"));
 
   private Map<String, byte[]> expectedResultMap = new HashMap<>();
   private Set<String> expectedResultFileNameSet = new HashSet<>();
@@ -174,7 +178,7 @@ public class BaseResourceTranslationTest {
           "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
-    File file = File.createTempFile("VSP", "zip");
+    File file = new File(tempDir, "RTVSP"+fileNameRandomizer.getAndIncrement()+".zip");
 
     try (FileOutputStream fos = new FileOutputStream(file)) {
       ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
