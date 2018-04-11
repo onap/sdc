@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fc668550",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-11T13:48:37Z",
+      "side": 1,
+      "message": "Stream api have map and collect. Foreach in this case abuses the stream API.",
+      "revId": "cd8c2b42d41c1a0ae4cbcd775a668a197fa2b038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3c8dcdd3",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/UserPermissionsDaoImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-11T13:48:37Z",
+      "side": 1,
+      "message": "remove unused imports.",
+      "revId": "cd8c2b42d41c1a0ae4cbcd775a668a197fa2b038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5c8a19c0",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/commands/PopulateUserPermissions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-11T13:48:37Z",
+      "side": 1,
+      "message": "Sonar remark - \nUtility classes should not have public constructors. Please create a private constructor.",
+      "revId": "cd8c2b42d41c1a0ae4cbcd775a668a197fa2b038",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
