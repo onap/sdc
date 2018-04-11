@@ -50,6 +50,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.config.api.Configuration;
 import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -2166,7 +2167,8 @@ public class UnifiedCompositionService {
       }
 
       if (unifiedCompositionEntity == UnifiedCompositionEntity.PORT
-          && entityConsolidationData instanceof PortTemplateConsolidationData) {
+          && entityConsolidationData instanceof PortTemplateConsolidationData
+          && ToggleableFeature.VLAN_TAGGING.isActive()) {
         properties.put(SUB_INTERFACE_INDICATOR_PROPERTY,
             ((PortTemplateConsolidationData) entityConsolidationData).isPortBoundToSubInterface());
       }
