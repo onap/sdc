@@ -1,0 +1,1 @@
+org/openecomp/sdc/itempermissions/dao/impl/ItemPermissionsManagerImplTest*
