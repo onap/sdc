@@ -64,6 +64,12 @@
             <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <artifactId>openecomp-zusammen-tools</artifactId>
     <groupId>org.openecomp.sdc.core.tools</groupId>
