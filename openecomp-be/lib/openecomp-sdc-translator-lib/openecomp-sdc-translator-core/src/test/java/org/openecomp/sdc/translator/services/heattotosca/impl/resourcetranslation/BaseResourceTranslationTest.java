@@ -76,6 +76,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -90,6 +91,9 @@ public class BaseResourceTranslationTest {
   private TranslationService translationService;
   private File translatedZipFile;
 
+  private static AtomicInteger fileNameRandomizer = new AtomicInteger(0);
+  private static File tempDir = new File(System.getProperty("java.io.tmpdir"));
+
   private Map<String, byte[]> expectedResultMap = new HashMap<>();
   private Set<String> expectedResultFileNameSet = new HashSet<>();
 
@@ -101,7 +105,6 @@ public class BaseResourceTranslationTest {
     manager.enableAll();
   }
 
-  @AfterClass
   public static void disableToggleableFeatures() {
     manager.disableAll();
     manager = null;
@@ -134,8 +137,8 @@ public class BaseResourceTranslationTest {
       }
     }
 
-    try (FileInputStream fis = new FileInputStream(translatedZipFile);
-         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
+    try (FileInputStream fis = new FileInputStream(translatedZipFile);BufferedInputStream bis = new BufferedInputStream(fis);
+         ZipInputStream zis = new ZipInputStream(bis)) {
       ZipEntry entry;
       String name;
       String expected;
@@ -174,7 +177,7 @@ public class BaseResourceTranslationTest {
           "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
-    File file = File.createTempFile("VSP", "zip");
+    File file = new File(tempDir, "RTVSP"+getFileNumber()+".zip");
 
     try (FileOutputStream fos = new FileOutputStream(file)) {
       ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
@@ -183,6 +186,15 @@ public class BaseResourceTranslationTest {
     }
 
     return file;
+  }
+
+
+  private int getFileNumber(){
+    int num=0;
+    synchronized (fileNameRandomizer){
+      num = fileNameRandomizer.getAndIncrement();
+    }
+    return num;
   }
 
   private String getErrorAsString(Map<String, List<ErrorMessage>> errorMessages) {

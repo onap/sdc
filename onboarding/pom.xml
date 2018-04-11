@@ -169,19 +169,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.5</version>
-                <configuration>
-                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                    <filesets>
-                        <fileset>
-                            <directory>${project.build.directory}</directory>
-                            <excludes>
-                                <exclude>test-classes/**</exclude>
-                                <exclude>pmd/**</exclude>
-                                <exclude>maven-status/**</exclude>
-                            </excludes>
-                        </fileset>
-                    </filesets>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -192,7 +179,7 @@
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>${project.build.directory}/../src/test/resources</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/src/test/resources</additionalClasspathElement>
                     </additionalClasspathElements>
                     <systemPropertyVariables>
                         <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
