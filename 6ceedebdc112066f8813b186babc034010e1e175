@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7accbe61",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-11T14:30:47Z",
+      "side": 1,
+      "message": "if you import static OnboardingMethod.NetworkPackage you can import static OnboardingMethod.Manual",
+      "revId": "6ceedebdc112066f8813b186babc034010e1e175",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
