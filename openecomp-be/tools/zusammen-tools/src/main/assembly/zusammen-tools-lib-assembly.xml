@@ -7,7 +7,6 @@
 	</formats>
 
 	<includeBaseDirectory>false</includeBaseDirectory>
-
 	<files>
 		<file>
 			<source>src/main/resources/zusammenMainTool.sh</source>
@@ -22,18 +21,11 @@
 			<fileMode>0755</fileMode>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/target</directory>
-			<includes>
-				<include>
-					openecomp-zusammen*.jar
-				</include>
-			</includes>
-			<outputDirectory>/</outputDirectory>
-		</fileSet>
-		<fileSet>
 			<directory>${basedir}/target/lib</directory>
 			<outputDirectory>/lib</outputDirectory>
 		</fileSet>
+
 	</fileSets>
+
 </assembly>
 
