@@ -1,8 +1,8 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ConsolidationDataUtilTest {
     private static final String PORT_TYPE_FORMAT_1 = "a_11_network_port_22";
