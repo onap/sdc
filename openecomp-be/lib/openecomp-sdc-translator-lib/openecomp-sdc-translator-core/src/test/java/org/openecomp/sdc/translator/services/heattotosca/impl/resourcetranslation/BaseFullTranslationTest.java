@@ -19,9 +19,10 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.collections4.MapUtils;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
@@ -33,7 +34,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
 import org.togglz.testing.TestFeatureManager;
@@ -42,7 +42,7 @@ import org.togglz.testing.TestFeatureManagerProvider;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -59,7 +59,11 @@ public class BaseFullTranslationTest {
   public static final String IN_POSTFIX = "/in";
   public static final String OUT_POSTFIX = "/out";
 
+  @Rule
+  public TestName name = new TestName();
+
   protected static TestFeatureManager manager;
+  private static File tempDir = new File(System.getProperty("java.io.tmpdir"));
 
   @BeforeClass
   public static void enableToggleableFeatures(){
@@ -69,7 +73,6 @@ public class BaseFullTranslationTest {
   }
 
 
-  @AfterClass
   public static void disableToggleableFeatures() {
     manager.disableAll();
     manager = null;
@@ -77,16 +80,16 @@ public class BaseFullTranslationTest {
   }
 
   protected void testTranslationWithInit(String path) throws IOException {
-    File translatedZipFile = initTranslatorAndTranslate(path);
+    byte[] translatedZipFile = initTranslatorAndTranslate(path);
     testTranslation(path, translatedZipFile);
   }
 
-  protected File initTranslatorAndTranslate(String path) throws IOException {
+  protected byte[] initTranslatorAndTranslate(String path) throws IOException {
     HeatToToscaTranslator heatToToscaTranslator = HeatToToscaTranslatorFactory.getInstance().createInterface();
     return translateZipFile(path, heatToToscaTranslator);
   }
 
-  protected void testTranslation(String basePath, File translatedZipFile) throws IOException {
+  protected void testTranslation(String basePath, byte[] translatedZipFile) throws IOException {
 
     URL url = BaseFullTranslationTest.class.getResource(basePath + OUT_POSTFIX);
     Set<String> expectedResultFileNameSet = new HashSet<>();
@@ -103,8 +106,8 @@ public class BaseFullTranslationTest {
       }
     }
 
-    try (FileInputStream fis = new FileInputStream(translatedZipFile);
-         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))) {
+    try (ByteArrayInputStream fis = new ByteArrayInputStream(translatedZipFile);BufferedInputStream bis = new BufferedInputStream(fis);
+         ZipInputStream zis = new ZipInputStream(bis)) {
       ZipEntry entry;
       String name;
       String expected;
@@ -127,10 +130,9 @@ public class BaseFullTranslationTest {
       }
     }
     assertEquals(0, expectedResultFileNameSet.size());
-    translatedZipFile.delete();
   }
 
-  private File translateZipFile(String basePath, HeatToToscaTranslator heatToToscaTranslator) throws IOException {
+  private byte[] translateZipFile(String basePath, HeatToToscaTranslator heatToToscaTranslator) throws IOException {
     URL inputFilesUrl = this.getClass().getResource(basePath + IN_POSTFIX);
     String path = inputFilesUrl.getPath();
     TestUtils.addFilesToTranslator(heatToToscaTranslator, path);
@@ -144,15 +146,9 @@ public class BaseFullTranslationTest {
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
 
-    File file = File.createTempFile("VSP", "zip");
+    byte[] data = new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);
 
-    try (FileOutputStream fos = new FileOutputStream(file)) {
-      ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
-      fos.write(
-          toscaFileOutputService.createOutputFile(translatorOutput.getToscaServiceModel(), null));
-    }
-
-    return file;
+    return data;
   }
 
   private String getErrorAsString(Map<String, List<ErrorMessage>> errorMessages) {

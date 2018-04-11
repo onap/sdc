@@ -251,8 +251,6 @@
                                     http://www.github.com/kongchen/swagger-maven-plugin
                                 </termsOfService>
                             </info>
-                            <templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
-                            <outputPath>${basedir}/target/generated/api.html</outputPath>
                             <swaggerDirectory>${basedir}/target/generated/swagger-ui
                             </swaggerDirectory>
                         </apiSource>

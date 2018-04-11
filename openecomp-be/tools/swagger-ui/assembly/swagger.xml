@@ -60,7 +60,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>./target</directory>
+            <directory>./target/api-docs</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>${api.json.file}</include>
