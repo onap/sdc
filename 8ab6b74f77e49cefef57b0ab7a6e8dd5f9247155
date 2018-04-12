@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2a6576b4",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/onap/sdc/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-12T16:21:25Z",
+      "side": 1,
+      "message": "If you want this exception logged, then use LOGGER.error(\"...\", exception); In this case both the exception\u0027s message and stack trace will be in the log. On the other hand, LOGGER.error(\"...\" + exception) translates into LOGGER.error(\"...\" + exception.toString()); In which case some important information will be lost.",
+      "range": {
+        "startLine": 84,
+        "startChar": 64,
+        "endLine": 84,
+        "endChar": 76
+      },
+      "revId": "8ab6b74f77e49cefef57b0ab7a6e8dd5f9247155",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a736a7f",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/onap/sdc/activityspec/errors/DefaultExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-12T16:21:25Z",
+      "side": 1,
+      "message": "Same problem with exception.toString()",
+      "range": {
+        "startLine": 89,
+        "startChar": 75,
+        "endLine": 89,
+        "endChar": 98
+      },
+      "revId": "8ab6b74f77e49cefef57b0ab7a6e8dd5f9247155",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
