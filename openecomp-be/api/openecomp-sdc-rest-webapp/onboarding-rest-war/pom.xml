@@ -81,6 +81,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>unique-type-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>${javax.servlet.version}</version>
