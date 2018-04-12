@@ -1,5 +1,8 @@
 package org.openecomp.sdc.model.impl.zusammen;
 
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
@@ -31,9 +34,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
 
 public class ServiceModelDaoZusammenImpl
     implements ServiceModelDao<ToscaServiceModel, ServiceElement> {
@@ -169,7 +169,7 @@ public class ServiceModelDaoZusammenImpl
     SessionContext context = ZusammenUtil.createSessionContext();
     ElementContext elementContext = new ElementContext(vspId, version.getId());
 
-    ZusammenElement serviceModelElement = buildStructuralElement(elementType, Action.UPDATE);
+    ZusammenElement serviceModelElement = buildStructuralElement(elementType, Action.IGNORE);
 
     Optional<ElementInfo> origServiceModel = getServiceModelElementInfo(context, elementContext);
     if (!origServiceModel.isPresent()) {
@@ -177,13 +177,11 @@ public class ServiceModelDaoZusammenImpl
     }
 
     Id serviceModelElementId = origServiceModel.get().getId();
-    overrideServiceTemplates(serviceModelElementId, serviceModel, context, elementContext,
-        serviceModelElement);
-    serviceModelElement.getInfo()
-        .addProperty(BASE_PROPERTY, serviceModel.getEntryDefinitionServiceTemplate());
+    serviceModelElement.setElementId(serviceModelElementId);
+    overrideServiceTemplates(serviceModelElementId, serviceModel, context, elementContext, serviceModelElement);
+    serviceModelElement.getInfo().addProperty(BASE_PROPERTY, serviceModel.getEntryDefinitionServiceTemplate());
 
-    zusammenAdaptor
-        .saveElement(context, elementContext, serviceModelElement, "Override service model");
+    zusammenAdaptor.saveElement(context, elementContext, serviceModelElement, "Override service model");
   }
 
 
@@ -193,32 +191,16 @@ public class ServiceModelDaoZusammenImpl
                                         ElementContext elementContext,
                                         ZusammenElement serviceModelElement) {
     Optional<ElementInfo> elementInfo = zusammenAdaptor.getElementInfoByName(
-        context, elementContext, serviceModelElementId, ElementType.ServiceTemplate.name());
+        context, elementContext, serviceModelElementId, ElementType.Templates.name());
     if (!elementInfo.isPresent()) {
       return;
     }
-    ZusammenElement zusammenElement =
-        buildStructuralElement(ElementType.ServiceTemplate, Action.UPDATE);
-    Collection<Element> elements = zusammenAdaptor.listElementData(context, elementContext,
-        elementInfo.get().getId());
-
-    elements
-        .forEach(element -> zusammenElement
-            .addSubElement(overrideServiceTemplateInElement(element, serviceModel)));
-
-    serviceModelElement.addSubElement(zusammenElement);
-  }
-
-  private ZusammenElement overrideServiceTemplateInElement(Element element,
-                                                           ToscaServiceModel serviceModel) {
-    ZusammenElement serviceTemplateElement = (ZusammenElement) element;
-    String templateName = element.getInfo().getName();
-    Optional<ServiceTemplate> serviceTemplate = serviceModel.getServiceTemplate(templateName);
-    serviceTemplate.ifPresent(serviceTemplateFile -> {
-      String yaml = new ToscaExtensionYamlUtil().objectToYaml(serviceTemplateFile);
-      serviceTemplateElement.setData(new ByteArrayInputStream(yaml.getBytes()));
-    });
-    return serviceTemplateElement;
+    ZusammenElement templateElement = buildStructuralElement(ElementType.Templates, Action.UPDATE);
+    templateElement.setElementId(elementInfo.get().getId());
+    serviceModel.getServiceTemplates().forEach((templateName, serviceTemplate) -> templateElement.addSubElement(
+        buildServiceTemplateElement(templateName, serviceTemplate,
+            serviceModel.getEntryDefinitionServiceTemplate(), Action.UPDATE)));
+    serviceModelElement.addSubElement(templateElement);
   }
 
   private Optional<ElementInfo> getServiceModelElementInfo(SessionContext context,

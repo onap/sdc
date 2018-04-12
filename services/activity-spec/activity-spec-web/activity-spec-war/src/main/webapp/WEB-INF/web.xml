@@ -12,12 +12,12 @@
     </context-param>
 
     <listener>
-        <listener-class>org.openecomp.activityspec.api.server.listeners.ActivitySpecAppStartupListener</listener-class>
+        <listener-class>org.onap.sdc.activityspec.api.server.listeners.ActivitySpecAppStartupListener</listener-class>
     </listener>
 
     <filter>
         <filter-name>SessionContextFilter</filter-name>
-        <filter-class>org.openecomp.activityspec.api.server.filters.ActivitySpecSessionContextFilter</filter-class>
+        <filter-class>org.onap.sdc.activityspec.api.server.filters.ActivitySpecSessionContextFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SessionContextFilter</filter-name>
