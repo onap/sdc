@@ -441,6 +441,10 @@
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
+			<properties>
+				<docker.username>docker</docker.username>
+				<docker.password>docker</docker.password>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -484,12 +488,11 @@
 							<registry>nexus3.onap.org:10001</registry>
 							<authConfig>
 								<pull>
-									<username>docker</username>
-									<password>docker</password>
+									<username>${docker.username}</username>
+									<password>${docker.password}</password>
 								</pull>
 							</authConfig>
 							<images>
-
 
 								<!-- Build frontend image -->
 								<image>
@@ -543,6 +546,5 @@
 				</plugins>
 			</build>
 		</profile>
-
 	</profiles>
 </project>
