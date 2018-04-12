@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_59a4664a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-12T08:59:13Z",
+      "side": 1,
+      "message": "There are 3 static analysis warnings that can be fixed",
+      "revId": "879bd3a43094fefd96fafe20d9eb36d13a38b5c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_591a26c7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-12T08:59:13Z",
+      "side": 1,
+      "message": "map + collect instead...",
+      "range": {
+        "startLine": 131,
+        "startChar": 17,
+        "endLine": 131,
+        "endChar": 24
+      },
+      "revId": "879bd3a43094fefd96fafe20d9eb36d13a38b5c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1951fe35",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-12T08:59:13Z",
+      "side": 1,
+      "message": "!ItemType.vsp.name().equals(item.getType())\n\u003d\u003d\u003e not vsp || (implicitly: vsp \u0026\u0026 ) method match the filter",
+      "range": {
+        "startLine": 275,
+        "startChar": 23,
+        "endLine": 275,
+        "endChar": 65
+      },
+      "revId": "879bd3a43094fefd96fafe20d9eb36d13a38b5c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_196a5eee",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-12T08:59:13Z",
+      "side": 1,
+      "message": "make it void and rearrange according to the calling order",
+      "revId": "879bd3a43094fefd96fafe20d9eb36d13a38b5c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_191fbe6d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-types/src/main/java/org/openecomp/sdcrests/item/types/ItemDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-12T08:59:13Z",
+      "side": 1,
+      "message": "Is it necessary?",
+      "range": {
+        "startLine": 13,
+        "startChar": 40,
+        "endLine": 13,
+        "endChar": 59
+      },
+      "revId": "879bd3a43094fefd96fafe20d9eb36d13a38b5c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
