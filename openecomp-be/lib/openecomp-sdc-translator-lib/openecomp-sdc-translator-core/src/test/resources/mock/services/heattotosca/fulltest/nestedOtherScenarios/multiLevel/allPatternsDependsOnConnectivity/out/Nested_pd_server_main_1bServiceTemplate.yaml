@@ -11,11 +11,6 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_pd_server_main_1b_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -113,10 +108,7 @@ topology_template:
           get_input: port_pd_server_main_1b_port_exCP_naming
         vlan_requirements:
           get_input: port_pd_server_main_1b_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_pd_server_main_1b_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_pd_server_main_1b_port_ip_requirements
         network_role_tag:

@@ -54,12 +54,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_plt_oam_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       vm_image_name:
         type: string
         required: true
@@ -102,12 +96,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
-      port_plt_internal_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_plt_internal_0_port_subnetpoolid:
         type: string
         required: true
@@ -254,12 +242,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_plt_data_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_plt_oam_0_port_replacement_policy:
         type: list
         required: true
@@ -805,12 +787,6 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-      port_app_internal_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       compute_app_scheduler_hints:
         type: list
         required: true
@@ -827,12 +803,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_app_data_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_app_oam_0_port_replacement_policy:
         type: list
         required: true
@@ -881,12 +851,6 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-      port_app_oam_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_app_data_0_port_network:
         type: list
         required: true
@@ -1588,12 +1552,6 @@ node_types:
   org.openecomp.resource.abstract.nodes.iox:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_iox_oam_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_iox_data_0_port_ip_requirements:
         type: list
         required: true
@@ -1616,12 +1574,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_iox_internal_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       vm_flavor_name:
         type: string
         required: true
@@ -1630,12 +1582,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_iox_data_0_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_iox_data_0_port_allowed_address_pairs:
         type: list
         required: true

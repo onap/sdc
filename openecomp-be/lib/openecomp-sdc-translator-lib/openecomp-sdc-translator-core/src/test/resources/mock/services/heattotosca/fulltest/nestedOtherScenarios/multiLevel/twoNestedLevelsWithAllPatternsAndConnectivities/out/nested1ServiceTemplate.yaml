@@ -135,8 +135,6 @@ topology_template:
           - 0
         vm_flavor_name:
           get_input: pd_server_1b_flavor
-        port_pd_server_1b_port_subinterface_indicator:
-        - false
         vm_image_name:
           get_input: pd_server_1b_image
         port_pd_server_1b_port_replacement_policy:
@@ -215,9 +213,6 @@ topology_template:
         - get_input:
           - cmaui_1c1_names
           - 0
-        port_cmaui_port_subinterface_indicator:
-        - false
-        - false
         service_template_filter:
           substitute_service_template: Nested_cmaui_1c1ServiceTemplate.yaml
           count: 2
@@ -270,8 +265,6 @@ topology_template:
         port_ps_server_1b_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_ps_server_1b_port_subinterface_indicator:
-        - false
         port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:
@@ -348,8 +341,6 @@ topology_template:
             get_attribute:
             - abstract_cmaui_1c1
             - cmaui_1c1_accessIPv4
-        port_oam_port_subinterface_indicator:
-        - false
         port_oam_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -396,8 +387,6 @@ topology_template:
             - 1
         vm_image_name:
           get_input: oam_server_1c2_image
-        port_oam_port_subinterface_indicator:
-        - false
         port_oam_port_ip_requirements:
         - ip_version: 4
           ip_count_required:

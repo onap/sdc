@@ -605,6 +605,9 @@ public class UnifiedCompositionService {
           handleNodeTypeProperties(nestedServiceTemplate,
                   portEntityConsolidationDataList, portNodeTemplate, UnifiedCompositionEntity.PORT,
                   null, context);
+          //Add subinterface_indicator property to PORT
+          addPortSubInterfaceIndicatorProperty(portNodeTemplate.getProperties(),
+              filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId));
         }
       }
     }
@@ -1866,6 +1869,10 @@ public class UnifiedCompositionService {
             portTemplateConsolidationDataList, computeTemplateConsolidationData,
             unifiedCompositionDataList, context);
 
+    //Add subinterface_indicator property to PORT
+    portTemplateConsolidationDataList.forEach(entity ->
+          addPortSubInterfaceIndicatorProperty(newPortNodeTemplate.getProperties(), entity));
+
     String newPortNodeTemplateId =
             getNewPortNodeTemplateId(portTemplateConsolidationData
                             .getNodeTemplateId(), connectedComputeNodeType,
@@ -2141,7 +2148,14 @@ public class UnifiedCompositionService {
     handleNodeTypeProperties(substitutionServiceTemplate,
             entityConsolidationDataList, nodeTemplate, unifiedCompositionEntity,
             computeTemplateConsolidationData, context);
+  }
 
+  private void addPortSubInterfaceIndicatorProperty(Map<String, Object> properties,
+                                                    EntityConsolidationData entityConsolidationData) {
+    if (ToggleableFeature.VLAN_TAGGING.isActive()) {
+      properties.put(SUB_INTERFACE_INDICATOR_PROPERTY,
+          ((PortTemplateConsolidationData) entityConsolidationData).isPortBoundToSubInterface());
+    }
   }
 
   private void handleNodeTemplateProperties(UnifiedCompositionTo unifiedCompositionTo,
@@ -2164,13 +2178,6 @@ public class UnifiedCompositionService {
               nodeTemplateId);
       if (MapUtils.isEmpty(properties)) {
         continue;
-      }
-
-      if (unifiedCompositionEntity == UnifiedCompositionEntity.PORT
-          && entityConsolidationData instanceof PortTemplateConsolidationData
-          && ToggleableFeature.VLAN_TAGGING.isActive()) {
-        properties.put(SUB_INTERFACE_INDICATOR_PROPERTY,
-            ((PortTemplateConsolidationData) entityConsolidationData).isPortBoundToSubInterface());
       }
 
       for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {

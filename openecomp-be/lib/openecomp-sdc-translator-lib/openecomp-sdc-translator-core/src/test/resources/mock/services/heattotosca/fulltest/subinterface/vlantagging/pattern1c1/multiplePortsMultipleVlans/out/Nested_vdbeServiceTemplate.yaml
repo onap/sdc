@@ -176,11 +176,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_vmi_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     subinterface_vlan1_aap_untrusted_ip_prefix:
       type: list
       required: true
@@ -280,11 +275,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_oam_vmi_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_vdbe_untr_vmi_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -427,10 +417,7 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_vdbe_untr_vmi_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_vdbe_untr_vmi_subinterface_indicator
-          - index_value
+        subinterface_indicator: true
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_vmi_virtual_network_refs
@@ -471,10 +458,7 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_vdbe_oam_vmi_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_vdbe_oam_vmi_subinterface_indicator
-          - index_value
+        subinterface_indicator: true
         virtual_network_refs:
           get_input:
           - port_vdbe_oam_vmi_virtual_network_refs

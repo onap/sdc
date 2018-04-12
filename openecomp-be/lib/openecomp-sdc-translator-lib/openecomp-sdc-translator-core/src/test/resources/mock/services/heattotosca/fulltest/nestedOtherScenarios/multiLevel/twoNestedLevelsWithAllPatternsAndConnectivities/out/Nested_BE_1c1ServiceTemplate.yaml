@@ -77,11 +77,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_BE_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
   node_templates:
     BE_1c1_BE_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -98,10 +93,7 @@ topology_template:
           get_input: port_BE_port_exCP_naming
         vlan_requirements:
           get_input: port_BE_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_BE_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_BE_port_ip_requirements
         network_role_tag:

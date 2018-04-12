@@ -184,8 +184,6 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - packet_internal_network
-        port_pd01_port_subinterface_indicator:
-        - false
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -231,8 +229,6 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - packet_internal_network
-        port_pd01_port_subinterface_indicator:
-        - false
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:

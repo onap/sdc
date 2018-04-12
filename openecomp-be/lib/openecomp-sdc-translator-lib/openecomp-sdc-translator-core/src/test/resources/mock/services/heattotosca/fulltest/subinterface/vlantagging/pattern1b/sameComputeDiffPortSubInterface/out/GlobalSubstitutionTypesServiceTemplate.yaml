@@ -54,12 +54,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_ps01_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_ps01_port_order:
         type: integer
         required: true
@@ -543,12 +537,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_pd01_port_order:
         type: integer
         required: true

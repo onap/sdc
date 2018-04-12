@@ -26,11 +26,6 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_oam_server_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_oam_server_port_replacement_policy:
       type: list
       required: true
@@ -113,10 +108,7 @@ topology_template:
           get_input: port_oam_server_port_exCP_naming
         vlan_requirements:
           get_input: port_oam_server_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_oam_server_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_oam_server_port_ip_requirements
         network_role_tag:

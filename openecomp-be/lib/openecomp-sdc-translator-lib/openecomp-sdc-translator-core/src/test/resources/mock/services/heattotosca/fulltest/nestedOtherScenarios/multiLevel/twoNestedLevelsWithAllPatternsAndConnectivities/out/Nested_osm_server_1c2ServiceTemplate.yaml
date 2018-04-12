@@ -22,11 +22,6 @@ topology_template:
     port_osm_port_subnetpoolid:
       type: string
       required: true
-    port_osm_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -103,10 +98,7 @@ topology_template:
           get_input: port_osm_port_exCP_naming
         vlan_requirements:
           get_input: port_osm_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_osm_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_osm_port_ip_requirements
         network_role_tag:

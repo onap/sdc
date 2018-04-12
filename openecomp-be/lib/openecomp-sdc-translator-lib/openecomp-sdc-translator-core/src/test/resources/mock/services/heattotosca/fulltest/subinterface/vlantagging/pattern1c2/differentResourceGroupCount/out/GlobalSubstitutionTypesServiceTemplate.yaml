@@ -8,12 +8,6 @@ node_types:
   org.openecomp.resource.abstract.nodes.vdbe:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_vdbe_untr_1_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       subinterface_nested_parent_interface:
         type: list
         required: true

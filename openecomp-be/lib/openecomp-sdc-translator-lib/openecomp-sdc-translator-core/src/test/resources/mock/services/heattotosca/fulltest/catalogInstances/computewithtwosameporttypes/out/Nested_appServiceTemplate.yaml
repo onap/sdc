@@ -14,11 +14,6 @@ topology_template:
     port_app_data_0_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_app_internal_0_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     compute_app_scheduler_hints:
       type: list
       required: true
@@ -32,11 +27,6 @@ topology_template:
     port_app_data_0_port_network_role:
       type: string
       required: true
-    port_app_data_0_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_app_oam_0_port_replacement_policy:
       type: list
       required: true
@@ -76,11 +66,6 @@ topology_template:
     port_app_oam_0_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_app_oam_0_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_app_data_0_port_network:
       type: list
       required: true
@@ -290,10 +275,7 @@ topology_template:
           get_input: port_app_internal_0_port_exCP_naming
         vlan_requirements:
           get_input: port_app_internal_0_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_app_internal_0_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_app_internal_0_port_ip_requirements
         network_role_tag:
@@ -334,10 +316,7 @@ topology_template:
           get_input: port_app_oam_0_port_exCP_naming
         vlan_requirements:
           get_input: port_app_oam_0_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_app_oam_0_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_app_oam_0_port_ip_requirements
         network_role_tag:
@@ -382,10 +361,7 @@ topology_template:
           get_input: port_app_data_0_port_exCP_naming
         vlan_requirements:
           get_input: port_app_data_0_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_app_data_0_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_app_data_0_port_ip_requirements
         network_role_tag:

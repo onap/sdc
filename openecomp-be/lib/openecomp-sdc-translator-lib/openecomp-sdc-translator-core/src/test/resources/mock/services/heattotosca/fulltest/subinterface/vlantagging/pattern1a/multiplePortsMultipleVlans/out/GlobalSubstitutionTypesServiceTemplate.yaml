@@ -52,12 +52,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: float
-      port_vdbe_untr_2_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       subinterface_vlan2_aap_untrusted_v6_ip_prefix:
         type: list
         required: true
@@ -196,12 +190,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       subinterface_vlan1_ip_v6_address:
         type: list
         required: true

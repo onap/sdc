@@ -32,11 +32,6 @@ topology_template:
     port_pd02_port_network_role_tag:
       type: string
       required: true
-    port_pd02_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_pd01_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
@@ -56,11 +51,6 @@ topology_template:
     port_pd02_port_network_role:
       type: string
       required: true
-    port_pd01_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_pd01_port_vlan_requirements:
       type: list
       required: true
@@ -156,10 +146,7 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_pd01_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_pd01_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_pd01_port_ip_requirements
         network_role_tag:
@@ -192,10 +179,7 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_pd02_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_pd02_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_pd02_port_ip_requirements
         network_role_tag:

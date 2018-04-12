@@ -213,6 +213,10 @@ topology_template:
     vson_server_oam_net_port_10:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        subnetpoolid:
+          get_input: port_vson_server_oam_net_port_10_subnetpoolid
+        network:
+          get_input: oam_net_id
         ip_requirements:
           get_input: port_vson_server_oam_net_port_10_ip_requirements
         security_groups:
@@ -224,10 +228,9 @@ topology_template:
             get_input:
             - oam_net_ips
             - get_input: instance_index
-        subnetpoolid:
-          get_input: port_vson_server_oam_net_port_10_subnetpoolid
         mac_requirements:
           get_input: port_vson_server_oam_net_port_10_mac_requirements
+        subinterface_indicator: false
         name:
           str_replace:
             template: VNF_NAME_VNF_ID_SERVER_NAME_oam_net_port_0
@@ -246,8 +249,6 @@ topology_template:
           get_input: port_vson_server_oam_net_port_10_vlan_requirements
         network_role_tag:
           get_input: port_vson_server_oam_net_port_10_network_role_tag
-        network:
-          get_input: oam_net_id
         order:
           get_input: port_vson_server_oam_net_port_10_order
       requirements:

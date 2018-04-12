@@ -132,6 +132,10 @@ topology_template:
     cmaui_port_7:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        subnetpoolid:
+          get_input: port_cmaui_port_7_subnetpoolid
+        network:
+          get_input: net1
         replacement_policy: AUTO
         ip_requirements:
           get_input: port_cmaui_port_7_ip_requirements
@@ -144,18 +148,15 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 0
-        subnetpoolid:
-          get_input: port_cmaui_port_7_subnetpoolid
         mac_requirements:
           get_input: port_cmaui_port_7_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_cmaui_port_7_exCP_naming
         vlan_requirements:
           get_input: port_cmaui_port_7_vlan_requirements
         network_role_tag:
           get_input: port_cmaui_port_7_network_role_tag
-        network:
-          get_input: net1
         order:
           get_input: port_cmaui_port_7_order
       requirements:
@@ -166,6 +167,10 @@ topology_template:
     cmaui_port_8:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        subnetpoolid:
+          get_input: port_cmaui_port_8_subnetpoolid
+        network:
+          get_input: net2
         replacement_policy: AUTO
         ip_requirements:
           get_input: port_cmaui_port_8_ip_requirements
@@ -179,18 +184,15 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 0
-        subnetpoolid:
-          get_input: port_cmaui_port_8_subnetpoolid
         mac_requirements:
           get_input: port_cmaui_port_8_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_cmaui_port_8_exCP_naming
         vlan_requirements:
           get_input: port_cmaui_port_8_vlan_requirements
         network_role_tag:
           get_input: port_cmaui_port_8_network_role_tag
-        network:
-          get_input: net2
         order:
           get_input: port_cmaui_port_8_order
       requirements:

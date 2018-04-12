@@ -162,6 +162,7 @@ topology_template:
           get_input: port_pcm_port_11_subnetpoolid
         mac_requirements:
           get_input: port_pcm_port_11_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_pcm_port_11_exCP_naming
         vlan_requirements:
@@ -193,6 +194,7 @@ topology_template:
           get_input: port_pcm_port_01_subnetpoolid
         mac_requirements:
           get_input: port_pcm_port_01_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_pcm_port_01_exCP_naming
         vlan_requirements:

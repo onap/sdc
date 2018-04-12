@@ -57,7 +57,6 @@ topology_template:
         replacement_policy: AUTO
         network:
           get_input: port_name
-        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -89,7 +88,6 @@ topology_template:
         replacement_policy: AUTO
         network:
           get_input: port_name
-        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -108,8 +106,6 @@ topology_template:
         - RAW
         vm_image_name:
           get_input: image_smp_name
-        port_port_1_subinterface_indicator:
-        - false
         port_port_2_replacement_policy:
         - AUTO
         compute_smp_name:
@@ -118,8 +114,6 @@ topology_template:
         - AUTO
         port_port_1_network:
         - get_input: port_name
-        port_port_2_subinterface_indicator:
-        - false
         port_port_2_network:
         - get_input: port_name
         compute_smp_metadata:

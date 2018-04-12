@@ -413,8 +413,6 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_subinterface_indicator:
-        - false
         port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
@@ -467,8 +465,6 @@ topology_template:
         - get_attribute:
           - network_policy_server
           - name
-        port_pd01_port_subinterface_indicator:
-        - false
         service_template_filter:
           substitute_service_template: Nested_ps_serverServiceTemplate.yaml
           count: 1
@@ -508,8 +504,6 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_subinterface_indicator:
-        - false
         compute_oam_server_user_data_format:
         - RAW
         compute_oam_server_name:

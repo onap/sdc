@@ -72,12 +72,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_port1_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_port1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true

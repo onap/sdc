@@ -138,6 +138,7 @@ topology_template:
           get_input: port_pd_server_pattern4_port_01_subnetpoolid
         mac_requirements:
           get_input: port_pd_server_pattern4_port_01_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_pd_server_pattern4_port_01_exCP_naming
         vlan_requirements:
@@ -183,6 +184,7 @@ topology_template:
           get_input: port_pd_server_pattern4_port_02_subnetpoolid
         mac_requirements:
           get_input: port_pd_server_pattern4_port_02_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_pd_server_pattern4_port_02_exCP_naming
         vlan_requirements:
