@@ -1,5 +1,8 @@
 package org.openecomp.sdcrests.item.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ItemDto {
   private String id;
   private String type;
@@ -7,6 +10,8 @@ public class ItemDto {
   private String description;
   private String owner;
   private String status;
+  private Map<String, Object> properties = new HashMap<>();
+
 
   public String getId() {
     return id;
@@ -54,5 +59,13 @@ public class ItemDto {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public Map<String, Object> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Map<String, Object> properties) {
+    this.properties = properties;
   }
 }
