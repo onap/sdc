@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ccad129d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-12T10:46:11Z",
+      "side": 1,
+      "message": "better: !ItemType.vsp.name().equals(item.getType())",
+      "range": {
+        "startLine": 275,
+        "startChar": 23,
+        "endLine": 275,
+        "endChar": 66
+      },
+      "revId": "68240965661f6ee92413a3749dd87ef19bd35524",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0ca8da8b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-04-12T10:46:11Z",
+      "side": 1,
+      "message": "redundant - at this point it\u0027s for sure a vsp",
+      "range": {
+        "startLine": 276,
+        "startChar": 16,
+        "endLine": 276,
+        "endChar": 61
+      },
+      "revId": "68240965661f6ee92413a3749dd87ef19bd35524",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
