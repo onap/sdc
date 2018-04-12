@@ -24,7 +24,11 @@ import {
 import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 import { actionTypes } from './SoftwareProductCreationConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-
+import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import {
+    itemStatus,
+    versionStatus
+} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 function baseUrl() {
     const restPrefix = Configuration.get('restPrefix');
     return `${restPrefix}/v1.0/vendor-software-products/`;
@@ -45,7 +49,7 @@ const SoftwareProductCreationActionHelper = {
             type: actionTypes.OPEN,
             selectedVendorId: vendorId
         });
-
+        this.loadVendorList(dispatch);
         dispatch({
             type: modalActionTypes.GLOBAL_MODAL_SHOW,
             data: {
@@ -77,6 +81,19 @@ const SoftwareProductCreationActionHelper = {
                 result
             });
             return result;
+        });
+    },
+    async loadVendorList(dispatch) {
+        const { results } = await ItemsHelper.fetchItems({
+            itemStatus: itemStatus.ACTIVE,
+            versionStatus: versionStatus.CERTIFIED,
+            itemType: {
+                vlm: true
+            }
+        });
+        dispatch({
+            type: actionTypes.VENDOR_LIST_LOADED,
+            vendorList: results
         });
     }
 };

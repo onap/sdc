@@ -15,64 +15,12 @@
  */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import classnames from 'classnames';
 import DetailsCatalogView from 'sdc-app/onboarding/onboard/DetailsCatalogView.jsx';
 import VendorCatalogView from './VendorCatalogView.jsx';
 import { tabsMapping } from './OnboardingCatalogConstants.js';
 import { tabsMapping as WCTabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
-import featureToggle from 'sdc-app/features/featureToggle.js';
-import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 
-const Separator = () => <div className="tab-separator" />;
-
-const Tab = ({ onTabPress, title, dataTestId, activeTab, tabMapping }) => (
-    <div
-        className={classnames('catalog-header-tab', {
-            active: activeTab === tabMapping
-        })}
-        onClick={() => onTabPress(tabMapping)}
-        data-test-id={dataTestId}>
-        {title}
-    </div>
-);
-
-const ArchiveTab = featureToggle(featureToggleNames.ARCHIVE_ITEM)(Tab);
-const ArchiveTabSeparator = featureToggle(featureToggleNames.ARCHIVE_ITEM)(
-    Separator
-);
-
-const CatalogHeaderTabs = props => (
-    <div className="catalog-header-tabs">
-        <Tab
-            {...props}
-            title={i18n('ACTIVE')}
-            dataTestId="catalog-all-tab"
-            tabMapping={tabsMapping.ACTIVE}
-        />
-        <Separator />
-        <Tab
-            {...props}
-            title={i18n('BY VENDOR')}
-            dataTestId="catalog-header-tab"
-            tabMapping={tabsMapping.BY_VENDOR}
-        />
-        <ArchiveTabSeparator />
-        <ArchiveTab
-            {...props}
-            title={i18n('ARCHIVE')}
-            dataTestId="catalog-archive-tab"
-            tabMapping={tabsMapping.ARCHIVE}
-        />
-    </div>
-);
-
-const CatalogHeader = ({ activeTab, onTabPress }) => (
-    <div className="catalog-header">
-        <CatalogHeaderTabs activeTab={activeTab} onTabPress={onTabPress} />
-    </div>
-);
-
-const FilterCatalogHeader = () => (
+const CatalogHeader = () => (
     <div className="catalog-header">
         <div className="catalog-header-tabs">
             <div className="catalog-header-tab active">
@@ -82,19 +30,11 @@ const FilterCatalogHeader = () => (
     </div>
 );
 
-const FeaturedCatalogHeader = featureToggle(featureToggleNames.FILTER)({
-    OnComp: FilterCatalogHeader,
-    OffComp: CatalogHeader
-});
-
 class OnboardingCatalogView extends React.Component {
     renderViewByTab(activeTab) {
         const {
-            finalizedLicenseModelList: licenseModelList,
-            fullLicenseModelList,
             users,
             vspOverlay,
-            finalizedSoftwareProductList: softwareProductList,
             onSelectLicenseModel,
             onSelectSoftwareProduct,
             onAddLicenseModelClick,
@@ -104,16 +44,17 @@ class OnboardingCatalogView extends React.Component {
             selectedVendor,
             searchValue,
             onMigrate,
-            archivedSoftwareProductList,
-            archivedLicenseModelList
+            filteredItems
         } = this.props;
+
+        const { vlmList, vspList } = filteredItems;
 
         switch (activeTab) {
             case tabsMapping.ARCHIVE:
                 return (
                     <DetailsCatalogView
-                        VLMList={archivedLicenseModelList}
-                        VSPList={archivedSoftwareProductList}
+                        VLMList={vlmList}
+                        VSPList={vspList}
                         users={users}
                         onSelectVLM={(item, users) =>
                             onSelectLicenseModel(
@@ -136,8 +77,8 @@ class OnboardingCatalogView extends React.Component {
             case tabsMapping.ACTIVE:
                 return (
                     <DetailsCatalogView
-                        VLMList={licenseModelList}
-                        VSPList={softwareProductList}
+                        VLMList={vlmList}
+                        VSPList={vspList}
                         users={users}
                         onAddVLM={onAddLicenseModelClick}
                         onAddVSP={onAddSoftwareProductClick}
@@ -163,7 +104,7 @@ class OnboardingCatalogView extends React.Component {
             default:
                 return (
                     <VendorCatalogView
-                        licenseModelList={fullLicenseModelList}
+                        licenseModelList={vlmList}
                         users={users}
                         onAddVSP={onAddSoftwareProductClick}
                         onAddVLM={onAddLicenseModelClick}
@@ -193,23 +134,10 @@ class OnboardingCatalogView extends React.Component {
     }
 
     render() {
-        const {
-            selectedVendor,
-            catalogActiveTab: activeTab,
-            onCatalogTabClick,
-            onSearch,
-            searchValue
-        } = this.props;
+        const { selectedVendor, catalogActiveTab: activeTab } = this.props;
         return (
             <div className="catalog-wrapper">
-                {!selectedVendor && (
-                    <FeaturedCatalogHeader
-                        onSearch={event => onSearch(event.target.value)}
-                        activeTab={activeTab}
-                        onTabPress={tab => onCatalogTabClick(tab)}
-                        searchValue={searchValue}
-                    />
-                )}
+                {!selectedVendor && <CatalogHeader />}
                 {this.renderViewByTab(activeTab)}
             </div>
         );

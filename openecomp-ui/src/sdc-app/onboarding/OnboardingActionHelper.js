@@ -45,6 +45,8 @@ import SoftwareProductComponentsImageActionHelper from './softwareProduct/compon
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import { tabsMapping as attachmentsTabsMapping } from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsConstants.js';
 import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
+import { actionTypes as filterActionTypes } from './onboard/filter/FilterConstants.js';
+import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
     dispatch({
@@ -74,11 +76,16 @@ const OnboardingActionHelper = {
         SoftwareProductActionHelper.fetchArchivedSoftwareProductList(dispatch);
     },
 
-    navigateToOnboardingCatalog(dispatch) {
+    async navigateToOnboardingCatalog(dispatch) {
+        await FeaturesActionHelper.getFeaturesList(dispatch);
         UsersActionHelper.fetchUsersList(dispatch);
         this.loadItemsLists(dispatch);
         OnboardActionHelper.resetOnboardStore(dispatch);
         setCurrentScreen(dispatch, enums.SCREEN.ONBOARDING_CATALOG);
+        dispatch({
+            type: filterActionTypes.FILTER_DATA_CHANGED,
+            deltaData: {}
+        });
     },
 
     autoSaveBeforeNavigate(
@@ -207,6 +214,7 @@ const OnboardingActionHelper = {
         { softwareProductId, version, status }
     ) {
         SoftwareProductComponentsActionHelper.clearComponentsStore(dispatch);
+        LicenseModelActionHelper.fetchFinalizedLicenseModels(dispatch);
         SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {
             softwareProductId,
             version
@@ -559,7 +567,7 @@ const OnboardingActionHelper = {
         );
     },
 
-    navigateToVersionsPage(
+    async navigateToVersionsPage(
         dispatch,
         { itemType, itemId, itemName, additionalProps, users }
     ) {
@@ -568,19 +576,19 @@ const OnboardingActionHelper = {
             allUsers: users
         });
         VersionsPageActionHelper.selectNone(dispatch);
-        VersionsPageActionHelper.fetchVersions(dispatch, {
+        await VersionsPageActionHelper.fetchVersions(dispatch, {
             itemType,
             itemId
-        }).then(() => {
-            ItemsHelper.fetchItem(itemId).then(result => {
-                setCurrentScreen(dispatch, enums.SCREEN.VERSIONS_PAGE, {
-                    status: result.status,
-                    itemType,
-                    itemId,
-                    itemName,
-                    additionalProps
-                });
-            });
+        });
+        const items = await ItemsHelper.fetchItem(itemId);
+        setCurrentScreen(dispatch, enums.SCREEN.VERSIONS_PAGE, {
+            status: items.status,
+            itemType,
+            itemId,
+            itemName,
+            vendorName: items.properties.vendorName,
+            vendorId: items.properties.vendorId,
+            additionalProps
         });
     },
 

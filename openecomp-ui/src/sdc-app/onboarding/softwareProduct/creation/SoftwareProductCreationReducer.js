@@ -74,6 +74,11 @@ export default (state = {}, action) => {
                 },
                 showModal: true
             };
+        case actionTypes.VENDOR_LIST_LOADED:
+            return {
+                ...state,
+                vendorList: action.vendorList
+            };
         case actionTypes.RESET_DATA:
             return {};
         default:
