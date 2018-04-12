@@ -17,6 +17,7 @@ package org.openecomp.sdcrests.item.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,6 +36,23 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Validated
 public interface Items {
 
+    @GET
+    @Path("/")
+    @ApiOperation(value = "Get list of items according to desired filters",
+            responseContainer = "List")
+    Response list(@ApiParam(value = "Filter by item status", allowableValues = "ACTIVE,ARCHIVED")
+                  @QueryParam("itemStatus") String itemStatusFilter,
+                  @ApiParam(value = "Filter by version status" , allowableValues = "Certified,Draft")
+                  @QueryParam("versionStatus") String versionStatusFilter,
+                  @ApiParam(value = "Filter by item type" , allowableValues = "vsp,vlm")
+                  @QueryParam("itemType") String itemTypeFilter,
+                  @ApiParam(value = "Filter by user permission" , allowableValues = "Owner,Contributor")
+                  @QueryParam("permission") String permissionFilter,
+                  @ApiParam(value = "Filter by onboarding method" , allowableValues = "NetworkPackage,Manual")
+                  @QueryParam("onboardingMethod") String onboardingMethodFilter,
+                  @NotNull(message = USER_MISSING_ERROR_MSG)
+                  @HeaderParam(USER_ID_HEADER_PARAM) String user);
+
    @GET
    @Path("/{itemId}")
    @ApiOperation(value = "Get details of a item")
@@ -49,6 +67,8 @@ public interface Items {
                  @PathParam("itemId") String itemId,
                  @NotNull(message = USER_MISSING_ERROR_MSG)
                  @HeaderParam(USER_ID_HEADER_PARAM) String user);
+
+
 
 
 
