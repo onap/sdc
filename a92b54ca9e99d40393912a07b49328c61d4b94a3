@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6c4cfe42",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/main/java/org/onap/sdc/activityspec/be/impl/ActivitySpecManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-12T10:09:45Z",
+      "side": 1,
+      "message": "This field is not used. Please delete it. And since Transition will have only one field left, it looks like this class isn\u0027t needed anymore.",
+      "range": {
+        "startLine": 277,
+        "startChar": 0,
+        "endLine": 277,
+        "endChar": 32
+      },
+      "revId": "a92b54ca9e99d40393912a07b49328c61d4b94a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ec380ea2",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-service/src/test/java/org/onap/sdc/activityspec/be/dao/impl/ActivitySpecZusammenDaoImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-12T10:09:45Z",
+      "side": 1,
+      "message": "This import it unused.",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 41
+      },
+      "revId": "a92b54ca9e99d40393912a07b49328c61d4b94a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
