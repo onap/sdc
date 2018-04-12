@@ -2,11 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
@@ -27,7 +25,7 @@
 
     <!-- aspect beans -->
     <bean id = "activitySpecs"
-          class="org.openecomp.activityspec.api.rest.services.ActivitySpecsImpl"/>
+          class="org.onap.sdc.activityspec.api.rest.services.ActivitySpecsImpl"/>
 
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">
@@ -38,7 +36,7 @@
 
         <jaxrs:providers>
             <ref bean="jsonProvider"/>
-            <bean class="org.openecomp.activityspec.errors.DefaultExceptionMapper"/>
+            <bean class="org.onap.sdc.activityspec.errors.DefaultExceptionMapper"/>
             <bean class="org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter">
                 <property name="requestIdHeaders" value="X-ECOMP-RequestID,X-ONAP-RequestID"/>
                 <property name="partnerNameHeaders" value="USER_ID"/>
