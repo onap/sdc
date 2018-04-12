@@ -14,11 +14,6 @@ topology_template:
     port_oam_oam_2_port_network_role_tag:
       type: string
       required: true
-    port_oam_oam_2_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_oam_oam_2_port_security_groups:
       type: list
       required: true
@@ -97,11 +92,6 @@ topology_template:
     port_oam_oam_2_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_oam_internal_2_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -188,10 +178,7 @@ topology_template:
           get_input: port_oam_internal_2_port_exCP_naming
         vlan_requirements:
           get_input: port_oam_internal_2_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_oam_internal_2_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_oam_internal_2_port_ip_requirements
         network_role_tag:
@@ -234,10 +221,7 @@ topology_template:
           get_input: port_oam_oam_2_port_exCP_naming
         vlan_requirements:
           get_input: port_oam_oam_2_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_oam_oam_2_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_oam_oam_2_port_ip_requirements
         network_role_tag:

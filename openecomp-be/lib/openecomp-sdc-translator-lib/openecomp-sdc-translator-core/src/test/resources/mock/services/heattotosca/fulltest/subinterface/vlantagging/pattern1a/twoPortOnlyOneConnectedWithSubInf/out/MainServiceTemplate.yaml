@@ -417,8 +417,6 @@ topology_template:
         port_vdbe_untr_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_vdbe_untr_port_subinterface_indicator:
-        - false
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
         port_vdbe_untr_port_name:
@@ -505,8 +503,6 @@ topology_template:
         port_vdbe_untr_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_vdbe_untr_port_subinterface_indicator:
-        - true
         port_vdbe_untr_port_name:
         - str_replace:
             template: VM_NAMEDBE001p1n004

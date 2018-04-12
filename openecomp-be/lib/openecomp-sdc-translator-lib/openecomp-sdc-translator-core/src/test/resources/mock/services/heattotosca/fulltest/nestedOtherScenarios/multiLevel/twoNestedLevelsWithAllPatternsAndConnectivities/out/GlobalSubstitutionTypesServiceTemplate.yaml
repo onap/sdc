@@ -26,12 +26,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd_server_1b_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_pd_server_1b_port_vlan_requirements:
         type: list
         required: true
@@ -459,12 +453,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_osm_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -950,12 +938,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_oam_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_oam_port_vlan_requirements:
         type: list
         required: true
@@ -1905,12 +1887,6 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-      port_ps_server_1b_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_ps_server_1b_port_network_role_tag:
         type: string
         required: true
@@ -2404,12 +2380,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_BE_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
     attributes:
       BE_1c1_accessIPv4:
         type: string
@@ -5399,12 +5369,6 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-      port_ps_server_1b_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_ps_server_1b_port_network_role_tag:
         type: string
         required: true
@@ -5846,12 +5810,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_rd_server_1b_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       vm_flavor_name:
         type: string
         required: true
@@ -7736,12 +7694,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_cmaui_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_cmaui_port_subnetpoolid:
         type: string
         required: true

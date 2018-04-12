@@ -63,11 +63,6 @@ topology_template:
     vm_image_name:
       type: string
       required: true
-    port_port1_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_port1_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -104,10 +99,7 @@ topology_template:
           - index_value
         vlan_requirements:
           get_input: port_port1_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_port1_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_port1_ip_requirements
         network_role_tag:

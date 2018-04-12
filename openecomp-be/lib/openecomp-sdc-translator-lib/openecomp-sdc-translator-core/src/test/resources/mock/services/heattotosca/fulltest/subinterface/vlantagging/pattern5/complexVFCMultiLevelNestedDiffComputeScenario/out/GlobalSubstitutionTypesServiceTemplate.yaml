@@ -930,12 +930,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd_server_1b_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_pd_server_1b_port_vlan_requirements:
         type: list
         required: true

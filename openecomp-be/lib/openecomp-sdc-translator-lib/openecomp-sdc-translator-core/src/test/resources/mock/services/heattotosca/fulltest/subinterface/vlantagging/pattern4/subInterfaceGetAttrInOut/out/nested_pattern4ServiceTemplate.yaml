@@ -250,14 +250,15 @@ topology_template:
     vdbe_untr_1_port:
       type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
+        subnetpoolid:
+          get_input: port_vdbe_untr_1_port_subnetpoolid
         ip_requirements:
           get_input: port_vdbe_untr_1_port_ip_requirements
         network_role:
           get_input: port_vdbe_untr_1_port_network_role
-        subnetpoolid:
-          get_input: port_vdbe_untr_1_port_subnetpoolid
         mac_requirements:
           get_input: port_vdbe_untr_1_port_mac_requirements
+        subinterface_indicator: true
         name:
           str_replace:
             template: VM_NAMEDBE001p1n004

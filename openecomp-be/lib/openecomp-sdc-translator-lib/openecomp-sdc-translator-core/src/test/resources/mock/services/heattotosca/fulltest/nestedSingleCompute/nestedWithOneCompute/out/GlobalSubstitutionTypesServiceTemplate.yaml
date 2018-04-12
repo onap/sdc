@@ -589,12 +589,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_compute_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance

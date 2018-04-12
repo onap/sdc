@@ -210,12 +210,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_vmi_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       subinterface_vlan1_aap_untrusted_ip_prefix:
         type: list
         required: true
@@ -336,12 +330,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_oam_vmi_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_vdbe_untr_vmi_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true

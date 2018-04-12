@@ -488,8 +488,6 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_vdbe_untr_1_port_subinterface_indicator:
-        - false
         compute_vdbe_availability_zone:
         - get_input: availability_zone_1
         vm_flavor_name:

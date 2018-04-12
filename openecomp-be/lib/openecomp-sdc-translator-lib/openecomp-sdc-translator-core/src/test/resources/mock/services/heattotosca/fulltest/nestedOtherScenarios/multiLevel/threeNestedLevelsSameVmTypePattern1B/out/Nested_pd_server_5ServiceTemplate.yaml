@@ -62,11 +62,6 @@ topology_template:
     port_ps02_port_order:
       type: integer
       required: true
-    port_ps02_port_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     compute_pd_server_user_data_format:
       type: list
       required: true
@@ -104,10 +99,7 @@ topology_template:
           get_input: port_ps02_port_exCP_naming
         vlan_requirements:
           get_input: port_ps02_port_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_ps02_port_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_ps02_port_ip_requirements
         network_role_tag:

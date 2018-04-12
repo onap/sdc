@@ -136,8 +136,6 @@ topology_template:
             is_required: false
         port_pd_server_nested2_1b_port_network:
         - get_input: jsa_name
-        port_pd_server_nested2_1b_port_subinterface_indicator:
-        - false
         service_template_filter:
           substitute_service_template: Nested_pd_server_nested2_1bServiceTemplate.yaml
           count: 1
@@ -214,8 +212,6 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_ps_server_nested2_1b_port_subinterface_indicator:
-        - false
         port_ps_server_nested2_1b_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -314,9 +310,6 @@ topology_template:
         - get_input:
           - cmaui_1c1_nested2_names
           - 0
-        port_cmaui_port_subinterface_indicator:
-        - false
-        - false
         compute_cmaui_1c1_nested2_availability_zone:
         - get_input: availability_zone_0
         - get_input: availability_zone_0

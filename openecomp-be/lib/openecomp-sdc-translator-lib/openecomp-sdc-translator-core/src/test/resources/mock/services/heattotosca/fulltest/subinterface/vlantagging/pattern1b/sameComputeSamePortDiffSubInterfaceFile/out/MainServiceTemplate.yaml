@@ -729,8 +729,6 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_subinterface_indicator:
-        - false
         port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
@@ -772,8 +770,6 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_subinterface_indicator:
-        - true
         subinterface_nested_net1:
         - test_net1
         port_pd01_port_network_role_tag: oam

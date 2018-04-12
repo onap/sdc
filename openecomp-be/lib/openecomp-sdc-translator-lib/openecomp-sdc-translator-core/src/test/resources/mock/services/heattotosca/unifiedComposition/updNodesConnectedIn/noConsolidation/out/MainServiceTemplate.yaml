@@ -55,7 +55,6 @@ topology_template:
       properties:
         network:
           get_input: cdr_network
-        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -66,7 +65,6 @@ topology_template:
       properties:
         network:
           get_input: oam_private_net_name
-        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -99,22 +97,18 @@ topology_template:
       directives:
       - substitutable
       properties:
-        vm_flavor_name: FLAVOR-test
-        vm_image_name: Image-test
-        port_oam_private_net_network_port_subinterface_indicator:
-        - false
         compute_QRouter_availability_zone:
         - Availability-test
         compute_QRouter_config_drive:
         - true
         port_cdr_network_port_network:
         - get_input: cdr_network
+        vm_flavor_name: FLAVOR-test
         port_oam_private_net_network_port_network:
         - get_input: oam_private_net_name
+        vm_image_name: Image-test
         compute_QRouter_name:
         - QRouter-name
-        port_cdr_network_port_subinterface_indicator:
-        - false
         service_template_filter:
           substitute_service_template: Nested_QRouterServiceTemplate.yaml
           count: 1

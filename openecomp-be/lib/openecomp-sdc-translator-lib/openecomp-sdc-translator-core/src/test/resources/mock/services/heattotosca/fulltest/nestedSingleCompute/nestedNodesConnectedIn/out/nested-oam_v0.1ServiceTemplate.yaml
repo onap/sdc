@@ -172,6 +172,7 @@ topology_template:
           get_input: port_oam_port_0_subnetpoolid
         mac_requirements:
           get_input: port_oam_port_0_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_oam_port_0_exCP_naming
         vlan_requirements:
@@ -216,6 +217,7 @@ topology_template:
           get_input: port_oam_port_1_subnetpoolid
         mac_requirements:
           get_input: port_oam_port_1_mac_requirements
+        subinterface_indicator: false
         exCP_naming:
           get_input: port_oam_port_1_exCP_naming
         vlan_requirements:

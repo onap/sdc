@@ -243,20 +243,6 @@ topology_template:
       directives:
       - substitutable
       properties:
-        vm_flavor_name:
-          get_input: pd_flavor_name
-        port_1b_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        port_1b_t2_port_subinterface_indicator:
-        - false
-        compute_b_single_1b_user_data_format:
-        - RAW
         port_1b_t2_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -270,13 +256,23 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_1b_t1_port_subinterface_indicator:
-        - false
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_1b_t1_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
         port_1b_t1_port_mac_requirements:
           mac_count_required:
             is_required: false
         port_1b_t2_port_network:
         - b_single_1b_network
+        compute_b_single_1b_user_data_format:
+        - RAW
         compute_b_single_1b_name:
         - get_input:
           - b_single_1b_names
@@ -302,9 +298,6 @@ topology_template:
         compute_1c1_scalling_instance_user_data_format:
         - RAW2
         - RAW1
-        port_1c1_t2_port_subinterface_indicator:
-        - false
-        - false
         port_1c1_t2_port_network_role_tag: ppds
         vm_flavor_name:
           get_input: pd_flavor_name
@@ -381,9 +374,6 @@ topology_template:
         compute_1c1_scalling_instance_scheduler_hints:
         - group: BE_Affinity_group
         - group: BE_Affinity_group
-        port_1c1_t1_port_subinterface_indicator:
-        - false
-        - false
         service_template_filter:
           substitute_service_template: Nested_1c1_scalling_instanceServiceTemplate.yaml
           count: 2
@@ -461,8 +451,6 @@ topology_template:
       properties:
         compute_1c2_catalog_instance_availability_zone:
         - get_input: availabilityzone_name
-        port_1c2_t1_port_subinterface_indicator:
-        - false
         vm_flavor_name:
           get_input: pd_flavor_name
         vm_image_name:
@@ -473,8 +461,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_1c2_t2_port_subinterface_indicator:
-        - false
         port_1c2_t1_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -520,8 +506,6 @@ topology_template:
       properties:
         compute_1c2_catalog_instance_availability_zone:
         - get_input: availabilityzone_name
-        port_1c2_t1_port_subinterface_indicator:
-        - false
         vm_flavor_name:
           get_input: pd_flavor_name
         vm_image_name:
@@ -532,8 +516,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_1c2_t2_port_subinterface_indicator:
-        - false
         port_1c2_t1_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -744,10 +726,6 @@ topology_template:
         - get_input: availabilityzone_name
         compute_a_single_1a_scheduler_hints:
         - group: BE_Affinity_group
-        port_1a_t2_port_subinterface_indicator:
-        - false
-        port_1a_t1_port_subinterface_indicator:
-        - false
         compute_a_single_1a_user_data_format:
         - RAW
         compute_a_single_1a_name:
@@ -886,8 +864,6 @@ topology_template:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_1b_t2_port_subinterface_indicator:
-        - false
         compute_b_single_1b_user_data_format:
         - RAW
         port_1b_t2_port_mac_requirements:
@@ -903,8 +879,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_1b_t1_port_subinterface_indicator:
-        - false
         port_1b_t1_port_network_role_tag: oam
         port_1b_t1_port_mac_requirements:
           mac_count_required:

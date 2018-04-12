@@ -86,12 +86,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_cmaui_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_cmaui_port_subnetpoolid:
         type: string
         required: true

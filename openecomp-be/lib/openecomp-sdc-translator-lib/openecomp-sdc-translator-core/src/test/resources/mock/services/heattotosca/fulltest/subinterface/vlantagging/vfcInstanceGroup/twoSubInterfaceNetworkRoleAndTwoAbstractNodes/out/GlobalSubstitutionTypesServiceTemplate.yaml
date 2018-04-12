@@ -234,12 +234,6 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_vdbe_untr_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_vdbe_untr_port_name:
         type: list
         required: true
@@ -881,12 +875,6 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_vdbe_untr_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_vdbe_untr_port_name:
         type: list
         required: true

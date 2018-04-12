@@ -224,6 +224,10 @@ topology_template:
     tdcore_internal_0_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        subnetpoolid:
+          get_input: port_tdcore_internal_0_port_0_subnetpoolid
+        network:
+          get_input: internal_net_id
         ip_requirements:
           get_input: port_tdcore_internal_0_port_0_ip_requirements
         security_groups:
@@ -235,10 +239,9 @@ topology_template:
             get_input:
             - tdcore_internal_ips
             - get_input: index
-        subnetpoolid:
-          get_input: port_tdcore_internal_0_port_0_subnetpoolid
         mac_requirements:
           get_input: port_tdcore_internal_0_port_0_mac_requirements
+        subinterface_indicator: false
         name:
           str_replace:
             template: $PREFIX$DELeth0
@@ -255,8 +258,6 @@ topology_template:
           get_input: port_tdcore_internal_0_port_0_vlan_requirements
         network_role_tag:
           get_input: port_tdcore_internal_0_port_0_network_role_tag
-        network:
-          get_input: internal_net_id
         order:
           get_input: port_tdcore_internal_0_port_0_order
       requirements:
@@ -289,6 +290,7 @@ topology_template:
             - get_input: index
         mac_requirements:
           get_input: port_tdcore_dpdk_0_port_1_mac_requirements
+        subinterface_indicator: false
         name:
           str_replace:
             template: $PREFIX$DELeth1

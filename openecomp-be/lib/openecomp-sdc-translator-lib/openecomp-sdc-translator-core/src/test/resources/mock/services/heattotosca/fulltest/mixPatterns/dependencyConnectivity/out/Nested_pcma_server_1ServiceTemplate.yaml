@@ -14,11 +14,6 @@ topology_template:
     port_pcm_port_0_network_role:
       type: string
       required: true
-    port_pcm_port_0_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_pcm_port_1_network_role_tag:
       type: string
       required: true
@@ -69,11 +64,6 @@ topology_template:
     port_pcm_port_1_network_role:
       type: string
       required: true
-    port_pcm_port_1_subinterface_indicator:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_pcm_port_1_network:
       type: list
       required: true
@@ -179,10 +169,7 @@ topology_template:
           get_input: port_pcm_port_0_exCP_naming
         vlan_requirements:
           get_input: port_pcm_port_0_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_pcm_port_0_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_pcm_port_0_ip_requirements
         network_role_tag:
@@ -219,10 +206,7 @@ topology_template:
           get_input: port_pcm_port_1_exCP_naming
         vlan_requirements:
           get_input: port_pcm_port_1_vlan_requirements
-        subinterface_indicator:
-          get_input:
-          - port_pcm_port_1_subinterface_indicator
-          - index_value
+        subinterface_indicator: false
         ip_requirements:
           get_input: port_pcm_port_1_ip_requirements
         network_role_tag:

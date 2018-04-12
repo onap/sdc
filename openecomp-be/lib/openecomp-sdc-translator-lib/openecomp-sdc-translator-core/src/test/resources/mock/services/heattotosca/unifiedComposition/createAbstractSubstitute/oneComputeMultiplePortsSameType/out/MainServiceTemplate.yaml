@@ -69,7 +69,6 @@ topology_template:
         mac_address:
           get_input: fsb1-Internal2-mac
         network: Internal2-net
-        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -81,7 +80,6 @@ topology_template:
         mac_address:
           get_input: fsb1-Internal1-mac
         network: Internal1-net
-        subinterface_indicator: false
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -160,8 +158,6 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_FSB1_Internal_2_subinterface_indicator:
-        - false
         vm_flavor_name:
           get_input: fsb-flavor
         vm_image_name:
@@ -170,8 +166,6 @@ topology_template:
         - STATIC-DATA-FSB1
         port_FSB1_Internal_1_mac_address:
           get_input: fsb1-Internal1-mac
-        port_FSB1_Internal_1_subinterface_indicator:
-        - false
         port_FSB1_Internal_1_network:
         - Internal1-net
         port_FSB1_Internal_2_mac_address:

@@ -40,12 +40,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd02_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_pd01_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -70,12 +64,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port_subinterface_indicator:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_pd01_port_vlan_requirements:
         type: list
         required: true
