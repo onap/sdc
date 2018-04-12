@@ -1,4 +1,4 @@
-Feature: Tosca Validation Flow
+Feature: Tosca VMI Flow
 
   Background: Init
     Given I want to create a VLM
