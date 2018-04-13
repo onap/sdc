@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_1b8a4d1b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 749
+      },
+      "writtenOn": "2018-04-13T14:13:44Z",
+      "side": 1,
+      "message": "This only contains, metadata.Even if it contains more than 100 packages, it would not cross 1KB. Since still it is in initial phase, we can keep this, useful for bug fixing.As the feature matures, i will remove this or add the flag.",
+      "parentUuid": "5a93c517_bf38f83d",
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_bf0f9887",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
         "patchSetId": 2
