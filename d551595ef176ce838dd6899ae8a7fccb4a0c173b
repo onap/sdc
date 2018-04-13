@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3b1dcabe",
+        "filename": "catalog-be/src/main/resources/config/config-vnfrepo.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 749
+      },
+      "writtenOn": "2018-04-13T12:31:10Z",
+      "side": 1,
+      "message": "This is copied to sdc\\catalog-be\\sdc-backend\\chef-repo\\cookbooks\\sdc-catalog-be\\files\\default  files, similar to error-configuration.yaml and other files.",
+      "parentUuid": "5a93c517_1f032cb9",
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_bf38f83d",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
         "patchSetId": 2
