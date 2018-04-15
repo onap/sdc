@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c4f722d2",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/creation/LicenseModelCreation.js",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-15T05:48:01Z",
+      "side": 1,
+      "message": "I don\u0027t remember seeing these entries in the i18n file. can you please verify?",
+      "revId": "ebd27677b13318f7a82778f2208de7c10f17b2c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_64008eab",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/creation/SoftwareProductCreation.js",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-04-15T05:48:01Z",
+      "side": 1,
+      "message": "check i18n",
+      "revId": "ebd27677b13318f7a82778f2208de7c10f17b2c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
