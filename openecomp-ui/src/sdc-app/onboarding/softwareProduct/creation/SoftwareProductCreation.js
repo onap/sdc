@@ -14,9 +14,11 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
-
+import featureToggle from 'sdc-app/features/featureToggle.js';
+import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 import SoftwareProductCreationActionHelper from './SoftwareProductCreationActionHelper.js';
 import SoftwareProductCreationView from './SoftwareProductCreationView.jsx';
+import SoftwareProductCreationViewWithFilter from './SoftwareProductCreationViewWithFilter.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import SoftwareProductActionHelper from '../SoftwareProductActionHelper.js';
 import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
@@ -24,6 +26,16 @@ import { itemTypes as versionItemTypes } from 'sdc-app/onboarding/versionsPage/V
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsActionHelper.js';
+import UniqueTypesHelper from 'sdc-app/common/helpers/UniqueTypesHelper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import { itemType } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
+
+const ToggledSoftwareProductCreationView = featureToggle(
+    featureToggleNames.FILTER
+)({
+    OnComp: SoftwareProductCreationViewWithFilter,
+    OffComp: SoftwareProductCreationView
+});
 
 export const mapStateToProps = ({
     finalizedLicenseModelList,
@@ -33,7 +45,7 @@ export const mapStateToProps = ({
     finalizedSoftwareProductList,
     softwareProduct: { softwareProductCreation, softwareProductCategories }
 }) => {
-    let { genericFieldInfo } = softwareProductCreation;
+    let { genericFieldInfo, vendorList = [] } = softwareProductCreation;
     let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
     let VSPNames = {};
@@ -52,6 +64,7 @@ export const mapStateToProps = ({
         disableVendor: softwareProductCreation.disableVendor,
         softwareProductCategories,
         finalizedLicenseModelList,
+        vendorList,
         isFormValid,
         formReady: softwareProductCreation.formReady,
         genericFieldInfo,
@@ -99,10 +112,22 @@ export const mapActionsToProps = dispatch => {
             });
         },
         onValidateForm: formName =>
-            ValidationHelper.validateForm(dispatch, formName)
+            ValidationHelper.validateForm(dispatch, formName),
+        isNameUnique: (value, name, formName) =>
+            UniqueTypesHelper.isNameUnique(dispatch, {
+                value,
+                name,
+                formName,
+                errorText: `${i18n(
+                    'Software product by the name'
+                )} ${value} ${i18n('already exists')}. ${i18n(
+                    'Software product name must be unique'
+                )}`,
+                itemType: itemType.VSP
+            })
     };
 };
 
 export default connect(mapStateToProps, mapActionsToProps, null, {
     withRef: true
-})(SoftwareProductCreationView);
+})(ToggledSoftwareProductCreationView);

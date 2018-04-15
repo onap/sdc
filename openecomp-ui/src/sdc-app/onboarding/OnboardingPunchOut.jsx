@@ -21,8 +21,6 @@ import ReactDOM from 'react-dom';
 
 import isEqual from 'lodash/isEqual.js';
 
-import lodashUnionBy from 'lodash/unionBy.js';
-
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Application from 'sdc-app/Application.jsx';
 import store from 'sdc-app/AppStore.js';
@@ -356,10 +354,6 @@ export default class OnboardingPunchOut {
     handleStoreChange() {
         let {
             currentScreen,
-            licenseModelList,
-            finalizedLicenseModelList,
-            softwareProductList,
-            finalizedSoftwareProductList,
             versionsPage: { versionsList: { itemType, itemId } },
             softwareProduct: {
                 softwareProductEditor: {
@@ -367,26 +361,17 @@ export default class OnboardingPunchOut {
                 },
                 softwareProductComponents: { componentsList }
             },
-            archivedLicenseModelList,
-            archivedSoftwareProductList
+            licenseModel: {
+                licenseModelEditor: { data: currentLicenseModel = {} }
+            }
         } = store.getState();
-        const wholeSoftwareProductList = lodashUnionBy(
-            softwareProductList,
-            [...finalizedSoftwareProductList, ...archivedSoftwareProductList],
-            'id'
-        );
-        const wholeLicenseModelList = lodashUnionBy(
-            licenseModelList,
-            [...finalizedLicenseModelList, ...archivedLicenseModelList],
-            'id'
-        );
+
         let breadcrumbsData = {
             itemType,
             itemId,
             currentScreen,
-            wholeLicenseModelList,
-            wholeSoftwareProductList,
             currentSoftwareProduct,
+            currentLicenseModel,
             componentsList
         };
 
@@ -415,8 +400,7 @@ export default class OnboardingPunchOut {
         itemType,
         itemId,
         currentSoftwareProduct,
-        wholeLicenseModelList,
-        wholeSoftwareProductList,
+        currentLicenseModel,
         componentsList
     }) {
         let {
@@ -435,12 +419,12 @@ export default class OnboardingPunchOut {
                         ? [
                               {
                                   selectedKey: itemId,
-                                  menuItems: wholeLicenseModelList.map(
-                                      ({ id, name }) => ({
-                                          key: id,
-                                          displayText: name
-                                      })
-                                  )
+                                  menuItems: [
+                                      {
+                                          key: itemId,
+                                          displayText: props.itemName
+                                      }
+                                  ]
                               }
                           ]
                         : [
@@ -448,12 +432,12 @@ export default class OnboardingPunchOut {
                                   selectedKey:
                                       props.additionalProps.licenseModelId ||
                                       currentSoftwareProduct.vendorId,
-                                  menuItems: wholeLicenseModelList.map(
-                                      ({ id, name }) => ({
-                                          key: id,
-                                          displayText: name
-                                      })
-                                  )
+                                  menuItems: [
+                                      {
+                                          key: props.vendorId,
+                                          displayText: props.vendorName
+                                      }
+                                  ]
                               },
                               {
                                   selectedKey:
@@ -472,17 +456,12 @@ export default class OnboardingPunchOut {
                               },
                               {
                                   selectedKey: itemId,
-                                  menuItems: wholeSoftwareProductList
-                                      .filter(
-                                          ({ id, vendorId }) =>
-                                              vendorId ===
-                                                  currentSoftwareProduct.vendorId ||
-                                              id === itemId
-                                      )
-                                      .map(({ id, name }) => ({
-                                          key: id,
-                                          displayText: name
-                                      }))
+                                  menuItems: [
+                                      {
+                                          key: itemId,
+                                          displayText: props.itemName
+                                      }
+                                  ]
                               }
                           ];
                 return [
@@ -519,13 +498,13 @@ export default class OnboardingPunchOut {
                 };
                 return [
                     {
-                        selectedKey: props.licenseModelId,
-                        menuItems: wholeLicenseModelList.map(
-                            ({ id, name }) => ({
-                                key: id,
-                                displayText: name
-                            })
-                        )
+                        selectedKey: currentLicenseModel.id,
+                        menuItems: [
+                            {
+                                key: currentLicenseModel.id,
+                                displayText: currentLicenseModel.vendorName
+                            }
+                        ]
                     },
                     {
                         selectedKey: enums.BREADCRUMS.LICENSE_MODEL,
@@ -533,19 +512,7 @@ export default class OnboardingPunchOut {
                             {
                                 key: enums.BREADCRUMS.LICENSE_MODEL,
                                 displayText: i18n('License Model')
-                            },
-                            ...(wholeSoftwareProductList.findIndex(
-                                ({ vendorId }) =>
-                                    vendorId === props.licenseModelId
-                            ) === -1
-                                ? []
-                                : [
-                                      {
-                                          key:
-                                              enums.BREADCRUMS.SOFTWARE_PRODUCT,
-                                          displayText: i18n('Software Products')
-                                      }
-                                  ])
+                            }
                         ]
                     },
                     {
@@ -636,16 +603,16 @@ export default class OnboardingPunchOut {
                     [enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING]:
                         enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_MONITORING
                 };
-                let licenseModelId = currentSoftwareProduct.vendorId;
+
                 let returnedBreadcrumb = [
                     {
-                        selectedKey: licenseModelId,
-                        menuItems: wholeLicenseModelList.map(
-                            ({ id, name }) => ({
-                                key: id,
-                                displayText: name
-                            })
-                        )
+                        selectedKey: currentSoftwareProduct.vendorId,
+                        menuItems: [
+                            {
+                                key: currentSoftwareProduct.vendorId,
+                                displayText: currentSoftwareProduct.vendorName
+                            }
+                        ]
                     },
                     {
                         selectedKey: enums.BREADCRUMS.SOFTWARE_PRODUCT,
@@ -661,17 +628,13 @@ export default class OnboardingPunchOut {
                         ]
                     },
                     {
-                        selectedKey: props.softwareProductId,
-                        menuItems: wholeSoftwareProductList
-                            .filter(
-                                ({ vendorId, id }) =>
-                                    vendorId === licenseModelId ||
-                                    id === props.softwareProductId
-                            )
-                            .map(({ id, name }) => ({
-                                key: id,
-                                displayText: name
-                            }))
+                        selectedKey: currentSoftwareProduct.id,
+                        menuItems: [
+                            {
+                                key: currentSoftwareProduct.id,
+                                displayText: currentSoftwareProduct.name
+                            }
+                        ]
                     },
                     .../*screen === enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE ? [] :*/ [
                         {

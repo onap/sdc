@@ -1,16 +1,22 @@
 .catalog-filter {
-    width: 242px;
-    overflow-y: auto;    
-    height: 100%;
-    box-shadow: 1px 0px 4px 0px rgba(24, 24, 25, 0.17);
-    background-color: $white;
-    padding: 12px 18px;    
-    .form-group {
-        margin-bottom: 10px;
+    .catalog-filter-by-vendor-view {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+    .empty-block {
+        height: 34px;
+        width: 100%;
     }
     .catalog-filter-items-type {
         width: 100%;
-        background-color: $gray;
-        color: $white;
+        background-color: $tlv-light-gray;
+        height: 34px;
+    }
+    .sdc-accordion {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .first-line {
+        margin-top: 40px;
     }
 }
