@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 import { actionTypes } from './FilterConstants.js';
-import {
-    itemStatus,
-    versionStatus
-} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
-
-const defaultState = {
-    itemStatus: itemStatus.ACTIVE,
-    versionStatus: versionStatus.DRAFT,
-    entityType: {},
-    permission: {},
-    onboardingMethod: {}
-};
-export default (state = defaultState, action) => {
+export default (state = { vspList: [], vlmList: [] }, action) => {
     switch (action.type) {
-        case actionTypes.FILTER_DATA_CHANGED:
-            return {
-                ...state,
-                ...action.deltaData
-            };
+        case actionTypes.UPDATE_FILTERED_LIST:
+            return action.data;
         default:
             return state;
     }

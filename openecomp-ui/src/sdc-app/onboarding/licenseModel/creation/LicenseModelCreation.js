@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 import { connect } from 'react-redux';
+import featureToggle from 'sdc-app/features/featureToggle.js';
+import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 import LicenseModelCreationActionHelper from './LicenseModelCreationActionHelper.js';
 import LicenseModelCreationView from './LicenseModelCreationView.jsx';
+import LicenseModelCreationViewWithFilter from './LicenseModelCreationViewWithFilter.jsx';
+
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
@@ -23,6 +27,16 @@ import { itemTypes as versionItemTypes } from 'sdc-app/onboarding/versionsPage/V
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsActionHelper.js';
+import UniqueTypesHelper from 'sdc-app/common/helpers/UniqueTypesHelper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import { itemType } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
+
+const ToggledLicenseModelCreationView = featureToggle(
+    featureToggleNames.FILTER
+)({
+    OnComp: LicenseModelCreationViewWithFilter,
+    OffComp: LicenseModelCreationView
+});
 
 export const mapStateToProps = ({
     users: { usersList },
@@ -87,10 +101,22 @@ export const mapActionsToProps = dispatch => {
             });
         },
         onValidateForm: formName =>
-            ValidationHelper.validateForm(dispatch, formName)
+            ValidationHelper.validateForm(dispatch, formName),
+        isNameUnique: (value, name, formName) =>
+            UniqueTypesHelper.isNameUnique(dispatch, {
+                value,
+                name,
+                formName,
+                errorText: `${i18n(
+                    'License model by the name'
+                )} ${value} ${i18n('already exists')}. ${i18n(
+                    'License model name must be unique'
+                )}`,
+                itemType: itemType.VLM
+            })
     };
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(
-    LicenseModelCreationView
+    ToggledLicenseModelCreationView
 );
