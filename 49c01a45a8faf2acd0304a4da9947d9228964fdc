@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e4e49ee1",
+        "filename": "catalog-be/src/main/resources/config/config-vnfrepo.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-15T11:41:26Z",
+      "side": 1,
+      "message": "I assume you tested it. If so, please explain how it works because I don\u0027t understand it. To the best of my understanding, vnfrepo configuration belongs to SDC onboarding, which uses a different configuration mechanism. Moreover, it will run as a separate deployment unit very soon. It doesn\u0027t make any sense for catalog-be have a configuration file for it other than the parameterized template BE-vnfrepo-configuration.yaml.erb, which is copied into ${JETTY_BASE}/config/onboarding-be/config-vnfrepo.yaml during deployment.",
+      "revId": "49c01a45a8faf2acd0304a4da9947d9228964fdc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
