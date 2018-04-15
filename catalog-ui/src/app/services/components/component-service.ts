@@ -24,7 +24,6 @@ import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, 
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
 import {SharingService} from "../sharing-service";
 import {ComponentMetadata} from "../../models/component-metadata";
-import {EventBusService} from "../../ng2/services/event-bus.service";
 
 export interface IComponentService {
 
@@ -82,16 +81,14 @@ export class ComponentService implements IComponentService {
         'sdcConfig',
         'Sdc.Services.SharingService',
         '$q',
-        '$base64',
-        'EventBusService'
+        '$base64'
     ];
 
     constructor(protected restangular:restangular.IElement,
                 protected sdcConfig:IAppConfigurtaion,
                 protected sharingService:SharingService,
                 protected $q:ng.IQService,
-                protected $base64:any,
-                protected eventBusService:EventBusService
+                protected $base64:any
                ) {
 
         this.restangular.setBaseUrl(sdcConfig.api.root + sdcConfig.api.component_api_root);
@@ -229,16 +226,6 @@ export class ComponentService implements IComponentService {
         }, (err)=> {
             deferred.reject(err);
         });
-
-        // Notifying about events before executing the actual actions
-        switch (state) {
-            case "lifecycleState/CHECKIN":
-                this.eventBusService.notify("CHECK_IN");
-                break;
-            case "lifecycleState/certificationRequest":
-                this.eventBusService.notify("SUBMIT_FOR_TESTING");
-                break;
-        }
 
         return deferred.promise;
     };

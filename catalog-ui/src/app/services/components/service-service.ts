@@ -26,7 +26,6 @@ import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
 import {Distribution, DistributionComponent, Service, PropertyModel, Component, IAppConfigurtaion} from "app/models";
 import {SharingService} from "../sharing-service";
-import {EventBusService} from "../../ng2/services/event-bus.service";
 
 export interface IServiceService extends IComponentService {
     getDistributionsList(uuid:string):ng.IPromise<Array<Distribution>>;
@@ -42,8 +41,7 @@ export class ServiceService extends ComponentService implements IServiceService 
         'sdcConfig',
         'Sdc.Services.SharingService',
         '$q',
-        '$base64',
-        'EventBusService'
+        '$base64'
     ];
 
     public distribution:string = "distribution";
@@ -52,9 +50,8 @@ export class ServiceService extends ComponentService implements IServiceService 
                 protected sdcConfig:IAppConfigurtaion,
                 protected sharingService:SharingService,
                 protected $q:ng.IQService,
-                protected $base64:any,
-                protected eventBusService:EventBusService) {
-        super(restangular, sdcConfig, sharingService, $q, $base64, eventBusService);
+                protected $base64:any) {
+        super(restangular, sdcConfig, sharingService, $q, $base64);
 
         this.restangular = restangular.one("services");
     }

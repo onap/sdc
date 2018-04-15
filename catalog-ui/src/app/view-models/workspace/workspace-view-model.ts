@@ -283,15 +283,14 @@ export class WorkspaceViewModel {
                 version: this.$scope.changeVersion.selectedVersion.versionNumber
             };
 
-            this.eventBusService.notify("VERSION_CHANGED", eventData);
-
-            this.$state.go(this.$state.current.name, {
-                id: selectedId,
-                type: this.$scope.componentType.toLowerCase(),
-                mode: WorkspaceMode.VIEW,
-                components: this.$state.params['components']
-            }, {reload: true});
-
+            this.eventBusService.notify("VERSION_CHANGED", eventData).subscribe(() => {
+                this.$state.go(this.$state.current.name, {
+                    id: selectedId,
+                    type: this.$scope.componentType.toLowerCase(),
+                    mode: WorkspaceMode.VIEW,
+                    components: this.$state.params['components']
+                }, {reload: true});
+            });
         };
 
         this.$scope.getLatestVersion = ():void => {
@@ -472,36 +471,38 @@ export class WorkspaceViewModel {
 
                 switch (url) {
                     case 'lifecycleState/CHECKOUT':
-                        // only checkOut get the full component from server
-                        //   this.$scope.component = component;
-                        // Work around to change the csar version
-                        if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
-                            (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
-                        }
+                        this.eventBusService.notify("CHECK_OUT", eventData).subscribe(() => {
+                            // only checkOut get the full component from server
+                            //   this.$scope.component = component;
+                            // Work around to change the csar version
+                            if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
+                                (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
+                            }
 
-                        //when checking out a minor version uuid remains
-                        const bcIdx = _.findIndex(this.components, (item) => {
-                            return item.uuid === component.uuid;
-                        });
-                        if (bcIdx !== -1) {
-                            this.components[bcIdx] = component;
-                        } else {
-                            //when checking out a major(certified) version
-                            this.components.unshift(component);
-                        }
-                        // this.$state.go(this.$state.current.name, {
-                        //     id: component.uniqueId,
-                        //     type: component.componentType.toLowerCase(),
-                        //     components: this.components
-                        // });
-                        this.$scope.mode = this.initViewMode();
-                        this.initChangeLifecycleStateButtons();
-                        this.initVersionObject();
-                        this.$scope.isLoading = false;
-                        this.EventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
-                        this.Notification.success({
-                            message: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TEXT"),
-                            title: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TITLE")
+                            //when checking out a minor version uuid remains
+                            const bcIdx = _.findIndex(this.components, (item) => {
+                                return item.uuid === component.uuid;
+                            });
+                            if (bcIdx !== -1) {
+                                this.components[bcIdx] = component;
+                            } else {
+                                //when checking out a major(certified) version
+                                this.components.unshift(component);
+                            }
+                            // this.$state.go(this.$state.current.name, {
+                            //     id: component.uniqueId,
+                            //     type: component.componentType.toLowerCase(),
+                            //     components: this.components
+                            // });
+                            this.$scope.mode = this.initViewMode();
+                            this.initChangeLifecycleStateButtons();
+                            this.initVersionObject();
+                            this.$scope.isLoading = false;
+                            this.EventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
+                            this.Notification.success({
+                                message: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TEXT"),
+                                title: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TITLE")
+                            });
                         });
                         break;
                     case 'lifecycleState/CHECKIN':
@@ -512,7 +513,7 @@ export class WorkspaceViewModel {
                         });
                         break;
                     case 'lifecycleState/UNDOCHECKOUT':
-                        setTimeout(() => {
+                        this.eventBusService.notify("UNDO_CHECK_OUT", eventData).subscribe(() => {
                             defaultActionAfterChangeLifecycleState();
                             this.Notification.success({
                                 message: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TEXT"),

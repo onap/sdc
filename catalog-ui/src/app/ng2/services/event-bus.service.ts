@@ -11,6 +11,18 @@ export class EventBusService extends BasePubSub {
     protected handlePluginRegistration(eventData: IPubSubEvent, event: any) {
         if (eventData.type === 'PLUGIN_REGISTER') {
             this.register(eventData.data.pluginId, event.source, event.origin);
+
+            let newEventsList = [];
+
+            if (this.eventsToWait.has(eventData.data.pluginId)) {
+                newEventsList = _.union(this.eventsToWait.get(eventData.data.pluginId), eventData.data.eventsToWait);
+            }
+            else {
+                newEventsList = eventData.data.eventsToWait;
+            }
+
+            this.eventsToWait.set(eventData.data.pluginId, newEventsList);
+
         } else if (eventData.type === 'PLUGIN_UNREGISTER') {
             this.unregister(eventData.data.pluginId);
         }
@@ -21,8 +33,9 @@ export class EventBusService extends BasePubSub {
             pluginId: pluginId
         };
 
-        this.notify('PLUGIN_CLOSE', unregisterData);
-        super.unregister(pluginId);
+        this.notify('PLUGIN_CLOSE', unregisterData).subscribe(() => {
+            super.unregister(pluginId);
+        });
     }
 
     protected onMessage(event: any) {

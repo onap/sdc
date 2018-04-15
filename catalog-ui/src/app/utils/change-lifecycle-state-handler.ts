@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ import {IEmailModalModel, IEmailModalModel_Email, IEmailModalModel_Data} from ".
 import {AsdcComment} from "../models/comments";
 import {ModalsHandler} from "./modals-handler";
 import {ServiceServiceNg2} from "../ng2/services/component-services/service.service";
+import {EventBusService} from "../ng2/services/event-bus.service";
 
 /**
  * Created by obarda on 2/11/2016.
@@ -37,7 +38,8 @@ export class ChangeLifecycleStateHandler {
         'ComponentFactory',
         '$filter',
         'ModalsHandler',
-        'ServiceServiceNg2'
+        'ServiceServiceNg2',
+        'EventBusService'
     ];
 
     constructor(private sdcConfig:IAppConfigurtaion,
@@ -45,7 +47,8 @@ export class ChangeLifecycleStateHandler {
                 private ComponentFactory:ComponentFactory,
                 private $filter:ng.IFilterService,
                 private ModalsHandler:ModalsHandler,
-                private ServiceServiceNg2:ServiceServiceNg2) {
+                private ServiceServiceNg2:ServiceServiceNg2,
+                private eventBusService:EventBusService) {
 
     }
 
@@ -101,7 +104,12 @@ export class ChangeLifecycleStateHandler {
             let onOk = (confirmationText):void => {
                 comment.userRemarks = confirmationText;
                 scope.isLoading = true;
-                component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+
+                if (data.url === "lifecycleState/CHECKIN") {
+                    this.eventBusService.notify("CHECK_IN").subscribe(() => {
+                        component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+                    });
+                }
             };
 
             let onCancel = ():void => {
@@ -118,10 +126,14 @@ export class ChangeLifecycleStateHandler {
             // Show email dialog if defined in menu.json
             //-------------------------------------------------
             let onOk = (resource):void => {
-                if (resource) {
-                    onSuccess(resource);
-                } else {
-                    onError("Error changing life cycle state");
+                if (data.url === "lifecycleState/certificationRequest") {
+                    this.eventBusService.notify("SUBMIT_FOR_TESTING").subscribe(() => {
+                        if (resource) {
+                            onSuccess(resource);
+                        } else {
+                            onError("Error changing life cycle state");
+                        }
+                    });
                 }
             };
 

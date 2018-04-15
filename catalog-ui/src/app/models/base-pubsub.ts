@@ -5,10 +5,12 @@ export class BasePubSub {
     subscribers: Map<string, ISubscriber>;
     eventsCallbacks: Array<Function>;
     clientId: string;
+    eventsToWait: Map<string, Array<string>>;
 
     constructor(pluginId: string) {
         this.subscribers = new Map<string, ISubscriber>();
-        this.eventsCallbacks = new Array<Function>();
+        this.eventsCallbacks = [];
+        this.eventsToWait = new Map<string, Array<string>>();
         this.clientId = pluginId;
         this.onMessage = this.onMessage.bind(this);
 
@@ -29,7 +31,13 @@ export class BasePubSub {
     }
 
     public on(callback: Function) {
-        this.eventsCallbacks.push(callback);
+        let functionExists = this.eventsCallbacks.find((func: Function) => {
+            return callback.toString() == func.toString()
+        });
+
+        if (!functionExists) {
+            this.eventsCallbacks.push(callback);
+        }
     }
 
     public off(callback: Function) {
@@ -44,9 +52,49 @@ export class BasePubSub {
             originId: this.clientId
         } as IPubSubEvent;
 
-        this.subscribers.forEach( (subscriber: ISubscriber, id: string) => {
-            subscriber.window.postMessage(eventObj, subscriber.locationUrl)
+        this.subscribers.forEach( (subscriber: ISubscriber, subscriberId: string) => {
+            subscriber.window.postMessage(eventObj, subscriber.locationUrl);
+
         });
+
+        return {
+            subscribe: function(callbackFn) {
+
+                if(this.subscribers.size !== 0) {
+                    let subscribersToNotify = Array.from(this.subscribers.keys());
+
+                    const checkNotifyComplete = (subscriberId: string) => {
+
+                        let index = subscribersToNotify.indexOf(subscriberId);
+                        subscribersToNotify.splice(index, 1);
+
+                        if (subscribersToNotify.length === 0) {
+                            callbackFn();
+                        }
+                    };
+
+                    this.subscribers.forEach((subscriber: ISubscriber, subscriberId: string) => {
+                        if (this.eventsToWait.has(subscriberId) && this.eventsToWait.get(subscriberId).indexOf(eventType) !== -1) {
+
+                            const actionCompletedFunction = (eventData, subId = subscriberId) => {
+                                if (eventData.type == "ACTION_COMPLETED") {
+                                    checkNotifyComplete(subId);
+                                }
+                                this.off(actionCompletedFunction);
+
+                            };
+                            this.on(actionCompletedFunction);
+                        }
+                        else {
+                            checkNotifyComplete(subscriberId);
+                        }
+                    });
+                }
+                else {
+                    callbackFn();
+                }
+            }.bind(this)
+        }
     }
 
     protected onMessage(event: any) {
@@ -55,31 +103,6 @@ export class BasePubSub {
                 callback(event.data, event);
             })
         }
-    }
-}
-
-export class PluginPubSub extends BasePubSub {
-
-    constructor(pluginId: string, parentUrl: string) {
-        super(pluginId);
-        this.register('sdc-hub', window.parent, parentUrl);
-        this.subscribe();
-    }
-
-    public subscribe() {
-        const registerData = {
-            pluginId: this.clientId
-        };
-
-        this.notify('PLUGIN_REGISTER', registerData);
-    }
-
-    public unsubscribe() {
-        const unregisterData = {
-            pluginId: this.clientId
-        };
-
-        this.notify('PLUGIN_UNREGISTER', unregisterData);
     }
 }
 

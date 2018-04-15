@@ -43,13 +43,16 @@ export class PluginFrameComponent implements OnInit {
             this.pluginUrl += this.urlSearchParams.toString();
         }
 
-        this.eventBusService.on((eventData) => {
+        let readyEvent = (eventData) => {
             if (eventData.originId === this.plugin.pluginId) {
                 if (eventData.type == "READY") {
                     this.onLoadingDone.emit();
+                    this.eventBusService.off(readyEvent)
                 }
             }
-        });
+        };
+
+        this.eventBusService.on(readyEvent);
 
         // Listening to the stateChangeStart event in order to notify the plugin about it being closed
         // before moving to a new state
@@ -58,11 +61,11 @@ export class PluginFrameComponent implements OnInit {
                 if (!this.isClosed) {
                     event.preventDefault();
 
-                    this.eventBusService.notify("WINDOW_OUT");
+                    this.eventBusService.notify("WINDOW_OUT").subscribe(() => {
+                        this.isClosed = true;
 
-                    this.isClosed = true;
+                        this.eventBusService.unregister(this.plugin.pluginId);
 
-                    setTimeout(() => {
                         this.$state.go(toState.name, toParams);
                     });
                 }
