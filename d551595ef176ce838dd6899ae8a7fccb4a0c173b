@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_04474a78",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-15T17:07:51Z",
+      "side": 1,
+      "message": "this is not needed the file should be a template in the chef and not copied",
+      "range": {
+        "startLine": 970,
+        "startChar": 48,
+        "endLine": 970,
+        "endChar": 81
+      },
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1f032cb9",
         "filename": "catalog-be/src/main/resources/config/config-vnfrepo.yaml",
         "patchSetId": 2
@@ -31,6 +54,29 @@
       "side": 1,
       "message": "This is copied to sdc\\catalog-be\\sdc-backend\\chef-repo\\cookbooks\\sdc-catalog-be\\files\\default  files, similar to error-configuration.yaml and other files.",
       "parentUuid": "5a93c517_1f032cb9",
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a45f7640",
+        "filename": "catalog-be/src/main/resources/config/config-vnfrepo.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-15T17:07:51Z",
+      "side": 1,
+      "message": "this a duplicat of the configuration templat that already exists",
+      "range": {
+        "startLine": 1,
+        "startChar": 17,
+        "endLine": 4,
+        "endChar": 78
+      },
       "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
