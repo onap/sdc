@@ -35,40 +35,40 @@ public class ResourceTranslationNeutronPortHelper {
     public static final int DEFAULT_IP_VERSION = 4;
 
     public void setAdditionalProperties(Map<String, Object> properties) {
-        setRequirments(properties);
+        setRequirements(properties);
         setNetworkRoleTag(properties);
     }
 
-    private void setRequirments(Map<String, Object> properties) {
-        properties.putAll(addRequirments());
-        setIpRequirments(properties);
-        setMacRequirments(properties);
+    private void setRequirements(Map<String, Object> properties) {
+        properties.putAll(addRequirements());
+        setIpRequirements(properties);
+        setMacRequirements(properties);
     }
 
-    private void setIpRequirments(Map<String, Object> properties) {
+    private void setIpRequirements(Map<String, Object> properties) {
         setFixedIpCount(properties);
         setFloatingIpCount(properties);
-        addDefaultIpRequirment(properties);
+        addDefaultIpRequirement(properties);
     }
 
-    private Map<String, Object> addRequirments() {
-        Map<String, Object> properties = new HashMap();
+    private Map<String, Object> addRequirements() {
+        Map<String, Object> properties = new HashMap<>();
         List<Map<String, Object>> ipRequirementsList = new ArrayList<>();
         properties.put(IP_REQUIREMENTS, ipRequirementsList);
-        properties.put(MAC_REQUIREMENTS, createMacRequirment());
+        properties.put(MAC_REQUIREMENTS, createMacRequirement());
         return properties;
 
     }
 
-    private Map<String, Object> createMacRequirment() {
-        Map<String, Object> macRequirements = new HashMap();
-        Map<String, Object> macIsRequired = new HashMap();
+    private Map<String, Object> createMacRequirement() {
+        Map<String, Object> macRequirements = new HashMap<>();
+        Map<String, Object> macIsRequired = new HashMap<>();
         macIsRequired.put(IS_REQUIRED, Boolean.FALSE);
         macRequirements.put(MAC_COUNT_REQUIRED, macIsRequired);
         return macRequirements;
     }
 
-    private void setMacRequirments(Map<String, Object> properties) {
+    private void setMacRequirements(Map<String, Object> properties) {
             updateMacCountRequired(properties);
     }
 
@@ -89,18 +89,17 @@ public class ResourceTranslationNeutronPortHelper {
     }
 
 
-    private void addDefaultIpRequirment(Map<String, Object> properties) {
-        List<Map<String, Object>> ipRequirmentsList = ((List<Map<String, Object>>) properties.get(IP_REQUIREMENTS));
-
-        if(CollectionUtils.isEmpty(ipRequirmentsList)) {
-            ipRequirmentsList.add(createIPRequirment(DEFAULT_IP_VERSION));
+    private void addDefaultIpRequirement(Map<String, Object> properties) {
+        List<Map<String, Object>> ipRequirementsList = ((List<Map<String, Object>>) properties.get(IP_REQUIREMENTS));
+        if(ipRequirementsList.isEmpty()) {
+            ipRequirementsList.add(createIPRequirement(DEFAULT_IP_VERSION));
         }
     }
 
-    private Map<String, Object> createIPRequirment(Object version) {
-        Map<String, Object> ipRequirements = new HashMap();
-        Map<String, Object> isRequired = new HashMap();
-        Map<String, Object> floatingIsRequired = new HashMap();
+    private Map<String, Object> createIPRequirement(Object version) {
+        Map<String, Object> ipRequirements = new HashMap<>();
+        Map<String, Object> isRequired = new HashMap<>();
+        Map<String, Object> floatingIsRequired = new HashMap<>();
         isRequired.put(IS_REQUIRED, Boolean.FALSE);
         floatingIsRequired.put(IS_REQUIRED, Boolean.FALSE);
         ipRequirements.put(IP_COUNT_REQUIRED, isRequired);
@@ -152,20 +151,20 @@ public class ResourceTranslationNeutronPortHelper {
 
     private void updateIpCountRequiredForVersion(String ipCountRequired, Map<String, Object> properties,   Object ipVersion) {
         if (ipVersion != null) {
-            HashMap<Object, Map<String, Object>> ipRequirmentsMap = getIPRequirments(properties);
-            Map<String, Object>  ipRequirement = ipRequirmentsMap.get(ipVersion);
+            HashMap<Object, Map<String, Object>> ipRequirementsMap = getIPRequirements(properties);
+            Map<String, Object>  ipRequirement = ipRequirementsMap.get(ipVersion);
             if (ipRequirement == null){
-                ipRequirement = addIPRequirment(properties, ipVersion);
+                ipRequirement = addIPRequirement(properties, ipVersion);
             }
             updateIpCountRequired(ipCountRequired, ipRequirement);
         }
     }
 
-    private Map<String, Object> addIPRequirment(Map<String, Object> properties, Object ipVersion) {
-        List<Map<String, Object>> ipRequirmentsList = ((List<Map<String,Object>>) properties.get(IP_REQUIREMENTS));
-        Map<String, Object> newIpRequirment = createIPRequirment(ipVersion);
-        ipRequirmentsList.add(newIpRequirment);
-        return newIpRequirment;
+    private Map<String, Object> addIPRequirement(Map<String, Object> properties, Object ipVersion) {
+        List<Map<String, Object>> ipRequirementsList = ((List<Map<String,Object>>) properties.get(IP_REQUIREMENTS));
+        Map<String, Object> newIpRequirement = createIPRequirement(ipVersion);
+        ipRequirementsList.add(newIpRequirement);
+        return newIpRequirement;
     }
 
     private void updateIpCountRequired(String ipCountRequired, Map<String, Object> ipRequirement) {
@@ -173,11 +172,11 @@ public class ResourceTranslationNeutronPortHelper {
         isIPCountRequired.put(IS_REQUIRED, Boolean.TRUE);
     }
 
-    private HashMap <Object, Map<String, Object>> getIPRequirments (Map<String, Object> properties) {
-        HashMap<Object, Map<String, Object>> ipRequirmentsMap = new HashMap();
-        List<Map<String, Object>> ipRequirmentsList = ((List<Map<String,Object>>) properties.get(IP_REQUIREMENTS));
-        ipRequirmentsList.stream().forEach(e->ipRequirmentsMap.put(e.get(IP_VERSION),e));
-        return ipRequirmentsMap;
+    private HashMap <Object, Map<String, Object>> getIPRequirements (Map<String, Object> properties) {
+        HashMap<Object, Map<String, Object>> ipRequirementsMap = new HashMap<>();
+        List<Map<String, Object>> ipRequirementsList = ((List<Map<String,Object>>) properties.get(IP_REQUIREMENTS));
+        ipRequirementsList.stream().forEach(e->ipRequirementsMap.put(e.get(IP_VERSION),e));
+        return ipRequirementsMap;
     }
 
     private void setNetworkRoleTag(Map<String, Object> properties) {
