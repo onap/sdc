@@ -40,7 +40,7 @@ export class PluginsContextViewModel {
             this.$scope.isLoading = true;
         }
 
-        this.$scope.queryParams = {
+        this.$scope.queryParams = this.$stateParams.queryParams || {
             userId: this.$scope.user.userId,
             userRole: this.$scope.user.role,
             displayType: "context",
