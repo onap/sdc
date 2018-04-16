@@ -181,7 +181,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vmme_small_create_fsb
+            - vmme_small
             source_type: HEAT
             param_name: FSB_1_image
       type: string
@@ -687,7 +687,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vmme_small_create_fsb
+            - vmme_small
             source_type: HEAT
             param_name: FSB_2_image
       type: string
@@ -755,7 +755,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vmme_small_create_fsb
+            - vmme_small
             source_type: HEAT
             param_name: FSB1_volume_name
       type: string
@@ -919,7 +919,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vmme_small_create_fsb
+            - vmme_small
             source_type: HEAT
             param_name: FSB2_volume_name
       type: string
@@ -1163,7 +1163,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vmme_small_create_fsb
+            - vmme_small
             source_type: HEAT
             param_name: volume_size
       type: float
@@ -1248,7 +1248,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vmme_small_create_fsb
+            - vmme_small
             source_type: HEAT
             param_name: volume_type
       type: string
