@@ -136,6 +136,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_2fc1ff53",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 749
+      },
+      "writtenOn": "2018-04-16T05:54:02Z",
+      "side": 1,
+      "message": "As per the above link, if the debug is parameterized message, then no need to wrap it with isDebugEnabled check.The above log is already parameterized.Right?",
+      "parentUuid": "5a93c517_24dfe60e",
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_bf0f9887",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
         "patchSetId": 2
