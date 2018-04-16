@@ -235,6 +235,7 @@ export class States {
     public static WORKSPACE_INFORMATION_ARTIFACTS = 'workspace.information_artifacts';
     public static WORKSPACE_TOSCA_ARTIFACTS = 'workspace.tosca_artifacts';
     public static WORKSPACE_COMPOSITION = 'workspace.composition';
+    public static WORKSPACE_INTERFACE_OPERATION = 'workspace.interface_operation';
     public static WORKSPACE_NETWORK_CALL_FLOW = 'workspace.network_call_flow';
     public static WORKSPACE_MANAGEMENT_WORKFLOW = 'workspace.management_workflow';
     public static WORKSPACE_DEPLOYMENT = 'workspace.deployment';
@@ -318,7 +319,7 @@ export class COMPONENT_FIELDS {
     static COMPONENT_TOSCA_ARTIFACTS = "toscaArtifacts";
     static COMPONENT_POLICIES = "policies";
     static COMPONENT_GROUPS = "groups";
-
+    static COMPONENT_INTERFACE_OPERATIONS = "interfaces";
 }
 
 export class SERVICE_FIELDS {

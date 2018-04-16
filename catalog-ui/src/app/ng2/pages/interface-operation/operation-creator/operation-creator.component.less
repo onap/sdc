@@ -1,0 +1,69 @@
+@import '../../../../../assets/styles/variables.less';
+
+.operation-creator {
+    font-family: @font-opensans-regular;
+    user-select: none;
+    padding-top: 12px;
+    padding-bottom: 20px;
+
+    .i-sdc-form-label {
+        font-size: 12px;
+    }
+
+    .w-sdc-form .i-sdc-form-item {
+        margin-bottom: 15px;
+    }
+
+    .side-by-side {
+        display: flex;
+
+        .i-sdc-form-item {
+            flex-basis: 100%;
+
+            &:first-child {
+                flex-basis: 40%;
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .input-param-title {
+        font-size: 16px;
+        text-transform: uppercase;
+    }
+
+    .separator-buttons {
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+
+        .add-param-link {
+            &:not(.disabled):hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .generic-table {
+        max-height: 233px;
+
+        .header-row .header-cell {
+            &:last-child {
+                padding: 0;
+            }
+        }
+
+        .data-row {
+            &.empty-msg {
+                padding: 6px 14px;
+            }
+        }
+
+        /deep/ .cell {
+            &:last-child {
+                min-width: 40px;
+            }
+        }
+
+    }
+}
