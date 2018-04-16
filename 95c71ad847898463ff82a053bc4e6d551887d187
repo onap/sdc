@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9542a63c",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-sdk/src/main/java/org/openecomp/sdc/validation/util/ValidationTestUtil.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-16T12:24:25Z",
+      "side": 1,
+      "message": "Why not to use Assert.Equal of junit?",
+      "revId": "95c71ad847898463ff82a053bc4e6d551887d187",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_752efa8d",
+        "filename": "openecomp-be/tools/build-helper/src/main/java/org/openecomp/onboarding/build/test/StaleCodeDetectionTest.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-16T12:24:25Z",
+      "side": 1,
+      "message": "Sonar remark. \nJava 8\u0027s \"Files.exists\" should not be used\n \nCode smell\n \nMajor\nsquid:S3725\n \nThe Files.exists method has noticeably poor performance in JDK 8, and can slow an application significantly when used to check files that don\u0027t actually exist.\nThe same goes for Files.notExists, Files.isDirectory and Files.isRegularFile.\nNote that this rule is automatically disabled when the project\u0027s sonar.java.source is not 8.",
+      "revId": "95c71ad847898463ff82a053bc4e6d551887d187",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
