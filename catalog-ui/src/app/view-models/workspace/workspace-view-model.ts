@@ -455,16 +455,6 @@ export class WorkspaceViewModel {
                     version: this.$scope.component.version
                 };
 
-                // Notifying about events after successfully executing the actions
-                switch (state) {
-                    case "checkOut":
-                        this.eventBusService.notify("CHECK_OUT", eventData);
-                        break;
-                    case "deleteVersion":
-                        this.eventBusService.notify("UNDO_CHECK_OUT", eventData);
-                        break;
-                }
-
                 //the server returns only metaData (small component) except checkout (Full component)  ,so we update only the statuses of distribution & lifecycle
                 this.$scope.component.lifecycleState = component.lifecycleState;
                 this.$scope.component.distributionStatus = component.distributionStatus;
