@@ -64,6 +64,7 @@ import {PropertiesViewModel} from "../view-models/workspace/tabs/properties/prop
 import {AttributesViewModel} from "../view-models/workspace/tabs/attributes/attributes-view-model";
 import {ActivityLogViewModel} from "../view-models/workspace/tabs/activity-log/activity-log";
 import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/management-workflow/management-workflow-view-model";
+import {InterfaceOperationViewModel} from "../view-models/workspace/tabs/interface-operation/interface-operation-view-model";
 import {NetworkCallFlowViewModel} from "../view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
 import {DeploymentViewModel} from "../view-models/workspace/tabs/deployment/deployment-view-model";
 import {ResourceInputsViewModel} from "../view-models/workspace/tabs/inputs/resource-input/resource-inputs-view-model";
@@ -131,6 +132,7 @@ viewModelModule
   .controller(moduleName + '.AttributesViewModel', AttributesViewModel)
   .controller(moduleName + '.ActivityLogViewModel', ActivityLogViewModel)
   .controller(moduleName + '.ManagementWorkflowViewModel', ManagementWorkflowViewModel)
+  .controller(moduleName + '.InterfaceOperationViewModel', InterfaceOperationViewModel)
   .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel)
   .controller(moduleName + '.DeploymentViewModel', DeploymentViewModel)
   .controller(moduleName + '.ResourceInputsViewModel', ResourceInputsViewModel)

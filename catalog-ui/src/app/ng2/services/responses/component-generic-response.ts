@@ -22,7 +22,7 @@
  * Created by ob0695 on 4/18/2017.
  */
 
-import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance,
+import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance, OperationModel,
     InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup,InputFEModel} from "app/models";
 import {CommonUtils} from "app/utils";
 import {Serializable} from "../utils/serializable";
@@ -47,6 +47,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public policies:Array<PolicyInstance>;
     public groups:Array<Module>;
     public interfaces:any;
+    public interfaceOperations:Array<OperationModel>;
     public additionalInformation:any;
     public derivedList:Array<any>;
 
@@ -87,6 +88,9 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         }
         if(response.toscaArtifacts) {
             this.toscaArtifacts = new ArtifactGroupModel(response.toscaArtifacts);
+        }
+        if(response.interfaces) {
+            this.interfaceOperations = CommonUtils.initInterfaceOperations(response.interfaces);
         }
         if(response.metadata) {
             this.metadata = new ComponentMetadata().deserialize(response.metadata);
