@@ -154,6 +154,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_8f96134b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-16T06:26:54Z",
+      "side": 1,
+      "message": "It\u0027s not about parameterization. You should consider the cost of rsp.getResponse() vs. LOGGER.isDebugEnabled(). But as I mentioned, you will have to call rsp.getResponse() anyway, so why not to store it in a variable and use also for the debug call? In any case, it looks like rsp.getResponse() doesn\u0027t do much, so leave it as is.",
+      "parentUuid": "5a93c517_2fc1ff53",
+      "revId": "d551595ef176ce838dd6899ae8a7fccb4a0c173b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_bf0f9887",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
         "patchSetId": 2
