@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ca572959",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseFullTranslationTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-16T11:21:06Z",
+      "side": 1,
+      "message": "Optimize imports.",
+      "revId": "6c23a6778b5bb590ce2d343b354e3338b7e435d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2a67ad4e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseFullTranslationTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-16T11:21:06Z",
+      "side": 1,
+      "message": "remarked code should be deleted.",
+      "revId": "6c23a6778b5bb590ce2d343b354e3338b7e435d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea5c657f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-16T11:21:06Z",
+      "side": 1,
+      "message": "comments should be deleted.",
+      "revId": "6c23a6778b5bb590ce2d343b354e3338b7e435d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
