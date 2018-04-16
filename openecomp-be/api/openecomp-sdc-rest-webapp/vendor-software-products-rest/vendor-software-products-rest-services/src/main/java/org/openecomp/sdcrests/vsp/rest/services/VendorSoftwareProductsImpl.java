@@ -227,43 +227,40 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         vspDetails.setWritetimeMicroSeconds(version.getModificationTime().getTime());
 
         try {
-            Optional<Version> healedVersion = HealingManagerFactory.getInstance().createInterface()
-                    .healItemVersion(vspId, version, ItemType.vsp, false);
-
-            healedVersion.ifPresent(version1 -> {
-                vspDetails.setVersion(version1);
-                if (version.getStatus() == VersionStatus.Certified) {
-                    submitHealedVersion(vspId, version1, versionId, user);
-                }
-            });
+            HealingManagerFactory.getInstance().createInterface()
+                                 .healItemVersion(vspId, version, ItemType.vsp, false)
+                                 .ifPresent(healedVersion -> {
+                                     vspDetails.setVersion(healedVersion);
+                                     if (version.getStatus() == VersionStatus.Certified) {
+                                         submitHealedVersion(vspDetails, versionId, user);
+                                     }
+                                 });
         } catch (Exception e) {
-            LOGGER.error(
-                    String.format("Error while auto healing VSP with Id %s and version %s", vspId, versionId),
-                    e);
+            LOGGER.error(String.format("Error while auto healing VSP with Id %s and version %s", vspId, versionId), e);
         }
 
-        VspDetailsDto vspDetailsDto =
-                new MapVspDetailsToDto().applyMapping(vspDetails, VspDetailsDto.class);
+        VspDetailsDto vspDetailsDto = new MapVspDetailsToDto().applyMapping(vspDetails, VspDetailsDto.class);
         addNetworkPackageInfo(vspId, vspDetails.getVersion(), vspDetailsDto);
 
         return Response.ok(vspDetailsDto).build();
     }
 
-    private void submitHealedVersion(String vspId, Version healedVersion, String baseVersionId,
-                                     String user) {
+    private void submitHealedVersion(VspDetails vspDetails, String baseVersionId, String user) {
         try {
-            Optional<ValidationResponse>
-                    validationResponse = submit(vspId, healedVersion, "Submit healed Vsp", user);
+            // sync vlm if not exists on user space
+            versioningManager.get(vspDetails.getVendorId(), vspDetails.getVlmVersion());
+
+            Optional<ValidationResponse> validationResponse =
+                    submit(vspDetails.getId(), vspDetails.getVersion(), "Submit healed Vsp", user);
             // TODO: 8/9/2017 before collaboration checkout was done at this scenario (equivalent
             // to new version in collaboration). need to decide what should be done now.
             validationResponse.ifPresent(validationResponse1 -> {
                 throw new IllegalStateException("Certified vsp after healing failed on validation");
             });
-            vendorSoftwareProductManager.createPackage(vspId, healedVersion);
+            vendorSoftwareProductManager.createPackage(vspDetails.getId(), vspDetails.getVersion());
         } catch (Exception ex) {
-            LOGGER.error(
-                    String.format(SUBMIT_HEALED_VERSION_ERROR, vspId, healedVersion.getId(), baseVersionId),
-                    ex);
+            LOGGER.error(String.format(SUBMIT_HEALED_VERSION_ERROR, vspDetails.getId(), vspDetails.getVersion().getId(),
+                    baseVersionId), ex);
         }
     }
 
