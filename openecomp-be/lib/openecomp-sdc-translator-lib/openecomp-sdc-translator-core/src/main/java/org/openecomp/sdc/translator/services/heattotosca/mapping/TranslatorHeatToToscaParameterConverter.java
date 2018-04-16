@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,14 +65,14 @@ public class TranslatorHeatToToscaParameterConverter {
    */
   public static Map<String, ParameterDefinition> parameterConverter(ServiceTemplate serviceTemplate,
       Map<String, Parameter> parameters, HeatOrchestrationTemplate heatOrchestrationTemplate,
-      String heatFileName, TranslationContext context) {
+      String heatFileName, String parentHeatFileName, TranslationContext context) {
     Map<String, ParameterDefinition> parameterDefinitionMap = new HashMap<>();
     for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
       String heatParamName = entry.getKey();
       parameterDefinitionMap.put(heatParamName,
           getToscaParameter(serviceTemplate,heatParamName, entry.getValue(),
               heatOrchestrationTemplate,
-              heatFileName, context));
+              heatFileName, parentHeatFileName, context));
     }
     return parameterDefinitionMap;
   }
@@ -110,12 +110,13 @@ public class TranslatorHeatToToscaParameterConverter {
    * @param context                   the context
    * @return the tosca parameter
    */
-  public static ParameterDefinitionExt getToscaParameter(ServiceTemplate serviceTemplate,
+  private static ParameterDefinitionExt getToscaParameter(ServiceTemplate serviceTemplate,
                                                          String heatParameterName,
                                                          Parameter heatParameter,
                                                          HeatOrchestrationTemplate
                                                              heatOrchestrationTemplate,
                                                          String heatFileName,
+                                                         String parentHeatFileName,
                                                          TranslationContext context) {
 
     ParameterDefinitionExt toscaParameter = new ParameterDefinitionExt();
@@ -129,14 +130,18 @@ public class TranslatorHeatToToscaParameterConverter {
     toscaParameter.setHidden(heatParameter.isHidden());
     toscaParameter.setImmutable(heatParameter.isImmutable());
     toscaParameter.setConstraints(getToscaConstrains(heatParameter.getConstraints()));
-    Optional<Map<String, AnnotationDefinition>>  annotations = getToscaAnnotations(context, serviceTemplate, heatFileName, heatParameterName);
+    Optional<Map<String, AnnotationDefinition>>  annotations = getToscaAnnotations(context, serviceTemplate, heatFileName, parentHeatFileName, heatParameterName);
     annotations.ifPresent(ant->toscaParameter.setAnnotations(annotations.get()));
 
 
     return toscaParameter;
   }
 
-  private static Optional<Map<String, AnnotationDefinition> > getToscaAnnotations (TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName, String heatParameterName){
+  private static Optional<Map<String, AnnotationDefinition> > getToscaAnnotations (TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName, String parentHeatFileName, String heatParameterName){
+
+    if(parentHeatFileName != null){
+      heatFileName = parentHeatFileName;
+    }
 
     if(!isAnnotationRequired(context, serviceTemplate, heatFileName)){
       return Optional.empty();
@@ -162,7 +167,7 @@ public class TranslatorHeatToToscaParameterConverter {
 
   private static boolean isNestedServiceTemplate(TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName) {
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate.getMetadata());
-    return HeatToToscaUtil.isHeatFileNested(context, heatFileName) || context.getNestedHeatFileName().containsKey(serviceTemplateFileName);
+    return HeatToToscaUtil.isHeatFileNested(context, heatFileName);
   }
 
 

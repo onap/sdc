@@ -47,7 +47,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - a_vol
             - hot_template
             source_type: HEAT
             param_name: cmaui_cinder_volume_size
@@ -229,7 +228,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - a_vol
             - hot_template
             source_type: HEAT
             param_name: CMAUI_volume_type
