@@ -183,7 +183,8 @@ import { SearchWithAutoCompleteComponent } from "../ng2/components/ui/search-wit
 import { PalettePopupPanelComponent } from "../ng2/components/ui/palette-popup-panel/palette-popup-panel.component";
 import { ServicePathComponent } from '../ng2/components/logic/service-path/service-path.component';
 import { ServicePathSelectorComponent } from '../ng2/components/logic/service-path-selector/service-path-selector.component';
-import {PluginFrameComponent} from "../ng2/components/ui/plugin/plugin-frame.component";
+import { InterfaceOperationComponent } from '../ng2/pages/interface-operation/interface-operation.page.component';
+import { PluginFrameComponent } from "../ng2/components/ui/plugin/plugin-frame.component";
 
 directiveModule.directive('menuListNg2', downgradeComponent({
     component: MenuListNg2Component,
@@ -239,6 +240,12 @@ directiveModule.directive('ng2ServicePath', downgradeComponent({
 directiveModule.directive('ng2ServicePathSelector', downgradeComponent({
     component: ServicePathSelectorComponent,
     inputs: ['drawPath', 'deletePaths', 'service', 'selectedPathId'],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2InterfaceOperation', downgradeComponent({
+    component: InterfaceOperationComponent,
+    inputs: ['component', 'readonly', 'state'],
     outputs: []
 }) as angular.IDirectiveFactory);
 

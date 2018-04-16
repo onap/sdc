@@ -1,0 +1,29 @@
+@import '../../../../../../assets/styles/variables.less';
+
+.remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .delete-item-icon {
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+
+.cell {
+    padding: 0;
+
+    /deep/ select {
+        height: 30px;
+        border: none;
+    }
+
+    input {
+        height: 30px;
+        border: none;
+        padding-left: 10px;
+    }
+}

@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel} from "../models";
+import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel, OperationModel} from "../models";
 import {ComponentInstanceFactory} from "./component-instance-factory";
 import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
@@ -125,6 +125,38 @@ export class CommonUtils {
         }
 
         return policies;
+    }
+
+    static initInterfaceOperations(interfaces: any): Array<OperationModel> {
+
+        return _.reduce(interfaces, (acc, interf: any) => {
+
+            return acc.concat(
+                _.map(interf.operations,
+                    ({description, name, uniqueId, inputs, outputs}) => {
+                        const operation = new OperationModel({
+                            description,
+                            operationType: name,
+                            uniqueId
+                        });
+                        if (inputs) {
+                            const inputParams = _.map(inputs.listToscaDataDefinition, (input:any) => {
+                                return {paramName: input.name, paramId: input.inputId};
+                            });
+                            operation.createInputParamsList(inputParams);
+                        }
+                        if (outputs) {
+                            const outputParams = _.map(outputs.listToscaDataDefinition, (output:any) => {
+                                return {paramName: output.name, paramId: output.outputId};
+                            });
+                            operation.createOutputParamsList(outputParams);
+                        }
+                        return operation;
+                    }
+                )
+            );
+
+        }, []);
     }
 }
 

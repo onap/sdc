@@ -23,7 +23,7 @@
 import * as _ from "lodash";
 import {AsdcComment, ArtifactModel, ArtifactGroupModel, IFileDownload, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance,
     InputModel, DisplayModule, Module, IValidate, RelationshipModel, IMainCategory, RequirementsGroup, CapabilitiesGroup, AdditionalInformationModel,
-    Resource, IAppMenu, Service} from "../../models";
+    Resource, IAppMenu, OperationModel, Service} from "../../models";
 
 import {IComponentService} from "../../services/components/component-service";
 import {CommonUtils} from "../../utils/common-utils";
@@ -134,6 +134,7 @@ export abstract class Component implements IComponent {
     public deploymentArtifacts:ArtifactGroupModel;
     public artifacts:ArtifactGroupModel;
     public toscaArtifacts:ArtifactGroupModel;
+    public interfaceOperations:Array<OperationModel>;
     public distributionStatus:string;
     public categories:Array<IMainCategory>;
     public categoryNormalizedName: string;
@@ -178,6 +179,7 @@ export abstract class Component implements IComponent {
             this.additionalInformation = component.additionalInformation;
             this.artifacts = new ArtifactGroupModel(component.artifacts);
             this.toscaArtifacts = new ArtifactGroupModel(component.toscaArtifacts);
+            this.interfaceOperations = component.interfaceOperations;
             this.contactId = component.contactId;
             this.categories = component.categories;
             this.categoryNormalizedName = component.categoryNormalizedName;

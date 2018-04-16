@@ -24,7 +24,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
-import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData} from "app/models";
+import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse} from "app/models";
 import {COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
@@ -112,6 +112,48 @@ export class ComponentServiceNg2 {
 
     getComponentProperties(component:Component):Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
+    }
+
+    getInterfaceOperations(component:Component):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INTERFACE_OPERATIONS]);
+    }
+
+    getInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    createInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
+        const operationList = {
+            'interfaceOperations': {
+                [operation.operationType]: operation
+            }
+        };
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    updateInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
+        const operationList = {
+            'interfaceOperations': {
+                [operation.operationType]: operation
+            }
+        };
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    deleteInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
+        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
+            .map((res:Response) => {
+                return res.json();
+            });
     }
 
     getCapabilitiesAndRequirements(componentType: string, componentId:string):Observable<ComponentGenericResponse> {
