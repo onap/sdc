@@ -115,8 +115,8 @@ Then('I want to check property {string} for value {int}', function(string, int) 
  * @exampleFile Example_ResponseData_CheckAndManipulation.feature
  * @step I want to check property {string} to be "True/False"
  **/
-Then('I want to check property {string} to be {string}', function(string, string2)  {
-	assert.equal(_.get(this.context.responseData, string), string2.toLowerCase());
+Then('I want to check property {string} to be {word}', function(string, string2)  {
+    assert.equal(_.get(this.context.responseData, string), string2.toLowerCase() == "true");
 });
 /**
  * @module ResponseData
