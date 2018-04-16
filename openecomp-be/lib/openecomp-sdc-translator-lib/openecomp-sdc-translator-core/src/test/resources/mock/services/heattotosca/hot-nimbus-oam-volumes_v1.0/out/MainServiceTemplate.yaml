@@ -78,7 +78,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-oam-volumes_v1.0
+            - hot-nimbus-oam_v1.0
             source_type: HEAT
             param_name: pcrf_oam_vol_size
       type: float
@@ -93,7 +93,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-oam-volumes_v1.0
+            - hot-nimbus-oam_v1.0
             source_type: HEAT
             param_name: pcrf_oam_vol_name_2
       type: string
@@ -152,7 +152,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-oam-volumes_v1.0
+            - hot-nimbus-oam_v1.0
             source_type: HEAT
             param_name: pcrf_oam_vol_name_1
       type: string
@@ -182,7 +182,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-pcm-volumes_v1.0
+            - hot-nimbus-pcm_v1.0
             source_type: HEAT
             param_name: pcrf_pcm_vol_size
       type: float
@@ -309,7 +309,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-pcm-volumes_v1.0
+            - hot-nimbus-pcm_v1.0
             source_type: HEAT
             param_name: pcrf_pcm_volume_silver
       type: string
@@ -390,7 +390,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-oam-volumes_v1.0
+            - hot-nimbus-oam_v1.0
             source_type: HEAT
             param_name: pcrf_oam_volume_silver-2
       type: string
@@ -405,7 +405,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-oam-volumes_v1.0
+            - hot-nimbus-oam_v1.0
             source_type: HEAT
             param_name: pcrf_oam_volume_silver-1
       type: string
@@ -564,7 +564,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - hot-nimbus-pcm-volumes_v1.0
+            - hot-nimbus-pcm_v1.0
             source_type: HEAT
             param_name: pcrf_pcm_vol_name_1
       type: string

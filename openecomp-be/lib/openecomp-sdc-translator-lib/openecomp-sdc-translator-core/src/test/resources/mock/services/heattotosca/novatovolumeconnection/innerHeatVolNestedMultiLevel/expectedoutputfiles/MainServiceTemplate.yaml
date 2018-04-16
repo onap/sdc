@@ -29,8 +29,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vol_b
-            - vol_a
             - main
             source_type: HEAT
             param_name: cmaui_cinder_volume_size
@@ -55,8 +53,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vol_b
-            - vol_a
             - main
             source_type: HEAT
             param_name: contrail_net_name
@@ -70,8 +66,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vol_b
-            - vol_a
             - main
             source_type: HEAT
             param_name: CMAUI_volume_type
@@ -84,8 +78,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - vol_b
-            - vol_a
             - main
             source_type: HEAT
             param_name: jsa_name
