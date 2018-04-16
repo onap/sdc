@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ef0eb78b",
+        "filename": "openecomp-bdd/features/Onboarding/UniqueValue.feature",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-16T06:48:48Z",
+      "side": 1,
+      "message": "This may break because the order is not guaranteed, to my knowledge.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 65
+      },
+      "revId": "4d0fac7c8057d2732203fe9f219059945aa9750c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4f1d6bbd",
+        "filename": "openecomp-bdd/features/Onboarding/UniqueValue.feature",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-16T06:48:48Z",
+      "side": 1,
+      "message": "Better to check the response code.",
+      "range": {
+        "startLine": 10,
+        "startChar": 56,
+        "endLine": 10,
+        "endChar": 77
+      },
+      "revId": "4d0fac7c8057d2732203fe9f219059945aa9750c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
