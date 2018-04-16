@@ -55,6 +55,54 @@ Feature: Tosca Validation Flow
 
     Then I want to create a VF for this Item
 
+  Scenario: Validate Input parameter for volume file
+    When I want to create a VSP with onboarding type "NetworkPackage"
+
+    Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/annotationMultVolume.zip"
+    And I want to process the NetworkPackage file for this VSP
+
+    Then I want to commit this Item
+    And I want to submit this VSP
+    And I want to package this VSP
+
+    Then I want to get the package for this Item to path "resources/downloads/VSPPackage.zip"
+    When I want to load the yaml content of the entry "Definitions/MainServiceTemplate.yaml" in the zip "resources/downloads/VSPPackage.zip" to context
+
+    Then I want to check property "topology_template.inputs.pcrf_oam_vol_size.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.pcrf_oam_vol_size.annotations.source.properties.source_type" for value "HEAT"
+    Then I want to check property "topology_template.inputs.pcrf_oam_vol_size.annotations.source.properties.vf_module_label" to have length 1
+    Then I want to check property "topology_template.inputs.pcrf_oam_vol_size.annotations.source.properties.vf_module_label[0]" for value "hot-nimbus-oam_v1.0"
+    Then I want to check property "topology_template.inputs.pcrf_oam_vol_size.annotations.source.properties.param_name" for value "pcrf_oam_vol_size"
+
+    Then I want to check property "topology_template.inputs.pcrf_pcm_vol_size.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.pcrf_pcm_vol_size.annotations.source.properties.source_type" for value "HEAT"
+    Then I want to check property "topology_template.inputs.pcrf_pcm_vol_size.annotations.source.properties.vf_module_label" to have length 1
+    Then I want to check property "topology_template.inputs.pcrf_pcm_vol_size.annotations.source.properties.vf_module_label[0]" for value "hot-nimbus-pcm_v1.0"
+    Then I want to check property "topology_template.inputs.pcrf_pcm_vol_size.annotations.source.properties.param_name" for value "pcrf_pcm_vol_size"
+
+
+    Then I want to check property "topology_template.inputs.pcm-volumes_and_pcm_main_param.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.pcm-volumes_and_pcm_main_param.annotations.source.properties.source_type" for value "HEAT"
+    Then I want to check property "topology_template.inputs.pcm-volumes_and_pcm_main_param.annotations.source.properties.vf_module_label" to have length 1
+    Then I want to check property "topology_template.inputs.pcm-volumes_and_pcm_main_param.annotations.source.properties.vf_module_label[0]" for value "hot-nimbus-pcm_v1.0"
+    Then I want to check property "topology_template.inputs.pcm-volumes_and_pcm_main_param.annotations.source.properties.param_name" for value "pcm-volumes_and_pcm_main_param"
+
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm_main_param.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm_main_param.annotations.source.properties.source_type" for value "HEAT"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm_main_param.annotations.source.properties.vf_module_label" to have length 2
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm_main_param.annotations.source.properties.vf_module_label[0]" for value "hot-nimbus-pcm_v1.0"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm_main_param.annotations.source.properties.vf_module_label[1]" for value "hot-nimbus-oam_v1.0"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm_main_param.annotations.source.properties.param_name" for value "oam-volumes_pcm_main_param"
+
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm-volumes_and_oam_main_param.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm-volumes_and_oam_main_param.annotations.source.properties.source_type" for value "HEAT"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm-volumes_and_oam_main_param.annotations.source.properties.vf_module_label" to have length 2
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm-volumes_and_oam_main_param.annotations.source.properties.vf_module_label[0]" for value "hot-nimbus-pcm_v1.0"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm-volumes_and_oam_main_param.annotations.source.properties.vf_module_label[1]" for value "hot-nimbus-oam_v1.0"
+    Then I want to check property "topology_template.inputs.oam-volumes_pcm-volumes_and_oam_main_param.annotations.source.properties.param_name" for value "oam-volumes_pcm-volumes_and_oam_main_param"
+
+    Then I want to create a VF for this Item
+
   Scenario: Validate Input parameter  - annotation was not added
 
     When I want to create a VSP with onboarding type "NetworkPackage"

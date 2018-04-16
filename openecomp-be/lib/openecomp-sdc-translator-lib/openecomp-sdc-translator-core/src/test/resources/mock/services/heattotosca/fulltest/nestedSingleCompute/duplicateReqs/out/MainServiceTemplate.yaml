@@ -230,7 +230,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_cscf_volume
+            - base_cscf
             source_type: HEAT
             param_name: oam_volume_size_0
       type: float
@@ -551,7 +551,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_cscf_volume
             - base_cscf
             source_type: HEAT
             param_name: vnf_name
@@ -689,7 +688,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_cscf_volume
             - base_cscf
             source_type: HEAT
             param_name: availability_zone_0
@@ -703,7 +701,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_cscf_volume
             - base_cscf
             source_type: HEAT
             param_name: availability_zone_1
@@ -1156,7 +1153,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_cscf_volume
+            - base_cscf
             source_type: HEAT
             param_name: cif_volume_size_0
       type: float
@@ -1612,7 +1609,6 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_cscf_volume
             - base_cscf
             source_type: HEAT
             param_name: vcscf_name_delimeter
