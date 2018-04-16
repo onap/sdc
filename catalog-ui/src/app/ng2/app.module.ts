@@ -43,6 +43,8 @@ import {ComponentInstanceServiceNg2} from "./services/component-instance-service
 import {ModalService} from "./services/modal.service";
 import {UiElementsModule} from "./components/ui/ui-elements.module";
 import {ConnectionWizardModule} from "./pages/connection-wizard/connection-wizard.module";
+import {InterfaceOperationModule} from "./pages/interface-operation/interface-operation.module";
+import {OperationCreatorModule} from "./pages/interface-operation/operation-creator/operation-creator.module";
 import {LayoutModule} from "./components/layout/layout.module";
 import {UserService} from "./services/user.service";
 import {PoliciesService} from "./services/policies.service";
@@ -85,6 +87,8 @@ export function configServiceFactory(config:ConfigService) {
         ConnectionWizardModule,
         PropertiesAssignmentModule,
         PluginFrameModule,
+        InterfaceOperationModule,
+        OperationCreatorModule,
         ServicePathCreatorModule,
         ServicePathsListModule,
         ServicePathModule,

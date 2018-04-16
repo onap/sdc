@@ -1,0 +1,59 @@
+<div class="operation-creator">
+    <form class="w-sdc-form">
+
+        <div class="side-by-side">
+            <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label">Operation Type</label>
+                <input
+                    type="text"
+                    data-tests-id="operationType"
+                    name="operationType"
+                    [(ngModel)]="operation.operationType"
+                    [attr.maxLength]="200"
+                    [disabled]="isEditMode" />
+            </div>
+
+            <div class="i-sdc-form-item" >
+                <label class="i-sdc-form-label">Description</label>
+                <input
+                    type="text"
+                    data-tests-id="operationDescription"
+                    name="description"
+                    [(ngModel)]="operation.description"
+                    [attr.maxLength]="200" />
+            </div>
+        </div>
+
+        <div class="separator-buttons">
+            <span class="input-param-title">Input Parameters</span>
+            <a
+                class="add-param-link"
+                data-tests-id="addInputParameter"
+                [ngClass]="{'disabled':!isAddAllowed()}"
+                (click)="addParam()">
+                Add Input Parameter
+            </a>
+        </div>
+
+        <div class="generic-table">
+            <div class="header-row table-row">
+                <span class="cell header-cell">Name</span>
+                <span class="cell header-cell">Property Name</span>
+                <span class="cell header-cell"></span>
+            </div>
+
+            <div class="empty-msg data-row" *ngIf="inputParams.length === 0">
+                No data to display.
+            </div>
+
+            <param-row
+                *ngFor="let param of inputParams; let idx=index"
+                class="data-row"
+                [param]="param"
+                [inputProps]="inputProperties"
+                [onRemoveParam]="onRemoveParam">
+            </param-row>
+        </div>
+
+    </form>
+</div>

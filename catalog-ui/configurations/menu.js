@@ -334,6 +334,7 @@ const SDC_MENU_CONFIG = {
             {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             // {"text":"Properties", "action":"onMenuItemPressed", "state": "workspace.properties"},
             {"text":"Composition", "action":"onMenuItemPressed", "state": "workspace.composition.details"},
+            {"text":"Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text":"Activity Log", "action":"onMenuItemPressed", "state": "workspace.activity_log"},
             {"text":"Deployment", "action":"onMenuItemPressed", "state": "workspace.deployment"},
             // {"text":"Inputs", "action":"onMenuItemPressed", "state": "workspace.resource_inputs"},

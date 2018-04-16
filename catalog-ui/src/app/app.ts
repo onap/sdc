@@ -508,9 +508,22 @@ ng1appModule.config([
         );
 
         $stateProvider.state(
+            States.WORKSPACE_INTERFACE_OPERATION, {
+                url: 'interface_operation',
+                parent: 'workspace',
+                controller: viewModelsModuleName + '.InterfaceOperationViewModel',
+                templateUrl: './view-models/workspace/tabs/interface-operation/interface-operation-view.html',
+                data: {
+                    bodyClass: 'interface_operation'
+                }
+            }
+        );
+
+        $stateProvider.state(
             'workspace.plugins', {
                 url: 'plugins/*path',
                 parent: 'workspace',
+                params: {'queryParams': null},
                 templateUrl: './view-models/workspace/tabs/plugins/plugins-context-view.html',
                 controller: viewModelsModuleName + '.PluginsContextViewModel'
             }

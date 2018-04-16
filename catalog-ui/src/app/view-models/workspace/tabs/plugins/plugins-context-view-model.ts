@@ -48,10 +48,14 @@ export class PluginsContextViewModel {
             uuid: this.$scope.component.uuid,
             lifecycleState: this.$scope.component.lifecycleState,
             isOwner: this.$scope.component.lastUpdaterUserId === this.$scope.user.userId,
-            version: this.$scope.component.version ,
+            version: this.$scope.component.version,
             parentUrl: window.location.origin,
             eventsClientId: this.$scope.plugin.pluginId
         };
+
+        if (this.$stateParams.queryParams) {
+            _.assign(this.$scope.queryParams, this.$stateParams.queryParams);
+        }
 
         this.$scope.onLoadingDone = (plugin: Plugin) => {
             if (plugin.pluginId == this.$scope.plugin.pluginId) {
