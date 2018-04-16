@@ -68,7 +68,7 @@ topology_template:
           type: org.openecomp.annotations.Source
           properties:
             vf_module_label:
-            - base_pronghorn_volume
+            - base_pronghorn
             source_type: HEAT
             param_name: db_volume_size_0
       type: float
