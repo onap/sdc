@@ -97,6 +97,7 @@ export * from './models/instance-inputs-properties-map';
 export * from './models/left-panel';
 export * from './models/member';
 export * from './models/modules/base-module';
+export * from './models/operation';
 export * from './models/properties';
 export * from './models/requirement';
 export * from './models/server-error-response';

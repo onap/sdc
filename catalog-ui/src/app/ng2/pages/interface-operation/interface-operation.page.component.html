@@ -1,0 +1,14 @@
+<div class="interface-operation">
+  <div class="add-btn" [ngClass]="{'disabled': readonly}" (click)="onAddOperation()">Add Operation</div>
+  <div class="operation-list" [ngClass]="{'disabled': readonly}">
+      <div class="operation-row" *ngFor="let operation of operationList" (click)="onEditOperation(operation)">
+          <span class="operation-info-container">
+              <span class="operation-title">{{operation.operationType}}</span>
+              <span class="operation-description">{{operation.description}}</span>
+          </span>
+          <span class="operation-dumbo">
+              <span class="sprite-new delete-item-icon" (click)="onRemoveOperation($event, operation)"></span>
+          </span>
+      </div>
+  </div>
+</div>

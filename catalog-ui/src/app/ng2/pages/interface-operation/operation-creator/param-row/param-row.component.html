@@ -1,0 +1,7 @@
+<div class="cell">
+	<input type="text" [(ngModel)]="param.paramName">
+</div>
+<ui-element-dropdown class="cell" [values]="inputProps" [(value)]="param.paramId"></ui-element-dropdown>
+<div class="cell remove" data-tests-id="removeInputParam">
+	<span class="sprite-new delete-item-icon" (click)="onRemove()"></span>
+</div>
