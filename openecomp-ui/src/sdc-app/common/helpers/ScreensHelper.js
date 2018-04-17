@@ -88,7 +88,6 @@ const ScreensHelper = {
                         );
                         break;
                     case enums.SCREEN.VERSIONS_PAGE:
-                    default:
                         OnboardingActionHelper.navigateToVersionsPage(
                             dispatch,
                             {
@@ -279,7 +278,6 @@ const ScreensHelper = {
                         );
                         break;
                     case enums.SCREEN.SOFTWARE_PRODUCT_VERSIONS_PAGE:
-                    default:
                         OnboardingActionHelper.navigateToVersionsPage(
                             dispatch,
                             {
