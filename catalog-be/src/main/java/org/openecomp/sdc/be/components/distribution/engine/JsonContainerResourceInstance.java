@@ -28,7 +28,7 @@ public class JsonContainerResourceInstance {
     private String resourceInstanceName;
     private String resourceName;
     private String resourceVersion;
-    private String resourceType;
+    private String resoucreType;
     private String resourceUUID;
     private String resourceInvariantUUID;
     private String resourceCustomizationUUID;
@@ -41,7 +41,7 @@ public class JsonContainerResourceInstance {
         this.resourceInstanceName = resourceInstance.getName();
         this.resourceName = resourceInstance.getComponentName();
         this.resourceVersion = resourceInstance.getComponentVersion();
-        this.resourceType = resourceType;
+        this.resoucreType = resourceType;
         this.resourceUUID = resourceInstance.getComponentUid();
         this.artifacts = artifacts;
         this.resourceCustomizationUUID = resourceInstance.getCustomizationUUID();
@@ -53,7 +53,7 @@ public class JsonContainerResourceInstance {
         this.resourceName = resourceInstance.getComponentName();
         this.resourceVersion = resourceInstance.getComponentVersion();
         if(resourceInstance.getOriginType() != null)
-            this.resourceType = resourceInstance.getOriginType().getValue();
+            this.resoucreType = resourceInstance.getOriginType().getValue();
         this.resourceUUID = resourceInstance.getComponentUid();
         this.artifacts = artifacts;
         this.resourceCustomizationUUID = resourceInstance.getCustomizationUUID();
@@ -84,11 +84,11 @@ public class JsonContainerResourceInstance {
     }
 
     public String getResoucreType() {
-        return resourceType;
+        return resoucreType;
     }
 
     public void setResoucreType(String resoucreType) {
-        this.resourceType = resoucreType;
+        this.resoucreType = resoucreType;
     }
 
     public String getResourceUUID() {
@@ -141,7 +141,7 @@ public class JsonContainerResourceInstance {
 
     @Override
     public String toString() {
-        return "JsonContainerResourceInstance [resourceInstanceName=" + resourceInstanceName + ", resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resoucreType=" + resourceType + ", resourceUUID=" + resourceUUID
+        return "JsonContainerResourceInstance [resourceInstanceName=" + resourceInstanceName + ", resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resoucreType=" + resoucreType + ", resourceUUID=" + resourceUUID
                 + ", resourceInvariantUUID=" + resourceInvariantUUID + ", resourceCustomizationUUID=" + resourceCustomizationUUID + ", category=" + category + ", subcategory=" + subcategory + ", artifacts=" + artifacts + "]";
     }
 
