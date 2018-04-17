@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_daf7f6d1",
+        "filename": "openecomp-bdd/stepDefinitions/General_Steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-17T08:19:48Z",
+      "side": 1,
+      "message": "javascript some will make this nicer \nhttps://www.w3schools.com/jsref/jsref_some.asp",
+      "revId": "b4780997db9281c10bed7c2f3fcff9bcd0a5fcf8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7a0022ab",
+        "filename": "openecomp-bdd/stepDefinitions/General_Steps.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-17T08:19:48Z",
+      "side": 1,
+      "message": "javascript some will make it nicer\nhttps://www.w3schools.com/jsref/jsref_some.asp\n\nBreak statements are confusing.",
+      "revId": "b4780997db9281c10bed7c2f3fcff9bcd0a5fcf8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
