@@ -427,7 +427,7 @@ class EntitlementPoolsEditorView extends React.Component {
                 <GridSection className="license-model-modal-buttons entitlement-pools-editor-buttons">
                     {!this.state.selectedLimit && (
                         <Button
-                            btnType="default"
+                            btnType="primary"
                             disabled={!this.props.isFormValid || isReadOnlyMode}
                             onClick={() => this.submit()}
                             type="reset">
@@ -436,7 +436,7 @@ class EntitlementPoolsEditorView extends React.Component {
                     )}
                     <Button
                         btnType={
-                            this.state.selectedLimit ? 'default' : 'outline'
+                            this.state.selectedLimit ? 'primary' : 'secondary'
                         }
                         onClick={() => this.props.onCancel()}
                         type="reset">

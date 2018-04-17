@@ -46,7 +46,7 @@ class DraggableUploadFileBox extends Component {
                 <Button
                     type="button"
                     data-test-id={dataTestId}
-                    btnType="outline"
+                    btnType="secondary"
                     onClick={onClick}
                     disabled={isReadOnlyMode}>
                     {i18n('Select File')}

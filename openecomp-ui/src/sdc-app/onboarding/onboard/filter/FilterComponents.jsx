@@ -38,14 +38,21 @@ export const ItemStatus = ({ data, onDataChanged, byVendorView }) => (
     </Input>
 );
 
-const FilterList = ({ title, items, groupKey, onDataChanged, data }) => {
+const FilterList = ({
+    title,
+    items,
+    groupKey,
+    onDataChanged,
+    data,
+    dataTestId
+}) => {
     let onChange = value => {
         let obj = {};
         obj[groupKey] = { ...data[groupKey], ...value };
         onDataChanged(obj);
     };
     return (
-        <Accordion title={title}>
+        <Accordion defaultExpanded dataTestId={dataTestId} title={title}>
             <Checklist items={items} onChange={onChange} />
         </Accordion>
     );
@@ -73,13 +80,14 @@ export const EntityType = ({ data, onDataChanged }) => {
         },
         {
             label: i18n('VLM'),
-            dataTestId: 'catalog-ilter-type-vlm',
+            dataTestId: 'catalog-filter-type-vlm',
             value: 'vlm',
             checked: data.itemType && data.itemType.vlm
         }
     ];
     return (
         <FilterList
+            dataTestId="catalog-filter-entity-type"
             title={i18n('ENTITY TYPE')}
             items={items}
             onDataChanged={onDataChanged}
@@ -107,6 +115,7 @@ export const Permissions = ({ data, onDataChanged }) => {
 
     return (
         <FilterList
+            dataTestId="catalog-filter-permissions"
             title={i18n('PERMISSIONS')}
             items={items}
             onDataChanged={onDataChanged}
@@ -135,6 +144,7 @@ export const OnboardingProcedure = ({ data, onDataChanged }) => {
 
     return (
         <FilterList
+            dataTestId="catalog-filter-onboarding-procedure"
             title={i18n('ONBOARDING PROCEDURE')}
             items={items}
             onDataChanged={onDataChanged}
