@@ -301,15 +301,14 @@ class LimitEditor extends React.Component {
                         </GridSection>
                         <GridSection className="limit-editor-buttons">
                             <Button
-                                btnType="outline"
+                                btnType="primary"
                                 disabled={!isFormValid || isReadOnlyMode}
                                 onClick={() => this.submit()}
                                 type="reset">
                                 {i18n('Save')}
                             </Button>
                             <Button
-                                btnType="outline"
-                                color="gray"
+                                btnType="secondary"
                                 onClick={onCancel}
                                 type="reset">
                                 {i18n('Cancel')}
