@@ -238,6 +238,48 @@ When('I want to load the json content of the entry {string} in the zip {string} 
 
 /**
  * @module ResponseData
+ * @description Check that the result list doesn't contain an element with property x which has value
+ * equals to saved property y
+ * @exampleFile ListItemsFilters.feature
+ * @step I want to check that element in the response list with {string} equals to value of saved property {string} does not exist
+ **/
+Then('I want to check that element in the response list with {string} equals to value of saved property {string} does not exist', function(string, string2) {
+    const results = this.context.responseData.results;
+    var testResult = false;
+
+    for (var i = 0; i < results.length; i++) {
+        if (this.context[string2] == _.get(results[i], string)) {
+            testResult = true;
+            break;
+        }
+    }
+
+    assert.equal(testResult, false);
+});
+
+/**
+ * @module ResponseData
+ * @description Check that the result list contains an element with property x which has value
+ * equals to saved property y
+ * @exampleFile ListItemsFilters.feature
+ * @step I want to check that element in the response list with {string} equals to value of saved property {string} exists
+ **/
+Then('I want to check that element in the response list with {string} equals to value of saved property {string} exists', function(string, string2) {
+    const results = this.context.responseData.results;
+    var testResult = false;
+
+    for (var i = 0; i < results.length; i++) {
+        if (this.context[string2] == _.get(results[i], string)) {
+            testResult = true;
+            break;
+        }
+    }
+
+    assert.equal(testResult, true);
+});
+
+/**
+ * @module ResponseData
  * @description Check that the itemId from context exits in result of responseData
  * exampleFile ArchiveItem.feature
  * step I want to check that item exits in response
