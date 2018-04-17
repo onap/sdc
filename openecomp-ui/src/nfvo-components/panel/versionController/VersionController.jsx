@@ -64,11 +64,11 @@ class VersionController extends React.Component {
         } = this.props;
         return (
             <div className="version-controller-bar">
-                <div
-                    className={`vc-container ${
-                        candidateInProcess ? 'disabled' : ''
-                    }`}>
-                    <div className="version-status-container">
+                <div className="vc-container">
+                    <div
+                        className={`version-status-container ${
+                            candidateInProcess ? 'disabled' : ''
+                        }`}>
                         <VersionSelector
                             viewableVersions={viewableVersions}
                             version={version}

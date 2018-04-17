@@ -57,6 +57,7 @@ const ModalFooter = ({
                     <Button
                         data-test-id="sdc-modal-confirm-button"
                         color={typeClass[type]}
+                        btnType="primary"
                         onClick={() => {
                             onConfirmed();
                             onClose();
@@ -67,7 +68,7 @@ const ModalFooter = ({
                 <Button
                     {...myPropsForNoConfirmed}
                     data-test-id="sdc-modal-cancel-button"
-                    btnType="outline"
+                    btnType="secondary"
                     color={typeClass[type]}
                     onClick={
                         onDeclined

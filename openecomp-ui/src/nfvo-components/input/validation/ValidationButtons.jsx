@@ -63,12 +63,13 @@ class ValidationButtons extends React.Component {
                     <div>
                         <Button
                             type="submit"
+                            btnType="primary"
                             data-test-id="form-submit-button"
                             disabled={!this.state.isValid}>
                             {submitBtn}
                         </Button>
                         <Button
-                            btnType="outline"
+                            btnType="secondary"
                             type="reset"
                             data-test-id="form-close-button">
                             {closeBtn}
@@ -76,7 +77,7 @@ class ValidationButtons extends React.Component {
                     </div>
                 ) : (
                     <Button
-                        btnType="outline"
+                        btnType="primary"
                         type="reset"
                         data-test-id="form-close-button">
                         {i18n('Close')}

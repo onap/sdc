@@ -62,6 +62,7 @@ class HeatScreenView extends Component {
                     {activeTab === tabsMapping.SETUP &&
                         candidateInProcess && (
                             <Button
+                                size="default"
                                 data-test-id="proceed-to-validation-btn"
                                 disabled={!isValidationAvailable}
                                 className="proceed-to-validation-btn"
@@ -83,7 +84,7 @@ class HeatScreenView extends Component {
                     {activeTab === tabsMapping.VALIDATION &&
                         softwareProductId && (
                             <Button
-                                btnType="outline"
+                                btnType="secondary"
                                 data-test-id="go-to-overview"
                                 disabled={this.props.goToOverview !== true}
                                 className="go-to-overview-btn"
