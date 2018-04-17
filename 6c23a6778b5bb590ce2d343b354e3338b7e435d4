@@ -103,6 +103,52 @@
       "revId": "6c23a6778b5bb590ce2d343b354e3338b7e435d4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0a4c319d",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-sdk/src/main/java/org/openecomp/sdc/validation/util/ValidationTestUtil.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-17T06:15:09Z",
+      "side": 1,
+      "message": "this is not in use. could be deleted",
+      "range": {
+        "startLine": 180,
+        "startChar": 26,
+        "endLine": 180,
+        "endChar": 45
+      },
+      "revId": "6c23a6778b5bb590ce2d343b354e3338b7e435d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a5fe140",
+        "filename": "openecomp-be/tools/build-helper/src/main/java/org/openecomp/onboarding/build/test/StaleCodeDetectionTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-17T06:15:09Z",
+      "side": 1,
+      "message": "this is too long.\nplease break it",
+      "range": {
+        "startLine": 21,
+        "startChar": 8,
+        "endLine": 21,
+        "endChar": 152
+      },
+      "revId": "6c23a6778b5bb590ce2d343b354e3338b7e435d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
