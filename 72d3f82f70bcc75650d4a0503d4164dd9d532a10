@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3ad5ba1b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-17T08:37:09Z",
+      "side": 1,
+      "message": "create an overloaded method",
+      "range": {
+        "startLine": 133,
+        "startChar": 16,
+        "endLine": 133,
+        "endChar": 33
+      },
+      "revId": "72d3f82f70bcc75650d4a0503d4164dd9d532a10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1a123e09",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-17T08:37:09Z",
+      "side": 1,
+      "message": "see intellij comment. this condition is always true",
+      "range": {
+        "startLine": 279,
+        "startChar": 12,
+        "endLine": 279,
+        "endChar": 53
+      },
+      "revId": "72d3f82f70bcc75650d4a0503d4164dd9d532a10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7a17c2ee",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-17T08:37:09Z",
+      "side": 1,
+      "message": "what if the parameter you are looking for is in position 1 and not 0?",
+      "range": {
+        "startLine": 286,
+        "startChar": 67,
+        "endLine": 286,
+        "endChar": 94
+      },
+      "revId": "72d3f82f70bcc75650d4a0503d4164dd9d532a10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fadaf249",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaParameterConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-17T08:37:09Z",
+      "side": 1,
+      "message": "this can be private",
+      "range": {
+        "startLine": 113,
+        "startChar": 2,
+        "endLine": 113,
+        "endChar": 8
+      },
+      "revId": "72d3f82f70bcc75650d4a0503d4164dd9d532a10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
