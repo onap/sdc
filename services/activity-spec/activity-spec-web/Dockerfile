@@ -1,4 +1,4 @@
-FROM jetty:alpine
+FROM jetty:9.4.9-alpine
 
 EXPOSE 8080
 EXPOSE 8443

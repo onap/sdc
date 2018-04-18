@@ -6,3 +6,6 @@ if [[ -z "${CASSANDRA_HOST}" ]]; then
 fi
 
 cqlsh -f /create_activityspec_db.cql $CASSANDRA_HOST $CASSANDRA_PORT
+
+rc=$?
+if [[ $rc != 0 ]]; then exit $rc; fi

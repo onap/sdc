@@ -1,6 +1,4 @@
-FROM cassandra:2.1.9
-
-ENV CASSANDRA_PORT=9042
+FROM onap/base_sdc-cqlsh:1.2.0-SNAPSHOT-latest
 
 COPY create_activityspec_db.cql .
 COPY start.sh .
