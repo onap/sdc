@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [[ -z "${CASSANDRA_HOST}" ]]; then
 	echo "CASSANDRA_HOST environment variable must be set"
