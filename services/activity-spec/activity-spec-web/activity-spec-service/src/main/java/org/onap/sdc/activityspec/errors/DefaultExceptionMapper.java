@@ -53,17 +53,17 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     }
 
     private Response transform(ActivitySpecNotFoundException notFoundException) {
-        LOGGER.error("Transforming ActivitySpecNotFoundException to Error Response  :", notFoundException);
+        LOGGER.error("Error while fetching Activity Spec :", notFoundException);
         return generateResponse(Status.NOT_FOUND, new ActivitySpecErrorResponse(notFoundException.getMessage()));
     }
 
     private Response transform(CoreException coreException) {
-        LOGGER.error("Transforming CoreException to Error Response  :", coreException);
+        LOGGER.error(coreException.getMessage(), coreException);
         return generateResponse(Status.BAD_REQUEST, new ActivitySpecErrorResponse(coreException.getMessage()));
     }
 
     private Response transform(ConstraintViolationException validationException) {
-        LOGGER.error("Transforming ConstraintViolationException to Error Response :", validationException);
+        LOGGER.error("ConstraintViolationException Occurred :", validationException);
         Set<ConstraintViolation<?>> constraintViolationSet = validationException.getConstraintViolations();
         String message;
 
@@ -81,12 +81,12 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     }
 
     private Response transform(Exception exception) {
-        LOGGER.error("Transforming Exception to Error Response " + exception);
+        LOGGER.error("Error occurred :", exception);
         return generateResponse(Status.INTERNAL_SERVER_ERROR, new ActivitySpecErrorResponse(exception.getMessage()));
     }
 
     private Response transform(JsonMappingException jsonMappingException) {
-        LOGGER.error("Transforming JsonMappingException to Error Response " + jsonMappingException);
+        LOGGER.error("Error Occurred during JSON mapping :", jsonMappingException);
         return generateResponse(Status.BAD_REQUEST, new ActivitySpecErrorResponse("Invalid Json Input"));
     }
 
