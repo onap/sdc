@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_006e442f",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-04-19T19:32:09Z",
+      "side": 1,
+      "message": "This line was previously located at line 64, I just moved",
+      "parentUuid": "5a93c517_29bef6ff",
+      "range": {
+        "startLine": 4,
+        "startChar": 14,
+        "endLine": 4,
+        "endChar": 34
+      },
+      "revId": "908e6091628b7448a46f6a6f194c821dc6214de9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_e937aeae",
         "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_206b401f",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-04-19T19:32:09Z",
+      "side": 1,
+      "message": "Did you test it?",
+      "parentUuid": "5a93c517_e937aeae",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 38
+      },
+      "revId": "908e6091628b7448a46f6a6f194c821dc6214de9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_093bfa9c",
         "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2018-04-09T21:53:28Z",
       "side": 1,
       "message": "please remove this it was done for debugging as i see it.",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 18
+      },
+      "revId": "908e6091628b7448a46f6a6f194c821dc6214de9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8061f43a",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 947
+      },
+      "writtenOn": "2018-04-19T19:32:09Z",
+      "side": 1,
+      "message": "This line combines the previous instructions located in lines 68 and 69, I take use this patch to remove them.",
+      "parentUuid": "5a93c517_093bfa9c",
       "range": {
         "startLine": 70,
         "startChar": 0,
