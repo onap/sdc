@@ -13,6 +13,7 @@
     </parent>
 
     <modules>
+        <module>../openecomp-be/tools/compile-helper-plugin</module>
         <module>../openecomp-be/tools/build-helper</module>
         <module>../common</module>
         <module>../openecomp-be</module>
@@ -110,6 +111,18 @@
         <jacoco.skip>true</jacoco.skip>
     </properties>
 
+    <profiles>
+    <profile>
+        <id>onboarding</id>
+        <activation>
+            <activeByDefault>false</activeByDefault>
+        </activation>
+        <properties>
+            <jacoco.skip>false</jacoco.skip>
+        </properties>
+    </profile>
+</profiles>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -176,6 +189,7 @@
                         <fileset>
                             <directory>${project.build.directory}</directory>
                             <excludes>
+                                <exclude>classes/**/*.class</exclude>
                                 <exclude>test-classes/**/*.class</exclude>
                                 <exclude>pmd/**</exclude>
                                 <exclude>maven-status/**</exclude>
@@ -189,7 +203,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.version}</version>
                 <configuration>
-                    <forkCount>0</forkCount>
+                    <forkCount>${fork.count}</forkCount>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
@@ -203,6 +217,7 @@
                     <dependenciesToScan>
                         org.openecomp.sdc:build-helper
                     </dependenciesToScan>
+                    <useSystemClassLoader>${useSystemClassLoader}</useSystemClassLoader>
                 </configuration>
             </plugin>
         </plugins>

@@ -215,5 +215,16 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>onboarding</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <useSystemClassLoader>false</useSystemClassLoader>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
