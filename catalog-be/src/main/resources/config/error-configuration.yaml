@@ -2084,3 +2084,11 @@ errors:
       message: "Error: Failed to delete interface operation.",
       messageId: "SVC4702"
     }
+#---------SVC4703-----------------------------
+# %1 – asset type [service / resource ]
+# %2 – main asset uuid
+    ERROR_DURING_CSAR_CREATION: {
+      code: 404,
+      message: "Error: CSAR packaging failed for %1 %2.",
+      messageId: "SVC4702"
+    }
