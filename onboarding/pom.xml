@@ -13,10 +13,10 @@
     </parent>
 
     <modules>
-        <module>../openecomp-be/tools/build-helper</module>
+        <module>../openecomp-be/tools/compile-helper-plugin</module>
         <module>../common</module>
         <module>../openecomp-be</module>
-        <module>../openecomp-ui</module>
+        <!--module>../openecomp-ui</module-->
     </modules>
 
     <properties>
@@ -99,7 +99,8 @@
         <swagger.version>1.5.3</swagger.version>
         <testng.version>6.9.10</testng.version> <!--new 6.9.13.6 still shows blackduck risk -->
         <woodstox.version>4.4.1</woodstox.version>
-        <ws.rs.version>2.0.1</ws.rs.version>  <!--  New version 2.0.1 to fix blackduck violation Failing with comiplation issues-->
+        <ws.rs.version>2.0.1
+        </ws.rs.version>  <!--  New version 2.0.1 to fix blackduck violation Failing with comiplation issues-->
         <zusammen.version>0.3.0</zusammen.version>
         <zusammen-state-store.version>0.3.0</zusammen-state-store.version>
         <zusammen-collaboration-store.version>0.3.2</zusammen-collaboration-store.version>
@@ -176,9 +177,10 @@
                         <fileset>
                             <directory>${project.build.directory}</directory>
                             <excludes>
-                                <exclude>test-classes/**/*.class</exclude>
-                                <exclude>pmd/**</exclude>
-                                <exclude>maven-status/**</exclude>
+                                <exclude>${classes}</exclude>
+                                <exclude>${testClasses}</exclude>
+                                <exclude>${pmd}</exclude>
+                                <exclude>${mavenStatus}</exclude>
                             </excludes>
                         </fileset>
                     </filesets>
@@ -189,7 +191,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.version}</version>
                 <configuration>
-                    <forkCount>0</forkCount>
+                    <forkCount>${fork.count}</forkCount>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
@@ -197,12 +199,13 @@
                     </additionalClasspathElements>
                     <systemPropertyVariables>
                         <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
-                        <artifactgenerator.config>${project.basedir}/src/test/resources/config/Artifact-Generator.properties</artifactgenerator.config>
+                        <artifactgenerator.config>
+                            ${project.basedir}/src/test/resources/config/Artifact-Generator.properties
+                        </artifactgenerator.config>
                         <config.location>${project.basedir}/configuration</config.location>
                     </systemPropertyVariables>
-                    <dependenciesToScan>
-                        org.openecomp.sdc:build-helper
-                    </dependenciesToScan>
+                    <useSystemClassLoader>${useSystemClassLoader}</useSystemClassLoader>
+                    <skip>${skipTestRun}</skip>
                 </configuration>
             </plugin>
         </plugins>
