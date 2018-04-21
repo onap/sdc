@@ -1,158 +1,157 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.openecomp.sdc</groupId>
-	<artifactId>sdc-main</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-        <name>sdc</name>	
-	<properties>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>sdc-main</artifactId>
+    <version>1.2.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>sdc</name>
+    <properties>
 
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
-		<!-- ==================== -->
-		<!-- Generic properties -->
-		<!-- ==================== -->
-		<build.type>-SNAPSHOT</build.type>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sprint.number>74</sprint.number>
+        <!-- ==================== -->
+        <!-- Generic properties -->
+        <!-- ==================== -->
+        <build.type>-SNAPSHOT</build.type>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sprint.number>74</sprint.number>
 
-		<!-- 3rd parties versions -->
-		<lang3.version>3.3.2</lang3.version>
-		<guava.version>18.0</guava.version>
-		<titan.version>1.0.0</titan.version>
-		<sdc.titan.version>1.2.0</sdc.titan.version>
-		<spring-boot.version>1.1.6.RELEASE</spring-boot.version>
-		<spring.version>4.3.13.RELEASE</spring.version>
-		<spring.security.version>3.2.3.RELEASE</spring.security.version>
-		<spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
+        <!-- 3rd parties versions -->
+        <lang3.version>3.3.2</lang3.version>
+        <guava.version>18.0</guava.version>
+        <titan.version>1.0.0</titan.version>
+        <sdc.titan.version>1.2.0</sdc.titan.version>
+        <spring-boot.version>1.1.6.RELEASE</spring-boot.version>
+        <spring.version>4.3.13.RELEASE</spring.version>
+        <spring.security.version>3.2.3.RELEASE</spring.security.version>
+        <spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
         <jersey-bom.version>2.26</jersey-bom.version>
         <servlet-api.version>2.5</servlet-api.version>
-		<wire-mock.version>2.11.0</wire-mock.version>
+        <wire-mock.version>2.11.0</wire-mock.version>
 
-		<artifact-generator-api.version>${project.version}</artifact-generator-api.version>
-		<artifact-generator-core.version>${project.version}</artifact-generator-core.version>
-		<ecomp.version>1.1.0</ecomp.version>
-		<dox-common-lib.version>${project.version}</dox-common-lib.version>
+        <artifact-generator-api.version>${project.version}</artifact-generator-api.version>
+        <artifact-generator-core.version>${project.version}</artifact-generator-core.version>
+        <ecomp.version>1.1.0</ecomp.version>
+        <dox-common-lib.version>${project.version}</dox-common-lib.version>
 
-		<!-- Elastic Search mapper (reference the elastic search version actually). -->
-		<elastic-search.version>2.4.0</elastic-search.version>
-		<catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
-		<catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
-		<jetty.version>9.2.10.v20150310</jetty.version>
+        <!-- Elastic Search mapper (reference the elastic search version actually). -->
+        <elastic-search.version>2.4.0</elastic-search.version>
+        <catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
+        <catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
+        <jetty.version>9.2.10.v20150310</jetty.version>
 
-		<!-- JSON and YAML Parsing -->
-		<jackson.version>2.9.4</jackson.version>
-		<jackson.yaml.version>2.9.4</jackson.yaml.version>
-		<jackson.annotations.version>2.9.4</jackson.annotations.version>
+        <!-- JSON and YAML Parsing -->
+        <jackson.version>2.9.4</jackson.version>
+        <jackson.yaml.version>2.9.4</jackson.yaml.version>
+        <jackson.annotations.version>2.9.4</jackson.annotations.version>
 
-		<!-- Yaml for properties -->
-		<snakeyaml.version>1.14</snakeyaml.version>
-		<functionaljava.version>4.4</functionaljava.version>
-		<httpclient.version>4.4.1</httpclient.version>
-		<httpcore.version>4.4.1</httpcore.version>
-		<json-simple.version>1.1</json-simple.version>
+        <!-- Yaml for properties -->
+        <snakeyaml.version>1.14</snakeyaml.version>
+        <functionaljava.version>4.4</functionaljava.version>
+        <httpclient.version>4.4.1</httpclient.version>
+        <httpcore.version>4.4.1</httpcore.version>
+        <json-simple.version>1.1</json-simple.version>
 
-
-		<!-- Logging start -->
-		<!-- logback -->
+        <!-- Logging start -->
+        <!-- logback -->
         <logback.version>1.2.3</logback.version>
         <slf4j-api.version>1.7.10</slf4j-api.version>
         <commons-codec>1.10</commons-codec>
         <commons-logging>1.2</commons-logging>
-		<groovy.version>2.4.13</groovy.version>
-		<janino.version>3.0.6</janino.version>
+        <groovy.version>2.4.13</groovy.version>
+        <janino.version>3.0.6</janino.version>
 
-		<!-- aspects -->
-		<jcabi.version>0.20.1</jcabi.version>
-		<aspectjrt.version>1.8.4</aspectjrt.version>
-		<aspectj.version>1.7.4</aspectj.version>
-		<jcabi.plugin.version>0.13.2</jcabi.plugin.version>
+        <!-- aspects -->
+        <jcabi.version>0.20.1</jcabi.version>
+        <aspectjrt.version>1.8.4</aspectjrt.version>
+        <aspectj.version>1.7.4</aspectj.version>
+        <jcabi.plugin.version>0.13.2</jcabi.plugin.version>
 
-		<!-- Logging end -->
-		<!-- System Metrics -->
-		<sigar.version>1.6.4</sigar.version>
+        <!-- Logging end -->
+        <!-- System Metrics -->
+        <sigar.version>1.6.4</sigar.version>
 
-		<regex.version>3.0.3</regex.version>
+        <regex.version>3.0.3</regex.version>
 
-		<!--GSON-->
-		<gson.version>2.3.1</gson.version>
+        <!--GSON-->
+        <gson.version>2.3.1</gson.version>
 
         <!--listen to file changes-->
         <commons-jci-core.version>1.1</commons-jci-core.version>
 
-		<!--TESTING-->
-		<mockito.version>2.12.0</mockito.version>
-		<junit.version>4.12</junit.version>
-		<assertj.version>3.8.0</assertj.version>
-		<testng.version>6.9.10</testng.version>
-		<extentreports.version>3.0.3</extentreports.version>
-		<cucumber.version>2.3.1</cucumber.version>
+        <!--TESTING-->
+        <mockito.version>2.12.0</mockito.version>
+        <junit.version>4.12</junit.version>
+        <assertj.version>3.8.0</assertj.version>
+        <testng.version>6.9.10</testng.version>
+        <extentreports.version>3.0.3</extentreports.version>
+        <cucumber.version>2.3.1</cucumber.version>
 
-		<!-- parser-->
-		<sdc-tosca-parser.version>1.2.3-SNAPSHOT</sdc-tosca-parser.version>
+        <!-- parser-->
+        <sdc-tosca-parser.version>1.2.3-SNAPSHOT</sdc-tosca-parser.version>
 
-		<!--JaCoCO -->
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.language>java</sonar.language>
-		<!-- Sonar properties -->
-		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
-		<sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
-		<sonar.branch>${project.version}</sonar.branch>
+        <!--JaCoCO -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.language>java</sonar.language>
+        <!-- Sonar properties -->
+        <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
+        <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
+        <sonar.branch>${project.version}</sonar.branch>
 
-		<!--cassandra -->
-		<cassandra.driver.version>3.0.0</cassandra.driver.version>
-		<!-- maven central (Nexus) -->
-		<nexus.id.release>nexus</nexus.id.release>
-		<nexus.id.snapshot>nexus</nexus.id.snapshot>
+        <!--cassandra -->
+        <cassandra.driver.version>3.0.0</cassandra.driver.version>
+        <!-- maven central (Nexus) -->
+        <nexus.id.release>nexus</nexus.id.release>
+        <nexus.id.snapshot>nexus</nexus.id.snapshot>
 
-		<!--nexus-->
-		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
-		<sitePath>/content/sites/site/org/openecomp/sdc/${project.version}</sitePath>
-		<staging.profile.id>176c31dfe190a</staging.profile.id>
-		<!--maven-->
-		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
-		<!--io.fabric8-->
-		<fabric8.version>0.23.0</fabric8.version>
-		<!--docker tags-->
-		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-		<!--<docker.latest.tag>${project.version}-latest</docker.latest.tag>-->
+        <!--nexus-->
+        <nexus.proxy>https://nexus.onap.org</nexus.proxy>
+        <sitePath>/content/sites/site/org/openecomp/sdc/${project.version}</sitePath>
+        <staging.profile.id>176c31dfe190a</staging.profile.id>
+        <!--maven-->
+        <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
+        <!--io.fabric8-->
+        <fabric8.version>0.23.0</fabric8.version>
+        <!--docker tags-->
+        <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+        <!--<docker.latest.tag>${project.version}-latest</docker.latest.tag>-->
 
-	</properties>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.glassfish.jersey.ext</groupId>
-				<artifactId>jersey-bean-validation</artifactId>
-				<version>${jersey-bom.version}</version>
-			</dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.glassfish.jersey.ext</groupId>
+                <artifactId>jersey-bean-validation</artifactId>
+                <version>${jersey-bom.version}</version>
+            </dependency>
 
-			<dependency>
-				<groupId>org.glassfish.hk2.external</groupId>
-				<artifactId>asm-all-repackaged</artifactId>
-				<version>2.4.0</version>
-			</dependency>
+            <dependency>
+                <groupId>org.glassfish.hk2.external</groupId>
+                <artifactId>asm-all-repackaged</artifactId>
+                <version>2.4.0</version>
+            </dependency>
 
-			<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>${assertj.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+            </dependency>
 
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>${mockito.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
 
-			<dependency>
-				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock</artifactId>
-				<version>${wire-mock.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock</artifactId>
+                <version>${wire-mock.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -165,318 +164,319 @@
                 <artifactId>cucumber-junit</artifactId>
                 <version>${cucumber.version}</version>
             </dependency>
-		</dependencies>
-	</dependencyManagement>
+        </dependencies>
+    </dependencyManagement>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.0-M1</version>
-				<configuration>
-					<failOnError>false</failOnError>
-					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-					<docletArtifact>
-						<groupId>org.umlgraph</groupId>
-						<artifactId>umlgraph</artifactId>
-						<version>5.6</version>
-					</docletArtifact>
-					<additionalparam>-views</additionalparam>
-					<useStandardDocletOptions>true</useStandardDocletOptions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                    <docletArtifact>
+                        <groupId>org.umlgraph</groupId>
+                        <artifactId>umlgraph</artifactId>
+                        <version>5.6</version>
+                    </docletArtifact>
+                    <additionalparam>-views</additionalparam>
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
-	<build>
-		<pluginManagement>
-			<plugins>
+    <build>
+        <pluginManagement>
+            <plugins>
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>3.4</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.wagon</groupId>
-							<artifactId>wagon-webdav-jackrabbit</artifactId>
-							<version>2.10</version>
-						</dependency>
-					</dependencies>
-				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.4</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-webdav-jackrabbit</artifactId>
+                            <version>2.10</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
 
 
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.1.0</version>
-				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
 
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.4.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.sonarsource.scanner.maven</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.0.2</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
-		<plugins>
+        <plugins>
 
-			<!-- Staging Plugin -->
-			<plugin>
-				 <groupId>org.sonatype.plugins</groupId>
-				 <artifactId>nexus-staging-maven-plugin</artifactId>
-				 <version>1.6.7</version>
-				 <extensions>true</extensions>
-				 <configuration>
-						 <nexusUrl>${nexus.proxy}</nexusUrl>
-						 <stagingProfileId>${staging.profile.id}</stagingProfileId>
-						 <serverId>ecomp-staging</serverId>
-				 </configuration>
-			</plugin>
+            <!-- Staging Plugin -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <nexusUrl>${nexus.proxy}</nexusUrl>
+                    <stagingProfileId>${staging.profile.id}</stagingProfileId>
+                    <serverId>ecomp-staging</serverId>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
-				<configuration>
-					<systemPropertyVariables>
-						<logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
-			<!-- plugin for parsing the project version -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<id>parse-version</id>
-						<goals>
-							<goal>parse-version</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!-- plugin for parsing the project version -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>parse-version</id>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<!-- Java Code Coverage -->
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
-				<executions>
-					<execution>
-						<id>default-prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>default-report</id>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.wagon</groupId>
-						<artifactId>wagon-webdav-jackrabbit</artifactId>
-						<version>2.10</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+            <!-- Java Code Coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.9</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<!-- Set the deployment repositories properties. -->
-			<plugin>
-				<groupId>org.codehaus.gmaven</groupId>
-				<artifactId>gmaven-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<inherited>false</inherited>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-						<configuration>
-							<source>
-								pom.properties['deploy.url']=
-								pom.version.contains('-SNAPSHOT') ?
-								project.distributionManagement.snapshotRepository.url :
-								project.distributionManagement.repository.url;
-								pom.properties['repo.id']= pom.version.contains('-SNAPSHOT') ?
-								project.distributionManagement.snapshotRepository.id :
-								project.distributionManagement.repository.id;
-							</source>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-webdav-jackrabbit</artifactId>
+                        <version>2.10</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-			<!-- license plugin -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>1.10</version>
-				<configuration>
-					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-					<processStartTag>============LICENSE_START=======================================================</processStartTag>
-					<processEndTag>============LICENSE_END=========================================================</processEndTag>
-					<sectionDelimiter>================================================================================</sectionDelimiter>
-					<licenseName>apache_v2</licenseName>
-					<inceptionYear>2017</inceptionYear>
-					<organizationName>AT&amp;T Intellectual Property. All rights
-						reserved.</organizationName>
-					<projectName>SDC</projectName>
-					<canUpdateCopyright>true</canUpdateCopyright>
-					<canUpdateDescription>true</canUpdateDescription>
-					<canUpdateLicense>true</canUpdateLicense>
-					<emptyLineAfterHeader>true</emptyLineAfterHeader>
-					<verbose>false</verbose>
-					<includes>
-						<include>**/*.java</include>
-						<include>**/*.ts</include>
-					</includes>
-					<excludes>
-						<exclude>**/*.d.ts</exclude>
-					</excludes>
-					<roots>
-						<root>src</root>
-						<root>app</root>
-						<root>server-mock</root>
-						<root>typings</root>
-					</roots>
-					<extraExtensions>
-						<ts>java</ts>
-					</extraExtensions>
-				</configuration>
-				<executions>
-					<execution>
-						<id>first</id>
-						<goals>
-							<goal>update-file-header</goal>
-						</goals>
-						<!--phase>process-sources</phase -->
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+            <!-- Set the deployment repositories properties. -->
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <inherited>false</inherited>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                pom.properties['deploy.url'] =
+                                        pom.version.contains('-SNAPSHOT') ?
+                                                project.distributionManagement.snapshotRepository.url :
+                                                project.distributionManagement.repository.url;
+                                pom.properties['repo.id'] = pom.version.contains('-SNAPSHOT') ?
+                                        project.distributionManagement.snapshotRepository.id :
+                                        project.distributionManagement.repository.id;
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-	<profiles>
-		<profile>
-			<id>all</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>build-tools</module>
-				<module>onboarding</module>
-				<module>services/activity-spec</module>
-				<module>security-utils</module>
-				<module>common-app-api</module>
-				<module>common-be</module>
-				<module>catalog-dao</module>
-				<module>catalog-model</module>
-				<module>catalog-be</module>
-				<module>asdctool</module>
-				<module>catalog-ui</module>
-				<module>catalog-fe</module>
-				<module>test-apis-ci</module>
-				<module>ui-ci</module>
-				<module>sdc-os-chef</module>
-				<module>utils/webseal-simulator</module>
-			</modules>
+            <!-- license plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.10</version>
+                <configuration>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <processStartTag>============LICENSE_START=======================================================</processStartTag>
+                    <processEndTag>============LICENSE_END=========================================================</processEndTag>
+                    <sectionDelimiter>================================================================================</sectionDelimiter>
+                    <licenseName>apache_v2</licenseName>
+                    <inceptionYear>2017</inceptionYear>
+                    <organizationName>AT&amp;T Intellectual Property. All rights
+                        reserved.
+                    </organizationName>
+                    <projectName>SDC</projectName>
+                    <canUpdateCopyright>true</canUpdateCopyright>
+                    <canUpdateDescription>true</canUpdateDescription>
+                    <canUpdateLicense>true</canUpdateLicense>
+                    <emptyLineAfterHeader>true</emptyLineAfterHeader>
+                    <verbose>false</verbose>
+                    <includes>
+                        <include>**/*.java</include>
+                        <include>**/*.ts</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.d.ts</exclude>
+                    </excludes>
+                    <roots>
+                        <root>src</root>
+                        <root>app</root>
+                        <root>server-mock</root>
+                        <root>typings</root>
+                    </roots>
+                    <extraExtensions>
+                        <ts>java</ts>
+                    </extraExtensions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <!--phase>process-sources</phase -->
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-		</profile>
+    <profiles>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>build-tools</module>
+                <module>onboarding</module>
+                <module>services/activity-spec</module>
+                <module>security-utils</module>
+                <module>common-app-api</module>
+                <module>common-be</module>
+                <module>catalog-dao</module>
+                <module>catalog-model</module>
+                <module>catalog-be</module>
+                <module>asdctool</module>
+                <module>catalog-ui</module>
+                <module>catalog-fe</module>
+                <module>test-apis-ci</module>
+                <module>ui-ci</module>
+                <module>sdc-os-chef</module>
+                <module>utils/webseal-simulator</module>
+            </modules>
 
-		<profile>
-			<id>catalog</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<modules>
-				<module>security-utils</module>
-				<module>common-app-api</module>
-				<module>common-be</module>
-				<module>catalog-dao</module>
-				<module>catalog-model</module>
-				<module>catalog-be</module>
-				<module>asdctool</module>
-				<module>catalog-ui</module>
-				<module>catalog-fe</module>
-				<module>test-apis-ci</module>
-				<module>ui-ci</module>
-			</modules>			
-			
-			<properties>
-				<ecomp.version>1.2.7</ecomp.version>
-				<artifact-generator-api.version>1802.0.1.167</artifact-generator-api.version>
-				<artifact-generator-core.version>1802.0.1.167</artifact-generator-core.version>
-				<dox-common-lib.version>1802.0.1.167</dox-common-lib.version>
-				<sdc-tosca-parser.version>1.1.32</sdc-tosca-parser.version>
-			</properties>	
-		</profile>
+        </profile>
 
-		<profile>
-			<id>onboarding</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<modules>
-				<module>build-tools</module>
-				<module>onboarding</module>
-			</modules>
-		</profile>
+        <profile>
+            <id>catalog</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>security-utils</module>
+                <module>common-app-api</module>
+                <module>common-be</module>
+                <module>catalog-dao</module>
+                <module>catalog-model</module>
+                <module>catalog-be</module>
+                <module>asdctool</module>
+                <module>catalog-ui</module>
+                <module>catalog-fe</module>
+                <module>test-apis-ci</module>
+                <module>ui-ci</module>
+            </modules>
 
-	</profiles>
+            <properties>
+                <ecomp.version>1.2.7</ecomp.version>
+                <artifact-generator-api.version>1802.0.1.167</artifact-generator-api.version>
+                <artifact-generator-core.version>1802.0.1.167</artifact-generator-core.version>
+                <dox-common-lib.version>1802.0.1.167</dox-common-lib.version>
+                <sdc-tosca-parser.version>1.1.32</sdc-tosca-parser.version>
+            </properties>
+        </profile>
 
-	<repositories>
-		<!-- LF repositories -->
-		<repository>
-			<id>ecomp-releases</id>
-			<name>Release Repository</name>
-			<url>${nexus.proxy}/content/repositories/releases/</url>
-		</repository>
-		<repository>
-			<id>ecomp-snapshots</id>
-			<name>Snapshots Repository</name>
-			<url>${nexus.proxy}/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>ecomp-public</id>
-			<name>Public Repository</name>
-			<url>${nexus.proxy}/content/repositories/public/</url>
-		</repository>
-		<!-- LF repositories END-->
-	</repositories>
+        <profile>
+            <id>onboarding</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>build-tools</module>
+                <module>onboarding</module>
+            </modules>
+        </profile>
 
-	<distributionManagement>
-		<repository>
-			<id>ecomp-releases</id>
-			<name>Release Repository</name>
-			<url>${nexus.proxy}/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>ecomp-snapshots</id>
-			<name>Snapshot Repository</name>
-			<url>${nexus.proxy}/content/repositories/snapshots/</url>
-		</snapshotRepository>
-		<site>
-			<id>ecomp-site</id>
-			<url>dav:${nexus.proxy}${sitePath}</url>
-		</site>
-	</distributionManagement>
+    </profiles>
+
+    <repositories>
+        <!-- LF repositories -->
+        <repository>
+            <id>ecomp-releases</id>
+            <name>Release Repository</name>
+            <url>${nexus.proxy}/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>ecomp-snapshots</id>
+            <name>Snapshots Repository</name>
+            <url>${nexus.proxy}/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>ecomp-public</id>
+            <name>Public Repository</name>
+            <url>${nexus.proxy}/content/repositories/public/</url>
+        </repository>
+        <!-- LF repositories END-->
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>ecomp-releases</id>
+            <name>Release Repository</name>
+            <url>${nexus.proxy}/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ecomp-snapshots</id>
+            <name>Snapshot Repository</name>
+            <url>${nexus.proxy}/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <site>
+            <id>ecomp-site</id>
+            <url>dav:${nexus.proxy}${sitePath}</url>
+        </site>
+    </distributionManagement>
 </project>

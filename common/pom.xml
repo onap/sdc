@@ -11,7 +11,7 @@
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-onboarding</artifactId>
         <version>1.2.0-SNAPSHOT</version>
-	<relativePath>../onboarding</relativePath>
+        <relativePath>../onboarding</relativePath>
     </parent>
 
     <properties>
@@ -161,6 +161,56 @@
                 <configuration>
                     <source>${java.source}</source>
                     <target>${java.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openecomp.sdc.onboarding</groupId>
+                <artifactId>compile-helper-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>pre-compile-helper</goal>
+                            <goal>pre-test-compile-helper</goal>
+                            <goal>post-compile-helper</goal>
+                            <goal>post-test-run-helper</goal>
+                            <goal>init-helper</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludePackaging>pom</excludePackaging>
+                    <excludeDependencies>test,runtime</excludeDependencies>
+                    <staleThreshold>10000</staleThreshold>
+                    <mainSourceLocation>${basedir}/src/main/java</mainSourceLocation>
+                    <testSourceLocation>${basedir}/src/test/java</testSourceLocation>
+                    <mainResourceLocation>${basedir}/src/main/resources</mainResourceLocation>
+                    <testResourceLocation>${basedir}/src/test/resources</testResourceLocation>
+                    <mainCompiledLocation>${project.build.directory}/classes</mainCompiledLocation>
+                    <testCompiledLocation>${project.build.directory}/test-classes</testCompiledLocation>
+                    <compiledFilesList>
+                        ${project.build.directory}/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+                    </compiledFilesList>
+                    <inputSourceFilesList>
+                        ${project.build.directory}/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+                    </inputSourceFilesList>
+                    <inputTestFilesList>
+                        ${project.build.directory}/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+                    </inputTestFilesList>
+                    <compiledTestFilesList>
+                        ${project.build.directory}/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+                    </compiledTestFilesList>
+                    <buildState>
+                        <moduleBuildDataFile>${project.build.directory}/build-data/ModuleDependencies.dat
+                        </moduleBuildDataFile>
+                        <resourceBuildDataFile>${project.build.directory}/build-data/ResourceDependencies.dat
+                        </resourceBuildDataFile>
+                        <project>${project}</project>
+                        <buildStateFilePath>org.openecomp.sdc:sdc-onboarding/target/build-data/BuildState.dat
+                        </buildStateFilePath>
+                        <resourceStateFilePath>org.openecomp.sdc:sdc-onboarding/target/build-data/ResourceState.dat
+                        </resourceStateFilePath>
+                    </buildState>
                 </configuration>
             </plugin>
             <!-- blackduck maven plugin -->
