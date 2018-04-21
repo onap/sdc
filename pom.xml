@@ -54,7 +54,7 @@
 		<httpclient.version>4.4.1</httpclient.version>
 		<httpcore.version>4.4.1</httpcore.version>
 		<json-simple.version>1.1</json-simple.version>
-
+		<fork.count>0</fork.count>
 
 		<!-- Logging start -->
 		<!-- logback -->
@@ -439,6 +439,9 @@
 				<module>build-tools</module>
 				<module>onboarding</module>
 			</modules>
+			<properties>
+				<fork.count>1</fork.count>
+			</properties>
 		</profile>
 
 	</profiles>
