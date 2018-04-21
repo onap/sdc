@@ -16,9 +16,7 @@
 
     <modules>
         <module>openecomp-sdc-translator-api</module>
-        <module>openecomp-sdc-translator-sdk</module>
         <module>openecomp-sdc-translator-core</module>
-        <module>openecomp-sdc-translator-impl</module>
     </modules>
 
     <dependencies>

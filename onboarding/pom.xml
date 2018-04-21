@@ -13,10 +13,10 @@
     </parent>
 
     <modules>
-        <module>../openecomp-be/tools/build-helper</module>
+        <module>../openecomp-be/tools/compile-helper-plugin</module>
         <module>../common</module>
         <module>../openecomp-be</module>
-        <module>../openecomp-ui</module>
+        <!--module>../openecomp-ui</module-->
     </modules>
 
     <properties>
@@ -24,16 +24,20 @@
         <jacoco.version>0.7.9</jacoco.version>
         <mvn.assembly.version>2.1</mvn.assembly.version>
         <mvn.compiler.version>3.7.0</mvn.compiler.version>
+        <mvn.clean.version>2.5</mvn.clean.version>
         <mvn.deploy.version>2.4</mvn.deploy.version>
         <mvn.hub.version>1.4.0</mvn.hub.version>
         <mvn.install.version>2.3.1</mvn.install.version>
         <mvn.jar.version>2.4</mvn.jar.version>
-        <mvn.jaxb2.version>0.13.2</mvn.jaxb2.version>
+        <mvn.jaxb2.version>0.13.3</mvn.jaxb2.version>
         <mvn.license.version>1.10</mvn.license.version>
         <mvn.shade.version>2.3</mvn.shade.version>
         <mvn.surefire.version>2.19.1</mvn.surefire.version>
         <mvn.swagger.version>3.1.5</mvn.swagger.version>
         <mvn.war.version>2.1.1</mvn.war.version>
+        <maven-core.version>3.5.3</maven-core.version>
+        <maven-plugin-plugin.version>3.5.1</maven-plugin-plugin.version>
+        <maven-plugin-annotations.version>3.5.1</maven-plugin-annotations.version>
         <mvn.antrun.version>1.8</mvn.antrun.version>
 
         <!-- Onboarding artifacts version -->
@@ -99,7 +103,8 @@
         <swagger.version>1.5.3</swagger.version>
         <testng.version>6.9.10</testng.version> <!--new 6.9.13.6 still shows blackduck risk -->
         <woodstox.version>4.4.1</woodstox.version>
-        <ws.rs.version>2.0.1</ws.rs.version>  <!--  New version 2.0.1 to fix blackduck violation Failing with comiplation issues-->
+        <ws.rs.version>2.0.1
+        </ws.rs.version>  <!--  New version 2.0.1 to fix blackduck violation Failing with comiplation issues-->
         <zusammen.version>0.3.0</zusammen.version>
         <zusammen-state-store.version>0.3.0</zusammen-state-store.version>
         <zusammen-collaboration-store.version>0.3.2</zusammen-collaboration-store.version>
@@ -169,16 +174,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
+                <version>${mvn.clean.version}</version>
                 <configuration>
                     <excludeDefaultDirectories>true</excludeDefaultDirectories>
                     <filesets>
                         <fileset>
                             <directory>${project.build.directory}</directory>
                             <excludes>
-                                <exclude>test-classes/**/*.class</exclude>
-                                <exclude>pmd/**</exclude>
-                                <exclude>maven-status/**</exclude>
+                                <exclude>${classes}</exclude>
+                                <exclude>${testClasses}</exclude>
+                                <exclude>${pmd}</exclude>
+                                <exclude>${mavenStatus}</exclude>
+                                <exclude>${customGeneratedSources}</exclude>
+                                <exclude>build-data/**</exclude>
                             </excludes>
                         </fileset>
                     </filesets>
@@ -189,7 +197,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${mvn.surefire.version}</version>
                 <configuration>
-                    <forkCount>0</forkCount>
+                    <forkCount>${fork.count}</forkCount>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
@@ -197,12 +205,13 @@
                     </additionalClasspathElements>
                     <systemPropertyVariables>
                         <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
-                        <artifactgenerator.config>${project.basedir}/src/test/resources/config/Artifact-Generator.properties</artifactgenerator.config>
+                        <artifactgenerator.config>
+                            ${project.basedir}/src/test/resources/config/Artifact-Generator.properties
+                        </artifactgenerator.config>
                         <config.location>${project.basedir}/configuration</config.location>
                     </systemPropertyVariables>
-                    <dependenciesToScan>
-                        org.openecomp.sdc:build-helper
-                    </dependenciesToScan>
+                    <useSystemClassLoader>${useSystemClassLoader}</useSystemClassLoader>
+                    <skip>${skipTestRun}</skip>
                 </configuration>
             </plugin>
         </plugins>
