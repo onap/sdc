@@ -61,24 +61,6 @@
             <artifactId>reflections</artifactId>
             <version>${org.reflections.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-            <version>6.8.5</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>snakeyaml</artifactId>
-                    <groupId>org.yaml</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-            <version>${junit.version}</version>
-        </dependency>
 
     </dependencies>
     <build>
@@ -86,7 +68,7 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-		<version>${mvn.jaxb2.version}</version>
+                <version>${mvn.jaxb2.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -98,7 +80,12 @@
                 <configuration>
                     <schemaDirectory>src/main/resources</schemaDirectory>
                     <generatePackage>org.openecomp.sdc.generator.aai.xml</generatePackage>
-                    <generateDirectory>target/generated-sources/aai/xml</generateDirectory>
+                    <generateDirectory>target/generated-sources/custom/aai/xml</generateDirectory>
+                    <removeOldOutput>false</removeOldOutput>
+                    <cleanPackageDirectories>true</cleanPackageDirectories>
+                    <forceRegenerate>false</forceRegenerate>
+                    <debug>false</debug>
+                    <verbose>false</verbose>
                     <schemaIncludes>
                         <include>aai_schema_v11.xsd</include>
                     </schemaIncludes>

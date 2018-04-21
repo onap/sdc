@@ -32,7 +32,6 @@
         <module>openecomp-healing-lib</module>
         <module>openecomp-sdc-activity-log-lib</module>
         <module>openecomp-tosca-converter-lib</module>
-        <module>openecomp-sdc-orchestration-lib</module>
         <module>openecomp-sdc-notification-lib</module>
         <module>openecomp-item-permissions-lib</module>
         <module>openecomp-conflict-lib</module>
