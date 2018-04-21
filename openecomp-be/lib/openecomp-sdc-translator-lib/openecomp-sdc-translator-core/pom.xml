@@ -93,7 +93,7 @@
                 <configuration>
                     <parallel>classes</parallel>
                     <threadCount>1</threadCount>
-                    <forkCount>0</forkCount>
+                    <forkCount>${fork.count}</forkCount>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <rerunFailingTestsCount>1</rerunFailingTestsCount>
@@ -106,9 +106,14 @@
                     <dependenciesToScan>
                         org.openecomp.sdc:build-helper
                     </dependenciesToScan>
+                    <useSystemClassLoader>${useSystemClassLoader}</useSystemClassLoader>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <useSystemClassLoader>false</useSystemClassLoader>
+    </properties>
 
 </project>

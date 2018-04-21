@@ -11,7 +11,7 @@
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-onboarding</artifactId>
         <version>1.2.0-SNAPSHOT</version>
-	<relativePath>../onboarding</relativePath>
+        <relativePath>../onboarding</relativePath>
     </parent>
 
     <properties>
@@ -163,6 +163,7 @@
                     <target>${java.target}</target>
                 </configuration>
             </plugin>
+
             <!-- blackduck maven plugin -->
 
             <!--<plugin>
@@ -190,9 +191,12 @@
                 <version>${mvn.license.version}</version>
                 <configuration>
                     <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-                    <processStartTag>============LICENSE_START=======================================================</processStartTag>
-                    <processEndTag>============LICENSE_END=========================================================</processEndTag>
-                    <sectionDelimiter>================================================================================</sectionDelimiter>
+                    <processStartTag>============LICENSE_START=======================================================
+                    </processStartTag>
+                    <processEndTag>============LICENSE_END=========================================================
+                    </processEndTag>
+                    <sectionDelimiter>================================================================================
+                    </sectionDelimiter>
                     <licenseName>apache_v2</licenseName>
                     <inceptionYear>2017</inceptionYear>
                     <organizationName>AT&amp;T Intellectual Property. All rights reserved.</organizationName>
