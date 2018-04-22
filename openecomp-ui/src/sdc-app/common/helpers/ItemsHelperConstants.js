@@ -27,3 +27,13 @@ export const itemType = {
     VSP: 'vsp',
     VLM: 'vlm'
 };
+
+export const itemPermissions = {
+    CONTRIBUTOR: 'Contributor',
+    OWNER: 'Owner'
+};
+
+export const itemOnboardingProcedure = {
+    NETWORK: 'NetworkPackage',
+    MANUAL: 'Manual'
+};

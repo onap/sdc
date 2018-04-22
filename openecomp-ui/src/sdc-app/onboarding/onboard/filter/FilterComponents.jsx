@@ -16,7 +16,11 @@
 import React from 'react';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import { itemStatus } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
+import {
+    itemStatus,
+    itemPermissions,
+    itemOnboardingProcedure
+} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 import Accordion from 'sdc-ui/lib/react/Accordion.js';
 import Checklist from 'sdc-ui/lib/react/Checklist.js';
 import Checkbox from 'sdc-ui/lib/react/Checkbox.js';
@@ -102,13 +106,13 @@ export const Permissions = ({ data, onDataChanged }) => {
         {
             label: i18n('Owner'),
             dataTestId: 'catalog-filter-permission-owner',
-            value: 'Owner',
+            value: itemPermissions.OWNER,
             checked: data.permission && data.permission.Owner
         },
         {
             label: i18n('Contributor'),
             dataTestId: 'catalog-filter-permission-contributor',
-            value: 'Contributor',
+            value: itemPermissions.CONTRIBUTOR,
             checked: data.permission && data.permission.Contributor
         }
     ];
@@ -130,14 +134,14 @@ export const OnboardingProcedure = ({ data, onDataChanged }) => {
         {
             label: i18n('Network Package'),
             dataTestId: 'catalog-filter-procedure-network',
-            value: 'NetworkPackage',
+            value: itemOnboardingProcedure.NETWORK,
             checked:
                 data.onboardingMethod && data.onboardingMethod.NetworkPackage
         },
         {
             label: i18n('Manual'),
             dataTestId: 'catalog-filter-procedure-manual',
-            value: 'Manual',
+            value: itemOnboardingProcedure.MANUAL,
             checked: data.onboardingMethod && data.onboardingMethod.Manual
         }
     ];

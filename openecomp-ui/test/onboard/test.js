@@ -20,6 +20,11 @@ import OnboardingCatalogActionHelper from 'sdc-app/onboarding/onboard/onboarding
 import { tabsMapping as onboardTabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 import { tabsMapping as onboardCatalogTabsMapping } from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
 import { FilterFactory } from 'test-utils/factories/onboard/FilterFactories.js';
+import mockRest from 'test-utils/MockRest.js';
+import {
+    itemStatus,
+    versionStatus
+} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 
 describe('Onboard Module Tests', () => {
     it('should return default state', () => {
@@ -34,6 +39,18 @@ describe('Onboard Module Tests', () => {
             activeTab: onboardTabsMapping.CATALOG,
             filter: FilterFactory.build({ versionStatus: 'Certified' })
         });
+
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items?&itemStatus=${
+                    itemStatus.ACTIVE
+                }&versionStatus=${versionStatus.CERTIFIED}`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
+
         OnboardActionHelper.changeActiveTab(
             store.dispatch,
             onboardTabsMapping.CATALOG
@@ -62,6 +79,18 @@ describe('Onboard Module Tests', () => {
         const store = storeCreator();
         const expectedStore = OnboardStoreFactory.build();
         OnboardActionHelper.changeSearchValue(store.dispatch, 'hello');
+
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items?&itemStatus=${
+                    itemStatus.ACTIVE
+                }&versionStatus=${versionStatus.CERTIFIED}`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
+
         OnboardActionHelper.changeActiveTab(
             store.dispatch,
             onboardTabsMapping.CATALOG
@@ -70,6 +99,7 @@ describe('Onboard Module Tests', () => {
             store.dispatch,
             onboardCatalogTabsMapping.ACTIVE
         );
+
         OnboardActionHelper.resetOnboardStore(store.dispatch, 'hello');
         expect(store.getState().onboard).toEqual(expectedStore);
     });

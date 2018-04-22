@@ -53,6 +53,7 @@ class HeatScreenView extends Component {
             onboardingOrigin,
             activeTab,
             setActiveTab,
+            goToOverview,
             ...other
         } = this.props;
 
@@ -82,17 +83,13 @@ class HeatScreenView extends Component {
                         />
                     )}
                     {activeTab === tabsMapping.VALIDATION &&
-                        softwareProductId && (
+                        softwareProductId &&
+                        goToOverview && (
                             <Button
                                 btnType="secondary"
                                 data-test-id="go-to-overview"
-                                disabled={this.props.goToOverview !== true}
                                 className="go-to-overview-btn"
-                                onClick={
-                                    this.props.goToOverview
-                                        ? () => onGoToOverview({ version })
-                                        : undefined
-                                }>
+                                onClick={() => onGoToOverview({ version })}>
                                 {i18n('GO TO OVERVIEW')}
                             </Button>
                         )}

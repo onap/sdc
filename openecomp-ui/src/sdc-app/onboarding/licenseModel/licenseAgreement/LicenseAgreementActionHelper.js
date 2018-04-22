@@ -124,46 +124,37 @@ export default {
         });
     },
 
-    saveLicenseAgreement(
+    async saveLicenseAgreement(
         dispatch,
         { licenseModelId, previousLicenseAgreement, licenseAgreement, version }
     ) {
         if (previousLicenseAgreement) {
-            return putLicenseAgreement(
+            await putLicenseAgreement(
                 licenseModelId,
                 previousLicenseAgreement,
                 licenseAgreement,
                 version
-            ).then(() => {
-                this.fetchLicenseAgreementList(dispatch, {
-                    licenseModelId,
-                    version
-                });
-                return ItemsHelper.checkItemStatus(dispatch, {
-                    itemId: licenseModelId,
-                    versionId: version.id
-                });
-            });
+            );
         } else {
-            return postLicenseAgreement(
+            await postLicenseAgreement(
                 licenseModelId,
                 licenseAgreement,
                 version
-            ).then(() => {
-                this.fetchLicenseAgreementList(dispatch, {
-                    licenseModelId,
-                    version
-                });
-                FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {
-                    licenseModelId,
-                    version
-                });
-                return ItemsHelper.checkItemStatus(dispatch, {
-                    itemId: licenseModelId,
-                    versionId: version.id
-                });
-            });
+            );
         }
+        await this.fetchLicenseAgreementList(dispatch, {
+            licenseModelId,
+            version
+        });
+        await FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {
+            licenseModelId,
+            version
+        });
+
+        return ItemsHelper.checkItemStatus(dispatch, {
+            itemId: licenseModelId,
+            versionId: version.id
+        });
     },
 
     deleteLicenseAgreement(

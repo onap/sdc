@@ -1,306 +1,456 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
-import {cloneAndSet, buildListFromFactory} from 'test-utils/Util.js';
-import {storeCreator} from 'sdc-app/AppStore.js';
+import { cloneAndSet, buildListFromFactory } from 'test-utils/Util.js';
+import { storeCreator } from 'sdc-app/AppStore.js';
 import FeatureGroupsActionHelper from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsActionHelper.js';
-import { FeatureGroupStoreFactory, FeatureGroupPostFactory, FeatureGroupDispatchFactory, FeatureGroupPutFactory } from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';
+import {
+    FeatureGroupStoreFactory,
+    FeatureGroupPostFactory,
+    FeatureGroupDispatchFactory,
+    FeatureGroupPutFactory
+} from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';
 import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
-import {SyncStates} from 'sdc-app/common/merge/MergeEditorConstants.js';
+import { SyncStates } from 'sdc-app/common/merge/MergeEditorConstants.js';
 
+describe('Feature Groups Module Tests', function() {
+    const LICENSE_MODEL_ID = '555';
+    const version = VersionFactory.build();
+    const itemPermissionAndProps = CurrentScreenFactory.build({}, { version });
+    const returnedVersionFields = {
+        baseId: version.baseId,
+        description: version.description,
+        id: version.id,
+        name: version.name,
+        status: version.status
+    };
 
-describe('Feature Groups Module Tests', function () {
+    it('Load Feature Groups List', () => {
+        const featureGroupsList = buildListFromFactory(
+            FeatureGroupStoreFactory
+        );
+        deepFreeze(featureGroupsList);
 
-	const LICENSE_MODEL_ID = '555';
-	const version = VersionFactory.build();
-	const itemPermissionAndProps = CurrentScreenFactory.build({}, {version});
-	const returnedVersionFields = {baseId: version.baseId, description: version.description, id: version.id, name: version.name, status: version.status};
+        const store = storeCreator();
+        deepFreeze(store.getState());
 
-	it('Load Feature Groups List', () => {
+        const expectedStore = cloneAndSet(
+            store.getState(),
+            'licenseModel.featureGroup.featureGroupsList',
+            featureGroupsList
+        );
 
-		const featureGroupsList = buildListFromFactory(FeatureGroupStoreFactory);
-		deepFreeze(featureGroupsList);
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/feature-groups`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: featureGroupsList };
+        });
 
-		const store = storeCreator();
-		deepFreeze(store.getState());
+        return FeatureGroupsActionHelper.fetchFeatureGroupsList(
+            store.dispatch,
+            { licenseModelId: LICENSE_MODEL_ID, version }
+        ).then(() => {
+            expect(store.getState()).toEqual(expectedStore);
+        });
+    });
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.featureGroup.featureGroupsList', featureGroupsList);
+    it('Delete Feature Group', () => {
+        const featureGroupsList = buildListFromFactory(
+            FeatureGroupStoreFactory,
+            1
+        );
+        deepFreeze(featureGroupsList);
+        const store = storeCreator({
+            currentScreen: { ...itemPermissionAndProps },
+            licenseModel: {
+                featureGroup: {
+                    featureGroupsList
+                }
+            }
+        });
+        deepFreeze(store.getState());
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/feature-groups`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: featureGroupsList};
-		});
+        const expectedCurrentScreenProps = {
+            ...itemPermissionAndProps,
+            itemPermission: {
+                ...itemPermissionAndProps.itemPermission,
+                isDirty: true
+            }
+        };
 
-		return FeatureGroupsActionHelper.fetchFeatureGroupsList(store.dispatch, {licenseModelId: LICENSE_MODEL_ID, version}).then(() => {
-			expect(store.getState()).toEqual(expectedStore);
-		});
-	});
+        let expectedStore = cloneAndSet(
+            store.getState(),
+            'licenseModel.featureGroup.featureGroupsList',
+            []
+        );
+        expectedStore = cloneAndSet(
+            expectedStore,
+            'currentScreen.itemPermission',
+            expectedCurrentScreenProps.itemPermission
+        );
 
-	it('Delete Feature Group', () => {
-		const featureGroupsList = buildListFromFactory(FeatureGroupStoreFactory, 1);
-		deepFreeze(featureGroupsList);
-		const store = storeCreator({
-			currentScreen: {...itemPermissionAndProps},
-			licenseModel: {
-				featureGroup: {
-					featureGroupsList
-				}
-			}
-		});
-		deepFreeze(store.getState());
+        const idToDelete = featureGroupsList[0].id;
 
-		const expectedCurrentScreenProps = {
-			...itemPermissionAndProps,
-			itemPermission: {
-				...itemPermissionAndProps.itemPermission,
-				isDirty: true
-			}
-		};
+        mockRest.addHandler('destroy', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/feature-groups/${idToDelete}`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return {
+                results: {
+                    returnCode: 'OK'
+                }
+            };
+        });
 
-		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.featureGroup.featureGroupsList', []);
-		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return {
+                ...returnedVersionFields,
+                state: {
+                    synchronizationState: SyncStates.UP_TO_DATE,
+                    dirty: true
+                }
+            };
+        });
 
-		const idToDelete = featureGroupsList[0].id;
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return {
+                ...returnedVersionFields
+            };
+        });
 
-		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/feature-groups/${idToDelete}`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {
-				results: {
-					returnCode: 'OK'
-				}
-			};
-		});
+        return FeatureGroupsActionHelper.deleteFeatureGroup(store.dispatch, {
+            licenseModelId: LICENSE_MODEL_ID,
+            version,
+            featureGroupId: idToDelete
+        }).then(() => {
+            expect(store.getState()).toEqual(expectedStore);
+        });
+    });
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
-		});
+    it('Add Feature Group', () => {
+        const store = storeCreator({
+            currentScreen: { ...itemPermissionAndProps },
+            licenseModel: {
+                featureGroup: {
+                    featureGroupsList: []
+                }
+            }
+        });
+        deepFreeze(store.getState());
 
-		return FeatureGroupsActionHelper.deleteFeatureGroup(store.dispatch, {
-			licenseModelId: LICENSE_MODEL_ID,
-			version,
-			featureGroupId: idToDelete
-		}).then(() => {
-			expect(store.getState()).toEqual(expectedStore);
-		});
-	});
+        const FeatureGroupPostRequest = FeatureGroupPostFactory.build({
+            addedLicenseKeyGroupsIds: [1],
+            addedEntitlementPoolsIds: [1]
+        });
+        const featureGroupToAdd = FeatureGroupDispatchFactory.build({
+            licenseKeyGroupsIds: [1],
+            entitlementPoolsIds: [1]
+        });
 
-	it('Add Feature Group', () => {
+        const featureGroupIdFromResponse = 'ADDED_ID';
+        const featureGroupAfterAdd = FeatureGroupStoreFactory.build({
+            ...featureGroupToAdd,
+            id: featureGroupIdFromResponse
+        });
 
-		const store = storeCreator({
-			currentScreen: {...itemPermissionAndProps},
-			licenseModel: {
-				featureGroup: {
-					featureGroupsList: []
-				}
-			}
-		});
-		deepFreeze(store.getState());
+        const expectedCurrentScreenProps = {
+            ...itemPermissionAndProps,
+            itemPermission: {
+                ...itemPermissionAndProps.itemPermission,
+                isDirty: true
+            }
+        };
 
-		const FeatureGroupPostRequest = FeatureGroupPostFactory.build({
-			addedLicenseKeyGroupsIds: [1],
-			addedEntitlementPoolsIds: [1]
-		});
-		const featureGroupToAdd = FeatureGroupDispatchFactory.build({
-			licenseKeyGroupsIds: [1],
-			entitlementPoolsIds: [1]
-		});
+        let expectedStore = cloneAndSet(
+            store.getState(),
+            'licenseModel.featureGroup.featureGroupsList',
+            [featureGroupAfterAdd]
+        );
+        expectedStore = cloneAndSet(
+            expectedStore,
+            'currentScreen.itemPermission',
+            expectedCurrentScreenProps.itemPermission
+        );
 
-		const featureGroupIdFromResponse = 'ADDED_ID';
-		const featureGroupAfterAdd = FeatureGroupStoreFactory.build({
-			...featureGroupToAdd,
-			id: featureGroupIdFromResponse
-		});
+        mockRest.addHandler('post', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/feature-groups`
+            );
+            expect(data).toEqual(FeatureGroupPostRequest);
+            expect(options).toEqual(undefined);
+            return {
+                returnCode: 'OK',
+                value: featureGroupIdFromResponse
+            };
+        });
 
-		const expectedCurrentScreenProps = {
-			...itemPermissionAndProps,
-			itemPermission: {
-				...itemPermissionAndProps.itemPermission,
-				isDirty: true
-			}
-		};
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/entitlement-pools`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
 
-		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.featureGroup.featureGroupsList', [featureGroupAfterAdd]);
-		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/license-key-groups`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
 
-		mockRest.addHandler('post', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/feature-groups`);
-			expect(data).toEqual(FeatureGroupPostRequest);
-			expect(options).toEqual(undefined);
-			return {
-				returnCode: 'OK',
-				value: featureGroupIdFromResponse
-			};
-		});
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return {
+                ...returnedVersionFields,
+                state: {
+                    synchronizationState: SyncStates.UP_TO_DATE,
+                    dirty: true
+                }
+            };
+        });
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: []};
-		});
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return {
+                ...returnedVersionFields
+            };
+        });
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: []};
-		});
+        return FeatureGroupsActionHelper.saveFeatureGroup(store.dispatch, {
+            licenseModelId: LICENSE_MODEL_ID,
+            version,
+            featureGroup: featureGroupToAdd
+        }).then(() => {
+            expect(store.getState()).toEqual(expectedStore);
+        });
+    });
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
-		});
+    it('Update Feature Group', () => {
+        const featureGroupsList = buildListFromFactory(
+            FeatureGroupStoreFactory,
+            1,
+            {
+                licenseKeyGroupsIds: [1],
+                entitlementPoolsIds: [1]
+            }
+        );
+        deepFreeze(featureGroupsList);
 
+        const store = storeCreator({
+            currentScreen: { ...itemPermissionAndProps },
+            licenseModel: {
+                featureGroup: {
+                    featureGroupsList
+                }
+            }
+        });
+        deepFreeze(store.getState());
 
-		return FeatureGroupsActionHelper.saveFeatureGroup(store.dispatch, {
-			licenseModelId: LICENSE_MODEL_ID,
-			version,
-			featureGroup: featureGroupToAdd
-		}).then(() => {
-			expect(store.getState()).toEqual(expectedStore);
-		});
-	});
+        const toBeUpdatedFeatureGroupId = featureGroupsList[0].id;
+        const previousFeatureGroupData = featureGroupsList[0];
 
-	it('Update Feature Group', () => {
-		const featureGroupsList = buildListFromFactory(FeatureGroupStoreFactory, 1, {
-			licenseKeyGroupsIds: [1],
-			entitlementPoolsIds: [1]
-		});
-		deepFreeze(featureGroupsList);
+        const featureGroupUpdateData = FeatureGroupStoreFactory.build({
+            ...previousFeatureGroupData,
+            licenseKeyGroupsIds: [7],
+            entitlementPoolsIds: [7]
+        });
+        deepFreeze(featureGroupUpdateData);
 
-		const store = storeCreator({
-			currentScreen: {...itemPermissionAndProps},
-			licenseModel: {
-				featureGroup: {
-					featureGroupsList
-				}
-			}
-		});
-		deepFreeze(store.getState());
+        const FeatureGroupPutFactoryRequest = FeatureGroupPutFactory.build({
+            name: featureGroupUpdateData.name,
+            description: featureGroupUpdateData.description,
+            partNumber: featureGroupUpdateData.partNumber,
+            addedLicenseKeyGroupsIds: [7],
+            addedEntitlementPoolsIds: [7],
+            removedLicenseKeyGroupsIds: [1],
+            removedEntitlementPoolsIds: [1]
+        });
+        deepFreeze(FeatureGroupPutFactoryRequest);
 
-		const toBeUpdatedFeatureGroupId = featureGroupsList[0].id;
-		const previousFeatureGroupData = featureGroupsList[0];
+        const expectedCurrentScreenProps = {
+            ...itemPermissionAndProps,
+            itemPermission: {
+                ...itemPermissionAndProps.itemPermission,
+                isDirty: true
+            }
+        };
 
-		const featureGroupUpdateData = FeatureGroupStoreFactory.build({
-			...previousFeatureGroupData,
-			licenseKeyGroupsIds: [7],
-			entitlementPoolsIds: [7]
-		});
-		deepFreeze(featureGroupUpdateData);
+        let expectedStore = cloneAndSet(
+            store.getState(),
+            'licenseModel.featureGroup.featureGroupsList',
+            [featureGroupUpdateData]
+        );
+        expectedStore = cloneAndSet(
+            expectedStore,
+            'currentScreen.itemPermission',
+            expectedCurrentScreenProps.itemPermission
+        );
 
-		const FeatureGroupPutFactoryRequest = FeatureGroupPutFactory.build({
-			name: featureGroupUpdateData.name,
-			description: featureGroupUpdateData.description,
-			partNumber: featureGroupUpdateData.partNumber,
-			addedLicenseKeyGroupsIds: [7],
-			addedEntitlementPoolsIds: [7],
-			removedLicenseKeyGroupsIds: [1],
-			removedEntitlementPoolsIds: [1]
-		});
-		deepFreeze(FeatureGroupPutFactoryRequest);
+        mockRest.addHandler('put', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/feature-groups/${toBeUpdatedFeatureGroupId}`
+            );
+            expect(data).toEqual(FeatureGroupPutFactoryRequest);
+            expect(options).toEqual(undefined);
+            return { returnCode: 'OK' };
+        });
 
-		const expectedCurrentScreenProps = {
-			...itemPermissionAndProps,
-			itemPermission: {
-				...itemPermissionAndProps.itemPermission,
-				isDirty: true
-			}
-		};
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/entitlement-pools`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
 
-		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.featureGroup.featureGroupsList', [featureGroupUpdateData]);
-		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/license-key-groups`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
 
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return {
+                ...returnedVersionFields,
+                state: {
+                    synchronizationState: SyncStates.UP_TO_DATE,
+                    dirty: true
+                }
+            };
+        });
 
-		mockRest.addHandler('put', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/feature-groups/${toBeUpdatedFeatureGroupId}`);
-			expect(data).toEqual(FeatureGroupPutFactoryRequest);
-			expect(options).toEqual(undefined);
-			return {returnCode: 'OK'};
-		});
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return {
+                ...returnedVersionFields
+            };
+        });
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: []};
-		});
+        return FeatureGroupsActionHelper.saveFeatureGroup(store.dispatch, {
+            licenseModelId: LICENSE_MODEL_ID,
+            version,
+            previousFeatureGroup: previousFeatureGroupData,
+            featureGroup: featureGroupUpdateData
+        }).then(() => {
+            expect(store.getState()).toEqual(expectedStore);
+        });
+    });
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: []};
-		});
+    it('Open Editor', () => {
+        const store = storeCreator();
+        deepFreeze(store.getState());
 
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
-		});
+        const editorData = FeatureGroupStoreFactory.build();
+        deepFreeze(editorData);
+        const LICENSE_MODEL_ID = '123';
 
-		return FeatureGroupsActionHelper.saveFeatureGroup(store.dispatch, {
-			licenseModelId: LICENSE_MODEL_ID,
-			version,
-			previousFeatureGroup: previousFeatureGroupData,
-			featureGroup: featureGroupUpdateData
-		}).then(() => {
-			expect(store.getState()).toEqual(expectedStore);
-		});
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/entitlement-pools`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
 
-	});
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/license-key-groups`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
 
-	it('Open Editor', () => {
-
-		const store = storeCreator();
-		deepFreeze(store.getState());
-
-		const editorData = FeatureGroupStoreFactory.build();
-		deepFreeze(editorData);
-		const LICENSE_MODEL_ID = '123';
-
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: []};
-		});
-
-		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups`);
-			expect(data).toEqual(undefined);
-			expect(options).toEqual(undefined);
-			return {results: []};
-		});
-
-
-		return FeatureGroupsActionHelper.openFeatureGroupsEditor(store.dispatch, {featureGroup: editorData, licenseModelId: '123', version}).then(() => {
-			expect(store.getState().licenseModel.featureGroup.featureGroupEditor.data).toEqual(editorData);
-		});
-	});
-
+        return FeatureGroupsActionHelper.openFeatureGroupsEditor(
+            store.dispatch,
+            { featureGroup: editorData, licenseModelId: '123', version }
+        ).then(() => {
+            expect(
+                store.getState().licenseModel.featureGroup.featureGroupEditor
+                    .data
+            ).toEqual(editorData);
+        });
+    });
 });
