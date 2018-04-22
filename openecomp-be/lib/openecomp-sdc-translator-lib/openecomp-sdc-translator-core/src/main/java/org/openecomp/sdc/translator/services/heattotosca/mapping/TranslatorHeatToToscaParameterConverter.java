@@ -26,19 +26,24 @@ import org.openecomp.sdc.tosca.datatypes.model.*;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.AnnotationDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 import java.util.*;
 
-
 public class TranslatorHeatToToscaParameterConverter {
 
 
   private static Map<String, String> parameterTypeMapping;
   private static Map<String, String> parameterEntrySchemaTypeMapping;
+  private static final String RANGE = "range";
+  private static final String LENGTH = "length";
+  private static final String MIN = "min";
+  private static final String MAX = "max";
+  private static final String ALLOWED_VALUES = "allowed_values";
+  private static final String ALLOWED_PATTERN = "allowed_pattern";
+
 
   static {
     parameterEntrySchemaTypeMapping = new HashMap<>();
@@ -130,20 +135,20 @@ public class TranslatorHeatToToscaParameterConverter {
     toscaParameter.setHidden(heatParameter.isHidden());
     toscaParameter.setImmutable(heatParameter.isImmutable());
     toscaParameter.setConstraints(getToscaConstrains(heatParameter.getConstraints()));
-    Optional<Map<String, AnnotationDefinition>>  annotations = getToscaAnnotations(context, serviceTemplate, heatFileName, parentHeatFileName, heatParameterName);
+    Optional<Map<String, AnnotationDefinition>>  annotations = getToscaAnnotations(context, heatFileName, parentHeatFileName, heatParameterName);
     annotations.ifPresent(ant->toscaParameter.setAnnotations(annotations.get()));
 
 
     return toscaParameter;
   }
 
-  private static Optional<Map<String, AnnotationDefinition> > getToscaAnnotations (TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName, String parentHeatFileName, String heatParameterName){
+  private static Optional<Map<String, AnnotationDefinition> > getToscaAnnotations (TranslationContext context, String heatFileName, String parentHeatFileName, String heatParameterName){
 
     if(parentHeatFileName != null){
       heatFileName = parentHeatFileName;
     }
 
-    if(!isAnnotationRequired(context, serviceTemplate, heatFileName)){
+    if(!isAnnotationRequired(context, heatFileName)){
       return Optional.empty();
     }
 
@@ -161,12 +166,11 @@ public class TranslatorHeatToToscaParameterConverter {
 
   }
 
-  private static boolean isAnnotationRequired(TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName){
-    return HeatToToscaUtil.shouldAnnotationsToBeAdded() && !isNestedServiceTemplate(context, serviceTemplate, heatFileName);
+  private static boolean isAnnotationRequired(TranslationContext context, String heatFileName){
+    return HeatToToscaUtil.shouldAnnotationsToBeAdded() && !isNestedServiceTemplate(context,  heatFileName);
   }
 
-  private static boolean isNestedServiceTemplate(TranslationContext context, ServiceTemplate serviceTemplate, String heatFileName) {
-    String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate.getMetadata());
+  private static boolean isNestedServiceTemplate(TranslationContext context, String heatFileName) {
     return HeatToToscaUtil.isHeatFileNested(context, heatFileName);
   }
 
@@ -272,16 +276,16 @@ public class TranslatorHeatToToscaParameterConverter {
     List<Constraint> convertedConstraintList = new ArrayList<>();
     Constraint convertedConstraint;
 
-    if (constraint.containsKey("range")) {
+    if (constraint.containsKey(RANGE)) {
       convertedConstraint = new Constraint();
       convertedConstraintList.add(convertedConstraint);
-      Integer min = (Integer) ((Map) constraint.get("range")).get("min");
-      Integer max = (Integer) ((Map) constraint.get("range")).get("max");
+      Integer min = (Integer) ((Map) constraint.get(RANGE)).get(MIN);
+      Integer max = (Integer) ((Map) constraint.get(RANGE)).get(MAX);
       convertedConstraint.setIn_range(new Integer[]{min, max});
 
-    } else if (constraint.containsKey("length")) {
-      Integer min = (Integer) ((Map) constraint.get("length")).get("min");
-      Integer max = (Integer) ((Map) constraint.get("length")).get("max");
+    } else if (constraint.containsKey(LENGTH)) {
+      Integer min = (Integer) ((Map) constraint.get(LENGTH)).get(MIN);
+      Integer max = (Integer) ((Map) constraint.get(LENGTH)).get(MAX);
       if (max != null) {
         convertedConstraint = new Constraint();
         convertedConstraintList.add(convertedConstraint);
@@ -292,14 +296,14 @@ public class TranslatorHeatToToscaParameterConverter {
         convertedConstraintList.add(convertedConstraint);
         convertedConstraint.setMin_length(min);
       }
-    } else if (constraint.containsKey("allowed_values")) {
+    } else if (constraint.containsKey(ALLOWED_VALUES)) {
       convertedConstraint = new Constraint();
       convertedConstraintList.add(convertedConstraint);
-      convertedConstraint.setValid_values((List) constraint.get("allowed_values"));
-    } else if (constraint.containsKey("allowed_pattern")) {
+      convertedConstraint.setValid_values((List) constraint.get(ALLOWED_VALUES));
+    } else if (constraint.containsKey(ALLOWED_PATTERN)) {
       convertedConstraint = new Constraint();
       convertedConstraintList.add(convertedConstraint);
-      convertedConstraint.setPattern(constraint.get("allowed_pattern"));
+      convertedConstraint.setPattern(constraint.get(ALLOWED_PATTERN));
     }
 
     return convertedConstraintList;
