@@ -1,7 +1,4 @@
 package org.openecomp.sdc.translator.services.heattotosca.helper;
-
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
