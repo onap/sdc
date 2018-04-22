@@ -24,7 +24,8 @@ import {
 import { FilterFactory } from 'test-utils/factories/onboard/FilterFactories.js';
 import {
     itemStatus,
-    versionStatus
+    versionStatus,
+    itemPermissions
 } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 import OnboardActionHelper from 'sdc-app/onboarding/onboard/OnboardActionHelper.js';
 import { tabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
@@ -46,7 +47,9 @@ describe('Onboard Filter Tests', () => {
             expect(baseUrl).toEqual(
                 `/onboarding-api/v1.0/items?&itemStatus=${
                     itemStatus.ACTIVE
-                }&versionStatus=${versionStatus.DRAFT}`
+                }&versionStatus=${versionStatus.DRAFT}&permission=${
+                    itemPermissions.OWNER
+                },${itemPermissions.CONTRIBUTOR}`
             );
             expect(data).toEqual(undefined);
             expect(options).toEqual(undefined);
@@ -62,10 +65,7 @@ describe('Onboard Filter Tests', () => {
             done();
         });
     });
-    /**
-     *  TODO Turn ON when FILTER TOGGLE Will BE REMOVED
-     */
-    /*
+
     it('load certifed data', done => {
         const store = storeCreator();
 
@@ -112,7 +112,7 @@ describe('Onboard Filter Tests', () => {
             done();
         });
     });
-    */
+
     it('onboarding tabs switching filter updates', done => {
         const store = storeCreator();
 

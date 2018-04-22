@@ -18,8 +18,6 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import { permissionTypes } from 'sdc-app/onboarding/permissions/PermissionsConstants.js';
 import { actionsEnum as VersionControllerActionsEnum } from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 import { actionTypes as onboardingActionTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
-import { restToggle } from 'sdc-app/features/featureToggleUtils.js';
-import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 import objectPropsToUrlString from 'nfvo-utils/objectPropsToUrlString.js';
 
 export const archiveActions = {
@@ -98,11 +96,7 @@ const ItemsHelper = {
     },
 
     fetchItem(itemId) {
-        return restToggle({
-            restFunction: () => RestAPIUtil.fetch(`${baseUrl()}/${itemId}`),
-            featureName: featureToggleNames.ARCHIVE_ITEM,
-            mockResult: {}
-        });
+        return RestAPIUtil.fetch(`${baseUrl()}/${itemId}`);
     },
 
     archiveItem(itemId) {
@@ -118,11 +112,7 @@ const ItemsHelper = {
 
     fetchItems(filterData) {
         const str = objectPropsToUrlString(filterData);
-        return restToggle({
-            restFunction: () => RestAPIUtil.fetch(`${baseUrl()}?${str}`),
-            featureName: featureToggleNames.FILTER,
-            mockResult: { results: [] }
-        });
+        return RestAPIUtil.fetch(`${baseUrl()}?${str}`);
     }
 };
 

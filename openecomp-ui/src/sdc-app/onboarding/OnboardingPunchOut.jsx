@@ -232,12 +232,13 @@ export default class OnboardingPunchOut {
                             softwareProductScreen ===
                             enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS
                         ) {
-                            softwareProduct = vspData;
+                            softwareProduct = { ...vspData };
                             //check current vsp fields to determine which file has uploaded
+
                             if (
-                                vspData.onboardingOrigin ===
+                                vspData.onboardingOrigin.toLowerCase() ===
                                     onboardingOriginTypes.ZIP ||
-                                vspData.candidateOnboardingOrigin ===
+                                vspData.candidateOnboardingOrigin.toLowerCase() ===
                                     onboardingOriginTypes.ZIP
                             ) {
                                 softwareProductScreen =
