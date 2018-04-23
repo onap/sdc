@@ -26,6 +26,55 @@
             </activation>
             <build>
                 <plugins>
+                  <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-static-configuration-files</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.parent.basedir}/activity-spec-web/activity-spec-assembly/chef-repo/cookbooks/sdc-activity-spec/files/default</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/activity-spec-web/activity-spec-service/src/main/resources/config</directory>
+                                            <includes>
+                                                <include>logback.xml</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.basedir}/activity-spec-assembly</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/activity-spec-web/activity-spec-war/target</directory>
+                                            <includes>
+                                                <include>activity-spec-war-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/activity-spec-web/activity-spec-api-docs/target
+                                            </directory>
+                                            <includes>
+                                                <include>activity-spec-api-docs-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
@@ -37,11 +86,8 @@
                                         <tags>
                                             <tag>${project.version}</tag>
                                         </tags>
-                                        <dockerFileDir>${project.basedir}</dockerFileDir>
+                                        <dockerFileDir>${project.basedir}/activity-spec-assembly</dockerFileDir>
                                         <dockerFile>Dockerfile</dockerFile>
-                                        <args>
-                                            <ARTIFACT_VERSION>${project.version}</ARTIFACT_VERSION>
-                                        </args>
                                     </build>
                                 </image>
                             </images>

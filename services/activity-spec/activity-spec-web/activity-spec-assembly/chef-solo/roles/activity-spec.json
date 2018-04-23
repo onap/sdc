@@ -1,0 +1,22 @@
+{
+  "name": "activity-spec",
+  "description": "Installation application - activity-spec",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-activity-spec::ACT_1_cleanup_jettydir]",
+    "recipe[sdc-activity-spec::ACT_2_setup_configuration]",
+    "recipe[sdc-activity-spec::ACT_3_locate_keystore]",
+    "recipe[sdc-activity-spec::ACT_4_jetty_Modules]",
+    "recipe[sdc-activity-spec::ACT_5_logback]"
+  ],
+  "env_run_lists": {
+  }
+}
+
