@@ -1,0 +1,326 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_739b5f18",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseFullTranslationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "All I can see in this file is formatting. if you already formatting the file, can apply the coding style and reformat?",
+      "range": {
+        "startLine": 54,
+        "startChar": 13,
+        "endLine": 54,
+        "endChar": 36
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d377d3d2",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "2018",
+      "range": {
+        "startLine": 2,
+        "startChar": 20,
+        "endLine": 2,
+        "endChar": 24
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_336f17fe",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "unused members",
+      "range": {
+        "startLine": 41,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 38
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_93a62b53",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 60,
+        "startChar": 65,
+        "endLine": 60,
+        "endChar": 66
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d38913cb",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "rename to \"ignored\", it will quite the IDE",
+      "range": {
+        "startLine": 88,
+        "startChar": 29,
+        "endLine": 88,
+        "endChar": 30
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_139c5b0d",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 98,
+        "startChar": 8,
+        "endLine": 100,
+        "endChar": 52
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f3868fb8",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 112,
+        "startChar": 12,
+        "endLine": 113,
+        "endChar": 99
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_938f0bcd",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "rename to ignored",
+      "range": {
+        "startLine": 117,
+        "startChar": 33,
+        "endLine": 117,
+        "endChar": 34
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f3ad2f32",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "is it not important too handle in case of the operation failed?",
+      "range": {
+        "startLine": 153,
+        "startChar": 34,
+        "endLine": 153,
+        "endChar": 49
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f3744fd0",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PostCompileHelperMojo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "2018",
+      "range": {
+        "startLine": 2,
+        "startChar": 20,
+        "endLine": 2,
+        "endChar": 24
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_33b87774",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PostCompileHelperMojo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 75,
+        "startChar": 8,
+        "endLine": 75,
+        "endChar": 110
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d3b0338d",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PostCompileHelperMojo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 87,
+        "startChar": 9,
+        "endLine": 87,
+        "endChar": 104
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3346377c",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "this if condition is to complex to understand. extract to a function with understandable\\meaningful  name",
+      "range": {
+        "startLine": 71,
+        "startChar": 12,
+        "endLine": 72,
+        "endChar": 60
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d35ef344",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreTestCompileHelperMojo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-23T06:25:27Z",
+      "side": 1,
+      "message": "2018",
+      "range": {
+        "startLine": 2,
+        "startChar": 20,
+        "endLine": 2,
+        "endChar": 24
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
