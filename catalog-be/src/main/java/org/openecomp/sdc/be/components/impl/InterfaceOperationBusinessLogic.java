@@ -20,8 +20,11 @@ package org.openecomp.sdc.be.components.impl;
 import com.google.common.collect.Sets;
 import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -36,7 +39,6 @@ import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -53,8 +55,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
@@ -67,6 +67,9 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
 
     @Autowired
     private InterfaceOperation interfaceOperation;
+
+    @Autowired
+    private ArtifactCassandraDao artifactCassandraDao;
 
     public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
         this.interfaceOperation = interfaceOperation;
@@ -82,19 +85,29 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
     }
 
 
+    public void setArtifactCassandraDao(ArtifactCassandraDao artifactCassandraDao) {
+        this.artifactCassandraDao = artifactCassandraDao;
+    }
+
     public Either<Resource, ResponseFormat> deleteInterfaceOperation(String resourceId, Set<String> interfaceOperationToDelete, User user, boolean lock) {
         Resource resourceToDelete = initResourceToDeleteWFOp(resourceId, interfaceOperationToDelete);
         Either<Resource, ResponseFormat> eitherDelete = validateUserAndRole(resourceToDelete, user, "deleteInterfaceOperation");
         if (eitherDelete != null)
             return eitherDelete;
+        if (interfaceOperationToDelete == null || interfaceOperationToDelete.isEmpty()){
+            LOGGER.debug("Invalid parameter interfaceOperationToDelete was empty");
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY));
+        }
 
         Either<Resource, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(resourceId);
         if (storageStatus.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.RESOURCE),""));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(),
+                    ComponentTypeEnum.RESOURCE),""));
         }
         Resource resource = storageStatus.left().value();
         if (lock) {
-            Either<Boolean, ResponseFormat> lockResult = lockComponent(resource.getUniqueId(), resource, "Delete interface Operation on a resource");
+            Either<Boolean, ResponseFormat> lockResult = lockComponent(resource.getUniqueId(), resource,
+                    "Delete interface Operation on a resource");
             if (lockResult.isRight()) {
                 LOGGER.debug("Failed to lock resource {}. Response is {}. ", resource.getName(), lockResult.right().value().getFormattedMessage());
                 titanDao.rollback();
@@ -110,14 +123,26 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
                 return Either.right(sValue.right().value());
             }
             InterfaceDefinition interfaceDefinition = sValue.left().value();
-            Either<InterfaceDefinition, ResponseFormat> deleteEither;
 
             for(String operationToDelete : interfaceOperationToDelete) {
-                deleteEither = deleteOperationFromInterface(interfaceDefinition, operationToDelete);
+                Either<Pair<InterfaceDefinition, Operation>, ResponseFormat> deleteEither = deleteOperationFromInterface(interfaceDefinition, operationToDelete);
                 if (deleteEither.isRight()){
                     return Either.right(deleteEither.right().value());
                 }
-                interfaceDefinition = deleteEither.left().value();
+
+                Operation deletedOperation = deleteEither.left().value().getValue();
+                ArtifactDefinition implementationArtifact = deletedOperation.getImplementationArtifact();
+                String artifactUUID = implementationArtifact.getArtifactUUID();
+                CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUUID);
+                if (cassandraStatus != CassandraOperationStatus.OK) {
+                    LOGGER.debug("Failed to delete the artifact {} from the database. ", artifactUUID);
+                    ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
+                            componentsUtils.convertFromStorageResponse(componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
+                            implementationArtifact.getArtifactDisplayName());
+                    return Either.right(responseFormatByArtifactId);
+                }
+
+
             }
 
             Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation.updateInterface(resource.getUniqueId(), interfaceDefinition);
@@ -127,16 +152,14 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
             }
 
-            InterfaceDefinition interfaceDef = interfaceUpdate.left().value();
-            if(interfaceDef.getOperationsMap().isEmpty()){
-                Either<Set<String>, StorageOperationStatus> deleteInterface = interfaceOperation.deleteInterface(resource, Sets.newHashSet(interfaceDef.getUniqueId()));
+            if(interfaceDefinition.getOperationsMap().isEmpty()){
+                Either<Set<String>, StorageOperationStatus> deleteInterface = interfaceOperation.deleteInterface(resource, Sets.newHashSet(interfaceDefinition.getUniqueId()));
                 if (deleteInterface.isRight()) {
                     LOGGER.debug("Failed to delete interface from resource {}. Response is {}. ", resource.getName(), deleteInterface.right().value());
                     titanDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteInterface.right().value(), ComponentTypeEnum.RESOURCE)));
                 }
             }
-
             titanDao.commit();
 
         } catch (Exception e){
@@ -168,7 +191,7 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
         }
     }
 
-    private Either<InterfaceDefinition,ResponseFormat> deleteOperationFromInterface(InterfaceDefinition interfaceDefinition, String operationId){
+    private Either<Pair<InterfaceDefinition, Operation>,ResponseFormat> deleteOperationFromInterface(InterfaceDefinition interfaceDefinition, String operationId){
         Optional<Map.Entry<String, Operation>> operationToRemove = interfaceDefinition.getOperationsMap().entrySet().stream()
                 .filter(entry -> entry.getValue().getUniqueId().equals(operationId)).findAny();
         if (operationToRemove.isPresent()){
@@ -176,11 +199,12 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
             Map<String, Operation> tempMap = interfaceDefinition.getOperationsMap();
             tempMap.remove(stringOperationEntry.getKey());
             interfaceDefinition.setOperationsMap(tempMap);
-            return Either.left(interfaceDefinition);
+            return Either.left(Pair.of(interfaceDefinition,stringOperationEntry.getValue()));
         }
         LOGGER.debug("Failed to delete interface operation");
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND));
     }
+
 
     private Either<InterfaceDefinition,ResponseFormat> addOperationToInterface(InterfaceDefinition interfaceDefinition, Operation interfaceOperation){
         if(interfaceOperation.getUniqueId() == null)
@@ -230,6 +254,10 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
             return eitherCreator;
 
         Either<Resource, ResponseFormat> resourceEither = getResourceDetails(resourceId);
+        if (resourceEither.isRight()){
+            return resourceEither;
+        }
+
         Resource storedResource = resourceEither.left().value();
 
         Map<String, Operation> interfaceOperations = InterfaceUtils
@@ -386,13 +414,13 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
 
     @Override
     public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId,
-                                                      ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
+                                                                                                              ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
         return null;
     }
 
     @Override
     public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId,
-                                                                    List<String> dataParamsToReturn) {
+                                                                                                   List<String> dataParamsToReturn) {
         ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
         Either<Resource, StorageOperationStatus> resourceResultEither = toscaOperationFacade.getToscaElement(resourceId,
                 paramsToRetuen);
