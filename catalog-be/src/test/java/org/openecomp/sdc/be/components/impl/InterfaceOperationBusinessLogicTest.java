@@ -31,6 +31,8 @@ import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -108,7 +110,7 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
     WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     UserValidations userValidations = Mockito.mock(UserValidations.class);
     WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-
+    ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
     InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
     InterfaceOperationValidation operationValidator = Mockito.mock(InterfaceOperationValidation.class);
 
@@ -208,6 +210,7 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
         bl.setUserValidations(userValidations);
         bl.setInterfaceOperation(interfaceOperation);
         bl.setInterfaceOperationValidation(operationValidator);
+        bl.setArtifactCassandraDao(artifactCassandraDao);
         Resource resourceCsar = createResourceObjectCsar(true);
         setCanWorkOnResource(resourceCsar);
         Either<Component, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
@@ -240,6 +243,7 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
     public void deleteInterfaceOperationTest() {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(createResourceForInterfaceOperation()));
+        when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         Set<String> idsToDelete = new HashSet<>();
         idsToDelete.add(operationId);
 
@@ -255,6 +259,19 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
         idsToDelete.add(resourceId);
         Either<Resource, ResponseFormat> deleteResourceResponseFormatEither = bl.deleteInterfaceOperation(resourceId, idsToDelete, user, true);
         Assert.assertFalse(deleteResourceResponseFormatEither.isLeft());
+    }
+
+
+    @Test
+    public void deleteInterfaceOperationFailToDeleteArtifactTest() {
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(createResourceForInterfaceOperation()));
+        when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.GENERAL_ERROR);
+        validateUserRoles(Role.ADMIN, Role.DESIGNER);
+        Set<String> idsToDelete = new HashSet<>();
+        idsToDelete.add(operationId);
+
+        Either<Resource, ResponseFormat> deleteResourceResponseFormatEither = bl.deleteInterfaceOperation(resourceId, idsToDelete, user, true);
+        Assert.assertTrue(deleteResourceResponseFormatEither.isRight());
     }
 
     @Test
