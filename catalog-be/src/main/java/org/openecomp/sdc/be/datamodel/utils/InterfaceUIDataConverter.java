@@ -51,7 +51,8 @@ public class InterfaceUIDataConverter {
   public static InterfaceOperationDataDefinition convertOperationDataToInterfaceData(Operation operationData){
 
     ListDataDefinition<OperationInputDefinition> inputs = operationData.getInputs();
-    List<InterfaceOperationParamDataDefinition> inputParamList = inputs.getListToscaDataDefinition().stream().map(a -> new InterfaceOperationParamDataDefinition(a.getName(), a.getInputId())).collect(
+    List<InterfaceOperationParamDataDefinition> inputParamList = inputs.getListToscaDataDefinition().stream()
+            .map(a -> new InterfaceOperationParamDataDefinition(a.getName(), a.getInputId())).collect(
             Collectors.toList());
     ListDataDefinition<InterfaceOperationParamDataDefinition> inputParams = new ListDataDefinition<>();
     inputParamList.forEach(inputParams::add);
@@ -61,7 +62,7 @@ public class InterfaceUIDataConverter {
     interfaceOperationDataDefinition.setOperationType(operationData.getName());
     interfaceOperationDataDefinition.setDescription(operationData.getDescription());
     interfaceOperationDataDefinition.setInputParams(inputParams);
-    interfaceOperationDataDefinition.setWorkflowId(operationData.getImplementation().getArtifactUUID());
+    interfaceOperationDataDefinition.setArtifactUUID(operationData.getImplementation().getArtifactUUID());
 
     return interfaceOperationDataDefinition;
   }
