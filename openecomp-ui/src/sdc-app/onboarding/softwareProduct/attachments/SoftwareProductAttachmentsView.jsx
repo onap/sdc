@@ -152,14 +152,21 @@ class HeatScreenView extends Component {
                             }
                             onProcessAndValidate={onProcessAndValidate}
                             softwareProductId={softwareProductId}
-                            isReadOnlyMode={isReadOnlyMode}
+                            isReadOnlyMode={
+                                isReadOnlyMode ||
+                                (candidateInProcess && !goToOverview) ||
+                                !candidateInProcess
+                            }
                             version={version}
                         />
                     </Tab>
                     <Tab
                         tabId={tabsMapping.VALIDATION}
                         title="Validation"
-                        disabled={!isValidationAvailable || candidateInProcess}>
+                        disabled={
+                            goToOverview &&
+                            (!isValidationAvailable || candidateInProcess)
+                        }>
                         <HeatValidation {...other} />
                     </Tab>
                 </Tabs>

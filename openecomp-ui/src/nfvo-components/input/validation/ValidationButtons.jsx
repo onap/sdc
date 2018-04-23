@@ -64,6 +64,7 @@ class ValidationButtons extends React.Component {
                         <Button
                             type="submit"
                             btnType="primary"
+                            size="default"
                             data-test-id="form-submit-button"
                             disabled={!this.state.isValid}>
                             {submitBtn}
