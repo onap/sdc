@@ -20,8 +20,11 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import com.google.gson.Gson;
+import fj.data.Either;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +43,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -58,11 +61,13 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
@@ -76,6 +81,7 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -92,10 +98,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-
-import fj.data.Either;
-
 
 /**
  * @author tg851x
@@ -103,6 +105,7 @@ import fj.data.Either;
  */
 @org.springframework.stereotype.Component("csar-utils")
 public class CsarUtils {
+
     private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
 
     @Autowired
@@ -132,6 +135,8 @@ public class CsarUtils {
     public static final String RESOURCES_PATH = "Resources/";
     public static final String INFORMATIONAL_ARTIFACTS = "Informational/";
     public static final String DEPLOYMENT_ARTIFACTS = "Deployment/";
+    public static final String WORKFLOW_ARTIFACT_DIR = "Workflows"+File.separator+"BPMN"+File.separator;
+    public static final String DEPLOYMENT_ARTIFACTS_DIR = "Deployment"+File.separator;
 
     public static final String DEFINITIONS_PATH = "Definitions/";
     private static final String CSAR_META_VERSION = "1.0";
@@ -395,7 +400,7 @@ public class CsarUtils {
             return Either.right(collectedComponentCsarDefinition.right().value());
         }
 
-        return writeAllFilesToScar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
+        return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
     }
 
     private Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra(ZipOutputStream zip, byte[] schemaFileZip){
@@ -1126,20 +1131,20 @@ public class CsarUtils {
         return artifactType == null ? ArtifactTypeEnum.OTHER.getType() : artifactType.getType();
     }
 
-    private Either<ZipOutputStream, ResponseFormat> writeAllFilesToScar(Component mainComponent, CsarDefinition csarDefinition, ZipOutputStream zipstream, boolean isInCertificationRequest) throws IOException{
+    private Either<ZipOutputStream, ResponseFormat> writeAllFilesToCsar(Component mainComponent, CsarDefinition csarDefinition, ZipOutputStream zipstream, boolean isInCertificationRequest) throws IOException{
         ComponentArtifacts componentArtifacts = csarDefinition.getComponentArtifacts();
 
-        Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedtPath = writeComponentArtifactsToSpecifiedtPath(mainComponent, componentArtifacts, zipstream, ARTIFACTS_PATH, isInCertificationRequest);
+        Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedPath = writeComponentArtifactsToSpecifiedPath(mainComponent, componentArtifacts, zipstream, ARTIFACTS_PATH, isInCertificationRequest);
 
-        if(writeComponentArtifactsToSpecifiedtPath.isRight()){
-            return Either.right(writeComponentArtifactsToSpecifiedtPath.right().value());
+        if(writeComponentArtifactsToSpecifiedPath.isRight()){
+            return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
         }
 
         ComponentTypeArtifacts mainTypeAndCIArtifacts = componentArtifacts.getMainTypeAndCIArtifacts();
-        writeComponentArtifactsToSpecifiedtPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
+        writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
 
-        if(writeComponentArtifactsToSpecifiedtPath.isRight()){
-            return Either.right(writeComponentArtifactsToSpecifiedtPath.right().value());
+        if(writeComponentArtifactsToSpecifiedPath.isRight()){
+            return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
         }
 
         Map<String, ArtifactsInfo> componentInstancesArtifacts = mainTypeAndCIArtifacts.getComponentInstancesArtifacts();
@@ -1149,17 +1154,77 @@ public class CsarUtils {
         for (String keyAssetName : keySet) {
             ArtifactsInfo artifactsInfo = componentInstancesArtifacts.get(keyAssetName);
             String pathWithAssetName = currentPath + keyAssetName + "/";
-            writeComponentArtifactsToSpecifiedtPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
+            writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
 
-            if(writeComponentArtifactsToSpecifiedtPath.isRight()){
-                return Either.right(writeComponentArtifactsToSpecifiedtPath.right().value());
+            if(writeComponentArtifactsToSpecifiedPath.isRight()){
+                return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
             }
         }
+        writeComponentArtifactsToSpecifiedPath = writeOperationsArtifactsToCsar(mainComponent, zipstream);
 
+        if (writeComponentArtifactsToSpecifiedPath.isRight()) {
+            return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
+        }
         return Either.left(zipstream);
     }
 
-    private Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedtPath(Component mainComponent, ComponentArtifacts componentArtifacts, ZipOutputStream zipstream,
+    private Either<ZipOutputStream, ResponseFormat> writeOperationsArtifactsToCsar(Component component,
+            ZipOutputStream zipstream) {
+        if (Objects.isNull(((Resource) component).getInterfaces())) {
+            log.debug("Component Name {}- no interfaces found", component.getNormalizedName());
+            return Either.left(zipstream);
+        }
+        final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
+
+        for (Map.Entry<String, InterfaceDefinition> interfaceEntry : interfaces.entrySet()) {
+            for (OperationDataDefinition operation : interfaceEntry.getValue().getOperations().values()) {
+                try {
+                    if (Objects.isNull(operation.getImplementation())) {
+                        log.debug("Component Name {}, Interface Id {}, Operation Name {} - no Operation Implementation found",
+                                component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
+                                operation.getName());
+                        continue;
+                    }
+                    if (Objects.isNull(operation.getImplementation().getArtifactName())) {
+                        log.debug("Component Name {}, Interface Id {}, Operation Name {} - no artifact found",
+                                component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
+                                operation.getName());
+                        continue;
+                    }
+
+                    final String artifactUUID = operation.getImplementation().getArtifactUUID();
+
+                    final Either<byte[], ActionStatus> artifactFromCassandra = getFromCassandra(artifactUUID);
+                    final String artifactName = operation.getImplementation().getArtifactName();
+                    if (artifactFromCassandra.isRight()) {
+                        log.error("ArtifactName {}, unique ID {}", artifactName, artifactUUID);
+                        log.error("Failed to get {} payload from DB reason: {}", artifactName,
+                                artifactFromCassandra.right().value());
+                        return Either.right(componentsUtils.getResponseFormat(
+                                ActionStatus.ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION, "Resource",
+                                component.getUniqueId(), artifactName, artifactUUID));
+                    }
+
+                    final byte[] payloadData = artifactFromCassandra.left().value();
+                    zipstream.putNextEntry(new ZipEntry(OperationArtifactUtil.createOperationArtifactPath(
+                            component.getNormalizedName(), interfaceEntry.getValue().getToscaResourceName(), operation)));
+                    zipstream.write(payloadData);
+
+                } catch (IOException e) {
+                    log.error("Component Name {},  Interface Name {}, Operation Name {}", component.getNormalizedName(),
+                            interfaceEntry.getKey(), operation.getName());
+                    log.error("Error while writing the operation's artifacts to the CSAR " + "{}", e);
+                    return Either.right(componentsUtils
+                                                .getResponseFormat(ActionStatus.ERROR_DURING_CSAR_CREATION, "Resource",
+                                                        component.getUniqueId()));
+                }
+            }
+        }
+        return Either.left(zipstream);
+
+    }
+
+    private Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedPath(Component mainComponent, ComponentArtifacts componentArtifacts, ZipOutputStream zipstream,
             String currentPath, boolean isInCertificationRequest) throws IOException {
         Map<String, ComponentTypeArtifacts> componentTypeArtifacts = componentArtifacts.getComponentTypeArtifacts();
         //Keys are defined:
