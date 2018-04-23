@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.healing.impl;
 
+
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -39,6 +40,7 @@ import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -229,12 +231,14 @@ public class HealingManagerImpl implements HealingManager {
 
   private List<Healer> getHealersToRun(Collection<String> healersClassNames, String itemId,
                                        Version version, List<String> failureMessages) {
-    return healersClassNames.stream()
-        .map(healerClassName -> getHealerInstance(healerClassName, failureMessages))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .filter(healer -> healer.isHealingNeeded(itemId, version))
-        .collect(Collectors.toList());
+    return healersClassNames == null
+                   ? Collections.EMPTY_LIST
+                   : healersClassNames.stream()
+                      .map(healerClassName -> getHealerInstance(healerClassName, failureMessages))
+                      .filter(Optional::isPresent)
+                      .map(Optional::get)
+                      .filter(healer -> healer.isHealingNeeded(itemId, version))
+                      .collect(Collectors.toList());
   }
 
   private Optional<Healer> getHealerInstance(String healerClassName, List<String> failureMessages) {
@@ -251,7 +255,7 @@ public class HealingManagerImpl implements HealingManager {
     Map healingConfig = FileUtils
         .readViaInputStream(HEALERS_BY_ENTITY_TYPE_FILE,
             stream -> JsonUtil.json2Object(stream, Map.class));
-    return (Map<String, Collection<String>>) healingConfig.get(itemType.name());
+    return (Map<String, Collection<String>>) healingConfig.getOrDefault(itemType.name(), Collections.EMPTY_MAP);
   }
 
   private String getUser() {
