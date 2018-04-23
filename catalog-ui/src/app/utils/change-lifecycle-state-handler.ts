@@ -110,6 +110,9 @@ export class ChangeLifecycleStateHandler {
                         component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
                     });
                 }
+                else {
+                    component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+                }
             };
 
             let onCancel = ():void => {
@@ -134,6 +137,13 @@ export class ChangeLifecycleStateHandler {
                             onError("Error changing life cycle state");
                         }
                     });
+                }
+                else {
+                    if (resource) {
+                        onSuccess(resource);
+                    } else {
+                        onError("Error changing life cycle state");
+                    }
                 }
             };
 
