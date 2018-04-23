@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_0e498e30",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseFullTranslationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-23T09:19:14Z",
+      "side": 1,
+      "message": "few unused elements/variables removed from this java file. it is already formatted with ONAP style. reattempt to format is not resulting in anything getting changed.",
+      "parentUuid": "5a93c517_739b5f18",
+      "range": {
+        "startLine": 54,
+        "startChar": 13,
+        "endLine": 54,
+        "endChar": 36
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_d377d3d2",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
         "patchSetId": 4
@@ -59,6 +83,30 @@
       "writtenOn": "2018-04-23T06:25:27Z",
       "side": 1,
       "message": "unused members",
+      "range": {
+        "startLine": 41,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 38
+      },
+      "revId": "80676e1e655f1ed1e99fcb5ab95c4f2df0270a17",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ce4e4638",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-23T09:19:14Z",
+      "side": 1,
+      "message": "they are not unused. getting used in the same file.",
+      "parentUuid": "5a93c517_336f17fe",
       "range": {
         "startLine": 41,
         "startChar": 4,
