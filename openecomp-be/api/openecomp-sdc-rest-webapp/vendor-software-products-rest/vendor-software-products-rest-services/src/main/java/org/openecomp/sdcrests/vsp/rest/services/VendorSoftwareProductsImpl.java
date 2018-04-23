@@ -247,8 +247,10 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     private void submitHealedVersion(VspDetails vspDetails, String baseVersionId, String user) {
         try {
-            // sync vlm if not exists on user space
-            versioningManager.get(vspDetails.getVendorId(), vspDetails.getVlmVersion());
+            if (vspDetails.getVlmVersion() != null) {
+                // sync vlm if not exists on user space
+                versioningManager.get(vspDetails.getVendorId(), vspDetails.getVlmVersion());
+            }
 
             Optional<ValidationResponse> validationResponse =
                     submit(vspDetails.getId(), vspDetails.getVersion(), "Submit healed Vsp", user);
