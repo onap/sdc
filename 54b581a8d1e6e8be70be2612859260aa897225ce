@@ -1,0 +1,326 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ffe3ad31",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactResolverImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "Please compare enum with \u003d\u003d and not equals",
+      "range": {
+        "startLine": 67,
+        "startChar": 12,
+        "endLine": 67,
+        "endChar": 60
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9fcce9bc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2898,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "Please break down this method to several smaller method",
+      "range": {
+        "startLine": 2898,
+        "startChar": 74,
+        "endLine": 2898,
+        "endChar": 92
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dfd6f14e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2913,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "please simplify:\ninstead of: (!(interfaceType !\u003d null \u0026\u0026 operationName !\u003d null))\nuse:\n(interfaceType \u003d\u003d null || operationName \u003d\u003d null)",
+      "range": {
+        "startLine": 2913,
+        "startChar": 12,
+        "endLine": 2913,
+        "endChar": 61
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3fc5958d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3101,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "please compare enum with !\u003d",
+      "range": {
+        "startLine": 3101,
+        "startChar": 16,
+        "endLine": 3101,
+        "endChar": 76
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_df64b1ba",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4985,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "in case using wrapper pattern please use flat indentation.\nFor Example,\n\nCorrect Usage:\nif( errorWrapper.isEmpty() ){\n//Do Some Logic\n}\nif( errorWrapper.isEmpty() ){\n//Do Some Additional Logic\n}\nif( errorWrapper.isEmpty() ){\n//Do Even more Logic\n}\n\nIncorrect Usage:\nif( errorWrapper.isEmpty() ){\n//Do Some Logic\n}\nif( errorWrapper.isEmpty() ){\n//Do Some Additional Logic\n   if( errorWrapper.isEmpty() ){\n   //Do Even more Logic\n   }\n}",
+      "range": {
+        "startLine": 4985,
+        "startChar": 54,
+        "endLine": 4985,
+        "endChar": 102
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5f70a171",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "nice to have:\nuse Utility to check this in single call for example:\nCollectionUtils.isEmpty(interfaceOperationToDelete)",
+      "range": {
+        "startLine": 97,
+        "startChar": 12,
+        "endLine": 97,
+        "endChar": 86
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ff688d89",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "nice to have:\nusing Constant Empty String\n(org.apache.commons.lang3.StringUtils)\nStringUtils.EMPTY instead of \"\"",
+      "range": {
+        "startLine": 105,
+        "startChar": 48,
+        "endLine": 105,
+        "endChar": 50
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_df0b51d4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/InterfaceOperationValidation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "Using trim() here will result NullPointerException in case inputParam.getName() returns null.\n\nin this case maybe use inputParam.getName() !\u003d null \u0026\u0026 !inputParam.getName().trim().equals(StringUtils.EMPTY)",
+      "range": {
+        "startLine": 242,
+        "startChar": 60,
+        "endLine": 242,
+        "endChar": 87
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9f114906",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/InterfaceUIDataConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "please use meaningful name instead of a",
+      "range": {
+        "startLine": 55,
+        "startChar": 17,
+        "endLine": 55,
+        "endChar": 18
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ffff2da9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/ArtifactExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "nice to have\nBetter practice is not to initialize ResponseFormat responseFormat with null.\ntherefore the compiler will verify for every usage that it is assigned.",
+      "range": {
+        "startLine": 119,
+        "startChar": 8,
+        "endLine": 119,
+        "endChar": 44
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5fcc2189",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "nice to have:\ntry reducing complexity of this method - sonar Lint plugin can be used for assistance",
+      "range": {
+        "startLine": 1170,
+        "startChar": 52,
+        "endLine": 1170,
+        "endChar": 82
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1fc21953",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/OperationArtifactUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "instead of \"/\" please use File.separator\nthis way the correct separator will return regrardless of the operation system the code runs on (Linux, Windows etc...)",
+      "range": {
+        "startLine": 19,
+        "startChar": 36,
+        "endLine": 19,
+        "endChar": 40
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ffc08d2c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ArtifactsOperations.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "nice to have\nreturn null is a bad practice, consider using a different patter (Wrapper, Either etc...)",
+      "range": {
+        "startLine": 162,
+        "startChar": 32,
+        "endLine": 162,
+        "endChar": 53
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9fb2a9e3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ArtifactsOperations.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 2805
+      },
+      "writtenOn": "2018-04-24T09:57:56Z",
+      "side": 1,
+      "message": "This code has 5 Levels of indentation !\nConsider simplifying it:\nEither Use Java 8 Stream, Or extract to another method.",
+      "range": {
+        "startLine": 177,
+        "startChar": 2,
+        "endLine": 191,
+        "endChar": 3
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
