@@ -126,16 +126,11 @@ topology_template:
         - get_input: availability_zone_0
         - get_input: availability_zone_0
         port_pd_server_1b_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_pd_server_1bServiceTemplate.yaml
           count: 2
@@ -188,16 +183,11 @@ topology_template:
         - packet_ext_network
         - packet_ext_network
         port_ps_server_1b_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: ps_server_1b_image
         port_ps_server_1b_port_replacement_policy:

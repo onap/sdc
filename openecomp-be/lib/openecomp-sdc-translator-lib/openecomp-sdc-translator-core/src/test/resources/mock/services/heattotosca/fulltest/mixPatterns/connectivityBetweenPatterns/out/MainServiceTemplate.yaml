@@ -300,16 +300,11 @@ topology_template:
         vm_flavor_name:
           get_input: pd_flavor_name
         port_1c1_t1_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         compute_1c1_scalling_instance_name:
@@ -347,16 +342,11 @@ topology_template:
               - myIPs
               - 1
         port_1c1_t2_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         port_1c1_t1_port_mac_requirements:
           mac_count_required:
             is_required: false

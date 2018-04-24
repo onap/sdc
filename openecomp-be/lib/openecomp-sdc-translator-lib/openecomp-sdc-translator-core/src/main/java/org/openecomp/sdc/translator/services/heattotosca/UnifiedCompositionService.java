@@ -2819,19 +2819,17 @@ public class UnifiedCompositionService {
       UnifiedCompositionEntity inputUnifiedCompositionEntity =
               getInputCompositionEntity(substitutionTemplateInputName);
 
-      if (!inputType.equalsIgnoreCase(PropertyType.LIST.getDisplayName())) {
-        if (isIdenticalValueProperty(
-                substitutionTemplateInputName, inputUnifiedCompositionEntity)) {
-          //Handle identical value properties
-          Optional<String> identicalValuePropertyName =
-                  getIdenticalValuePropertyName(substitutionTemplateInputName,
-                          inputUnifiedCompositionEntity);
+      if (isIdenticalValueProperty(substitutionTemplateInputName, inputUnifiedCompositionEntity)
+          || !inputType.equalsIgnoreCase(PropertyType.LIST.getDisplayName())) {
+        //Handle identical value properties
+        Optional<String> identicalValuePropertyName =
+            getIdenticalValuePropertyName(substitutionTemplateInputName,
+                inputUnifiedCompositionEntity);
 
-          identicalValuePropertyName.ifPresent(propertyName -> updateIdenticalPropertyValue(propertyName,
-                  substitutionTemplateInputName, inputUnifiedCompositionEntity,
-                  unifiedCompositionDataList.get(0), serviceTemplate, abstractSubstituteProperties,
-                  context));
-        }
+        identicalValuePropertyName.ifPresent(propertyName -> updateIdenticalPropertyValue(propertyName,
+            substitutionTemplateInputName, inputUnifiedCompositionEntity,
+            unifiedCompositionDataList.get(0), serviceTemplate, abstractSubstituteProperties,
+            context));
         continue;
       }
 
@@ -3663,7 +3661,7 @@ public class UnifiedCompositionService {
   private Optional<String> getPortPropertyNameFromInput(String inputName,
                                                         List<String> identicalValuePropertyList) {
     for (String identicalProperty : identicalValuePropertyList) {
-      if (inputName.contains(identicalProperty)) {
+      if (inputName.endsWith(identicalProperty)) {
         return Optional.of(identicalProperty);
       }
     }
