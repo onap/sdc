@@ -255,6 +255,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_bf2c4503",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 2143
+      },
+      "writtenOn": "2018-04-24T10:44:54Z",
+      "side": 1,
+      "message": "I have run Sonar prior to submitting \u0026 tried to reduce complexity using streams etc, unfortunately it was unachievable.",
+      "parentUuid": "5a93c517_5fcc2189",
+      "range": {
+        "startLine": 1170,
+        "startChar": 52,
+        "endLine": 1170,
+        "endChar": 82
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1fc21953",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/OperationArtifactUtil.java",
         "patchSetId": 2
