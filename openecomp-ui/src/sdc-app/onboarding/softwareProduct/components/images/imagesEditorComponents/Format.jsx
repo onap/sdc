@@ -18,11 +18,10 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const Format = ({ isManual, dataMap, qgenericFieldInfo, onQDataChanged }) => {
+const Format = ({ dataMap, qgenericFieldInfo, onQDataChanged }) => {
     return (
         <GridItem colSpan={2}>
             <Input
-                disabled={!isManual}
                 data-test-id="image-format"
                 type="select"
                 label={i18n('Format')}

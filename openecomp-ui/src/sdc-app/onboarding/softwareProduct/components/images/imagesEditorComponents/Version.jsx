@@ -19,11 +19,10 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import { imageCustomValidations } from '../ImageValidations.js';
 
-const Version = ({ isManual, dataMap, qgenericFieldInfo, onQDataChanged }) => {
+const Version = ({ dataMap, qgenericFieldInfo, onQDataChanged }) => {
     return (
         <GridItem colSpan={1} lastColInRow>
             <Input
-                disabled={!isManual}
                 data-test-id="image-version"
                 type="text"
                 className="image-version"
