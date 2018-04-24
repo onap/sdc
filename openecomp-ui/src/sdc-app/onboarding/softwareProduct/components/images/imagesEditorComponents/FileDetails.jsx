@@ -61,7 +61,6 @@ const FileDetails = ({
             )}
             {editingMode && (
                 <Version
-                    isManual={isManual}
                     dataMap={dataMap}
                     qgenericFieldInfo={qgenericFieldInfo}
                     onQDataChanged={onQDataChanged}
@@ -69,7 +68,6 @@ const FileDetails = ({
             )}
             {editingMode && (
                 <Format
-                    isManual={isManual}
                     qgenericFieldInfo={qgenericFieldInfo}
                     dataMap={dataMap}
                     onQDataChanged={onQDataChanged}
