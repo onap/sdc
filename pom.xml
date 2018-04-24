@@ -446,17 +446,17 @@
 	<repositories>
 		<!-- LF repositories -->
 		<repository>
-			<id>onap-releases</id>
+			<id>ecomp-releases</id>
 			<name>Release Repository</name>
 			<url>${nexus.proxy}/content/repositories/releases/</url>
 		</repository>
 		<repository>
-			<id>onap-snapshots</id>
+			<id>ecomp-snapshots</id>
 			<name>Snapshots Repository</name>
 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-			<id>onap-public</id>
+			<id>ecomp-public</id>
 			<name>Public Repository</name>
 			<url>${nexus.proxy}/content/repositories/public/</url>
 		</repository>
@@ -465,17 +465,17 @@
 
 	<distributionManagement>
 		<repository>
-			<id>onap-releases</id>
+			<id>ecomp-releases</id>
 			<name>Release Repository</name>
 			<url>${nexus.proxy}/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>onap-snapshots</id>
+			<id>ecomp-snapshots</id>
 			<name>Snapshot Repository</name>
 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<site>
-			<id>onap-site</id>
+			<id>ecomp-site</id>
 			<url>dav:${nexus.proxy}${sitePath}</url>
 		</site>
 	</distributionManagement>
