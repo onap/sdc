@@ -278,6 +278,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_ffee4db4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/OperationArtifactUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2143
+      },
+      "writtenOn": "2018-04-24T10:43:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_1fc21953",
+      "range": {
+        "startLine": 19,
+        "startChar": 36,
+        "endLine": 19,
+        "endChar": 40
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ffc08d2c",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ArtifactsOperations.java",
         "patchSetId": 2
