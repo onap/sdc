@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9f5aa9f0",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-04-24T07:25:31Z",
+      "side": 1,
+      "message": "extract to a function",
+      "range": {
+        "startLine": 72,
+        "startChar": 8,
+        "endLine": 78,
+        "endChar": 9
+      },
+      "revId": "d263a76099e8da00d7ca5d7109ec5d7abed5dc61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
