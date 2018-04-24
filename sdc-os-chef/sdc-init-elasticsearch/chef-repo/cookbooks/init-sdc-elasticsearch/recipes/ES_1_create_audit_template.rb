@@ -1,8 +1,11 @@
+# Get the first es node in the list
+es_node =  node['Nodes']['ES'].first
+
 ruby_block "check_ElasticSearch_Cluster_Health" do
     block do
 		#tricky way to load this Chef::Mixin::ShellOut utilities
 		Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)
-		curl_command = "http://#{node['Nodes']['ES']}:9200/_cluster/health?pretty=true"
+		curl_command = "http://#{es_node}:9200/_cluster/health?pretty=true"
 		resp = Net::HTTP.get_response URI.parse(curl_command)
 		stat = JSON.parse(resp.read_body)['status']
 
@@ -233,13 +236,13 @@ bash "create audit mapping" do
 			},
             "_all": { "enabled": true } }
 		},
-        "aliases": { "last_3_months": {}}}' http://#{node['Nodes']['ES']}:9200/_template/audit_template
+        "aliases": { "last_3_months": {}}}' http://#{es_node}:9200/_template/audit_template
 	EOH
 end
 
 bash "set default index for Kibana" do
 	code <<-EOH
-        curl -XPUT http://#{node['Nodes']['ES']}:9200/.kibana/index-pattern/auditingevents-* -d '{"title" : "events-*",  "timeFieldName": "TIMESTAMP"}'
-        curl -XPUT http://#{node['Nodes']['ES']}:9200/.kibana/config/4.3.3 -d '{"defaultIndex" : "auditingevents-*"}'
+        curl -XPUT http://#{es_node}:9200/.kibana/index-pattern/auditingevents-* -d '{"title" : "events-*",  "timeFieldName": "TIMESTAMP"}'
+        curl -XPUT http://#{es_node}:9200/.kibana/config/4.3.3 -d '{"defaultIndex" : "auditingevents-*"}'
     EOH
 end
