@@ -20,24 +20,40 @@ import static org.openecomp.sdc.itempermissions.notifications.NotificationConsta
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
@@ -47,6 +63,7 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.ItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManager;
@@ -65,6 +82,7 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
 
 @Named
 @Service("items")
@@ -85,6 +103,17 @@ public class ItemsImpl implements Items {
     private NotificationPropagationManager notifier =
             NotificationPropagationManagerFactory.getInstance().createInterface();
 
+    private static final String CONFIG_FILE = "configuration.yaml";
+    private static final String PROTOCOL_KEY = "beProtocol";
+    private static final String HOST_KEY = "beFqdn";
+    private static final String PORT_KEY = "beHttpPort";
+    private static final String URL_KEY = "onboardCatalogNotificationUrl";
+    private static final String URL_DEFAULT_FORMAT = "%s://%s:%s/sdc1/feProxy/rest/v1/catalog/notif/vsp/";
+
+    private String configurationYamlFile = System.getProperty(CONFIG_FILE);
+
+    private String notifyCatalogUrl;
+
     private Map<ItemAction, ActionSideAffects> actionSideAffectsMap = new EnumMap<>(ItemAction.class);
 
     @PostConstruct
@@ -93,9 +122,12 @@ public class ItemsImpl implements Items {
                 .put(ItemAction.ARCHIVE, new ActionSideAffects(ActivityType.Archive, NotificationEventTypes.ARCHIVE));
         actionSideAffectsMap
                 .put(ItemAction.RESTORE, new ActionSideAffects(ActivityType.Restore, NotificationEventTypes.RESTORE));
+
+        readConfiguration();
     }
 
     private static final String ONBOARDING_METHOD = "onboardingMethod";
+    private static final String USER_ID_HEADER_PARAM = "USER_ID";
 
     @Override
     public Response actOn(ItemActionRequestDto request, String itemId, String user) {
@@ -116,6 +148,7 @@ public class ItemsImpl implements Items {
         }
 
         actionSideAffectsMap.get(request.getAction()).execute(item, user);
+        notifyCatalog(Collections.singleton(itemId), request.getAction());
 
         return Response.ok().build();
     }
@@ -131,8 +164,8 @@ public class ItemsImpl implements Items {
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
         itemManager.list(itemPredicate).stream()
-                       .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                       .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
+                   .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                   .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
 
         return Response.ok(results).build();
 
@@ -180,6 +213,41 @@ public class ItemsImpl implements Items {
             return entityId;
         }
 
+    }
+
+    private void notifyCatalog(Collection<String> itemIds, ItemAction action) {
+
+        String postUrl = getUrl(action);
+
+        HttpClient client = HttpClientBuilder.create().build();
+
+        HttpPost request = new HttpPost(postUrl);
+        request.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+        request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        request.addHeader(USER_ID_HEADER_PARAM,
+                SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId());
+        try {
+            HttpEntity entity = new StringEntity(JsonUtil.object2Json(itemIds));
+            request.setEntity(entity);
+            HttpResponse response = client.execute(request);
+            LOGGER.debug(
+                    String.format("Catalog notification on vspId - %s action  - %s. Response: %s", itemIds.toString(),
+                            action.name(), response.getStatusLine()));
+        } catch (Exception e) {
+            LOGGER.error(
+                    String.format("Catalog notification on vspId - %s action  - %s", itemIds.toString(), action.name()),
+                    postUrl, e);
+        }
+    }
+
+    private String getUrl(ItemAction action) {
+        String actionStr = "";
+        if (action == ItemAction.ARCHIVE) {
+            actionStr = "archived";
+        } else if (action == ItemAction.RESTORE) {
+            actionStr = "restored";
+        }
+        return notifyCatalogUrl + actionStr;
     }
 
     private class ActionSideAffects {
@@ -317,6 +385,47 @@ public class ItemsImpl implements Items {
         for (String value : values) {
             PermissionTypes.valueOf(value);
         }
+    }
+
+    private <T> T readFromFile(String file, Function<InputStream, T> reader) throws IOException {
+        try (InputStream is = new FileInputStream(file)) {
+            return reader.apply(is);
+        }
+    }
+
+    private void readConfiguration() {
+
+        Function<InputStream, Map<String, LinkedHashMap<String, Object>>> reader = is -> {
+            YamlUtil yamlUtil = new YamlUtil();
+            return yamlUtil.yamlToMap(is);
+        };
+
+        Map<String, LinkedHashMap<String, Object>> configurationMap;
+
+        try {
+            configurationMap = readFromFile(configurationYamlFile, reader);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read configuration file configuration.yaml");
+        }
+
+        Map<String, String> configValues = new HashMap<>();
+        configValues.put(PROTOCOL_KEY, String.valueOf(configurationMap.get(PROTOCOL_KEY)));
+        configValues.put(HOST_KEY, String.valueOf(configurationMap.get(HOST_KEY)));
+        configValues.put(PORT_KEY, String.valueOf(configurationMap.get(PORT_KEY)));
+
+        configValues.forEach((key, value) -> {
+            if (value == null) {
+                throw new RuntimeException(
+                        String.format("Missing value %s in configuration file configuration.yaml", key));
+            }
+        });
+
+        String urlFormat = String.valueOf(configurationMap.get(URL_KEY));
+
+        notifyCatalogUrl = String.format(urlFormat != null ? urlFormat : URL_DEFAULT_FORMAT,
+                configValues.get(PROTOCOL_KEY), configValues.get(HOST_KEY),
+                configValues.get(PORT_KEY));
     }
 
     //Do not delete - is in use, duplicates code to prevent dependency on openecomp-sdc-vendor-software-product-api
