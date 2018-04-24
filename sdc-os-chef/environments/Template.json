@@ -35,12 +35,16 @@
             "fqdn": ["10.0.11.1", "10.0.11.1"]
         },
         "Nodes": {
-            "CS":            "yyy",
+            "CS": [
+              "yyy"
+            ],
             "BE":            "yyy",
             "ONBOARDING_BE": "yyy",
             "FE":            "yyy",
-            "ES":            "yyy",
-            "KB":            "yyy"
+            "ES": [
+	       "yyy"
+            ],
+	    "KB":            "yyy"
         },
         "Plugins": {
             "DCAE": {

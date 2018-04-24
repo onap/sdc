@@ -12,3 +12,11 @@ cookbook_file "#{ENV['JETTY_BASE']}/etc/keystore" do
    group "jetty"
    mode 0755
 end
+
+cookbook_file "#{ENV['JETTY_BASE']}/etc/truststore" do
+   source "truststore"
+   owner "jetty"
+   group "jetty"
+   mode 0755
+end
+

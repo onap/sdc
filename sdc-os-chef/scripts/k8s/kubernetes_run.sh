@@ -90,7 +90,7 @@ status $?
 # SDC LOGS Tree    #
 ####################
 print_header "SDC - Deploy Pods ..."
-mkdir -p /dockerdata-nfs/onap/sdc/logs//BE/SDC/SDC-BE
-mkdir -p /dockerdata-nfs/onap/sdc/logs/FE/SDC/SDC-FE
-mkdir -p /dockerdata-nfs/onap/sdc/logs/ONBOARD/SDC/ONBOARD-BE
-chmod -R 777 /dockerdata-nfs/onap/sdc/logs/*
+sudo mkdir -p /dockerdata-nfs/onap/sdc/logs//BE/SDC/SDC-BE
+sudo mkdir -p /dockerdata-nfs/onap/sdc/logs/FE/SDC/SDC-FE
+sudo mkdir -p /dockerdata-nfs/onap/sdc/logs/ONBOARD/SDC/ONBOARD-BE
+sudo chmod -R 777 /dockerdata-nfs/onap/sdc/logs/*

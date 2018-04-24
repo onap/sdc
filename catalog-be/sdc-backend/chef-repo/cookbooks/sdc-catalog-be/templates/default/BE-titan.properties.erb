@@ -1,14 +1,14 @@
 storage.backend=cassandra
-storage.hostname=<%= @CASSANDRA_IP %>
+storage.hostname=<%= @cassandra_ip %>
 storage.port=9160
-storage.username=<%= @CASSANDRA_USR %>
-storage.password=<%= @CASSANDRA_PWD %>
+storage.username=<%= @cassandra_usr %>
+storage.password=<%= @cassandra_pwd %>
 storage.connection-timeout=<%= @titan_connection_timeout %>
 storage.cassandra.keyspace=sdctitan
 
 storage.cassandra.ssl.enabled=<%= @cassandra_ssl_enabled %>
 storage.cassandra.ssl.truststore.location=/var/lib/jetty/config/truststore
-storage.cassandra.ssl.truststore.password=<%= @cassandra_traststore_password %>
+storage.cassandra.ssl.truststore.password=<%= @cassandra_truststore_password %>
 
 storage.cassandra.read-consistency-level=LOCAL_QUORUM
 storage.cassandra.write-consistency-level=LOCAL_QUORUM
