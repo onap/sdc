@@ -951,16 +951,11 @@ topology_template:
         - RAW1
         - RAW1
         port_1c1_t1_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c1_t1_port_name:
@@ -1145,16 +1140,11 @@ topology_template:
         - RAW1
         - RAW1
         port_1c1_t1_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c1_t1_port_name:
