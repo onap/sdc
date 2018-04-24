@@ -42,6 +42,7 @@ import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -1436,7 +1437,25 @@ public class ComponentsUtils {
         return responseFormat;
     }
 
-
+    public StorageOperationStatus convertToStorageOperationStatus(CassandraOperationStatus cassandraStatus) {
+        StorageOperationStatus result;
+        switch (cassandraStatus) {
+            case OK:
+                result = StorageOperationStatus.OK;
+                break;
+            case NOT_FOUND:
+                result = StorageOperationStatus.NOT_FOUND;
+                break;
+            case CLUSTER_NOT_CONNECTED:
+            case KEYSPACE_NOT_CONNECTED:
+                result = StorageOperationStatus.CONNECTION_FAILURE;
+                break;
+            default:
+                result = StorageOperationStatus.GENERAL_ERROR;
+                break;
+        }
+        return result;
+    }
 
 
 }
