@@ -1,8 +1,11 @@
+# Get the first es node in the list
+es_node =  node['Nodes']['ES'].first
+
 ruby_block "check_ElasticSearch_Cluster_Health" do
     block do
       #tricky way to load this Chef::Mixin::ShellOut utilities
       Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)
-      curl_command = "http://#{node['Nodes']['ES']}:9200/_cluster/health?pretty=true"
+      curl_command = "http://#{es_node}:9200/_cluster/health?pretty=true"
       resp = Net::HTTP.get_response URI.parse(curl_command)
       stat = JSON.parse(resp.read_body)['status']
 
@@ -25,7 +28,7 @@ bash "create Kibana dashboard" do
         for file in /root/chef-solo/cookbooks/sdc-init-elasticsearch/files/default/dashboard_*.json; do 
             name=`basename $file .json | awk -F"_" '{print $2}'` 
             echo "Loading dashboard $name:" 
-            curl -XPUT http://#{node['Nodes']['ES']}:9200/.kibana/dashboard/$name -d @$file || exit 1 
+            curl -XPUT http://#{es_node}:9200/.kibana/dashboard/$name -d @$file || exit 1
             echo 
         done 
     EOH
@@ -36,7 +39,7 @@ bash "create Kibana visualization" do
         for file in /root/chef-solo/cookbooks/sdc-init-elasticsearch/files/default/visualization_*.json; do 
             name=`basename $file .json | awk -F"_" '{print $2}'` 
             echo "Loading visualization $name:" 
-            curl -XPUT http://#{node['Nodes']['ES']}:9200/.kibana/visualization/$name -d @$file || exit 1 
+            curl -XPUT http://#{es_node}:9200/.kibana/visualization/$name -d @$file || exit 1
             echo 
         done 
     EOH

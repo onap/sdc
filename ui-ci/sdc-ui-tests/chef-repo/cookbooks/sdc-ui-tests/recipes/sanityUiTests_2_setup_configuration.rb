@@ -19,7 +19,7 @@ template "sdc-yaml-config" do
         :importResourceTestsConfigDir => "#{tests_base}/CI/importResourceTests",
         :ConfigurationFile            => "#{tests_base}/conf/configuration.yaml",
         :errorConfigurationFile       => "#{tests_base}/conf/error-configuration.yaml",
-        :CASSANDRA_IP                 => node['Nodes']['CS'],
+        :CASSANDRA_IP                 => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
         :CASSANDRA_PWD                => node['cassandra'][:cassandra_password],
         :CASSANDRA_USR                => node['cassandra'][:cassandra_user],
         :ES_IP                        => node['Nodes']['ES']
@@ -34,7 +34,7 @@ template "titan.properties" do
    group "root"
    mode "0755"
    variables({
-      :CASSANDRA_IP => node['Nodes']['CS'],
+      :CASSANDRA_IP => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
       :CASSANDRA_PWD => node['cassandra'][:cassandra_password],
       :CASSANDRA_USR => node['cassandra'][:cassandra_user],
       :rep_factor => replication_factor,
