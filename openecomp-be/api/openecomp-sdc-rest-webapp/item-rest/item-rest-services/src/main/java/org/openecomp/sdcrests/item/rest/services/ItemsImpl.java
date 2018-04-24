@@ -21,7 +21,7 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,6 +66,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+
 @Named
 @Service("items")
 @Scope(value = "prototype")
@@ -85,6 +86,8 @@ public class ItemsImpl implements Items {
     private NotificationPropagationManager notifier =
             NotificationPropagationManagerFactory.getInstance().createInterface();
 
+    private CatalogNotifier catalogNotifier = new CatalogNotifier();
+
     private Map<ItemAction, ActionSideAffects> actionSideAffectsMap = new EnumMap<>(ItemAction.class);
 
     @PostConstruct
@@ -96,6 +99,7 @@ public class ItemsImpl implements Items {
     }
 
     private static final String ONBOARDING_METHOD = "onboardingMethod";
+
 
     @Override
     public Response actOn(ItemActionRequestDto request, String itemId, String user) {
@@ -116,6 +120,7 @@ public class ItemsImpl implements Items {
         }
 
         actionSideAffectsMap.get(request.getAction()).execute(item, user);
+        catalogNotifier.execute(Collections.singleton(itemId),request.getAction(),2);
 
         return Response.ok().build();
     }
@@ -131,8 +136,8 @@ public class ItemsImpl implements Items {
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
         itemManager.list(itemPredicate).stream()
-                       .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                       .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
+                   .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                   .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
 
         return Response.ok(results).build();
 
