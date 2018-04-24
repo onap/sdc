@@ -1,0 +1,3 @@
+    beHttpPort: 8080
+    beProtocol: http
+    beFqdn: localhost
