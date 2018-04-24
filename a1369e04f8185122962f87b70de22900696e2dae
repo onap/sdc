@@ -1,0 +1,256 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_22c25a53",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "I\u0027d prefer not to use it in the onboarding code. You should be using onboarding infrastructure code only.",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 21
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a2850ad0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "Please run static analysis and also fix formatting issues. There must be a space after a comma, for instance.",
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_02aabe70",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "There must be a better way to read the configuration. Is it a new configuration file, or one that already exists? For new configuration files use you should be using the org.openecomp.config.api.ConfigurationManager#lookup() API.",
+      "range": {
+        "startLine": 122,
+        "startChar": 1,
+        "endLine": 134,
+        "endChar": 9
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_02739e4e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "Please remove any commented-out code.",
+      "range": {
+        "startLine": 160,
+        "startChar": 1,
+        "endLine": 160,
+        "endChar": 112
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c2905645",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "Putting the notification logic in the rest layer is incorrect. Let\u0027s see if it can be moved into the business logic for items.",
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_82ad6e86",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "I think it should be debug(). In most cases info will be always enabled, but on the other hand this sort of events is exactly what Metrics logging is used for.",
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_82324e5c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "This message is too generic because it can be about just any request. Put yourself in the troubleshooting shoes - this message in a log probably won\u0027t help much. Write what exactly was being done when an error happened. Also, add some info about how it is acted upon. For example: \"Ignored as the request is not mission critical\". Probably add suggestions for fixing it (e.g. \"Check configuration and make sure the catalog server is accessible\"). That will also serve as in-code documentation.",
+      "range": {
+        "startLine": 248,
+        "startChar": 0,
+        "endLine": 248,
+        "endChar": 73
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_021ddebd",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "Please simplify this nested ternary operator.",
+      "range": {
+        "startLine": 257,
+        "startChar": 37,
+        "endLine": 257,
+        "endChar": 117
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_623dc22a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "You don\u0027t need to format the URL every time unless the configuration may change in run-time (which I doubt). Create a base URL when you read the configuration, and then just inject an action into it. This will also eliminate the need for the configurationMap data member and all associated code.",
+      "range": {
+        "startLine": 254,
+        "startChar": 0,
+        "endLine": 259,
+        "endChar": 86
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a20e6a8a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "The URL format must be configurable.",
+      "range": {
+        "startLine": 417,
+        "startChar": 36,
+        "endLine": 417,
+        "endChar": 46
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_22433ab0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "You probable don\u0027t need a separate class just for constants.",
+      "range": {
+        "startLine": 411,
+        "startChar": 1,
+        "endLine": 419,
+        "endChar": 5
+      },
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c21376b6",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/resources/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-24T13:58:09Z",
+      "side": 1,
+      "message": "It doesn\u0027t make sense to have this packaged under resources because the defaults don\u0027t make much sense anyway.",
+      "revId": "a1369e04f8185122962f87b70de22900696e2dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
