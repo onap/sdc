@@ -56,6 +56,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -81,6 +82,87 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     private static final Logger log = LoggerFactory.getLogger(ArtifactExternalServlet.class);
 
     private static String startLog = "Start handle request of ";
+
+    @POST
+    @Path("/resources/{uuid}/interfaces/{operationUUID}/artifacts/{artifactUUID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "uploads of artifact to VF operation workflow", httpMethod = "POST", notes = "uploads of artifact to VF operation workflow")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Artifact uploaded", response = ArtifactDefinition.class),
+            @ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+            @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+            @ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+            @ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+            @ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+            @ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+            @ApiResponse(code = 400, message = "Artifact name given in input already exists in the context of the asset - SVC4125"),
+            @ApiResponse(code = 400, message = "Invalid MD5 header - SVC4127"),
+            @ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+            @ApiResponse(code = 400, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+            @ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+    public Response uploadInterfaceOperationArtifact(
+            @ApiParam(value = "Determines the format of the body of the request", required = true) @HeaderParam(value = HttpHeaders.CONTENT_TYPE) String contenType,
+            @ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true) @HeaderParam(value = Constants.MD5_HEADER) String checksum,
+            @ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
+            @ApiParam(value = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @ApiParam(value = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+            @ApiParam(value = "Determines the format of the body of the response", required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @ApiParam(value = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+            @ApiParam(value = "The uuid of the operation", required = true)@PathParam("operationUUID") final String operationUUID,
+            @ApiParam(value = "The uuid of the artifact", required = true)@PathParam("artifactUUID") final String artifactUUID,
+            String data) {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        ResponseFormat responseFormat;
+        String requestURI = request.getRequestURI();
+        String url = request.getMethod() + " " + requestURI;
+        log.debug("{} {}", startLog, url);
+        ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
+        String componentTypeValue = componentType.getValue();
+        EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifactUUID);
+
+        if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
+            log.debug("updateArtifact: Missing X-ECOMP-InstanceID header");
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
+            responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
+        }
+        if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
+            log.debug("updateArtifact: Missing USER_ID");
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
+            responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
+        }
+        try {
+            if (responseWrapper.isEmpty()) {
+                ServletContext context = request.getSession().getServletContext();
+                ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
+                Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnInterfaceOperationByResourceUUID(data, request, componentType, uuid, artifactUUID, operationUUID,
+                        additionalParams, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                if (uploadArtifactEither.isRight()) {
+                    log.debug("failed to update artifact");
+                    responseFormat = uploadArtifactEither.right().value();
+                    responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
+                } else {
+                    Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                    responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+                    responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
+                }
+            }
+        } catch (Exception e) {
+            final String message = "failed to update artifact on a resource or service";
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+            log.debug(message, e);
+            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+        } finally {
+            getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentTypeValue, request, additionalParams);
+        }
+        return responseWrapper.getInnerElement();
+    }
 
     /**
      * Uploads an artifact to resource or service

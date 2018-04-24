@@ -2060,9 +2060,9 @@ errors:
       messageId: "SVC4698"
     }
 #---------SVC4699-----------------------------
-    INTERFACE_OPERATION_INPUT_NAME_INVALID: {
+    INTERFACE_OPERATION_INPUT_NAME_ALREADY_IN_USE: {
       code: 400,
-      message: "Error: Interface Operation input parameter names %1 are invalid ,Input parameters name should be unique",
+      message: "Error: Interface Operation input parameter names %1 already in use",
       messageId: "SVC4699"
     }
 #---------SVC4700-----------------------------
@@ -2083,4 +2083,18 @@ errors:
       code: 404,
       message: "Error: Failed to delete interface operation.",
       messageId: "SVC4702"
+    }
+#---------SVC4703-----------------------------
+# %1 – asset type [service / resource ]
+# %2 – main asset uuid
+    ERROR_DURING_CSAR_CREATION: {
+      code: 404,
+      message: "Error: CSAR packaging failed for %1 %2.",
+      messageId: "SVC4702"
+    }
+#---------SVC46703-----------------------------
+    INTERFACE_OPERATION_INPUT_NAME_MANDATORY: {
+      code: 404,
+      message: "Error: Interface operation input  parameter name should not be empty",
+      messageId: "SVC46703"
     }
