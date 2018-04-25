@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7496dc3f",
+        "filename": "onboarding/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T14:52:10Z",
+      "side": 1,
+      "message": "1. The line indentation is broken - it is difficult to read.\n2. We try our best to avoid new profiles, definitely not for just a simple flag (\"-P onboarding\" vs \"-Djacoco.skip\u003dfalse\").\n3. This profile clashes with the one defined in the root pom (sdc/pom.xml), so that running the usual \"mvn clean install -P onboarding\" behaves differently, because jacoco.skip is \"true\" there, which it must be by default.",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 11
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_949b6865",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T14:52:10Z",
+      "side": 1,
+      "message": "See my earlier comment.",
+      "range": {
+        "startLine": 218,
+        "startChar": 1,
+        "endLine": 228,
+        "endChar": 15
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_34a4d4a4",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T14:52:10Z",
+      "side": 1,
+      "message": "Why is it a profile? It clashes with the root \"onboarding\" profile. See my earlier comments.",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 15
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_54a16092",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T14:52:10Z",
+      "side": 1,
+      "message": "See my earlier comments.",
+      "range": {
+        "startLine": 115,
+        "startChar": 1,
+        "endLine": 125,
+        "endChar": 15
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_14a758a8",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T14:52:10Z",
+      "side": 1,
+      "message": "See earlier comments.",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 15
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b4b784d7",
+        "filename": "openecomp-be/tools/compile-helper-plugin/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T14:52:10Z",
+      "side": 1,
+      "message": "You may want to use the property defined in the parent pom.",
+      "range": {
+        "startLine": 36,
+        "startChar": 25,
+        "endLine": 36,
+        "endChar": 30
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_74ad7c83",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreTestCompileHelperMojo.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T14:52:10Z",
+      "side": 1,
+      "message": "Constants must be declared before data members.",
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
