@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.logging.api;
 
+import java.util.Objects;
+
 /**
  * Builder to populate logging <i>context</i> data, i.e. data that should be available to any log writing event
  * throughout an application. This includes only data known at some point to the application (e.g. at an API call),
@@ -64,9 +66,30 @@ public class ContextData {
     }
 
     @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ContextData that = (ContextData) o;
+        return Objects.equals(requestId, that.requestId) && Objects.equals(serviceName, that.serviceName)
+                       && Objects.equals(partnerName, that.partnerName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(requestId, serviceName, partnerName);
+    }
+
+    @Override
     public String toString() {
         return "ContextData{responseCode=" + requestId + ", responseDescription=" + serviceName
-                + ", clientIpAddress=" + partnerName + '}';
+                       + ", clientIpAddress=" + partnerName + '}';
     }
 
     public static ContextDataBuilder builder() {

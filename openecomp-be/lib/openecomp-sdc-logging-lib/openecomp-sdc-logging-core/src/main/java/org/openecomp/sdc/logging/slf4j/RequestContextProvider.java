@@ -30,8 +30,19 @@ class RequestContextProvider implements ContextProvider {
 
     private final ContextData data;
 
-    RequestContextProvider(ContextData contextData) {
+    private RequestContextProvider(ContextData contextData) {
         this.data = contextData;
+    }
+
+    static RequestContextProvider from(ContextData contextData) {
+        return new RequestContextProvider(contextData);
+    }
+
+    static ContextData to(Map<ContextField, String> values) {
+        return ContextData.builder()
+                          .requestId(values.get(ContextField.REQUEST_ID))
+                          .serviceName(values.get(ContextField.SERVICE_NAME))
+                          .partnerName(values.get(ContextField.PARTNER_NAME)).build();
     }
 
     @Override

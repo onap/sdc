@@ -40,6 +40,11 @@ public interface LoggingContextService {
     void put(ContextData contextData);
 
     /**
+     * Return logging context's data.
+     */
+    ContextData get();
+
+    /**
      * Clear logging thread context.
      */
     void clear();
