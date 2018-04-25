@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7957b55a",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T12:06:32Z",
+      "side": 1,
+      "message": "Why are using leading slashes? Is there a particular reason?",
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_995c017f",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T12:06:32Z",
+      "side": 1,
+      "message": "Please remove any commented out code.",
+      "range": {
+        "startLine": 247,
+        "startChar": 1,
+        "endLine": 253,
+        "endChar": 25
+      },
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3955ad4f",
+        "filename": "openecomp-be/tools/compile-helper-plugin/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T12:06:32Z",
+      "side": 1,
+      "message": "No, this has to be inherited from the parent. Otherwise it won\u0027t be replaced when a release version is created.",
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1948f1b1",
+        "filename": "openecomp-be/tools/compile-helper-plugin/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T12:06:32Z",
+      "side": 1,
+      "message": "Please explain why you\u0027ve chosen the onboarding pom as a parent, instead of sdc-main? sdc-main is the root pom of the project and is slimmer. If the plugin moves to the separate onboarding repo when ready, you will change the parent to that repo\u0027s parent.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 13
+      },
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_99d3a1d4",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T12:06:32Z",
+      "side": 1,
+      "message": "I think commenting this out will break docker build - \"latest\" image tag will not be updated and will point to an outdated version.",
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
