@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Michael Lando <ml636r@att.com>
+Code-Review+1: Avi Ziv <avi.ziv@amdocs.com>
+Code-Review+2: Oren  Kleks <orenkle@amdocs.com>
+Submitted-by: Oren  Kleks <orenkle@amdocs.com>
+Submitted-at: Wed, 25 Apr 2018 06:25:47 +0000
+Reviewed-on: https://gerrit.onap.org/r/44071
+Project: sdc
+Branch: refs/heads/master
