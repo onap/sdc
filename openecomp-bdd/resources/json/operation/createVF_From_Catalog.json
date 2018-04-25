@@ -1,0 +1,70 @@
+{
+  "artifacts": {
+
+  },
+  "toscaArtifacts": {
+
+  },
+  "contactId": "cs0008",
+  "categories": [
+    {
+      "name": "Allotted Resource",
+      "normalizedName": "allotted resource",
+      "uniqueId": "resourceNewCategory.allotted resource",
+      "icons": null,
+      "subcategories": [
+        {
+          "name": "Tunnel XConnect",
+          "normalizedName": "tunnel xconnect",
+          "uniqueId": "resourceNewCategory.allotted resource.tunnel xconnect",
+          "icons": [
+            "tunnel_x_connect"
+          ],
+          "groupings": null,
+          "ownerId": null,
+          "empty": false
+        }
+      ],
+      "ownerId": null,
+      "empty": false
+    }
+  ],
+  "description": "sd",
+  "icon": "defaulticon",
+  "componentInstancesProperties": {
+
+  },
+  "componentInstancesAttributes": {
+
+  },
+  "name": "REPLACE",
+  "tags": [
+    "REPLACE"
+  ],
+  "capabilities": {
+
+  },
+  "requirements": {
+
+  },
+  "deploymentArtifacts": {
+
+  },
+  "componentType": "RESOURCE",
+  "vendorName": "vendor",
+  "vendorRelease": "vendor release",
+  "componentInstances": [
+
+  ],
+  "inputs": [ ],
+  "properties": [
+
+  ],
+  "attributes": [
+
+  ],
+  "groups": [
+
+  ],
+  "resourceType": "VF"
+}
