@@ -50,6 +50,27 @@ class MDCDelegate {
     }
 
     /**
+     * Reads all context fields from MDC.
+     */
+    static Map<ContextField, String> get() {
+        return get(ContextField.values());
+    }
+
+    /**
+     * Reads selected fields from MDC.
+     */
+    static Map<ContextField, String> get(ContextField... fields) {
+
+        Map<ContextField, String> values = new EnumMap<>(ContextField.class);
+
+        for (ContextField key : fields) {
+            values.put(key, MDC.get(key.asKey()));
+        }
+
+        return values;
+    }
+
+    /**
      * Entirely replaces the logging MDC context with the content of the argument. Logging keys that are not present in
      * the input map will be cleared from MDC.
      */

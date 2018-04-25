@@ -45,7 +45,12 @@ public class SLF4JLoggingServiceProvider implements LoggingServiceProvider {
     @Override
     public void put(ContextData contextData) {
         Objects.requireNonNull(contextData, "Context data cannot be null");
-        MDCDelegate.put(new RequestContextProvider(contextData), new GlobalContextProvider());
+        MDCDelegate.put(RequestContextProvider.from(contextData), new GlobalContextProvider());
+    }
+
+    @Override
+    public ContextData get() {
+        return RequestContextProvider.to(MDCDelegate.get());
     }
 
     @Override

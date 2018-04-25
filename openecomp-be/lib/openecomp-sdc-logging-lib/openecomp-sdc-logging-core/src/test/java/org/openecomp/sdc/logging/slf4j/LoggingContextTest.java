@@ -42,7 +42,7 @@ public class LoggingContextTest {
 
     @Test
     public void returnMdcWrapperWhenToRunnableCalled() {
-        assertEquals(LoggingContext.copyToRunnable(() -> {}).getClass(), MDCRunnableWrapper.class);
+        assertEquals(LoggingContext.copyToRunnable(() -> { }).getClass(), MDCRunnableWrapper.class);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
@@ -140,4 +140,32 @@ public class LoggingContextTest {
         LoggingContext.put(context);
         assertNotNull(MDC.get(ContextField.INSTANCE_ID.asKey()));
     }
+
+    @Test
+    public void contextReturnsServiceNameWhenPut() {
+
+        String random = UUID.randomUUID().toString();
+        ContextData context = ContextData.builder().serviceName(random).build();
+        LoggingContext.put(context);
+        assertEquals(context, LoggingContext.get());
+    }
+
+    @Test
+    public void contextReturnsRequestIdWhenPut() {
+
+        String random = UUID.randomUUID().toString();
+        ContextData context = ContextData.builder().requestId(random).build();
+        LoggingContext.put(context);
+        assertEquals(context, LoggingContext.get());
+    }
+
+    @Test
+    public void contextReturnsPartnerNameWhenPut() {
+
+        String random = UUID.randomUUID().toString();
+        ContextData context = ContextData.builder().partnerName(random).build();
+        LoggingContext.put(context);
+        assertEquals(context, LoggingContext.get());
+    }
+
 }
