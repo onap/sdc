@@ -3,14 +3,20 @@
 
   "onboarding" : {
     "port" : 8285,
-    "prefix" : "sdc1/feProxy/onboarding-api/v1.0"
+    "prefix" : "sdc1/feProxy/onboarding-api/v1.0",
+    "server" : "onboarding.server",
+    "user" : "user"
   },
   "vf" : {
     "port" : 8285,
-    "prefix" : "sdc1/feProxy/rest/v1"
+    "prefix" : "sdc1/feProxy/rest/v1",
+    "server" : "vf.server",
+    "user" : "user"
   },
   "activity_spec" : {
     "port" : 8080,
-    "prefix" : "activity-spec-api/v1.0"
+    "prefix" : "activity-spec-api/v1.0",
+    "server" : "activity_spec.server",
+    "user" : "user"
   }
 }

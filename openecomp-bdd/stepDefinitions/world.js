@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 const { setWorldConstructor } = require('cucumber');
-const config = require('../config.json');
-let localDevConfig = {};
+const _ = require('lodash');
+
+let config = require('../config.json');
+let localConfig = {};
 try {
-	localDevConfig = require('../devConfig.json');
-} catch (e) {}
+	localConfig = require('../devConfig.json');
+} catch (e) {
+	try {
+		localConfig = require('../jenkinsConfig.json');
+	} catch (e) {
+		console.error("no env configuration was found!");
+	}
+}
+
+config = _.merge(config, localConfig);
 var {setDefaultTimeout} = require('cucumber');
+
 
 /**
  * @module Context
@@ -38,15 +49,12 @@ class CustomWorld {
 	constructor(options) {
 		this.context = {};
 		this.context.headers = {};
-		if (localDevConfig.user) {
-			this.context.headers['USER_ID'] = localDevConfig.user;
-		} else {
-			this.context.headers['USER_ID'] = process.env.USER;
-		}
-		if (localDevConfig.server) {
-			this.context.server = localDevConfig.server;
-		} else {
-			this.context.server = process.env.SERVER;
+		let typeName;
+		for (typeName in config) {
+			this.context.headers[typeName] = {};
+			if (config[typeName].user) {
+				this.context.headers[typeName]['USER_ID'] = config[typeName].user;
+			}
 		}
 
 		this.context.vlm = {id: null, versionId: null};
@@ -69,7 +77,7 @@ class CustomWorld {
 			return function(type) {
 				let typeData = _config[type];
 				let _url = _config.protocol + '://' +
-					_server + ':' +
+					typeData.server + ':' +
 					typeData.port + '/' +
 					typeData.prefix;
 				return _url;

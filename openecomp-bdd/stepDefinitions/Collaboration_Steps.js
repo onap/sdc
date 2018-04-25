@@ -109,5 +109,5 @@ When('I want to get the permissions for this Item', function()  {
  * @step I want to set the user to {string}
  **/
 When('I want to set the user to {string}', function(string)  {
-	this.context.headers.USER_ID = string;
+	this.context.headers['onboarding'].USER_ID = string;
 });

@@ -29,7 +29,7 @@ Then('I want to create a VF for this Item', function () {
 	return util.request(this.context, 'GET', '/vendor-software-products/' + this.context.item.id + '/versions/' + this.context.item.versionId).then(result => {
 		this.context.inputData = util.getJSONFromFile('resources/json/createVF.json');
 		// start replacing stuff
-		this.context.inputData.contactId = this.context.headers["USER_ID"];
+		this.context.inputData.contactId = this.context.headers['vf']["USER_ID"];
 		this.context.inputData.categories[0].uniqueId = result.data.category;
 		this.context.inputData.categories[0].subcategories[0].uniqueId = result.data.subCategory;
 		this.context.inputData.description = result.data.description;

@@ -23,7 +23,7 @@ function _request(context, method, path, data, isBinary=false, type='onboarding'
 	let options = {
 		method: method,
 		url: server + path,
-		headers: context.headers
+		headers: context.headers[type]
 	};
 	console.log('--> Calling REST ' + options.method +' url: ' + options.url);
 
@@ -106,7 +106,7 @@ function download(context, path, filePath,  callback, type='onboarding') {
 	let options = {
 			method: 'GET',
 			url: server + path,
-			headers: context.headers
+			headers: context.headers[type]
 		};
 	console.log('--> Calling REST download url: ' + options.url);
 

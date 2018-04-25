@@ -1,0 +1,14 @@
+{
+  "onboarding" : {
+    "user": "${onboardingUser}",
+    "server": "${onboardingServer}"
+  },
+  "vf" : {
+    "user": "${vfUser}",
+    "server": "${vfServer}"
+  },
+  "activity_spec" : {
+    "user": "${activitySpecUser}",
+    "server": "${activitySpecServer}"
+  }
+}
