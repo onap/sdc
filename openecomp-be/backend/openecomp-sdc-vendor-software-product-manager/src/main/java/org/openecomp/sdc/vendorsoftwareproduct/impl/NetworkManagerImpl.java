@@ -70,7 +70,7 @@ public class NetworkManagerImpl implements NetworkManager {
     NetworkEntity retrieved = getValidatedNetwork(network.getVspId(), network.getVersion(), network.getId());
 
     NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
-    schemaInput.setManual(!vspInfoDao.isManual(network.getVspId(), network.getVersion()));
+    schemaInput.setManual(vspInfoDao.isManual(network.getVspId(), network.getVersion()));
     schemaInput.setNetwork(retrieved.getNetworkCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
@@ -88,7 +88,7 @@ public class NetworkManagerImpl implements NetworkManager {
     Network network = networkEntity.getNetworkCompositionData();
 
     NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
-    schemaInput.setManual(!vspInfoDao.isManual(vspId, version));
+    schemaInput.setManual(vspInfoDao.isManual(vspId, version));
     schemaInput.setNetwork(network);
 
     CompositionEntityResponse<Network> response = new CompositionEntityResponse<>();
