@@ -78,9 +78,10 @@ const SoftwareProductDependenciesActionHelper = {
 
     createDependency(dispatch, { softwareProductId, version, item }) {
         // removing the temp id
-        delete item.id;
+        let newItem = { ...item };
+        delete newItem.id;
         // creating the new dependency
-        return addDepencency(softwareProductId, version, item).then(() => {
+        return addDepencency(softwareProductId, version, newItem).then(() => {
             dispatch({
                 type: actionTypes.ADD_SOFTWARE_PRODUCT_DEPENDENCY
             });
