@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_94004867",
+        "filename": "onboarding/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T15:15:16Z",
+      "side": 1,
+      "message": "1. line indentation will be corrected.\n2. it is not a new profile. this profile is already present in SDC. having it here simply switched jacoco \"ON\" so that code coverage report can be generated when we run it with -P onboarding profile.\n3. I have done these changes intentionally so that profile \u0027onboaring\u0027 will be self sufficient to generate code coverage report. you donot need to pass jacoco.skip \u003d false with maven clean install.",
+      "parentUuid": "5a93c517_7496dc3f",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 11
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_949b6865",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/pom.xml",
         "patchSetId": 9
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_54f64090",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T15:15:16Z",
+      "side": 1,
+      "message": "my earlier comment +\nI need to pass \u0027useSystemClassLoader\u0027 as false to to maven surefire plugin to run it successfully. I am using onboarindg profile to run all unit test in a newly forked VM so that jacoco code coverage report can be generated.",
+      "parentUuid": "5a93c517_949b6865",
+      "range": {
+        "startLine": 218,
+        "startChar": 1,
+        "endLine": 228,
+        "endChar": 15
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_34a4d4a4",
         "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/pom.xml",
         "patchSetId": 9
@@ -59,6 +107,30 @@
       "writtenOn": "2018-04-25T14:52:10Z",
       "side": 1,
       "message": "Why is it a profile? It clashes with the root \"onboarding\" profile. See my earlier comments.",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 15
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f4ee6cb4",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T15:15:16Z",
+      "side": 1,
+      "message": "see my earlier comment. when you say \u0027clashes\u0027 what do you mean? what does it broke? can you clarify?",
+      "parentUuid": "5a93c517_34a4d4a4",
       "range": {
         "startLine": 111,
         "startChar": 0,
@@ -117,6 +189,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_14ec38ba",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T15:15:16Z",
+      "side": 1,
+      "message": "see my earlier comment",
+      "parentUuid": "5a93c517_14a758a8",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 15
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_b4b784d7",
         "filename": "openecomp-be/tools/compile-helper-plugin/pom.xml",
         "patchSetId": 9
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_d431f05a",
+        "filename": "openecomp-be/tools/compile-helper-plugin/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T15:15:16Z",
+      "side": 1,
+      "message": "will correct it",
+      "parentUuid": "5a93c517_b4b784d7",
+      "range": {
+        "startLine": 36,
+        "startChar": 25,
+        "endLine": 36,
+        "endChar": 30
+      },
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_74ad7c83",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreTestCompileHelperMojo.java",
         "patchSetId": 9
@@ -151,6 +271,24 @@
       "writtenOn": "2018-04-25T14:52:10Z",
       "side": 1,
       "message": "Constants must be declared before data members.",
+      "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b42c6403",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreTestCompileHelperMojo.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T15:15:16Z",
+      "side": 1,
+      "message": "will correct it",
+      "parentUuid": "5a93c517_74ad7c83",
       "revId": "032fdba65665d5344f4c379cf6886143f10ebe07",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
