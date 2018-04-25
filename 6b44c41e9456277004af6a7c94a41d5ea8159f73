@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_19f6b15d",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T12:23:08Z",
+      "side": 1,
+      "message": "they are not part of my changes.",
+      "parentUuid": "5a93c517_7957b55a",
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_995c017f",
         "filename": "openecomp-be/pom.xml",
         "patchSetId": 8
@@ -30,6 +48,30 @@
       "writtenOn": "2018-04-25T12:06:32Z",
       "side": 1,
       "message": "Please remove any commented out code.",
+      "range": {
+        "startLine": 247,
+        "startChar": 1,
+        "endLine": 253,
+        "endChar": 25
+      },
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_198d51d3",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T12:23:08Z",
+      "side": 1,
+      "message": "will do it as part of my next set of changes in the same series. I havenot commented it out.",
+      "parentUuid": "5a93c517_995c017f",
       "range": {
         "startLine": 247,
         "startChar": 1,
@@ -82,6 +124,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_59ae792f",
+        "filename": "openecomp-be/tools/compile-helper-plugin/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T12:23:08Z",
+      "side": 1,
+      "message": "because I have decided to keep my changes limited to onboarding only. I donot want these changes inheriting anything out of onboarding directly. eventually if they inherit sdc-main transitively then I am fine.",
+      "parentUuid": "5a93c517_1948f1b1",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 13
+      },
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_99d3a1d4",
         "filename": "pom.xml",
         "patchSetId": 8
@@ -93,6 +159,24 @@
       "writtenOn": "2018-04-25T12:06:32Z",
       "side": 1,
       "message": "I think commenting this out will break docker build - \"latest\" image tag will not be updated and will point to an outdated version.",
+      "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f9a66553",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-04-25T12:23:08Z",
+      "side": 1,
+      "message": "I havenot commented it out as part of my changes. they are commented out by someone else for some reason. I will figure out who commented it out later and request that fellow to do the needful.",
+      "parentUuid": "5a93c517_99d3a1d4",
       "revId": "6b44c41e9456277004af6a7c94a41d5ea8159f73",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
