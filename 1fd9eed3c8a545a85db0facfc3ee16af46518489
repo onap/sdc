@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1966b1bb",
+        "filename": "openecomp-be/tools/compile-helper-plugin/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-25T10:39:49Z",
+      "side": 1,
+      "message": "All poms in this repo must inherit from the root SDC pom, and use its version. This is required to be able to create a release version - ONAP allows one version per repository, not per artifact. ONAP also doesn\u0027t keep snapshot artifacts, so the snapshot version will expire sooner or later and all dependent projects will fail.",
+      "revId": "1fd9eed3c8a545a85db0facfc3ee16af46518489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
