@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_bfef6586",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2898,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_9fcce9bc",
+      "range": {
+        "startLine": 2898,
+        "startChar": 74,
+        "endLine": 2898,
+        "endChar": 92
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_dfd6f14e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 2
@@ -128,6 +152,30 @@
         "id": 2805
       },
       "writtenOn": "2018-04-25T12:41:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_dfd6f14e",
+      "range": {
+        "startLine": 2913,
+        "startChar": 12,
+        "endLine": 2913,
+        "endChar": 61
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1f8d39d3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2913,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
       "side": 1,
       "message": "Done",
       "parentUuid": "5a93c517_dfd6f14e",
@@ -190,6 +238,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_9fb86976",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3101,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_3fc5958d",
+      "range": {
+        "startLine": 3101,
+        "startChar": 16,
+        "endLine": 3101,
+        "endChar": 76
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_df64b1ba",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 2
@@ -201,6 +273,30 @@
       "writtenOn": "2018-04-24T09:57:56Z",
       "side": 1,
       "message": "in case using wrapper pattern please use flat indentation.\nFor Example,\n\nCorrect Usage:\nif( errorWrapper.isEmpty() ){\n//Do Some Logic\n}\nif( errorWrapper.isEmpty() ){\n//Do Some Additional Logic\n}\nif( errorWrapper.isEmpty() ){\n//Do Even more Logic\n}\n\nIncorrect Usage:\nif( errorWrapper.isEmpty() ){\n//Do Some Logic\n}\nif( errorWrapper.isEmpty() ){\n//Do Some Additional Logic\n   if( errorWrapper.isEmpty() ){\n   //Do Even more Logic\n   }\n}",
+      "range": {
+        "startLine": 4985,
+        "startChar": 54,
+        "endLine": 4985,
+        "endChar": 102
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5fae612f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4985,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_df64b1ba",
       "range": {
         "startLine": 4985,
         "startChar": 54,
@@ -260,6 +356,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_df6911fa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_5f70a171",
+      "range": {
+        "startLine": 97,
+        "startChar": 12,
+        "endLine": 97,
+        "endChar": 86
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ff688d89",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
         "patchSetId": 2
@@ -292,6 +412,30 @@
         "id": 2805
       },
       "writtenOn": "2018-04-25T12:41:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_ff688d89",
+      "range": {
+        "startLine": 105,
+        "startChar": 48,
+        "endLine": 105,
+        "endChar": 50
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_df1831d5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
       "side": 1,
       "message": "Done",
       "parentUuid": "5a93c517_ff688d89",
@@ -388,6 +532,30 @@
       "writtenOn": "2018-04-24T09:57:56Z",
       "side": 1,
       "message": "nice to have\nBetter practice is not to initialize ResponseFormat responseFormat with null.\ntherefore the compiler will verify for every usage that it is assigned.",
+      "range": {
+        "startLine": 119,
+        "startChar": 8,
+        "endLine": 119,
+        "endChar": 44
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5f52e167",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/ArtifactExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_ffff2da9",
       "range": {
         "startLine": 119,
         "startChar": 8,
@@ -597,6 +765,30 @@
         "id": 2805
       },
       "writtenOn": "2018-04-25T12:41:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_9fb2a9e3",
+      "range": {
+        "startLine": 177,
+        "startChar": 2,
+        "endLine": 191,
+        "endChar": 3
+      },
+      "revId": "54b581a8d1e6e8be70be2612859260aa897225ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bf32050e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ArtifactsOperations.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-25T12:50:28Z",
       "side": 1,
       "message": "Done",
       "parentUuid": "5a93c517_9fb2a9e3",
