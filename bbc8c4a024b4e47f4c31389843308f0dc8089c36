@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9ec86223",
+        "filename": "common/pom.xml",
+        "patchSetId": 14
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-26T11:20:23Z",
+      "side": 1,
+      "message": "I\u0027m afraid this may break the content. Reading the XML produces  \"\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003dLICENSE_START\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\\n\n                    \" (all the white-spaces included), instead of the original line. Not sure how the plugin handles it, but I don\u0027t want to break it accidentally for AT\u0026T.",
+      "range": {
+        "startLine": 243,
+        "startChar": 0,
+        "endLine": 248,
+        "endChar": 39
+      },
+      "revId": "bbc8c4a024b4e47f4c31389843308f0dc8089c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ece5a2e",
+        "filename": "onboarding/pom.xml",
+        "patchSetId": 14
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-26T11:20:23Z",
+      "side": 1,
+      "message": "Why did you disable the UI build?",
+      "range": {
+        "startLine": 19,
+        "startChar": 8,
+        "endLine": 19,
+        "endChar": 45
+      },
+      "revId": "bbc8c4a024b4e47f4c31389843308f0dc8089c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7eea3675",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 14
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-26T11:20:23Z",
+      "side": 1,
+      "message": "I\u0027m afraid it may break the functionality. If you\u0027re concerned with the lines being too long, it\u0027s better to leave them \"as is\" - we don\u0027t have explicit requirements for XML formatting.",
+      "range": {
+        "startLine": 116,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 39
+      },
+      "revId": "bbc8c4a024b4e47f4c31389843308f0dc8089c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_def82a4c",
+        "filename": "pom.xml",
+        "patchSetId": 14
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-04-26T11:20:23Z",
+      "side": 1,
+      "message": "Let\u0027s make sure this doesn\u0027t break anything.",
+      "range": {
+        "startLine": 334,
+        "startChar": 1,
+        "endLine": 344,
+        "endChar": 39
+      },
+      "revId": "bbc8c4a024b4e47f4c31389843308f0dc8089c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
