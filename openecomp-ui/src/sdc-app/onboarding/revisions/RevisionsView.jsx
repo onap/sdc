@@ -37,6 +37,7 @@ class RevisionsView extends React.Component {
             <div className="manage-revisions-page">
                 <Form
                     hasButtons={true}
+                    isValid={this.state.revertId}
                     onSubmit={() => onRevert(this.state.revertId)}
                     onReset={() => onCancel()}
                     submitButtonText={i18n('Revert')}
