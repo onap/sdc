@@ -432,32 +432,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
 	}
 
-
-
-	private GroupInstanceData buildGroupInstanceData(GroupInstance groupInstance, String componentInstanceId, String logicalName) {
-		String ciOriginComponentUid = groupInstance.getGroupUid();
-
-		GroupInstanceDataDefinition dataDefinition = new GroupInstanceDataDefinition(groupInstance);
-
-		Long creationDate = groupInstance.getCreationTime();
-		if (creationDate == null) {
-			creationDate = System.currentTimeMillis();
-		}
-		dataDefinition.setCreationTime(creationDate);
-		dataDefinition.setModificationTime(creationDate);
-		// dataDefinition.setResourceUid(resourceUid);
-		// String replacmentlogicalName = logicalName.replaceAll(" ",
-		// "_").toLowerCase();
-		dataDefinition.setName(logicalName);
-		if (dataDefinition.getNormalizedName() == null)
-			dataDefinition.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(logicalName));
-		dataDefinition.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstanceId, ciOriginComponentUid, dataDefinition.getNormalizedName()));
-
-		GroupInstanceData resourceInstanceData = new GroupInstanceData(dataDefinition);
-
-		return resourceInstanceData;
-	}
-
 	/**
 	 * update value of attribute on resource instance
 	 * 
@@ -684,73 +658,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 				elementDataWrapper.setInnerElement(findResInstanceRes.left().value());
 			}
 		}
-	}
-
-	private Either<GroupInstance, TitanOperationStatus> getGroupInstanceFromGraph(String uniqueId, boolean skipProperties, boolean skipArtifacts) {
-
-		Either<GroupInstance, TitanOperationStatus> result = null;
-
-		Either<GroupInstanceData, TitanOperationStatus> groupInstRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupInstance), uniqueId, GroupInstanceData.class);
-		if (groupInstRes.isRight()) {
-			TitanOperationStatus status = groupInstRes.right().value();
-			log.debug("Failed to retrieve group {}  from graph. Status is {}", uniqueId, status);
-			BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("Fetch Group", uniqueId, String.valueOf(status));
-			result = Either.right(status);
-			return result;
-		}
-
-		GroupInstanceData groupInstData = groupInstRes.left().value();
-
-		GroupInstance groupInstance = new GroupInstance(groupInstData.getGroupDataDefinition());
-		String instOriginGroupId = groupInstance.getGroupUid();
-		Either<GroupDefinition, TitanOperationStatus> groupRes = groupOperation.getGroupFromGraph(instOriginGroupId, false, true, false);
-
-		if (groupRes.isRight()) {
-			TitanOperationStatus status = groupRes.right().value();
-			result = Either.right(status);
-
-		}
-		GroupDefinition groupDefinition = groupRes.left().value();
-		Either<Map<String, PropertyValueData>, TitanOperationStatus> groupInstancePropertyValuesRes = getAllGroupInstancePropertyValuesData(groupInstData);
-		if(groupInstancePropertyValuesRes.isRight()){
-			result = Either.right(groupInstancePropertyValuesRes.right().value());
-		}
-		buildGroupInstanceFromGroup(groupInstance, groupDefinition, groupInstancePropertyValuesRes.left().value());
-
-		/*
-		 * if (false == skipProperties) { Either<List<GroupProperty>, TitanOperationStatus> propertiesRes = getGroupProperties(uniqueId); if (propertiesRes.isRight()) { TitanOperationStatus status = propertiesRes.right().value(); if (status !=
-		 * TitanOperationStatus.OK) { result = Either.right(status); return result; } } else { List<GroupProperty> properties = propertiesRes.left().value(); groupDefinition.setProperties(properties); } }
-		 */
-
-		if (false == skipArtifacts) {
-			Either<List<ImmutablePair<String, String>>, TitanOperationStatus> artifactsRes = getGroupArtifactsPairs(uniqueId);
-			if (artifactsRes.isRight()) {
-				TitanOperationStatus status = artifactsRes.right().value();
-				if (status != TitanOperationStatus.OK) {
-					result = Either.right(status);
-					return result;
-				}
-			} else {
-				List<String> artifactsUid = new ArrayList<>();
-				List<String> artifactsUUID = new ArrayList<>();
-
-				List<ImmutablePair<String, String>> list = artifactsRes.left().value();
-				if (list != null) {
-					for (ImmutablePair<String, String> pair : list) {
-						String uid = pair.left;
-						String UUID = pair.right;
-						artifactsUid.add(uid);
-						artifactsUUID.add(UUID);
-					}
-					groupInstance.setGroupInstanceArtifacts(artifactsUid);
-					groupInstance.setGroupInstanceArtifactsUuid(artifactsUUID);
-				}
-			}
-		}
-		result = Either.left(groupInstance);
-
-		return result;
-
 	}
 
 	private void buildGroupInstanceFromGroup(GroupInstance groupInstance, GroupDefinition groupDefinition, Map<String, PropertyValueData> groupInstancePropertyValues) {
