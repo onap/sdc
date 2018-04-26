@@ -166,19 +166,6 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
         Assert.assertTrue(booleanResponseFormatEither.isLeft());
     }
 
-    @Test
-    public void testInterfaceOperationeInputParamNameEmpty() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("  "));
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"update");
-
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
-        Assert.assertTrue(booleanResponseFormatEither.isRight());
-    }
-
     private Set<Operation> createInterfaceOperationData( String uniqueID, String description, ArtifactDefinition artifactDefinition,
                                                          ListDataDefinition<OperationInputDefinition> inputs, String name) {
         return Sets.newHashSet(createInterfaceOperation(uniqueID, description, artifactDefinition, inputs, name));

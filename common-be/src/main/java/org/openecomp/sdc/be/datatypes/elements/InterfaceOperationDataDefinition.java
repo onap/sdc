@@ -22,14 +22,13 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.ARTIFACT_UUID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.DESCRIPTION;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.UNIQUE_ID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_INPUT_PARAMETERS;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_OPERATION_TYPE;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_OUTPUT_PARAMETERS;
-
 public class InterfaceOperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
     @JsonCreator
@@ -45,7 +44,7 @@ public class InterfaceOperationDataDefinition extends ToscaDataDefinition implem
         setDescription(iodd.getDescription());
         setToscaResourceName(iodd.getToscaResourceName());
         setOperationType(iodd.getOperationType());
-        setArtifactUUID(iodd.getArtifactUUID());
+        setWorkflowId(iodd.getWorkflowId());
     }
 
     public ListDataDefinition<InterfaceOperationParamDataDefinition> getInputParams() {
@@ -94,10 +93,10 @@ public class InterfaceOperationDataDefinition extends ToscaDataDefinition implem
         setToscaPresentationValue(TOSCA_RESOURCE_NAME, toscaResourceName);
     }
 
-    public String getArtifactUUID() {
-        return (String) getToscaPresentationValue(ARTIFACT_UUID);
+    public String getWorkflowId() {
+        return (String) getToscaPresentationValue(IO_WORKFLOW_ID);
     }
-    public void setArtifactUUID(String artifactUUID) {
-        setToscaPresentationValue(ARTIFACT_UUID, artifactUUID);
+    public void setWorkflowId(String workflowId) {
+        setToscaPresentationValue(IO_WORKFLOW_ID, workflowId);
     }
 }

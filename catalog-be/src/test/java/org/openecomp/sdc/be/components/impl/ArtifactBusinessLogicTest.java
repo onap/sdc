@@ -375,7 +375,7 @@ public class ArtifactBusinessLogicTest {
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
+        when(artifactsOperations.updateArifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
                 , any(String.class))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
@@ -394,7 +394,7 @@ public class ArtifactBusinessLogicTest {
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
-        when(artifactsOperations.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
+        when(artifactsOperations.updateArifactOnResource(any(ArtifactDefinition.class), any(), any(), any(NodeTypeEnum.class)
                 , any(String.class))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());

@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,16 +40,13 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -92,7 +88,7 @@ public class ArtifactsOperations extends BaseOperation {
 
 	}
 
-	public Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, String instanceId) {
+	public Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, String instanceId) {
 
 		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(id, artifactInfo, type, artifactId, instanceId, true, false);
 		if (status.isRight()) {
@@ -145,10 +141,6 @@ public class ArtifactsOperations extends BaseOperation {
 		if (foundArtifact == null) {
 			foundArtifact = getArtifactByLabelAndId(parentId, id, EdgeLabelEnum.SERVICE_API_ARTIFACTS);
 		}
-		if (foundArtifact == null) {
-			foundArtifact = findInterfaceArtifact(parentId, id);
-
-		}
 
 		if (foundArtifact == null) {
 			result = Either.right(StorageOperationStatus.NOT_FOUND);
@@ -159,47 +151,6 @@ public class ArtifactsOperations extends BaseOperation {
 		return Either.left(artifactDefResult);
 
 	}
-	private ArtifactDataDefinition findInterfaceArtifact(String parentId, String id) {
-		Either<Map<String, InterfaceDefinition>, TitanOperationStatus> dataFromGraph = getDataFromGraph(parentId, EdgeLabelEnum.INTERFACE_ARTIFACTS);
-		if (dataFromGraph.isRight()){
-			log.debug("failed to fetch interfaces {} for tosca element with id {}, error {}", id, parentId ,dataFromGraph.right().value());
-			return null;
-		}
-
-		Map<String, InterfaceDefinition> interfaceDefinitionMap = dataFromGraph.left().value();
-		if(interfaceDefinitionMap == null) {
-			return null;
-		}
-		Collection<InterfaceDefinition> interfaces = interfaceDefinitionMap.values();
-		if (interfaces == null){
-			return null;
-		}
-		for (InterfaceDataDefinition interfaceDataDefinition : interfaces){
-			Map<String, OperationDataDefinition> operationsMap = interfaceDataDefinition.getOperations();
-			if (operationsMap == null) {
-				return null;
-			}
-			ArtifactDataDefinition implementationArtifact = getArtifactDataDefinition(id, operationsMap);
-			if (implementationArtifact != null)
-				return implementationArtifact;
-		}
-		return null;
-	}
-
-	private ArtifactDataDefinition getArtifactDataDefinition(String id,
-			Map<String, OperationDataDefinition> operationsMap) {
-		for(OperationDataDefinition operationDataDefinition : operationsMap.values()){
-			ArtifactDataDefinition implementationArtifact = operationDataDefinition.getImplementation();
-			if(implementationArtifact != null){
-				String uniqueId = implementationArtifact.getUniqueId();
-				if (id.equals(uniqueId)) {
-					return  implementationArtifact;
-				}
-			}
-		}
-		return null;
-	}
-
 
 	public Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromResource(String id, String artifactId, NodeTypeEnum type, boolean deleteMandatoryArtifact) {
 		Either<ArtifactDefinition, StorageOperationStatus> status = removeArtifactOnGraph(id, artifactId, type, deleteMandatoryArtifact);
@@ -385,7 +336,7 @@ public class ArtifactsOperations extends BaseOperation {
 		if (envList != null && !envList.isEmpty()) {
 			envList.forEach(a -> {
 				a.setGeneratedFromId(newArtifactId);
-				updateArtifactOnResource(a, id, a.getUniqueId(), type, instanceId);
+				updateArifactOnResource(a, id, a.getUniqueId(), type, instanceId);
 
 			});
 
@@ -394,7 +345,7 @@ public class ArtifactsOperations extends BaseOperation {
 	}
 
 	public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvPlaceholder(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type) {
-		return updateArtifactOnResource(artifactInfo, parentId, artifactInfo.getUniqueId(), type, null);
+		return updateArifactOnResource(artifactInfo, parentId, artifactInfo.getUniqueId(), type, null);
 	}
 
 	// public Either<List<HeatParameterDefinition>, StorageOperationStatus> getHeatParamsForEnv(ArtifactDefinition heatEnvArtifact, String parentId) {

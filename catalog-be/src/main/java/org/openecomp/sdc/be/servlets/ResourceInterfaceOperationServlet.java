@@ -27,6 +27,7 @@ import io.swagger.annotations.ApiResponses;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.InterfaceUIDataConverter;

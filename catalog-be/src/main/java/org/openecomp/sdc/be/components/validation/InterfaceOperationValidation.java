@@ -204,42 +204,31 @@ public class InterfaceOperationValidation {
     }
     private Either<Boolean, ResponseFormat> validateInputParameters(Operation interfaceOperation,
                                                                     ResponseFormatManager responseFormatManager) {
-        if (isInputParameterNameEmpty(interfaceOperation)) {
-            LOGGER.error("Interface operation input  parameter name can't be empty");
-            ResponseFormat inputResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_INPUT_NAME_MANDATORY);
-            return Either.right(inputResponse);
-        }
-
         Either<Boolean, Set<String>> validateInputParametersUniqueResponse = isInputParametersUnique(interfaceOperation);
         if(validateInputParametersUniqueResponse.isRight()) {
-            LOGGER.error("Interface operation input  parameter names {} already in use",
+            LOGGER.error("Interface operation input  parameter names {} are invalid, Input parameter names should be unique",
                     validateInputParametersUniqueResponse.right().value().toString());
             ResponseFormat inputResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_INPUT_NAME_ALREADY_IN_USE, validateInputParametersUniqueResponse.right().value().toString());
+                    .INTERFACE_OPERATION_INPUT_NAME_INVALID, validateInputParametersUniqueResponse.right().value().toString());
             return Either.right(inputResponse);
         }
         return Either.left(Boolean.TRUE);
     }
 
     private Either<Boolean, Set<String>> isInputParametersUnique(Operation operationDataDefinition) {
+
         Set<String> inputParamNamesSet = new HashSet<>();
         Set<String> duplicateParamNamesToReturn = new HashSet<>();
         operationDataDefinition.getInputs().getListToscaDataDefinition()
                 .forEach(inputParam -> {
-                    if(!inputParamNamesSet.add(inputParam.getName().trim())) {
-                        duplicateParamNamesToReturn.add(inputParam.getName().trim());
+                    if(!inputParamNamesSet.add(inputParam.getName())) {
+                        duplicateParamNamesToReturn.add(inputParam.getName());
                     }
                 });
         if(!duplicateParamNamesToReturn.isEmpty()) {
             return Either.right(duplicateParamNamesToReturn);
         }
         return Either.left(Boolean.TRUE);
-    }
-
-    private Boolean isInputParameterNameEmpty(Operation operationDataDefinition) {
-        return operationDataDefinition.getInputs().getListToscaDataDefinition().stream()
-                .anyMatch(inputParam -> inputParam.getName() == null || inputParam.getName().trim().equals(StringUtils.EMPTY));
     }
 
 

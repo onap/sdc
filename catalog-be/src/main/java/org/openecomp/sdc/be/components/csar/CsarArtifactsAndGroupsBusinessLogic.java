@@ -25,17 +25,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.info.MergedArtifactInfo;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.CsarInfo;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -807,7 +797,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             if (op.isPresent()) {
                 ArtifactDefinition artifactInfoHeatEnv = op.get();
                 Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource = artifactToscaOperation
-                        .updateArtifactOnResource(artifactInfoHeatEnv, updatedResource.getUniqueId(),
+                        .updateArifactOnResource(artifactInfoHeatEnv, updatedResource.getUniqueId(),
                                 artifactInfoHeatEnv.getUniqueId(), null, null);
                 if (updateArifactOnResource.isRight()) {
                     log.debug("Failed to update heat env on CSAR flow for component {} artifact {} label {}",
@@ -878,7 +868,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             }
             currentInfo.setListHeatParameters(currentHeatEnvParams);
             Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource = artifactToscaOperation
-                    .updateArtifactOnResource(currentInfo, resource.getUniqueId(), currentInfo.getUniqueId(),
+                    .updateArifactOnResource(currentInfo, resource.getUniqueId(), currentInfo.getUniqueId(),
                             null, null);
             if (updateArifactOnResource.isRight()) {
                 log.debug(

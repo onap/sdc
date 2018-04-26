@@ -58,6 +58,7 @@ public interface InterfaceOperationTestUtils {
         return operation;
     }
 
+    
 
     default Map<String, Operation> createMockOperationMap() {
         Operation operation = new Operation();
@@ -68,10 +69,6 @@ public interface InterfaceOperationTestUtils {
         operation.setDefinition(false);
         operation.setName("CREATE");
         operation.setUniqueId("uniqueId1");
-        ArtifactDefinition implementation = new ArtifactDefinition();
-        implementation.setUniqueId("uniqId");
-        implementation.setArtifactUUID("artifactId");
-        operation.setImplementation(implementation);
         Map<String, Operation> operationMap = new HashMap<>();
         operationMap.put("op1", operation);
         return operationMap;
@@ -93,5 +90,5 @@ public interface InterfaceOperationTestUtils {
 
         return interfaceDefinitionMap;
     }
-
+    
 }

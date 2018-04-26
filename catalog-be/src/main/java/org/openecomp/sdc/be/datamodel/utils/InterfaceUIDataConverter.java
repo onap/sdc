@@ -36,8 +36,7 @@ public class InterfaceUIDataConverter {
     ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
     if (inputParams != null) {
       List<OperationInputDefinition> inputList = inputParams.getListToscaDataDefinition().stream()
-              .map(interfaceOperationParamDataDefinition -> new OperationInputDefinition(interfaceOperationParamDataDefinition.getParamName(),
-                      interfaceOperationParamDataDefinition.getParamId())).collect(Collectors.toList());
+              .map(a -> new OperationInputDefinition(a.getParamName(), a.getParamId())).collect(Collectors.toList());
       inputList.forEach(inputs::add);
     }
     Operation operationData = new Operation();
@@ -52,8 +51,7 @@ public class InterfaceUIDataConverter {
   public static InterfaceOperationDataDefinition convertOperationDataToInterfaceData(Operation operationData){
 
     ListDataDefinition<OperationInputDefinition> inputs = operationData.getInputs();
-    List<InterfaceOperationParamDataDefinition> inputParamList = inputs.getListToscaDataDefinition().stream()
-            .map(a -> new InterfaceOperationParamDataDefinition(a.getName(), a.getInputId())).collect(
+    List<InterfaceOperationParamDataDefinition> inputParamList = inputs.getListToscaDataDefinition().stream().map(a -> new InterfaceOperationParamDataDefinition(a.getName(), a.getInputId())).collect(
             Collectors.toList());
     ListDataDefinition<InterfaceOperationParamDataDefinition> inputParams = new ListDataDefinition<>();
     inputParamList.forEach(inputParams::add);
@@ -63,7 +61,7 @@ public class InterfaceUIDataConverter {
     interfaceOperationDataDefinition.setOperationType(operationData.getName());
     interfaceOperationDataDefinition.setDescription(operationData.getDescription());
     interfaceOperationDataDefinition.setInputParams(inputParams);
-    interfaceOperationDataDefinition.setArtifactUUID(operationData.getImplementation().getArtifactUUID());
+    interfaceOperationDataDefinition.setWorkflowId(operationData.getImplementation().getArtifactUUID());
 
     return interfaceOperationDataDefinition;
   }

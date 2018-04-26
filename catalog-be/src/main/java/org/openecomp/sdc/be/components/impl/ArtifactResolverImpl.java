@@ -20,24 +20,16 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.apache.commons.collections.MapUtils;
+import java.util.*;
+
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import java.util.*;
 @org.springframework.stereotype.Component("artifact-resolver")
 public class ArtifactResolverImpl implements ArtifactsResolver {
 
@@ -63,22 +55,11 @@ public class ArtifactResolverImpl implements ArtifactsResolver {
     private List<ArtifactDefinition> getAllComponentsArtifacts(Component component, ComponentTypeEnum componentType) {
         Map<String, ArtifactDefinition> deploymentArtifacts = Optional.ofNullable(component.getDeploymentArtifacts()).orElse(Collections.emptyMap());
         Map<String, ArtifactDefinition> artifacts = Optional.ofNullable(component.getArtifacts()).orElse(Collections.emptyMap());
-        Map<String, ArtifactDefinition> interfaceArtifacts= Collections.emptyMap();
-        if (componentType == ComponentTypeEnum.RESOURCE) {
-            Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-            if (MapUtils.isNotEmpty(interfaces)) {
-                interfaceArtifacts = interfaces.values().stream()
-                        .flatMap(inte -> inte.getOperationsMap().values().stream())
-                        .map(operation -> operation.getImplementationArtifact())
-                        .collect(Collectors.toMap(artifactDefinition -> artifactDefinition.getUniqueId(), artifactDefinition -> artifactDefinition));
-            }
-        }
-
         Map<String, ArtifactDefinition> serviceApiArtifacts = Collections.emptyMap();
         if (componentType.equals(ComponentTypeEnum.SERVICE)) {
             serviceApiArtifacts = Optional.ofNullable(((Service) component).getServiceApiArtifacts()).orElse(Collections.emptyMap());
         }
-        return appendAllArtifacts(deploymentArtifacts, artifacts, interfaceArtifacts, serviceApiArtifacts);
+        return appendAllArtifacts(deploymentArtifacts, artifacts, serviceApiArtifacts);
     }
 
     private List<ArtifactDefinition> getAllInstanceArtifacts(ComponentInstance instance) {
