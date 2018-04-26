@@ -1176,10 +1176,6 @@ public class ComponentsUtils {
         return responseFormat;
     }
 
-    public boolean validateStringNotEmpty(String value) {
-        return value != null && !value.trim().isEmpty();
-    }
-
     public ActionStatus convertFromStorageResponseForAdditionalInformation(StorageOperationStatus storageResponse) {
         ActionStatus responseEnum;
 

@@ -204,14 +204,6 @@ public class ManualVspToscaGenerationService {
     return componentName + TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX;
   }
 
-  private String getNodeTemplateId(String componentName, String idPrefix, String idSuffix) {
-    StringBuilder builder = new StringBuilder();
-    //builder.append(idPrefix);
-    builder.append(componentName);
-    builder.append(idSuffix);
-    return builder.toString();
-  }
-
   private ServiceTemplate createInitMainServiceTemplate(String releaseVendor) {
     ServiceTemplate mainServiceTemplate = new ServiceTemplate();
     Map<String, String> templateMetadata = new HashMap<>();
@@ -363,18 +355,6 @@ public class ManualVspToscaGenerationService {
   }
 
   //*************** CREATE GLOBAL SUBSTITUTION SERVICE TEMPLATE **********************
-
-  private ServiceTemplate createGlobalSubstitutionServiceTemplate(ServiceTemplate
-                                                                      substitutionServiceTemplate,
-                                                                  String componentName) {
-    ServiceTemplate globalSubstitutionServiceTemplate = fetchGlobalSubstitutionServiceTemplate();
-    NodeType substitutionNodeType =
-        createGlobalSubstitutionNodeType(substitutionServiceTemplate, componentName);
-    String substitutionNodeTypeId = getSubstitutionNodeTypeId(componentName);
-    DataModelUtil.addNodeType(globalSubstitutionServiceTemplate, substitutionNodeTypeId,
-        substitutionNodeType);
-    return globalSubstitutionServiceTemplate;
-  }
 
   private ServiceTemplate createInitGlobalSubstitutionServiceTemplate() {
     ServiceTemplate globalSubstitutionServiceTemplate = new ServiceTemplate();
