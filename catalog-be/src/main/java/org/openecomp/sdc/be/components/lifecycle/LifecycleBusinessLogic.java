@@ -344,18 +344,6 @@ public class LifecycleBusinessLogic {
         return Either.left(eitherResourceResponse.left().value());
     }
 
-    private Either<Boolean, ResponseFormat> validateHighestVersion(User modifier, LifeCycleTransition lifeCycleTransition, Resource resource, String resourceCurrVersion) {
-        ResponseFormat errorResponse;
-        if (!resource.isHighestVersion()) {
-            log.debug("resource version {} is not the last version of resource {}", resource.getVersion(), resource.getName());
-            errorResponse = componentUtils.getResponseFormat(ActionStatus.COMPONENT_HAS_NEWER_VERSION, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase());
-            componentUtils.auditResource(errorResponse, modifier, resource, lifeCycleTransition.getAuditingAction(), ResourceAuditData.newBuilder()
-                    .state(resource.getLifecycleState().name()).version(resourceCurrVersion).build());
-            return Either.right(errorResponse);
-        }
-        return Either.left(true);
-    }
-
     private Either<Boolean, ResponseFormat> validateHighestVersion(User modifier, LifeCycleTransition lifeCycleTransition, Component component, String resourceCurrVersion, ComponentTypeEnum componentType) {
         ResponseFormat errorResponse;
         if (!component.isHighestVersion()) {

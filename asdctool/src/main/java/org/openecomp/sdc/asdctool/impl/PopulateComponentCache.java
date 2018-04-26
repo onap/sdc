@@ -173,65 +173,6 @@ public class PopulateComponentCache {
 
 	}
 
-	private long writeResourceToCassandraComponent(ComponentCacheData componentCacheData) {
-
-		long startTime = System.currentTimeMillis();
-
-		// call to cassandra read
-		CassandraOperationStatus saveArtifact = componentCassandraDao.saveComponent(componentCacheData);
-		if (saveArtifact != CassandraOperationStatus.OK) {
-			exit("writeResourceToCassandra", 3);
-		}
-
-		long endTime = System.currentTimeMillis();
-
-		return (endTime - startTime);
-	}
-
-	private void deserializeByThreads(List<ESArtifactData> list, ExecutorService executor, int threadNumber) {
-
-		long fullSearchStart = System.currentTimeMillis();
-		// for (int k =0; k < parts; k++) {
-
-		List<List<ESArtifactData>> lists = new ArrayList<>();
-		for (int i = 0; i < threadNumber; i++) {
-			lists.add(new ArrayList<>());
-		}
-
-		List<Future<List<Resource>>> results = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			lists.get(i % threadNumber).add(list.get(i));
-		}
-
-		for (int i = 0; i < threadNumber; i++) {
-
-			// Callable<List<Resource>> worker = new
-			// MyDesrializabletCallable(lists.get(i), i);
-			Callable<List<Resource>> worker = new My3rdPartyDesrializabletCallable(lists.get(i), i);
-			Future<List<Resource>> submit = executor.submit(worker);
-			results.add(submit);
-		}
-
-		long fullSearchStart2 = System.currentTimeMillis();
-		for (Future<List<Resource>> future : results) {
-			try {
-				while (false == future.isDone()) {
-					Thread.sleep(1);
-				}
-
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		long fullSearchEnd2 = System.currentTimeMillis();
-		log.info("esofer time wait to threads finish {} ms",((fullSearchEnd2 - fullSearchStart2)));
-		// }
-		long fullSearchEnd = System.currentTimeMillis();
-
-		log.info("esofer full desrialize time {} ms",((fullSearchEnd - fullSearchStart)));
-		System.out.println("esofer full desrialize time " + ((fullSearchEnd - fullSearchStart)) + " ms");
-	}
-
 	public class MyDesrializabletCallable implements Callable<List<Resource>> {
 
 		List<ESArtifactData> list;

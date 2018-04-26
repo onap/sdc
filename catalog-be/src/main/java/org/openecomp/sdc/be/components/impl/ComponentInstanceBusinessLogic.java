@@ -1390,10 +1390,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 && ComponentTypeEnum.SERVICE == componentTypeEnum;
     }
 
-    private StorageOperationStatus concatServiceNameToVLINetworkRolePropertyValue(ToscaOperationFacade toscaOperationFacade, ComponentTypeEnum componentTypeEnum, String componentId, String resourceInstanceId, ComponentInstanceProperty property) {
-        return concatServiceNameToVLINetworkRolePropertiesValues(toscaOperationFacade, componentTypeEnum, componentId, resourceInstanceId, Arrays.asList(property));
-    }
-
     // US833308 VLI in service - specific network_role property value logic
     private StorageOperationStatus concatServiceNameToVLINetworkRolePropertiesValues(ToscaOperationFacade toscaOperationFacade, ComponentTypeEnum componentTypeEnum, String componentId, String resourceInstanceId, List<ComponentInstanceProperty> properties) {
         for (ComponentInstanceProperty property: properties) {

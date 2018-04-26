@@ -154,66 +154,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return functionPatterns;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openecomp.sdc.be.model.operations.api.IPropertyOperation# addPropertyToResource(java.lang.String, org.openecomp.sdc.be.model.PropertyDefinition, org.openecomp.sdc.be.dao.neo4j.datatype.NodeTypeEnum, java.lang.String)
-	 */
-	/*
-	 * @Override public Either<PropertyDefinition, StorageOperationStatus> addPropertyToResource( String propertyName, PropertyDefinition propertyDefinition, NodeTypeEnum nodeType, String resourceId) {
-	 * 
-	 * StorageOperationStatus isValidProperty = isTypeExistsAndValid(propertyDefinition); if (isValidProperty != StorageOperationStatus.OK) { return Either.right(isValidProperty); }
-	 * 
-	 * Either<PropertyData, TitanOperationStatus> status = addPropertyToGraph(propertyName, propertyDefinition, resourceId);
-	 * 
-	 * if (status.isRight()) { titanGenericDao.rollback(); 
-	 * log.error("Failed to add property {} to resource {}, propertyName, resourceId);
-	 *  return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status. right().value())); } else
-	 * { titanGenericDao.commit(); PropertyData propertyData = status.left().value();
-	 * 
-	 * PropertyDefinition propertyDefResult = convertPropertyDataToPropertyDefinition(propertyData, propertyName, resourceId); log.debug("The returned PropertyDefintion is " + propertyDefinition); return Either.left(propertyDefResult); }
-	 * 
-	 * 
-	 * }
-	 */
-	private StorageOperationStatus isTypeExistsAndValid(PropertyDefinition propertyDefinition) {
-
-		ToscaPropertyType type = ToscaPropertyType.isValidType(propertyDefinition.getType());
-
-		if (type == null) {
-			return StorageOperationStatus.INVALID_TYPE;
-		}
-
-		String propertyType = propertyDefinition.getType();
-		String innerType = null;
-		String value = propertyDefinition.getDefaultValue();
-
-		if (propertyType.equals(ToscaPropertyType.LIST) || propertyType.equals(ToscaPropertyType.MAP)) {
-			SchemaDefinition schema;
-			if ((schema = propertyDefinition.getSchema()) != null) {
-				PropertyDataDefinition property;
-				if ((property = schema.getProperty()) != null) {
-					innerType = property.getType();
-
-				}
-			}
-		}
-
-		PropertyTypeValidator validator = type.getValidator();
-
-		if (value == null || (EMPTY_VALUE != null && EMPTY_VALUE.equals(propertyDefinition.getDefaultValue()))) {
-			return StorageOperationStatus.OK;
-		} else {
-			boolean isValid = validator.isValid(value, innerType, null);
-			if (true == isValid) {
-				return StorageOperationStatus.OK;
-			} else {
-				return StorageOperationStatus.INVALID_VALUE;
-			}
-		}
-
-	}
-
 	public PropertyDefinition convertPropertyDataToPropertyDefinition(PropertyData propertyDataResult, String propertyName, String resourceId) {
 		log.debug("The object returned after create property is {}", propertyDataResult);
 
@@ -500,48 +440,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 		return StorageOperationStatus.OK;
 	}
-
-	/*
-	 * public Either<Object, Boolean> validateAndUpdatePropertyValue(String propertyType, String value, String innerType) {
-	 * 
-	 * log. trace("Going to validate property value and its type. type = {}, value = {}" ,propertyType, value);
-	 * 
-	 * ToscaPropertyType type = getType(propertyType);
-	 * 
-	 * if (type == null) {
-	 * 
-	 * Either<DataTypeDefinition, TitanOperationStatus> externalDataType = getExternalDataType(propertyType); if (externalDataType.isRight()) { TitanOperationStatus status = externalDataType.right().value(); log.debug("The type " + propertyType +
-	 * " of property cannot be found. Status is " + status); if (status != TitanOperationStatus.NOT_FOUND) { BeEcompErrorManager.getInstance(). logBeInvalidTypeError("validate property type", propertyType, "property"); } return Either.right(false); }
-	 * 
-	 * DataTypeDefinition dataTypeDefinition = externalDataType.left().value();
-	 * 
-	 * Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypesRes = getAllDataTypes(); if (allDataTypesRes.isRight()) { TitanOperationStatus status = allDataTypesRes.right().value(); return Either.right(false); }
-	 * 
-	 * Map<String, DataTypeDefinition> allDataTypes = allDataTypesRes.left().value();
-	 * 
-	 * ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, allDataTypes);
-	 * 
-	 * if (validateResult.right.booleanValue() == false) { 
-	 * log.debug("The value {} of property from type {} is invalid", value, propertyType); 
-	 * return Either.right(false); }
-	 * 
-	 * JsonElement jsonElement = validateResult.left;
-	 * 
-	 * String valueFromJsonElement = getValueFromJsonElement(jsonElement);
-	 * 
-	 * return Either.left(valueFromJsonElement);
-	 * 
-	 * }
-	 * 
-	 * log.trace("After validating property type {}", propertyType);
-	 * 
-	 * boolean isValidProperty = isValidValue(type, value, innerType); if (false == isValidProperty) { log.debug("The value " + value + " of property from type " + type + " is invalid"); return Either.right(false); }
-	 * 
-	 * 
-	 * Object convertedValue = value; if (false == isEmptyValue(value)) { PropertyValueConverter converter = type.getConverter(); convertedValue = converter.convert(value, null); }
-	 * 
-	 * return Either.left(convertedValue); }
-	 */
 
 	public Either<PropertyData, TitanOperationStatus> addPropertyToGraph(String propertyName, PropertyDefinition propertyDefinition, String resourceId) {
 
@@ -1431,37 +1329,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	}
 
-	private Either<Map<String, DataTypeDefinition>, TitanOperationStatus> findAllDataTypeDefinition(DataTypeDefinition dataTypeDefinition) {
-
-		Map<String, DataTypeDefinition> nameToDataTypeDef = new HashMap<>();
-
-		DataTypeDefinition typeDefinition = dataTypeDefinition;
-
-		while (typeDefinition != null) {
-
-			List<PropertyDefinition> properties = typeDefinition.getProperties();
-			if (properties != null) {
-				for (PropertyDefinition propertyDefinition : properties) {
-					String type = propertyDefinition.getType();
-					Either<DataTypeDefinition, TitanOperationStatus> dataTypeByName = this.getDataTypeUsingName(type);
-					if (dataTypeByName.isRight()) {
-						return Either.right(dataTypeByName.right().value());
-					} else {
-						DataTypeDefinition value = dataTypeByName.left().value();
-						if (false == nameToDataTypeDef.containsKey(type)) {
-							nameToDataTypeDef.put(type, value);
-						}
-					}
-
-				}
-			}
-
-			typeDefinition = typeDefinition.getDerivedFrom();
-		}
-
-		return Either.left(nameToDataTypeDef);
-	}
-
 	public Either<List<ComponentInstanceProperty>, TitanOperationStatus> getAllPropertiesOfResourceInstanceOnlyPropertyDefId(String resourceInstanceUid, NodeTypeEnum instanceNodeType) {
 
 		Either<TitanVertex, TitanOperationStatus> findResInstanceRes = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid);
@@ -2184,19 +2051,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 
 		return Either.left(true);
-
-	}
-
-	private Either<DataTypeDefinition, TitanOperationStatus> getExternalDataType(String propertyType) {
-
-		String dataTypeUid = UniqueIdBuilder.buildDataTypeUid(propertyType);
-		Either<DataTypeDefinition, TitanOperationStatus> dataTypeByUid = getDataTypeByUid(dataTypeUid);
-		if (dataTypeByUid.isRight()) {
-			TitanOperationStatus status = dataTypeByUid.right().value();
-			return Either.right(status);
-		}
-
-		return Either.left(dataTypeByUid.left().value());
 
 	}
 
