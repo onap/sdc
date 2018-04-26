@@ -19,6 +19,8 @@ package org.onap.sdc.activityspec.api.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecActionRequestDto;
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecRequestDto;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +37,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static org.onap.sdc.activityspec.utils.ActivitySpecConstant.USER_ID_HEADER_PARAM;
+
 @Path("/v1.0/activity-spec/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -45,17 +49,23 @@ public interface ActivitySpecs {
     @POST
     @Path("/")
     @ApiOperation(value = "Create Activity Spec")
+    @ApiImplicitParams({@ApiImplicitParam(name = USER_ID_HEADER_PARAM, required = true, dataType = "string",
+            paramType = "header")})
     Response createActivitySpec(@Valid ActivitySpecRequestDto request);
 
     @GET
     @Path("/{id}/versions/{versionId}")
     @ApiOperation(value = "Get Activity Spec")
+    @ApiImplicitParams({@ApiImplicitParam(name = USER_ID_HEADER_PARAM, required = true, dataType = "string",
+            paramType = "header")})
     Response getActivitySpec(@ApiParam(value = "Activity Spec Id") @PathParam("id") String id,
                                     @ApiParam(value = "Version Id") @PathParam("versionId") String versionId);
 
     @PUT
     @Path("/{id}/versions/{versionId}")
     @ApiOperation(value = "Update Activity Spec")
+    @ApiImplicitParams({@ApiImplicitParam(name = USER_ID_HEADER_PARAM, required = true, dataType = "string",
+            paramType = "header")})
     Response updateActivitySpec(@Valid ActivitySpecRequestDto request,
                                        @ApiParam(value = "Activity Spec Id") @PathParam("id") String id,
                                        @ApiParam(value = "Version Id") @PathParam("versionId") String versionId);
@@ -65,6 +75,8 @@ public interface ActivitySpecs {
     @ApiOperation(value = "Actions on a activity spec",
             notes = "Performs one of the following actions on a activity spec: |" + "CERTIFY: Certifies activity spec.|"
                             + "DEPRECATE: Deprecates activity spec.|" + "DELETE: Deletes activity spec.")
+    @ApiImplicitParams({@ApiImplicitParam(name = USER_ID_HEADER_PARAM, required = true, dataType = "string",
+            paramType = "header")})
     Response actOnActivitySpec(ActivitySpecActionRequestDto request,
                                       @ApiParam(value = "Activity Spec Id") @PathParam("id") String id,
                                       @ApiParam(value = "Version Id") @PathParam("versionId") String versionId);
@@ -72,6 +84,8 @@ public interface ActivitySpecs {
     @GET
     @Path("/")
     @ApiOperation(value = "Get list of activity specs ", responseContainer = "List")
+    @ApiImplicitParams({@ApiImplicitParam(name = USER_ID_HEADER_PARAM, required = true, dataType = "string",
+            paramType = "header")})
     Response list(@ApiParam(value = "List activity specs based on status filter") @QueryParam("status")
                           String versionStatus);
 }
