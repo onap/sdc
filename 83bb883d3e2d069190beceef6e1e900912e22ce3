@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5e23ba57",
+        "filename": "catalog-ui/src/app/models/operation.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "This is default behavior and can be omitted.",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 50,
+        "endChar": 6
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_becd1e33",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "Note that all rows will have the same data-tests-id, on the tag having *ngFor and all its children.",
+      "range": {
+        "startLine": 14,
+        "startChar": 12,
+        "endLine": 14,
+        "endChar": 46
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_de726a49",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "Do not inject $state via component input, but instead use injection in the constructor:\n\n@Inject(\u0027$state\u0027) private $state:ng.ui.IStateService",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 39
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_be18bed3",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "This will make unnecessary HTTP request!\nYou can remove the appropriate operation from the list.",
+      "range": {
+        "startLine": 110,
+        "startChar": 27,
+        "endLine": 110,
+        "endChar": 55
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3ea10e94",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "This will make unnecessary HTTP request!\nIt seems from the code on component.service that the update interface operations already returns the updated operation, so there\u0027s no need to retrieve them again with another HTTP request! You can replace the old operation in the list with the new one.",
+      "range": {
+        "startLine": 148,
+        "startChar": 12,
+        "endLine": 148,
+        "endChar": 43
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5e6adaed",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/param-row/param-row.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "See comment of onRemove. These inputs are unnecessary.",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 15,
+        "endChar": 27
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3eaeee2e",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/param-row/param-row.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "It would be better if a component that handles a single param, will not receive the whole list of params and affect it.\nYou can transfer a function from the parent that will make the remove param logic, e.g: removeInputParamFromList(param);",
+      "range": {
+        "startLine": 18,
+        "startChar": 13,
+        "endLine": 18,
+        "endChar": 24
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1ee8d2e0",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/interface-operation/interface-operation-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "This view is child of IWorkspaceViewModelScope, and extends its parent scope.\nTherefore, create a new scope for this view IInterfaceOperationViewModelScope that extends IWorkspaceViewModelScope and add new scope members to it.",
+      "range": {
+        "startLine": 13,
+        "startChar": 24,
+        "endLine": 13,
+        "endChar": 55
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5edada4b",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/interface-operation/interface-operation-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "This function is not declared on $scope - it will not be accessible from the the view. And it is not used as this class member.\n\nActually, it is already declared on the IWorkspaceViewModelScope, and the view that uses isDesigner() method actually accesses the method declared on WorkspaceViewModel.\n\nThis function is useless here - please remove it.",
+      "range": {
+        "startLine": 15,
+        "startChar": 4,
+        "endLine": 15,
+        "endChar": 16
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_feeac6d6",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/interface-operation/interface-operation-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "This call accesses the $scope.isDesigner member which is already declared on IWorkspaceViewModelScope.",
+      "range": {
+        "startLine": 2,
+        "startChar": 82,
+        "endLine": 2,
+        "endChar": 92
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5ea89a8b",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/plugins/plugins-context-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T11:34:53Z",
+      "side": 1,
+      "message": "Are you sure you want to take the whole queryParams as given?\nOr maybe truncate the default object values with the given queryParams [Object.assign(defaultQueryParams, queryParams)]?",
+      "range": {
+        "startLine": 43,
+        "startChar": 34,
+        "endLine": 43,
+        "endChar": 63
+      },
+      "revId": "83bb883d3e2d069190beceef6e1e900912e22ce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
