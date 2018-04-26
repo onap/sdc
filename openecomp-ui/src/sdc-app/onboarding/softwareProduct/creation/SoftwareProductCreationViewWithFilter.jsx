@@ -267,7 +267,9 @@ class SoftwareProductCreationView extends React.Component {
 
     validateIsNameUnique = e => {
         const value = e.target.value;
-        this.props.isNameUnique(value, 'name', SP_CREATION_FORM_NAME);
+        if (value) {
+            this.props.isNameUnique(value, 'name', SP_CREATION_FORM_NAME);
+        }
     };
 
     validate() {
@@ -286,7 +288,6 @@ const OnboardingProcedure = ({
                 <Input
                     label={i18n('Network Package')}
                     overlayPos="top"
-                    isValid={genericFieldInfo.onboardingMethod.isValid}
                     checked={
                         onboardingMethod ===
                         onboardingMethodConst.NETWORK_PACKAGE
