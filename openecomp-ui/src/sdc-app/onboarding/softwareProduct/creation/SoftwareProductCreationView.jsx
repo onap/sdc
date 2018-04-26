@@ -286,12 +286,10 @@ const OnboardingProcedure = ({
                 <Input
                     label={i18n('Network Package')}
                     overlayPos="top"
-                    isValid={genericFieldInfo.onboardingMethod.isValid}
                     checked={
                         onboardingMethod ===
                         onboardingMethodConst.NETWORK_PACKAGE
                     }
-                    errorText={genericFieldInfo.onboardingMethod.errorText}
                     onChange={() =>
                         onDataChanged(
                             {
