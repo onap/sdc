@@ -796,35 +796,6 @@ public class TitanGenericDao {
 		}
 	}
 
-	private boolean vertexLeftNotContainsAllRightProps(Map<String, Object> leftProps, Map<String, Object> rightProps) {
-
-		if (rightProps != null) {
-
-			for (Entry<String, Object> entry : rightProps.entrySet()) {
-				String key = entry.getKey();
-				Object leftValue = leftProps.get(key);
-				Object rightValue = entry.getValue();
-
-				if (leftValue == null) {
-					if (rightValue == null) {
-						return false;
-					} else {
-						continue;
-					}
-				}
-
-				if (true == leftValue.equals(rightValue)) {
-					logger.trace("The value of key {}  is differnet between properties. {} vs {}", key, leftValue, rightValue);
-					return false;
-				}
-			}
-
-		}
-
-		return true;
-
-	}
-
 	public <T extends GraphNode> Either<List<T>, TitanOperationStatus> getByCriteria(NodeTypeEnum type, Map<String, Object> props, Class<T> clazz) {
 		Either<TitanGraph, TitanOperationStatus> graph = titanClient.getGraph();
 		if (graph.isLeft()) {
@@ -876,34 +847,6 @@ public class TitanGenericDao {
 			}
 			return Either.right(graph.right().value());
 		}
-	}
-
-	private boolean vertexLeftContainsRightProps(Map<String, Object> leftProps, Map<String, Object> rightProps) {
-
-		if (rightProps != null) {
-
-			for (Entry<String, Object> entry : rightProps.entrySet()) {
-				String key = entry.getKey();
-				Object leftValue = leftProps.get(key);
-				Object rightValue = entry.getValue();
-				if (leftValue == null) {
-					if (rightValue == null) {
-						continue;
-					} else {
-						logger.debug("The key {} cannot be found in the properties {}", key, leftProps);
-						return false;
-					}
-				}
-
-				if (false == leftValue.equals(rightValue)) {
-					logger.trace("The value of key {} is differnet between properties. {} vs {} ", key, leftValue, rightValue);
-					return false;
-				}
-			}
-
-		}
-
-		return true;
 	}
 
 	public <T extends GraphNode> Either<List<T>, TitanOperationStatus> getByCriteriaWithPredicate(NodeTypeEnum type, Map<String, Entry<TitanPredicate, Object>> props, Class<T> clazz) {

@@ -54,75 +54,6 @@ public class VersionCalculatorImpl implements VersionCalculator {
     return CommonMethods.arrayToSeparatedString(versionLevels, '.');
   }
 
-
-  // version calculator when there are no version restrictions
- /* @Override
-  public String calculate(String baseVersion, VersionCreationMethod creationMethod) {
-
-    return calculate(baseVersion,creationMethod,2);
-  }
-
-  private String calculate(String baseVersion, VersionCreationMethod creationMethod,int
-      maxVersionLevels) {
-    if (baseVersion == null) {
-      return INITIAL_VERSION;
-    }
-
-    String[] versionLevels = baseVersion.split("\\.");
-    if (versionLevels.length > maxVersionLevels) {
-      throw new IllegalArgumentException(VERSION_STRING_VIOLATION_MSG);
-    }
-
-    int index;
-    int versionLevel = calcVersionLevel(versionLevels);
-    if (versionLevel == -1) {
-      throw new IllegalArgumentException(
-          VERSION_STRING_VIOLATION_MSG + " given version:" + baseVersion);
-    }
-    int requiredVersionLevelIncrease;
-    switch (creationMethod) {
-      case parent_level:
-        if (versionLevel == 0) {
-          throw new IllegalArgumentException(
-              PARENT_LEVEL_VERSION_CANNOT_BE_CREATED_FROM_TOP_LEVEL + " version:" + baseVersion);
-
-        }
-        requiredVersionLevelIncrease = versionLevel - 1;
-        versionLevels[versionLevel] = "0";
-        index = Integer.getInteger(versionLevels[requiredVersionLevelIncrease]);
-        index++;
-        versionLevels[requiredVersionLevelIncrease] = Integer.toString(index);
-        break;
-      case same_level:
-        requiredVersionLevelIncrease = versionLevel;
-        index = Integer.valueOf(versionLevels[requiredVersionLevelIncrease]);
-        index++;
-        versionLevels[requiredVersionLevelIncrease] = Integer.toString(index);
-        break;
-      case sub_level:
-        if (versionLevel == versionLevels.length - 1) {
-          throw new IllegalArgumentException(
-              SUB_LEVEL_VERSION_CANNOT_BE_CREATED_FROM_LOWEST_LEVEL + " version:" + baseVersion);
-        }
-        requiredVersionLevelIncrease = versionLevel + 1;
-        if(requiredVersionLevelIncrease>maxVersionLevels){
-          throw new IllegalArgumentException(INVALID_CREATION_METHOD_MSG+" max " +
-              "levels:"+maxVersionLevels + "requested level:"+requiredVersionLevelIncrease);
-        }
-        String newVersion = baseVersion + ".1";
-        versionLevels = newVersion.split("\\.");
-
-        break;
-      default:
-        throw new IllegalArgumentException(VERSION_CALCULATION_ERROR_MSG + " base " +
-            "version:" + baseVersion + " creation method:" + creationMethod);
-
-    }
-
-    return CommonMethods.arrayToSeparatedString(versionLevels, '.');
-  }*/
-
-
   @Override
   public void injectAdditionalInfo(Version version, Set<String> existingVersions) {
     String optionalVersion;
@@ -143,13 +74,4 @@ public class VersionCalculatorImpl implements VersionCalculator {
 
   }
 
-
-  private int calcVersionLevel(String[] versionLevels) {
-    for (int i = versionLevels.length - 1; i >= 0; i--) {
-      if (!versionLevels[i].equals("0")) {
-        return i;
-      }
-    }
-    return -1;
-  }
 }
