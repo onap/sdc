@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_014393af",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T14:51:33Z",
+      "side": 1,
+      "message": "Yet, you can avoid using another HTTP request.",
+      "range": {
+        "startLine": 122,
+        "startChar": 27,
+        "endLine": 122,
+        "endChar": 55
+      },
+      "revId": "069fbc5ca0f6dddb8c535ae28852693f2fe1bcce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_61093783",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 3903
+      },
+      "writtenOn": "2018-04-26T14:51:33Z",
+      "side": 1,
+      "message": "Yet, you can avoid using another HTTP request.",
+      "range": {
+        "startLine": 161,
+        "startChar": 12,
+        "endLine": 161,
+        "endChar": 43
+      },
+      "revId": "069fbc5ca0f6dddb8c535ae28852693f2fe1bcce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
