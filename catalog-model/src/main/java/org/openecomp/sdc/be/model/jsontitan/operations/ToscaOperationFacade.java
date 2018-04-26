@@ -448,11 +448,6 @@ public class ToscaOperationFacade {
 
 	}
 
-	private List<InputDefinition> getNewInputsByResourceType(Resource component) {
-		return component.getResourceType().equals(ResourceTypeEnum.CVFC) ?
-				component.getInputs() : null;
-	}
-
 	// region - Component Update
 	/**
 	 *

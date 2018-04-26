@@ -729,19 +729,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 		}
 	}
 
-	private void commitOrRollbackTx(TitanTransaction tx, boolean inTransaction, Either<? extends Object, StorageOperationStatus> result) {
-
-		if (false == inTransaction) {
-			if (result == null || result.isRight()) {
-				log.error("Going to execute rollback on graph.");
-				tx.rollback();
-			} else {
-				log.debug("Going to execute commit on graph.");
-				tx.commit();
-			}
-		}
-	}
-
 	@Override
 	public Either<AdditionalInfoParameterInfo, StorageOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String id, boolean inTransaction) {
 
