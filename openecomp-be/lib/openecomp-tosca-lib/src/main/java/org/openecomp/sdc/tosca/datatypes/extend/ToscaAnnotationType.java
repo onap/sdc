@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.tosca.datatypes.extend;
 
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
+import org.onap.config.api.Configuration;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.sdc.tosca.services.ConfigConstants;
 
 

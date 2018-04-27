@@ -64,18 +64,18 @@
 				</exclusion>
 
 				<exclusion>
-					<groupId>org.openecomp.sdc.common</groupId>
-					<artifactId>openecomp-sdc-artifact-generator-api</artifactId>
+					<groupId>org.onap.sdc.common</groupId>
+					<artifactId>onap-sdc-artifact-generator-api</artifactId>
 				</exclusion>
 
 				<exclusion>
-					<groupId>org.openecomp.sdc.common</groupId>
-					<artifactId>openecomp-sdc-artifact-generator-core</artifactId>
+					<groupId>org.onap.sdc.common</groupId>
+					<artifactId>onap-sdc-artifact-generator-core</artifactId>
 				</exclusion>
 
 				<exclusion>
-					<groupId>org.openecomp.sdc.common</groupId>
-					<artifactId>openecomp-common-lib</artifactId>
+					<groupId>org.onap.sdc.common</groupId>
+					<artifactId>onap-common-lib</artifactId>
 				</exclusion>
 				
 				<exclusion>
@@ -120,8 +120,8 @@
 
 		<!--Artifact Generator-->
 		<dependency>
-			<groupId>org.openecomp.sdc.common</groupId>
-			<artifactId>openecomp-sdc-artifact-generator-api</artifactId>
+			<groupId>org.onap.sdc.common</groupId>
+			<artifactId>onap-sdc-artifact-generator-api</artifactId>
 			<version>${artifact-generator-api.version}</version>
 			<scope>compile</scope>
 			<exclusions>
@@ -133,8 +133,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openecomp.sdc.common</groupId>
-			<artifactId>openecomp-sdc-artifact-generator-core</artifactId>
+			<groupId>org.onap.sdc.common</groupId>
+			<artifactId>onap-sdc-artifact-generator-core</artifactId>
 			<version>${artifact-generator-core.version}</version>
 			<scope>compile</scope>
 			<exclusions>
@@ -146,8 +146,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openecomp.sdc.common</groupId>
-			<artifactId>openecomp-common-lib</artifactId>
+			<groupId>org.onap.sdc.common</groupId>
+			<artifactId>onap-common-lib</artifactId>
 			<version>${dox-common-lib.version}</version>
 			<type>pom</type>
 			<exclusions>

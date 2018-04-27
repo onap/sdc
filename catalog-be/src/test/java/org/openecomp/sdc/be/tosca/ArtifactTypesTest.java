@@ -3,7 +3,7 @@ package org.openecomp.sdc.be.tosca;
 import java.util.List;
 
 import org.junit.Test;
-import org.openecomp.sdc.generator.data.ArtifactType;
+import org.onap.sdc.generator.data.ArtifactType;
 
 
 public class ArtifactTypesTest {

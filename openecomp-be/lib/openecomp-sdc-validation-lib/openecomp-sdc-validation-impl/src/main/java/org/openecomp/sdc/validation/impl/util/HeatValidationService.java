@@ -29,7 +29,7 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.impl.validators.HeatValidator;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 

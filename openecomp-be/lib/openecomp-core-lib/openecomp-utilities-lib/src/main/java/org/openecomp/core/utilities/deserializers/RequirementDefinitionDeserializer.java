@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
-import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
 import java.lang.reflect.Type;
 import java.util.Objects;

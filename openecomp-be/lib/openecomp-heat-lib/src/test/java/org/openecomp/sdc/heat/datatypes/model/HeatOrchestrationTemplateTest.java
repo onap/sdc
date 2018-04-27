@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

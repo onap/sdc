@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;

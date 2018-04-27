@@ -22,9 +22,9 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.datatypes.model.Import;
-import org.openecomp.sdc.tosca.datatypes.model.NodeType;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 import java.util.ArrayList;

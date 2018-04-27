@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 

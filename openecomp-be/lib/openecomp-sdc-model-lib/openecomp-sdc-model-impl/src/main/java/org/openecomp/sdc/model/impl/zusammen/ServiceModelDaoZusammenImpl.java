@@ -23,8 +23,8 @@ import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.types.ElementPropertyName;
 

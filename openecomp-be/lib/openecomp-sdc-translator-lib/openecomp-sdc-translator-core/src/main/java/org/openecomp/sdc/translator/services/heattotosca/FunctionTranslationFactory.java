@@ -21,8 +21,8 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
 
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
+import org.onap.config.api.Configuration;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 

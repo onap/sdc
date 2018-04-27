@@ -17,8 +17,8 @@
 package org.openecomp.sdc.translator.services.heattotosca.globaltypes;
 
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.tosca.datatypes.model.Import;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 import java.util.ArrayList;

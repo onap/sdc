@@ -22,7 +22,7 @@ package org.openecomp.sdc.notification.config;
 
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.FileInputStream;
 import java.io.IOException;

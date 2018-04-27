@@ -1,7 +1,7 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition;
 
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 
 import java.util.Collection;
 import java.util.HashMap;

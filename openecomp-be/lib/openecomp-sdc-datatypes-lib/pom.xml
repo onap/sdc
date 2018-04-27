@@ -34,8 +34,8 @@
             <version>${commons.lang.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-configuration-management-api</artifactId>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-configuration-management-api</artifactId>
             <version>${openecomp.sdc.common.version}</version>
         </dependency>
     </dependencies>

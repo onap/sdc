@@ -18,7 +18,7 @@ import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.InputStream;
 import java.util.Map;

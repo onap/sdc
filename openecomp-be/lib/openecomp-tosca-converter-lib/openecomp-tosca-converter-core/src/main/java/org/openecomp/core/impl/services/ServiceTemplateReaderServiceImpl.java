@@ -1,7 +1,7 @@
 package org.openecomp.core.impl.services;
 
 import org.openecomp.core.converter.ServiceTemplateReaderService;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.util.HashMap;
 import java.util.Map;

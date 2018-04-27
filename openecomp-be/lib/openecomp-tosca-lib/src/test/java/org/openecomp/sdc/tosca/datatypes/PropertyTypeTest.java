@@ -22,7 +22,7 @@ package org.openecomp.sdc.tosca.datatypes;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
+import org.onap.sdc.tosca.datatypes.model.PropertyType;
 
 public class PropertyTypeTest {
   @Test
