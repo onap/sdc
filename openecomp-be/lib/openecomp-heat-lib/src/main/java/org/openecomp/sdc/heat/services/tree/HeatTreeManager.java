@@ -33,7 +33,7 @@ import org.openecomp.sdc.heat.datatypes.structure.Artifact;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.InputStream;
 import java.util.HashMap;

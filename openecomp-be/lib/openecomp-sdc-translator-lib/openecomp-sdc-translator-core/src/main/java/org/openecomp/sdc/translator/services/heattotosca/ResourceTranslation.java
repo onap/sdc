@@ -23,7 +23,7 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
 import java.util.Optional;

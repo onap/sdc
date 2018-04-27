@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to;
 
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
 

@@ -36,7 +36,7 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
 import java.io.BufferedReader;
 import java.io.IOException;

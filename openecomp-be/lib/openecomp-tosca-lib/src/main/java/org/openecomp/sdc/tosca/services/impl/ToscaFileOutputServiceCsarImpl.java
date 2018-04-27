@@ -23,7 +23,7 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
 import org.openecomp.sdc.tosca.exceptions.CsarMissingEntryPointErrorBuilder;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;

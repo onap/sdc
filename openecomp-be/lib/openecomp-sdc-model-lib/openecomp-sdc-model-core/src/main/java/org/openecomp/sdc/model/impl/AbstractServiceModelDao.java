@@ -30,9 +30,9 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.Old1610ServiceTemplate;
-import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
@@ -71,7 +71,7 @@ public class AbstractServiceModelDao implements VersionableDao {
 
     FileContentHandler artifactFiles = getArtifacts(vspId, version);
 
-    Map<String, org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate> serviceTemplates =
+    Map<String, org.onap.sdc.tosca.datatypes.model.ServiceTemplate> serviceTemplates =
         getTemplates(vspId,
             version);
     String entryDefinitionServiceTemplate = getServiceBase(vspId, version);
@@ -107,7 +107,7 @@ public class AbstractServiceModelDao implements VersionableDao {
 
     ServiceTemplate entityTmp;
     String yaml;
-    for (Map.Entry<String, org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate>
+    for (Map.Entry<String, org.onap.sdc.tosca.datatypes.model.ServiceTemplate>
         entryTemplate : toscaServiceModel.getServiceTemplates().entrySet()) {
       entityTmp = new ServiceTemplate();
 
@@ -153,7 +153,7 @@ public class AbstractServiceModelDao implements VersionableDao {
     return templateDao.getBase(vspId, version);
   }
 
-  private Map<String, org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate> getTemplates(
+  private Map<String, org.onap.sdc.tosca.datatypes.model.ServiceTemplate> getTemplates(
       String vspId,
       Version version) {
 
@@ -165,13 +165,13 @@ public class AbstractServiceModelDao implements VersionableDao {
         template -> getServiceTemplate(template.getContent())));
   }
 
-  private org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate getServiceTemplate(
+  private org.onap.sdc.tosca.datatypes.model.ServiceTemplate getServiceTemplate(
       InputStream content) {
     String serviceTemplateContent = new String(FileUtils.toByteArray(content));
 
     try{
       return new ToscaExtensionYamlUtil().yamlToObject(serviceTemplateContent,
-          org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate.class);
+          org.onap.sdc.tosca.datatypes.model.ServiceTemplate.class);
     }catch (Exception e){
       log.debug("",e);
       System.out.println("Found vsp with old-versioned tosca service template");
@@ -183,9 +183,9 @@ public class AbstractServiceModelDao implements VersionableDao {
     }
   }
 
-  private static org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate mapOldSTToCurrentST(Old1610ServiceTemplate oldServiceTemplate){
-    org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate
-        serviceTemplate = new org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate();
+  private static org.onap.sdc.tosca.datatypes.model.ServiceTemplate mapOldSTToCurrentST(Old1610ServiceTemplate oldServiceTemplate){
+    org.onap.sdc.tosca.datatypes.model.ServiceTemplate
+        serviceTemplate = new org.onap.sdc.tosca.datatypes.model.ServiceTemplate();
 
     serviceTemplate.setArtifact_types(oldServiceTemplate.getArtifact_types());
     serviceTemplate.setCapability_types(oldServiceTemplate.getCapability_types());

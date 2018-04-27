@@ -30,17 +30,17 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
+import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
+import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyType;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
@@ -57,7 +57,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class TranslationService {
 

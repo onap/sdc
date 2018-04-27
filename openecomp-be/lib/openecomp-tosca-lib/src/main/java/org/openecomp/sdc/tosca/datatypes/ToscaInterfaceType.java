@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
+import org.onap.config.api.Configuration;
+import org.onap.config.api.ConfigurationManager;
 
 public class ToscaInterfaceType {
 

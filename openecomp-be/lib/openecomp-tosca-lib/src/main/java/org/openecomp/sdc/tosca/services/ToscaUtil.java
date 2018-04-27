@@ -22,8 +22,8 @@ package org.openecomp.sdc.tosca.services;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 
 import java.util.Collections;
 import java.util.HashMap;
