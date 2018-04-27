@@ -20,7 +20,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.globaltypes.Glob
 
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.junit.Assert;
 import org.junit.Test;
 

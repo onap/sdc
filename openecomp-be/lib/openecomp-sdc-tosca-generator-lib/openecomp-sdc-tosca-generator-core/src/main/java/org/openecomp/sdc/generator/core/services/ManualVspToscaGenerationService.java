@@ -18,19 +18,20 @@ package org.openecomp.sdc.generator.core.services;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.generator.core.utils.GeneratorUtils;
 import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VspModelInfo;
+import org.openecomp.sdc.generator.util.GeneratorConstants;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.Import;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.NodeType;
-import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyType;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
@@ -48,22 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import static org.openecomp.sdc.generator.util.GeneratorConstants.ALLOWED_FLAVORS_PROPERTY;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.DISK_SIZE;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.DISK_SIZE_PROP_DESC_PREFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.IMAGES_PROPERTY;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.MEM_SIZE;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.MEM_SIZE_PROP_DESC_PREFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS_PROP_DESC_PREFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_NODE_TEMPLATE_ID_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.RELEASE_VENDOR;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_CONFIG_NODE_TEMPLATE_ID_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX;
 
 /**
  * The type Manual vsp tosca generator.
@@ -89,7 +74,7 @@ public class ManualVspToscaGenerationService {
         .getGlobalTypesServiceTemplate(OnboardingTypesEnum.MANUAL));
     toscaServiceModel.setServiceTemplates(serviceTemplates);
     toscaServiceModel.setEntryDefinitionServiceTemplate(Constants.MAIN_TEMPLATE_NAME
-        + TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX);
+        + GeneratorConstants.TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX);
     createToscaFromVspData(vspModelInfo, toscaServiceModel);
     for (Map.Entry<String, ServiceTemplate> serviceTemplateEntry :
         generatedServiceTemplates.entrySet()) {
@@ -150,10 +135,10 @@ public class ManualVspToscaGenerationService {
       vnfConfigurationNodeTemplate.setType(ToscaNodeType.VNF_CONFIG_NODE_TYPE);
       if (Objects.nonNull(vspModelInfo.getAllowedFlavors())) {
         Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put(ALLOWED_FLAVORS_PROPERTY, vspModelInfo.getAllowedFlavors());
+        properties.put(GeneratorConstants.ALLOWED_FLAVORS_PROPERTY, vspModelInfo.getAllowedFlavors());
         vnfConfigurationNodeTemplate.setProperties(properties);
       }
-      String nodeTemplateId = componentName.get() + VNF_CONFIG_NODE_TEMPLATE_ID_SUFFIX;
+      String nodeTemplateId = componentName.get() + GeneratorConstants.VNF_CONFIG_NODE_TEMPLATE_ID_SUFFIX;
       DataModelUtil.addNodeTemplate(mainServiceTemplate, nodeTemplateId,
           vnfConfigurationNodeTemplate);
     }
@@ -175,7 +160,7 @@ public class ManualVspToscaGenerationService {
       //Enable below if we need "abstract_" as prefix like we have in Unified model
       //String nodeTemplateId =
       // Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX + componentName + "VNF_NODE_TEMPLATE_ID_SUFFIX";
-      String nodeTemplateId = componentName.get() + VNF_NODE_TEMPLATE_ID_SUFFIX;
+      String nodeTemplateId = componentName.get() + GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX;
       DataModelUtil.addNodeTemplate(mainServiceTemplate, nodeTemplateId,
           vnfNodeTemplate);
       abstractSubstitutionIdTypes.put(componentName.get(), ToscaNodeType
@@ -194,14 +179,14 @@ public class ManualVspToscaGenerationService {
         componentImages.stream()
             .forEach(multiFlavorVfcImage ->
                 vfcImages.put(multiFlavorVfcImage.getSoftware_version(), multiFlavorVfcImage));
-        properties.put(IMAGES_PROPERTY, vfcImages);
+        properties.put(GeneratorConstants.IMAGES_PROPERTY, vfcImages);
       }
     }
     return properties;
   }
 
   private String getSubstitutionServiceTemplateFileName(String componentName) {
-    return componentName + TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX;
+    return componentName + GeneratorConstants.TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX;
   }
 
   private String getNodeTemplateId(String componentName, String idPrefix, String idSuffix) {
@@ -217,7 +202,7 @@ public class ManualVspToscaGenerationService {
     Map<String, String> templateMetadata = new HashMap<>();
     templateMetadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, Constants.MAIN_TEMPLATE_NAME);
     if (Objects.nonNull(releaseVendor)) {
-      templateMetadata.put(RELEASE_VENDOR, releaseVendor);
+      templateMetadata.put(GeneratorConstants.RELEASE_VENDOR, releaseVendor);
     }
     mainServiceTemplate.setTosca_definitions_version(ToscaConstants.TOSCA_DEFINITIONS_VERSION);
     mainServiceTemplate.setMetadata(templateMetadata);
@@ -302,11 +287,11 @@ public class ManualVspToscaGenerationService {
     StringBuilder builder = new StringBuilder();
     builder.append(nicName);
     if (nicNetworkType == NetworkType.External) {
-      builder.append(PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX);
+      builder.append(GeneratorConstants.PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX);
     } else if (nicNetworkType == NetworkType.Internal) {
-      builder.append(PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX);
+      builder.append(GeneratorConstants.PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX);
     }
-    builder.append(PORT_NODE_TEMPLATE_ID_SUFFIX);
+    builder.append(GeneratorConstants.PORT_NODE_TEMPLATE_ID_SUFFIX);
     return builder.toString();
   }
 
@@ -403,23 +388,23 @@ public class ManualVspToscaGenerationService {
     //Create num_cpus property
     PropertyDefinition numCpus = new PropertyDefinition();
     numCpus.setType(PropertyType.INTEGER.getDisplayName());
-    numCpus.setDescription(NUM_CPUS_PROP_DESC_PREFIX + componentName);
+    numCpus.setDescription(GeneratorConstants.NUM_CPUS_PROP_DESC_PREFIX + componentName);
     numCpus.setRequired(true);
     //Create disk_size property
     PropertyDefinition diskSize = new PropertyDefinition();
     diskSize.setType(PropertyType.SCALAR_UNIT_SIZE.getDisplayName());
-    diskSize.setDescription(DISK_SIZE_PROP_DESC_PREFIX + componentName);
+    diskSize.setDescription(GeneratorConstants.DISK_SIZE_PROP_DESC_PREFIX + componentName);
     diskSize.setRequired(true);
     //Create mem_size property
     PropertyDefinition memSize = new PropertyDefinition();
     memSize.setType(PropertyType.SCALAR_UNIT_SIZE.getDisplayName());
-    memSize.setDescription(MEM_SIZE_PROP_DESC_PREFIX + componentName);
+    memSize.setDescription(GeneratorConstants.MEM_SIZE_PROP_DESC_PREFIX + componentName);
     memSize.setRequired(true);
 
     Map<String, PropertyDefinition> manualVspProperties = new LinkedHashMap<>();
-    manualVspProperties.put(NUM_CPUS, numCpus);
-    manualVspProperties.put(DISK_SIZE, diskSize);
-    manualVspProperties.put(MEM_SIZE, memSize);
+    manualVspProperties.put(GeneratorConstants.NUM_CPUS, numCpus);
+    manualVspProperties.put(GeneratorConstants.DISK_SIZE, diskSize);
+    manualVspProperties.put(GeneratorConstants.MEM_SIZE, memSize);
 
     return manualVspProperties;
   }

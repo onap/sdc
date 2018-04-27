@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.openecomp.sdc.common</groupId>
-    <name>openecomp-common-lib</name>
-    <artifactId>openecomp-common-lib</artifactId>
+    <groupId>org.onap.sdc.common</groupId>
+    <name>onap-common-lib</name>
+    <artifactId>onap-common-lib</artifactId>
     <packaging>pom</packaging>
 
     <parent>
@@ -20,9 +20,9 @@
     </properties>
 
     <modules>
-        <module>openecomp-sdc-artifact-generator-lib</module>
-        <module>openecomp-common-configuration-management</module>
-        <module>openecomp-tosca-datatype</module>
+        <module>onap-sdc-artifact-generator-lib</module>
+        <module>onap-common-configuration-management</module>
+        <module>onap-tosca-datatype</module>
     </modules>
 
     <dependencies>

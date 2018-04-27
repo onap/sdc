@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
+import org.onap.config.api.Configuration;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;

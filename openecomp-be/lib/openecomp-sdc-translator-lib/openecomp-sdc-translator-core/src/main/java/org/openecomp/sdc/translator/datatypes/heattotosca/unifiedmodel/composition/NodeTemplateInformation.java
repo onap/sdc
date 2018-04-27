@@ -1,6 +1,6 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition;
 
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 
 /**
  * Created by Talio on 4/4/2017.

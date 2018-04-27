@@ -23,7 +23,7 @@ package org.openecomp.sdc.tosca.datatypes;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.datatypes.model.AsdcModel;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 
 import java.util.Collections;

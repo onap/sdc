@@ -1,6 +1,6 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
-import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;

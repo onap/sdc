@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.datatypes.configuration;
 
-import org.openecomp.config.api.Config;
+import org.onap.config.api.Config;
 
 import java.util.Map;
 

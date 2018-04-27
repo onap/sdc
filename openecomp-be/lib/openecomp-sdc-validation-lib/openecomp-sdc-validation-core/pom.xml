@@ -60,8 +60,8 @@
             <version>${mockito.all.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-configuration-management-core</artifactId>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-configuration-management-core</artifactId>
             <version>${openecomp.sdc.common.version}</version>
             <scope>runtime</scope>
             <exclusions>

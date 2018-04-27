@@ -23,10 +23,10 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslati
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.tosca.datatypes.ToscaArtifactType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
-import org.openecomp.sdc.tosca.datatypes.model.ArtifactDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.Template;
+import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.Template;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;

@@ -1,8 +1,8 @@
 package org.openecomp.sdc.validation.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
+import org.onap.config.api.Configuration;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.logging.api.Logger;

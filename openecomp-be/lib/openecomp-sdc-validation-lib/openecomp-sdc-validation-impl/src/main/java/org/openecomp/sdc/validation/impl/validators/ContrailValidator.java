@@ -30,7 +30,7 @@ import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.tos.ContrailResourcesMappingTo;
 import org.openecomp.sdc.validation.util.ValidationUtil;

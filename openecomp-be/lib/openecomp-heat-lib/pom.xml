@@ -15,8 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-configuration-management-core</artifactId>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-configuration-management-core</artifactId>
             <version>${openecomp.sdc.common.version}</version>
             <scope>runtime</scope>
             <exclusions>
@@ -27,8 +27,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-tosca-datatype</artifactId>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-tosca-datatype</artifactId>
             <version>${openecomp.sdc.common.version}</version>
         </dependency>
         <dependency>

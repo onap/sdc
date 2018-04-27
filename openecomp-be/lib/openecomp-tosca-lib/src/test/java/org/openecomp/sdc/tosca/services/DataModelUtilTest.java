@@ -26,13 +26,13 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.NodeType;
-import org.openecomp.sdc.tosca.datatypes.model.PolicyDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.RelationshipTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
+import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.PolicyDefinition;
+import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 
 import java.util.ArrayList;
 
