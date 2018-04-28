@@ -660,17 +660,17 @@ environmentContext:
        - General_Non-Revenue
 
 dmaapConsumerConfiguration:
-    hosts: olsd004.wnsnet.attws.com:3905
-    consumerGroup: asdc
+    hosts: localhost:3905
+    consumerGroup: sdc
     consumerId: mama
     timeoutMs: 15000
     limit: 1
     pollingInterval: 2
-    topic: com.att.sdc.23911-SDCforTestDev-v001
+    topic: topic
     latitude: 32.109333
     longitude: 34.855499
     version: 1.0
-    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.att.com/events
+    serviceName: localhost/events
     environment: TEST
     partner: BOT_R
     routeOffer: MR1
@@ -684,8 +684,8 @@ dmaapConsumerConfiguration:
     dme2preferredRouterFilePath: DME2preferredRouter.txt
     timeLimitForNotificationHandleMs: 120000 
     credential:
-        username: m09875@sdc.att.com
-        password: hmXYcznAljMSisdy8zgcag==
+        username: user
+        password:
         
 dmeConfiguration:
     dme2Search: DME2SEARCH

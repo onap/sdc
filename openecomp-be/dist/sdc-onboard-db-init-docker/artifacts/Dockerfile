@@ -1,4 +1,4 @@
-FROM onap/base_sdc-cqlsh:1.2.0-SNAPSHOT-latest
+FROM onap/base_sdc-cqlsh:1.3.0
 
 COPY init_keyspaces.cql /root/
 
