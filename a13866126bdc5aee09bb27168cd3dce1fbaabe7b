@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_ae3c0330",
+        "filename": "common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-core/src/test/resources/missingVLTosca/service-ServiceWithAllotedVfAndExvl-template.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-04-29T14:09:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_0e8bb71f",
+      "revId": "a13866126bdc5aee09bb27168cd3dce1fbaabe7b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_2e8eb32e",
         "filename": "common/onap-sdc-artifact-generator-lib/onap-sdc-artifact-generator-core/src/test/resources/missingVLTosca/service-ServiceWithAllotedVfAndExvl-template.yml",
         "patchSetId": 1
