@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8edfc768",
+        "filename": "services/activity-spec/activity-spec-init/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "consider using an existing base https://git.onap.org/sdc/sdc-docker-base/tree/base_sdc-cqlsh/Dockerfile",
+      "range": {
+        "startLine": 1,
+        "startChar": 5,
+        "endLine": 1,
+        "endChar": 15
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6eb7db21",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "consider allowing the configuration of this ports",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 11
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6e4efb39",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "you can use chef for this just put it in the chef files and it will be passed and you can alsow set the permisions their",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 20
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0e6177a8",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/chef-repo/cookbooks/sdc-activity-spec/attributes/default.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "+1",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 74
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2e6473b7",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/chef-repo/cookbooks/sdc-activity-spec/recipes/ACT_2_setup_configuration.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "i sugest you make thsi configurable",
+      "range": {
+        "startLine": 11,
+        "startChar": 7,
+        "endLine": 11,
+        "endChar": 35
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ce562fce",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/chef-repo/cookbooks/sdc-activity-spec/templates/default/ACT-configuration.yaml.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "you do not need this key spaces you only need yours.",
+      "range": {
+        "startLine": 14,
+        "startChar": 7,
+        "endLine": 18,
+        "endChar": 42
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ee59abfd",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/chef-repo/cookbooks/sdc-activity-spec/templates/default/http-ini.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "please look at the way we configure catalog be",
+      "range": {
+        "startLine": 5,
+        "startChar": 7,
+        "endLine": 5,
+        "endChar": 32
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8e74a768",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/chef-repo/cookbooks/sdc-activity-spec/templates/default/https-ini.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "please look at the way we configure catalog be",
+      "range": {
+        "startLine": 3,
+        "startChar": 1,
+        "endLine": 3,
+        "endChar": 14
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ae6f2391",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/chef-repo/cookbooks/sdc-activity-spec/templates/default/ssl-ini.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "please look at the way we configure catalog be",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 12
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4e6a1f82",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/start.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "whay do you need thsi?",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 42
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6e659bad",
+        "filename": "services/activity-spec/activity-spec-web/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 1,
+      "message": "please youse the same tag smantic as sdc",
+      "range": {
+        "startLine": 87,
+        "startChar": 44,
+        "endLine": 87,
+        "endChar": 73
+      },
+      "revId": "4ef11d14d0f82a1177f4e5316755b134dfee0654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

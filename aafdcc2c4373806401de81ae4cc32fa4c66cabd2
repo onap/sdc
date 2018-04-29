@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8ec6e798",
+        "filename": "services/activity-spec/activity-spec-init/start.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 0,
+      "message": "you should consider adding user name and password since the cassndra is secure",
+      "range": {
+        "startLine": 8,
+        "startChar": 31,
+        "endLine": 8,
+        "endChar": 68
+      },
+      "revId": "aafdcc2c4373806401de81ae4cc32fa4c66cabd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4ebc5f06",
+        "filename": "services/activity-spec/activity-spec-web/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-29T09:26:05Z",
+      "side": 0,
+      "message": "consider allowing the settings of port on deployment becouse the ports may be taken and thsi way you will not allow flaxabilty",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 11
+      },
+      "revId": "aafdcc2c4373806401de81ae4cc32fa4c66cabd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
