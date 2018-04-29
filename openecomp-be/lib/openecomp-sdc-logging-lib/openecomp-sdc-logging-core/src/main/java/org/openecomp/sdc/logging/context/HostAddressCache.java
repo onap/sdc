@@ -17,7 +17,11 @@
 package org.openecomp.sdc.logging.context;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Optional;
 
 /**
  * Holds a reference to local host address as returned by Java runtime. A value of host address will be cached for the
@@ -28,7 +32,7 @@ import java.net.UnknownHostException;
  * @author evitaliy
  * @since 26 Mar 2018
  */
-@SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace", "squid:S106", "squid:S1148"})
+@SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace", "squid:S106", "squid:S1148", "squid:S1166"})
 public class HostAddressCache {
 
     private static final long DEFAULT_REFRESH_INTERVAL = 60000L; // 1 min
@@ -54,16 +58,16 @@ public class HostAddressCache {
      *
      * @return local host address or <code>null</code> if it could not be read for some reason
      */
-    public synchronized InetAddress get() {
+    public synchronized Optional<InetAddress> get() {
 
         long current = System.currentTimeMillis();
         if (current - cachedAddress.lastUpdated < interval) {
-            return cachedAddress.address;
+            return Optional.ofNullable(cachedAddress.address);
         }
 
-        InetAddress address = read();
+        InetAddress address = read(); // register the attempt even if null, i.e. failed to get a meaningful address
         cachedAddress = new CacheEntry(current, address);
-        return address;
+        return Optional.ofNullable(address);
     }
 
     private InetAddress read() {
@@ -71,9 +75,59 @@ public class HostAddressCache {
         try {
             return InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
+            System.err.println(
+                    "[WARNING] Failed to get local host address. Using a fallback. If you are on Linux, make sure "
+                            + "/etc/hosts contains the host name of your machine, "
+                            + "e.g. '127.0.0.1 localhost my-host.example.com'.");
+
             e.printStackTrace(); // can't really use logging
-            return null; // let register the attempt even if failed
+            return getFallbackLocalHost();
         }
+    }
+
+    private InetAddress getFallbackLocalHost() {
+
+        try {
+
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+
+            while (networkInterfaces.hasMoreElements()) {
+
+                InetAddress address = getAddress(networkInterfaces.nextElement());
+                if (address != null) {
+                    return address;
+                }
+            }
+
+            return null;
+
+        } catch (SocketException e) {
+            e.printStackTrace(); // can't really use logging
+            return null;
+        }
+    }
+
+    private InetAddress getAddress(NetworkInterface networkInterface) throws SocketException {
+
+        if (networkInterface.isLoopback() || networkInterface.isUp()) {
+            return null;
+        }
+
+        Enumeration<InetAddress> interfaceAddresses = networkInterface.getInetAddresses();
+        while (interfaceAddresses.hasMoreElements()) {
+
+            InetAddress address = interfaceAddresses.nextElement();
+            if (isHostAddress(address)) {
+                return address;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isHostAddress(InetAddress address) {
+        return !address.isLoopbackAddress() && !address.isAnyLocalAddress() && !address.isLinkLocalAddress()
+                       && !address.isMulticastAddress();
     }
 
     private static class CacheEntry {

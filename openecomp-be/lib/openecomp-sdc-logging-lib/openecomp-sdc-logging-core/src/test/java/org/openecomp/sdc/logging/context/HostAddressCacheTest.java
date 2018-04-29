@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.logging.context;
 
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -37,7 +37,7 @@ public class HostAddressCacheTest extends PowerMockTestCase {
 
     @Test
     public void hostAddressIsAlwaysPopulated() {
-        assertNotNull(new HostAddressCache().get());
+        assertTrue(new HostAddressCache().get().isPresent());
     }
 
     @Test
