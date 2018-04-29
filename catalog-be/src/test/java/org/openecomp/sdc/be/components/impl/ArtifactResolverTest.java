@@ -25,10 +25,13 @@ import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
@@ -68,6 +71,7 @@ public class ArtifactResolverTest {
 
         resource.setDeploymentArtifacts(artifact1Map);
         resource.setArtifacts(artifact2Map);
+        resource.setInterfaces(createInterfaceArtifact());
 
         service.setDeploymentArtifacts(artifact1Map);
         service.setArtifacts(artifact2Map);
@@ -75,6 +79,26 @@ public class ArtifactResolverTest {
 
         componentInstance.setDeploymentArtifacts(artifact1Map);
         componentInstance.setArtifacts(artifact2Map);
+    }
+
+    private Map<String, InterfaceDefinition> createInterfaceArtifact() {
+        Operation operation = new Operation();
+        ArtifactDefinition artifact4 = new ArtifactDefinition();
+        artifact4.setUniqueId("a4");
+        operation.setImplementation(artifact4);
+        HashMap<String, Operation> operationsMap = new HashMap<>();
+        operationsMap.put("operation", operation);
+        InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setOperationsMap(operationsMap);
+        Map<String, InterfaceDefinition> interfaces = new HashMap<>(1);
+        interfaces.put("someKey", interfaceDefinition);
+        return interfaces;
+    }
+
+    @Test
+    public void findArtifactOnComponent_resourceInterfaceOperation() throws Exception {
+        assertNull(testInstance.findArtifactOnComponent(resource, ComponentTypeEnum.RESOURCE, "someId"));
+        assertNotNull(testInstance.findArtifactOnComponent(resource, ComponentTypeEnum.RESOURCE, "a4"));
     }
 
     @Test
