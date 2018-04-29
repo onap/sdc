@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,11 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import com.google.gson.Gson;
+import fj.data.Either;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +43,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -58,11 +61,13 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
@@ -76,6 +81,7 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -92,10 +98,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-
-import fj.data.Either;
-
 
 /**
  * @author tg851x
@@ -103,6 +105,7 @@ import fj.data.Either;
  */
 @org.springframework.stereotype.Component("csar-utils")
 public class CsarUtils {
+
     private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
 
     @Autowired
@@ -132,6 +135,8 @@ public class CsarUtils {
     public static final String RESOURCES_PATH = "Resources/";
     public static final String INFORMATIONAL_ARTIFACTS = "Informational/";
     public static final String DEPLOYMENT_ARTIFACTS = "Deployment/";
+    public static final String WORKFLOW_ARTIFACT_DIR = "Workflows"+File.separator+"BPMN"+File.separator;
+    public static final String DEPLOYMENT_ARTIFACTS_DIR = "Deployment"+File.separator;
 
     public static final String DEFINITIONS_PATH = "Definitions/";
     private static final String CSAR_META_VERSION = "1.0";
@@ -145,23 +150,23 @@ public class CsarUtils {
     private static String versionFirstThreeOctates;
 
     public static final String VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS + DEL_PATTERN +
-                                                                    ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX +
-                                                                    "([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
-                                                                    "([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
-                                                                    "([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
-                                                                    "([\\d\\w\\_\\-\\.\\s]+)";
+                                                                              ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX +
+                                                                              "([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
+                                                                              "([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
+                                                                              "([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
+                                                                              "([\\d\\w\\_\\-\\.\\s]+)";
 
     public static final String VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS + DEL_PATTERN+
-    // Artifact Group (i.e Deployment/Informational)
-            "([\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
-            // Artifact Type
-            "([\\w\\_\\-\\.\\s]+)"  + DEL_PATTERN +
-            // Artifact Any File Name
-            ".+";
+                                                                             // Artifact Group (i.e Deployment/Informational)
+                                                                             "([\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
+                                                                             // Artifact Type
+                                                                             "([\\w\\_\\-\\.\\s]+)"  + DEL_PATTERN +
+                                                                             // Artifact Any File Name
+                                                                             ".+";
     public static final String VALID_ENGLISH_ARTIFACT_NAME = "([\\w\\_\\-\\.\\s]+)";
     public static final String SERVICE_TEMPLATE_PATH_PATTERN = DEFINITION + DEL_PATTERN+
-            // Service Template File Name
-            "([\\w\\_\\-\\.\\s]+)";
+                                                                       // Service Template File Name
+                                                                       "([\\w\\_\\-\\.\\s]+)";
 
     public static final String ARTIFACT_CREATED_FROM_CSAR = "Artifact created from csar";
 
@@ -214,7 +219,7 @@ public class CsarUtils {
         try (
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ZipOutputStream zip = new ZipOutputStream(out);
-                ){
+        ){
             zip.putNextEntry(new ZipEntry(CSAR_META_PATH_FILE_NAME));
             zip.write(csarBlock0Byte);
             zip.putNextEntry(new ZipEntry(TOSCA_META_PATH_FILE_NAME));
@@ -277,11 +282,11 @@ public class CsarUtils {
 
         zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + fileName));
         zip.write(mainYaml);
-            //US798487 - Abstraction of complex types
-            if (!ModelConverter.isAtomicComponent(component)){
-                log.debug("Component {} is complex - generating abstract type for it..", component.getName());
-                writeComponentInterface(component, zip, fileName);
-            }
+        //US798487 - Abstraction of complex types
+        if (!ModelConverter.isAtomicComponent(component)){
+            log.debug("Component {} is complex - generating abstract type for it..", component.getName());
+            writeComponentInterface(component, zip, fileName);
+        }
 
         generatorInputs.add(new ImmutablePair<Component, byte[]>(component, mainYaml));
 
@@ -302,9 +307,9 @@ public class CsarUtils {
 
         if (dependencies != null && !dependencies.isEmpty()) {
             for (Triple<String, String, Component> d : dependencies) {
-                    String cassandraId = d.getMiddle();
+                String cassandraId = d.getMiddle();
                 Component childComponent = d.getRight();
-                    Either<byte[], ActionStatus> entryData = getEntryData(cassandraId, childComponent);
+                Either<byte[], ActionStatus> entryData = getEntryData(cassandraId, childComponent);
 
                 if (entryData.isRight()) {
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
@@ -333,7 +338,7 @@ public class CsarUtils {
                 if (entryData.isRight()) {
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
                     log.debug("Failed adding to zip component {}, error {}", innerComponentTriple.getLeft(),
-                                                                                entryData.right().value());
+                            entryData.right().value());
                     return Either.right(responseFormat);
                 }
                 byte[] content = entryData.left().value();
@@ -364,7 +369,7 @@ public class CsarUtils {
 
         // Artifact Generation
         if (component.getComponentType() == ComponentTypeEnum.SERVICE
-                && isInCertificationRequest) {
+                    && isInCertificationRequest) {
 
             List<ArtifactDefinition> aiiArtifactList;
 
@@ -395,7 +400,7 @@ public class CsarUtils {
             return Either.right(collectedComponentCsarDefinition.right().value());
         }
 
-        return writeAllFilesToScar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
+        return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
     }
 
     private Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra(ZipOutputStream zip, byte[] schemaFileZip){
@@ -405,8 +410,8 @@ public class CsarUtils {
         log.debug("Starting copy from Schema file zip to CSAR zip");
 
         try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                BufferedOutputStream bos = new BufferedOutputStream(out, initSize);) {
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+             BufferedOutputStream bos = new BufferedOutputStream(out, initSize);) {
 
             ZipEntry entry = null;
 
@@ -576,9 +581,9 @@ public class CsarUtils {
         Set<String> componetInformationalArtifactLables = component.getArtifacts().keySet();
 
         return artifactsFromAAI.stream()
-                .filter(e -> componetDeploymentArtifactLables.contains(e.getArtifactLabel()) || componetInformationalArtifactLables.contains(e.getArtifactLabel()))
-                .filter(e -> checkAaiForUpdate(component, e))
-                .collect(Collectors.toList());
+                               .filter(e -> componetDeploymentArtifactLables.contains(e.getArtifactLabel()) || componetInformationalArtifactLables.contains(e.getArtifactLabel()))
+                               .filter(e -> checkAaiForUpdate(component, e))
+                               .collect(Collectors.toList());
     }
 
     private boolean checkAaiForUpdate(Component component, ArtifactDefinition artifactDefinition) {
@@ -609,26 +614,26 @@ public class CsarUtils {
     private List<ArtifactDefinition> getAAIArtifatcsForDelete(List<ArtifactDefinition> artifactsFromAAI, Component component) {
 
         Set<String> aaiLabels = artifactsFromAAI.stream()
-                .map(ArtifactDefinition::getArtifactLabel)
-                .collect(Collectors.toSet());
+                                                .map(ArtifactDefinition::getArtifactLabel)
+                                                .collect(Collectors.toSet());
 
         List<ArtifactDefinition> artifactsForDeleteDeployment = component.getDeploymentArtifacts().values().stream()
-        // Filter Out Artifacts that are not contained in artifacts returned
-        // from AAI API
-                .filter(e -> !aaiLabels.contains(e.getArtifactLabel()))
-                .collect(Collectors.toList());
+                                                                         // Filter Out Artifacts that are not contained in artifacts returned
+                                                                         // from AAI API
+                                                                         .filter(e -> !aaiLabels.contains(e.getArtifactLabel()))
+                                                                         .collect(Collectors.toList());
 
         List<ArtifactDefinition> artifactsForDeleteInformational = component.getArtifacts().values().stream()
-        // Filter Out Artifacts that are not contained in artifacts returned
-        // from AAI API
-                .filter(e -> !aaiLabels.contains(e.getArtifactLabel()))
-                .collect(Collectors.toList());
+                                                                            // Filter Out Artifacts that are not contained in artifacts returned
+                                                                            // from AAI API
+                                                                            .filter(e -> !aaiLabels.contains(e.getArtifactLabel()))
+                                                                            .collect(Collectors.toList());
 
         artifactsForDeleteDeployment.addAll(artifactsForDeleteInformational);
 
         return artifactsForDeleteDeployment.stream()
-                .filter(e -> (e.getGenerated() != null && e.getGenerated().equals(Boolean.TRUE)) || (e.getGenerated() == null && e.getArtifactLabel().toLowerCase().startsWith("aai")))
-                .collect(Collectors.toList());
+                                           .filter(e -> (e.getGenerated() != null && e.getGenerated().equals(Boolean.TRUE)) || (e.getGenerated() == null && e.getArtifactLabel().toLowerCase().startsWith("aai")))
+                                           .collect(Collectors.toList());
     }
 
     private List<ArtifactDefinition> getAAIArtifatcsForCreate(List<ArtifactDefinition> artifactsFromAAI, Component component) {
@@ -639,8 +644,8 @@ public class CsarUtils {
         // If the artifact label does not exist in the service -
         // store the artifact (generate uuid and version, "generated" flag is TRUE)
         return artifactsFromAAI.stream()
-                .filter(e -> !componentDeploymentLabels.contains(e.getArtifactLabel()) && !componentInfoLabels.contains(e.getArtifactLabel()))
-                .collect(Collectors.toList());
+                               .filter(e -> !componentDeploymentLabels.contains(e.getArtifactLabel()) && !componentInfoLabels.contains(e.getArtifactLabel()))
+                               .collect(Collectors.toList());
     }
 
     private Either<ActionStatus, ResponseFormat> handleAAIArtifactsInDataModelByOperationType(Component component, List<ArtifactDefinition> generatedArtifactsDefinitions, ArtifactOperationInfo operationType, User user, boolean shouldLock,
@@ -748,7 +753,7 @@ public class CsarUtils {
         } else {
             Either<byte[], ActionStatus> fromCassandra = getFromCassandra(cassandraId);
             if (fromCassandra.isRight()) {
-                 return Either.right(fromCassandra.right().value());
+                return Either.right(fromCassandra.right().value());
             } else {
                 content = fromCassandra.left().value();
             }
@@ -766,7 +771,7 @@ public class CsarUtils {
             return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
         }
 
-         List<SdcSchemaFilesData> listOfSchemas = specificSchemaFiles.left().value();
+        List<SdcSchemaFilesData> listOfSchemas = specificSchemaFiles.left().value();
 
         if(listOfSchemas.isEmpty()){
             log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", versionFirstThreeOctates, CONFORMANCE_LEVEL);
@@ -867,10 +872,10 @@ public class CsarUtils {
             log.debug("************* Going to extract VFCs artifacts from Csar. ");
             Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
             csar.entrySet().stream()
-                    // filter CSAR entry by node type artifact path
-                    .filter(e -> Pattern.compile(VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey()).matches())
-                    // extract ArtifactDefinition from CSAR entry for each entry with matching artifact path
-                    .forEach(e -> addExtractedVfcArtifact(extractVfcArtifact(e, collectedWarningMessages), artifacts));
+                // filter CSAR entry by node type artifact path
+                .filter(e -> Pattern.compile(VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey()).matches())
+                // extract ArtifactDefinition from CSAR entry for each entry with matching artifact path
+                .forEach(e -> addExtractedVfcArtifact(extractVfcArtifact(e, collectedWarningMessages), artifacts));
             // add counter suffix to artifact labels
             handleWarningMessages(collectedWarningMessages);
 
@@ -885,10 +890,10 @@ public class CsarUtils {
      */
     public static void handleWarningMessages(Map<String, Set<List<String>>> collectedWarningMessages) {
         collectedWarningMessages.entrySet().stream()
-                // for each vfc
-                .forEach(e -> e.getValue().stream()
-                        // add each warning message to log
-                        .forEach(args -> log.warn(e.getKey(), args.toArray())));
+                                // for each vfc
+                                .forEach(e -> e.getValue().stream()
+                                               // add each warning message to log
+                                               .forEach(args -> log.warn(e.getKey(), args.toArray())));
 
     }
 
@@ -1092,16 +1097,16 @@ public class CsarUtils {
 
         if(artifactGroupType != null){
             switch (artifactGroupType) {
-            case INFORMATIONAL:
-                resourceValidTypeArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
-                .getResourceInformationalArtifacts();
-                break;
-            case DEPLOYMENT:
-                resourceValidTypeArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
-                .getResourceDeploymentArtifacts();
-                break;
-            default:
-                break;
+                case INFORMATIONAL:
+                    resourceValidTypeArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
+                                                                     .getResourceInformationalArtifacts();
+                    break;
+                case DEPLOYMENT:
+                    resourceValidTypeArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
+                                                                     .getResourceDeploymentArtifacts();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1126,20 +1131,20 @@ public class CsarUtils {
         return artifactType == null ? ArtifactTypeEnum.OTHER.getType() : artifactType.getType();
     }
 
-    private Either<ZipOutputStream, ResponseFormat> writeAllFilesToScar(Component mainComponent, CsarDefinition csarDefinition, ZipOutputStream zipstream, boolean isInCertificationRequest) throws IOException{
+    private Either<ZipOutputStream, ResponseFormat> writeAllFilesToCsar(Component mainComponent, CsarDefinition csarDefinition, ZipOutputStream zipstream, boolean isInCertificationRequest) throws IOException{
         ComponentArtifacts componentArtifacts = csarDefinition.getComponentArtifacts();
 
-        Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedtPath = writeComponentArtifactsToSpecifiedtPath(mainComponent, componentArtifacts, zipstream, ARTIFACTS_PATH, isInCertificationRequest);
+        Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedPath = writeComponentArtifactsToSpecifiedPath(mainComponent, componentArtifacts, zipstream, ARTIFACTS_PATH, isInCertificationRequest);
 
-        if(writeComponentArtifactsToSpecifiedtPath.isRight()){
-            return Either.right(writeComponentArtifactsToSpecifiedtPath.right().value());
+        if(writeComponentArtifactsToSpecifiedPath.isRight()){
+            return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
         }
 
         ComponentTypeArtifacts mainTypeAndCIArtifacts = componentArtifacts.getMainTypeAndCIArtifacts();
-        writeComponentArtifactsToSpecifiedtPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
+        writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
 
-        if(writeComponentArtifactsToSpecifiedtPath.isRight()){
-            return Either.right(writeComponentArtifactsToSpecifiedtPath.right().value());
+        if(writeComponentArtifactsToSpecifiedPath.isRight()){
+            return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
         }
 
         Map<String, ArtifactsInfo> componentInstancesArtifacts = mainTypeAndCIArtifacts.getComponentInstancesArtifacts();
@@ -1149,17 +1154,80 @@ public class CsarUtils {
         for (String keyAssetName : keySet) {
             ArtifactsInfo artifactsInfo = componentInstancesArtifacts.get(keyAssetName);
             String pathWithAssetName = currentPath + keyAssetName + "/";
-            writeComponentArtifactsToSpecifiedtPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
+            writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
 
-            if(writeComponentArtifactsToSpecifiedtPath.isRight()){
-                return Either.right(writeComponentArtifactsToSpecifiedtPath.right().value());
+            if(writeComponentArtifactsToSpecifiedPath.isRight()){
+                return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
             }
         }
+        writeComponentArtifactsToSpecifiedPath = writeOperationsArtifactsToCsar(mainComponent, zipstream);
 
+        if (writeComponentArtifactsToSpecifiedPath.isRight()) {
+            return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
+        }
         return Either.left(zipstream);
     }
 
-    private Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedtPath(Component mainComponent, ComponentArtifacts componentArtifacts, ZipOutputStream zipstream,
+    private Either<ZipOutputStream, ResponseFormat> writeOperationsArtifactsToCsar(Component component,
+            ZipOutputStream zipstream) {
+        if (component instanceof Service ) {
+            return Either.left(zipstream);
+        }
+        if (Objects.isNull(((Resource) component).getInterfaces())) {
+            log.debug("Component Name {}- no interfaces found", component.getNormalizedName());
+            return Either.left(zipstream);
+        }
+        final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
+
+        for (Map.Entry<String, InterfaceDefinition> interfaceEntry : interfaces.entrySet()) {
+            for (OperationDataDefinition operation : interfaceEntry.getValue().getOperations().values()) {
+                try {
+                    if (Objects.isNull(operation.getImplementation())) {
+                        log.debug("Component Name {}, Interface Id {}, Operation Name {} - no Operation Implementation found",
+                                component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
+                                operation.getName());
+                        continue;
+                    }
+                    if (Objects.isNull(operation.getImplementation().getArtifactName())) {
+                        log.debug("Component Name {}, Interface Id {}, Operation Name {} - no artifact found",
+                                component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
+                                operation.getName());
+                        continue;
+                    }
+
+                    final String artifactUUID = operation.getImplementation().getArtifactUUID();
+
+                    final Either<byte[], ActionStatus> artifactFromCassandra = getFromCassandra(artifactUUID);
+                    final String artifactName = operation.getImplementation().getArtifactName();
+                    if (artifactFromCassandra.isRight()) {
+                        log.error("ArtifactName {}, unique ID {}", artifactName, artifactUUID);
+                        log.error("Failed to get {} payload from DB reason: {}", artifactName,
+                                artifactFromCassandra.right().value());
+                        return Either.right(componentsUtils.getResponseFormat(
+                                ActionStatus.ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION, "Resource",
+                                component.getUniqueId(), artifactName, artifactUUID));
+                    }
+
+                    final byte[] payloadData = artifactFromCassandra.left().value();
+                    zipstream.putNextEntry(new ZipEntry(OperationArtifactUtil.createOperationArtifactPath(
+                            component.getNormalizedName(), interfaceEntry.getValue().getToscaResourceName(), operation)));
+                    zipstream.write(payloadData);
+
+                } catch (IOException e) {
+                    log.error("Component Name {},  Interface Name {}, Operation Name {}", component.getNormalizedName(),
+                            interfaceEntry.getKey(), operation.getName());
+                    log.error("Error while writing the operation's artifacts to the CSAR " + "{}", e);
+                    return Either.right(componentsUtils
+                                                .getResponseFormat(ActionStatus.ERROR_DURING_CSAR_CREATION, "Resource",
+                                                        component.getUniqueId()));
+                }
+            }
+        }
+        return Either.left(zipstream);
+
+    }
+
+    private Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedPath(Component mainComponent, ComponentArtifacts componentArtifacts, ZipOutputStream zipstream,
             String currentPath, boolean isInCertificationRequest) throws IOException {
         Map<String, ComponentTypeArtifacts> componentTypeArtifacts = componentArtifacts.getComponentTypeArtifacts();
         //Keys are defined:
@@ -1182,7 +1250,7 @@ public class CsarUtils {
 
     private Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedtPath(Component mainComponent, ArtifactsInfo currArtifactsInfo, ZipOutputStream zip, String path, boolean isInCertificationRequest) throws IOException {
         Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> artifactsInfo = currArtifactsInfo
-                .getArtifactsInfo();
+                                                                                                            .getArtifactsInfo();
         Set<ArtifactGroupTypeEnum> groupTypeEnumKeySet = artifactsInfo.keySet();
 
         for (ArtifactGroupTypeEnum artifactGroupTypeEnum : groupTypeEnumKeySet) {
@@ -1214,9 +1282,9 @@ public class CsarUtils {
 
         for (ArtifactDefinition artifactDefinition : artifactDefinitionList) {
             if (!isInCertificationRequest && componentType == ComponentTypeEnum.SERVICE
-                    && artifactDefinition.getArtifactType().equals(heatEnvType) ||
-                    //this is placeholder
-                    (artifactDefinition.getEsId() == null && artifactDefinition.getMandatory())){
+                        && artifactDefinition.getArtifactType().equals(heatEnvType) ||
+                        //this is placeholder
+                        (artifactDefinition.getEsId() == null && artifactDefinition.getMandatory())){
                 continue;
             }
 
