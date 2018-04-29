@@ -128,7 +128,7 @@ class Form extends React.Component {
                 this.props.onValidityChanged(this.props.isValid);
             }
         }
-        if (this.props.formReady) {
+        if (this.props.formReady && !prevProps.formReady) {
             // if form validation succeeded -> continue with submit
             this.handleFormSubmit();
         }

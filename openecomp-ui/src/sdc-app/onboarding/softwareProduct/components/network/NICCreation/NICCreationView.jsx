@@ -42,7 +42,6 @@ class NICCreationView extends React.Component {
             onDataChanged,
             genericFieldInfo,
             isFormValid,
-            onValidateForm,
             formReady
         } = this.props;
         let { name, description, networkDescription } = data;
@@ -50,16 +49,15 @@ class NICCreationView extends React.Component {
             <div>
                 {genericFieldInfo && (
                     <Form
-                        ref={form => (this.form = form)}
                         hasButtons={true}
-                        onSubmit={() => this.submit()}
+                        onSubmit={this.submit}
                         submitButtonText={
                             data.id ? i18n('Save') : i18n('Create')
                         }
-                        onReset={() => this.props.onCancel()}
+                        onReset={this.cancel}
                         labledButtons={true}
                         isValid={isFormValid}
-                        onValidateForm={() => onValidateForm()}
+                        onValidateForm={this.validate}
                         formReady={formReady}>
                         <GridSection hasLastColSet>
                             <GridItem colSpan={4} lastColInRow>
@@ -148,10 +146,18 @@ class NICCreationView extends React.Component {
         );
     }
 
-    submit() {
+    submit = () => {
         const { data: nic, componentId } = this.props;
         this.props.onSubmit({ nic, componentId });
-    }
+    };
+
+    validate = () => {
+        this.props.onValidateForm();
+    };
+
+    cancel = () => {
+        this.props.onCancel();
+    };
 }
 
 export default NICCreationView;
