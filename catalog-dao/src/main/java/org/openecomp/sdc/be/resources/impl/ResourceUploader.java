@@ -30,7 +30,6 @@ import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

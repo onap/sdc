@@ -38,7 +38,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 import org.slf4j.Logger;
