@@ -51,7 +51,7 @@ public class DBVersionTest {
     }
 
     @Test(dataProvider = "versionComparisionProvider")
-    public void testVersionCompareTo2(String firstVersion, String otherVersion, int expectedComparisionResult) throws Exception {
+    public void testVersionCompareTo2(String firstVersion, String otherVersion, int expectedComparisionResult) {
         assertEquals(DBVersion.fromString(firstVersion).compareTo(DBVersion.fromString(otherVersion)), expectedComparisionResult);
     }
 }

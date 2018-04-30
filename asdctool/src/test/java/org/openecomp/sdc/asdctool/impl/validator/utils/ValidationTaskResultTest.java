@@ -12,7 +12,7 @@ public class ValidationTaskResultTest {
 
 	
 	@Test
-	public void testGetName() throws Exception {
+	public void testGetName() {
 		ValidationTaskResult testSubject;
 		String result;
 
@@ -23,7 +23,7 @@ public class ValidationTaskResultTest {
 
 	
 	@Test
-	public void testSetName() throws Exception {
+	public void testSetName() {
 		ValidationTaskResult testSubject;
 		String name = "";
 
@@ -34,7 +34,7 @@ public class ValidationTaskResultTest {
 
 	
 	@Test
-	public void testGetResultMessage() throws Exception {
+	public void testGetResultMessage() {
 		ValidationTaskResult testSubject;
 		String result;
 
@@ -45,7 +45,7 @@ public class ValidationTaskResultTest {
 
 	
 	@Test
-	public void testSetResultMessage() throws Exception {
+	public void testSetResultMessage() {
 		ValidationTaskResult testSubject;
 		String resultMessage = "";
 
@@ -56,7 +56,7 @@ public class ValidationTaskResultTest {
 
 	
 	@Test
-	public void testIsSuccessful() throws Exception {
+	public void testIsSuccessful() {
 		ValidationTaskResult testSubject;
 		boolean result;
 
@@ -67,7 +67,7 @@ public class ValidationTaskResultTest {
 
 	
 	@Test
-	public void testSetSuccessful() throws Exception {
+	public void testSetSuccessful() {
 		ValidationTaskResult testSubject;
 		boolean successful = false;
 

@@ -34,7 +34,7 @@ public class EsToCassandraDataMigrationMenu {
 
 	private static Logger log = LoggerFactory.getLogger(EsToCassandraDataMigrationMenu.class.getName());
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		if (args == null || args.length < 2) {
 			usageAndExit();

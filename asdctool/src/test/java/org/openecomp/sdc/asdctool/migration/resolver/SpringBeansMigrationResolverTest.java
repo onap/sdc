@@ -31,13 +31,13 @@ public class SpringBeansMigrationResolverTest {
 
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         testInstance.setMigrations(migrations);
     }
 
     @Test
-    public void testResolveMigrations_getMigrationsWithVersionGreaterThanLatest() throws Exception {
+    public void testResolveMigrations_getMigrationsWithVersionGreaterThanLatest() {
         when(sdcRepoServiceMock.getLatestDBVersion()).thenReturn(DBVersion.fromString("1710.2"));
         testInstance.setPostMigrations(Collections.emptyList());
         List<IMigrationStage> resolvedMigrations = testInstance.resolveMigrations();
@@ -47,7 +47,7 @@ public class SpringBeansMigrationResolverTest {
     }
 
     @Test
-    public void testResolveMigration_noLatestVersionForCurrentMajorVersion() throws Exception {
+    public void testResolveMigration_noLatestVersionForCurrentMajorVersion() {
         when(sdcRepoServiceMock.getLatestDBVersion()).thenReturn(DBVersion.fromString("1710.-1"));
         testInstance.setPostMigrations(Collections.emptyList());
         List<IMigrationStage> resolvedMigrations = testInstance.resolveMigrations();
@@ -58,7 +58,7 @@ public class SpringBeansMigrationResolverTest {
     }
 
     @Test
-    public void testResolveMigrations_emptyMigrationsList() throws Exception {
+    public void testResolveMigrations_emptyMigrationsList() {
         testInstance.setMigrations(Collections.emptyList());
         testInstance.setPostMigrations(Collections.emptyList());
         when(sdcRepoServiceMock.getLatestDBVersion()).thenReturn(DBVersion.fromString("1710.-1"));

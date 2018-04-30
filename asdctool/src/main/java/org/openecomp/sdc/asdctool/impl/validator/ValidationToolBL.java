@@ -20,11 +20,7 @@ public class ValidationToolBL {
     @Autowired
     protected List<ValidatorExecuter> validators;
 
-    @Autowired
-    protected ReportManager reportManager;
-
     private boolean allValid = true;
-
 
     public boolean validateAll() {
         for (ValidatorExecuter validatorExec: validators) {
