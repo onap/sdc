@@ -457,8 +457,6 @@ public class GraphMLConverter {
 					} catch (Exception e) {
 						e.printStackTrace();
 
-						GraphPropertiesDictionary[] values = GraphPropertiesDictionary.values();
-
 						Object property1 = vertex.value(GraphPropertiesDictionary.HEALTH_CHECK.getProperty());
 						System.out.println(property1);
 

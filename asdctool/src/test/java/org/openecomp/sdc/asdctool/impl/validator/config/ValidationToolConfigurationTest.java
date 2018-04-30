@@ -32,7 +32,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testBasicServiceValidator() throws Exception {
+	public void testBasicServiceValidator() {
 		ValidationToolConfiguration testSubject;
 		ServiceValidatorExecuter result;
 
@@ -43,7 +43,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testVfArtifactValidationTask() throws Exception {
+	public void testVfArtifactValidationTask() {
 		ValidationToolConfiguration testSubject;
 		VfArtifactValidationTask result;
 
@@ -54,7 +54,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testServiceArtifactValidationTask() throws Exception {
+	public void testServiceArtifactValidationTask() {
 		ValidationToolConfiguration testSubject;
 		ServiceArtifactValidationTask result;
 
@@ -65,7 +65,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testModuleJsonTask() throws Exception {
+	public void testModuleJsonTask() {
 		ValidationToolConfiguration testSubject;
 		ModuleJsonTask result;
 
@@ -76,7 +76,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testValidationToolBL() throws Exception {
+	public void testValidationToolBL() {
 		ValidationToolConfiguration testSubject;
 		ValidationToolBL result;
 
@@ -87,7 +87,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testBasicVfValidator() throws Exception {
+	public void testBasicVfValidator() {
 		ValidationToolConfiguration testSubject;
 		VfValidatorExecuter result;
 
@@ -97,7 +97,7 @@ public class ValidationToolConfigurationTest {
 	}
 	
 	@Test
-	public void testArtifactCassandraDao() throws Exception {
+	public void testArtifactCassandraDao() {
 		ValidationToolConfiguration testSubject;
 		ArtifactCassandraDao result;
 
@@ -108,7 +108,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testArtifactValidationUtils() throws Exception {
+	public void testArtifactValidationUtils() {
 		ValidationToolConfiguration testSubject;
 		ArtifactValidationUtils result;
 
@@ -119,7 +119,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testJsonGroupsOperation() throws Exception {
+	public void testJsonGroupsOperation() {
 		ValidationToolConfiguration testSubject;
 		GroupsOperation result;
 
@@ -130,7 +130,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testCassandraClient() throws Exception {
+	public void testCassandraClient() {
 		ValidationToolConfiguration testSubject;
 		CassandraClient result;
 
@@ -141,7 +141,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testDaoStrategy() throws Exception {
+	public void testDaoStrategy() {
 		ValidationToolConfiguration testSubject;
 		TitanClientStrategy result;
 
@@ -155,7 +155,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testToscaOperationFacade() throws Exception {
+	public void testToscaOperationFacade() {
 		ValidationToolConfiguration testSubject;
 		ToscaOperationFacade result;
 
@@ -166,7 +166,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testNodeTypeOperation() throws Exception {
+	public void testNodeTypeOperation() {
 		ValidationToolConfiguration testSubject;
 		DerivedNodeTypeResolver migrationDerivedNodeTypeResolver = null;
 		NodeTypeOperation result;
@@ -178,7 +178,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testTopologyTemplateOperation() throws Exception {
+	public void testTopologyTemplateOperation() {
 		ValidationToolConfiguration testSubject;
 		TopologyTemplateOperation result;
 
@@ -192,7 +192,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testMigrationDerivedNodeTypeResolver() throws Exception {
+	public void testMigrationDerivedNodeTypeResolver() {
 		ValidationToolConfiguration testSubject;
 		DerivedNodeTypeResolver result;
 
@@ -203,7 +203,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testTitanDao() throws Exception {
+	public void testTitanDao() {
 		ValidationToolConfiguration testSubject;
 		TitanGraphClient titanGraphClient = null;
 		TitanDao result;
@@ -215,7 +215,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testCategoryOperation() throws Exception {
+	public void testCategoryOperation() {
 		ValidationToolConfiguration testSubject;
 		CategoryOperation result;
 
@@ -226,7 +226,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testArtifactsOperation() throws Exception {
+	public void testArtifactsOperation() {
 		ValidationToolConfiguration testSubject;
 		ArtifactsOperations result;
 
@@ -237,7 +237,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testToscaDataOperation() throws Exception {
+	public void testToscaDataOperation() {
 		ValidationToolConfiguration testSubject;
 		ToscaDataOperation result;
 
@@ -248,7 +248,7 @@ public class ValidationToolConfigurationTest {
 
 	
 	@Test
-	public void testToscaElementLifecycleOperation() throws Exception {
+	public void testToscaElementLifecycleOperation() {
 		ValidationToolConfiguration testSubject;
 		ToscaElementLifecycleOperation result;
 

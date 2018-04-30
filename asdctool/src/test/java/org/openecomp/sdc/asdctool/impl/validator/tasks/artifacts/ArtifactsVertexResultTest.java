@@ -11,7 +11,7 @@ public class ArtifactsVertexResultTest {
 
 	
 	@Test
-	public void testAddNotFoundArtifact() throws Exception {
+	public void testAddNotFoundArtifact() {
 		ArtifactsVertexResult testSubject;
 		String artifactId = "";
 
@@ -22,7 +22,7 @@ public class ArtifactsVertexResultTest {
 
 	
 	@Test
-	public void testGetResult() throws Exception {
+	public void testGetResult() {
 		ArtifactsVertexResult testSubject;
 		String result;
 
