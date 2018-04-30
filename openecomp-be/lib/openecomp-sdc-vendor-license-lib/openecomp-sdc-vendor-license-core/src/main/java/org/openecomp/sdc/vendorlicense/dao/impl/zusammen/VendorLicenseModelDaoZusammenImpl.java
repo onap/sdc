@@ -134,9 +134,8 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
 
   @Override
   public void delete(VendorLicenseModelEntity entity) {
-
+    // delete vlm version is done using versioning manager
   }
-
 
   private ZusammenElement mapVlmToZusammenElement(VendorLicenseModelEntity vendorLicenseModel,
                                                   Action action) {
@@ -150,14 +149,11 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
     info.addProperty(InfoPropertyName.name.name(), vendorLicenseModel.getVendorName());
     info.addProperty(InfoPropertyName.description.name(), vendorLicenseModel.getDescription());
     info.addProperty(InfoPropertyName.iconRef.name(), vendorLicenseModel.getIconRef());
-    info.addProperty(InfoPropertyName.oldVersion.name(), vendorLicenseModel.getOldVersion());
   }
-
 
   public enum InfoPropertyName {
     name,
     description,
     iconRef,
-    oldVersion
   }
 }

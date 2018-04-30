@@ -224,7 +224,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     public Response getVsp(String vspId, String versionId, String user) {
         Version version = versioningManager.get(vspId, new Version(versionId));
         VspDetails vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
-        vspDetails.setWritetimeMicroSeconds(version.getModificationTime().getTime());
 
         try {
             HealingManagerFactory.getInstance().createInterface()
@@ -252,13 +251,10 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 versioningManager.get(vspDetails.getVendorId(), vspDetails.getVlmVersion());
             }
 
-            Optional<ValidationResponse> validationResponse =
-                    submit(vspDetails.getId(), vspDetails.getVersion(), "Submit healed Vsp", user);
-            // TODO: 8/9/2017 before collaboration checkout was done at this scenario (equivalent
-            // to new version in collaboration). need to decide what should be done now.
-            validationResponse.ifPresent(validationResponse1 -> {
-                throw new IllegalStateException("Certified vsp after healing failed on validation");
-            });
+            submit(vspDetails.getId(), vspDetails.getVersion(), "Submit healed Vsp", user)
+                    .ifPresent(validationResponse -> {
+                        throw new IllegalStateException("Certified vsp after healing failed on validation");
+                    });
             vendorSoftwareProductManager.createPackage(vspDetails.getId(), vspDetails.getVersion());
         } catch (Exception ex) {
             LOGGER.error(String.format(SUBMIT_HEALED_VERSION_ERROR, vspDetails.getId(), vspDetails.getVersion().getId(),

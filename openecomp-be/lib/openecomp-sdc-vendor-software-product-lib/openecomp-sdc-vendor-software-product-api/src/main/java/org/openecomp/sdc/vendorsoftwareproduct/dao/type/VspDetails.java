@@ -52,8 +52,6 @@ public class VspDetails implements VersionableEntity {
 
   private List<String> featureGroups;
 
-  private Long writetimeMicroSeconds;
-
   private String onboardingMethod;
 
   public VspDetails() {
@@ -172,18 +170,6 @@ public class VspDetails implements VersionableEntity {
     this.featureGroups = featureGroups;
   }
 
-  public Long getWritetimeMicroSeconds() {
-    return this.writetimeMicroSeconds;
-  }
-
-  public void setWritetimeMicroSeconds(Long writetimeMicroSeconds) {
-    this.writetimeMicroSeconds = writetimeMicroSeconds;
-  }
-
-  /*public boolean isOldVersion() {
-    return this.oldVersion;
-  }*/
-
   public String getOnboardingMethod() {
     return onboardingMethod;
   }
@@ -191,7 +177,6 @@ public class VspDetails implements VersionableEntity {
   public void setOnboardingMethod(String onboardingMethod) {
     this.onboardingMethod = onboardingMethod;
   }
-
 
   @Override
   public String toString() {
