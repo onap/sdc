@@ -31,12 +31,12 @@ public class SdcMigrationToolTest {
     private SdcRepoService sdcRepoServiceMock;
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void testMigrate_noMigrations() throws Exception {
+    public void testMigrate_noMigrations() {
         when(migrationResolverMock.resolveMigrations()).thenReturn(Collections.emptyList());
         testInstance.migrate(false);
         verify(sdcRepoServiceMock, new Times(0)).clearTasksForCurrentMajor();
@@ -44,14 +44,14 @@ public class SdcMigrationToolTest {
     }
 
     @Test
-    public void testMigrate_enforceFlag_removeAllMigrationTasksForCurrentVersion() throws Exception {
+    public void testMigrate_enforceFlag_removeAllMigrationTasksForCurrentVersion() {
         when(migrationResolverMock.resolveMigrations()).thenReturn(Collections.emptyList());
         testInstance.migrate(true);
         verify(sdcRepoServiceMock, new Times(1)).clearTasksForCurrentMajor();
     }
 
     @Test
-    public void testMigrate_stopAfterFirstFailure() throws Exception {
+    public void testMigrate_stopAfterFirstFailure() {
         when(migrationResolverMock.resolveMigrations()).thenReturn(Arrays.asList(new SuccessfulMigration(), new FailedMigration(), new SuccessfulMigration()));
         testInstance.migrate(false);
         verify(sdcRepoServiceMock, new Times(0)).clearTasksForCurrentMajor();

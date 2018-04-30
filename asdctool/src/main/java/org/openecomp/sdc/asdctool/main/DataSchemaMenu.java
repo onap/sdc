@@ -33,7 +33,7 @@ public class DataSchemaMenu {
 
 	private static Logger log = LoggerFactory.getLogger(DataSchemaMenu.class.getName());
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		String operation = args[0];
 

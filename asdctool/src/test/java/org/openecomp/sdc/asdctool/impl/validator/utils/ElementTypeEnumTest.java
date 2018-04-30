@@ -13,7 +13,7 @@ public class ElementTypeEnumTest {
 
 	
 	@Test
-	public void testGetByType() throws Exception {
+	public void testGetByType() {
 		String elementType = "";
 		ElementTypeEnum result;
 
@@ -23,7 +23,7 @@ public class ElementTypeEnumTest {
 
 	
 	@Test
-	public void testGetAllTypes() throws Exception {
+	public void testGetAllTypes() {
 		List<String> result;
 
 		// default test
@@ -32,7 +32,7 @@ public class ElementTypeEnumTest {
 
 	
 	@Test
-	public void testGetElementType() throws Exception {
+	public void testGetElementType() {
 		ElementTypeEnum testSubject;
 		String result;
 
@@ -43,7 +43,7 @@ public class ElementTypeEnumTest {
 
 	
 	@Test
-	public void testSetElementType() throws Exception {
+	public void testSetElementType() {
 		ElementTypeEnum testSubject;
 		String elementType = "";
 
@@ -54,7 +54,7 @@ public class ElementTypeEnumTest {
 
 	
 	@Test
-	public void testGetClazz() throws Exception {
+	public void testGetClazz() {
 		ElementTypeEnum testSubject;
 		Class result;
 
@@ -65,7 +65,7 @@ public class ElementTypeEnumTest {
 
 	
 	@Test
-	public void testSetClazz() throws Exception {
+	public void testSetClazz() {
 		ElementTypeEnum testSubject;
 		Class clazz = null;
 

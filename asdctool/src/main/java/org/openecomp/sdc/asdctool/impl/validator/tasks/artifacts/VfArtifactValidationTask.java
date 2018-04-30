@@ -15,9 +15,6 @@ public class VfArtifactValidationTask extends VfValidationTask {
     @Autowired
     ArtifactValidationUtils artifactValidationUtils;
 
-    @Autowired
-    protected TopologyTemplateOperation topologyTemplateOperation;
-
     public VfArtifactValidationTask() {
         this.name = "VF Artifact Validation Task";
     }

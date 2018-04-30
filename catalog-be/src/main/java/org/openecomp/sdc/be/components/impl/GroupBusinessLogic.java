@@ -1465,11 +1465,6 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                 component.getComponentType().toString());
     }
 
-    private Boolean onFailedToLockComponent(ResponseFormat responseFormat) {
-        throw new ComponentException(responseFormat);
-    }
-
-
     public Either<List<GroupDefinition>, ResponseFormat> createGroups(Component component, final List<GroupDefinition> groupDefinitions) {
 
         Map<String, GroupDataDefinition> groups = new HashMap<>();

@@ -11,7 +11,7 @@ public class TopologyTemplateValidatorExecuterTest {
 
 	
 	@Test
-	public void testSetName() throws Exception {
+	public void testSetName() {
 		TopologyTemplateValidatorExecuter testSubject;
 		String name = "";
 
@@ -22,7 +22,7 @@ public class TopologyTemplateValidatorExecuterTest {
 
 	
 	@Test
-	public void testGetName() throws Exception {
+	public void testGetName() {
 		TopologyTemplateValidatorExecuter testSubject;
 		String result;
 
