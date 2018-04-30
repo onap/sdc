@@ -36,7 +36,6 @@ import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

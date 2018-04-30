@@ -22,10 +22,7 @@ package org.openecomp.sdc.be.dao.utils;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Utility class to ease map manipulation.
