@@ -390,10 +390,10 @@
             </activation>
             <modules>
                 <module>build-tools</module>
-                <module>onboarding</module>
-                <module>services/activity-spec</module>
                 <module>security-utils</module>
                 <module>common-app-api</module>
+                <module>onboarding</module>
+                <module>services/activity-spec</module>
                 <module>common-be</module>
                 <module>catalog-dao</module>
                 <module>catalog-model</module>

@@ -29,8 +29,8 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
+import org.onap.config.api.Configuration;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.logging.api.Logger;
