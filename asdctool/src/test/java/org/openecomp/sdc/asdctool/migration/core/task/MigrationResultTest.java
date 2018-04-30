@@ -12,7 +12,7 @@ public class MigrationResultTest {
 
 	
 	@Test
-	public void testGetMsg() throws Exception {
+	public void testGetMsg() {
 		MigrationResult testSubject;
 		String result;
 
@@ -23,7 +23,7 @@ public class MigrationResultTest {
 
 	
 	@Test
-	public void testSetMsg() throws Exception {
+	public void testSetMsg() {
 		MigrationResult testSubject;
 		String msg = "";
 
@@ -34,7 +34,7 @@ public class MigrationResultTest {
 
 	
 	@Test
-	public void testGetMigrationStatus() throws Exception {
+	public void testGetMigrationStatus() {
 		MigrationResult testSubject;
 		MigrationStatus result;
 
@@ -45,7 +45,7 @@ public class MigrationResultTest {
 
 	
 	@Test
-	public void testSetMigrationStatus() throws Exception {
+	public void testSetMigrationStatus() {
 		MigrationResult testSubject;
 		MigrationStatus migrationStatus = null;
 

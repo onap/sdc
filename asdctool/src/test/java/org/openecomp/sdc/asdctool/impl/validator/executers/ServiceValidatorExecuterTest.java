@@ -14,7 +14,7 @@ public class ServiceValidatorExecuterTest {
 
 	
 	@Test
-	public void testGetName() throws Exception {
+	public void testGetName() {
 		ServiceValidatorExecuter testSubject;
 		String result;
 

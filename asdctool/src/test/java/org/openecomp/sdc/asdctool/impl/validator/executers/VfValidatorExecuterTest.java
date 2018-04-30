@@ -12,7 +12,7 @@ public class VfValidatorExecuterTest {
 
 	
 	@Test
-	public void testGetName() throws Exception {
+	public void testGetName() {
 		VfValidatorExecuter testSubject;
 		String result;
 
