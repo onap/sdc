@@ -47,7 +47,6 @@ import org.openecomp.sdc.be.resources.data.AdditionalInfoParameterData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -725,19 +724,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 			} else {
 				log.debug("Going to execute commit on graph.");
 				titanGenericDao.commit();
-			}
-		}
-	}
-
-	private void commitOrRollbackTx(TitanTransaction tx, boolean inTransaction, Either<? extends Object, StorageOperationStatus> result) {
-
-		if (false == inTransaction) {
-			if (result == null || result.isRight()) {
-				log.error("Going to execute rollback on graph.");
-				tx.rollback();
-			} else {
-				log.debug("Going to execute commit on graph.");
-				tx.commit();
 			}
 		}
 	}

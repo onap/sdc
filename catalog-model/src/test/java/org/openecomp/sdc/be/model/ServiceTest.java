@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.annotation.Generated;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 
 @Generated(value = "org.junit-tools-1.0.6")

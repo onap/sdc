@@ -637,21 +637,6 @@ public class ArtifactsOperations extends BaseOperation {
 		artifactData.setArtifactVersion(String.valueOf(newVersion));
 	}
 
-	private boolean validateParentType(NodeTypeEnum type) {
-		boolean isValid = false;
-		switch (type) {
-			case Resource:
-			case InterfaceOperation:
-			case Service:
-			case ResourceInstance:
-				isValid = true;
-				break;
-			default:
-				log.debug("Not supported node type for artifact relation : {} ", type);
-		}
-		return isValid;
-	}
-
 	public Either<ArtifactDataDefinition, StorageOperationStatus> removeArtifactOnGraph(ArtifactDefinition artifactFromGraph, String componentId, String instanceId, NodeTypeEnum type, boolean deleteMandatoryArtifact) {
 
 		Triple<EdgeLabelEnum, Boolean, VertexTypeEnum> triple = getEdgeLabelEnumFromArtifactGroupType(artifactFromGraph.getArtifactGroupType(), type);

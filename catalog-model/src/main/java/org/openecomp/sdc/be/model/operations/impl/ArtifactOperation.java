@@ -53,7 +53,6 @@ import org.openecomp.sdc.be.resources.data.HeatParameterData;
 import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

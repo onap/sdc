@@ -70,7 +70,6 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
-import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
@@ -152,66 +151,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 
 		return functionPatterns;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openecomp.sdc.be.model.operations.api.IPropertyOperation# addPropertyToResource(java.lang.String, org.openecomp.sdc.be.model.PropertyDefinition, org.openecomp.sdc.be.dao.neo4j.datatype.NodeTypeEnum, java.lang.String)
-	 */
-	/*
-	 * @Override public Either<PropertyDefinition, StorageOperationStatus> addPropertyToResource( String propertyName, PropertyDefinition propertyDefinition, NodeTypeEnum nodeType, String resourceId) {
-	 * 
-	 * StorageOperationStatus isValidProperty = isTypeExistsAndValid(propertyDefinition); if (isValidProperty != StorageOperationStatus.OK) { return Either.right(isValidProperty); }
-	 * 
-	 * Either<PropertyData, TitanOperationStatus> status = addPropertyToGraph(propertyName, propertyDefinition, resourceId);
-	 * 
-	 * if (status.isRight()) { titanGenericDao.rollback(); 
-	 * log.error("Failed to add property {} to resource {}, propertyName, resourceId);
-	 *  return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status. right().value())); } else
-	 * { titanGenericDao.commit(); PropertyData propertyData = status.left().value();
-	 * 
-	 * PropertyDefinition propertyDefResult = convertPropertyDataToPropertyDefinition(propertyData, propertyName, resourceId); log.debug("The returned PropertyDefintion is " + propertyDefinition); return Either.left(propertyDefResult); }
-	 * 
-	 * 
-	 * }
-	 */
-	private StorageOperationStatus isTypeExistsAndValid(PropertyDefinition propertyDefinition) {
-
-		ToscaPropertyType type = ToscaPropertyType.isValidType(propertyDefinition.getType());
-
-		if (type == null) {
-			return StorageOperationStatus.INVALID_TYPE;
-		}
-
-		String propertyType = propertyDefinition.getType();
-		String innerType = null;
-		String value = propertyDefinition.getDefaultValue();
-
-		if (propertyType.equals(ToscaPropertyType.LIST) || propertyType.equals(ToscaPropertyType.MAP)) {
-			SchemaDefinition schema;
-			if ((schema = propertyDefinition.getSchema()) != null) {
-				PropertyDataDefinition property;
-				if ((property = schema.getProperty()) != null) {
-					innerType = property.getType();
-
-				}
-			}
-		}
-
-		PropertyTypeValidator validator = type.getValidator();
-
-		if (value == null || (EMPTY_VALUE != null && EMPTY_VALUE.equals(propertyDefinition.getDefaultValue()))) {
-			return StorageOperationStatus.OK;
-		} else {
-			boolean isValid = validator.isValid(value, innerType, null);
-			if (true == isValid) {
-				return StorageOperationStatus.OK;
-			} else {
-				return StorageOperationStatus.INVALID_VALUE;
-			}
-		}
-
 	}
 
 	public PropertyDefinition convertPropertyDataToPropertyDefinition(PropertyData propertyDataResult, String propertyName, String resourceId) {
@@ -501,48 +440,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return StorageOperationStatus.OK;
 	}
 
-	/*
-	 * public Either<Object, Boolean> validateAndUpdatePropertyValue(String propertyType, String value, String innerType) {
-	 * 
-	 * log. trace("Going to validate property value and its type. type = {}, value = {}" ,propertyType, value);
-	 * 
-	 * ToscaPropertyType type = getType(propertyType);
-	 * 
-	 * if (type == null) {
-	 * 
-	 * Either<DataTypeDefinition, TitanOperationStatus> externalDataType = getExternalDataType(propertyType); if (externalDataType.isRight()) { TitanOperationStatus status = externalDataType.right().value(); log.debug("The type " + propertyType +
-	 * " of property cannot be found. Status is " + status); if (status != TitanOperationStatus.NOT_FOUND) { BeEcompErrorManager.getInstance(). logBeInvalidTypeError("validate property type", propertyType, "property"); } return Either.right(false); }
-	 * 
-	 * DataTypeDefinition dataTypeDefinition = externalDataType.left().value();
-	 * 
-	 * Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypesRes = getAllDataTypes(); if (allDataTypesRes.isRight()) { TitanOperationStatus status = allDataTypesRes.right().value(); return Either.right(false); }
-	 * 
-	 * Map<String, DataTypeDefinition> allDataTypes = allDataTypesRes.left().value();
-	 * 
-	 * ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, allDataTypes);
-	 * 
-	 * if (validateResult.right.booleanValue() == false) { 
-	 * log.debug("The value {} of property from type {} is invalid", value, propertyType); 
-	 * return Either.right(false); }
-	 * 
-	 * JsonElement jsonElement = validateResult.left;
-	 * 
-	 * String valueFromJsonElement = getValueFromJsonElement(jsonElement);
-	 * 
-	 * return Either.left(valueFromJsonElement);
-	 * 
-	 * }
-	 * 
-	 * log.trace("After validating property type {}", propertyType);
-	 * 
-	 * boolean isValidProperty = isValidValue(type, value, innerType); if (false == isValidProperty) { log.debug("The value " + value + " of property from type " + type + " is invalid"); return Either.right(false); }
-	 * 
-	 * 
-	 * Object convertedValue = value; if (false == isEmptyValue(value)) { PropertyValueConverter converter = type.getConverter(); convertedValue = converter.convert(value, null); }
-	 * 
-	 * return Either.left(convertedValue); }
-	 */
-
 	public Either<PropertyData, TitanOperationStatus> addPropertyToGraph(String propertyName, PropertyDefinition propertyDefinition, String resourceId) {
 
 		ResourceMetadataData resourceData = new ResourceMetadataData();
@@ -726,37 +623,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 
 		return Either.left(createNodeResult.left().value());
-
-	}
-
-	public TitanOperationStatus addPropertyToNodeType(TitanVertex elementVertex, String propertyName, PropertyDefinition propertyDefinition, NodeTypeEnum nodeType, String uniqueId) {
-
-		List<PropertyConstraint> constraints = propertyDefinition.getConstraints();
-
-		propertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(uniqueId, propertyName));
-		PropertyData propertyData = new PropertyData(propertyDefinition, convertConstraintsToString(constraints));
-
-		if (log.isDebugEnabled())
-			log.debug("Before adding property to graph {}", propertyData);
-		Either<TitanVertex, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(propertyData);
-		if (log.isDebugEnabled())
-			log.debug("After adding property to graph {}", propertyData);
-		if (createNodeResult.isRight()) {
-			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add property {} to graph. status is {} ", propertyName, operationStatus);
-			return operationStatus;
-		}
-
-		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(GraphPropertiesDictionary.NAME.getProperty(), propertyName);
-
-		TitanOperationStatus createRelResult = titanGenericDao.createEdge(elementVertex, propertyData, GraphEdgeLabels.PROPERTY, props);
-		if (!createRelResult.equals(TitanOperationStatus.OK)) {
-			log.error("Failed to associate resource {} to property {} in graph. status is {}", uniqueId, propertyName, createRelResult);
-			return createRelResult;
-		}
-
-		return createRelResult;
 
 	}
 
@@ -1744,41 +1610,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	}
 
-	public void updatePropertiesByPropertyValues(Map<String, List<ComponentInstanceProperty>> resourceInstancesProperties, Map<String, Map<String, ComponentInstanceProperty>> values) {
-
-		if (resourceInstancesProperties == null) {
-			return;
-		}
-
-		List<ComponentInstanceProperty> allProperties = new ArrayList<>();
-		Collection<List<ComponentInstanceProperty>> properties = resourceInstancesProperties.values();
-		if (properties != null) {
-			Iterator<List<ComponentInstanceProperty>> iterator = properties.iterator();
-			while (iterator.hasNext()) {
-				List<ComponentInstanceProperty> compInstancePropertyList = iterator.next();
-				allProperties.addAll(compInstancePropertyList);
-			}
-		}
-
-		// Go over each property and check whether there is a rule which updates
-		// it
-		for (ComponentInstanceProperty instanceProperty : allProperties) {
-
-			String propertyUniqueId = instanceProperty.getUniqueId();
-
-			// get the changes per componentInstanceId.
-			Map<String, ComponentInstanceProperty> instanceIdToValue = values.get(propertyUniqueId);
-
-			if (instanceIdToValue == null) {
-				continue;
-			}
-
-			this.updatePropertyByBestMatch(propertyUniqueId, instanceProperty, instanceIdToValue);
-
-		}
-
-	}
-
 	/**
 	 * 
 	 * Add data type to graph.
@@ -2187,19 +2018,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	}
 
-	private Either<DataTypeDefinition, TitanOperationStatus> getExternalDataType(String propertyType) {
-
-		String dataTypeUid = UniqueIdBuilder.buildDataTypeUid(propertyType);
-		Either<DataTypeDefinition, TitanOperationStatus> dataTypeByUid = getDataTypeByUid(dataTypeUid);
-		if (dataTypeByUid.isRight()) {
-			TitanOperationStatus status = dataTypeByUid.right().value();
-			return Either.right(status);
-		}
-
-		return Either.left(dataTypeByUid.left().value());
-
-	}
-
 	public Either<Map<String, DataTypeDefinition>, TitanOperationStatus> getAllDataTypes() {
 
 		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
@@ -2480,26 +2298,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 
 		return Either.left(propertiesData);
-
-	}
-
-	protected TitanOperationStatus addPropertiesToElementType(String uniqueId, NodeTypeEnum nodeType, Map<String, PropertyDefinition> propertiesMap, TitanVertex elementVertex) {
-
-		if (propertiesMap != null) {
-
-			for (Entry<String, PropertyDefinition> propertyDefinitionEntry : propertiesMap.entrySet()) {
-				String propertyName = propertyDefinitionEntry.getKey();
-
-				TitanOperationStatus operationStatus = this.addPropertyToNodeType(elementVertex, propertyName, propertyDefinitionEntry.getValue(), nodeType, uniqueId);
-
-				if (!operationStatus.equals(TitanOperationStatus.OK)) {
-					log.error("Failed to associate {} {}  to property {} in graph. status is {}", nodeType.getName(), uniqueId, propertyName, operationStatus);
-					return operationStatus;
-				}
-			}
-		}
-
-		return TitanOperationStatus.OK;
 
 	}
 

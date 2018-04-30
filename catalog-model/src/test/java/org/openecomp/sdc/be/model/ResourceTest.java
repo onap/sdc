@@ -3,8 +3,6 @@ package org.openecomp.sdc.be.model;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;

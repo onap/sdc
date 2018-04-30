@@ -24,7 +24,6 @@ import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
-import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 
 import java.util.HashMap;
 import java.util.Map;

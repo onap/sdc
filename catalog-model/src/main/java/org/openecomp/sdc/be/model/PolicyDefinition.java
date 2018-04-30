@@ -5,7 +5,6 @@ import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;

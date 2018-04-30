@@ -172,26 +172,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 		return Either.left(createNodeResult.left().value());
 	}
 
-	private Either<TitanVertex, TitanOperationStatus> createInterfaceNodeAndRelation(String interfaceName, String resourceId, InterfaceData interfaceData, TitanVertex metadataVertex) {
-		log.debug("Before adding interface to graph {}", interfaceData);
-		Either<TitanVertex, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(interfaceData);
-
-		if (createNodeResult.isRight()) {
-			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add interface {} to graph. status is {}", interfaceName, operationStatus);
-			return Either.right(operationStatus);
-		}
-
-		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(GraphPropertiesDictionary.NAME.getProperty(), interfaceName);
-		TitanVertex interfaceVertex = createNodeResult.left().value();
-		TitanOperationStatus createRelResult = titanGenericDao.createEdge(metadataVertex, interfaceVertex, GraphEdgeLabels.INTERFACE, props);
-		if (!createRelResult.equals(TitanOperationStatus.OK)) {
-			log.error("Failed to associate resource {} to property {} in graph. status is {}", resourceId, interfaceName, createRelResult);
-		}
-		return Either.left(interfaceVertex);
-	}
-
 	private Either<OperationData, TitanOperationStatus> createOperationNodeAndRelation(String operationName, OperationData operationData, InterfaceData interfaceData) {
 		log.debug("Before adding operation to graph {}", operationData);
 		Either<OperationData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(operationData, OperationData.class);
