@@ -103,14 +103,15 @@ export class ChangeLifecycleStateHandler {
             //-------------------------------------------------
             let onOk = (confirmationText):void => {
                 comment.userRemarks = confirmationText;
-                scope.isLoading = true;
 
                 if (data.url === "lifecycleState/CHECKIN") {
                     this.eventBusService.notify("CHECK_IN").subscribe(() => {
+                        scope.isLoading = true;
                         component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
                     });
                 }
                 else {
+                    scope.isLoading = true;
                     component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
                 }
             };
