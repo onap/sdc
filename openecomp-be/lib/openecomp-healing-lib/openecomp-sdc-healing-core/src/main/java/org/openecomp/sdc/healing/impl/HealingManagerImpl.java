@@ -232,7 +232,7 @@ public class HealingManagerImpl implements HealingManager {
   private List<Healer> getHealersToRun(Collection<String> healersClassNames, String itemId,
                                        Version version, List<String> failureMessages) {
     return healersClassNames == null
-                   ? Collections.EMPTY_LIST
+                   ? Collections.emptyList()
                    : healersClassNames.stream()
                       .map(healerClassName -> getHealerInstance(healerClassName, failureMessages))
                       .filter(Optional::isPresent)
@@ -255,7 +255,7 @@ public class HealingManagerImpl implements HealingManager {
     Map healingConfig = FileUtils
         .readViaInputStream(HEALERS_BY_ENTITY_TYPE_FILE,
             stream -> JsonUtil.json2Object(stream, Map.class));
-    return (Map<String, Collection<String>>) healingConfig.getOrDefault(itemType.name(), Collections.EMPTY_MAP);
+    return (Map<String, Collection<String>>) healingConfig.getOrDefault(itemType.name(), Collections.emptyMap());
   }
 
   private String getUser() {
