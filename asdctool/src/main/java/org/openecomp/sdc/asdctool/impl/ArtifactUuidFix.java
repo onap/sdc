@@ -330,7 +330,7 @@ public class ArtifactUuidFix {
 		return true;
 	}
 
-	private boolean isProblematicService( Service service, String serviceName) throws IOException {
+	private boolean isProblematicService( Service service, String serviceName) {
 		
 		List<ComponentInstance> componentInstances = service.getComponentInstances();
 		
