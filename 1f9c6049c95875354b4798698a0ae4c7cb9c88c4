@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_14074a83",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1180,
+      "author": {
+        "id": 3467
+      },
+      "writtenOn": "2018-04-30T14:01:41Z",
+      "side": 1,
+      "message": "casting to (Resource) component can throw ClassCastExeption. component may be Service, Resource  e.t.c. Please check",
+      "range": {
+        "startLine": 1180,
+        "startChar": 72,
+        "endLine": 1180,
+        "endChar": 81
+      },
+      "revId": "1f9c6049c95875354b4798698a0ae4c7cb9c88c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
