@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.config;
 
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
