@@ -50,9 +50,7 @@ public class GraphLockOperation implements IGraphLockOperation {
 		log.info("lock resource with id {}", componentId);
 		TitanOperationStatus lockElementStatus = null;
 		try {
-
 			lockElementStatus = titanGenericDao.lockElement(componentId, nodeType);
-
 		} catch (Exception e) {
 			lockElementStatus = TitanOperationStatus.ALREADY_LOCKED;
 

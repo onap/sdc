@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 public class MigrationExecutorImplTest {
 
     @Test
-    public void testExecuteMigration() throws Exception {
+    public void testExecuteMigration() {
         MigrationExecutionResult execute = new MigrationExecutorImpl().execute(DummyMigrationFactory.SUCCESSFUL_MIGRATION);
         assertMigrationTaskEntryByMigrationExecutionResult(execute, DummyMigrationFactory.SUCCESSFUL_MIGRATION);
     }

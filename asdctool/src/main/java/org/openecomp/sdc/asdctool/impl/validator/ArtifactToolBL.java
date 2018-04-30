@@ -16,11 +16,7 @@ public class ArtifactToolBL {
 	    @Autowired
 	    protected List<IArtifactValidatorExecuter> validators;
 
-	    @Autowired
-	    protected ReportManager reportManager;
-
 	    private boolean allValid = true;
-
 
 	    public boolean validateAll() {
 	        for (IArtifactValidatorExecuter validatorExec: validators) {
