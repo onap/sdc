@@ -27,7 +27,7 @@ import org.openecomp.sdc.asdctool.impl.ProductLogic;
  */
 public class RemoveUtils {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		if (args == null || args.length < 1) {
 			removeUsage();

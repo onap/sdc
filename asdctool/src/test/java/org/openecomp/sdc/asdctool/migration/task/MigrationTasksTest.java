@@ -21,13 +21,13 @@ public class MigrationTasksTest  {
     private List<Migration> migrations;
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         ClassScanner classScanner = new ClassScanner();
         migrations = classScanner.getAllClassesOfType(MIGRATIONS_BASE_PACKAGE, Migration.class);
     }
 
     @Test
-    public void testNoTasksWithSameVersion() throws Exception {
+    public void testNoTasksWithSameVersion() {
         Map<DBVersion, List<Migration>> migrationsByVersion = migrations.stream().collect(Collectors.groupingBy(Migration::getVersion));
         migrationsByVersion.forEach((version, migrations) -> {
             if (migrations.size() > 1) {
@@ -38,7 +38,7 @@ public class MigrationTasksTest  {
     }
 
     @Test
-    public void testNoTaskWithVersionGreaterThanCurrentVersion() throws Exception {
+    public void testNoTaskWithVersionGreaterThanCurrentVersion() {
         Set<Migration> migrationsWithVersionsGreaterThanCurrent = migrations.stream().filter(mig -> mig.getVersion().compareTo(DBVersion.CURRENT_VERSION) > 0)
                 .collect(Collectors.toSet());
 

@@ -34,9 +34,6 @@ public class TopologyTemplateValidatorExecuter {
     @Autowired
     protected TitanDao titanDao;
 
-    @Autowired
-    protected TopologyTemplateOperation topologyTemplateOperation;
-
     protected String name;
 
     public void setName(String name) {

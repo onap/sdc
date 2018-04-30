@@ -15,7 +15,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class ArtifactValidatorTool {
 	private static Logger log = LoggerFactory.getLogger(ValidationTool.class.getName());
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
         String outputPath = args[0];
         ValidationConfigManager.setOutputFullFilePath(outputPath);

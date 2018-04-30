@@ -11,7 +11,7 @@ public class VertexResultTest {
 
 	
 	@Test
-	public void testGetStatus() throws Exception {
+	public void testGetStatus() {
 		VertexResult testSubject;
 		boolean result;
 
@@ -22,7 +22,7 @@ public class VertexResultTest {
 
 	
 	@Test
-	public void testSetStatus() throws Exception {
+	public void testSetStatus() {
 		VertexResult testSubject;
 		boolean status = false;
 
@@ -33,7 +33,7 @@ public class VertexResultTest {
 
 	
 	@Test
-	public void testGetResult() throws Exception {
+	public void testGetResult() {
 		VertexResult testSubject;
 		String result;
 

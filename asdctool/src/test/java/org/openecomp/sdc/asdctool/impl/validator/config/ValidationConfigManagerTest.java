@@ -13,7 +13,7 @@ public class ValidationConfigManagerTest {
 
 	
 	@Test
-	public void testGetOutputFilePath() throws Exception {
+	public void testGetOutputFilePath() {
 		String result;
 
 		// default test
@@ -21,7 +21,7 @@ public class ValidationConfigManagerTest {
 	}
 	
 	@Test
-	public void testGetCsvReportFilePath() throws Exception {
+	public void testGetCsvReportFilePath() {
 		String result;
 
 		// default test
@@ -30,7 +30,7 @@ public class ValidationConfigManagerTest {
 
 	
 	@Test
-	public void testSetCsvReportFilePath() throws Exception {
+	public void testSetCsvReportFilePath() {
 		String outputPath = "";
 
 		// default test
@@ -39,7 +39,7 @@ public class ValidationConfigManagerTest {
 
 	
 	@Test
-	public void testSetValidationConfiguration() throws Exception {
+	public void testSetValidationConfiguration() {
 		String path = "";
 		Properties result;
 
@@ -49,7 +49,7 @@ public class ValidationConfigManagerTest {
 
 	
 	@Test
-	public void testGetValidationConfiguration() throws Exception {
+	public void testGetValidationConfiguration() {
 		Properties result;
 
 		// default test
