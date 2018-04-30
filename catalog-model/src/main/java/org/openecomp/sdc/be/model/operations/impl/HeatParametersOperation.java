@@ -61,8 +61,6 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 	@javax.annotation.Resource
 	private TitanGenericDao titanGenericDao;
 
-	private Gson gson = new Gson();
-
 	public TitanGenericDao getTitanGenericDao() {
 		return titanGenericDao;
 	}

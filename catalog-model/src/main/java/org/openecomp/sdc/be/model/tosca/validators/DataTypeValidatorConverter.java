@@ -58,8 +58,6 @@ public class DataTypeValidatorConverter {
 
 	JsonParser jsonParser = new JsonParser();
 
-	Gson gson = new Gson();
-
 	ImmutablePair<JsonElement, Boolean> falseResult = new ImmutablePair<JsonElement, Boolean>(null, false);
 	ImmutablePair<JsonElement, Boolean> trueEmptyResult = new ImmutablePair<JsonElement, Boolean>(null, true);
 
@@ -285,22 +283,6 @@ public class DataTypeValidatorConverter {
 		}
 
 		return allParentsProps;
-	}
-
-	private String getValueFromJsonElement(JsonElement jsonElement) {
-		String value = null;
-
-		if (jsonElement == null || jsonElement.isJsonNull()) {
-			value = PropertyOperation.EMPTY_VALUE;
-		} else {
-			if (jsonElement.toString().isEmpty()) {
-				value = "";
-			} else {
-				value = jsonElement.toString();
-			}
-		}
-
-		return value;
 	}
 
 	public boolean isValid(String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {

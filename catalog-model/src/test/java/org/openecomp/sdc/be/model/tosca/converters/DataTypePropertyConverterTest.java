@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
-import javax.json.Json;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
