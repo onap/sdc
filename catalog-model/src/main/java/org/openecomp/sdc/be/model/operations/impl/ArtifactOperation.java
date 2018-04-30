@@ -53,17 +53,12 @@ import org.openecomp.sdc.be.resources.data.HeatParameterData;
 import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import com.thinkaurelius.titan.core.TitanGraph;
-//import com.tinkerpop.blueprints.Direction;
-//import com.tinkerpop.blueprints.Edge;
-//import com.tinkerpop.blueprints.Vertex;
-//import com.tinkerpop.blueprints.util.ElementHelper;
 import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;

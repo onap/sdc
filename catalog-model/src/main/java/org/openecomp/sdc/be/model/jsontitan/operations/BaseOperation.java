@@ -55,8 +55,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;

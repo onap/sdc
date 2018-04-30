@@ -448,11 +448,6 @@ public class ToscaOperationFacade {
 
 	}
 
-	private List<InputDefinition> getNewInputsByResourceType(Resource component) {
-		return component.getResourceType().equals(ResourceTypeEnum.CVFC) ?
-				component.getInputs() : null;
-	}
-
 	// region - Component Update
 	/**
 	 *
@@ -1183,33 +1178,6 @@ public class ToscaOperationFacade {
 			}
 		}
 		return Either.left(instProperties);
-	}
-
-	public StorageOperationStatus deleteComponentInstanceInputsToComponent(Map<String, List<ComponentInstanceInput>> instProperties, String componentId) {
-
-		Either<GraphVertex, TitanOperationStatus> getVertexEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
-		if (getVertexEither.isRight()) {
-			log.debug("Couldn't fetch component with and unique id {}, error: {}", componentId, getVertexEither.right().value());
-			return DaoStatusConverter.convertTitanStatusToStorageStatus(getVertexEither.right().value());
-
-		}
-
-		GraphVertex vertex = getVertexEither.left().value();
-		Map<String, MapPropertiesDataDefinition> instPropsMap = new HashMap<>();
-		if (instProperties != null) {
-
-			MapPropertiesDataDefinition propertiesMap;
-			for (Entry<String, List<ComponentInstanceInput>> entry : instProperties.entrySet()) {
-				propertiesMap = new MapPropertiesDataDefinition();
-
-				propertiesMap.setMapToscaDataDefinition(entry.getValue().stream().map(e -> new PropertyDataDefinition(e)).collect(Collectors.toMap(e -> e.getName(), e -> e)));
-
-				instPropsMap.put(entry.getKey(), propertiesMap);
-			}
-		}
-
-		return topologyTemplateOperation.deleteInstInputsToComponent(vertex, instPropsMap);
-
 	}
 
 	public Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addComponentInstancePropertiesToComponent(Component containerComponent, Map<String, List<ComponentInstanceProperty>> instProperties, String componentId) {

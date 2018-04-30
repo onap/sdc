@@ -433,31 +433,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	}
 
 
-
-	private GroupInstanceData buildGroupInstanceData(GroupInstance groupInstance, String componentInstanceId, String logicalName) {
-		String ciOriginComponentUid = groupInstance.getGroupUid();
-
-		GroupInstanceDataDefinition dataDefinition = new GroupInstanceDataDefinition(groupInstance);
-
-		Long creationDate = groupInstance.getCreationTime();
-		if (creationDate == null) {
-			creationDate = System.currentTimeMillis();
-		}
-		dataDefinition.setCreationTime(creationDate);
-		dataDefinition.setModificationTime(creationDate);
-		// dataDefinition.setResourceUid(resourceUid);
-		// String replacmentlogicalName = logicalName.replaceAll(" ",
-		// "_").toLowerCase();
-		dataDefinition.setName(logicalName);
-		if (dataDefinition.getNormalizedName() == null)
-			dataDefinition.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(logicalName));
-		dataDefinition.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstanceId, ciOriginComponentUid, dataDefinition.getNormalizedName()));
-
-		GroupInstanceData resourceInstanceData = new GroupInstanceData(dataDefinition);
-
-		return resourceInstanceData;
-	}
-
 	/**
 	 * update value of attribute on resource instance
 	 * 

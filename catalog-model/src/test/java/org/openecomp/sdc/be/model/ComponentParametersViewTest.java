@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.model;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
