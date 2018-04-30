@@ -11,7 +11,7 @@ public class EntryPointTest {
 
 	
 	@Test
-	public void testTest() throws Exception {
+	public void testTest() {
 		EntryPoint testSubject;
 		String result;
 

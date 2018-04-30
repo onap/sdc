@@ -45,7 +45,7 @@ public class UpdateIsVnfMenu {
 				"Usage: updateIsVnfTrue <titan.properties> <systemServiceName1,systemServiceName2,...,systemServiceNameN>");
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		if (args == null || args.length < 1) {
 			usageAndExit();
