@@ -1297,37 +1297,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	}
 
-	private Either<Map<String, DataTypeDefinition>, TitanOperationStatus> findAllDataTypeDefinition(DataTypeDefinition dataTypeDefinition) {
-
-		Map<String, DataTypeDefinition> nameToDataTypeDef = new HashMap<>();
-
-		DataTypeDefinition typeDefinition = dataTypeDefinition;
-
-		while (typeDefinition != null) {
-
-			List<PropertyDefinition> properties = typeDefinition.getProperties();
-			if (properties != null) {
-				for (PropertyDefinition propertyDefinition : properties) {
-					String type = propertyDefinition.getType();
-					Either<DataTypeDefinition, TitanOperationStatus> dataTypeByName = this.getDataTypeUsingName(type);
-					if (dataTypeByName.isRight()) {
-						return Either.right(dataTypeByName.right().value());
-					} else {
-						DataTypeDefinition value = dataTypeByName.left().value();
-						if (false == nameToDataTypeDef.containsKey(type)) {
-							nameToDataTypeDef.put(type, value);
-						}
-					}
-
-				}
-			}
-
-			typeDefinition = typeDefinition.getDerivedFrom();
-		}
-
-		return Either.left(nameToDataTypeDef);
-	}
-
 	public Either<List<ComponentInstanceProperty>, TitanOperationStatus> getAllPropertiesOfResourceInstanceOnlyPropertyDefId(String resourceInstanceUid, NodeTypeEnum instanceNodeType) {
 
 		Either<TitanVertex, TitanOperationStatus> findResInstanceRes = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid);

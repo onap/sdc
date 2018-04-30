@@ -4816,11 +4816,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private void auditCreateResource(User user, Resource persistedResource, AuditingActionEnum actionEnum) {
-        ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
-        componentsUtils.auditResource(responseFormat, user, persistedResource, actionEnum);
-    }
-
     private Either<Resource, ResponseFormat> createResourceTransaction(Resource resource, User user,
                                                                        boolean isNormative, boolean inTransaction) {
         // validate resource name uniqueness

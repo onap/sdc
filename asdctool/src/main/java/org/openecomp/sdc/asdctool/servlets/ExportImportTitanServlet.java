@@ -161,8 +161,6 @@ public class ExportImportTitanServlet {
 			// graph.commit();
 			graph.tx().commit();
 
-			String exportedGraph = out.toString();
-
 			result = outputFile;
 
 		} catch (Exception e) {

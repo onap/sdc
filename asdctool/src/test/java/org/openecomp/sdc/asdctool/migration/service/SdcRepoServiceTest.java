@@ -25,12 +25,12 @@ public class SdcRepoServiceTest {
     private MigrationTasksDao migrationTasksDaoMock;
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void testGetLatestVersion_noMinorVersionForCurrentVersion() throws Exception {
+    public void testGetLatestVersion_noMinorVersionForCurrentVersion() {
         when(migrationTasksDaoMock.getLatestMinorVersion(DBVersion.CURRENT_VERSION.getMajor())).thenReturn(null);
         DBVersion latestDBVersion = testInstance.getLatestDBVersion();
         assertEquals(latestDBVersion.getMajor(), DBVersion.CURRENT_VERSION.getMajor());
@@ -38,7 +38,7 @@ public class SdcRepoServiceTest {
     }
 
     @Test
-    public void testGetLatestVersion() throws Exception {
+    public void testGetLatestVersion() {
         when(migrationTasksDaoMock.getLatestMinorVersion(DBVersion.CURRENT_VERSION.getMajor())).thenReturn(BigInteger.TEN);
         DBVersion latestDBVersion = testInstance.getLatestDBVersion();
         assertEquals(latestDBVersion.getMajor(), DBVersion.CURRENT_VERSION.getMajor());
@@ -46,7 +46,7 @@ public class SdcRepoServiceTest {
     }
 
     @Test
-    public void testCreateMigrationTask() throws Exception {
+    public void testCreateMigrationTask() {
         MigrationTaskEntry taskEntry =  new MigrationTaskEntry();
         testInstance.createMigrationTask(taskEntry);
         verify(migrationTasksDaoMock, new Times(1)).createMigrationTask(taskEntry);

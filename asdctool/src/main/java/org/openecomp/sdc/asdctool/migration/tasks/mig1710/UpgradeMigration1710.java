@@ -803,21 +803,6 @@ public class UpgradeMigration1710 implements PostMigration {
         return titanDao.getByCriteria(vertexType, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
     }
 
-    protected Either<List<String>, TitanOperationStatus> findResourcesPathRecursively(GraphVertex nodeTypeV, List<String> allCertifiedUids) {
-        Either<List<GraphVertex>, TitanOperationStatus> parentResourceRes = titanDao.getParentVertecies(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseMetadata);
-        if (parentResourceRes.isRight()) {
-            return Either.right(parentResourceRes.right().value());
-        }
-        List<GraphVertex> derivedResourcesUid = new ArrayList<>();
-        for (GraphVertex chV : parentResourceRes.left().value()) {
-            Optional<String> op = allCertifiedUids.stream().filter(id -> id.equals((String) chV.getJsonMetadataField(JsonPresentationFields.UNIQUE_ID))).findAny();
-            if (op.isPresent()) {
-                derivedResourcesUid.add(chV);
-            }
-        }
-        return null;
-    }
-
     private Either<List<GraphVertex>, StorageOperationStatus> getLatestByName(GraphPropertyEnum property, String nodeName) {
 
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
