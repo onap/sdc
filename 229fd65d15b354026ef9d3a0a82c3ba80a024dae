@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_39959f32",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-04-30T08:19:34Z",
+      "side": 1,
+      "message": "optional:\nplease move this to a java doc for this method",
+      "range": {
+        "startLine": 217,
+        "startChar": 12,
+        "endLine": 217,
+        "endChar": 47
+      },
+      "revId": "229fd65d15b354026ef9d3a0a82c3ba80a024dae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
