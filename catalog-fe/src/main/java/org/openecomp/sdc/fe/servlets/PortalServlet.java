@@ -37,7 +37,6 @@ import javax.ws.rs.core.Context;
 import org.openecomp.portalsdk.core.onboarding.util.CipherUtil;
 import org.openecomp.portalsdk.core.onboarding.util.PortalApiConstants;
 import org.openecomp.portalsdk.core.onboarding.util.PortalApiProperties;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.impl.MutableHttpServletRequest;
 import org.openecomp.sdc.fe.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
