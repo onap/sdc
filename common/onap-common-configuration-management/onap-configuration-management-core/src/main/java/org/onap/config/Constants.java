@@ -10,5 +10,5 @@ public class Constants {
   public static final String NAMESPACE_KEY = "_config.namespace";
   public static final String MODE_KEY = "_config.mergeStrategy";
   public static final String MBEAN_NAME = "org.openecomp.jmx:name=SystemConfig";
-  public final static String LOAD_ORDER_KEY="_config.loadOrder";
+  public static final String LOAD_ORDER_KEY="_config.loadOrder";
 }

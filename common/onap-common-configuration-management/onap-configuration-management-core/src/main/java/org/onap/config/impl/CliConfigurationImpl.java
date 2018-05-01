@@ -45,6 +45,9 @@ import javax.management.StandardMBean;
  */
 public final class CliConfigurationImpl extends ConfigurationImpl implements ConfigurationManager {
 
+  public static final String NODE_CONFIG_LOCATION = "node.config.location";
+  public static final String FETCHKEYSQL = "fetchkeysql";
+
   /**
    * Instantiates a new Cli configuration.
    *
@@ -57,10 +60,8 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
       mbs.unregisterMBean(name);
     }
     mbs.registerMBean(new StandardMBean(this, ConfigurationManager.class), name);
-    //mbs.registerMBean(getMBean(), name);
     mbs.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, this::handleNotification, null,
         null);
-    //mbs.addNotificationListener(name, this::handleNotification, null, null);
   }
 
 
@@ -180,9 +181,9 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                     + updateData.getNamespace());
             pc.setProperty(MODE_KEY, "OVERRIDE");
             pc.setProperty(updateData.getKey(), updateData.getValue());
-            if (System.getProperty("node.config.location") != null
-                && System.getProperty("node.config.location").trim().length() > 0) {
-              File file = new File(System.getProperty("node.config.location"),
+            if (System.getProperty(NODE_CONFIG_LOCATION) != null
+                && System.getProperty(NODE_CONFIG_LOCATION).trim().length() > 0) {
+              File file = new File(System.getProperty(NODE_CONFIG_LOCATION),
                   updateData.getTenant() + File.separator + updateData.getNamespace()
                       + File.separator + "config.properties");
               file.getParentFile().mkdirs();
@@ -259,10 +260,9 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
   public boolean updateConfigurationValues(String tenant, String namespace,
                                            Map configKeyValueStore) {
     boolean valueToReturn = true;
-    Iterator<String> keys = configKeyValueStore.keySet().iterator();
-    while (keys.hasNext()) {
+    for (String s : (Iterable<String>) configKeyValueStore.keySet()) {
       try {
-        String key = keys.next();
+        String key = s;
         ConfigurationUpdate updateData = new ConfigurationUpdate();
         updateData.tenant(tenant).namespace(namespace).key(key);
         updateData.value(configKeyValueStore.get(key).toString());
@@ -332,15 +332,15 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
           new String[]{tenant + KEY_ELEMENTS_DELEMETER + DEFAULT_NAMESPACE}));
       keyCollection.addAll(ConfigurationUtils.executeSelectSql(
           ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-              .getString("fetchkeysql"),
+              .getString(FETCHKEYSQL),
           new String[]{tenant + KEY_ELEMENTS_DELEMETER + namespace}));
       keyCollection.addAll(ConfigurationUtils.executeSelectSql(
           ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-              .getString("fetchkeysql"),
+              .getString(FETCHKEYSQL),
           new String[]{DEFAULT_TENANT + KEY_ELEMENTS_DELEMETER + namespace}));
       keyCollection.addAll(ConfigurationUtils.executeSelectSql(
           ConfigurationRepository.lookup().getConfigurationFor(DEFAULT_TENANT, DB_NAMESPACE)
-              .getString("fetchkeysql"),
+              .getString(FETCHKEYSQL),
           new String[]{DEFAULT_TENANT + KEY_ELEMENTS_DELEMETER + DEFAULT_NAMESPACE}));
     } catch (Exception exception) {
       exception.printStackTrace();

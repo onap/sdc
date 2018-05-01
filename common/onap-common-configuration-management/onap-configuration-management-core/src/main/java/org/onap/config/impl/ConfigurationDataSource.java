@@ -39,9 +39,8 @@ public final class ConfigurationDataSource {
    * Lookup basic data source.
    *
    * @return the basic data source
-   * @throws Exception the exception
    */
-  public static BasicDataSource lookup() throws Exception {
+  public static BasicDataSource lookup() {
     if (validCallers.contains(Thread.currentThread().getStackTrace()[2].getClassName())) {
       return configDBDatasource;
     } else {

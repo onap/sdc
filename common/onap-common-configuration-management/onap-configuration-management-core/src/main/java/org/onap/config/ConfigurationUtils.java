@@ -4,11 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.virtlink.commons.configuration2.jackson.JsonConfiguration;
 import net.sf.corn.cps.CPScanner;
 import net.sf.corn.cps.ResourceFilter;
-import org.apache.commons.configuration2.CompositeConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
 import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
@@ -18,10 +14,10 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.onap.config.api.Config;
 import org.onap.config.api.ConfigurationManager;
-import org.onap.config.impl.ConfigurationRepository;
-import org.onap.config.impl.YamlConfiguration;
 import org.onap.config.impl.AgglomerateConfiguration;
 import org.onap.config.impl.ConfigurationDataSource;
+import org.onap.config.impl.ConfigurationRepository;
+import org.onap.config.impl.YamlConfiguration;
 import org.onap.config.type.ConfigurationMode;
 import org.onap.config.type.ConfigurationType;
 
@@ -31,61 +27,40 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TransferQueue;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableMap.builder;
-import static org.onap.config.api.Hint.EXTERNAL_LOOKUP;
-import static org.onap.config.api.Hint.LATEST_LOOKUP;
-import static org.onap.config.api.Hint.NODE_SPECIFIC;
+import static java.lang.String.format;
+import static org.onap.config.api.Hint.*;
 
 /**
  * The type Configuration utils.
  */
 public class ConfigurationUtils {
 
+    public static final String CONFIG_REGEX_PREFIX = "CONFIG(-\\w*)?(-";
+
     private ConfigurationUtils() {
     }
 
-    private static ImmutableMap<Class,Class> arrayClassMap;
+    private static ImmutableMap<Class, Class> arrayClassMap;
 
     static {
-        ImmutableMap.Builder<Class,Class> builder = builder();
-        builder.put(Byte.class,Byte[].class).put(Short.class, Short[].class)
-                .put(Integer.class,Integer[].class).put(Long.class,Long[].class)
-                .put(Float.class,Float[].class).put(Double.class,Double[].class)
-                .put(Boolean.class,Boolean[].class).put(Character.class,Character[].class)
-                .put(String.class,String[].class);
+        ImmutableMap.Builder<Class, Class> builder = builder();
+        builder.put(Byte.class, Byte[].class).put(Short.class, Short[].class).put(Integer.class, Integer[].class).put(Long.class, Long[].class).put(
+                   Float.class, Float[].class).put(Double.class, Double[].class).put(Boolean.class, Boolean[].class).put(Character.class,
+                   Character[].class).put(String.class, String[].class);
         arrayClassMap = builder.build();
     }
 
@@ -95,7 +70,7 @@ public class ConfigurationUtils {
      * @return the thread factory
      */
     public static ThreadFactory getThreadFactory() {
-        return (r1) -> {
+        return r1 -> {
             Thread thread = Executors.privilegedThreadFactory().newThread(r1);
             thread.setDaemon(true);
             return thread;
@@ -105,9 +80,12 @@ public class ConfigurationUtils {
     /**
      * Gets all files.
      *
-     * @param file          the file
-     * @param recursive     the recursive
-     * @param onlyDirectory the only directory
+     * @param file
+     *            the file
+     * @param recursive
+     *            the recursive
+     * @param onlyDirectory
+     *            the only directory
      * @return the all files
      */
     public static Collection<File> getAllFiles(File file, boolean recursive, boolean onlyDirectory) {
@@ -131,17 +109,20 @@ public class ConfigurationUtils {
     /**
      * Gets comma saperated list.
      *
-     * @param list the list
+     * @param list
+     *            the list
      * @return the comma separated list
      */
     public static String getCommaSeparatedList(List list) {
-        return ((Stream<String>) list.stream().filter(o -> o != null && !o.toString().trim().isEmpty()).map(o -> o.toString().trim())).collect(Collectors.joining(","));
+        return (String) (list.stream().filter(o -> o != null && !o.toString().trim().isEmpty()).map(o -> o.toString().trim())).collect(
+                   Collectors.joining(","));
     }
 
     /**
      * Gets comma saperated list.
      *
-     * @param list the list
+     * @param list
+     *            the list
      * @return the comma saperated list
      */
     public static String getCommaSeparatedList(String[] list) {
@@ -151,30 +132,30 @@ public class ConfigurationUtils {
     /**
      * Gets config type.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return the config type
      */
     public static ConfigurationType getConfigType(URL url) {
-        return Enum.valueOf(ConfigurationType.class,
-                url.getFile().substring(url.getFile().lastIndexOf('.') + 1).toUpperCase());
+        return Enum.valueOf(ConfigurationType.class, url.getFile().substring(url.getFile().lastIndexOf('.') + 1).toUpperCase());
     }
 
     /**
      * Gets config type.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the config type
      */
     public static ConfigurationType getConfigType(File file) {
-        return Enum.valueOf(ConfigurationType.class,
-                file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf('.') + 1)
-                        .toUpperCase());
+        return Enum.valueOf(ConfigurationType.class, file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf('.') + 1).toUpperCase());
     }
 
     /**
      * Is config boolean.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return the boolean
      */
     public static boolean isConfig(URL url) {
@@ -184,7 +165,8 @@ public class ConfigurationUtils {
     /**
      * Is config boolean.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the boolean
      */
     public static boolean isConfig(File file) {
@@ -194,26 +176,26 @@ public class ConfigurationUtils {
     /**
      * Is config boolean.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the boolean
      */
     public static boolean isConfig(String file) {
         file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
         file = file.substring(file.lastIndexOf('/') + 1);
         return file.matches(
-                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE
-                        + "|" + ConfigurationMode.UNION + ")){0,1}" + "\\.("
-                        + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|"
-                        + ConfigurationType.JSON.name() + "|" + ConfigurationType.YAML.name() + ")$")
-                || file.matches("CONFIG(.)*\\.(" + ConfigurationType.PROPERTIES.name() + "|"
-                + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON.name() + "|"
-                + ConfigurationType.YAML.name() + ")$");
+                   CONFIG_REGEX_PREFIX + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|" + ConfigurationMode.UNION + "))?"
+                              + "\\.(" + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON
+                              .name() + "|" + ConfigurationType.YAML.name() + ")$") || file.matches(
+                   "CONFIG(.)*\\.(" + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON.name()
+                              + "|" + ConfigurationType.YAML.name() + ")$");
     }
 
     /**
      * Gets namespace.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return the namespace
      */
     public static String getNamespace(URL url) {
@@ -227,7 +209,8 @@ public class ConfigurationUtils {
     /**
      * Gets namespace.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the namespace
      */
     public static String getNamespace(File file) {
@@ -239,33 +222,30 @@ public class ConfigurationUtils {
     }
 
     private static String getNamespace(Configuration config) {
-        return config.getString(Constants.NAMESPACE_KEY) == null ? null
-                : config.getString(Constants.NAMESPACE_KEY).toUpperCase();
+        return config.getString(Constants.NAMESPACE_KEY) == null ? null : config.getString(Constants.NAMESPACE_KEY).toUpperCase();
     }
 
     /**
      * Gets namespace.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the namespace
      */
     public static String getNamespace(String file) {
         file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
         file = file.substring(file.lastIndexOf('/') + 1);
         Pattern pattern = Pattern.compile(
-                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE
-                        + "|" + ConfigurationMode.UNION + ")){0,1}" + "\\.("
-                        + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|"
-                        + ConfigurationType.JSON.name() + "|" + ConfigurationType.YAML.name() + ")$");
+                   CONFIG_REGEX_PREFIX + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|" + ConfigurationMode.UNION + "))?"
+                              + "\\.(" + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON
+                              .name() + "|" + ConfigurationType.YAML.name() + ")$");
         Matcher matcher = pattern.matcher(file);
         boolean b1 = matcher.matches();
         if (b1) {
             if (matcher.group(1) != null) {
                 String moduleName = matcher.group(1).substring(1);
-                return moduleName.equalsIgnoreCase(ConfigurationMode.OVERRIDE.name())
-                        || moduleName.equalsIgnoreCase(ConfigurationMode.UNION.name())
-                        || moduleName.equalsIgnoreCase(ConfigurationMode.MERGE.name())
-                        ? Constants.DEFAULT_NAMESPACE : moduleName;
+                return moduleName.equalsIgnoreCase(ConfigurationMode.OVERRIDE.name()) || moduleName.equalsIgnoreCase(ConfigurationMode.UNION.name())
+                           || moduleName.equalsIgnoreCase(ConfigurationMode.MERGE.name()) ? Constants.DEFAULT_NAMESPACE : moduleName;
             } else {
                 return Constants.DEFAULT_NAMESPACE;
             }
@@ -279,7 +259,8 @@ public class ConfigurationUtils {
     /**
      * Gets merge strategy.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(URL url) {
@@ -295,14 +276,14 @@ public class ConfigurationUtils {
     }
 
     private static String getMergeStrategy(Configuration config) {
-        return config.getString(Constants.MODE_KEY) == null ? null
-                : config.getString(Constants.MODE_KEY).toUpperCase();
+        return config.getString(Constants.MODE_KEY) == null ? null : config.getString(Constants.MODE_KEY).toUpperCase();
     }
 
     /**
      * Gets merge strategy.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(File file) {
@@ -320,17 +301,17 @@ public class ConfigurationUtils {
     /**
      * Gets merge strategy.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(String file) {
         file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
         file = file.substring(file.lastIndexOf('/') + 1);
         Pattern pattern = Pattern.compile(
-                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE
-                        + "|" + ConfigurationMode.UNION + ")){0,1}" + "\\.("
-                        + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|"
-                        + ConfigurationType.JSON.name() + "|" + ConfigurationType.YAML.name() + ")$");
+                   CONFIG_REGEX_PREFIX + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|" + ConfigurationMode.UNION + "))?"
+                              + "\\.(" + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON
+                              .name() + "|" + ConfigurationType.YAML.name() + ")$");
         Matcher matcher = pattern.matcher(file);
         boolean b1 = matcher.matches();
         if (b1) {
@@ -353,7 +334,8 @@ public class ConfigurationUtils {
     /**
      * Gets configuration.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return the configuration
      */
     public static FileBasedConfiguration getConfiguration(URL url) {
@@ -374,7 +356,7 @@ public class ConfigurationUtils {
                     builder = new Configurations().fileBased(YamlConfiguration.class, url);
                     break;
                 default:
-                    throw new ConfigurationException("Configuration type not supported:"+ configType);
+                    throw new ConfigurationException(format("Configuration type not supported:%s", configType));
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
@@ -385,7 +367,8 @@ public class ConfigurationUtils {
     /**
      * Gets configuration.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the configuration
      */
     public static FileBasedConfiguration getConfiguration(File file) {
@@ -406,7 +389,7 @@ public class ConfigurationUtils {
                     builder = new Configurations().fileBased(YamlConfiguration.class, file);
                     break;
                 default:
-                    throw new ConfigurationException("Configuration type not supported:"+ configType);
+                    throw new ConfigurationException(format("Configuration type not supported:%s", configType));
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
@@ -417,7 +400,8 @@ public class ConfigurationUtils {
     /**
      * Gets collection generic type.
      *
-     * @param field the field
+     * @param field
+     *            the field
      * @return the collection generic type
      */
     public static Class getCollectionGenericType(Field field) {
@@ -433,19 +417,18 @@ public class ConfigurationUtils {
                 if (isWrapperClass(clzz)) {
                     return clzz;
                 } else {
-                    throw new RuntimeException("Collection of type " + clzz.getName() + " not supported.");
+                    throw new RuntimeException(format("Collection of type %s not supported.", clzz.getName()));
                 }
             }
         }
         return String[].class;
     }
 
-
-
     /**
      * Gets array class.
      *
-     * @param clazz the clazz
+     * @param clazz
+     *            the clazz
      * @return the array class
      */
     public static Class getArrayClass(Class clazz) {
@@ -464,15 +447,16 @@ public class ConfigurationUtils {
     /**
      * Execute ddlsql boolean.
      *
-     * @param sql the sql
+     * @param sql
+     *            the sql
      * @return the boolean
-     * @throws Exception the exception
+     * @throws Exception
+     *            the exception
      */
     public static boolean executeDdlSql(String sql) throws Exception {
         DataSource datasource = ConfigurationDataSource.lookup();
         if (datasource == null) {
-            System.err.println("DB configuration not found. Configuration management will be using "
-                    + "in-memory persistence.");
+            System.err.println("DB configuration not found. Configuration management will be using " + "in-memory persistence.");
             return false;
         }
         try (Connection con = datasource.getConnection(); Statement stmt = con.createStatement()) {
@@ -487,88 +471,73 @@ public class ConfigurationUtils {
     /**
      * Gets configuration builder.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return the configuration builder
      */
     public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(URL url) {
         ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder = null;
         ConfigurationType configType = ConfigurationUtils.getConfigType(url);
+        builder = getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(configType);
+        builder.configure(new Parameters().fileBased().setURL(url).setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+        return builder;
+    }
+
+    private static ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(
+               ConfigurationType configType) {
+        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder;
         switch (configType) {
             case PROPERTIES:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        PropertiesConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
                 break;
             case XML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        XMLConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(XMLConfiguration.class);
                 break;
             case JSON:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        JsonConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(JsonConfiguration.class);
                 break;
             case YAML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        YamlConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(YamlConfiguration.class);
                 break;
             default:
-                throw new IllegalArgumentException("Configuration type not supported:"+ configType);
+                throw new IllegalArgumentException("Configuration type not supported:" + configType);
         }
-        builder.configure(new Parameters().fileBased().setURL(url)
-                .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
         return builder;
     }
 
     /**
      * Gets configuration builder.
      *
-     * @param file     the file
-     * @param autoSave the auto save
+     * @param file
+     *            the file
+     * @param autoSave
+     *            the auto save
      * @return the configuration builder
      */
-    public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(File file,
-                                                                                            boolean autoSave) {
-        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder = null;
+    public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(File file, boolean autoSave) {
         ConfigurationType configType = ConfigurationUtils.getConfigType(file);
-        switch (configType) {
-            case PROPERTIES:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        PropertiesConfiguration.class);
-                break;
-            case XML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        XMLConfiguration.class);
-                break;
-            case JSON:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        JsonConfiguration.class);
-                break;
-            case YAML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        YamlConfiguration.class);
-                break;
-            default:
-                throw new IllegalArgumentException("Configuration type not supported:"+ configType);
-        }
-        builder.configure(new Parameters().fileBased().setFile(file)
-                .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder = getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(
+                   configType);
+        builder.configure(new Parameters().fileBased().setFile(file).setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
         builder.setAutoSave(autoSave);
         return builder;
     }
 
-
     /**
      * Execute select sql collection.
      *
-     * @param sql    the sql
-     * @param params the params
+     * @param sql
+     *            the sql
+     * @param params
+     *            the params
      * @return the collection
-     * @throws Exception the exception
+     * @throws Exception
+     *            the exception
      */
     public static Collection<String> executeSelectSql(String sql, String[] params) throws Exception {
         Collection<String> coll = new ArrayList<>();
         DataSource datasource = ConfigurationDataSource.lookup();
-        try (Connection con = datasource.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+        try (Connection con = datasource.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
                     stmt.setString(i + 1, params[i]);
@@ -583,26 +552,25 @@ public class ConfigurationUtils {
             }
 
         } catch (Exception exception) {
-            //exception.printStackTrace();
             return null;
         }
-
         return coll;
     }
 
     /**
      * Execute insert sql boolean.
      *
-     * @param sql    the sql
-     * @param params the params
+     * @param sql
+     *            the sql
+     * @param params
+     *            the params
      * @return the boolean
-     * @throws Exception the exception
+     * @throws Exception
+     *            the exception
      */
     public static boolean executeInsertSql(String sql, Object[] params) throws Exception {
-        Collection<String> coll = new ArrayList<>();
         DataSource datasource = ConfigurationDataSource.lookup();
-        try (Connection con = datasource.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
+        try (Connection con = datasource.getConnection(); PreparedStatement stmt = con.prepareStatement(sql)) {
             if (params != null) {
                 int counter = 0;
                 for (Object obj : params) {
@@ -614,10 +582,10 @@ public class ConfigurationUtils {
                             stmt.setString(++counter, obj.toString());
                             break;
                         case "java.lang.Integer":
-                            stmt.setInt(++counter, ((Integer) obj).intValue());
+                            stmt.setInt(++counter, (Integer) obj);
                             break;
                         case "java.lang.Long":
-                            stmt.setLong(++counter, ((Long) obj).longValue());
+                            stmt.setLong(++counter, (Long) obj);
                             break;
                         default:
                             stmt.setString(++counter, obj.toString());
@@ -636,24 +604,26 @@ public class ConfigurationUtils {
     /**
      * Read t.
      *
-     * @param <T>       the type parameter
-     * @param config    the config
-     * @param clazz     the clazz
-     * @param keyPrefix the key prefix
+     * @param <T>
+     *            the type parameter
+     * @param config
+     *            the config
+     * @param clazz
+     *            the clazz
+     * @param keyPrefix
+     *            the key prefix
      * @return the t
-     * @throws Exception the exception
+     * @throws Exception
+     *            the exception
      */
-    public static <T> T read(Configuration config, Class<T> clazz, String keyPrefix)
-            throws Exception {
-        Config confAnnot =
-                clazz.getAnnotation(Config.class);
+    public static <T> T read(Configuration config, Class<T> clazz, String keyPrefix) throws Exception {
+        Config confAnnot = clazz.getAnnotation(Config.class);
         if (confAnnot != null) {
             keyPrefix += (confAnnot.key() + ".");
         }
         T objToReturn = clazz.newInstance();
         for (Field field : clazz.getDeclaredFields()) {
-            Config fieldConfAnnot =
-                    field.getAnnotation(Config.class);
+            Config fieldConfAnnot = field.getAnnotation(Config.class);
             if (fieldConfAnnot != null) {
                 field.setAccessible(true);
                 field.set(objToReturn, config.getProperty(keyPrefix + fieldConfAnnot.key()));
@@ -667,35 +637,30 @@ public class ConfigurationUtils {
     /**
      * Gets db configuration builder.
      *
-     * @param configName the config name
+     * @param configName
+     *            the config name
      * @return the db configuration builder
-     * @throws Exception the exception
+     * @throws Exception
+     *            the exception
      */
-    public static BasicConfigurationBuilder<AgglomerateConfiguration> getDbConfigurationBuilder(
-            String configName) throws Exception {
-        Configuration dbConfig = ConfigurationRepository.lookup()
-                .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE);
-        BasicConfigurationBuilder<AgglomerateConfiguration> builder =
-                new BasicConfigurationBuilder<AgglomerateConfiguration>(AgglomerateConfiguration.class);
-        builder.configure(
-                new Parameters().database()
-                        .setDataSource(ConfigurationDataSource.lookup())
-                        .setTable(dbConfig.getString("config.Table"))
-                        .setKeyColumn(dbConfig.getString("configKey"))
-                        .setValueColumn(dbConfig.getString("configValue"))
-                        .setConfigurationNameColumn(dbConfig.getString("configNameColumn"))
-                        .setConfigurationName(configName)
-                        .setAutoCommit(true)
-        );
+    public static BasicConfigurationBuilder<AgglomerateConfiguration> getDbConfigurationBuilder(String configName) throws Exception {
+        Configuration dbConfig = ConfigurationRepository.lookup().getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE);
+        BasicConfigurationBuilder<AgglomerateConfiguration> builder = new BasicConfigurationBuilder<>(AgglomerateConfiguration.class);
+        builder.configure(new Parameters().database().setDataSource(ConfigurationDataSource.lookup()).setTable(dbConfig.getString("config.Table"))
+                   .setKeyColumn(dbConfig.getString("configKey")).setValueColumn(dbConfig.getString("configValue")).setConfigurationNameColumn(
+                              dbConfig.getString("configNameColumn")).setConfigurationName(configName).setAutoCommit(true));
         return builder;
     }
 
     /**
      * Gets property.
      *
-     * @param config          the config
-     * @param key             the key
-     * @param processingHints the processing hints
+     * @param config
+     *            the config
+     * @param key
+     *            the key
+     * @param processingHints
+     *            the processing hints
      * @return the property
      */
     public static Object getProperty(Configuration config, String key, int processingHints) {
@@ -722,8 +687,10 @@ public class ConfigurationUtils {
     /**
      * Gets primitive array.
      *
-     * @param collection the collection
-     * @param clazz      the clazz
+     * @param collection
+     *            the collection
+     * @param clazz
+     *            the clazz
      * @return the primitive array
      */
     public static Object getPrimitiveArray(Collection collection, Class clazz) {
@@ -783,29 +750,29 @@ public class ConfigurationUtils {
             }
             return array;
         }
-        Object obj = null;
-        return obj;
+        return null;
     }
 
     /**
      * Is wrapper class boolean.
      *
-     * @param clazz the clazz
+     * @param clazz
+     *            the clazz
      * @return the boolean
      */
     public static boolean isWrapperClass(Class clazz) {
-        return clazz == String.class || clazz == Boolean.class || clazz == Character.class
-                || Number.class.isAssignableFrom(clazz);
+        return clazz == String.class || clazz == Boolean.class || clazz == Character.class || Number.class.isAssignableFrom(clazz);
     }
 
     /**
      * Gets collection string.
      *
-     * @param input the input
+     * @param input
+     *            the input
      * @return the collection string
      */
     public static String getCollectionString(String input) {
-        Pattern pattern = Pattern.compile("^\\[(.*)\\]$");
+        Pattern pattern = Pattern.compile("^\\[(.*)]$");
         Matcher matcher = pattern.matcher(input);
         if (matcher.matches()) {
             input = matcher.group(1);
@@ -816,11 +783,12 @@ public class ConfigurationUtils {
     /**
      * Is collection boolean.
      *
-     * @param input the input
+     * @param input
+     *            the input
      * @return the boolean
      */
     public static boolean isCollection(String input) {
-        Pattern pattern = Pattern.compile("^\\[(.*)\\]$");
+        Pattern pattern = Pattern.compile("^\\[(.*)]$");
         Matcher matcher = pattern.matcher(input);
         return matcher.matches();
     }
@@ -828,29 +796,32 @@ public class ConfigurationUtils {
     /**
      * Process variables if present string.
      *
-     * @param tenant    the tenant
-     * @param namespace the namespace
-     * @param data      the data
+     * @param tenant
+     *            the tenant
+     * @param namespace
+     *            the namespace
+     * @param data
+     *            the data
      * @return the string
      */
     public static String processVariablesIfPresent(String tenant, String namespace, String data) {
-        Pattern pattern = Pattern.compile("^.*\\$\\{(.*)\\}.*");
+        Pattern pattern = Pattern.compile("^.*\\$\\{(.*)}.*");
         Matcher matcher = pattern.matcher(data);
         if (matcher.matches()) {
             String key = matcher.group(1);
             if (key.toUpperCase().startsWith("ENV:")) {
                 String envValue = System.getenv(key.substring(4));
-                return processVariablesIfPresent(tenant, namespace, data.replaceAll("\\$\\{" + key + "\\}",
-                        envValue == null ? "" : envValue.replace("\\", "\\\\")));
+                return processVariablesIfPresent(tenant, namespace,
+                           data.replaceAll("\\$\\{" + key + "}", envValue == null ? "" : envValue.replace("\\", "\\\\")));
             } else if (key.toUpperCase().startsWith("SYS:")) {
                 String sysValue = System.getProperty(key.substring(4));
-                return processVariablesIfPresent(tenant, namespace, data.replaceAll("\\$\\{" + key + "\\}",
-                        sysValue == null ? "" : sysValue.replace("\\", "\\\\")));
+                return processVariablesIfPresent(tenant, namespace,
+                           data.replaceAll("\\$\\{" + key + "}", sysValue == null ? "" : sysValue.replace("\\", "\\\\")));
             } else {
                 String propertyValue = ConfigurationUtils.getCollectionString(
-                        ConfigurationManager.lookup().getAsStringValues(tenant, namespace, key).toString());
-                return processVariablesIfPresent(tenant, namespace, data.replaceAll("\\$\\{" + key + "\\}",
-                        propertyValue == null ? "" : propertyValue.replace("\\", "\\\\")));
+                           ConfigurationManager.lookup().getAsStringValues(tenant, namespace, key).toString());
+                return processVariablesIfPresent(tenant, namespace,
+                           data.replaceAll("\\$\\{" + key + "}", propertyValue == null ? "" : propertyValue.replace("\\", "\\\\")));
             }
         } else {
             return data;
@@ -860,13 +831,14 @@ public class ConfigurationUtils {
     /**
      * Gets file contents.
      *
-     * @param path the path
+     * @param path
+     *            the path
      * @return the file contents
      */
     public static String getFileContents(String path) {
         try {
             if (path != null) {
-                return IOUtils.toString(new URL(path));
+                return IOUtils.toString(new URL(path), Charset.defaultCharset());
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -877,7 +849,8 @@ public class ConfigurationUtils {
     /**
      * Gets file contents.
      *
-     * @param path the path
+     * @param path
+     *            the path
      * @return the file contents
      */
     public static String getFileContents(Path path) {
@@ -894,7 +867,8 @@ public class ConfigurationUtils {
     /**
      * Gets concrete collection.
      *
-     * @param clazz the clazz
+     * @param clazz
+     *            the clazz
      * @return the concrete collection
      */
     public static Collection getConcreteCollection(Class clazz) {
@@ -922,7 +896,8 @@ public class ConfigurationUtils {
     /**
      * Gets default for.
      *
-     * @param clazz the clazz
+     * @param clazz
+     *            the clazz
      * @return the default for
      */
     public static Object getDefaultFor(Class clazz) {
@@ -941,13 +916,14 @@ public class ConfigurationUtils {
         } else if (boolean.class == clazz) {
             return Boolean.FALSE;
         }
-        return new Character((char) 0);
+        return (char) 0;
     }
 
     /**
      * Gets compatible collection for abstract def.
      *
-     * @param clazz the clazz
+     * @param clazz
+     *            the clazz
      * @return the compatible collection for abstract def
      */
     public static Collection getCompatibleCollectionForAbstractDef(Class clazz) {
@@ -978,7 +954,8 @@ public class ConfigurationUtils {
     /**
      * Gets configuration repository key.
      *
-     * @param array the array
+     * @param array
+     *            the array
      * @return the configuration repository key
      */
     public static String getConfigurationRepositoryKey(String[] array) {
@@ -994,29 +971,30 @@ public class ConfigurationUtils {
     /**
      * Gets configuration repository key.
      *
-     * @param file the file
+     * @param file
+     *            the file
      * @return the configuration repository key
      */
     public static String getConfigurationRepositoryKey(File file) {
-        return getConfigurationRepositoryKey(
-                ConfigurationUtils.getNamespace(file).split(Constants.TENANT_NAMESPACE_SAPERATOR));
+        return getConfigurationRepositoryKey(ConfigurationUtils.getNamespace(file).split(Constants.TENANT_NAMESPACE_SAPERATOR));
     }
 
     /**
      * Gets configuration repository key.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return the configuration repository key
      */
     public static String getConfigurationRepositoryKey(URL url) {
-        return getConfigurationRepositoryKey(
-                ConfigurationUtils.getNamespace(url).split(Constants.TENANT_NAMESPACE_SAPERATOR));
+        return getConfigurationRepositoryKey(ConfigurationUtils.getNamespace(url).split(Constants.TENANT_NAMESPACE_SAPERATOR));
     }
 
     /**
      * To map linked hash map.
      *
-     * @param config the config
+     * @param config
+     *            the config
      * @return the linked hash map
      */
     public static LinkedHashMap toMap(Configuration config) {
@@ -1024,8 +1002,7 @@ public class ConfigurationUtils {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         while (iterator.hasNext()) {
             String key = iterator.next();
-            if (!(key.equals(Constants.MODE_KEY) || key.equals(Constants.NAMESPACE_KEY)
-                    || key.equals(Constants.LOAD_ORDER_KEY))) {
+            if (!(key.equals(Constants.MODE_KEY) || key.equals(Constants.NAMESPACE_KEY) || key.equals(Constants.LOAD_ORDER_KEY))) {
                 map.put(key, config.getProperty(key).toString());
             }
         }
@@ -1036,8 +1013,10 @@ public class ConfigurationUtils {
     /**
      * Diff map.
      *
-     * @param orig   the orig
-     * @param latest the latest
+     * @param orig
+     *            the orig
+     * @param latest
+     *            the latest
      * @return the map
      */
     public static Map diff(LinkedHashMap orig, LinkedHashMap latest) {
@@ -1063,25 +1042,28 @@ public class ConfigurationUtils {
     /**
      * Is array boolean.
      *
-     * @param tenant          the tenant
-     * @param namespace       the namespace
-     * @param key             the key
-     * @param processingHints the processing hints
+     * @param tenant
+     *            the tenant
+     * @param namespace
+     *            the namespace
+     * @param key
+     *            the key
+     * @param processingHints
+     *            the processing hints
      * @return the boolean
-     * @throws Exception the exception
+     * @throws Exception
+     *            the exception
      */
-    public static boolean isArray(String tenant, String namespace, String key, int processingHints)
-            throws Exception {
-        Object obj = ConfigurationUtils
-                .getProperty(ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key,
-                        processingHints);
-        return (obj == null) ? false : ConfigurationUtils.isCollection(obj.toString());
+    public static boolean isArray(String tenant, String namespace, String key, int processingHints) throws Exception {
+        Object obj = ConfigurationUtils.getProperty(ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
+        return (obj != null) && ConfigurationUtils.isCollection(obj.toString());
     }
 
     /**
      * Is direct lookup boolean.
      *
-     * @param hints the hints
+     * @param hints
+     *            the hints
      * @return the boolean
      */
     public static boolean isDirectLookup(int hints) {
@@ -1091,7 +1073,8 @@ public class ConfigurationUtils {
     /**
      * Is external lookup boolean.
      *
-     * @param hints the hints
+     * @param hints
+     *            the hints
      * @return the boolean
      */
     public static boolean isExternalLookup(int hints) {
@@ -1101,7 +1084,8 @@ public class ConfigurationUtils {
     /**
      * Is node specific boolean.
      *
-     * @param hints the hints
+     * @param hints
+     *            the hints
      * @return the boolean
      */
     public static boolean isNodeSpecific(int hints) {
@@ -1128,17 +1112,6 @@ public class ConfigurationUtils {
                 return ((Object[]) obj).length == 0;
             }
         }
-
         return false;
-    }
-
-    /**
-     * Checks if value is blank
-     *
-     * @param value
-     * @return
-     */
-    public static boolean isBlank(String value) {
-        return value == null || value.trim().length() == 0;
     }
 }

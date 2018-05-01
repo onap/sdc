@@ -6,6 +6,8 @@ import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.commons.configuration2.tree.OverrideCombiner;
 import org.apache.commons.configuration2.tree.UnionCombiner;
 import static org.onap.config.Constants.LOAD_ORDER_KEY;
+
+import org.apache.commons.lang3.StringUtils;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.type.ConfigurationMode;
 
@@ -148,10 +150,10 @@ public final class AggregateConfiguration {
   private int sortForOverride(Configuration conf1, Configuration conf2){
     String order1 = conf1.getString(LOAD_ORDER_KEY);
     String order2 = conf2.getString(LOAD_ORDER_KEY);
-    if (ConfigurationUtils.isBlank(order1) || !order1.trim().matches("\\d+")){
+    if (StringUtils.isEmpty(order1) || !order1.trim().matches("\\d+")){
       order1 = "0";
     }
-    if (ConfigurationUtils.isBlank(order2) || !order2.trim().matches("\\d+")){
+    if (StringUtils.isEmpty(order2) || !order2.trim().matches("\\d+")){
       order2 = "0";
     }
     return Integer.parseInt(order2.trim())-Integer.parseInt(order1.trim());
@@ -160,10 +162,10 @@ public final class AggregateConfiguration {
   private int sortForMerge(Configuration conf1, Configuration conf2){
     String order1 = conf1.getString(LOAD_ORDER_KEY);
     String order2 = conf2.getString(LOAD_ORDER_KEY);
-    if (ConfigurationUtils.isBlank(order1) || !order1.trim().matches("\\d+")){
+    if (StringUtils.isEmpty(order1) || !order1.trim().matches("\\d+")){
       order1 = "0";
     }
-    if (ConfigurationUtils.isBlank(order2) || !order2.trim().matches("\\d+")){
+    if (StringUtils.isEmpty(order2) || !order2.trim().matches("\\d+")){
       order2 = "0";
     }
     return Integer.parseInt(order1.trim())-Integer.parseInt(order2.trim());
