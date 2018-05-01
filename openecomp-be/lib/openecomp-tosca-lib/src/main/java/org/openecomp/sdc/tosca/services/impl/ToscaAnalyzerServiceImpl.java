@@ -39,6 +39,7 @@ import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.errors.ToscaElementTypeNotFoundErrorBuilder;
+import org.openecomp.sdc.tosca.errors.ToscaFileNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidEntryNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstitutionServiceTemplateErrorBuilder;
@@ -604,6 +605,10 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         filesScanned.add(fileName);
       }
       ServiceTemplate template = toscaModel.getServiceTemplates().get(fileName);
+      if (Objects.isNull(template)) {
+        throw new CoreException(
+            new ToscaFileNotFoundErrorBuilder(fileName).build());
+      }
       found = scanAnFlatEntity(elementType, typeId, entity, template, toscaModel,
           filesScanned, filesScanned.size());
     }

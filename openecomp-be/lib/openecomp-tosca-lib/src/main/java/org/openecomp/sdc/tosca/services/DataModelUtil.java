@@ -820,6 +820,9 @@ public class DataModelUtil {
         matchRequirementAssignmentList.add(requirementAssignment);
       }
     }
+    if(CollectionUtils.isEmpty(matchRequirementAssignmentList)){
+      return Optional.empty();
+    }
     return Optional.of(matchRequirementAssignmentList);
   }
 
