@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ce6f0a91",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-license-lib/openecomp-sdc-vendor-license-core/src/main/java/org/openecomp/sdc/vendorlicense/dao/impl/zusammen/VendorLicenseModelDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-01T06:31:57Z",
+      "side": 1,
+      "message": "shouldn\u0027t you throw UnsupportsOperationException ?",
+      "range": {
+        "startLine": 137,
+        "startChar": 4,
+        "endLine": 137,
+        "endChar": 58
+      },
+      "revId": "9eea50495f341de70e17a99cc74ef893c1613778",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
