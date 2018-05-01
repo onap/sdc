@@ -17,6 +17,7 @@ import React from 'react';
 import DetailsCatalogView from '../DetailsCatalogView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { tabsMapping } from 'sdc-app/onboarding/onboard/OnboardConstants.js';
+import { tabsMapping as catalogTabsMappping } from '../onboardingCatalog/OnboardingCatalogConstants.js';
 
 const WorkspaceView = props => {
     let {
@@ -27,6 +28,7 @@ const WorkspaceView = props => {
         onSelectSoftwareProduct,
         searchValue,
         onMigrate,
+        catalogActiveTab,
         filteredItems: { vspList, vlmList }
     } = props;
 
@@ -39,8 +41,16 @@ const WorkspaceView = props => {
                 VLMList={vlmList}
                 VSPList={vspList}
                 users={users}
-                onAddVLM={onAddLicenseModelClick}
-                onAddVSP={onAddSoftwareProductClick}
+                onAddVLM={
+                    catalogActiveTab === catalogTabsMappping.ACTIVE
+                        ? onAddLicenseModelClick
+                        : false
+                }
+                onAddVSP={
+                    catalogActiveTab === catalogTabsMappping.ACTIVE
+                        ? onAddSoftwareProductClick
+                        : false
+                }
                 onSelectVLM={(item, users) =>
                     onSelectLicenseModel(item, users, tabsMapping.WORKSPACE)
                 }
