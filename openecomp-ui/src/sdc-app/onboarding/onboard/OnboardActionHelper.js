@@ -21,10 +21,7 @@ import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPa
 import { itemTypes } from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
 import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsActionHelper.js';
 import { actionTypes as filterActionTypes } from './filter/FilterConstants.js';
-import {
-    versionStatus,
-    itemStatus
-} from 'sdc-app/common/helpers/ItemsHelperConstants.js';
+import { versionStatus } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 
 const OnboardActionHelper = {
     resetOnboardStore(dispatch) {
@@ -43,8 +40,7 @@ const OnboardActionHelper = {
             deltaData:
                 activeTab === tabsMapping.WORKSPACE
                     ? {
-                          versionStatus: versionStatus.DRAFT,
-                          itemStatus: itemStatus.ACTIVE
+                          versionStatus: versionStatus.DRAFT
                       }
                     : {
                           versionStatus: versionStatus.CERTIFIED

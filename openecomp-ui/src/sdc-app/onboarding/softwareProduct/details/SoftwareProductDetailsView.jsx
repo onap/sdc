@@ -98,6 +98,7 @@ class GeneralSection extends React.Component {
                             <Input
                                 data-test-id="vsp-name"
                                 label={i18n('Name')}
+                                disabled
                                 type="text"
                                 value={this.props.name}
                                 isRequired={true}
