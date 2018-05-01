@@ -48,7 +48,7 @@ node_types:
         - 0
         - UNBOUNDED
     interfaces:
-      standard:
+      Standard:
         type: tosca.interfaces.node.lifecycle.Standard
 
   tosca.nodes.ObjectStorage:

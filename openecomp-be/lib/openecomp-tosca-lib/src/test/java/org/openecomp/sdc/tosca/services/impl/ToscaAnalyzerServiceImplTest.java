@@ -127,6 +127,26 @@ public class ToscaAnalyzerServiceImplTest {
   }
 
   @Test
+  public void testGetFlatEntityFileNotFound() throws Exception {
+    thrown.expect(CoreException.class);
+    thrown.expectMessage(
+        "Tosca file 'missingFile.yaml' was not found in tosca service model");
+    ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/ServiceTemplateFileNotFoundTest.yaml")) {
+
+      ServiceTemplate
+          serviceTemplateFromYaml =
+          toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+      toscaAnalyzerService
+          .getFlatEntity(ToscaElementTypes.NODE_TYPE,
+              "org.openecomp.resource.vfc.nodes.heat.cmaui_image",
+              serviceTemplateFromYaml, toscaServiceModel);
+    }
+  }
+
+  @Test
   public void testGetFlatEntityNodeType() throws Exception {
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
     try (InputStream yamlFile = toscaExtensionYamlUtil
