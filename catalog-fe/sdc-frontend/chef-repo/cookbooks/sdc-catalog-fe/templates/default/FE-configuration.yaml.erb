@@ -51,15 +51,15 @@ onboarding:
     <% end -%>
 
 dcae:
-    host: <%= @fe_host_ip %>
+    host: <%= @dcae_fe_vip %>
     <% if node[:disableHttp] -%>
     protocol: https
-    port: <%= node['FE'][:https_port] %> 
+    port: <%= node['DCAE']['FE'][:https_port] %>
     <% else %>
     protocol: http
-    port: <%= node['FE'][:http_port] %> 
+    port: <%= node['DCAE']['FE'][:http_port] %>
     <% end -%>
-    healthCheckUri: "/dcae/healthCheck"
+    healthCheckUri: "/dcaed/healthCheck"
 
 identificationHeaderFields: 
    -

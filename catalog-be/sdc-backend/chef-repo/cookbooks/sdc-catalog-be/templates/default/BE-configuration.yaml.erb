@@ -565,17 +565,16 @@ onboarding:
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
 dcae:
+    host: <%= @dcae_be_vip %>
     <% if node[:disableHttp] -%>
     protocol: https
-    host: <%= @catalog_ip %>
-    port: <%= node['BE'][:https_port] %> 
+    port: <%= node['DCAE']['BE'][:https_port] %>
     <% else %>
     protocol: http
-    host: <%= @catalog_ip %>
-    port: <%= node['BE'][:http_port] %> 
-    <% end -%>  
+    port: <%= node['DCAE']['BE'][:http_port] %>
+    <% end -%>
     
-    healthCheckUri: "/dcae/healthCheck"
+    healthCheckUri: "/dcaed/healthCheck"
 
 # #GSS IDNS
 switchoverDetector:
