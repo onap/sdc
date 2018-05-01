@@ -7,3 +7,8 @@ default['disableHttp'] = true
 default['jetty'][:keystore_pwd] = "OBF:1cp61iuj194s194u194w194y1is31cok"
 default['jetty'][:keymanager_pwd] = "OBF:1cp61iuj194s194u194w194y1is31cok"
 default['jetty'][:truststore_pwd] = "OBF:1cp61iuj194s194u194w194y1is31cok"
+
+#Reserved for DCAE backend
+default['DCAE']['FE'][:http_port] = 8183
+default['DCAE']['FE'][:https_port] = 9444
+default['DCAE_FE_VIP'] = "dcaed-fe"

@@ -9,7 +9,8 @@ template "catalog-fe-config" do
       :be_host_ip   => node['Nodes']['BE'],
       :kb_host_ip   => node['Nodes']['KB'],
       :catalog_port => node['BE'][:http_port],
-      :ssl_port     => node['BE'][:https_port]
+      :ssl_port     => node['BE'][:https_port],
+      :dcae_fe_vip  => node['DCAE_FE_VIP']
    })
 end
 
