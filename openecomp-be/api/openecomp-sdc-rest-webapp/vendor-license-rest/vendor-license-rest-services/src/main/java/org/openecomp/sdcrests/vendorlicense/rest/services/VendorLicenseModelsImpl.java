@@ -28,7 +28,6 @@ import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActio
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
@@ -163,19 +162,16 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     public Response getLicenseModel(String vlmId, String versionId, String user) {
         Version version = versioningManager.get(vlmId, new Version(versionId));
         VendorLicenseModelEntity vlm = vendorLicenseManager.getVendorLicenseModel(vlmId, version);
-        vlm.setWritetimeMicroSeconds(version.getModificationTime().getTime());
 
         try {
-            Optional<Version> healedVersion = HealingManagerFactory.getInstance().createInterface()
-                                                                   .healItemVersion(vlmId, version, ItemType.vlm,
-                                                                           false);
-
-            if (healedVersion.isPresent()) {
-                vlm.setVersion(healedVersion.get());
-                if (version.getStatus() == VersionStatus.Certified) {
-                    submitHealedVersion(vlmId, healedVersion.get(), versionId, user);
-                }
-            }
+            HealingManagerFactory.getInstance().createInterface()
+                                 .healItemVersion(vlmId, version, ItemType.vlm, false)
+                                 .ifPresent(healedVersion -> {
+                                     vlm.setVersion(healedVersion);
+                                     if (version.getStatus() == VersionStatus.Certified) {
+                                         submitHealedVersion(vlmId, healedVersion, versionId, user);
+                                     }
+                                 });
         } catch (Exception e) {
             LOGGER.error(String.format("Error while auto healing VLM with Id %s and version %s", vlmId, versionId), e);
         }

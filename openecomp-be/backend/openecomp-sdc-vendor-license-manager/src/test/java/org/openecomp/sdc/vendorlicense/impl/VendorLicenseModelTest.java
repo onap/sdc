@@ -120,8 +120,6 @@ public class VendorLicenseModelTest {
         .updateUniqueName(VendorLicenseConstants.UniqueValues.VENDOR_NAME,
             existingVlm.getVendorName(), updatedVlm.getVendorName());
 
-    existingVlm.setWritetimeMicroSeconds(8L);
-
     doReturn(existingVlm).when(vendorLicenseModelDaoMcok).get(any(VendorLicenseModelEntity.class));
 
     vendorLicenseManager.updateVendorLicenseModel(updatedVlm);

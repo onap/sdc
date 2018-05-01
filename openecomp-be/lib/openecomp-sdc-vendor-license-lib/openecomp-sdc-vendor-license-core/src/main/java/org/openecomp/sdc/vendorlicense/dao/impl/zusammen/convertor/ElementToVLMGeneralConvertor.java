@@ -30,7 +30,6 @@ public class ElementToVLMGeneralConvertor extends ElementConvertor {
 
   }
 
-
   private VendorLicenseModelEntity mapInfoToVendorLicenseModelEntity(Info info) {
 
     VendorLicenseModelEntity vendorLicenseModelEntity = new VendorLicenseModelEntity();
@@ -41,12 +40,7 @@ public class ElementToVLMGeneralConvertor extends ElementConvertor {
         VendorLicenseModelDaoZusammenImpl.InfoPropertyName.description.name()));
     vendorLicenseModelEntity.setIconRef(info.getProperty(
         VendorLicenseModelDaoZusammenImpl.InfoPropertyName.iconRef.name()));
-    vendorLicenseModelEntity.setOldVersion(info.getProperty(
-        VendorLicenseModelDaoZusammenImpl.InfoPropertyName.oldVersion.name()));
-
 
     return vendorLicenseModelEntity;
   }
-
-
 }
