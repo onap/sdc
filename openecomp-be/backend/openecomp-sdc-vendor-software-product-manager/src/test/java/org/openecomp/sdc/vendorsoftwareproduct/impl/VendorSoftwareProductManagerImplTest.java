@@ -215,7 +215,6 @@ public class VendorSoftwareProductManagerImplTest {
         createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
             "category_updated",
             "subCategory", "456", null);
-    existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp).when(vspInfoDaoMock)
         .get(any(VspDetails.class));
     doNothing().when(vendorSoftwareProductManager)
@@ -247,7 +246,6 @@ public class VendorSoftwareProductManagerImplTest {
         createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
             "category_updated",
             "subCategory", "456", updFgs);
-    existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp).when(vspInfoDaoMock)
         .get(any(VspDetails.class));
     doNothing().when(vendorSoftwareProductManager)
@@ -292,7 +290,6 @@ public class VendorSoftwareProductManagerImplTest {
         createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
             "category",
             "subCategory", "456", null);
-    existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     VspDetails actualVsp =
@@ -316,7 +313,6 @@ public class VendorSoftwareProductManagerImplTest {
         createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
             "category",
             "subCategory", "456", null);
-    existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp)
         .when(vspInfoDaoMock).get(any(VspDetails.class));
 

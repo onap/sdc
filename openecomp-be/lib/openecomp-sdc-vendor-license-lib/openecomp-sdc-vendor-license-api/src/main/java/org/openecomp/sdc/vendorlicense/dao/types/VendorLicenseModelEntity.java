@@ -147,12 +147,4 @@ public class VendorLicenseModelEntity implements VersionableEntity {
         && Objects.equals(description, that.description)
         && Objects.equals(iconRef, that.iconRef);
   }
-
-  public Long getWritetimeMicroSeconds() {
-    return writetimeMicroSeconds;
-  }
-
-  public void setWritetimeMicroSeconds(Long writetimeMicroSeconds) {
-    this.writetimeMicroSeconds = writetimeMicroSeconds;
-  }
 }
