@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8eea62d6",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/context/HostAddressCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-01T07:21:34Z",
+      "side": 1,
+      "message": "this return value(null) is bubbled up to a function with public scope (get).\ndon\u0027t expect user to guess that null is a valid value for return.\nplease return optional (at least in the public method)",
+      "range": {
+        "startLine": 101,
+        "startChar": 12,
+        "endLine": 101,
+        "endChar": 24
+      },
+      "revId": "56e2d5148f6592cadaf9310f6f37210d17d479d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
