@@ -204,7 +204,7 @@ public final class ConfigurationChangeNotifier {
     List<NotificationData> notificationList =
         store.get(tenant + Constants.KEY_ELEMENTS_DELEMETER + component);
     if (notificationList == null) {
-      notificationList = Collections.synchronizedList(new ArrayList<NotificationData>());
+      notificationList = Collections.synchronizedList(new ArrayList<>());
       store.put(tenant + Constants.KEY_ELEMENTS_DELEMETER + component, notificationList);
       executor.scheduleWithFixedDelay(
           () -> triggerScanning(tenant + Constants.KEY_ELEMENTS_DELEMETER + component), 1, 30000,
@@ -263,11 +263,11 @@ public final class ConfigurationChangeNotifier {
 
   private Set<Path> watchForChange(String location) throws Exception {
     if (location == null || location.trim().length() == 0) {
-      return null;
+      return Collections.emptySet();
     }
     File file = new File(location);
     if (!file.exists()) {
-      return null;
+      return Collections.emptySet();
     }
     Path path = file.toPath();
     Set<Path> toReturn = new HashSet<>();
