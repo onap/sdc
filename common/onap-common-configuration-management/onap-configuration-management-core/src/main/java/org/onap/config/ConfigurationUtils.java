@@ -491,28 +491,9 @@ public class ConfigurationUtils {
      * @return the configuration builder
      */
     public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(URL url) {
-        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder = null;
         ConfigurationType configType = ConfigurationUtils.getConfigType(url);
-        switch (configType) {
-            case PROPERTIES:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        PropertiesConfiguration.class);
-                break;
-            case XML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        XMLConfiguration.class);
-                break;
-            case JSON:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        JsonConfiguration.class);
-                break;
-            case YAML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        YamlConfiguration.class);
-                break;
-            default:
-                throw new IllegalArgumentException("Configuration type not supported:"+ configType);
-        }
+        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder = getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(
+                configType);
         builder.configure(new Parameters().fileBased().setURL(url)
                 .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
         return builder;
@@ -527,31 +508,34 @@ public class ConfigurationUtils {
      */
     public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(File file,
                                                                                             boolean autoSave) {
-        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder = null;
+        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder;
         ConfigurationType configType = ConfigurationUtils.getConfigType(file);
+        builder = getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(configType);
+        builder.configure(new Parameters().fileBased().setFile(file)
+                .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+        builder.setAutoSave(autoSave);
+        return builder;
+    }
+
+    private static ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> getFileBasedConfigurationReloadingFileBasedConfigurationBuilder(
+            ConfigurationType configType) {
+        ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> builder;
         switch (configType) {
             case PROPERTIES:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        PropertiesConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
                 break;
             case XML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        XMLConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(XMLConfiguration.class);
                 break;
             case JSON:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        JsonConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(JsonConfiguration.class);
                 break;
             case YAML:
-                builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(
-                        YamlConfiguration.class);
+                builder = new ReloadingFileBasedConfigurationBuilder<>(YamlConfiguration.class);
                 break;
             default:
                 throw new IllegalArgumentException("Configuration type not supported:"+ configType);
         }
-        builder.configure(new Parameters().fileBased().setFile(file)
-                .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
-        builder.setAutoSave(autoSave);
         return builder;
     }
 
@@ -599,7 +583,6 @@ public class ConfigurationUtils {
      * @throws Exception the exception
      */
     public static boolean executeInsertSql(String sql, Object[] params) throws Exception {
-        Collection<String> coll = new ArrayList<>();
         DataSource datasource = ConfigurationDataSource.lookup();
         try (Connection con = datasource.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -941,7 +924,7 @@ public class ConfigurationUtils {
         } else if (boolean.class == clazz) {
             return Boolean.FALSE;
         }
-        return new Character((char) 0);
+        return (char) 0;
     }
 
     /**
@@ -1075,7 +1058,7 @@ public class ConfigurationUtils {
         Object obj = ConfigurationUtils
                 .getProperty(ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key,
                         processingHints);
-        return (obj == null) ? false : ConfigurationUtils.isCollection(obj.toString());
+        return (obj != null) && ConfigurationUtils.isCollection(obj.toString());
     }
 
     /**
