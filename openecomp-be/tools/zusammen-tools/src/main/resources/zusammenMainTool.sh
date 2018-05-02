@@ -9,6 +9,7 @@
 #  4.  Import all - ./zusammenMainTool.sh -c  IMPORT -f  ${fileName}
 #  5.  Reset old version - ./zusammenMainTool.sh -c  RESET_OLD_VERSION
 #  6.  Heal all - ./zusammenMainTool.sh -c  HEAL_ALL -t ${thread number}
+#  7. Populate User Permissions - ./zusammenMainTool.sh -c POPULATE_USER_PERMISSIONS
 #
 ##########################################################################################################
 

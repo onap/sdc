@@ -28,14 +28,17 @@ public class PopulateUserPermissions {
 
     private PopulateUserPermissions(){ }
 
-    public static void execute(){
+    public static void execute() {
 
         List<ItemPermissionsEntity> permissions = permissionHandler.getAll();
 
-        permissions.forEach(itemPermissionsEntity ->
+        permissions.forEach(itemPermissionsEntity -> {
+            if (!itemPermissionsEntity.getUserId().isEmpty() && !itemPermissionsEntity.getPermission().isEmpty()) {
             permissionHandler.addItem
                     (Collections.singleton(itemPermissionsEntity.getItemId()),
-                            itemPermissionsEntity.getUserId(),itemPermissionsEntity.getPermission()));
+                            itemPermissionsEntity.getUserId(),itemPermissionsEntity.getPermission());
+            }
+        });
 
         System.exit(0);
 
