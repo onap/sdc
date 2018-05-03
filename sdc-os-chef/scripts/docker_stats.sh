@@ -1,21 +1,21 @@
 #!/bin/bash
 
-FILE='/data/logs/docker_stats.out'
+FILE="${WORKSPACE}/data/logs/docker_stats.out"
 FE_ID=`docker ps|grep sdc-front|awk '{print $1}'`
 BE_ID=`docker ps|grep sdc-back |awk '{print $1}'`
 
 echo `date` >> ${FILE}
 
 if [ ! -z "${FE_ID}" ]; then
-   docker stats ${FE_ID} --no-stream >> /data/logs/docker_stats.out
+   docker stats ${FE_ID} --no-stream >> ${WORKSPACE}/data/logs/docker_stats.out
 else
-   echo "frontend Docker is down!!!" >> /data/logs/docker_stats.out
+   echo "frontend Docker is down!!!" >> ${WORKSPACE}/data/logs/docker_stats.out
 fi
 
 if [ ! -z "${BE_ID}" ]; then
-   docker stats ${BE_ID} --no-stream >> /data/logs/docker_stats.out
+   docker stats ${BE_ID} --no-stream >> ${WORKSPACE}/data/logs/docker_stats.out
 else
-   echo "backend Docker is down!!!" >> /data/logs/docker_stats.out
+   echo "backend Docker is down!!!" >> ${WORKSPACE}/data/logs/docker_stats.out
 fi
 
 echo "------------------------------------------" >>  ${FILE}

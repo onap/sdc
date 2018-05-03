@@ -10,6 +10,14 @@ ONBOARD_BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001
 SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m"
 API_TESTS_JAVA_OPTIONS="-Xmx512m -Xms512m"
 UI_TESTS_JAVA_OPTIONS="-Xmx1024m -Xms1024m"
+#Define this as variable, so it can be excluded in run commands on Docker for OSX, as /etc/localtime cant be mounted there.
+LOCAL_TIME_MOUNT_CMD="--volume /etc/localtime:/etc/localtime:ro"
+# If os is OSX, unset this, so /etc/localtime is not mounted, otherwise leave it be
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  LOCAL_TIME_MOUNT_CMD=""
+fi
+
+
 
 function usage {
     echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ]  [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -t|--runTests <Run-with-sanityDocker>] [ -h|--help ]"
@@ -34,18 +42,18 @@ function cleanup {
 	fi
 }
 
-
+#Prefix all dirs with WORKSPACE variable, so it doesn't use absolute path if runnning outside of VM
 function dir_perms {
-    mkdir -p ${WORKSPACE}/data/logs/BE/SDC/SDC-BE
-    mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
-    mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport
-    mkdir -p ${WORKSPACE}/data/logs/ONBOARD/SDC/ONBOARD-BE
+  mkdir -p ${WORKSPACE}/data/logs/BE/SDC/SDC-BE
+  mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
+  mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport
+  mkdir -p ${WORKSPACE}/data/logs/ONBOARD/SDC/ONBOARD-BE
 	mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/target
 	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport
 	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
 	mkdir -p ${WORKSPACE}/data/logs/WS
-    chmod -R 777 ${WORKSPACE}/data/logs
+  chmod -R 777 ${WORKSPACE}/data/logs
 }
 
 function docker_logs {
@@ -267,14 +275,18 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-
-[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || echo ${DEP_ENV}
-[ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
-[ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
-[ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=nexus3.onap.org:${PORT}
-[ -f /opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
+#Prefix those with WORKSPACE so it can be set to something other then /opt
+[ -f ${WORKSPACE}/opt/config/env_name.txt ] && DEP_ENV=$(cat ${WORKSPACE}/opt/config/env_name.txt) || echo ${DEP_ENV}
+[ -f ${WORKSPACE}/opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat ${WORKSPACE}/opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
+[ -f ${WORKSPACE}/opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat ${WORKSPACE}/opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
+[ -f ${WORKSPACE}/opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat ${WORKSPACE}/opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=nexus3.onap.org:${PORT}
+[ -f ${WORKSPACE}/opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
 
 export IP=`ip route get 8.8.8.8 | awk '/src/{ print $7 }'`
+#If OSX, then use this to get IP
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export IP=$(ipconfig getifaddr en0)
+fi
 export PREFIX=${NEXUS_DOCKER_REPO}'/onap'
 
 if [ ${LOCAL} = true ]; then
@@ -291,7 +303,7 @@ if [ ${LOCAL} = false ]; then
 	echo "pulling code"
 	docker pull ${PREFIX}/sdc-elasticsearch:${RELEASE}
 fi
-docker run -dit --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --env ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --env ES_HEAP_SIZE=1024M --volume ${WORKSPACE}/data/ES:/usr/share/elasticsearch/data --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE} /bin/sh
+docker run -dit --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --env ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --env ES_HEAP_SIZE=1024M --volume ${WORKSPACE}/data/ES:/usr/share/elasticsearch/data --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE} /bin/sh
 
 echo "please wait while ES is starting..."
 monitor_docker sdc-es
@@ -306,7 +318,7 @@ if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-init-elasticsearch:${RELEASE}
 fi
 echo "Running sdc-init-es"
-docker run --name sdc-init-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE} > /dev/null 2>&1
+docker run --name sdc-init-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE} > /dev/null 2>&1
 rc=$?
 docker_logs sdc-init-es
 if [[ $rc != 0 ]]; then exit $rc; fi
@@ -319,7 +331,7 @@ echo "docker run sdc-cassandra..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
 fi
-docker run -dit --name sdc-cs --env RELEASE="${RELEASE}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --env MAX_HEAP_SIZE="1536M" --env HEAP_NEWSIZE="512M" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${PREFIX}/sdc-cassandra:${RELEASE} /bin/sh
+docker run -dit --name sdc-cs --env RELEASE="${RELEASE}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --env MAX_HEAP_SIZE="1536M" --env HEAP_NEWSIZE="512M" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${PREFIX}/sdc-cassandra:${RELEASE} /bin/sh
 
 
 echo "please wait while CS is starting..."
@@ -332,7 +344,7 @@ echo "docker run sdc-cassandra-init..."
 if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-cassandra-init:${RELEASE}
 fi
-docker run --name sdc-cs-init --env RELEASE="${RELEASE}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE} > /dev/null 2>&1
+docker run --name sdc-cs-init --env RELEASE="${RELEASE}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE} > /dev/null 2>&1
 rc=$?
 docker_logs sdc-cs-init
 if [[ $rc != 0 ]]; then exit $rc; fi
@@ -344,7 +356,7 @@ echo "docker run sdc-cs-onboard-init..."
 if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
 fi
-docker run --name sdc-cs-onboard-init --env RELEASE="${RELEASE}" --env CS_HOST_IP=${IP}  --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
+docker run --name sdc-cs-onboard-init --env RELEASE="${RELEASE}" --env CS_HOST_IP=${IP}  --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
 rc=$?
 docker_logs sdc-onboard-cs-init
 if [[ $rc != 0 ]]; then exit $rc; fi
@@ -355,7 +367,7 @@ function sdc-kbn {
 echo "docker run sdc-kibana..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-kibana:${RELEASE}
-docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --env NODE_OPTIONS="--max-old-space-size=200" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
+docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --env NODE_OPTIONS="--max-old-space-size=200" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
 fi
 
 }
@@ -368,7 +380,7 @@ if [ ${LOCAL} = false ]; then
 else
 	ADDITIONAL_ARGUMENTS=${DEBUG_PORT}
 fi
-docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
+docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
 
 echo "please wait while BE is starting..."
 monitor_docker sdc-BE
@@ -380,7 +392,7 @@ echo "docker run sdc-backend-init..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-backend-init:${RELEASE}
 fi
-docker run --name sdc-BE-init --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
+docker run --name sdc-BE-init --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
 rc=$?
 docker_logs sdc-BE-init
 if [[ $rc != 0 ]]; then exit $rc; fi
@@ -397,7 +409,7 @@ if [ ${LOCAL} = false ]; then
 else
         ADDITIONAL_ARGUMENTS=${ONBOARD_DEBUG_PORT}
 fi
-docker run --detach --name sdc-onboard-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/ONBOARD:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
+docker run --detach --name sdc-onboard-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/logs/ONBOARD:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
 
 echo "please wait while sdc-onboard-BE is starting..."
 monitor_docker sdc-onboard-BE
@@ -410,7 +422,7 @@ echo "docker run sdc-frontend..."
 if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-frontend:${RELEASE}
 fi
-docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume ${WORKSPACE}/data/logs/FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${PREFIX}/sdc-frontend:${RELEASE}
+docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD  --volume ${WORKSPACE}/data/logs/FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${PREFIX}/sdc-frontend:${RELEASE}
 
 echo "please wait while FE is starting....."
 monitor_docker sdc-FE
@@ -428,7 +440,7 @@ if [[ (${RUN_API_TESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
         docker pull ${PREFIX}/sdc-api-tests:${RELEASE}
     fi
 
-docker run --detach --name sdc-api-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${API_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${API_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/sdc-api-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-api-tests/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-api-tests:${RELEASE} echo "please wait while SDC-API-TESTS is starting....."
+docker run --detach --name sdc-api-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${API_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${API_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/logs/sdc-api-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/logs/sdc-api-tests/outputCsar:/var/lib/tests/outputCsar --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-api-tests:${RELEASE} echo "please wait while SDC-API-TESTS is starting....."
 monitor_docker sdc-api-tests
 
 fi
@@ -446,7 +458,7 @@ if [[ (${RUN_UI_TESTS} = true) && (${healthCheck_http_code} == 200) ]]; then
     fi
 
 sdc-sim
-docker run --detach --name sdc-ui-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${UI_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${UI_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/sdc-ui-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5901:5901 --publish 6901:6901 ${PREFIX}/sdc-ui-tests:${RELEASE}
+docker run --detach --name sdc-ui-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${UI_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${UI_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/logs/sdc-ui-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5901:5901 --publish 6901:6901 ${PREFIX}/sdc-ui-tests:${RELEASE}
 echo "please wait while SDC-UI-TESTS is starting....."
 monitor_docker sdc-ui-tests
 
@@ -464,7 +476,7 @@ fi
 probe_sim
 if [ sim_stat=false ]; then
 
-docker run --detach --name sdc-sim  --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" --env ENVNAME="${DEP_ENV}" --volume /etc/localtime:/etc/localtime:ro --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8285:8080 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
+docker run --detach --name sdc-sim  --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" --env ENVNAME="${DEP_ENV}" $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8285:8080 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
 echo "please wait while SDC-WEB-SIMULATOR is starting....."
 monitor_docker sdc-sim
 
@@ -472,7 +484,7 @@ fi
 }
 
 if [ -z "${DOCKER}" ]; then
-    cleanup all
+  cleanup all
 	dir_perms
 	sdc-es
 	sdc-init-es
@@ -484,9 +496,9 @@ if [ -z "${DOCKER}" ]; then
 	sdc-BE
 	sdc-BE-init
 	sdc-FE
-    healthCheck
+  healthCheck
 	sdc-api-tests
-        sdc-ui-tests
+  sdc-ui-tests
 else
 	cleanup ${DOCKER}
 	dir_perms
