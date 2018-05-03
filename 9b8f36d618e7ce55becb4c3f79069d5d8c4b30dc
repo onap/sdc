@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_b66f70c3",
+        "filename": "services/activity-spec/activity-spec-init/start.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-05-03T09:10:18Z",
+      "side": 1,
+      "message": "I still don\u0027t see any additional benefit in passing a default port here as Cassandra itself takes care of it.\nhttps://docs.datastax.com/en/cassandra/3.0/cassandra/configuration/secureFireWall.html\n\nMoreover if someone wants to override the default port then it can be done using environment variable. Adding a default port here will create confusion to anyone who will be looking at this without any intention of changing it.",
+      "parentUuid": "5a93c517_3644c045",
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_d676bca3",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/Dockerfile",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2018-05-03T08:39:59Z",
       "side": 1,
       "message": "I don\u0027t like this. In my opinion you must declare exactly what you are adding to the image (e.g. exact versions). You don\u0027t want surprises. In general, the way you\u0027ve changed the build assumes too much, and relies to much on the knowledge of what other files/modules/components do.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 50
+      },
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_766568df",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-05-03T09:10:18Z",
+      "side": 1,
+      "message": "Putting up specific version will cause unnecessary change to the docker file every time a new version is created. In my personal opinion; I would want to avoid repetitive changes which doesn\u0027t add any value.\n\nAlso changing the build reduced the overhead and complexity; i don\u0027t see any assumptions there.",
+      "parentUuid": "5a93c517_d676bca3",
       "range": {
         "startLine": 10,
         "startChar": 0,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_365b6023",
+        "filename": "services/activity-spec/activity-spec-web/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-05-03T09:10:18Z",
+      "side": 1,
+      "message": "logback.xml is an artifact of webservice; I don\u0027t see any point in keeping it under activity-spec-assembly. Docker documentation and standard practices which I learned ,clearly mentions that build scope of DOCKERFILE should be limited to avoid large build up time and cache issues.",
+      "parentUuid": "5a93c517_763ec8b9",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 78,
+        "endChar": 28
+      },
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f652d811",
         "filename": "services/activity-spec/activity-spec-web/pom.xml",
         "patchSetId": 1
@@ -76,6 +142,24 @@
       "writtenOn": "2018-05-03T08:39:59Z",
       "side": 1,
       "message": "Why didn\u0027t you like the old location of Dockerfile? It was places at the top level, because the resulting image must include artifacts from different sub-modules. So it doesn\u0027t makes sense for it to be a \"sibling\" of those modules. Instead, Docker build should be above everything that will be included in a resulting image.",
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f6a098f5",
+        "filename": "services/activity-spec/activity-spec-web/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-05-03T09:10:18Z",
+      "side": 1,
+      "message": "I didn\u0027t like the original approach. Building a docker image there will take everything from that root path and put it in build context resulting in un-optimized process of docker image creation.\nhttps://docs.docker.com/develop/develop-images/dockerfile_best-practices/\n\nThis is the reason; I have modified the build process (one time activity) to have DOCKERFILE in assembly along with its relevant artifacts only. That way build scope is reduced and docker image creation confined with its own artifacts.",
+      "parentUuid": "5a93c517_f652d811",
       "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
