@@ -2,8 +2,6 @@ package org.openecomp.sdc.asdctool.configuration.mocks.es;
 
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 
-import java.net.URISyntaxException;
-
 public class ElasticSearchClientMock extends ElasticSearchClient {
 
     @Override

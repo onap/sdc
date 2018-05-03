@@ -1,16 +1,11 @@
 package org.openecomp.sdc.asdctool.migration.config.mocks;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
-import org.openecomp.sdc.be.components.impl.ActivationRequestInformation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
 @Component("distributionEngine")

@@ -1,8 +1,12 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
 import org.junit.Test;
+import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
+import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
@@ -23,14 +27,12 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaDataOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 
-
 public class ValidationToolConfigurationTest {
 
 	private ValidationToolConfiguration createTestSubject() {
 		return new ValidationToolConfiguration();
 	}
 
-	
 	@Test
 	public void testBasicServiceValidator() {
 		ValidationToolConfiguration testSubject;
@@ -41,7 +43,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.basicServiceValidator();
 	}
 
-	
 	@Test
 	public void testVfArtifactValidationTask() {
 		ValidationToolConfiguration testSubject;
@@ -52,7 +53,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.vfArtifactValidationTask();
 	}
 
-	
 	@Test
 	public void testServiceArtifactValidationTask() {
 		ValidationToolConfiguration testSubject;
@@ -63,7 +63,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.serviceArtifactValidationTask();
 	}
 
-	
 	@Test
 	public void testModuleJsonTask() {
 		ValidationToolConfiguration testSubject;
@@ -74,7 +73,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.moduleJsonTask();
 	}
 
-	
 	@Test
 	public void testValidationToolBL() {
 		ValidationToolConfiguration testSubject;
@@ -85,7 +83,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.validationToolBL();
 	}
 
-	
 	@Test
 	public void testBasicVfValidator() {
 		ValidationToolConfiguration testSubject;
@@ -95,7 +92,7 @@ public class ValidationToolConfigurationTest {
 		testSubject = createTestSubject();
 		result = testSubject.basicVfValidator();
 	}
-	
+
 	@Test
 	public void testArtifactCassandraDao() {
 		ValidationToolConfiguration testSubject;
@@ -106,7 +103,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.artifactCassandraDao();
 	}
 
-	
 	@Test
 	public void testArtifactValidationUtils() {
 		ValidationToolConfiguration testSubject;
@@ -117,7 +113,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.artifactValidationUtils();
 	}
 
-	
 	@Test
 	public void testJsonGroupsOperation() {
 		ValidationToolConfiguration testSubject;
@@ -128,7 +123,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.jsonGroupsOperation();
 	}
 
-	
 	@Test
 	public void testCassandraClient() {
 		ValidationToolConfiguration testSubject;
@@ -139,7 +133,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.cassandraClient();
 	}
 
-	
 	@Test
 	public void testDaoStrategy() {
 		ValidationToolConfiguration testSubject;
@@ -150,10 +143,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.daoStrategy();
 	}
 
-	
-
-
-	
 	@Test
 	public void testToscaOperationFacade() {
 		ValidationToolConfiguration testSubject;
@@ -164,7 +153,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.toscaOperationFacade();
 	}
 
-	
 	@Test
 	public void testNodeTypeOperation() {
 		ValidationToolConfiguration testSubject;
@@ -176,7 +164,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.nodeTypeOperation(migrationDerivedNodeTypeResolver);
 	}
 
-	
 	@Test
 	public void testTopologyTemplateOperation() {
 		ValidationToolConfiguration testSubject;
@@ -187,10 +174,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.topologyTemplateOperation();
 	}
 
-	
-
-
-	
 	@Test
 	public void testMigrationDerivedNodeTypeResolver() {
 		ValidationToolConfiguration testSubject;
@@ -201,7 +184,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.migrationDerivedNodeTypeResolver();
 	}
 
-	
 	@Test
 	public void testTitanDao() {
 		ValidationToolConfiguration testSubject;
@@ -213,7 +195,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.titanDao(titanGraphClient);
 	}
 
-	
 	@Test
 	public void testCategoryOperation() {
 		ValidationToolConfiguration testSubject;
@@ -224,7 +205,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.categoryOperation();
 	}
 
-	
 	@Test
 	public void testArtifactsOperation() {
 		ValidationToolConfiguration testSubject;
@@ -235,7 +215,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.artifactsOperation();
 	}
 
-	
 	@Test
 	public void testToscaDataOperation() {
 		ValidationToolConfiguration testSubject;
@@ -246,7 +225,6 @@ public class ValidationToolConfigurationTest {
 		result = testSubject.toscaDataOperation();
 	}
 
-	
 	@Test
 	public void testToscaElementLifecycleOperation() {
 		ValidationToolConfiguration testSubject;
@@ -256,4 +234,80 @@ public class ValidationToolConfigurationTest {
 		testSubject = createTestSubject();
 		result = testSubject.toscaElementLifecycleOperation();
 	}
+
+	@Test
+	public void testNodeToscaArtifactsValidatorValidator() throws Exception {
+		ValidationToolConfiguration testSubject;
+		NodeToscaArtifactsValidatorExecuter result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.NodeToscaArtifactsValidatorValidator();
+	}
+
+	@Test
+	public void testServiceToscaArtifactsValidator() throws Exception {
+		ValidationToolConfiguration testSubject;
+		ServiceToscaArtifactsValidatorExecutor result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.ServiceToscaArtifactsValidator();
+	}
+
+	@Test
+	public void testVFToscaArtifactValidator() throws Exception {
+		ValidationToolConfiguration testSubject;
+		VFToscaArtifactValidatorExecutor result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.VFToscaArtifactValidator();
+	}
+
+	@Test
+	public void testArtifactToolBL() throws Exception {
+		ValidationToolConfiguration testSubject;
+		ArtifactToolBL result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.artifactToolBL();
+	}
+	
+	//TODO runs as single JUnit Fails on maven clean install
+	/*@Test(expected=NullPointerException.class)
+	public void testReportManager() throws Exception {
+		ValidationToolConfiguration testSubject;
+		ReportManager result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.reportManager();
+	}
+*/
+	
+	//TODO runs as single JUnit Fails on maven clean install
+	/*@Test(expected=NullPointerException.class)
+	public void testTitanMigrationClient() throws Exception {
+		ValidationToolConfiguration testSubject;
+		TitanClientStrategy titanClientStrategy = null;
+		TitanGraphClient result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.titanMigrationClient(titanClientStrategy);
+	}*/
+
+	//TODO runs as single JUnit Fails on maven clean install
+	/*@Test(expected=NullPointerException.class)
+	public void testNodeTemplateOperation() throws Exception {
+		ValidationToolConfiguration testSubject;
+		NodeTemplateOperation result;
+
+		// default test
+		testSubject = createTestSubject();
+		System.out.println("ConfigurationManager Print" + ConfigurationManager.getConfigurationManager().getConfiguration().toString());
+		result = testSubject.nodeTemplateOperation();
+	}*/
 }

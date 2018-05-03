@@ -61,12 +61,6 @@ import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanGraphQuery;
 import com.thinkaurelius.titan.core.TitanVertex;
-//import com.tinkerpop.blueprints.Direction;
-//import com.tinkerpop.blueprints.Edge;
-//import com.tinkerpop.blueprints.Vertex;
-//import com.tinkerpop.blueprints.util.ElementHelper;
-//import com.tinkerpop.blueprints.util.io.graphson.GraphSONReader;
-//import com.tinkerpop.blueprints.util.io.graphson.GraphSONWriter;
 
 public class GraphMLConverter {
 

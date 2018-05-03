@@ -2,14 +2,12 @@ package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import org.junit.Test;
 
-
 public class ArtifactsVertexResultTest {
 
 	private ArtifactsVertexResult createTestSubject() {
 		return new ArtifactsVertexResult();
 	}
 
-	
 	@Test
 	public void testAddNotFoundArtifact() {
 		ArtifactsVertexResult testSubject;
@@ -20,7 +18,6 @@ public class ArtifactsVertexResultTest {
 		testSubject.addNotFoundArtifact(artifactId);
 	}
 
-	
 	@Test
 	public void testGetResult() {
 		ArtifactsVertexResult testSubject;
