@@ -21,81 +21,82 @@ import org.testng.annotations.Test;
 
 public class SdcMigrationToolTest {
 
-    @InjectMocks
-    private SdcMigrationTool testInstance = spy(SdcMigrationTool.class);
+	@InjectMocks
+	private SdcMigrationTool testInstance = spy(SdcMigrationTool.class);
 
-    @Mock
-    private MigrationResolver migrationResolverMock;
+	@Mock
+	private MigrationResolver migrationResolverMock;
 
-    @Mock
-    private SdcRepoService sdcRepoServiceMock;
+	@Mock
+	private SdcRepoService sdcRepoServiceMock;
 
-    @BeforeMethod
+	@BeforeMethod
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+		MockitoAnnotations.initMocks(this);
+	}
 
-    @Test
+	@Test
     public void testMigrate_noMigrations() {
-        when(migrationResolverMock.resolveMigrations()).thenReturn(Collections.emptyList());
-        testInstance.migrate(false);
-        verify(sdcRepoServiceMock, new Times(0)).clearTasksForCurrentMajor();
-        verify(sdcRepoServiceMock, new Times(0)).createMigrationTask(Mockito.any());
-    }
+		when(migrationResolverMock.resolveMigrations()).thenReturn(Collections.emptyList());
+		testInstance.migrate(false);
+		verify(sdcRepoServiceMock, new Times(0)).clearTasksForCurrentMajor();
+		verify(sdcRepoServiceMock, new Times(0)).createMigrationTask(Mockito.any());
+	}
 
-    @Test
+	@Test
     public void testMigrate_enforceFlag_removeAllMigrationTasksForCurrentVersion() {
-        when(migrationResolverMock.resolveMigrations()).thenReturn(Collections.emptyList());
-        testInstance.migrate(true);
-        verify(sdcRepoServiceMock, new Times(1)).clearTasksForCurrentMajor();
-    }
+		when(migrationResolverMock.resolveMigrations()).thenReturn(Collections.emptyList());
+		testInstance.migrate(true);
+		verify(sdcRepoServiceMock, new Times(1)).clearTasksForCurrentMajor();
+	}
 
-    @Test
+	@Test
     public void testMigrate_stopAfterFirstFailure() {
-        when(migrationResolverMock.resolveMigrations()).thenReturn(Arrays.asList(new SuccessfulMigration(), new FailedMigration(), new SuccessfulMigration()));
-        testInstance.migrate(false);
-        verify(sdcRepoServiceMock, new Times(0)).clearTasksForCurrentMajor();
-        verify(sdcRepoServiceMock, new Times(1)).createMigrationTask(Mockito.any());
+		when(migrationResolverMock.resolveMigrations())
+				.thenReturn(Arrays.asList(new SuccessfulMigration(), new FailedMigration(), new SuccessfulMigration()));
+		testInstance.migrate(false);
+		verify(sdcRepoServiceMock, new Times(0)).clearTasksForCurrentMajor();
+		verify(sdcRepoServiceMock, new Times(1)).createMigrationTask(Mockito.any());
 
-    }
+	}
 
-    private class FailedMigration implements Migration {
+	private class FailedMigration implements Migration {
 
-        @Override
-        public String description() {
-            return null;
-        }
+		@Override
+		public String description() {
+			return null;
+		}
 
-        @Override
-        public DBVersion getVersion() {
-            return DBVersion.fromString("1710.22");
-        }
+		@Override
+		public DBVersion getVersion() {
+			return DBVersion.fromString("1710.22");
+		}
 
-        @Override
-        public MigrationResult migrate() {
-            MigrationResult migrationResult = new MigrationResult();
-            migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.FAILED);
-            return migrationResult;
-        }
-    }
+		@Override
+		public MigrationResult migrate() {
+			MigrationResult migrationResult = new MigrationResult();
+			migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.FAILED);
+			return migrationResult;
+		}
+	}
 
-    private class SuccessfulMigration implements Migration {
+	private class SuccessfulMigration implements Migration {
 
-        @Override
-        public String description() {
-            return null;
-        }
+		@Override
+		public String description() {
+			return null;
+		}
 
-        @Override
-        public DBVersion getVersion() {
-            return DBVersion.fromString("1710.22");
-        }
+		@Override
+		public DBVersion getVersion() {
+			return DBVersion.fromString("1710.22");
+		}
 
-        @Override
-        public MigrationResult migrate() {
-            MigrationResult migrationResult = new MigrationResult();
-            migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.COMPLETED);
-            return migrationResult;
-        }
-    }
+		@Override
+		public MigrationResult migrate() {
+			MigrationResult migrationResult = new MigrationResult();
+			migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.COMPLETED);
+			return migrationResult;
+		}
+	}
 }

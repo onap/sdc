@@ -2,7 +2,6 @@ package org.openecomp.sdc.asdctool.impl.validator;
 
 import java.util.List;
 
-import org.openecomp.sdc.asdctool.impl.validator.executers.ArtifactValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.executers.IArtifactValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.slf4j.Logger;
