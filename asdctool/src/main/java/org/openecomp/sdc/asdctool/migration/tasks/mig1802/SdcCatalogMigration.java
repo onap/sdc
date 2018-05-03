@@ -1,6 +1,10 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1802;
 
-import fj.data.Either;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.ListUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
@@ -21,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 @Component
 public class SdcCatalogMigration implements Migration {

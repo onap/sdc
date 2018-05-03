@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import fj.data.Either;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,6 +40,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
+
 import org.apache.commons.lang.SystemUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
@@ -81,6 +77,13 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import fj.data.Either;
 
 /**
  * Created by mlando on 5/16/2016.

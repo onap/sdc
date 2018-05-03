@@ -19,6 +19,7 @@ public class ElementTypeEnumTest {
 
 		// default test
 		result = ElementTypeEnum.getByType(elementType);
+		result = ElementTypeEnum.getByType(ElementTypeEnum.VF.getElementType());
 	}
 
 	

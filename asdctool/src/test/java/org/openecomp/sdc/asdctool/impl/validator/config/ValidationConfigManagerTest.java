@@ -55,4 +55,23 @@ public class ValidationConfigManagerTest {
 		// default test
 		result = ValidationConfigManager.getValidationConfiguration();
 	}
+
+
+	@Test
+	public void testGetOutputFullFilePath() throws Exception {
+	String result;
+	
+	// default test
+	result=ValidationConfigManager.getOutputFullFilePath();
+	}
+
+
+	@Test
+	public void testSetOutputFullFilePath() throws Exception {
+	String outputPath = "";
+	
+	
+	// default test
+	ValidationConfigManager.setOutputFullFilePath(outputPath);
+	}
 }
