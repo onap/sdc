@@ -14,7 +14,7 @@ JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m"
 
 function usage {
     cat <<EOF
-usage: simulator_docker_run.sh [-e <ENV-NAME>] [-r <RELEASE-NAME>] [-h]
+usage: simulator_docker_run.sh [-e <ENV-NAME>] [-r <RELEASE-NAME>] [-u <FE-URL>][-h]
 Optional arguments:
     -e, --environment
         Environment Name
