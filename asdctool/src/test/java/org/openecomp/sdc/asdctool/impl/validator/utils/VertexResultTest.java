@@ -9,6 +9,10 @@ public class VertexResultTest {
 		return new VertexResult();
 	}
 
+	@Test
+	public void createTestSubjectBoolean() {
+		new VertexResult(true);
+	}
 	
 	@Test
 	public void testGetStatus() {

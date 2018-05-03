@@ -1,6 +1,7 @@
 package org.openecomp.sdc.asdctool.main;
 
-import fj.data.Either;
+import java.util.List;
+
 import org.openecomp.sdc.asdctool.cli.CLIToolData;
 import org.openecomp.sdc.asdctool.cli.SpringCLITool;
 import org.openecomp.sdc.asdctool.configuration.GetConsumersConfiguration;
@@ -10,7 +11,7 @@ import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import fj.data.Either;
 
 public class GetConsumersMenu extends SpringCLITool {
 
