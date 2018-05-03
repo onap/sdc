@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_16e50437",
+        "filename": "services/activity-spec/activity-spec-init/start.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-03T09:49:04Z",
+      "side": 1,
+      "message": "Here we go again :( Sorry, we should have documented everything as we discussed it. The benefit is not in passing, the benefit is in telling a developer looking at the Dockerfile/start scrip that it CAN be passed, and HOW. Without the need for the developer to look it up in C* documentation.",
+      "parentUuid": "5a93c517_b66f70c3",
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_d676bca3",
         "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/Dockerfile",
         "patchSetId": 1
