@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3644c045",
+        "filename": "services/activity-spec/activity-spec-init/start.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-03T08:39:59Z",
+      "side": 1,
+      "message": "We have agreed that the port must be explicitly mentions, haven\u0027t we? Even if it\u0027s a default.",
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d676bca3",
+        "filename": "services/activity-spec/activity-spec-web/activity-spec-assembly/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-03T08:39:59Z",
+      "side": 1,
+      "message": "I don\u0027t like this. In my opinion you must declare exactly what you are adding to the image (e.g. exact versions). You don\u0027t want surprises. In general, the way you\u0027ve changed the build assumes too much, and relies to much on the knowledge of what other files/modules/components do.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 50
+      },
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_763ec8b9",
+        "filename": "services/activity-spec/activity-spec-web/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-03T08:39:59Z",
+      "side": 1,
+      "message": "Avoid moving things around without special reason. You could have pulled the war directly from its original location, and stored logback.xml under \"activity-spec-assembly\" if you think it\u0027s the right location for it.",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 78,
+        "endChar": 28
+      },
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f652d811",
+        "filename": "services/activity-spec/activity-spec-web/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-03T08:39:59Z",
+      "side": 1,
+      "message": "Why didn\u0027t you like the old location of Dockerfile? It was places at the top level, because the resulting image must include artifacts from different sub-modules. So it doesn\u0027t makes sense for it to be a \"sibling\" of those modules. Instead, Docker build should be above everything that will be included in a resulting image.",
+      "revId": "9b8f36d618e7ce55becb4c3f79069d5d8c4b30dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
