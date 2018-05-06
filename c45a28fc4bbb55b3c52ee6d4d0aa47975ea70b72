@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d2debf3d",
+        "filename": ".gitignore",
+        "patchSetId": 3
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-05-06T12:02:44Z",
+      "side": 1,
+      "message": "thank you!!!",
+      "range": {
+        "startLine": 272,
+        "startChar": 8,
+        "endLine": 272,
+        "endChar": 22
+      },
+      "revId": "c45a28fc4bbb55b3c52ee6d4d0aa47975ea70b72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_72e9ebe4",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/DataMigrationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-05-06T12:02:44Z",
+      "side": 1,
+      "message": "this is the problem test with the configuration managers?",
+      "range": {
+        "startLine": 19,
+        "startChar": 15,
+        "endLine": 19,
+        "endChar": 49
+      },
+      "revId": "c45a28fc4bbb55b3c52ee6d4d0aa47975ea70b72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_329da366",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/GraphMLConverterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-05-06T12:02:44Z",
+      "side": 1,
+      "message": "why are thsi commented out\u003e?",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 25
+      },
+      "revId": "c45a28fc4bbb55b3c52ee6d4d0aa47975ea70b72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_52986f74",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationToolConfigurationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-05-06T12:02:44Z",
+      "side": 1,
+      "message": "why are thsi commented out\u003e?",
+      "range": {
+        "startLine": 278,
+        "startChar": 11,
+        "endLine": 284,
+        "endChar": 17
+      },
+      "revId": "c45a28fc4bbb55b3c52ee6d4d0aa47975ea70b72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f28adb19",
+        "filename": "asdctool/src/test/resources/graph.json",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-05-06T12:02:44Z",
+      "side": 1,
+      "message": "why is thsi in the commit?",
+      "range": {
+        "startLine": 1,
+        "startChar": 11,
+        "endLine": 1,
+        "endChar": 134
+      },
+      "revId": "c45a28fc4bbb55b3c52ee6d4d0aa47975ea70b72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b280d3f7",
+        "filename": "asdctool/src/test/resources/graphError.json",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-05-06T12:02:44Z",
+      "side": 1,
+      "message": "why is thsi in the commit?",
+      "range": {
+        "startLine": 1,
+        "startChar": 11,
+        "endLine": 1,
+        "endChar": 47
+      },
+      "revId": "c45a28fc4bbb55b3c52ee6d4d0aa47975ea70b72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
