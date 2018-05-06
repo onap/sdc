@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_12c0a74e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "Don\u0027t we have configuration framework?",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b2b21304",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "Constructor?",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f2bc1bde",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "Input Stream not inside try block. Resource leak.",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d2b55fed",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "This map is not required",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_72d00b1f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "Default values?",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_92cb5771",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "Why RuntimeException.",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_12a747be",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "1. Maybe callable?\n2. LoggingContext needs to be copied . LoggingContext.copyToRunnable()",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_32c60369",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "Use ExecutorService.",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_52c14f4c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "Pool should be static and shared for the whole product.",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f2a3bbaf",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "if it is closeable, it should be inside a try block.",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b2a9b391",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/CatalogNotifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-06T11:40:56Z",
+      "side": 1,
+      "message": "constant?",
+      "revId": "29d0844b2453215021f6b040abf214792e228201",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
