@@ -78,7 +78,7 @@ cassandraConfig:
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
     ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath : /config/truststore
+    truststorePath : /var/lib/jetty/etc/truststore
     truststorePassword : <%= @cassandra_traststore_password %>
     keySpaces:
         - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
