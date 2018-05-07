@@ -33,6 +33,8 @@ import org.onap.sdc.activityspec.api.rest.types.ActivitySpecCreateResponse;
 import org.onap.sdc.activityspec.be.dao.impl.ActivitySpecDaoZusammenImpl;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.ItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -94,6 +96,10 @@ public class ActivitySpecsImpl implements ActivitySpecs {
 
     @Override
     public Response actOnActivitySpec(ActivitySpecActionRequestDto request, String activitySpecId, String versionId) {
+        if (request.getAction() == null) {
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage("Mandatory action field is missing")
+                                                                    .build());
+        }
         activitySpecManager.actOnAction(activitySpecId, versionId, request.getAction());
         return Response.ok(new InternalEmptyObject()).build();
     }
@@ -105,10 +111,9 @@ public class ActivitySpecsImpl implements ActivitySpecs {
         MapItemToListResponseDto mapper = new MapItemToListResponseDto();
         activitySpecManager.list(versionStatus).stream()
                            .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime())).forEach(
-                activitySpecItem -> results.add(
-                        mapper.applyMapping(activitySpecItem, ActivitySpecListResponseDto.class)));
+                               activitySpecItem -> results.add(mapper.applyMapping(activitySpecItem,
+                                      ActivitySpecListResponseDto.class)));
 
         return Response.ok(results).build();
     }
-
 }
