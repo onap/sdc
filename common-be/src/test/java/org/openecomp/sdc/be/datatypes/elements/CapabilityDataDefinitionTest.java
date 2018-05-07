@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -12,6 +13,18 @@ public class CapabilityDataDefinitionTest {
 		return new CapabilityDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		CapabilityDataDefinition testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		new CapabilityDataDefinition(testSubject);
+		testSubject.setValidSourceTypes(new LinkedList<>());
+		testSubject.setCapabilitySources(new LinkedList<>());
+		testSubject.setPath(new LinkedList<>());
+		new CapabilityDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetOwnerId() throws Exception {
@@ -354,6 +367,10 @@ public class CapabilityDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(createTestSubject());
+		Assert.assertEquals(true, result);
 	}
 
 	

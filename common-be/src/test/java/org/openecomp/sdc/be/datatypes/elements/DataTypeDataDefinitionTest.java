@@ -9,6 +9,15 @@ public class DataTypeDataDefinitionTest {
 		return new DataTypeDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		DataTypeDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new DataTypeDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetName() throws Exception {

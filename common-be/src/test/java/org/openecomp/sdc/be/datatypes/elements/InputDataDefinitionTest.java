@@ -1,5 +1,7 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 
 
@@ -9,6 +11,17 @@ public class InputDataDefinitionTest {
 		return new InputDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		InputDataDefinition testSubject;
+		Boolean result;
+
+		// default test
+		testSubject = createTestSubject();
+		new InputDataDefinition(testSubject);
+		new InputDataDefinition(new HashMap<>());
+		new InputDataDefinition(new PropertyDataDefinition());
+	}
 	
 	@Test
 	public void testIsHidden() throws Exception {

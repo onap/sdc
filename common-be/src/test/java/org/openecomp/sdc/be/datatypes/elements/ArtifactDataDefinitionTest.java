@@ -1,5 +1,7 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -13,6 +15,15 @@ public class ArtifactDataDefinitionTest {
 		return new ArtifactDataDefinition();
 	}
 
+	
+	@Test
+	public void testConstructors() throws Exception {
+		ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition(new HashMap<>());
+		new ArtifactDataDefinition(artifactDataDefinition);
+		artifactDataDefinition.setRequiredArtifacts(new LinkedList<>());
+		artifactDataDefinition.setHeatParameters(new LinkedList<>());
+		new ArtifactDataDefinition(artifactDataDefinition);
+	}
 	
 	@Test
 	public void testGetArtifactName() throws Exception {
@@ -730,5 +741,9 @@ public class ArtifactDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(new ArtifactDataDefinition(testSubject));
+		Assert.assertEquals(true, result);
 	}
 }

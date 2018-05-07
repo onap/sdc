@@ -1,5 +1,7 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.HashMap;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,6 +12,15 @@ public class GetInputValueDataDefinitionTest {
 		return new GetInputValueDataDefinition();
 	}
 
+	@Test
+	public void testConstructors() throws Exception {
+		GetInputValueDataDefinition testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		new GetInputValueDataDefinition(testSubject);
+		new GetInputValueDataDefinition(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetPropName() throws Exception {
@@ -176,5 +187,9 @@ public class GetInputValueDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(createTestSubject());
+		Assert.assertEquals(true, result);
 	}
 }

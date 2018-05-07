@@ -42,6 +42,9 @@ public enum FilterKeyEnum {
 	}
 
 	public static List<String> getValidFiltersByAssetType(ComponentTypeEnum assetType) {
+		if(assetType == null) {
+			return null;
+		}
 		switch (assetType) {
 		case RESOURCE:
 			return getAllFilters().subList(0, 3);

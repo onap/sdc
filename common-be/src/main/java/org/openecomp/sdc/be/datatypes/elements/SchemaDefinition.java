@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.datatypes.elements;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class SchemaDefinition extends ToscaDataDefinition implements Serializabl
 
 	public SchemaDefinition() {
 		super();
-
+		properties = new HashMap<>();
 	}
 
 	public SchemaDefinition(String derivedFrom, List<String> constraints,

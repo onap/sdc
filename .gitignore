@@ -267,3 +267,5 @@ utils/DmaapPublisher/logs/*
 
 /openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/init_keyspaces.cql
 /openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/init_schemas.cql
+
+asdctool/test-output/*

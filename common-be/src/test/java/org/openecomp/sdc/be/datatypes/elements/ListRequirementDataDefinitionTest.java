@@ -1,6 +1,6 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -9,10 +9,20 @@ import org.junit.Test;
 public class ListRequirementDataDefinitionTest {
 
 	private ListRequirementDataDefinition createTestSubject() {
-		List list = new ArrayList<>();
-		return new ListRequirementDataDefinition(list);
+		return new ListRequirementDataDefinition();
 	}
 
+	@Test
+	public void testOverloadConstructors() throws Exception {
+		ListRequirementDataDefinition testSubject;
+		List<RequirementDataDefinition> result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getListToscaDataDefinition();
+		new ListRequirementDataDefinition(testSubject);
+		new ListRequirementDataDefinition(new LinkedList<>());
+	}
 	
 	@Test
 	public void testGetListToscaDataDefinition() throws Exception {

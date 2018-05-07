@@ -12,6 +12,14 @@ public class SubCategoryDataDefinitionTest {
 		return new SubCategoryDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		SubCategoryDataDefinition testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		SubCategoryDataDefinition subCategoryDataDefinition = new SubCategoryDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetName() throws Exception {
@@ -123,6 +131,10 @@ public class SubCategoryDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(new SubCategoryDataDefinition());
+		Assert.assertEquals(true, result);
 	}
 
 	

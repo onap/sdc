@@ -11,7 +11,16 @@ public class CategoryDataDefinitionTest {
 	private CategoryDataDefinition createTestSubject() {
 		return new CategoryDataDefinition();
 	}
+	
+	@Test
+	public void testCopyConstructor() throws Exception {
+		CategoryDataDefinition testSubject;
+		String result;
 
+		// default test
+		testSubject = createTestSubject();
+		CategoryDataDefinition categoryDataDefinition = new CategoryDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetName() throws Exception {
@@ -123,6 +132,10 @@ public class CategoryDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(new CategoryDataDefinition(testSubject));
+		Assert.assertEquals(true, result);
 	}
 
 	

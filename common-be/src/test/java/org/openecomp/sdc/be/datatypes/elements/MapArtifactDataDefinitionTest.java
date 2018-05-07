@@ -9,12 +9,19 @@ import org.junit.Test;
 public class MapArtifactDataDefinitionTest {
 
 	private MapArtifactDataDefinition createTestSubject() {
-		
-		Map map = new HashMap<>();
-		
-		return new MapArtifactDataDefinition(new MapDataDefinition(map), "");
+		return new MapArtifactDataDefinition();
 	}
 
+	@Test
+	public void testOverloadConstructors() throws Exception {
+		MapArtifactDataDefinition testSubject;
+		Map<String, ArtifactDataDefinition> result;
+
+		// default test
+		testSubject = createTestSubject();
+		new MapArtifactDataDefinition(new HashMap<>());
+		new MapArtifactDataDefinition(testSubject, "");
+	}
 	
 	@Test
 	public void testGetMapToscaDataDefinition() throws Exception {

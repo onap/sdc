@@ -12,6 +12,15 @@ public class GroupTypeDataDefinitionTest {
 		return new GroupTypeDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		GroupTypeDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new GroupTypeDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetType() throws Exception {

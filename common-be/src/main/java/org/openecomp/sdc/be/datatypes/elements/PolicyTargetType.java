@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-
 public enum PolicyTargetType {
 
     GROUPS("GROUPS"),
