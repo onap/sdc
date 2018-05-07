@@ -10,6 +10,14 @@ public class GroupingDataDefinitionTest {
 		return new GroupingDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		GroupingDataDefinition testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		GroupingDataDefinition groupingDataDefinition = new GroupingDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetName() throws Exception {
@@ -99,6 +107,10 @@ public class GroupingDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(new GroupingDataDefinition(testSubject));
+		Assert.assertEquals(true, result);
 	}
 
 	

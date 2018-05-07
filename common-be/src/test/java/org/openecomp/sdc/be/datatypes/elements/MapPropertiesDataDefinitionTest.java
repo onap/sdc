@@ -9,10 +9,19 @@ import org.junit.Test;
 public class MapPropertiesDataDefinitionTest {
 
 	private MapPropertiesDataDefinition createTestSubject() {
-		Map map = new HashMap<>();
-		return new MapPropertiesDataDefinition(new MapDataDefinition(map), "");
+		return new MapPropertiesDataDefinition();
 	}
 
+	@Test
+	public void testConstructors() throws Exception {
+		MapPropertiesDataDefinition testSubject;
+		Map<String, PropertyDataDefinition> result;
+
+		// default test
+		testSubject = createTestSubject();
+		new MapPropertiesDataDefinition(new HashMap<>());
+		new MapPropertiesDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetMapToscaDataDefinition() throws Exception {

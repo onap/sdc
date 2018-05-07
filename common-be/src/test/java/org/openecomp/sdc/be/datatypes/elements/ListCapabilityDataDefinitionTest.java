@@ -1,6 +1,6 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -9,10 +9,19 @@ import org.junit.Test;
 public class ListCapabilityDataDefinitionTest {
 
 	private ListCapabilityDataDefinition createTestSubject() {
-		List list = new ArrayList<>();
-		return new ListCapabilityDataDefinition(list);
+		return new ListCapabilityDataDefinition();
 	}
 
+	@Test
+	public void testOverloadConstructors() throws Exception {
+		ListCapabilityDataDefinition testSubject;
+		List<CapabilityDataDefinition> result;
+
+		// default test
+		testSubject = createTestSubject();
+		new ListCapabilityDataDefinition(testSubject);
+		new ListCapabilityDataDefinition(new LinkedList<>());
+	}
 	
 	@Test
 	public void testGetListToscaDataDefinition() throws Exception {

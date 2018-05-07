@@ -172,7 +172,7 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 	@Override
 	public String getActualComponentType() {
 
-		return  componentType.getValue();
+		return componentType != null ? componentType.getValue() : "";
 	}
 
 }

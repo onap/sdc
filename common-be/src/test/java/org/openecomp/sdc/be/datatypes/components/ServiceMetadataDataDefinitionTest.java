@@ -2,6 +2,7 @@ package org.openecomp.sdc.be.datatypes.components;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
 
 public class ServiceMetadataDataDefinitionTest {
@@ -10,6 +11,14 @@ public class ServiceMetadataDataDefinitionTest {
 		return new ServiceMetadataDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		ServiceMetadataDataDefinition testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		ServiceMetadataDataDefinition serviceMetadataDataDefinition = new ServiceMetadataDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetDistributionStatus() throws Exception {
@@ -142,6 +151,17 @@ public class ServiceMetadataDataDefinitionTest {
 		result = testSubject.hashCode();
 	}
 
+	@Test
+	public void testgetActualComponentType() throws Exception {
+		ServiceMetadataDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getActualComponentType();
+		testSubject.setComponentType(ComponentTypeEnum.PRODUCT);
+		result = testSubject.getActualComponentType();
+	}
 	
 	@Test
 	public void testEquals() throws Exception {
@@ -154,5 +174,9 @@ public class ServiceMetadataDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(new ServiceMetadataDataDefinition());
+		Assert.assertEquals(true, result);
 	}
 }

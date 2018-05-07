@@ -10,6 +10,15 @@ public class ConsumerDataDefinitionTest {
 		return new ConsumerDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		ConsumerDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new ConsumerDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetConsumerName() throws Exception {
@@ -176,5 +185,9 @@ public class ConsumerDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(new ConsumerDataDefinition(testSubject));
+		Assert.assertEquals(true, result);
 	}
 }

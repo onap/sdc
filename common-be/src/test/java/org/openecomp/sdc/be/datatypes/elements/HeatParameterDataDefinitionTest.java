@@ -10,6 +10,15 @@ public class HeatParameterDataDefinitionTest {
 		return new HeatParameterDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		HeatParameterDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new HeatParameterDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {
@@ -176,5 +185,9 @@ public class HeatParameterDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(createTestSubject());
+		Assert.assertEquals(true, result);
 	}
 }

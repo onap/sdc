@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.datatypes.components;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -159,13 +160,13 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 		this.lastUpdateDate = other.getLastUpdateDate();
 		this.description = other.getDescription();
 		this.state = other.getState();
-		this.tags = new ArrayList<>(other.getTags());
+		this.tags = new ArrayList<>(other.getTags() != null  ? other.getTags() : new LinkedList<>());
 		this.icon = other.getIcon();
 		this.contactId = other.getContactId();
 		this.UUID = other.getUUID();
 		this.normalizedName = other.getNormalizedName();
 		this.systemName = other.getSystemName();
-		this.allVersions = new HashMap<>(other.getAllVersions());
+		this.allVersions = new HashMap<>(other.getAllVersions() != null ? other.getAllVersions() : new HashMap<>());
 		this.isDeleted = other.isDeleted();
 		this.projectCode = other.getProjectCode();
 		this.csarUUID = other.getCsarUUID();

@@ -126,6 +126,6 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
 	@Override
 	public String getActualComponentType() {
-		return getComponentType().getValue();
+		return getComponentType() != null ? getComponentType().getValue() : null;
 	}
 }

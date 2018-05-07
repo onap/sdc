@@ -90,6 +90,10 @@ public enum ComponentTypeEnum {
 
 	public static String findParamByType(ComponentTypeEnum type) {
 		String ret = null;
+		if (type == null) {
+			return ret;
+		}
+		
 		switch (type) {
 		case RESOURCE:
 			ret = RESOURCE_PARAM_NAME;

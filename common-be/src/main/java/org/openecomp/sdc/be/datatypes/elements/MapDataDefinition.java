@@ -94,26 +94,32 @@ public  class MapDataDefinition <T extends ToscaDataDefinition>  extends ToscaDa
 	}
 	@Override
 	public <T extends ToscaDataDefinition>  T removeByOwnerId(Set<String> ownerIdList) {
-		Map<String, T > collect = (Map<String, T >)mapToscaDataDefinition.entrySet().stream().filter(e -> ownerIdList.contains(e.getValue().getOwnerId())).collect(Collectors.toMap(Map.Entry::getKey, (Map.Entry::getValue)));
-		
-		MapDataDefinition collectMap = new MapDataDefinition<>(collect);
-		
-		mapToscaDataDefinition.entrySet().removeIf(e -> ownerIdList.contains(e.getValue().getOwnerId()));
-		
-		return (T) collectMap;
+		if(mapToscaDataDefinition != null) {
+			Map<String, T > collect = (Map<String, T >)mapToscaDataDefinition.entrySet()
+					.stream()
+					.filter(e -> ownerIdList.contains(e.getValue().getOwnerId())).collect(Collectors.toMap(Map.Entry::getKey, (Map.Entry::getValue)));
+			
+			MapDataDefinition collectMap = new MapDataDefinition<>(collect);
+			
+			mapToscaDataDefinition.entrySet().removeIf(e -> ownerIdList.contains(e.getValue().getOwnerId()));
+			
+			return (T) collectMap;			
+		}
+		return (T) new MapDataDefinition(new HashMap<>());
 	}
 
 	@Override
 	public <T extends ToscaDataDefinition> T updateIfExist(T other, boolean allowDefaultValueOverride) {
 		
 		Map<String, T > map = ((MapDataDefinition)other).getMapToscaDataDefinition();
-		
-		map.entrySet().forEach(e ->{
-			String key = e.getKey();
-			if ( mapToscaDataDefinition.containsKey(key) ){
-				e.getValue().mergeFunction(mapToscaDataDefinition.get(key), allowDefaultValueOverride);
-			}
-		});
+		if(map != null) {
+			map.entrySet().forEach(e ->{
+				String key = e.getKey();
+				if ( mapToscaDataDefinition.containsKey(key) ){
+					e.getValue().mergeFunction(mapToscaDataDefinition.get(key), allowDefaultValueOverride);
+				}
+			});
+		}
 		return other;
 	}
 	@Override

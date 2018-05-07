@@ -126,5 +126,18 @@ public class ProductMetadataDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.equals(obj);
+		result = testSubject.equals(testSubject);
+		result = testSubject.equals(createTestSubject());
+	}
+	
+	@Test
+	public void testGetActualComponentType() throws Exception {
+		ProductMetadataDataDefinition testSubject;
+		Object obj = null;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getActualComponentType();
 	}
 }
