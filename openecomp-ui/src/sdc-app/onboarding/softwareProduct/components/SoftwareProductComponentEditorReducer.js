@@ -59,7 +59,7 @@ export default (state = {}, action) => {
                     nfcFunction: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 30 }]
+                        validations: []
                     },
                     description: {
                         isValid: true,
