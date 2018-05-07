@@ -97,6 +97,12 @@ export class BasePubSub {
         }
     }
 
+    public isWaitingForEvent(eventName: string) : boolean {
+        return Array.from(this.eventsToWait.values()).some((eventsList: Array<string>) =>
+            eventsList.indexOf(eventName) !== -1
+        );
+    }
+
     protected onMessage(event: any) {
         if (this.subscribers.has(event.data.originId)) {
             this.eventsCallbacks.forEach((callback: Function) => {

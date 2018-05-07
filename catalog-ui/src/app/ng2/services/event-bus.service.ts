@@ -49,4 +49,48 @@ export class EventBusService extends BasePubSub {
             this.handlePluginRegistration(event.data, event);
         }
     }
+
+    public disableNavigation(isDisable: boolean) {
+        if (isDisable) {
+            let disableDiv = document.createElement('div');
+            disableDiv.style.cssText = "position: fixed;\n" +
+                "z-index: 1029;\n" +
+                "background: rgba(0,0,0,0.5);\n" +
+                "width: 100%;\n" +
+                "height: 100%;\n" +
+                "top: 0;\n" +
+                "left: 0;";
+            disableDiv.setAttribute("class", "disable-navigation-div");
+            document.body.appendChild(disableDiv);
+        }
+        else {
+            document.getElementsByClassName("disable-navigation-div")[0].remove();
+        }
+    }
+
+    public notify(eventType:string, eventData?:any, disableOnWaiting:boolean=true) {
+        let doDisable = false;
+
+        if (disableOnWaiting) {
+            doDisable = this.isWaitingForEvent(eventType);
+
+            if (doDisable) {
+                this.disableNavigation(true);
+            }
+        }
+
+        const origSubscribe = super.notify(eventType, eventData).subscribe;
+
+        return {
+            subscribe: function (callbackFn) {
+                origSubscribe(() => {
+                    if (doDisable) {
+                        this.disableNavigation(false);
+                    }
+
+                    callbackFn();
+                });
+            }.bind(this)
+        };
+    }
 }

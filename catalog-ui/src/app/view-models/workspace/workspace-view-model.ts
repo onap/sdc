@@ -276,7 +276,6 @@ export class WorkspaceViewModel {
                     return versionObj.versionId === this.$scope.component.uniqueId;
                 });
             }
-            this.$scope.isLoading = true;
 
             let eventData = {
                 uuid: this.$scope.component.uuid,
@@ -284,6 +283,8 @@ export class WorkspaceViewModel {
             };
 
             this.eventBusService.notify("VERSION_CHANGED", eventData).subscribe(() => {
+                this.$scope.isLoading = true;
+
                 this.$state.go(this.$state.current.name, {
                     id: selectedId,
                     type: this.$scope.componentType.toLowerCase(),
@@ -461,7 +462,7 @@ export class WorkspaceViewModel {
 
                 switch (url) {
                     case 'lifecycleState/CHECKOUT':
-                        this.eventBusService.notify("CHECK_OUT", eventData).subscribe(() => {
+                        this.eventBusService.notify("CHECK_OUT", eventData, false).subscribe(() => {
                             // only checkOut get the full component from server
                             //   this.$scope.component = component;
                             // Work around to change the csar version
@@ -503,7 +504,7 @@ export class WorkspaceViewModel {
                         });
                         break;
                     case 'lifecycleState/UNDOCHECKOUT':
-                        this.eventBusService.notify("UNDO_CHECK_OUT", eventData).subscribe(() => {
+                        this.eventBusService.notify("UNDO_CHECK_OUT", eventData, false).subscribe(() => {
                             defaultActionAfterChangeLifecycleState();
                             this.Notification.success({
                                 message: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TEXT"),

@@ -19,5 +19,5 @@ export class PluginsService {
         return plugin.pluginDisplayOptions["context"] &&
                plugin.pluginDisplayOptions["context"].displayRoles.includes(userRole) &&
                plugin.pluginDisplayOptions["context"].displayContext.indexOf(contextType) !== -1
-    }
+    };
 }
