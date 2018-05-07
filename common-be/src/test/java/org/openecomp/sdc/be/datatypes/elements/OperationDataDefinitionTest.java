@@ -9,6 +9,16 @@ public class OperationDataDefinitionTest {
 		return new OperationDataDefinition();
 	}
 
+	@Test
+	public void testConstructors() throws Exception {
+		OperationDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new OperationDataDefinition(testSubject);
+		new OperationDataDefinition("mock");
+	}
 
 	@Test
 	public void testGetUniqueId() throws Exception {
@@ -19,7 +29,6 @@ public class OperationDataDefinitionTest {
 		testSubject = createTestSubject();
 		result = testSubject.getUniqueId();
 	}
-
 
 	@Test
 	public void testSetUniqueId() throws Exception {

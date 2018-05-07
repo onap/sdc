@@ -1,6 +1,6 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -9,10 +9,19 @@ import org.junit.Test;
 public class ListMapPropertiesDataDefinitionTest {
 
 	private ListMapPropertiesDataDefinition createTestSubject() {
-		List list = new ArrayList<>();
-		return new ListMapPropertiesDataDefinition(list);
+		return new ListMapPropertiesDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		ListMapPropertiesDataDefinition testSubject;
+		List<MapPropertiesDataDefinition> result;
+
+		// default test
+		testSubject = createTestSubject();
+		new ListMapPropertiesDataDefinition(testSubject);
+		new ListMapPropertiesDataDefinition(new LinkedList<>());
+	}
 	
 	@Test
 	public void testGetListToscaDataDefinition() throws Exception {

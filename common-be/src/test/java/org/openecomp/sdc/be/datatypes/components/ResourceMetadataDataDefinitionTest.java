@@ -10,6 +10,15 @@ public class ResourceMetadataDataDefinitionTest {
 		return new ResourceMetadataDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		ResourceMetadataDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		ResourceMetadataDataDefinition resourceMetadataDataDefinition = new ResourceMetadataDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetVendorName() throws Exception {
@@ -218,5 +227,18 @@ public class ResourceMetadataDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.equals(obj);
+		testSubject.equals(testSubject);
+		testSubject.equals(createTestSubject());
+	}
+	
+	@Test
+	public void testGetActualComponentType() throws Exception {
+		ResourceMetadataDataDefinition testSubject;
+		Object obj = null;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getActualComponentType();
 	}
 }

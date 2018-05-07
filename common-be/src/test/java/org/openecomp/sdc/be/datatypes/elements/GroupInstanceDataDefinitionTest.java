@@ -1,5 +1,7 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -11,6 +13,22 @@ public class GroupInstanceDataDefinitionTest {
 		return new GroupInstanceDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		GroupInstanceDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new GroupInstanceDataDefinition(testSubject);
+		testSubject.setArtifacts(new LinkedList<>());
+		testSubject.setArtifactsUuid(new LinkedList<>());
+		testSubject.setGroupInstanceArtifacts(new LinkedList<>());
+		testSubject.setGroupInstanceArtifactsUuid(new LinkedList<>());
+		testSubject.setProperties(new LinkedList<>());
+		new GroupInstanceDataDefinition(testSubject);
+		new GroupInstanceDataDefinition(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {

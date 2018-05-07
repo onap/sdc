@@ -137,7 +137,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 	}
 
 	public void setName(String name) {
-		if (this.getInvariantName() == null) {
+		if (this.getInvariantName() == null && name != null) {
 			this.setInvariantName(ValidationUtils.normalizeComponentInstanceName(name));
 		}
 		setToscaPresentationValue(JsonPresentationFields.NAME, name);

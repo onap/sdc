@@ -11,6 +11,18 @@ public class InterfaceDataDefinitionTest {
 		return new InterfaceDataDefinition();
 	}
 
+	@Test
+	public void testOverloadConstructors() throws Exception {
+		InterfaceDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getUniqueId();
+		
+		new InterfaceDataDefinition(testSubject);
+		new InterfaceDataDefinition("","");
+	}
 
 	@Test
 	public void testGetUniqueId() throws Exception {

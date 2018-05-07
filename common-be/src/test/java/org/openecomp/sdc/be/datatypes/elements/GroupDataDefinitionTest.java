@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,16 @@ public class GroupDataDefinitionTest {
 		return new GroupDataDefinition();
 	}
 
+	@Test
+	public void testConstructors() throws Exception {
+		GroupDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new GroupDataDefinition(testSubject);
+		new GroupDataDefinition(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetName() throws Exception {
@@ -307,5 +318,15 @@ public class GroupDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.toString();
+	}
+	
+	@Test
+	public void testContainsInstanceAsMember() throws Exception {
+		GroupDataDefinition testSubject;
+		boolean result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.containsInstanceAsMember("");
 	}
 }

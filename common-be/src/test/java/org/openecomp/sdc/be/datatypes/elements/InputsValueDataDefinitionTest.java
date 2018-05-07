@@ -6,9 +6,13 @@ import org.junit.Test;
 public class InputsValueDataDefinitionTest {
 
 	private InputsValueDataDefinition createTestSubject() {
-		return new InputsValueDataDefinition("", "");
+		return new InputsValueDataDefinition();
 	}
 
+	@Test
+	public void testOverloadConstructor() throws Exception {
+		new InputsValueDataDefinition("", "");
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {

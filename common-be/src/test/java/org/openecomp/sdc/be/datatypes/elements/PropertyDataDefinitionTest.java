@@ -12,6 +12,15 @@ public class PropertyDataDefinitionTest {
 		return new PropertyDataDefinition();
 	}
 
+	@Test
+	public void testConstructor() throws Exception {
+		PropertyDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new PropertyDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetInputPath() throws Exception {
@@ -486,16 +495,11 @@ public class PropertyDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(createTestSubject());
+		Assert.assertEquals(true, result);
 	}
-
-	
-
-	
-
-
-	
-
-
 	
 	@Test
 	public void testConvertPropertyDataToInstancePropertyData() throws Exception {
@@ -504,5 +508,25 @@ public class PropertyDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.convertPropertyDataToInstancePropertyData();
+	}
+	
+	@Test
+	public void testTypeEquals() throws Exception {
+		PropertyDataDefinition testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.typeEquals(testSubject);
+		testSubject.typeEquals(null);
+		testSubject.typeEquals(createTestSubject());
+	}
+	
+	@Test
+	public void testMergeFunction() throws Exception {
+		PropertyDataDefinition testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.mergeFunction(createTestSubject(), false);
 	}
 }

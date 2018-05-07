@@ -11,6 +11,15 @@ public class AdditionalInfoParameterDataDefinitionTest {
 		return new AdditionalInfoParameterDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		AdditionalInfoParameterDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		AdditionalInfoParameterDataDefinition additionalInfoParameterDataDefinition = new AdditionalInfoParameterDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {

@@ -3,14 +3,22 @@ package org.openecomp.sdc.be.datatypes.elements;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 
-
 public class ComponentInstanceDataDefinitionTest {
 
 	private ComponentInstanceDataDefinition createTestSubject() {
 		return new ComponentInstanceDataDefinition();
 	}
 
-	
+	@Test
+	public void testCopyConstructor() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new ComponentInstanceDataDefinition(testSubject);
+	}
+
 	@Test
 	public void testGetIcon() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -21,7 +29,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getIcon();
 	}
 
-	
 	@Test
 	public void testSetIcon() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -32,7 +39,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setIcon(icon);
 	}
 
-	
 	@Test
 	public void testGetUniqueId() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -43,7 +49,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getUniqueId();
 	}
 
-	
 	@Test
 	public void testSetUniqueId() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -54,7 +59,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setUniqueId(uniqueId);
 	}
 
-	
 	@Test
 	public void testGetCreationTime() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -65,7 +69,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getCreationTime();
 	}
 
-	
 	@Test
 	public void testSetCreationTime() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -76,7 +79,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setCreationTime(creationTime);
 	}
 
-	
 	@Test
 	public void testGetModificationTime() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -87,7 +89,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getModificationTime();
 	}
 
-	
 	@Test
 	public void testSetModificationTime() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -98,7 +99,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setModificationTime(modificationTime);
 	}
 
-	
 	@Test
 	public void testGetDescription() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -109,7 +109,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getDescription();
 	}
 
-	
 	@Test
 	public void testSetDescription() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -120,7 +119,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setDescription(description);
 	}
 
-	
 	@Test
 	public void testGetPosX() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -131,7 +129,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getPosX();
 	}
 
-	
 	@Test
 	public void testSetPosX() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -142,7 +139,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setPosX(posX);
 	}
 
-	
 	@Test
 	public void testGetPosY() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -153,7 +149,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getPosY();
 	}
 
-	
 	@Test
 	public void testSetPosY() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -164,7 +159,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setPosY(posY);
 	}
 
-	
 	@Test
 	public void testGetComponentUid() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -175,7 +169,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getComponentUid();
 	}
 
-	
 	@Test
 	public void testSetComponentUid() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -186,7 +179,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setComponentUid(resourceUid);
 	}
 
-	
 	@Test
 	public void testGetName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -197,7 +189,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getName();
 	}
 
-	
 	@Test
 	public void testSetName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -208,7 +199,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setName(name);
 	}
 
-	
 	@Test
 	public void testGetInvariantName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -219,7 +209,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getInvariantName();
 	}
 
-	
 	@Test
 	public void testSetInvariantName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -230,7 +219,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setInvariantName(invariantName);
 	}
 
-	
 	@Test
 	public void testGetPropertyValueCounter() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -241,7 +229,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getPropertyValueCounter();
 	}
 
-	
 	@Test
 	public void testSetPropertyValueCounter() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -252,7 +239,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setPropertyValueCounter(propertyValueCounter);
 	}
 
-	
 	@Test
 	public void testGetNormalizedName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -263,7 +249,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getNormalizedName();
 	}
 
-	
 	@Test
 	public void testSetNormalizedName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -274,7 +259,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setNormalizedName(normalizedName);
 	}
 
-	
 	@Test
 	public void testGetOriginType() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -283,9 +267,10 @@ public class ComponentInstanceDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getOriginType();
+		testSubject.setOriginType(OriginTypeEnum.PRODUCT);
+		result = testSubject.getOriginType();
 	}
 
-	
 	@Test
 	public void testSetOriginType() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -295,9 +280,13 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject = createTestSubject();
 		originType = null;
 		testSubject.setOriginType(originType);
+
+		// test 2
+		testSubject = createTestSubject();
+		originType = null;
+		testSubject.setOriginType(OriginTypeEnum.PRODUCT);
 	}
 
-	
 	@Test
 	public void testGetAttributeValueCounter() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -308,7 +297,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getAttributeValueCounter();
 	}
 
-	
 	@Test
 	public void testSetAttributeValueCounter() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -319,7 +307,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setAttributeValueCounter(attributeValueCounter);
 	}
 
-	
 	@Test
 	public void testGetInputValueCounter() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -330,7 +317,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getInputValueCounter();
 	}
 
-	
 	@Test
 	public void testSetInputValueCounter() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -341,7 +327,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setInputValueCounter(inputValueCounter);
 	}
 
-	
 	@Test
 	public void testGetCustomizationUUID() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -352,7 +337,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getCustomizationUUID();
 	}
 
-	
 	@Test
 	public void testSetCustomizationUUID() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -363,7 +347,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setCustomizationUUID(customizationUUID);
 	}
 
-	
 	@Test
 	public void testGetComponentName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -374,7 +357,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getComponentName();
 	}
 
-	
 	@Test
 	public void testSetComponentName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -385,7 +367,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setComponentName(resourceName);
 	}
 
-	
 	@Test
 	public void testGetComponentVersion() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -396,7 +377,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getComponentVersion();
 	}
 
-	
 	@Test
 	public void testGetToscaComponentName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -407,7 +387,6 @@ public class ComponentInstanceDataDefinitionTest {
 		result = testSubject.getToscaComponentName();
 	}
 
-	
 	@Test
 	public void testSetToscaComponentName() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -418,7 +397,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setToscaComponentName(toscaComponentName);
 	}
 
-	
 	@Test
 	public void testSetComponentVersion() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -429,7 +407,6 @@ public class ComponentInstanceDataDefinitionTest {
 		testSubject.setComponentVersion(resourceVersion);
 	}
 
-	
 	@Test
 	public void testToString() throws Exception {
 		ComponentInstanceDataDefinition testSubject;
@@ -438,5 +415,116 @@ public class ComponentInstanceDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.toString();
+	}
+
+	@Test
+	public void testSetSourceModelInvariant() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String targetModelInvariant = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setSourceModelInvariant(targetModelInvariant);
+	}
+
+	@Test
+	public void testSetSourceModelName() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String targetModelName = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setSourceModelName(targetModelName);
+	}
+
+	@Test
+	public void testSetSourceModelUid() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String targetModelUid = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setSourceModelUid(targetModelUid);
+	}
+
+	@Test
+	public void testSetSourceModelUuid() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String targetModelUuid = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setSourceModelUuid(targetModelUuid);
+	}
+
+	@Test
+	public void testGetIsProxy() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		Boolean result;
+
+		// default test 1
+		testSubject = createTestSubject();
+		result = testSubject.getIsProxy();
+	}
+
+	@Test
+	public void testGetSourceModelUuid() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getSourceModelUuid();
+	}
+
+	@Test
+	public void testGetSourceModelUid() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getSourceModelUid();
+	}
+
+	@Test
+	public void testGetSourceModelName() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getSourceModelName();
+	}
+
+	@Test
+	public void testGetSourceModelInvariant() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getSourceModelInvariant();
+	}
+
+	@Test
+	public void testSetIsProxy() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		Boolean isProxy = null;
+
+		// test 1
+		testSubject = createTestSubject();
+		isProxy = null;
+		testSubject.setIsProxy(isProxy);
+	}
+
+	@Test
+	public void testGetIsProxy_1() throws Exception {
+		ComponentInstanceDataDefinition testSubject;
+		Boolean result;
+
+		// default test 1
+		testSubject = createTestSubject();
+		result = testSubject.getIsProxy();
 	}
 }

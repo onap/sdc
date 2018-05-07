@@ -12,6 +12,15 @@ public class RequirementDataDefinitionTest {
 		return new RequirementDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		RequirementDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new RequirementDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {
@@ -332,6 +341,10 @@ public class RequirementDataDefinitionTest {
 		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		result = testSubject.equals(createTestSubject());
+		Assert.assertEquals(true, result);
 	}
 
 	

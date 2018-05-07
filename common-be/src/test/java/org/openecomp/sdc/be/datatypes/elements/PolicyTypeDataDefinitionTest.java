@@ -12,6 +12,15 @@ public class PolicyTypeDataDefinitionTest {
 		return new PolicyTypeDataDefinition();
 	}
 
+	@Test
+	public void testCopyConstructor() throws Exception {
+		PolicyTypeDataDefinition testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		new PolicyTypeDataDefinition(testSubject);
+	}
 	
 	@Test
 	public void testGetType() throws Exception {
