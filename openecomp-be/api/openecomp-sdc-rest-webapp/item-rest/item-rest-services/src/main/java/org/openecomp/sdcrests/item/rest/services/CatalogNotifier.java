@@ -60,6 +60,7 @@ public class CatalogNotifier {
     private static String notifyCatalogUrl;
 
     private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    private static boolean executeNotificationFlag = true;
 
 
     static {
@@ -72,38 +73,42 @@ public class CatalogNotifier {
 
         try {
             configurationMap = readFromFile(configurationYamlFile, reader);
+            Object protocol = configurationMap.get(PROTOCOL_KEY);
+            Object host = configurationMap.get(HOST_KEY);
+            Object port = configurationMap.get(PORT_KEY);
 
-        } catch (IOException e) {
-            throw new RuntimeException("Could not read configuration file configuration.yaml");
-        }
+            if (protocol == null || host == null || port == null) {
+                LOGGER.error("Could not read configuration file configuration.yaml");
+                executeNotificationFlag = false;
+            }
 
-        Object protocol = configurationMap.get(PROTOCOL_KEY);
-        Object host = configurationMap.get(HOST_KEY);
-        Object port = configurationMap.get(PORT_KEY);
+            if (configurationMap.get(URL_KEY) != null) {
+                String urlFormat = String.valueOf(configurationMap.get(URL_KEY));
+                notifyCatalogUrl =
+                        String.format(urlFormat, String.valueOf(protocol), String.valueOf(host), String.valueOf(port));
 
-        if (protocol == null || host == null || port == null) {
-            throw new RuntimeException("Could not read configuration file configuration.yaml");
-        }
+            } else {
+                notifyCatalogUrl = String.format(URL_DEFAULT_FORMAT, String.valueOf(protocol), String.valueOf(host),
+                        String.valueOf(port));
+            }
 
-        if (configurationMap.get(URL_KEY) != null) {
-            String urlFormat = String.valueOf(configurationMap.get(URL_KEY));
-            notifyCatalogUrl =
-                    String.format(urlFormat, String.valueOf(protocol), String.valueOf(host), String.valueOf(port));
-
-        } else {
-            notifyCatalogUrl = String.format(URL_DEFAULT_FORMAT, String.valueOf(protocol), String.valueOf(host),
-                    String.valueOf(port));
+        } catch (Exception e) {
+           LOGGER.error("Could not read configuration file configuration.yaml");
+           executeNotificationFlag = false;
         }
     }
 
 
     public void execute(Collection<String> itemIds, ItemAction action, int numOfRetries) {
 
-        String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
+        if (executeNotificationFlag) {
 
-        Callable callable = createCallable(JsonUtil.object2Json(itemIds), action, numOfRetries, userId);
+            String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
 
-        executor.submit(callable);
+            Callable callable = createCallable(JsonUtil.object2Json(itemIds), action, numOfRetries, userId);
+
+            executor.submit(callable);
+        }
 
     }
 
