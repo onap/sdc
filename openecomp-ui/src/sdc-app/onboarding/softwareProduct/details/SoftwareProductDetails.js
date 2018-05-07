@@ -47,6 +47,9 @@ export const mapStateToProps = ({
     licenseAgreementList = licensingVersion
         ? licenseAgreement.licenseAgreementList
         : [];
+    const sortedLicensingVersionsList = [...licensingVersionsList].sort(
+        (a, b) => Number(a.name) > Number(b.name)
+    );
     if (licensingVersion && licensingData && licensingData.licenseAgreement) {
         let selectedLicenseAgreement = licenseAgreementList.find(
             la => la.id === licensingData.licenseAgreement
@@ -82,7 +85,7 @@ export const mapStateToProps = ({
         currentSoftwareProduct,
         softwareProductCategories,
         licenseAgreementList,
-        licensingVersionsList,
+        licensingVersionsList: sortedLicensingVersionsList,
         featureGroupsList: filteredFeatureGroupsList,
         finalizedLicenseModelList,
         qdata,

@@ -79,11 +79,15 @@ const VersionListItem = ({
             className={`version-item-row ${
                 isHeader ? 'header-row' : 'clickable'
             } ${isSelected ? 'selected' : ''}`}
-            onClick={e => {
-                e.stopPropagation();
-                onSelectVersion();
-                onNavigateToVersion();
-            }}>
+            onClick={
+                isHeader
+                    ? null
+                    : e => {
+                          e.stopPropagation();
+                          onSelectVersion();
+                          onNavigateToVersion();
+                      }
+            }>
             <div
                 className={`version-item-field ${
                     isHeader ? 'header-field item-version' : 'item-version'
