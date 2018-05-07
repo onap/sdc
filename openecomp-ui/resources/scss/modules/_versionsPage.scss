@@ -186,6 +186,12 @@
 			.tree-view {
 				background-color: $white;
 				flex: 1;
+
+				.node:not(.selectedNode):hover {
+					.outer-circle, .inner-circle {
+						transform: scale(1.1);
+					}
+				}
 			}
 		}
 	}
@@ -229,8 +235,8 @@
 			&.selected {
 				box-shadow: 0 1px 4px 0 rgba(24, 24, 24, 0.06), inset 5px 0 0 0 $blue;
 				background-color: $row-active-color;
+
 				&:hover {
-					background-color: $row-hover-color;
 					box-shadow: 0 1px 4px 0 rgba(24, 24, 24, 0.06), inset 5px 0 0 0 lighten($blue, 35%);
 				}
 			}
@@ -278,6 +284,7 @@
 				&.item-description > .description-text {
 					margin-right: 10px;
 					@include ellipsis($max-width: 300px);
+					width: initial;
 				}
 
 				&.item-actions {
@@ -315,7 +322,7 @@
 
 			/* To keep ellipsis hider's background the same color as row background */
 			&:not(.selected):hover .item-description > .description-text:after {
-				background: $row-hover-color
+				background: $row-hover-color;
 			}
 
 			&:hover:active .item-description > .description-text:after {
