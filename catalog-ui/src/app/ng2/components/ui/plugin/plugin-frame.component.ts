@@ -1,4 +1,4 @@
-import {Component, Inject, Input, Output, OnInit, EventEmitter, ViewChild, ElementRef} from "@angular/core";
+import {Component, Inject, Input, Output, OnInit, EventEmitter} from "@angular/core";
 import {URLSearchParams} from '@angular/http';
 import {Plugin} from "app/models";
 import {EventBusService} from "../../../services/event-bus.service";
@@ -63,7 +63,6 @@ export class PluginFrameComponent implements OnInit {
 
                     this.eventBusService.notify("WINDOW_OUT").subscribe(() => {
                         this.isClosed = true;
-
                         this.eventBusService.unregister(this.plugin.pluginId);
 
                         this.$state.go(toState.name, toParams);
