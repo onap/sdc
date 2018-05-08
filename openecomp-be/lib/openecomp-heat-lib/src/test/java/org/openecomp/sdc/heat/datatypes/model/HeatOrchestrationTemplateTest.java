@@ -22,9 +22,10 @@ package org.openecomp.sdc.heat.datatypes.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 public class HeatOrchestrationTemplateTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
+  private final static Logger LOG = (Logger) LoggerFactory
+          .getLogger(HeatOrchestrationTemplateTest.class.getName());
   @Test
   public void testYamlToServiceTemplateObj() throws IOException {
     YamlUtil yamlUtil = new YamlUtil();
@@ -48,7 +48,7 @@ public class HeatOrchestrationTemplateTest {
   }
 
   @Test
-  public void createHotTemplate() {
+  public void createHotTemplate() throws Exception{
     HeatOrchestrationTemplate template = new HeatOrchestrationTemplate();
     template.setHeat_template_version("2016-04-14");
     template.setDescription("test description for hot template");
@@ -100,13 +100,10 @@ public class HeatOrchestrationTemplateTest {
     YamlUtil yamlUtil = new YamlUtil();
     String yml = yamlUtil.objectToYaml(template);
     Assert.assertNotNull(yml);
-    try {
-      HeatOrchestrationTemplate heatOrchestrationTemplate =
+    HeatOrchestrationTemplate heatOrchestrationTemplate = null;
+       heatOrchestrationTemplate =
           yamlUtil.yamlToObject(yml, HeatOrchestrationTemplate.class);
-      Assert.assertNotNull(heatOrchestrationTemplate);
-    } catch (Exception ignored) {
-      log.debug("",ignored);
-    }
+    Assert.assertNotNull(heatOrchestrationTemplate);
   }
 
   private Map<String, Parameter> createParameters() {

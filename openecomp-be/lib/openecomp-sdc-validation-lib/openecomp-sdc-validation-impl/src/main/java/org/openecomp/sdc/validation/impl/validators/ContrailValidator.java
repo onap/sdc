@@ -54,7 +54,7 @@ public class ContrailValidator implements Validator {
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
-      LOGGER.debug("",exception);
+      LOGGER.error("Failed to validate manifest file", exception);
       return;
     }
     Map<String, FileData.Type> fileTypeMap = ManifestUtil.getFileTypeMap(manifestContent);
@@ -120,7 +120,7 @@ public class ContrailValidator implements Validator {
       heatOrchestrationTemplate =
           new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
     } catch (Exception ignored) {
-      LOGGER.debug("",ignored);
+      LOGGER.error("Invalid file content : " + fileContent, ignored);
       // the HeatValidator should handle file that is failing to parse
       return Optional.empty();
     }

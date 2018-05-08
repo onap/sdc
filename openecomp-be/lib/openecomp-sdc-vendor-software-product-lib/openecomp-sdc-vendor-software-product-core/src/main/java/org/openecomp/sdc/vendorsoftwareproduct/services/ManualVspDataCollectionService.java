@@ -300,7 +300,8 @@ public class ManualVspDataCollectionService {
       computeQuestionnaire = computeDao.getQuestionnaireData(vspId, version, componentId,
           computeFlavorId);
     } catch (Exception ex) {
-      log.debug("", ex);
+      log.warn("Failed to get QuestionnaireData from computeDao," +
+              " initializing computeQuestionnaire to null", ex);
       computeQuestionnaire = null;
     }
     if (Objects.nonNull(computeQuestionnaire)) {
@@ -310,7 +311,8 @@ public class ManualVspDataCollectionService {
         try {
           compute = JsonUtil.json2Object(computeQuestionnaireData, Compute.class);
         } catch (Exception ex) {
-          log.debug("", ex);
+          log.warn("Failed to convert json value to compute object," +
+                  "initializing compute to null", ex);
           compute = null;
         }
         if (compute != null && Objects.nonNull(compute.getVmSizing())) {
@@ -370,7 +372,8 @@ public class ManualVspDataCollectionService {
             imageDetails = JsonUtil.json2Object(imageQuestionnaireDataEntity
                 .getQuestionnaireData(), ImageDetails.class);
           } catch (Exception ex) {
-            log.debug("", ex);
+            log.warn("Failed to convert json value to ImageDetails object," +
+                    "initializing imageDetails to null", ex);
             imageDetails = null;
           }
           if (Objects.nonNull(imageDetails)

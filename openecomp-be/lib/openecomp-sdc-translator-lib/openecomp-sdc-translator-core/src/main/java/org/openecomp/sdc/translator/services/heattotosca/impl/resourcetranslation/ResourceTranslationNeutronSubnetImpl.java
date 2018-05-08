@@ -133,14 +133,12 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
               Boolean booleanValue = HeatBoolean.eval(defaultVal);
               dhcpParameterDefinition.set_default(booleanValue);
             } catch (CoreException coreException) {
-              logger.debug("",coreException);
-              //if value is not valid value for boolean set with dhcp_enabled default value = true
               dhcpParameterDefinition.set_default(true);
               logger.warn("Parameter '" + dhcpEnabledParameterName + "' used for "
                   + ToscaConstants.DHCP_ENABLED_PROPERTY_NAME
                   + " boolean property, but it's value is not a valid boolean value, therefore "
                   + ToscaConstants.DHCP_ENABLED_PROPERTY_NAME
-                  + " property will be set with default value of 'true'.");
+                  + " property will be set with default value of 'true'.", coreException);
             }
             dhcpParameterDefinition.setType(PropertyType.BOOLEAN.getDisplayName());
           }
