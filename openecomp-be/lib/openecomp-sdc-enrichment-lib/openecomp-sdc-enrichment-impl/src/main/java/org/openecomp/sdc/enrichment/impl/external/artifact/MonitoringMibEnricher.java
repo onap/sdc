@@ -71,7 +71,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
   private ComponentArtifactDao componentArtifactDao;
   private static final String COMPONENT_PREFIX = "org.openecomp.resource.vfc.";
 
-  private final Logger LOG = LoggerFactory.getLogger(this.getClass().getName());
+  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
   /**
    * Enrich map.
@@ -79,6 +79,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
    * @param enrichmentInfo the enrichmentInfo
    * @return the map
    */
+  @Override
   public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo,
                                                 ToscaServiceModel serviceModel) {
 
@@ -277,7 +278,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
       mibs = FileUtils
           .getFileContentMapFromZip(FileUtils.toByteArray(monitoringArtifactInfo.getContent()));
     } catch (IOException ioException) {
-      LOG.debug("", ioException);
+      log.error("Failed to get file content map from zip ", ioException);
       ErrorMessage.ErrorMessageUtil
           .addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
           .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));

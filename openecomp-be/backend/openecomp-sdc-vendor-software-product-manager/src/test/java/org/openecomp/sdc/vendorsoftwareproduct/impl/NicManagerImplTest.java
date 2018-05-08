@@ -5,8 +5,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -37,8 +35,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class NicManagerImplTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String NIC_NOT_EXIST_MSG =
       "Vendor Software Product NIC with Id nic1 does not exist for Vendor Software Product with " +
@@ -137,7 +133,6 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity);
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.NIC_NAME_FORMAT_NOT_ALLOWED,
           exception.code().id());
     }
@@ -163,7 +158,6 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity);
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals("Invalid request, NIC with name " + nic.getName() +
               " already exist for component with ID " + nicEntity.getComponentId() + ".",
           exception.code().message());
@@ -186,7 +180,6 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity);
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals("Invalid request,NetworkId not allowed for External Networks",
           exception.code().message());
       Assert
@@ -210,7 +203,6 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity);
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals("Invalid request, Network Description not allowed for Internal Networks",
           exception.code().message());
       Assert.assertEquals(VendorSoftwareProductErrorCodes
@@ -359,7 +351,6 @@ public class NicManagerImplTest {
       nicManager.updateNic(nicEntity);
       Assert.fail();
     } catch (CoreException ex) {
-      log.debug("", ex);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.NIC_NAME_FORMAT_NOT_ALLOWED,
           ex.code().id());
     }
@@ -458,7 +449,6 @@ public class NicManagerImplTest {
       nicManager.createNic(nic);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -469,7 +459,6 @@ public class NicManagerImplTest {
       nicManager.getNic(vspId, version, componentId, nicId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -480,7 +469,6 @@ public class NicManagerImplTest {
       nicManager.updateNic(new NicEntity(vspId, version, componentId, nicId));
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -491,7 +479,6 @@ public class NicManagerImplTest {
       nicManager.deleteNic(vspId, version, componentId, nicId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

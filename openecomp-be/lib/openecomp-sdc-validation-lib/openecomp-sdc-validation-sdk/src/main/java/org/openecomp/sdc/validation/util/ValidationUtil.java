@@ -126,7 +126,7 @@ public class ValidationUtil {
         throw new Exception("The file '" + envFileName + "' has no content");
       }
     } catch (Exception exception) {
-      LOG.debug("",exception);
+      LOG.error("Invalid envFile name : " + envFileName, exception);
       return null;
     }
     return envContent;
@@ -160,8 +160,7 @@ public class ValidationUtil {
     try {
       manifestContent = JsonUtil.json2Object(manifest.get(), ManifestContent.class);
     } catch (Exception exception) {
-      LOG.debug("",exception);
-      throw new SdcRuntimeException("Can't load manifest file for Heat Validator");
+      throw new SdcRuntimeException("Can't load manifest file for Heat Validator", exception);
     }
 
     return manifestContent;

@@ -23,8 +23,6 @@ import org.junit.Assert;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
@@ -69,8 +67,6 @@ public class TestUtils {
   private static final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
   private static String zipFilename = "VSP.zip";
   private static String validationFilename = "validationOutput.json";
-
-  private static Logger logger = (Logger) LoggerFactory.getLogger(TestUtils.class);
 
   private TestUtils() {
   }
@@ -128,7 +124,6 @@ public class TestUtils {
         serviceTemplateMap.put(fileName, serviceTemplate);
       }
     } catch (Exception e) {
-      logger.debug("", e);
       Assert.fail(e.getMessage());
     }
     return serviceTemplateMap;
@@ -185,13 +180,6 @@ public class TestUtils {
               toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
           createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml,
               toscaExtensionYamlUtil);
-          try {
-            yamlFile.close();
-          } catch (IOException ignore) {
-            logger.debug("", ignore);
-          }
-        } catch (FileNotFoundException e) {
-          throw e;
         } catch (IOException e) {
           throw e;
         }
@@ -232,15 +220,6 @@ public class TestUtils {
         createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml,
             toscaExtensionYamlUtil);
         serviceTemplates.put(file.getName(), serviceTemplateFromYaml);
-        try {
-          yamlFile.close();
-        } catch (IOException ignore) {
-          logger.debug("", ignore);
-        }
-      } catch (FileNotFoundException e) {
-        throw e;
-      } catch (IOException e) {
-        throw e;
       }
     }
   }

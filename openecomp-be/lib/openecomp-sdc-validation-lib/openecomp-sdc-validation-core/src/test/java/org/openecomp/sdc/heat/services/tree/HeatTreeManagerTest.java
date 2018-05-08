@@ -31,9 +31,7 @@ import java.net.URL;;
 
 
 public class HeatTreeManagerTest {
-
-  private Logger logger = LoggerFactory.getLogger(HeatTreeManagerTest.class);
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(HeatTreeManagerTest.class);
   @Test
   public void testHeatTreeCreation() {
 
@@ -102,9 +100,8 @@ public class HeatTreeManagerTest {
     try {
       return FileUtils.toByteArray(new FileInputStream(file));
     } catch (IOException e) {
-      logger.debug("",e);
+      LOGGER.error("Exception while reading file", e);
     }
-
     return new byte[0];
   }
 }

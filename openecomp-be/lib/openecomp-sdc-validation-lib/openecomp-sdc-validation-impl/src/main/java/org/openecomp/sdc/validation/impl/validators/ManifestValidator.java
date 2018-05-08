@@ -58,7 +58,7 @@ public class ManifestValidator implements Validator {
         throw new Exception("The manifest file '" + SdcCommon.MANIFEST_NAME + "' has no content");
       }
     } catch (Exception re) {
-      LOGGER.debug("",re);
+      LOGGER.error("Invalid manifest file", re);
       globalContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
               ErrorMessagesFormatBuilder
                       .getErrorWithParameters(ERROR_CODE_MNF_6,
