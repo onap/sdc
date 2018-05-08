@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -20,6 +20,7 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
+import isEqual from 'lodash/isEqual.js';
 
 const NICPropType = PropTypes.shape({
     id: PropTypes.string,
@@ -35,14 +36,25 @@ class NICCreationView extends React.Component {
         onSubmit: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired
     };
-
+    shouldComponentUpdate(nextProps) {
+        let res = true;
+        const { data, isFormValid, formReady, genericFieldInfo } = this.props;
+        if (
+            isEqual(data, nextProps.data) &&
+            isEqual(isFormValid, nextProps.isFormValid) &&
+            formReady === nextProps.formReady &&
+            isEqual(genericFieldInfo, nextProps.genericFieldInfo)
+        ) {
+            res = false;
+        }
+        return res;
+    }
     render() {
         let {
             data = {},
             onDataChanged,
             genericFieldInfo,
             isFormValid,
-            onValidateForm,
             formReady
         } = this.props;
         let { name, description, networkDescription } = data;
@@ -50,16 +62,15 @@ class NICCreationView extends React.Component {
             <div>
                 {genericFieldInfo && (
                     <Form
-                        ref={form => (this.form = form)}
                         hasButtons={true}
-                        onSubmit={() => this.submit()}
+                        onSubmit={this.submit}
                         submitButtonText={
                             data.id ? i18n('Save') : i18n('Create')
                         }
-                        onReset={() => this.props.onCancel()}
+                        onReset={this.cancel}
                         labledButtons={true}
                         isValid={isFormValid}
-                        onValidateForm={() => onValidateForm()}
+                        onValidateForm={this.validate}
                         formReady={formReady}>
                         <GridSection hasLastColSet>
                             <GridItem colSpan={4} lastColInRow>
@@ -148,10 +159,18 @@ class NICCreationView extends React.Component {
         );
     }
 
-    submit() {
+    submit = () => {
         const { data: nic, componentId } = this.props;
         this.props.onSubmit({ nic, componentId });
-    }
+    };
+
+    validate = () => {
+        this.props.onValidateForm();
+    };
+
+    cancel = () => {
+        this.props.onCancel();
+    };
 }
 
 export default NICCreationView;

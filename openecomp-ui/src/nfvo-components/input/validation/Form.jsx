@@ -70,8 +70,8 @@ class Form extends React.Component {
         return (
             <form
                 {...formProps}
-                ref={form => (this.form = form)}
-                onSubmit={event => this.handleFormValidation(event)}>
+                ref={this.setFormRef}
+                onSubmit={this.handleFormValidation}>
                 <div className="validation-form-content">
                     <fieldset disabled={isReadOnlyMode}>{children}</fieldset>
                 </div>
@@ -80,7 +80,7 @@ class Form extends React.Component {
                         labledButtons={labledButtons}
                         submitButtonText={submitButtonText}
                         cancelButtonText={cancelButtonText}
-                        ref={buttons => (this.buttons = buttons)}
+                        ref={this.setButtonsRef}
                         isReadOnlyMode={isReadOnlyMode}
                     />
                 )}
@@ -88,14 +88,19 @@ class Form extends React.Component {
         );
     }
 
-    handleFormValidation(event) {
+    handleFormValidation = event => {
         event.preventDefault();
         if (this.props.onValidateForm && !this.props.formReady) {
             return this.props.onValidateForm();
         } else {
             return this.handleFormSubmit(event);
         }
-    }
+    };
+
+    setButtonsRef = buttons => (this.buttons = buttons);
+
+    setFormRef = form => (this.form = form);
+
     handleFormSubmit(event) {
         if (event) {
             event.preventDefault();
@@ -128,7 +133,10 @@ class Form extends React.Component {
                 this.props.onValidityChanged(this.props.isValid);
             }
         }
-        if (this.props.formReady) {
+        if (
+            this.props.formReady &&
+            this.props.formReady !== prevProps.formReady
+        ) {
             // if form validation succeeded -> continue with submit
             this.handleFormSubmit();
         }

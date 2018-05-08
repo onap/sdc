@@ -110,7 +110,7 @@ export default class JSONSchema {
             if (items && items.length > 0) {
                 let values = items
                     .filter(value => value)
-                    .map(value => ({ enum: value, title: value }));
+                    .map(value => ({ enum: value, title: value.toString() }));
                 enumResult = values;
             }
         }
