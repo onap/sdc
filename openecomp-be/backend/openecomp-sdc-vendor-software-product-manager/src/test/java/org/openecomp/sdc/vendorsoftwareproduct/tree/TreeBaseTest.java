@@ -33,35 +33,28 @@ import java.net.URL;
  * Created by SHALOMB on 6/8/2016.
  */
 public class TreeBaseTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
   String INPUT_DIR;
-
-
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
   HeatTreeManager initHeatTreeManager() {
     HeatTreeManager heatTreeManager = new HeatTreeManager();
 
     URL url = Thread.currentThread().getContextClassLoader().getResource(INPUT_DIR);
 
-    File inputDir = null;
+
     try {
-      inputDir = new File(url.toURI());
+      File inputDir = new File(url.toURI());
+        File[] files = inputDir.listFiles();
+        for (File inputFile : files) {
+
+            heatTreeManager.addFile(inputFile.getName(), FileUtils.loadFileToInputStream(
+                    INPUT_DIR.replace("/", File.separator) + File.separator + inputFile.getName()));
+        }
+
     } catch (URISyntaxException exception) {
-      log.debug("",exception);
+      log.debug("Failed to parse URL {}, invalid INPUT_DIR {} ", url, INPUT_DIR, exception);
     }
 
-    if(inputDir != null) {
-      File[] files = inputDir.listFiles();
-      for (File inputFile : files) {
-        try {
-          heatTreeManager.addFile(inputFile.getName(), FileUtils.loadFileToInputStream(
-              INPUT_DIR.replace("/", File.separator) + File.separator + inputFile.getName()));
-        } catch (Exception e) {
-          throw e;
-        }
-      }
-    }
+
     return heatTreeManager;
 
   }
