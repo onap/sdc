@@ -17,30 +17,37 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
 public class Constants {
-  //Service Template - Template Names
-  public static final String GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME = "GlobalSubstitutionTypes";
-  public static final String MAIN_TEMPLATE_NAME = "Main";
-  //properties
-  public static final String MAX_INSTANCES_PROPERTY_NAME = "max_instances";
-  public static final String DESCRIPTION_PROPERTY_NAME = "description";
-  public static final String NAME_PROPERTY_NAME = "name";
-  public static final String SECURITY_GROUPS_PROPERTY_NAME = "security_groups";
-  public static final String PORT_PROPERTY_NAME = "port";
-  static final String VFC_PARENT_PORT_ROLE = "vfc_parent_port_role";
-  static final String SUB_INTERFACE_ROLE = "subinterface_role";
-  //General
-  public static final String PROP = "properties";
-  public static final String ATTR = "attributes";
-  public static final String SERVICE_INSTANCE_PORT_PREFIX = "port_";
-  public static final String SERVICE_INSTANCE_LINK_PREFIX = "link_";
-  static final String GROUP = "group";
-  //Unified model
-  static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX = "vm_";
-  static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX = "_name";
-  static final String PORT_IDENTICAL_VALUE_PROPERTY_PREFIX = "port_";
-  static final String SUB_INTERFACE_PROPERTY_VALUE_PREFIX = "subinterface_";
-  public static final String ABSTRACT_NODE_TEMPLATE_ID_PREFIX = "abstract_";
 
-  private Constants() {
-  }
+    //Service Template - Template Names
+    public static final String GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME = "GlobalSubstitutionTypes";
+    public static final String MAIN_TEMPLATE_NAME = "Main";
+    //properties
+    public static final String MAX_INSTANCES_PROPERTY_NAME = "max_instances";
+    public static final String DESCRIPTION_PROPERTY_NAME = "description";
+    public static final String NAME_PROPERTY_NAME = "name";
+    public static final String SECURITY_GROUPS_PROPERTY_NAME = "security_groups";
+    public static final String PORT_PROPERTY_NAME = "port";
+    static final String VFC_PARENT_PORT_ROLE = "vfc_parent_port_role";
+    static final String SUB_INTERFACE_ROLE = "subinterface_role";
+    //General
+    public static final String PROP = "properties";
+    public static final String ATTR = "attributes";
+    public static final String SERVICE_INSTANCE_PORT_PREFIX = "port_";
+    public static final String SERVICE_INSTANCE_LINK_PREFIX = "link_";
+    static final String GROUP = "group";
+    //Unified model
+    static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX = "vm_";
+    static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX = "_name";
+    static final String PORT_IDENTICAL_VALUE_PROPERTY_PREFIX = "port_";
+    static final String SUB_INTERFACE_PROPERTY_VALUE_PREFIX = "subinterface_";
+    public static final String ABSTRACT_NODE_TEMPLATE_ID_PREFIX = "abstract_";
+    //GlobalTypesServiceTemplates
+    public static final String INVALID_ONBOARDING_TYPE = "Invalid Onboarding Type";
+    public static final String GLOBAL_TYPES_READ_ERROR = "GlobalTypes Read Error";
+    public static final String FAILED_TO_GENERATE_GLOBAL_TYPES = "Failed to generate globalTypes";
+    public static final String OPENECOMP_INVENTORY = "openecomp-inventory";
+    public static final String GLOBAL_TYPES = "globalTypes";
+
+    private Constants() {
+    }
 }
