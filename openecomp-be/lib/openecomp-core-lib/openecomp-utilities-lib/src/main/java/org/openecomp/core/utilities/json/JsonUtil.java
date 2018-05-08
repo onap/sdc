@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
  * The type Json util.
  */
 public class JsonUtil {
-  private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
   private static final GsonBuilder gsonBuilder;
   private static final Gson gson;
 
@@ -129,7 +129,7 @@ public class JsonUtil {
         try {
           is.close();
         } catch (IOException ignore) {
-          logger.debug("",ignore);
+          LOGGER.debug("Failed to read from inputStream ", ignore);
           //do nothing
         }
       }
@@ -149,7 +149,7 @@ public class JsonUtil {
     try {
       return new JsonParser().parse(json).isJsonObject();
     } catch (JsonSyntaxException jse) {
-      logger.debug("",jse);
+      LOGGER.debug("Invalid json, Failed to parse json", jse);
       return false;
     }
   }
@@ -186,7 +186,7 @@ public class JsonUtil {
   }
 
   private static List<ValidationException> validateUsingEverit(String json, String jsonSchema) {
-    logger.debug(
+    LOGGER.debug(
         String.format("validateUsingEverit start, json=%s, jsonSchema=%s", json, jsonSchema));
     if (json == null || jsonSchema == null) {
       throw new IllegalArgumentException("Input strings json and jsonSchema can not be null");

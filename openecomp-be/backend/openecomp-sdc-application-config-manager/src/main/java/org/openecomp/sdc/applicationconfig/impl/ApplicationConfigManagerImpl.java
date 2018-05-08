@@ -51,7 +51,7 @@ public class ApplicationConfigManagerImpl implements ApplicationConfigManager {
     try {
       applicationConfig.insertValue(namespace, key, value);
     } catch (Exception exception) {
-      log.debug("",exception);
+      log.debug("Failed to insert value into application_config", exception);
       throw new CoreException(new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory
           .APPLICATION).withId(SCHEMA_GENERATOR_INITIALIZATION_ERROR).withMessage(
           SCHEMA_GENERATOR_INITIALIZATION_ERROR_MSG).build());

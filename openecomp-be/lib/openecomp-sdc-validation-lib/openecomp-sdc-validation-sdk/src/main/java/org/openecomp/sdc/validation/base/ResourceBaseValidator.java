@@ -54,7 +54,7 @@ public class ResourceBaseValidator implements Validator {
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
-      LOGGER.debug("",exception);
+      LOGGER.debug("Failed to validate manifest file", exception);
       return;
     }
 

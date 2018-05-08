@@ -46,8 +46,8 @@ public abstract class XmlArtifact {
     try {
       xml = xmlMapper.writeValueAsString(this);
     } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
-      log.debug("",exception);
-      throw new CoreException(new JsonErrorBuilder(exception.getMessage()).build());
+      log.debug("Failed to write xml value as string ", exception);
+      throw new CoreException(new JsonErrorBuilder(exception.getMessage()).build(), exception);
     }
 
     return xml.replaceAll(VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE, "");

@@ -22,8 +22,7 @@ package org.openecomp.sdc.heat.datatypes.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
+
 import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.IOException;
@@ -34,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 public class HeatOrchestrationTemplateTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Test
   public void testYamlToServiceTemplateObj() throws IOException {
@@ -105,7 +102,6 @@ public class HeatOrchestrationTemplateTest {
           yamlUtil.yamlToObject(yml, HeatOrchestrationTemplate.class);
       Assert.assertNotNull(heatOrchestrationTemplate);
     } catch (Exception ignored) {
-      log.debug("",ignored);
     }
   }
 

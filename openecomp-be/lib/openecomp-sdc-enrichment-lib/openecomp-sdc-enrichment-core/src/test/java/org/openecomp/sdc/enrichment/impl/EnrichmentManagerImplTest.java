@@ -22,8 +22,6 @@ package org.openecomp.sdc.enrichment.impl;
 
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
@@ -52,10 +50,6 @@ import static org.junit.Assert.assertEquals;
 
 
 public class EnrichmentManagerImplTest {
-
-  private final static Logger log = (Logger) LoggerFactory.getLogger
-      (EnrichmentManagerImplTest.class.getName());
-
 
   private static ToscaServiceModel loadToscaServiceModel(String serviceTemplatesPath,
                                                          String globalServiceTemplatesPath,
@@ -106,7 +100,6 @@ public class EnrichmentManagerImplTest {
           try {
             yamlFile.close();
           } catch (IOException ignore) {
-            log.debug("",ignore);
           }
         } catch (FileNotFoundException e) {
           throw e;

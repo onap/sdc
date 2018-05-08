@@ -35,7 +35,7 @@ public class HeatBoolean {
   private static Set<Object> heatFalse;
   private static Set<Object> heatTrue;
 
-  private final static Logger log = (Logger) LoggerFactory.getLogger(HeatBoolean.class.getName());
+  private final static Logger LOG = (Logger) LoggerFactory.getLogger(HeatBoolean.class.getName());
 
   static {
 
@@ -94,7 +94,7 @@ public class HeatBoolean {
       Boolean answer = eval(value);
       return true;
     } catch (CoreException ce) {
-      log.debug("",ce);
+      LOG.debug("Invalid boolean value : " + value, ce);
       return false;
     }
   }

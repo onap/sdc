@@ -59,10 +59,10 @@ public class SchemaGenerator {
       schemaTemplate.process(input, writer);
       return writer.toString();
     } catch (IOException | TemplateException exception) {
-      log.debug("",exception);
+      log.debug("Failed to process SchemaTemplateInput", exception);
       throw new CoreException(
           new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
-              .withId(SCHEMA_GENERATION_ERROR).withMessage(exception.getMessage()).build());
+              .withId(SCHEMA_GENERATION_ERROR).withMessage(exception.getMessage()).build(), exception);
     }
   }
 }

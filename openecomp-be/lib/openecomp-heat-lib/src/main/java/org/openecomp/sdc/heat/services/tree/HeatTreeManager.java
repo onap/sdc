@@ -46,7 +46,7 @@ import java.util.Set;
 
 public class HeatTreeManager {
 
-  private static Logger logger = (Logger) LoggerFactory.getLogger(HeatTreeManager.class);
+  private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(HeatTreeManager.class);
 
 
   private FileContentHandler heatContentMap = new FileContentHandler();
@@ -80,7 +80,7 @@ public class HeatTreeManager {
    */
   public void createTree() {
     if (manifest == null) {
-      logger.error("Missing manifest file in the zip.");
+      LOGGER.error("Missing manifest file in the zip.");
       return;
     }
     ManifestContent manifestData =
@@ -134,7 +134,7 @@ public class HeatTreeManager {
       Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(fileName, hot, globalContext);
       addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
     } catch (Exception ignore) { /* invalid yaml no need to process reference */
-      logger.debug("",ignore);
+      LOGGER.debug("Failed to handle heatContentReference", ignore);
     }
   }
 

@@ -277,7 +277,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
       mibs = FileUtils
           .getFileContentMapFromZip(FileUtils.toByteArray(monitoringArtifactInfo.getContent()));
     } catch (IOException ioException) {
-      LOG.debug("", ioException);
+      LOG.debug("Failed to get file content map from zip ", ioException);
       ErrorMessage.ErrorMessageUtil
           .addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
           .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));

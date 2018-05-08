@@ -23,8 +23,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
 import org.apache.commons.io.FileUtils;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
@@ -54,9 +52,6 @@ import java.util.Map;
  */
 
 public class CompositionDataExtractorImplTest {
-
-  private static final Logger log = (Logger) LoggerFactory.getLogger
-      (CompositionDataExtractorImplTest.class.getName());
 
   @InjectMocks
   private static CompositionDataExtractorImpl compositionDataExtractor;
@@ -115,7 +110,6 @@ public class CompositionDataExtractorImplTest {
         try {
           yamlFile.close();
         } catch (IOException ignore) {
-          log.debug("", ignore);
         }
       } catch (FileNotFoundException exception) {
         throw exception;

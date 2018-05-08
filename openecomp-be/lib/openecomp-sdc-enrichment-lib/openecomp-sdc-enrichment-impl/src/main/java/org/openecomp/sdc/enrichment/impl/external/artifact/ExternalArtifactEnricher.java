@@ -60,8 +60,7 @@ public class ExternalArtifactEnricher extends Enricher {
                 externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model);
             }
         } catch (Exception e) {
-          logger.debug("",e);
-          logger.error(e.getMessage());
+          logger.error("Enrichment failed!, failed to get implementing className", e);
         }
     return errors;
   }

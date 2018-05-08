@@ -25,11 +25,10 @@ public class MapComponentDependencyModelRequestToEntity extends
       ComponentRelationType.valueOf(source.getRelationType());
       target.setRelation(source.getRelationType());
     } catch (IllegalArgumentException exception) {
-      logger.debug("",exception);
       ErrorCode errorCode =
           ComponentDependencyModelErrorBuilder.getInvalidRelationTypeErrorBuilder();
-      logger.error(errorCode.message(), exception);
-      throw new CoreException(errorCode);
+      logger.error("Failed to map source to target relation", exception);
+      throw new CoreException(errorCode, exception);
     }
   }
 }
