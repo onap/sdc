@@ -6,12 +6,14 @@ export class BasePubSub {
     eventsCallbacks: Array<Function>;
     clientId: string;
     eventsToWait: Map<string, Array<string>>;
+    lastEventNotified: string;
 
     constructor(pluginId: string) {
         this.subscribers = new Map<string, ISubscriber>();
         this.eventsCallbacks = [];
         this.eventsToWait = new Map<string, Array<string>>();
         this.clientId = pluginId;
+        this.lastEventNotified = "";
         this.onMessage = this.onMessage.bind(this);
 
         window.addEventListener("message", this.onMessage);
@@ -54,8 +56,9 @@ export class BasePubSub {
 
         this.subscribers.forEach( (subscriber: ISubscriber, subscriberId: string) => {
             subscriber.window.postMessage(eventObj, subscriber.locationUrl);
-
         });
+
+        this.lastEventNotified = eventType;
 
         return {
             subscribe: function(callbackFn) {

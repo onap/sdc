@@ -4,8 +4,11 @@ import {BasePubSub, IPubSubEvent} from "../../models/base-pubsub";
 @Injectable()
 export class EventBusService extends BasePubSub {
 
+    NoWindowOutEvents: Array<string>;
+
     constructor() {
         super("sdc-hub");
+        this.NoWindowOutEvents = ["CHECK_IN", "SUBMIT_FOR_TESTING", "UNDO_CHECK_OUT"];
     }
 
     protected handlePluginRegistration(eventData: IPubSubEvent, event: any) {

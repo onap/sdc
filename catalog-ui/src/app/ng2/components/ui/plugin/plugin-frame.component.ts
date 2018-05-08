@@ -58,15 +58,20 @@ export class PluginFrameComponent implements OnInit {
         // before moving to a new state
         this.$scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
             if ((fromState.name !== toState.name) || (fromState.name === toState.name) && (toParams.path !== fromParams.path)) {
-                if (!this.isClosed) {
-                    event.preventDefault();
+                if(this.eventBusService.NoWindowOutEvents.indexOf(this.eventBusService.lastEventNotified) == -1) {
+                    if (!this.isClosed) {
+                        event.preventDefault();
 
-                    this.eventBusService.notify("WINDOW_OUT").subscribe(() => {
-                        this.isClosed = true;
-                        this.eventBusService.unregister(this.plugin.pluginId);
+                        this.eventBusService.notify("WINDOW_OUT").subscribe(() => {
+                            this.isClosed = true;
+                            this.eventBusService.unregister(this.plugin.pluginId);
 
-                        this.$state.go(toState.name, toParams);
-                    });
+                            this.$state.go(toState.name, toParams);
+                        });
+                    }
+                }
+                else {
+                    this.eventBusService.unregister(this.plugin.pluginId);
                 }
             }
         });

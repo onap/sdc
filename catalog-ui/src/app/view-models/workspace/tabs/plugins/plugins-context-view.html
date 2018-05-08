@@ -1,4 +1,4 @@
-<loader display="isLoading"></loader>
+<loader display="isLoading && plugin.isOnline" ></loader>
 <div class="workspace-plugins">
     <plugin-frame (on-loading-done)="onLoadingDone(plugin)" [plugin]="plugin" [query-params]="queryParams"></plugin-frame>
 </div>
