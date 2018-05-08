@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_41ead7d8",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/ActionAuthenticationFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T12:14:10Z",
+      "side": 1,
+      "message": "This should be logged as ERROR",
+      "revId": "ec7e6cc2e1be6a7a0cb9a3ebb074bd0e784c5a62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e1bc43de",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/ActionAuthenticationFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T12:14:10Z",
+      "side": 1,
+      "message": "Should be error",
+      "range": {
+        "startLine": 90,
+        "startChar": 20,
+        "endLine": 90,
+        "endChar": 25
+      },
+      "revId": "ec7e6cc2e1be6a7a0cb9a3ebb074bd0e784c5a62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a1b2bb03",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/mapping/MapComponentDependencyModelRequestToEntity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T12:14:10Z",
+      "side": 1,
+      "message": "Please remove this as you are passing the original exception to the CoreException.",
+      "range": {
+        "startLine": 30,
+        "startChar": 6,
+        "endLine": 30,
+        "endChar": 73
+      },
+      "revId": "ec7e6cc2e1be6a7a0cb9a3ebb074bd0e784c5a62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e1a3e3af",
+        "filename": "openecomp-be/backend/openecomp-sdc-application-config-manager/src/main/java/org/openecomp/sdc/applicationconfig/impl/ApplicationConfigManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T12:14:10Z",
+      "side": 1,
+      "message": "Please pass the caught exception to the constructor of the CoreException and delete this call to log.\n\nthrow new CoreException(new ErrorCode.......build(), exception);",
+      "range": {
+        "startLine": 54,
+        "startChar": 1,
+        "endLine": 54,
+        "endChar": 77
+      },
+      "revId": "ec7e6cc2e1be6a7a0cb9a3ebb074bd0e784c5a62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
