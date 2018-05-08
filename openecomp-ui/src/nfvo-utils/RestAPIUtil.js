@@ -79,10 +79,6 @@ function handleSuccess(responseHeaders, requestHeaders) {
 
 class RestAPIUtil {
     handleRequest(url, type, options = {}, data) {
-        if (DEBUG) {
-            console.log('axios --> Making REST call (' + type + '): ' + url);
-        }
-
         applySecurity(options, data);
 
         // TODO see ig necessary or in transformrequest funtion
