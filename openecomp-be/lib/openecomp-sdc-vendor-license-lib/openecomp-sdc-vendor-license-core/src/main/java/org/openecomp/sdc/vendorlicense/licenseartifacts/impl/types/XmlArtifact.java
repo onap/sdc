@@ -22,15 +22,12 @@ package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.errors.JsonErrorBuilder;
 
 public abstract class XmlArtifact {
 
   XmlMapper xmlMapper = new XmlMapper();
-  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
   abstract void initMapper();
 
@@ -46,8 +43,8 @@ public abstract class XmlArtifact {
     try {
       xml = xmlMapper.writeValueAsString(this);
     } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
-      log.debug("",exception);
-      throw new CoreException(new JsonErrorBuilder(exception.getMessage()).build());
+      throw new CoreException(new JsonErrorBuilder("Failed to write xml value as string ")
+              .build(), exception);
     }
 
     return xml.replaceAll(VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE, "");

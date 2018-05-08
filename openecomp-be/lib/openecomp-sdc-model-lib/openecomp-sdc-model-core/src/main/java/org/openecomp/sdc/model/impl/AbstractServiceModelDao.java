@@ -49,7 +49,7 @@ public class AbstractServiceModelDao implements VersionableDao {
   protected ServiceTemplateDaoInter templateDao;
   protected ServiceArtifactDaoInter artifactDao;
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
   @Override
   public void registerVersioning(String versionableEntityType) {
@@ -173,8 +173,7 @@ public class AbstractServiceModelDao implements VersionableDao {
       return new ToscaExtensionYamlUtil().yamlToObject(serviceTemplateContent,
           org.onap.sdc.tosca.datatypes.model.ServiceTemplate.class);
     }catch (Exception e){
-      log.debug("",e);
-      System.out.println("Found vsp with old-versioned tosca service template");
+      log.warn("Found vsp with old-versioned tosca service template", e);
       Old1610ServiceTemplate old1610ServiceTemplate =
           new ToscaExtensionYamlUtil().yamlToObject(serviceTemplateContent,
               Old1610ServiceTemplate.class);

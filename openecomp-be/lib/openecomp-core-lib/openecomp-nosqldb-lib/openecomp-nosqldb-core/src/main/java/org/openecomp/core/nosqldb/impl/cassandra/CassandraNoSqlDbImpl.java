@@ -117,7 +117,7 @@ class CassandraNoSqlDbImpl implements NoSqlDb {
                     .collect(Collectors.toSet());
             return versions.stream().collect(Collectors.joining(","));
         } catch (Exception e){
-            log.debug("",e);
+            log.error("Failed to retrieve version", e);
             return "Failed to retrieve version";
         }
     }

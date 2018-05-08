@@ -62,7 +62,7 @@ public class ActionAuthenticationFilter implements Filter {
           String decodedCredentials = new String(Base64.getDecoder().decode(base64Credentials));
           username = decodedCredentials.substring(0, decodedCredentials.indexOf(":"));
         } catch (Exception exception) {
-          log.debug("",exception);
+          log.error("Failed to decode credentials", exception);
           setResponseStatus((HttpServletResponse) arg1, HttpServletResponse.SC_FORBIDDEN);
           return;
         }
@@ -87,7 +87,7 @@ public class ActionAuthenticationFilter implements Filter {
                     .valueOf(username.substring(username.indexOf("-") + 1).toUpperCase());
                 return userPrivilege.ordinal() >= requiredPrivilege.ordinal();
               } catch (Exception exception) {
-                log.debug("",exception);
+                log.error("Failed to validate UserInRole", exception);
                 return false;
               }
             }

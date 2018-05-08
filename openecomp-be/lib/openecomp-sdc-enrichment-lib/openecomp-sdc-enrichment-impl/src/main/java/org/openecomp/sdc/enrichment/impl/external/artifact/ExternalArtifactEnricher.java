@@ -57,11 +57,10 @@ public class ExternalArtifactEnricher extends Enricher {
         try {
             for (String implementingClassName : implementingClasses) {
                 ExternalArtifactEnricherInterface externalArtifactEnricherInstance = getExternalArtifactEnricherInstance(implementingClassName);
-                externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model);
+              errors = externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model);
             }
         } catch (Exception e) {
-          logger.debug("",e);
-          logger.error(e.getMessage());
+          logger.error("Enrichment failed!, Exception in populating error Map", e);
         }
     return errors;
   }

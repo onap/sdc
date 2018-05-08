@@ -22,9 +22,10 @@ package org.openecomp.sdc.heat.datatypes.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 public class HeatOrchestrationTemplateTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
+  private final static Logger LOG = (Logger) LoggerFactory
+          .getLogger(HeatOrchestrationTemplateTest.class.getName());
   @Test
   public void testYamlToServiceTemplateObj() throws IOException {
     YamlUtil yamlUtil = new YamlUtil();
@@ -100,13 +100,15 @@ public class HeatOrchestrationTemplateTest {
     YamlUtil yamlUtil = new YamlUtil();
     String yml = yamlUtil.objectToYaml(template);
     Assert.assertNotNull(yml);
+    HeatOrchestrationTemplate heatOrchestrationTemplate = null;
     try {
-      HeatOrchestrationTemplate heatOrchestrationTemplate =
+       heatOrchestrationTemplate =
           yamlUtil.yamlToObject(yml, HeatOrchestrationTemplate.class);
-      Assert.assertNotNull(heatOrchestrationTemplate);
+
     } catch (Exception ignored) {
-      log.debug("",ignored);
+      LOG.error("Failed to parse YAML to object", ignored);
     }
+    Assert.assertNotNull(heatOrchestrationTemplate);
   }
 
   private Map<String, Parameter> createParameters() {
