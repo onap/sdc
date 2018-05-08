@@ -48,7 +48,7 @@ public class TreeBaseTest {
     try {
       inputDir = new File(url.toURI());
     } catch (URISyntaxException exception) {
-      log.debug("",exception);
+      log.debug("Failed to parse URL " + url, exception);
     }
 
     if(inputDir != null) {
