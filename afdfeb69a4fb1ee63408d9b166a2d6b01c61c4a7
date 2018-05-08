@@ -1,0 +1,360 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a94f016a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/composition/CompositionDataExtractorImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "This is redundant because try (InputStream yamlFile... ) { ...} already closes the stream. https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 9
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_896fa5c3",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/tree/TreeBaseTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "Try to understand when this is possible, and act accordingly. The message \"Failed to parse URL\" tells nothing. Is it OK to fail? Was it unexpected? Is it OK to ignore?",
+      "range": {
+        "startLine": 50,
+        "startChar": 13,
+        "endLine": 50,
+        "endChar": 41
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a99dc1bd",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/tree/TreeBaseTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "It doesn\u0027t make sense to catch an exception here. It will be re-thrown anyway, and the method won\u0027t return anything. Please fix this, and also move the code before \"catch (URISyntaxException)\". Because the only way inpotDir is not null is when \"inputDir \u003d new File(url.toURI())\" succeeds.",
+      "range": {
+        "startLine": 57,
+        "startChar": 1,
+        "endLine": 63,
+        "endChar": 1
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_29b1b146",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/HeatBoolean.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "I\u0027d suggest (\"Failed to evaluate value as boolean: {}\", value, ce);",
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_49ac3ded",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "This can be debug because the code clearly expects a possibility of such an exception. You may re-use the comment, and remove it. The error message will serve as documentation. E.g. \"Invalid YAML received. No need to process content reference - ignoring\".",
+      "range": {
+        "startLine": 137,
+        "startChar": 13,
+        "endLine": 137,
+        "endChar": 18
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2998d1be",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/datatypes/model/HeatOrchestrationTemplateTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "Is it OK to ignore? What will the test verify then?",
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e98d097d",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-core/src/test/java/org/openecomp/sdc/enrichment/impl/EnrichmentManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "This is redundant https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html.",
+      "range": {
+        "startLine": 100,
+        "startChar": 1,
+        "endLine": 104,
+        "endChar": 11
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0989556e",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-core/src/test/java/org/openecomp/sdc/enrichment/impl/EnrichmentManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "This is redundant. The code re-throws them anyway. Just let them be bubble up.",
+      "range": {
+        "startLine": 105,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 9
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a9eb8111",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "Why are you assuming this is the error? This exception is effectively ignored (the method returns as if nothing has happened). Please check also if that\u0027s an expected behavior.",
+      "range": {
+        "startLine": 63,
+        "startChar": 44,
+        "endLine": 63,
+        "endChar": 80
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_09e07524",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/test/java/org/openecomp/sdc/enrichment/impl/tosca/BaseToscaEnrichmentTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "See one of my previous comments.",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 108,
+        "endChar": 13
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_29c6919a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNeutronSubnetImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "It all is already explained in logger.warn(\"Parameter...\") below. The new warn(), and the comment are redundant. What you need is to pass coreException to that warn().",
+      "range": {
+        "startLine": 136,
+        "startChar": 7,
+        "endLine": 139,
+        "endChar": 1
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_29fbf1c1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/TestUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "The right approach is to let it be thrown.",
+      "range": {
+        "startLine": 126,
+        "startChar": 27,
+        "endLine": 127,
+        "endChar": 34
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_09fcf5b3",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/TestUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "See my earlier comments.",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 192,
+        "endChar": 9
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c9312da3",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/TestUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "See my earlier comments.",
+      "range": {
+        "startLine": 230,
+        "startChar": 0,
+        "endLine": 239,
+        "endChar": 7
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e91749ec",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-core/src/test/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "Why? It has failed, something bad has happened. Ignoring the exception doesn\u0027t help us understand what went wrong.",
+      "range": {
+        "startLine": 101,
+        "startChar": 1,
+        "endLine": 101,
+        "endChar": 18
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8927a562",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-core/src/test/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-08T15:35:48Z",
+      "side": 1,
+      "message": "It is not OK to just return an empty content when there was a failure. Please find a solution.",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 23
+      },
+      "revId": "afdfeb69a4fb1ee63408d9b166a2d6b01c61c4a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
