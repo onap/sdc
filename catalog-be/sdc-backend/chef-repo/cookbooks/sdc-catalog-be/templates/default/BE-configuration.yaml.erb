@@ -78,8 +78,8 @@ cassandraConfig:
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
     ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath : /config/truststore
-    truststorePassword : <%= @cassandra_traststore_password %>
+    truststorePath : /var/lib/jetty/etc/truststore
+    truststorePassword : <%= @cassandra_truststore_password %>
     keySpaces:
         - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
@@ -573,7 +573,6 @@ dcae:
     protocol: http
     port: <%= node['DCAE']['BE'][:http_port] %>
     <% end -%>
-    
     healthCheckUri: "/dcaed/healthCheck"
 
 # #GSS IDNS

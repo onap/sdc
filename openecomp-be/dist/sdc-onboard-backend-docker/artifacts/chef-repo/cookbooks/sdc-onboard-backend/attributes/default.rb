@@ -8,3 +8,13 @@ default['cassandra'][:truststore_password] = "Aa123456"
 default['jetty'][:keystore_pwd] = "OBF:1cp61iuj194s194u194w194y1is31cok"
 default['jetty'][:keymanager_pwd] = "OBF:1cp61iuj194s194u194w194y1is31cok"
 default['jetty'][:truststore_pwd] = "OBF:1cp61iuj194s194u194w194y1is31cok"
+
+#Cassandra
+default['cassandra']['cluster_name'] = "SDC-CS-"
+default['cassandra']['socket_read_timeout'] = 20000
+default['cassandra']['socket_connect_timeout'] = 20000
+default['cassandra']['titan_connection_timeout'] = 10000
+
+
+default['VnfRepo']['vnfRepoHost'] = "192.168.50.5"
+default['VnfRepo']['vnfRepoPort'] = 8702

@@ -851,6 +851,34 @@
                 </executions>
             </plugin>
 
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-static-configuration-files</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
+                                    <includes>
+                                        <include>Artifact-Generator.properties</include>
+                                        <include>error-configuration.yaml</include>
+                                        <include>ecomp-error-configuration.yaml</include>
+                                        <include>logback.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <pluginManagement>
@@ -944,28 +972,6 @@
                                             </directory>
                                             <includes>
                                                 <include>api-docs.war</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>copy-static-configuration-files</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
-                                            <includes>
-                                                <include>Artifact-Generator.properties</include>
-                                                <include>error-configuration.yaml</include>
-                                                <include>ecomp-error-configuration.yaml</include>
-                                                <include>logback.xml</include>
                                             </includes>
                                         </resource>
                                     </resources>
