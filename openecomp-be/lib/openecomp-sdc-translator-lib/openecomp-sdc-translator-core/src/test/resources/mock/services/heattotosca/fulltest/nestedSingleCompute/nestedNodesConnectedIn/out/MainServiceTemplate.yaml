@@ -480,10 +480,6 @@ topology_template:
           get_input: net_name
       requirements:
       - dependency:
-          capability: tosca.capabilities.Node
-          node: server_pcm_001
-          relationship: tosca.relationships.DependsOn
-      - dependency:
           capability: feature_compute
           node: abstract_compute
           relationship: tosca.relationships.DependsOn

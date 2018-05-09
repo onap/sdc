@@ -1323,26 +1323,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: security_group
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
     vProbe:
       type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vProbeTemplate
       directives:
@@ -1425,26 +1405,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: security_group
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
     packet_mirror_network:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
@@ -1648,27 +1608,6 @@ topology_template:
           get_input: qrouter_volume_size_2
         rpmrepository_ip_0:
           get_input: rpmrepository_ip_0
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: security_group
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
     vLB:
       type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBTemplate
       directives:
@@ -1746,26 +1685,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_mirror_network
           relationship: tosca.relationships.network.LinksTo
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: security_group
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
   groups:
     FEBase_Module_group:
       type: org.openecomp.groups.heat.HeatStack

@@ -92,9 +92,6 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
     SubInterfaceTemplateConsolidationData data = subInfList.get(0);
 
     Assert.assertEquals(NETWORK_ROLE_INOUT_ATTR_TEST, data.getNetworkRole());
-    Assert.assertEquals(ONE, data.getNodesConnectedIn().size());
-    Assert.assertEquals(ONE, data.getNodesConnectedOut().size());
-    Assert.assertEquals(TWO, data.getNodesConnectedOut().get("control_int_net").size());
     Assert.assertEquals(ONE, data.getNodesGetAttrIn().size());
     Assert.assertEquals(ONE, data.getNodesGetAttrOut().size());
     Assert.assertEquals(ONE, data.getOutputParametersGetAttrIn().size());

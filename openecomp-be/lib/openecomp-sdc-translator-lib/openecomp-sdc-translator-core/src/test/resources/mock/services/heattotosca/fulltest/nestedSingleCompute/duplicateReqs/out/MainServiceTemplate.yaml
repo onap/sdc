@@ -2290,10 +2290,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_cscf_server_0:
-          capability: tosca.capabilities.Node
-          node: cscf_internal_network_0
-          relationship: tosca.relationships.DependsOn
     oam_oam_vip_1_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -2412,14 +2408,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_dpdk_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_tdcore_server_0:
-          capability: tosca.capabilities.Node
-          node: cscf_internal_network_0
-          relationship: tosca.relationships.DependsOn
-      - dependency_tdcore_server_0:
-          capability: tosca.capabilities.Node
-          node: cscf_internal_dpdk_network_0
-          relationship: tosca.relationships.DependsOn
     lbd_ims_core_v6_vip_2_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -2750,14 +2738,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_dpdk_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_tdcore_server_0:
-          capability: tosca.capabilities.Node
-          node: cscf_internal_network_0
-          relationship: tosca.relationships.DependsOn
-      - dependency_tdcore_server_0:
-          capability: tosca.capabilities.Node
-          node: cscf_internal_dpdk_network_0
-          relationship: tosca.relationships.DependsOn
     oam_volume_1:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -3503,10 +3483,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: cscf_internal_network_0
           relationship: tosca.relationships.network.LinksTo
-      - dependency_cscf_server_0:
-          capability: tosca.capabilities.Node
-          node: cscf_internal_network_0
-          relationship: tosca.relationships.DependsOn
     lbd_internal_dpdk_vip_1_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
