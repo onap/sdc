@@ -26,53 +26,51 @@ import java.util.Objects;
 
 public class ToscaLifecycleOperationDefinition {
 
-  private String description;
-  private String implementation;
-  private Map<String, ToscaProperty> inputs;
+    private String description;
+    private String implementation;
+    private Map<String, ToscaProperty> inputs;
 
 
-  public String getImplementation() {
-    return implementation;
-  }
-
-  public void setImplementation(String implementation) {
-    this.implementation = implementation;
-  }
-
-  public Map<String, ToscaProperty> getInputs() {
-    return inputs;
-  }
-
-  public void setInputs(
-      Map<String, ToscaProperty> inputs) {
-    this.inputs = inputs;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public String getImplementation() {
+        return implementation;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public void setImplementation(String implementation) {
+        this.implementation = implementation;
     }
-    ToscaLifecycleOperationDefinition that = (ToscaLifecycleOperationDefinition) o;
-    return Objects.equals(implementation, that.implementation) &&
-        Objects.equals(inputs, that.inputs);
-  }
 
-  @Override
-  public int hashCode() {
+    public Map<String, ToscaProperty> getInputs() {
+        return inputs;
+    }
 
-    return Objects.hash(implementation, inputs);
-  }
+    public void setInputs(Map<String, ToscaProperty> inputs) {
+        this.inputs = inputs;
+    }
 
-  public String getDescription() {
-    return description;
-  }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ToscaLifecycleOperationDefinition that = (ToscaLifecycleOperationDefinition) o;
+        return Objects.equals(implementation, that.implementation) && Objects.equals(inputs, that.inputs);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(implementation, inputs);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

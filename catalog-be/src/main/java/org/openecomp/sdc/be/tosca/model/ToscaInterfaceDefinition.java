@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.Map;
@@ -25,23 +24,27 @@ import java.util.Map;
 
 public class ToscaInterfaceDefinition {
 
-  private String type;
-  private Map<String,ToscaLifecycleOperationDefinition> operations;
+    private String type;
+    private Map<String, Object> operations; // ToscaLifecycleOperationDefinition <-> Object
 
-  public String getType() {
-    return type;
-  }
+    public String getType() {
+        return type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  public Map<String, ToscaLifecycleOperationDefinition> getOperations() {
-    return operations;
-  }
+    public Map<String, Object> getOperations() {
+        return operations;
+    }
 
-  public void setOperations(
-      Map<String, ToscaLifecycleOperationDefinition> operations) {
-    this.operations = operations;
-  }
+//    public void setOperations(Map<String, Object> operations) {
+//        this.operations = operations;
+//    }
+
+    public void setOperations(Map<String,Object> toscaOperations) {
+        this.operations = toscaOperations;
+    }
 }
+

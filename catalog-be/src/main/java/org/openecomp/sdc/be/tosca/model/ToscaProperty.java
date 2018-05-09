@@ -22,8 +22,9 @@ package org.openecomp.sdc.be.tosca.model;
 
 public class ToscaProperty {
 
-    private String type;
+
     private Object _defaultp_;
+    private String type;
     private String description;
     private Boolean required;
     private EntrySchema entry_schema;
