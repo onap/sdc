@@ -40,7 +40,6 @@ template "titan.properties" do
 end
 
 
-
 template "catalog-be-config" do
    path "#{ENV['JETTY_BASE']}/config/catalog-be/configuration.yaml"
    source "BE-configuration.yaml.erb"
@@ -48,7 +47,7 @@ template "catalog-be-config" do
    group "jetty"
    mode "0755"
    variables({
-      :catalog_ip             => node['BE_VIP'],
+      :catalog_ip             => node['Nodes']['BE'],
       :catalog_port           => node['BE'][:http_port],
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
@@ -65,7 +64,6 @@ template "catalog-be-config" do
       :dcae_be_vip            => node['DCAE_BE_VIP']
    })
 end
-
 
 
 template "distribution-engine-configuration" do
