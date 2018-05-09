@@ -5,8 +5,8 @@ template "catalog-fe-config" do
    group "jetty"
    mode "0755"
    variables({
-      :fe_host_ip   => node['Nodes']['FE'],
-      :be_host_ip   => node['Nodes']['BE'],
+      :fe_host_ip   => node['FE_VIP'],
+      :be_host_ip   => node['BE_VIP'],
       :kb_host_ip   => node['Nodes']['KB'],
       :catalog_port => node['BE'][:http_port],
       :ssl_port     => node['BE'][:https_port],
