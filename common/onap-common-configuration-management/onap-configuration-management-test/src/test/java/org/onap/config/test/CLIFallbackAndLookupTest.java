@@ -41,7 +41,7 @@ public class CLIFallbackAndLookupTest {
 
         //Verify without fallback
         Map<String, Object> input = new HashMap<>();
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationQuery");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
         input.put("tenant", TENANT);
         input.put("namespace", NAMESPACE);
         input.put("key", ConfigTestConstant.ARTIFACT_MAXSIZE);
@@ -66,7 +66,7 @@ public class CLIFallbackAndLookupTest {
 
         //Verify with fallback
         Map<String, Object> fallbackInput = new HashMap<>();
-        fallbackInput.put("ImplClass", "org.openecomp.config.type.ConfigurationQuery");
+        fallbackInput.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
         fallbackInput.put("fallback", true);
         fallbackInput.put("tenant", TENANT);
         fallbackInput.put("namespace", NAMESPACE);

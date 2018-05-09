@@ -35,7 +35,7 @@ public class NodeSpecificCLITest {
     public void testCLIApi() throws Exception{
         //Verify without fallback
         Map<String, Object> input = new HashMap<>();
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationQuery");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
         input.put("namespace", NAMESPACE);
         input.put("key", ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH);
 
@@ -67,7 +67,7 @@ public class NodeSpecificCLITest {
         conf.addConfigurationChangeListener(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH, new CLINodeListener());
 
         //Update maxlength
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationUpdate");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationUpdate");
         input.put("nodeOverride", true);
         input.put("nodeSpecific", false);
         input.put("value", "60");
@@ -80,7 +80,7 @@ public class NodeSpecificCLITest {
         //Fetch the updated nodespecific value
         input.put("nodeOverride", false);
         input.put("nodeSpecific", true);
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationQuery");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
         String updatedMaxLength = conf.getConfigurationValue(input);
         Assert.assertEquals("60",updatedMaxLength);
 
@@ -91,7 +91,7 @@ public class NodeSpecificCLITest {
 
         Thread.sleep(35000);
 
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationQuery");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
         input.put("nodeOverride", false);
         input.put("nodeSpecific", false);
         System.out.println("val on other node is::"+conf.getConfigurationValue(input));

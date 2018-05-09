@@ -39,7 +39,7 @@ public class CLITest {
         public void testCLIApi() throws Exception{
         //Verify without fallback
         Map<String, Object> input = new HashMap<>();
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationQuery");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
         input.put("tenant", TENANT);
         input.put("namespace", NAMESPACE);
         input.put("key", ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH);
@@ -54,7 +54,7 @@ public class CLITest {
 
 
         //Update maxlength
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationUpdate");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationUpdate");
         input.put("value", "24");
         conf.updateConfigurationValue(input);
 
@@ -64,7 +64,7 @@ public class CLITest {
 
         //Reset value and fetch updated value again
         input.put("value", "");
-        input.put("ImplClass", "org.openecomp.config.type.ConfigurationQuery");
+        input.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
         String updatedMaxLength = conf.getConfigurationValue(input);
         Assert.assertEquals("24",updatedMaxLength);
 
