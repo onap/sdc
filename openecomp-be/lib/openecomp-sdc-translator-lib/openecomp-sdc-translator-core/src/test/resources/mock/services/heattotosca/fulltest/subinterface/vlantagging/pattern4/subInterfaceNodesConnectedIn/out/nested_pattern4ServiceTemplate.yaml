@@ -244,11 +244,6 @@ topology_template:
             params:
               VNF_NAME:
                 get_input: vnf_name
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: vdbe_untr_1_subports
-          relationship: tosca.relationships.DependsOn
     vdbe_untr_1_port:
       type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:

@@ -73,11 +73,6 @@ topology_template:
           - output_attr_1
         network_name:
           get_input: jsa_net_name
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: test_nested
-          relationship: tosca.relationships.DependsOn
     jsa_security_group1:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
       properties:

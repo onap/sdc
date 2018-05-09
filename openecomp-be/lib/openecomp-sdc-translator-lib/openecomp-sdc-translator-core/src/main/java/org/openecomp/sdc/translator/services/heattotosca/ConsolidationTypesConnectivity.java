@@ -1,79 +1,39 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import org.apache.commons.collections.CollectionUtils;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Multimap;
 
 public class ConsolidationTypesConnectivity {
 
-  private static Map<ConsolidationEntityType, Set<ConsolidationEntityType>>
-      entityToEntitiesWithoutRelationship = new EnumMap<>(ConsolidationEntityType.class);
+    private static Multimap<ConsolidationEntityType, ConsolidationEntityType> entityToEntitiesWithoutRelationship;
+    private static ImmutableSet<ConsolidationEntityType> consolidationEntityRelationNodes = ImmutableSet.of(
+            ConsolidationEntityType.COMPUTE, ConsolidationEntityType.VOLUME,
+            ConsolidationEntityType.PORT, ConsolidationEntityType.NESTED,
+            ConsolidationEntityType.VFC_NESTED);
 
-  static {
-    entityToEntitiesWithoutRelationship
-        .put(ConsolidationEntityType.COMPUTE, getIgnoredComputeRelationships());
-    entityToEntitiesWithoutRelationship
-        .put(ConsolidationEntityType.PORT,getIgnoredPortRelationships());
-    entityToEntitiesWithoutRelationship
-        .put(ConsolidationEntityType.VOLUME, getIgnoredVolumeRelationships());
-    entityToEntitiesWithoutRelationship
-        .put(ConsolidationEntityType.VFC_NESTED, getIgnoredVfcNestedRelationships());
-    entityToEntitiesWithoutRelationship
-        .put(ConsolidationEntityType.NESTED, getIgnoredNestedRelationships());
-  }
+    static {
+        entityToEntitiesWithoutRelationship =
+                ImmutableSetMultimap.<ConsolidationEntityType, ConsolidationEntityType>builder()
+                        .putAll(ConsolidationEntityType.COMPUTE, consolidationEntityRelationNodes)
+                        .putAll(ConsolidationEntityType.PORT, consolidationEntityRelationNodes)
+                        .putAll(ConsolidationEntityType.VOLUME, consolidationEntityRelationNodes)
+                        .putAll(ConsolidationEntityType.VFC_NESTED, consolidationEntityRelationNodes)
+                        .putAll(ConsolidationEntityType.NESTED, consolidationEntityRelationNodes)
+                        .build();
+    }
 
-  private ConsolidationTypesConnectivity() {
-  }
+    private ConsolidationTypesConnectivity() {
+    }
 
-  private static Set<ConsolidationEntityType> getIgnoredComputeRelationships(){
-    return Stream.of(ConsolidationEntityType.COMPUTE,
-        ConsolidationEntityType.VOLUME,
-        ConsolidationEntityType.PORT,
-        ConsolidationEntityType.NESTED,
-        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
-  }
+    static boolean isDependsOnRelationshipValid(ConsolidationEntityType source, ConsolidationEntityType target) {
+        return !eitherSourceOrTargetIsNested(source, target)
+                       && (!entityToEntitiesWithoutRelationship.containsKey(source)
+                                   || !entityToEntitiesWithoutRelationship.containsEntry(source, target));
+    }
 
-  private static Set<ConsolidationEntityType> getIgnoredPortRelationships(){
-    return Stream.of(ConsolidationEntityType.COMPUTE,
-        ConsolidationEntityType.VOLUME,
-        ConsolidationEntityType.PORT,
-        ConsolidationEntityType.NESTED,
-        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
-  }
-
-  private static Set<ConsolidationEntityType> getIgnoredVolumeRelationships(){
-    return Stream.of(ConsolidationEntityType.COMPUTE,
-        ConsolidationEntityType.VOLUME,
-        ConsolidationEntityType.PORT,
-        ConsolidationEntityType.NESTED,
-        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
-  }
-
-  private static Set<ConsolidationEntityType> getIgnoredVfcNestedRelationships(){
-    return Stream.of(ConsolidationEntityType.COMPUTE,
-        ConsolidationEntityType.VOLUME,
-        ConsolidationEntityType.PORT,
-        ConsolidationEntityType.NESTED,
-        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
-  }
-
-  private static Set<ConsolidationEntityType> getIgnoredNestedRelationships(){
-    return Stream.of(ConsolidationEntityType.COMPUTE,
-        ConsolidationEntityType.PORT,
-        ConsolidationEntityType.NESTED,
-        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
-  }
-
-  public static boolean isDependsOnRelationshipValid(ConsolidationEntityType source,
-                                                     ConsolidationEntityType target) {
-    Set<ConsolidationEntityType> consolidationEntityTypes =
-        entityToEntitiesWithoutRelationship.get(source);
-    return CollectionUtils.isEmpty(consolidationEntityTypes) ||
-        !consolidationEntityTypes.contains(target);
-
-  }
+    private static boolean eitherSourceOrTargetIsNested(ConsolidationEntityType source,
+                                                               ConsolidationEntityType target) {
+        return ConsolidationEntityType.isEntityTypeNested(source) || ConsolidationEntityType.isEntityTypeNested(target);
+    }
 }

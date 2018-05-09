@@ -306,11 +306,6 @@ topology_template:
       properties:
         network_name:
           get_input: net_name
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: server_pcm_001
-          relationship: tosca.relationships.DependsOn
     compute_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:

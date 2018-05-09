@@ -205,7 +205,7 @@ resources:
     type: OS::Heat::ResourceGroup
     depends_on: test_net2
     properties:
-      count: 9
+      count: 19
       resource_def:
         type: nested.yml
         properties:

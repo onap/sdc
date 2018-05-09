@@ -454,11 +454,6 @@ topology_template:
             params:
               VNF_NAME:
                 get_input: vnf_name
-      requirements:
-      - dependency:
-          capability: feature_vdbe_untr_x_vlan1-Network-Role_vmi_subport_vdbe_vdbe_untr_1_port_vlan1
-          node: abstract_vdbe
-          relationship: tosca.relationships.DependsOn
     control_int_net:
       type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
       properties:
@@ -613,10 +608,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: control_int_net
           relationship: tosca.relationships.network.LinksTo
-      - dependency_vdbe_vdbe_untr_1_port_vlan1:
-          capability: tosca.capabilities.Node
-          node: control_int_net
-          relationship: tosca.relationships.DependsOn
   groups:
     main_group:
       type: org.openecomp.groups.heat.HeatStack

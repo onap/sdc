@@ -477,10 +477,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: control_int_net
           relationship: tosca.relationships.network.LinksTo
-      - dependency_vdbe_vdbe_untr_1_port_nested:
-          capability: tosca.capabilities.Node
-          node: control_int_net
-          relationship: tosca.relationships.DependsOn
   groups:
     main_group:
       type: org.openecomp.groups.heat.HeatStack

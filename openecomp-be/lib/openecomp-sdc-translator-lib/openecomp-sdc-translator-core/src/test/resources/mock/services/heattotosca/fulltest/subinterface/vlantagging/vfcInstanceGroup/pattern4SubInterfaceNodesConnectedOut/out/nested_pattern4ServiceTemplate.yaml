@@ -339,10 +339,6 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: vdbe_0_untr_vmi_1
           relationship: tosca.relationships.network.BindsTo
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: control_int_net
-          relationship: tosca.relationships.DependsOn
     control_int_net:
       type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
       properties:
