@@ -20,7 +20,7 @@ template "titan.properties" do
       :cassandra_pwd            => node['cassandra'][:cassandra_password],
       :cassandra_usr            => node['cassandra'][:cassandra_user],
       :rep_factor               => replication_factor,
-      :DC_NAME                  => node['cassandra'][:cluster_name]+node.chef_environment,
+      :DC_NAME                  => node['cassandra']['datacenter_name']+node.chef_environment,
       :titan_connection_timeout => node['cassandra']['titan_connection_timeout'],
       :cassandra_truststore_password => node['cassandra'][:truststore_password],
       :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}"
@@ -35,12 +35,12 @@ template "catalog-be-config" do
    group "jetty"
    mode "0755"
    variables({
-      :catalog_ip             => node['Nodes']['BE'],
+      :catalog_ip             => node['BE_VIP'],
       :catalog_port           => node['BE'][:http_port],
       :ssl_port               => node['BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
       :rep_factor             => replication_factor,
-      :DC_NAME                => node['cassandra'][:cluster_name]+node.chef_environment,
+      :DC_NAME                => node['cassandra']['datacenter_name']+node.chef_environment,
       :titan_Path             => "/var/lib/jetty/config/catalog-be/",
       :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
       :socket_read_timeout    => node['cassandra']['socket_read_timeout'],
@@ -48,7 +48,7 @@ template "catalog-be-config" do
       :cassandra_usr          => node['cassandra'][:cassandra_user],
       :cassandra_truststore_password => node['cassandra'][:truststore_password],
       :cassandra_ssl_enabled  => "#{ENV['cassandra_ssl_enabled']}",
-      :dcae_fe_vip            => node['DCAE_FE_VIP']
+      :dcae_be_vip            => node['DCAE_BE_VIP']
    })
 end
 
