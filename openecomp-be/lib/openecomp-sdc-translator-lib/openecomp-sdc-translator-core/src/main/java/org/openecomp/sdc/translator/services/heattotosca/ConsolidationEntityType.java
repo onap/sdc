@@ -20,88 +20,81 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDat
 import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isPortResource;
 import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isVolumeResource;
 
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+
 /**
  * The enum Entity type.
  */
 public enum ConsolidationEntityType {
-  COMPUTE,
-  PORT,
-  VOLUME,
-  NESTED,
-  //Simple nested VFC (nested file with one compute) or a complex VFC (nested ST with more than
-  //one compute)
-  VFC_NESTED,
-  SUB_INTERFACE,
-  OTHER;
+    COMPUTE, PORT, VOLUME, NESTED,
+    //Simple nested VFC (nested file with one compute) or a complex VFC (nested ST with more than
+    //one compute)
+    VFC_NESTED, SUB_INTERFACE, OTHER;
 
-  private ConsolidationEntityType sourceEntityType;
-  private ConsolidationEntityType targetEntityType;
+    private ConsolidationEntityType sourceEntityType;
+    private ConsolidationEntityType targetEntityType;
 
-  public ConsolidationEntityType getSourceEntityType() {
-    return sourceEntityType;
-  }
-
-  public ConsolidationEntityType getTargetEntityType() {
-    return targetEntityType;
-  }
-
-
-  /**
-   * Sets entity type.
-   *
-   * @param sourceResource          the source resource
-   * @param targetResource          the target resource
-   */
-  public void setEntityType(Resource sourceResource,
-                            Resource targetResource,
-                            TranslationContext context) {
-    targetEntityType =
-        getEntityType(targetResource, context);
-    sourceEntityType =
-        getEntityType(sourceResource, context);
-  }
-
-  private static final Set<ConsolidationEntityType> consolidationEntityTypes = initConsolidationEntities();
-  
-  private static Set<ConsolidationEntityType> initConsolidationEntities() {
-    Set<ConsolidationEntityType> consolidationEntityTypes = new HashSet<>(Arrays.asList(ConsolidationEntityType
-        .values()));
-    return Collections.unmodifiableSet(consolidationEntityTypes.stream()
-        .filter(entity -> entity != ConsolidationEntityType.OTHER
-            && entity != ConsolidationEntityType.VOLUME)
-        .collect(Collectors.toSet()));
-  }
-
-  public static Set<ConsolidationEntityType> getSupportedConsolidationEntities() {
-    return consolidationEntityTypes;
-  }
-
-  private ConsolidationEntityType getEntityType(Resource resource, TranslationContext context) {
-    ConsolidationEntityType consolidationEntityType = ConsolidationEntityType.OTHER;
-    if (isComputeResource(resource)) {
-      consolidationEntityType = ConsolidationEntityType.COMPUTE;
-    } else if (isPortResource(resource)) {
-      consolidationEntityType = ConsolidationEntityType.PORT;
-    } else if (HeatToToscaUtil.isSubInterfaceResource(resource, context)) {
-      consolidationEntityType = ConsolidationEntityType.SUB_INTERFACE;
-    } else if (isVolumeResource(resource)) {
-      consolidationEntityType = ConsolidationEntityType.VOLUME;
-    } else if (HeatToToscaUtil.isNestedResource(resource)) {
-      if (HeatToToscaUtil.isNestedVfcResource(resource, context)) {
-        consolidationEntityType = ConsolidationEntityType.VFC_NESTED;
-      } else {
-        consolidationEntityType = ConsolidationEntityType.NESTED;
-      }
+    public ConsolidationEntityType getSourceEntityType() {
+        return sourceEntityType;
     }
-    return consolidationEntityType;
-  }
+
+    public ConsolidationEntityType getTargetEntityType() {
+        return targetEntityType;
+    }
+
+
+    /**
+     * Sets entity type.
+     *
+     * @param sourceResource the source resource
+     * @param targetResource the target resource
+     */
+    public void setEntityType(Resource sourceResource, Resource targetResource, TranslationContext context) {
+        targetEntityType = getEntityType(targetResource, context);
+        sourceEntityType = getEntityType(sourceResource, context);
+    }
+
+    private static final Set<ConsolidationEntityType> consolidationEntityTypes = initConsolidationEntities();
+
+    private static Set<ConsolidationEntityType> initConsolidationEntities() {
+        Set<ConsolidationEntityType> consolidationEntityTypes =
+                new HashSet<>(Arrays.asList(ConsolidationEntityType.values()));
+        return Collections.unmodifiableSet(
+                consolidationEntityTypes.stream().filter(
+                        entity -> entity != ConsolidationEntityType.OTHER
+                                          && entity != ConsolidationEntityType.VOLUME).collect(Collectors.toSet()));
+    }
+
+    public static Set<ConsolidationEntityType> getSupportedConsolidationEntities() {
+        return consolidationEntityTypes;
+    }
+
+    private ConsolidationEntityType getEntityType(Resource resource, TranslationContext context) {
+        ConsolidationEntityType consolidationEntityType = ConsolidationEntityType.OTHER;
+        if (isComputeResource(resource)) {
+            consolidationEntityType = ConsolidationEntityType.COMPUTE;
+        } else if (isPortResource(resource)) {
+            consolidationEntityType = ConsolidationEntityType.PORT;
+        } else if (isVolumeResource(resource)) {
+            consolidationEntityType = ConsolidationEntityType.VOLUME;
+        } else if (HeatToToscaUtil.isNestedResource(resource)) {
+            if (HeatToToscaUtil.isNestedVfcResource(resource, context)) {
+                consolidationEntityType = ConsolidationEntityType.VFC_NESTED;
+            } else {
+                consolidationEntityType = ConsolidationEntityType.NESTED;
+            }
+        }
+        return consolidationEntityType;
+    }
+
+    public static boolean isEntityTypeNested(ConsolidationEntityType entityType) {
+        return NESTED == entityType || VFC_NESTED == entityType;
+    }
 }

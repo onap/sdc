@@ -808,7 +808,6 @@ public class ConsolidationDataTestUtil {
           nestedTemplateConsolidationData.getNodesConnectedIn();
       List<String> dependentNodes = new LinkedList<>();
       dependentNodes.add("packet_mirror_network");
-      validateNestedNodesConnectedInDependency(nodesConnectedIn, nestedNodeTemplateId, dependentNodes);
 
       //Validate get attribute in
       Map<String, List<GetAttrFuncData>> nodesGetAttrIn =
@@ -852,7 +851,6 @@ public class ConsolidationDataTestUtil {
               nestedTemplateConsolidationData.getNodesConnectedIn();
           List<String> dependentNodes = new LinkedList<>();
           dependentNodes.add("packet_mirror_network");
-          validateNestedNodesConnectedInDependency(nodesConnectedIn, nestedNodeTemplateId, dependentNodes);
         } else {
           Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedIn());
         }
@@ -920,7 +918,6 @@ public class ConsolidationDataTestUtil {
           nestedTemplateConsolidationData.getNodesConnectedIn();
       List<String> dependentNodes = new LinkedList<>();
       dependentNodes.add("packet_mirror_network");
-      validateNestedNodesConnectedInDependency(nodesConnectedIn, nestedNodeTemplateId, dependentNodes);
       //Validate output parameter get attribute in
       List<GetAttrFuncData> getAttrFuncData =
           nestedTemplateConsolidationData.getNodesGetAttrIn().get("packet_mirror_network");

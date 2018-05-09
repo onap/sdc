@@ -579,14 +579,6 @@ topology_template:
           get_input: net_name
       requirements:
       - dependency:
-          capability: tosca.capabilities.Node
-          node: nestedNoUnified
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: 4p_nested
-          relationship: tosca.relationships.DependsOn
-      - dependency:
           capability: feature_1c2_catalog_instance_1c2_t1_port
           node: abstract_1c2_catalog_instance_1
           relationship: tosca.relationships.DependsOn

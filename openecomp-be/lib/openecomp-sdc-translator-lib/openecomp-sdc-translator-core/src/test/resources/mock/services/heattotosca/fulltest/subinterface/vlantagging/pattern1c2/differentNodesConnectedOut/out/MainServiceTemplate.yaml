@@ -763,7 +763,7 @@ topology_template:
           - pd_server_names
           - 0
         subinterface_nested_service_template_filter_count:
-        - 9
+        - 19
         vm_flavor_name:
           get_input: pd_flavor_name
         subinterface_nested_p1:
@@ -795,10 +795,6 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - dependency_pd_server_pd01_port_nested:
-          capability: tosca.capabilities.Node
-          node: test_net2
-          relationship: tosca.relationships.DependsOn
       - subinterface_link_template_Vlan_vmi_1_pd_server_pd01_port_nested:
           capability: tosca.capabilities.network.Linkable
           node: test_net1

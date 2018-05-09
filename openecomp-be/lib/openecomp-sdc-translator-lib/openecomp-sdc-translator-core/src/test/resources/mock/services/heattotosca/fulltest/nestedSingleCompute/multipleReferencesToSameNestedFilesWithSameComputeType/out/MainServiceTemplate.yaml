@@ -2237,11 +2237,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_clm_name_0
-      requirements:
-      - dependency_vson_server_1:
-          capability: tosca.capabilities.Node
-          node: oam_net_security_group
-          relationship: tosca.relationships.DependsOn
     vson_mgt_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_2
       directives:

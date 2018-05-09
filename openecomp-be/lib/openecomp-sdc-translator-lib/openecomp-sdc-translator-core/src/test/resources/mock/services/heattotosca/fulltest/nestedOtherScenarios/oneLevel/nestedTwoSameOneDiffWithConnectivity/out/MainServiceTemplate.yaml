@@ -40,19 +40,6 @@ topology_template:
       properties:
         network_name:
           get_input: jsa_name
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: test_nested_same_file_1
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: test_nested_same_file_2
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: test_nested_diff_file
-          relationship: tosca.relationships.DependsOn
     test_nested_diff_file:
       type: org.openecomp.resource.abstract.nodes.heat.nested-other-file-1B
       directives:

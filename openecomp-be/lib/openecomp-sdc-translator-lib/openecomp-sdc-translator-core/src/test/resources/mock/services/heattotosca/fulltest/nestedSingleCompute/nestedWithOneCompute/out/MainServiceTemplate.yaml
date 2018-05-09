@@ -306,11 +306,6 @@ topology_template:
       properties:
         network_name:
           get_input: port_net_name
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: server_pcm_001
-          relationship: tosca.relationships.DependsOn
     abstract_compute:
       type: org.openecomp.resource.abstract.nodes.compute
       directives:
