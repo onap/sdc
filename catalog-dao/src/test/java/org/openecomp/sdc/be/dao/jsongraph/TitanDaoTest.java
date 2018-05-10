@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -32,55 +33,54 @@ public class TitanDaoTest {
 	
 	
 	private static Logger logger = LoggerFactory.getLogger(TitanDaoTest.class);
-
+	private TitanDao dao = new TitanDao(new TitanGraphClient(new DAOTitanStrategy()));
 	
-
-	private TitanDao createTestSubject() {
-		TitanGraphClient client = new TitanGraphClient(new DAOTitanStrategy());
-		client.createGraph();
-		return new TitanDao(client);
+	static {
+		String appConfigDir = "src/test/resources/config/catalog-dao";
+	    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 	}
+	
 	@Before
 	public void init(){
-	String appConfigDir = "src/test/resources/config/catalog-dao";
-    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-	ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
-
-
+	dao.titanClient.createGraph();
+	}
+	
+	@After
+	public void end(){
+		dao.titanClient.cleanupGraph();
 	}
 
 	
 	@Test
 	public void testCommit() throws Exception {
-		TitanDao testSubject;
 		TitanOperationStatus result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.commit();
+		
+		result = dao.commit();
 	}
 
 	
 	@Test
 	public void testRollback() throws Exception {
-		TitanDao testSubject;
+		
 		TitanOperationStatus result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.rollback();
+		
+		result = dao.rollback();
 	}
 
 	
 	@Test
 	public void testGetGraph() throws Exception {
-		TitanDao testSubject;
+		
 		Either<TitanGraph, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getGraph();
+		
+		result = dao.getGraph();
 	}
 
 	
@@ -89,15 +89,15 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetVertexByPropertyAndLabel() throws Exception {
-		TitanDao testSubject;
+		
 		GraphPropertyEnum name = null;
 		Object value = null;
 		VertexTypeEnum label = null;
 		Either<GraphVertex, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getVertexByPropertyAndLabel(name, value, label);
+		
+		result = dao.getVertexByPropertyAndLabel(name, value, label);
 	}
 
 
@@ -107,7 +107,7 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetVertexByPropertyAndLabel_1() throws Exception {
-		TitanDao testSubject;
+		
 		GraphPropertyEnum name = null;
 		Object value = null;
 		VertexTypeEnum label = null;
@@ -115,39 +115,39 @@ public class TitanDaoTest {
 		Either<GraphVertex, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getVertexByPropertyAndLabel(name, value, label, parseFlag);
+		
+		result = dao.getVertexByPropertyAndLabel(name, value, label, parseFlag);
 	}
 
 	
 	@Test
 	public void testGetVertexById() throws Exception {
-		TitanDao testSubject;
+		
 		String id = "";
 		Either<GraphVertex, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getVertexById(id);
+		
+		result = dao.getVertexById(id);
 	}
 
 	
 	@Test
 	public void testGetVertexById_1() throws Exception {
-		TitanDao testSubject;
+		
 		String id = "";
 		JsonParseFlagEnum parseFlag = null;
 		Either<GraphVertex, TitanOperationStatus> result;
 
 		// test 1
-		testSubject = createTestSubject();
+		
 		id = null;
-		result = testSubject.getVertexById(id, parseFlag);
+		result = dao.getVertexById(id, parseFlag);
 
 		// test 2
-		testSubject = createTestSubject();
+		
 		id = "";
-		result = testSubject.getVertexById(id, parseFlag);
+		result = dao.getVertexById(id, parseFlag);
 	}
 
 	
@@ -165,27 +165,27 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetVertexProperties() throws Exception {
-		TitanDao testSubject;
+		
 		Element element = null;
 		Map<GraphPropertyEnum, Object> result;
 
 		// test 1
-		testSubject = createTestSubject();
+		
 		element = null;
-		result = testSubject.getVertexProperties(element);
+		result = dao.getVertexProperties(element);
 	}
 
 	
 	@Test
 	public void testGetEdgeProperties() throws Exception {
-		TitanDao testSubject;
+		
 		Element element = null;
 		Map<EdgePropertyEnum, Object> result;
 
 		// test 1
-		testSubject = createTestSubject();
+		
 		element = null;
-		result = testSubject.getEdgeProperties(element);
+		result = dao.getEdgeProperties(element);
 	}
 
 	
@@ -194,34 +194,34 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetByCriteria() throws Exception {
-		TitanDao testSubject;
+		
 		VertexTypeEnum type = null;
 		Map<GraphPropertyEnum, Object> props = null;
 		Either<List<GraphVertex>, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getByCriteria(type, props);
+		
+		result = dao.getByCriteria(type, props);
 	}
 
 	
 	@Test
 	public void testGetByCriteria_1() throws Exception {
-		TitanDao testSubject;
+		
 		VertexTypeEnum type = null;
 		Map<GraphPropertyEnum, Object> props = null;
 		JsonParseFlagEnum parseFlag = null;
 		Either<List<GraphVertex>, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getByCriteria(type, props, parseFlag);
+		
+		result = dao.getByCriteria(type, props, parseFlag);
 	}
 
 	
 	@Test
 	public void testGetByCriteria_2() throws Exception {
-		TitanDao testSubject;
+		
 		VertexTypeEnum type = null;
 		Map<GraphPropertyEnum, Object> props = null;
 		Map<GraphPropertyEnum, Object> hasNotProps = null;
@@ -229,19 +229,19 @@ public class TitanDaoTest {
 		Either<List<GraphVertex>, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getByCriteria(type, props, hasNotProps, parseFlag);
+		
+		result = dao.getByCriteria(type, props, hasNotProps, parseFlag);
 	}
 
 	
 	@Test
 	public void testGetCatalogVerticies() throws Exception {
-		TitanDao testSubject;
+		
 		Either<Iterator<Vertex>, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCatalogVerticies();
+		
+		result = dao.getCatalogVerticies();
 	}
 
 
@@ -261,15 +261,15 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetParentVertecies_1() throws Exception {
-		TitanDao testSubject;
+		
 		Vertex parentVertex = null;
 		EdgeLabelEnum edgeLabel = null;
 		JsonParseFlagEnum parseFlag = null;
 		Either<List<Vertex>, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getParentVertecies(parentVertex, edgeLabel, parseFlag);
+		
+		result = dao.getParentVertecies(parentVertex, edgeLabel, parseFlag);
 	}
 
 
@@ -277,15 +277,15 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetChildrenVertecies_1() throws Exception {
-		TitanDao testSubject;
+		
 		Vertex parentVertex = null;
 		EdgeLabelEnum edgeLabel = null;
 		JsonParseFlagEnum parseFlag = null;
 		Either<List<Vertex>, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
+		
+		result = dao.getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
 	}
 
 
@@ -318,14 +318,14 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testUpdateVertexMetadataPropertiesWithJson() throws Exception {
-		TitanDao testSubject;
+		
 		Vertex vertex = null;
 		Map<GraphPropertyEnum, Object> properties = null;
 		TitanOperationStatus result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.updateVertexMetadataPropertiesWithJson(vertex, properties);
+		
+		result = dao.updateVertexMetadataPropertiesWithJson(vertex, properties);
 	}
 
 	
@@ -335,14 +335,14 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetProperty_1() throws Exception {
-		TitanDao testSubject;
+		
 		Edge edge = null;
 		EdgePropertyEnum key = null;
 		Object result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getProperty(edge, key);
+		
+		result = dao.getProperty(edge, key);
 	}
 
 	
@@ -351,14 +351,14 @@ public class TitanDaoTest {
 	
 	@Test
 	public void testGetBelongingEdgeByCriteria_1() throws Exception {
-		TitanDao testSubject;
+		
 		String parentId = "";
 		EdgeLabelEnum label = null;
 		Map<GraphPropertyEnum, Object> properties = null;
 		Either<Edge, TitanOperationStatus> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getBelongingEdgeByCriteria(parentId, label, properties);
+		
+		result = dao.getBelongingEdgeByCriteria(parentId, label, properties);
 	}
 }

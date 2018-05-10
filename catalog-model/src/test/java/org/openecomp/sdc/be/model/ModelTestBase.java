@@ -37,6 +37,7 @@ public class ModelTestBase {
 			configurationManager = new ConfigurationManager(configurationSource);
 
 			Configuration configuration = new Configuration();
+			
 			configuration.setTitanInMemoryGraph(true);
 
 			configurationManager.setConfiguration(configuration);
