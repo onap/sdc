@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_bebc11dd",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationEntityType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-10T10:04:26Z",
+      "side": 1,
+      "message": "We create an Array, then we create a set and then we create a Stream.\n\nWhy do we need to create an Array and then to create a set out of it? consider using EnumSet allof.\n\nEnumSet.allOf(ConsolidationEntityType.class).stream()\nhttps://docs.oracle.com/javase/7/docs/api/java/util/EnumSet.html#allOf(java.lang.Class)",
+      "revId": "255b9ec4c24388f5d5f1696c31de7da955d828c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9eb595ee",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationTypesConnectivity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-10T10:04:26Z",
+      "side": 1,
+      "message": "Consider using SetMultiMap. \nhttps://google.github.io/guava/releases/21.0/api/docs/com/google/common/collect/SetMultimap.html",
+      "revId": "255b9ec4c24388f5d5f1696c31de7da955d828c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3ed0011e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationTypesConnectivity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-10T10:04:26Z",
+      "side": 1,
+      "message": "Consider  MultiMap will enable you to call directly to containValue",
+      "revId": "255b9ec4c24388f5d5f1696c31de7da955d828c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
