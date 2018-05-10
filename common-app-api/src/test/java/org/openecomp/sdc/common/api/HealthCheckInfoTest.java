@@ -5,14 +5,12 @@ import java.util.List;
 import org.junit.Test;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 
-
 public class HealthCheckInfoTest {
 
 	private HealthCheckInfo createTestSubject() {
-		return new HealthCheckInfo(null, null, "", "");
+		return new HealthCheckInfo("", HealthCheckStatus.UP, "", "");
 	}
 
-	
 	@Test
 	public void testGetHealthCheckComponent() throws Exception {
 		HealthCheckInfo testSubject;
@@ -23,7 +21,6 @@ public class HealthCheckInfoTest {
 		result = testSubject.getHealthCheckComponent();
 	}
 
-	
 	@Test
 	public void testGetHealthCheckStatus() throws Exception {
 		HealthCheckInfo testSubject;
@@ -34,7 +31,6 @@ public class HealthCheckInfoTest {
 		result = testSubject.getHealthCheckStatus();
 	}
 
-	
 	@Test
 	public void testGetComponentsInfo() throws Exception {
 		HealthCheckInfo testSubject;
@@ -45,7 +41,6 @@ public class HealthCheckInfoTest {
 		result = testSubject.getComponentsInfo();
 	}
 
-	
 	@Test
 	public void testSetComponentsInfo() throws Exception {
 		HealthCheckInfo testSubject;
@@ -56,7 +51,6 @@ public class HealthCheckInfoTest {
 		testSubject.setComponentsInfo(componentsInfo);
 	}
 
-	
 	@Test
 	public void testGetVersion() throws Exception {
 		HealthCheckInfo testSubject;
@@ -67,7 +61,6 @@ public class HealthCheckInfoTest {
 		result = testSubject.getVersion();
 	}
 
-	
 	@Test
 	public void testSetVersion() throws Exception {
 		HealthCheckInfo testSubject;
@@ -78,7 +71,6 @@ public class HealthCheckInfoTest {
 		testSubject.setVersion(version);
 	}
 
-	
 	@Test
 	public void testGetDescription() throws Exception {
 		HealthCheckInfo testSubject;
@@ -89,7 +81,6 @@ public class HealthCheckInfoTest {
 		result = testSubject.getDescription();
 	}
 
-	
 	@Test
 	public void testToString() throws Exception {
 		HealthCheckInfo testSubject;
@@ -100,7 +91,6 @@ public class HealthCheckInfoTest {
 		result = testSubject.toString();
 	}
 
-	
 	@Test
 	public void testMain() throws Exception {
 		String[] args = new String[] { "" };

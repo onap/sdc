@@ -30,7 +30,7 @@ public class ArtifactGroupTypeEnumTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setType(type);
+		testSubject.setType(ArtifactGroupTypeEnum.DEPLOYMENT.getType());
 	}
 
 	

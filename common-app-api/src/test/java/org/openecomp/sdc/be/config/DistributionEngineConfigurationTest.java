@@ -7,6 +7,10 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArti
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
+import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
+
+import java.util.*;
+import org.junit.Assert;
 
 
 public class DistributionEngineConfigurationTest {
@@ -203,6 +207,7 @@ public class DistributionEngineConfigurationTest {
 	}
 
 	
+	
 	@Test
 	public void testSetEnvironments() throws Exception {
 		DistributionEngineConfiguration testSubject;
@@ -367,4 +372,200 @@ public class DistributionEngineConfigurationTest {
 		testSubject = createTestSubject();
 		testSubject.setUseHttpsWithDmaap(useHttpsWithDmaap);
 	}
+
+
+	
+	@Test
+	public void testGetAaiConfig() throws Exception {
+	DistributionEngineConfiguration testSubject;ExternalServiceConfig result;
+	
+	// default test 1
+	testSubject=createTestSubject();result=testSubject.getAaiConfig();
+	}
+
+
+	
+	@Test
+	public void testGetAllowedTimeBeforeStaleSec() throws Exception {
+	DistributionEngineConfiguration testSubject;Integer result;
+	
+	// default test 1
+	testSubject=createTestSubject();result=testSubject.getAllowedTimeBeforeStaleSec();
+	}
+
+
+	
+	@Test
+	public void testGetCurrentArtifactInstallationTimeout() throws Exception {
+	DistributionEngineConfiguration testSubject;int result;
+	
+	// default test 1
+	testSubject=createTestSubject();result=testSubject.getCurrentArtifactInstallationTimeout();
+	}
+
+
+	
+	@Test
+	public void testGetCurrentArtifactInstallationTimeout_1() throws Exception {
+	DistributionEngineConfiguration testSubject;int result;
+	
+	// default test 1
+	testSubject=createTestSubject();result=testSubject.getCurrentArtifactInstallationTimeout();
+	}
+
+
+	
+	@Test
+	public void testSetCurrentArtifactInstallationTimeout() throws Exception {
+	DistributionEngineConfiguration testSubject;int currentArtifactInstallationTimeout = 0;
+	
+	
+	// default test
+	testSubject=createTestSubject();testSubject.setCurrentArtifactInstallationTimeout(currentArtifactInstallationTimeout);
+	}
+
+
+	
+	@Test
+	public void testGetOpEnvRecoveryIntervalSec() throws Exception {
+	DistributionEngineConfiguration testSubject;Integer result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.getOpEnvRecoveryIntervalSec();
+	}
+
+
+	
+	@Test
+	public void testSetOpEnvRecoveryIntervalSec() throws Exception {
+	DistributionEngineConfiguration testSubject;Integer opEnvRecoveryIntervalSec = 0;
+	
+	
+	// default test
+	testSubject=createTestSubject();testSubject.setOpEnvRecoveryIntervalSec(opEnvRecoveryIntervalSec);
+	}
+
+
+	
+	@Test
+	public void testGetAllowedTimeBeforeStaleSec_1() throws Exception {
+	DistributionEngineConfiguration testSubject;Integer result;
+	
+	// default test 1
+	testSubject=createTestSubject();result=testSubject.getAllowedTimeBeforeStaleSec();
+	}
+
+
+	
+	@Test
+	public void testSetAllowedTimeBeforeStaleSec() throws Exception {
+	DistributionEngineConfiguration testSubject;Integer allowedTimeBeforeStaleSec = 0;
+	
+	
+	// default test
+	testSubject=createTestSubject();testSubject.setAllowedTimeBeforeStaleSec(allowedTimeBeforeStaleSec);
+	}
+
+
+	
+	@Test
+	public void testGetAaiConfig_1() throws Exception {
+	DistributionEngineConfiguration testSubject;ExternalServiceConfig result;
+	
+	// default test 1
+	testSubject=createTestSubject();result=testSubject.getAaiConfig();
+	}
+
+
+	
+	@Test
+	public void testSetAaiConfig() throws Exception {
+	DistributionEngineConfiguration testSubject;ExternalServiceConfig aaiConfig = null;
+	
+	
+	// default test
+	testSubject=createTestSubject();testSubject.setAaiConfig(aaiConfig);
+	}
+
+
+	
+	@Test
+	public void testGetMsoConfig() throws Exception {
+	DistributionEngineConfiguration testSubject;ExternalServiceConfig result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.getMsoConfig();
+	}
+
+
+	
+	@Test
+	public void testSetMsoConfig() throws Exception {
+	DistributionEngineConfiguration testSubject;ExternalServiceConfig msoConfig = null;
+	
+	
+	// default test
+	testSubject=createTestSubject();testSubject.setMsoConfig(msoConfig);
+	}
+	
+	private ComponentArtifactTypesConfig createTestSubject2() {
+		return new DistributionEngineConfiguration.ComponentArtifactTypesConfig();
+	}
+
+	
+	@Test
+	public void testGetInfo() throws Exception {
+		ComponentArtifactTypesConfig testSubject;
+		List<String> result;
+
+		// default test
+		testSubject = createTestSubject2();
+		result = testSubject.getInfo();
+	}
+
+	
+	@Test
+	public void testSetInfo() throws Exception {
+		ComponentArtifactTypesConfig testSubject;
+		List<String> info = null;
+
+		// default test
+		testSubject = createTestSubject2();
+		testSubject.setInfo(info);
+	}
+
+	
+	@Test
+	public void testGetLifecycle() throws Exception {
+		ComponentArtifactTypesConfig testSubject;
+		List<String> result;
+
+		// default test
+		testSubject = createTestSubject2();
+		result = testSubject.getLifecycle();
+	}
+
+	
+	@Test
+	public void testSetLifecycle() throws Exception {
+		ComponentArtifactTypesConfig testSubject;
+		List<String> lifecycle = null;
+
+		// default test
+		testSubject = createTestSubject2();
+		testSubject.setLifecycle(lifecycle);
+	}
+
+	
+	@Test
+	public void testToString() throws Exception {
+		ComponentArtifactTypesConfig testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject2();
+		result = testSubject.toString();
+	}
+	
+	
 }
