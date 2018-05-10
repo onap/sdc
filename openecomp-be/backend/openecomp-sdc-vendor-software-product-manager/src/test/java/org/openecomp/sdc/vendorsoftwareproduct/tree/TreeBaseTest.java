@@ -1,68 +1,58 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.tree;
 
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 
 /**
  * Created by SHALOMB on 6/8/2016.
  */
-public class TreeBaseTest {
+public abstract class TreeBaseTest {
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+    HeatTreeManager initHeatTreeManager(String inputDirectory) throws URISyntaxException, IOException {
 
-  String INPUT_DIR;
-
-
-  HeatTreeManager initHeatTreeManager() {
-    HeatTreeManager heatTreeManager = new HeatTreeManager();
-
-    URL url = Thread.currentThread().getContextClassLoader().getResource(INPUT_DIR);
-
-    File inputDir = null;
-    try {
-      inputDir = new File(url.toURI());
-    } catch (URISyntaxException exception) {
-      log.debug("",exception);
-    }
-
-    if(inputDir != null) {
-      File[] files = inputDir.listFiles();
-      for (File inputFile : files) {
-        try {
-          heatTreeManager.addFile(inputFile.getName(), FileUtils.loadFileToInputStream(
-              INPUT_DIR.replace("/", File.separator) + File.separator + inputFile.getName()));
-        } catch (Exception e) {
-          throw e;
+        URL url = Thread.currentThread().getContextClassLoader().getResource(inputDirectory);
+        if (url == null) {
+            throw new FileNotFoundException("Directory " + inputDirectory + " not found in classpath");
         }
-      }
-    }
-    return heatTreeManager;
 
-  }
+        File inputDir = new File(url.toURI());
+
+        File[] files = inputDir.listFiles();
+        if (files == null) {
+            throw new IllegalArgumentException("Directory " + inputDirectory + " does not contain files");
+        }
+
+        HeatTreeManager heatTreeManager = new HeatTreeManager();
+        for (File inputFile : files) {
+
+            String path = inputDirectory.replace("/", File.separator) + File.separator + inputFile.getName();
+            try (InputStream inputStream = FileUtils.loadFileToInputStream(path)) {
+                heatTreeManager.addFile(inputFile.getName(), inputStream);
+            }
+        }
+
+        return heatTreeManager;
+    }
 }

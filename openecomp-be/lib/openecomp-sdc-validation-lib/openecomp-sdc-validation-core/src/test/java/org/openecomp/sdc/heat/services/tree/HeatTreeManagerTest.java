@@ -16,26 +16,21 @@
 
 package org.openecomp.sdc.heat.services.tree;
 
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;;
-
+import java.io.InputStream;
+import java.net.URL;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class HeatTreeManagerTest {
 
-  private Logger logger = LoggerFactory.getLogger(HeatTreeManagerTest.class);
-
   @Test
-  public void testHeatTreeCreation() {
+  public void testHeatTreeCreation() throws IOException {
 
     FileContentHandler fileContentMap = new FileContentHandler();
     URL url = this.getClass().getResource("/heatTreeValidationOutput");
@@ -59,7 +54,7 @@ public class HeatTreeManagerTest {
   }
 
   @Test
-  public void testHeatTreeArtifactsCreated() {
+  public void testHeatTreeArtifactsCreated() throws IOException {
 
     FileContentHandler fileContentMap = new FileContentHandler();
     URL url = this.getClass().getResource("/heatTreeArtifactsValidationOutput");
@@ -88,23 +83,19 @@ public class HeatTreeManagerTest {
 
   private void verifyHeatArtifacts(HeatStructureTree tree, String heatName, int expectedArtifactNum ) {
     HeatStructureTree heat = HeatStructureTree.getHeatStructureTreeByName(tree.getHeat(), heatName);
-    if(expectedArtifactNum > 0) {
+    Assert.assertNotNull(heat);
+    if (expectedArtifactNum > 0) {
       Assert.assertNotNull(heat.getArtifacts());
       Assert.assertEquals(heat.getArtifacts().size(), expectedArtifactNum);
     } else {
       Assert.assertNull(heat.getArtifacts());
     }
-
   }
 
 
-  private byte[] getFileContent(File file) {
-    try {
-      return FileUtils.toByteArray(new FileInputStream(file));
-    } catch (IOException e) {
-      logger.debug("",e);
+  private byte[] getFileContent(File file) throws IOException {
+    try(InputStream inputStream = new FileInputStream(file)) {
+      return FileUtils.toByteArray(inputStream);
     }
-
-    return new byte[0];
   }
 }
