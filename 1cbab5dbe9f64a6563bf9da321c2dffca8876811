@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_de36bd02",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/composition/CompositionDataExtractorImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1771
+      },
+      "writtenOn": "2018-05-10T12:26:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_9eb115e2",
+      "range": {
+        "startLine": 110,
+        "startChar": 1,
+        "endLine": 111,
+        "endChar": 24
+      },
+      "revId": "1cbab5dbe9f64a6563bf9da321c2dffca8876811",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_7ee529da",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2018-05-10T11:15:59Z",
       "side": 1,
       "message": "Please remove one \"try\".",
+      "range": {
+        "startLine": 121,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 9
+      },
+      "revId": "1cbab5dbe9f64a6563bf9da321c2dffca8876811",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7e39a9f0",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1771
+      },
+      "writtenOn": "2018-05-10T12:26:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_7ee529da",
       "range": {
         "startLine": 121,
         "startChar": 0,
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3e27a1cb",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/datatypes/model/HeatOrchestrationTemplateTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1771
+      },
+      "writtenOn": "2018-05-10T12:26:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_fed8591f",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 52
+      },
+      "revId": "1cbab5dbe9f64a6563bf9da321c2dffca8876811",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1ed425e7",
         "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
         "patchSetId": 4
@@ -122,6 +194,30 @@
       "writtenOn": "2018-05-10T11:15:59Z",
       "side": 1,
       "message": "This solution doesn\u0027t make much sense. If the enrichment fails, \"errors\" will be empty. It will look like everything was fine. And if everything is fine, nobody has a reason to look at the log.",
+      "range": {
+        "startLine": 57,
+        "startChar": 1,
+        "endLine": 64,
+        "endChar": 9
+      },
+      "revId": "1cbab5dbe9f64a6563bf9da321c2dffca8876811",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7e10c958",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1771
+      },
+      "writtenOn": "2018-05-10T12:26:34Z",
+      "side": 1,
+      "message": "I can think two solution for it- \n1. If enrichment failed we can throw runtime exception and cath in caller class\n2. or directly we can check empty for errorMap  in caller \nmethod\n\n\nEnrichmentManagerImpl\n\nif(!enricher.enrich().isEmpty()) {\n        enrichErrors.putAll(enricher.enrich());\n      }",
+      "parentUuid": "5a93c517_de09dd95",
       "range": {
         "startLine": 57,
         "startChar": 1,
