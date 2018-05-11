@@ -1,8 +1,8 @@
 {
-	"payloadName": "vduCpd.yml",
+	"payloadName": "vduCp.yml",
 	"contactId": "jh0003",
-	"name": "VDU Cpd",
-	"description": "VDU Cpd",
+	"name": "VDU Cp",
+	"description": "VDU Cp",
 	"resourceIconPath": "port",
 	"resourceType": "CP",
 	"categories": [{
@@ -11,5 +11,5 @@
 			"name": "Network Elements"
 		}]
 	}],
-	"tags": ["VDU Cpd"]
+	"tags": ["VDU Cp"]
 }
