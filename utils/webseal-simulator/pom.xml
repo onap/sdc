@@ -14,7 +14,6 @@
 	</parent>
 
 	<properties>
-		<jetty-version>9.2.10.v20150310</jetty-version>
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
 		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -66,14 +65,14 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-proxy</artifactId>
-			<version>9.2.10.v20150310</version>
+			<version>${jetty.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlets</artifactId>
-            <version>${jetty-version}</version>
+            <version>${jetty.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
