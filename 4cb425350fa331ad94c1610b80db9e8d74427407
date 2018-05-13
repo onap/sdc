@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a1a38db0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationTypesConnectivity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-13T04:58:36Z",
+      "side": 1,
+      "message": "In the previous version you used EnumMap. EnumMap is not synchronized. Here you use a synchronized class.\nIs synchronization required?\nIf it is not required, other MultiMaps should be used.\nIf it is required ImmutableSetMultimap looks a better solution , since after initialization the data does not change.",
+      "revId": "4cb425350fa331ad94c1610b80db9e8d74427407",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c1a6d9c0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationTypesConnectivity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-13T04:58:36Z",
+      "side": 1,
+      "message": "MultiMap has a function named containsEntry.\nIt will make this code more readable and shorter.\nhttps://google.github.io/guava/releases/21.0/api/docs/com/google/common/collect/Multimap.html#containsEntry-java.lang.Object-java.lang.Object-",
+      "revId": "4cb425350fa331ad94c1610b80db9e8d74427407",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
