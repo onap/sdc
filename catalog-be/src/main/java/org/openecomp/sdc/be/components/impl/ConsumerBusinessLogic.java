@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
+import java.util.Date;
+
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -34,14 +35,13 @@ import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import fj.data.Either;
 
 @Component("ConsumerBusinessLogic")
 public class ConsumerBusinessLogic extends BaseBusinessLogic {

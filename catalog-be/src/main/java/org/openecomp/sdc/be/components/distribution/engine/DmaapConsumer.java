@@ -1,6 +1,11 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.att.nsa.mr.client.MRConsumer;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
 import org.slf4j.Logger;
@@ -8,11 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import com.att.nsa.mr.client.MRConsumer;
 
 /**
  * Allows consuming DMAAP topic according to received consumer parameters

@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.components.utils;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 public class UtilsTest {
 

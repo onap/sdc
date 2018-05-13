@@ -1,5 +1,9 @@
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -7,10 +11,6 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import javax.servlet.http.HttpServletRequest;
-
-import static org.mockito.Mockito.mock;
 
 public class JerseySpringBaseTest extends JerseyTest {
 

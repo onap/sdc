@@ -20,7 +20,12 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import fj.data.Either;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,11 +51,7 @@ import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionCode
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionStatusEnum;
 import org.slf4j.Logger;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class SdncTransactionTest {
     private static ESCatalogDAO esCatalogDao = Mockito.mock(ESCatalogDAO.class);

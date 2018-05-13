@@ -20,8 +20,14 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import com.google.gson.JsonElement;
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
+
+import javax.servlet.ServletContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -51,12 +57,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Supplier;
+import com.google.gson.JsonElement;
+
+import fj.data.Either;
 
 @Component("propertyBusinessLogic")
 public class PropertyBusinessLogic extends BaseBusinessLogic {

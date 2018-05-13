@@ -1,6 +1,11 @@
 package org.openecomp.sdc.be.components.path.beans;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -9,10 +14,7 @@ import org.openecomp.sdc.be.dao.cassandra.ComponentCassandraDao;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import fj.data.Either;
 
 @Component("component-cassandra-dao")
 public class ComponentCassandraDaoMock  extends ComponentCassandraDao {

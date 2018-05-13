@@ -1,6 +1,13 @@
 package org.openecomp.sdc.be.tosca.utils;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -13,7 +20,7 @@ import org.openecomp.sdc.be.tosca.CapabiltyRequirementConvertor;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 
-import java.util.*;
+import fj.data.Either;
 
 /**
  * @author KATYR

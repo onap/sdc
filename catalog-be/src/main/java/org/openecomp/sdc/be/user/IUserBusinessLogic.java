@@ -20,13 +20,15 @@
 
 package org.openecomp.sdc.be.user;
 
-import fj.data.Either;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import javax.servlet.ServletContext;
-import java.util.List;
+import fj.data.Either;
 
 /**
  * 

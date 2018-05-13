@@ -20,10 +20,11 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.att.nsa.cambria.client.CambriaConsumer;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import fj.data.Either;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCompleteReporter;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -35,10 +36,11 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import com.att.nsa.cambria.client.CambriaConsumer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import fj.data.Either;
 
 public class DistributionEnginePollingTask implements Runnable {
 

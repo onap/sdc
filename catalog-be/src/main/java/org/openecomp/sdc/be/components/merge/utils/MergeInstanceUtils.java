@@ -1,6 +1,14 @@
 package org.openecomp.sdc.be.components.merge.utils;
 
-import fj.data.Either;
+import static java.util.function.Function.identity;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -14,10 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.util.*;
-import java.util.stream.Collectors;
 
-import static java.util.function.Function.identity;
+import fj.data.Either;
 
 /**
  * This class is Utils class but it should be bean

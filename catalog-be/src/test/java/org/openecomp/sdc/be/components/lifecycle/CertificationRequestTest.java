@@ -20,7 +20,13 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,12 +54,7 @@ import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CertificationRequestTest extends LifecycleTestBase {

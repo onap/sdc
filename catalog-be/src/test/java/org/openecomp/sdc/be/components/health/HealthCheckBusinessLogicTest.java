@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.components.health;
 
-import static org.junit.Assert.*;
-import java.util.*;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class HealthCheckBusinessLogicTest {
 

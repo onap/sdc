@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.utils;
 
-import org.openecomp.sdc.be.model.GroupDefinition;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.openecomp.sdc.be.model.GroupDefinition;
 
 public class GroupDefinitionBuilder {
     private GroupDefinition groupDefinition;

@@ -1,6 +1,7 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
+import java.util.List;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
@@ -14,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import fj.data.Either;
 /**
  * Created by chaya on 9/12/2017.
  */

@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
@@ -59,9 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component("lifecycleBusinessLogic")
 public class LifecycleBusinessLogic {

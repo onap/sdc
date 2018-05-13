@@ -1,7 +1,12 @@
 package org.openecomp.sdc.be.components.path;
 
-import com.google.common.collect.Lists;
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -35,12 +40,9 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import fj.data.Either;
 
 public class BaseForwardingPathTest extends BeConfDependentTest implements ForwardingPathTestUtils {
 

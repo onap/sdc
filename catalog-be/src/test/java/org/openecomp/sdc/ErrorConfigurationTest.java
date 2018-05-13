@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ErrorConfiguration;
@@ -32,10 +36,6 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-
-import static org.junit.Assert.assertTrue;
 
 public class ErrorConfigurationTest {
     ConfigurationSource configurationSource = null;

@@ -1,7 +1,18 @@
 package org.openecomp.sdc.be.components.impl;
 
-import com.google.common.collect.ImmutableMap;
-import fj.data.Either;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,18 +32,9 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.ImmutableMap;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyTypeBusinessLogicTest {

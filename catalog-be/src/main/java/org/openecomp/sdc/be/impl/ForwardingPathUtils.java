@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.impl;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -24,6 +23,9 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 public class ForwardingPathUtils {
 

@@ -1,6 +1,14 @@
 package org.openecomp.sdc.be.components.property;
 
-import fj.data.Either;
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -15,14 +23,7 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class PolicyPropertyDecelerator extends DefaultPropertyDecelerator<PolicyDefinition, PropertyDataDefinition> {

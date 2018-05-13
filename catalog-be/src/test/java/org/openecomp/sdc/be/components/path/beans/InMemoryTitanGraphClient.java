@@ -1,6 +1,20 @@
 package org.openecomp.sdc.be.components.path.beans;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.openecomp.sdc.be.dao.TitanClientStrategy;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.thinkaurelius.titan.core.InvalidElementException;
 import com.thinkaurelius.titan.core.InvalidIDException;
 import com.thinkaurelius.titan.core.PropertyKey;
@@ -16,19 +30,8 @@ import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.thinkaurelius.titan.diskstorage.ResourceUnavailableException;
 import com.thinkaurelius.titan.diskstorage.locking.PermanentLockingException;
 import com.thinkaurelius.titan.graphdb.database.idassigner.IDPoolExhaustedException;
-import fj.data.Either;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.openecomp.sdc.be.dao.TitanClientStrategy;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
+import fj.data.Either;
 
 @Component("titan-client")
 public class InMemoryTitanGraphClient extends TitanGraphClient {

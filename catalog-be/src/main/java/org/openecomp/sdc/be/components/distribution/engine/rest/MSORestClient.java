@@ -1,13 +1,18 @@
 package org.openecomp.sdc.be.components.distribution.engine.rest;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.Gson;
+import java.util.Properties;
+
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.eclipse.jetty.util.URIUtil;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotificationEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.common.http.client.api.*;
+import org.openecomp.sdc.common.http.client.api.HttpExecuteException;
+import org.openecomp.sdc.common.http.client.api.HttpRequest;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.common.http.client.api.Responses;
+import org.openecomp.sdc.common.http.client.api.RestUtils;
+import org.openecomp.sdc.common.http.client.api.RetryHandlers;
 import org.openecomp.sdc.common.http.config.BasicAuthorization;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
@@ -15,7 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Properties;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.Gson;
 
 @Component
 public class MSORestClient {

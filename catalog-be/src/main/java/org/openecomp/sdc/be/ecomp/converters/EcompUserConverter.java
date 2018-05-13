@@ -20,16 +20,17 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
-import fj.data.Either;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.openecomp.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import fj.data.Either;
 
 public final class EcompUserConverter {
 

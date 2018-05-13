@@ -20,7 +20,14 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -47,13 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component("productBusinessLogic")
 public class ProductBusinessLogic extends ComponentBusinessLogic {

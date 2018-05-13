@@ -1,5 +1,10 @@
 package org.openecomp.sdc.be.components.impl.version;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
+import java.util.List;
+import java.util.function.UnaryOperator;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
@@ -9,11 +14,6 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.function.UnaryOperator;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 @org.springframework.stereotype.Component
 public class PolicyTargetsUpdateOperation implements PostChangeVersionOperation {

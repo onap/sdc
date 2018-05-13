@@ -1,14 +1,22 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.att.aft.dme2.api.DME2Exception;
-import com.att.aft.dme2.iterator.DME2EndpointIterator;
-import com.att.aft.dme2.iterator.domain.DME2EndpointReference;
-import com.att.aft.dme2.manager.registry.DME2Endpoint;
-import com.att.nsa.apiClient.credentials.ApiCredential;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import fj.data.Either;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.runMethodWithTimeOut;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.components.distribution.engine.IDmaapNotificationData.DmaapActionEnum;
@@ -31,22 +39,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import com.att.aft.dme2.api.DME2Exception;
+import com.att.aft.dme2.iterator.DME2EndpointIterator;
+import com.att.aft.dme2.iterator.domain.DME2EndpointReference;
+import com.att.aft.dme2.manager.registry.DME2Endpoint;
+import com.att.nsa.apiClient.credentials.ApiCredential;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.runMethodWithTimeOut;
+import fj.data.Either;
 
 /**
  * Allows to consume DMAAP topic and handle received notifications

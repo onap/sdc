@@ -1,6 +1,11 @@
 package org.openecomp.sdc.be.components.property;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -15,11 +20,7 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceInputPropertyDecelerator extends DefaultPropertyDecelerator<ComponentInstance, ComponentInstanceInput> {

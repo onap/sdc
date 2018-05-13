@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.auditing.impl;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -35,9 +38,6 @@ import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.Map.Entry;
 
 @Component
 public class AuditingManager {

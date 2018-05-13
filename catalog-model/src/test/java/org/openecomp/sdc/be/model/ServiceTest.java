@@ -2,18 +2,14 @@ package org.openecomp.sdc.be.model;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 
-@Generated(value = "org.junit-tools-1.0.6")
 public class ServiceTest {
 
 	private Service createTestSubject() {
 		return new Service();
 	}
-
 	
 	@Test
 	public void testGetServiceApiArtifacts() throws Exception {

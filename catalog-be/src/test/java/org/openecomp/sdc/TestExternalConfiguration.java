@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc;
 
+import java.io.IOException;
+
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
@@ -28,8 +30,6 @@ import org.openecomp.sdc.common.api.FileChangeCallback;
 import org.openecomp.sdc.common.impl.ConfigFileChangeListener;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-
-import java.io.IOException;
 
 public class TestExternalConfiguration<T extends Object> {
 

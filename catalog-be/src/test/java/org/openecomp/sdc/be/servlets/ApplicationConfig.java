@@ -20,16 +20,17 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Application;
+
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.mockito.Mockito;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Application;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ApplicationConfig extends Application {
 

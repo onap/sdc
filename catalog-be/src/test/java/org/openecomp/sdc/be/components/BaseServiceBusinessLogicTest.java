@@ -1,7 +1,15 @@
 package org.openecomp.sdc.be.components;
 
-import com.google.common.collect.Sets;
-import fj.data.Either;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
@@ -47,14 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Sets;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 public class BaseServiceBusinessLogicTest {
     private static final Logger log = LoggerFactory.getLogger(ServiceBusinessLogicTest.class);
     private static final String SERVICE_CATEGORY = "Mobility";

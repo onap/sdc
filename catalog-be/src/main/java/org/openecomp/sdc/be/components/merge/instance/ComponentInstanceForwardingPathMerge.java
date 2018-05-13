@@ -1,6 +1,12 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -19,12 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceForwardingPathMerge implements ComponentInstanceMergeInterface {

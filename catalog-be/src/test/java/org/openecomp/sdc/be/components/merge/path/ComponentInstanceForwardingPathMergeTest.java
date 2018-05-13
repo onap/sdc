@@ -1,6 +1,15 @@
 package org.openecomp.sdc.be.components.merge.path;
 
-import fj.data.Either;
+import static groovy.util.GroovyTestCase.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.when;
+
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -17,14 +26,7 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.Set;
-
-import static groovy.util.GroovyTestCase.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPathVersionChangeTest {
 

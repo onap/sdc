@@ -1,11 +1,6 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import javax.annotation.Generated;
-
-import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;

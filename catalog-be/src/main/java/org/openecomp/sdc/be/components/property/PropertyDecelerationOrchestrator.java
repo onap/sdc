@@ -1,6 +1,8 @@
 package org.openecomp.sdc.be.components.property;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.model.Component;
@@ -11,8 +13,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class PropertyDecelerationOrchestrator {

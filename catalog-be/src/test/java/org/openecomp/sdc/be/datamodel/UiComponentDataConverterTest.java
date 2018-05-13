@@ -1,5 +1,9 @@
 package org.openecomp.sdc.be.datamodel;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.PolicyDefinitionBuilder;
@@ -10,10 +14,6 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class UiComponentDataConverterTest {
 

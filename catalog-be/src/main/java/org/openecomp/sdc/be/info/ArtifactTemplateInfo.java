@@ -20,9 +20,12 @@
 
 package org.openecomp.sdc.be.info;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -35,7 +38,10 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import fj.data.Either;
 
 public class ArtifactTemplateInfo {
     public static final String TYPE = "type";

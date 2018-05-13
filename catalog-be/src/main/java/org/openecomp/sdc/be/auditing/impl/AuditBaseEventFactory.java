@@ -1,14 +1,14 @@
 package org.openecomp.sdc.be.auditing.impl;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
-
-import java.util.Collections;
-import java.util.List;
 
 public abstract class AuditBaseEventFactory implements AuditEventFactory {
 

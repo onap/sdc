@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.components.utils;
 
 
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-
 import java.util.List;
 import java.util.Map;
+
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 
 public class PolicyTypeBuilder {
 

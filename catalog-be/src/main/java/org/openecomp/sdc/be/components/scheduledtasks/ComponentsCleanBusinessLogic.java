@@ -20,7 +20,10 @@
 
 package org.openecomp.sdc.be.components.scheduledtasks;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
@@ -32,9 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 @Component("componentsCleanBusinessLogic")
 public class ComponentsCleanBusinessLogic extends BaseBusinessLogic {

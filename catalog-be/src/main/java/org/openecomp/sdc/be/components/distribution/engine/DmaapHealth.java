@@ -1,17 +1,9 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.http.client.utils.URIUtils;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
-import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import static org.apache.commons.lang3.StringUtils.countMatches;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DMAAP_ENGINE;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -22,8 +14,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DMAAP_ENGINE;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.http.client.utils.URIUtils;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
+import org.openecomp.sdc.common.api.HealthCheckInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Component("dmaapHealth")
 public class DmaapHealth {

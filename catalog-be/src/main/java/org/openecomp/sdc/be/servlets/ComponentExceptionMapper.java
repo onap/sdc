@@ -1,15 +1,16 @@
 package org.openecomp.sdc.be.servlets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Component
 @Provider

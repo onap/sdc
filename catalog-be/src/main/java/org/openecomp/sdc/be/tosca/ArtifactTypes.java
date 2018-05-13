@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import org.onap.sdc.generator.data.ArtifactType;
-
 import java.util.List;
+
+import org.onap.sdc.generator.data.ArtifactType;
 
 
 public class ArtifactTypes {

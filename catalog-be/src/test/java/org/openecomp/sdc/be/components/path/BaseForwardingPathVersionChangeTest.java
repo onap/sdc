@@ -1,6 +1,10 @@
 package org.openecomp.sdc.be.components.path;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -13,10 +17,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
 public abstract class BaseForwardingPathVersionChangeTest {
     protected Service service;

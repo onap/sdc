@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.common.transaction.api;
 
+import java.util.Stack;
+
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.LogMessages;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Stack;
 
 public abstract class RollbackHandler implements IDBType {
 

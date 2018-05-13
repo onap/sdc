@@ -20,9 +20,20 @@
 
 package org.openecomp.sdc.be.filters;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import fj.data.Either;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.StringTokenizer;
+
+import javax.annotation.Priority;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -36,18 +47,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.Priority;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.StringTokenizer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import fj.data.Either;
 
 @Priority(10)
 public class BasicAuthenticationFilter implements ContainerRequestFilter {

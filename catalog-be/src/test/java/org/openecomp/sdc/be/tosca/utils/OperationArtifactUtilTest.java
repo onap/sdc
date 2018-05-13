@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.HashMap;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.be.DummyConfigurationManager;

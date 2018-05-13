@@ -20,7 +20,13 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import fj.data.Either;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -29,12 +35,7 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.assertTrue;
+import fj.data.Either;
 
 public class CsarUtilsTest {
     @Before

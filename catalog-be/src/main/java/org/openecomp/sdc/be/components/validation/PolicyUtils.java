@@ -1,6 +1,10 @@
 package org.openecomp.sdc.be.components.validation;
 
-import fj.data.Either;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -15,10 +19,7 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import fj.data.Either;
 
 /**
  * Provides specific functionality for policy
