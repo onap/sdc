@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.openecomp.sdc.be.model.Component;
 

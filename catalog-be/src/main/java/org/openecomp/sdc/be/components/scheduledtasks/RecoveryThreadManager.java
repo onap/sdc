@@ -20,8 +20,20 @@
 
 package org.openecomp.sdc.be.components.scheduledtasks;
 
-import com.google.common.annotations.VisibleForTesting;
-import fj.data.Either;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.convertToFunction;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.openecomp.sdc.be.components.distribution.engine.EnvironmentsEngine;
@@ -37,18 +49,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import com.google.common.annotations.VisibleForTesting;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.convertToFunction;
+import fj.data.Either;
 
 @Component("recoveryThreadManager")
 public class RecoveryThreadManager extends AbstractScheduleTaskRunner {

@@ -1,6 +1,12 @@
 package org.openecomp.sdc.be.components.impl.utils;
 
-import com.google.common.collect.ImmutableMap;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.PolicyTypeBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
@@ -9,12 +15,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.google.common.collect.ImmutableMap;
 
 
 public class PolicyTypeImportUtilsTest {

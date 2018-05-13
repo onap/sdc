@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.tosca;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceDefinitionElement;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceTypeElement;
 
-import fj.data.Either;
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +35,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -101,6 +101,8 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
+
+import fj.data.Either;
 
 @org.springframework.stereotype.Component("tosca-export-handler")
 public class ToscaExportHandler {

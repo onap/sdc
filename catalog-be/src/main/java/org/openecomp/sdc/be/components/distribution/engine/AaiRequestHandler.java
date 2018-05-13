@@ -1,5 +1,14 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.util.Properties;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.conn.ConnectTimeoutException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.Constants;
@@ -13,14 +22,6 @@ import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.util.Properties;
-import java.util.UUID;
 
 @Component
 public class AaiRequestHandler {

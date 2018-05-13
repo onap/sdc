@@ -20,8 +20,12 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -29,11 +33,8 @@ import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class DistributionEngineHealthCheckTest extends BeConfDependentTest {
 

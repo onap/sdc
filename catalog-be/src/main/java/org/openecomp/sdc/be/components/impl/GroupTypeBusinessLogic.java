@@ -1,5 +1,8 @@
 package org.openecomp.sdc.be.components.impl;
 
+import java.util.List;
+import java.util.Set;
+
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -9,9 +12,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Set;
 
 @Component
 public class GroupTypeBusinessLogic {

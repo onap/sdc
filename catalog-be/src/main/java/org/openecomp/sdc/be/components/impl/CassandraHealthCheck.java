@@ -1,18 +1,5 @@
 package org.openecomp.sdc.be.components.impl;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Session;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
-import org.openecomp.sdc.be.dao.cassandra.schema.Table;
-import org.openecomp.sdc.common.util.GeneralUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,6 +9,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
+import org.openecomp.sdc.be.dao.cassandra.schema.Table;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.Metadata;
+import com.datastax.driver.core.Session;
 
 @Component("cassandra-health-check")
 public class CassandraHealthCheck {

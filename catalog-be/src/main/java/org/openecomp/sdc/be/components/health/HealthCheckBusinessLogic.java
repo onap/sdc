@@ -20,8 +20,34 @@
 
 package org.openecomp.sdc.be.components.health;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_BE;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CASSANDRA;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DCAE;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ES;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_TITAN;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UP;
+import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
@@ -46,27 +72,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.stream.Collectors;
-
-import static java.lang.String.format;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.openecomp.sdc.common.api.Constants.*;
-import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
-import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UP;
-import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Component("healthCheckBusinessLogic")

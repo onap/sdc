@@ -18,6 +18,7 @@ package org.openecomp.sdc.be.tosca.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

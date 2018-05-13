@@ -1,13 +1,14 @@
 package org.openecomp.sdc.be.tosca;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.model.operations.impl.ComponentInstanceOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class ToscaExportUtilsTest {
     private static final Logger log = LoggerFactory.getLogger(ToscaExportUtilsTest.class);

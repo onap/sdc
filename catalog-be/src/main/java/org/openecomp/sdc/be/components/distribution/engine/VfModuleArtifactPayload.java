@@ -20,17 +20,17 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.GroupInstanceProperty;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.common.api.Constants;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.GroupInstanceProperty;
+import org.openecomp.sdc.be.model.GroupProperty;
+import org.openecomp.sdc.common.api.Constants;
 
 public class VfModuleArtifactPayload {
 

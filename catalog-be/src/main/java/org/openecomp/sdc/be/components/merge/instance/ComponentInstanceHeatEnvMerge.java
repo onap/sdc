@@ -1,6 +1,8 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.merge.heat.HeatEnvArtifactsMergeBusinessLogic;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -15,8 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 /**
  * Created by chaya on 9/20/2017.

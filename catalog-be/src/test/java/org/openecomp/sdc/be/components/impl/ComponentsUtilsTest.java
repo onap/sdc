@@ -1,35 +1,5 @@
 package org.openecomp.sdc.be.components.impl;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditBaseEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionDownloadEvent;
-import org.openecomp.sdc.be.resources.data.auditing.EcompOperationalEnvironmentEvent;
-import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
-import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
-import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-import org.openecomp.sdc.exception.ResponseFormat;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,6 +39,36 @@ import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_EMAIL;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_FIRST_NAME;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_ID;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_LAST_NAME;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
+import org.openecomp.sdc.be.auditing.impl.AuditBaseEventFactory;
+import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionDownloadEvent;
+import org.openecomp.sdc.be.resources.data.auditing.EcompOperationalEnvironmentEvent;
+import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
+import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentsUtilsTest {

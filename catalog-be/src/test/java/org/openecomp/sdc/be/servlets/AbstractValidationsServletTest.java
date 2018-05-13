@@ -20,17 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,8 +32,18 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.codec.binary.Base64;
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.Logger;
+
+import fj.data.Either;
 
 public class AbstractValidationsServletTest {
     private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {};

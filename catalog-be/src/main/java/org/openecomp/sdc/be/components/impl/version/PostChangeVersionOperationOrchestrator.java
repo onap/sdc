@@ -1,13 +1,13 @@
 package org.openecomp.sdc.be.components.impl.version;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Iterator;
-import java.util.List;
 
 @org.springframework.stereotype.Component
 public class PostChangeVersionOperationOrchestrator {

@@ -1,6 +1,13 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -19,13 +26,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class ComponentInstanceHeatEnvMergeTest {
 

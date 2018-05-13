@@ -1,6 +1,12 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -9,12 +15,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceCapabiliteisPropertiesMerge implements ComponentInstanceMergeInterface {

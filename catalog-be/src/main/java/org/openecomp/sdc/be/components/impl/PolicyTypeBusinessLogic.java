@@ -1,6 +1,8 @@
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Set;
+
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -13,8 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Set;
+import fj.data.Either;
 
 @Component
 public class PolicyTypeBusinessLogic {

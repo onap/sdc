@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import fj.data.Either;
+import java.util.Arrays;
 
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
@@ -44,7 +44,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import fj.data.Either;
 
 public class UndoCheckoutTransition extends LifeCycleTransition {
     private static final Logger log = LoggerFactory.getLogger(CheckoutTransition.class);

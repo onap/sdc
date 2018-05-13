@@ -1,14 +1,14 @@
 package org.openecomp.sdc.be.components.utils;
 
-import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 
 public class PolicyDefinitionBuilder {
 

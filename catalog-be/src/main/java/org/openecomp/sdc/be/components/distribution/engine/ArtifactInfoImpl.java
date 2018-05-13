@@ -20,17 +20,17 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 public class ArtifactInfoImpl implements IArtifactInfo {
 

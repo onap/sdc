@@ -1,18 +1,20 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.att.nsa.mr.client.MRClientFactory;
-import com.att.nsa.mr.client.MRConsumer;
-import fj.data.Either;
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Properties;
+
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
 import org.openecomp.sdc.security.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Properties;
+import com.att.nsa.mr.client.MRClientFactory;
+import com.att.nsa.mr.client.MRConsumer;
+
+import fj.data.Either;
 
 /**
  * Allows to create DMAAP client of type MRConsumer according received configuration parameters

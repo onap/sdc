@@ -20,7 +20,18 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,17 +47,7 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class DistributionEngineInitTaskTest {
 
@@ -90,7 +91,115 @@ public class DistributionEngineInitTaskTest {
         assertEquals("check next retry interval reach max retry interval", initTask.getCurrentRetryInterval(), maxRetry);
 
     }
+    
+    @Test
+    public void checkStartTask() {
 
+        String envName = "PrOD";
+
+        DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
+        int retry = 2;
+        int maxRetry = 40;
+        deConfiguration.setInitRetryIntervalSec(retry);
+        deConfiguration.setInitMaxIntervalSec(maxRetry);
+        DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
+        
+        initTask.startTask();
+    }
+    
+    @Test
+    public void checkRestartTask() {
+
+        String envName = "PrOD";
+
+        DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
+        int retry = 2;
+        int maxRetry = 40;
+        deConfiguration.setInitRetryIntervalSec(retry);
+        deConfiguration.setInitMaxIntervalSec(maxRetry);
+        DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
+        
+        initTask.restartTask();
+    }
+    
+    @Test
+    public void checkStopTask() {
+
+        String envName = "PrOD";
+
+        DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
+        int retry = 2;
+        int maxRetry = 40;
+        deConfiguration.setInitRetryIntervalSec(retry);
+        deConfiguration.setInitMaxIntervalSec(maxRetry);
+        DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
+        
+        initTask.stopTask();
+        initTask.startTask();
+        initTask.stopTask();
+    }
+    
+    @Test
+    public void checkDestroy() {
+
+        String envName = "PrOD";
+
+        DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
+        int retry = 2;
+        int maxRetry = 40;
+        deConfiguration.setInitRetryIntervalSec(retry);
+        deConfiguration.setInitMaxIntervalSec(maxRetry);
+        DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
+        
+        initTask.destroy();
+    }
+    
+    @Test
+    public void checkRun() {
+
+    	String notifTopic = "notif";
+        String statusTopic = "status";
+
+        List<String> uebServers = new ArrayList<>();
+        uebServers.add("server1");
+        CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.NOT_FOUND);
+        Either<Set<String>, CambriaErrorResponse> right = Either.right(cambriaErrorResponse);
+        when(cambriaHandler.getTopics(Mockito.any(List.class))).thenReturn(right);
+
+        String envName = "PrOD";
+
+        DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
+        deConfiguration.setUebServers(uebServers);
+        int retry = 2;
+        int maxRetry = 40;
+        deConfiguration.setInitRetryIntervalSec(retry);
+        deConfiguration.setInitMaxIntervalSec(maxRetry);
+        deConfiguration.setDistributionNotifTopicName(notifTopic);
+        deConfiguration.setDistributionStatusTopicName(statusTopic);
+        CreateTopicConfig createTopic = new CreateTopicConfig();
+        createTopic.setPartitionCount(1);
+        createTopic.setReplicationCount(1);
+        deConfiguration.setCreateTopic(createTopic);
+
+        cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OK);
+
+        String realNotifTopic = notifTopic + "-" + envName.toUpperCase();
+        String realStatusTopic = statusTopic + "-" + envName.toUpperCase();
+        when(cambriaHandler.createTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.eq(realNotifTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
+        when(cambriaHandler.createTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.eq(realStatusTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
+
+        cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OK);
+        when(cambriaHandler.registerToTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(cambriaErrorResponse);
+
+        DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
+        initTask.setCambriaHandler(cambriaHandler);
+
+        boolean initFlow = initTask.initFlow();
+        
+        initTask.run();
+    }
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testInitFlowScenarioSuccess() {

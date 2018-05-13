@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.be.ecomp;
 
-import fj.data.Either;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.openecomp.portalsdk.core.onboarding.crossapi.IPortalRestAPIService;
 import org.openecomp.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.openecomp.portalsdk.core.restful.domain.EcompRole;
@@ -40,9 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.LinkedList;
-import java.util.List;
+import fj.data.Either;
 
 
 public class EcompIntImpl implements IPortalRestAPIService {

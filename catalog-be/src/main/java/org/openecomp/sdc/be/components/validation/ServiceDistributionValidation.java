@@ -1,6 +1,10 @@
 package org.openecomp.sdc.be.components.validation;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ActivationRequestInformation;
@@ -19,9 +23,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
+import fj.data.Either;
 
 /**
  * Created by chaya on 10/18/2017.

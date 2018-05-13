@@ -1,6 +1,9 @@
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -15,9 +18,7 @@ import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 /**
  * Created by yavivi on 04/02/2018.

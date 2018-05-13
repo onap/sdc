@@ -20,22 +20,8 @@
 
 package org.openecomp.sdc.be.filters;
 
-import com.google.gson.GsonBuilder;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
-import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import org.springframework.web.context.WebApplicationContext;
+import java.io.IOException;
+import java.util.UUID;
 
 import javax.annotation.Priority;
 import javax.servlet.ServletContext;
@@ -47,8 +33,23 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.util.UUID;
+
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.google.gson.GsonBuilder;
 
 @Provider
 @Priority(1)

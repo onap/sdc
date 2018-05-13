@@ -1,15 +1,11 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.att.aft.dme2.api.DME2Exception;
-import com.att.aft.dme2.iterator.DME2EndpointIterator;
-import com.att.nsa.apiClient.credentials.ApiCredential;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import fj.data.Either;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.http.HttpStatus;
@@ -28,11 +24,17 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.att.aft.dme2.api.DME2Exception;
+import com.att.aft.dme2.iterator.DME2EndpointIterator;
+import com.att.nsa.apiClient.credentials.ApiCredential;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import fj.data.Either;
 
 public class StepsTenantIsolation {
 

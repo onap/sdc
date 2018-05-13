@@ -20,14 +20,6 @@
 
 package org.openecomp.sdc.be.datamodel.utils;
 
-import org.apache.commons.codec.binary.Base64;
-import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.util.ValidationUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +27,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.binary.Base64;
+import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
 public class ArtifactUtils {

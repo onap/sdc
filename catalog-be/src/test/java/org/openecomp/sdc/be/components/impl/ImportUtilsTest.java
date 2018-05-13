@@ -20,17 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
-import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.yaml.snakeyaml.Yaml;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -42,10 +35,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.yaml.snakeyaml.Yaml;
+
+import fj.data.Either;
 
 public class ImportUtilsTest {
     @Test

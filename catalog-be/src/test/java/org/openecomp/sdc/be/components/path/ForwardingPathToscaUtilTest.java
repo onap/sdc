@@ -1,5 +1,19 @@
 package org.openecomp.sdc.be.components.path;
 
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.FORWARDER;
+import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.FORWARDS_TO_TOSCA_NAME;
+import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.PORTS_RANGE;
+import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.PROTOCOL;
+import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.addForwardingPaths;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,20 +30,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.FORWARDER;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.FORWARDS_TO_TOSCA_NAME;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.PORTS_RANGE;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.PROTOCOL;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.addForwardingPaths;
 
 /**
  * @author KATYR, ORENK

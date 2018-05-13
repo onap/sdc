@@ -1,6 +1,9 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -11,9 +14,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceInputsMergeBL implements ComponentsMergeCommand {

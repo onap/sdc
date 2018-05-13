@@ -1,5 +1,26 @@
 package org.openecomp.sdc.be.auditing.impl.category;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.CATEGORY;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESCRIPTION;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_ADD_CATEGORY_LOG_STR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.GROUPING_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_UID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.RESOURCE_TYPE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SERVICE_INSTANCE_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SUB_CATEGORY;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.init;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.modifier;
+
+import java.util.EnumMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,27 +41,6 @@ import org.openecomp.sdc.be.resources.data.auditing.CategoryEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-
-import java.util.EnumMap;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.CATEGORY;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESCRIPTION;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_ADD_CATEGORY_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.GROUPING_NAME;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_UID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.RESOURCE_TYPE;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SERVICE_INSTANCE_ID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SUB_CATEGORY;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.init;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.modifier;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditCategoryEventFuncTest {

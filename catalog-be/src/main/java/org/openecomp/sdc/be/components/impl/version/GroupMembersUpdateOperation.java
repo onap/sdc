@@ -1,5 +1,10 @@
 package org.openecomp.sdc.be.components.impl.version;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -9,11 +14,6 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 @org.springframework.stereotype.Component
 public class GroupMembersUpdateOperation implements PostChangeVersionOperation {
 

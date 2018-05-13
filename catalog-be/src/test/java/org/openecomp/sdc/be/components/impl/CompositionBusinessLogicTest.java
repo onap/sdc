@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.unittests.utils.FactoryUtils;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +29,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.unittests.utils.FactoryUtils;
 
 public class CompositionBusinessLogicTest {
     CompositionBusinessLogic compBl = new CompositionBusinessLogic();

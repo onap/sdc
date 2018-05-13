@@ -1,6 +1,14 @@
 package org.openecomp.sdc.be.components.merge.input;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.ListUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,14 +22,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class ComponentInputsMergeBLTest {
 

@@ -20,17 +20,22 @@
 
 package org.openecomp.sdc.be.datamodel.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.ui.model.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
+import org.openecomp.sdc.be.ui.model.UiResourceDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiResourceMetadata;
+import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiServiceMetadata;
 
 public class UiComponentDataConverter {
 

@@ -1,13 +1,13 @@
 package org.openecomp.sdc.be.components.impl.utils;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class PolicyTypeImportUtils {
 

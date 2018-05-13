@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.be.components;
 
+import static org.mockito.Mockito.when;
+
+import javax.servlet.ServletContext;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,10 +46,6 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletContext;
-
-import static org.mockito.Mockito.when;
 /**
  * tests GroupBusinessLogic class
  * @author ns019t

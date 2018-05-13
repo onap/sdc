@@ -1,12 +1,13 @@
 package org.openecomp.sdc.be.components.merge.resource;
 
 
-import fj.data.Either;
 import org.openecomp.sdc.be.components.merge.GlobalTypesMergeBusinessLogic;
 import org.openecomp.sdc.be.components.merge.TopologyComparator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Resource;
 import org.springframework.stereotype.Component;
+
+import fj.data.Either;
 
 @Component
 public class MergeResourceBLFactory {

@@ -1,15 +1,9 @@
 package org.openecomp.sdc.be.impl;
 
-import java.util.EnumMap;
 import java.util.List;
 
-import javax.annotation.Generated;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.tinkerpop.gremlin.structure.T;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -25,7 +19,6 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -33,17 +26,14 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
 
 public class ComponentsUtilsTest {
 

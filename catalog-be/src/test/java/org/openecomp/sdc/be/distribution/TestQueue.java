@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.be.distribution;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.openecomp.sdc.be.components.distribution.engine.CambriaHandler;
-import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
-import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -39,6 +34,12 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.openecomp.sdc.be.components.distribution.engine.CambriaHandler;
+import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
+import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 public class TestQueue {
 

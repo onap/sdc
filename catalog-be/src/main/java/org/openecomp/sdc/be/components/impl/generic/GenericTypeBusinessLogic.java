@@ -1,6 +1,9 @@
 package org.openecomp.sdc.be.components.impl.generic;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -17,9 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class GenericTypeBusinessLogic {

@@ -20,18 +20,17 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Response;
+
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.info.ServletJsonResponse;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Response;
 
 public abstract class ToscaDaoServlet extends BeGenericServlet {
     public abstract Logger getLogger();

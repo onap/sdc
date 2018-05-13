@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.MonitoringDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -29,6 +28,8 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import fj.data.Either;
 
 @Component("monitoringBusinessLogic")
 public class MonitoringBusinessLogic {

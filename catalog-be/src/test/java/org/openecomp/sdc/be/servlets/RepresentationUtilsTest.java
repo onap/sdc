@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ArtifactDefinition;

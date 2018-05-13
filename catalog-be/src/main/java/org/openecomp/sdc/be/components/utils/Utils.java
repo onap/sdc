@@ -1,14 +1,15 @@
 package org.openecomp.sdc.be.components.utils;
 
-import org.apache.tinkerpop.shaded.minlog.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.validation.constraints.NotNull;
+
+import org.apache.tinkerpop.shaded.minlog.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Utils {
 

@@ -1,13 +1,13 @@
 package org.openecomp.sdc.be.components.merge.resource;
 
+import java.util.List;
+
 import org.openecomp.sdc.be.components.merge.instance.ComponentsMergeCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class ResourceDataMergeBusinessLogic implements MergeResourceBusinessLogic {

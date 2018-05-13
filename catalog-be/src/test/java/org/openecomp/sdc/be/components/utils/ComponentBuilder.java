@@ -1,5 +1,9 @@
 package org.openecomp.sdc.be.components.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -11,10 +15,6 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public abstract class ComponentBuilder<T extends Component, B extends ComponentBuilder<T, B>> {
 

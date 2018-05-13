@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.servlets;
 
-import org.eclipse.jetty.http.HttpStatus;
-import org.springframework.stereotype.Component;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import org.eclipse.jetty.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 @Component
 @Provider

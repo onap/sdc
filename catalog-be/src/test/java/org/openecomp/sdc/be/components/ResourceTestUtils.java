@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ResourceTestUtils {
 

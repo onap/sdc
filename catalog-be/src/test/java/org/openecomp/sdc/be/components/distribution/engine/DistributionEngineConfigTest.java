@@ -20,6 +20,13 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -30,13 +37,6 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionS
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class DistributionEngineConfigTest {
 

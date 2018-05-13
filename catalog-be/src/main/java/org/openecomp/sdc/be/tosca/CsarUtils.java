@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import com.google.gson.Gson;
-import fj.data.Either;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -43,6 +41,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -50,6 +49,11 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.onap.sdc.generator.data.AdditionalParams;
+import org.onap.sdc.generator.data.Artifact;
+import org.onap.sdc.generator.data.ArtifactType;
+import org.onap.sdc.generator.data.GenerationData;
+import org.onap.sdc.generator.impl.ArtifactGenerationServiceImpl;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
@@ -89,14 +93,13 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.onap.sdc.generator.data.AdditionalParams;
-import org.onap.sdc.generator.data.Artifact;
-import org.onap.sdc.generator.data.ArtifactType;
-import org.onap.sdc.generator.data.GenerationData;
-import org.onap.sdc.generator.impl.ArtifactGenerationServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.gson.Gson;
+
+import fj.data.Either;
 
 
 /**

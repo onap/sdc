@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.components.merge.property;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.List;
 
 @Component
 public class DataDefinitionsValuesMergingBusinessLogic  {

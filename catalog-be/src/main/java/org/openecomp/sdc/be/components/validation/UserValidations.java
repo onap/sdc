@@ -1,6 +1,7 @@
 package org.openecomp.sdc.be.components.validation;
 
-import fj.data.Either;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -13,7 +14,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class UserValidations {

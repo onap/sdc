@@ -1,7 +1,8 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.att.nsa.mr.client.MRConsumer;
-import com.google.gson.GsonBuilder;
+import java.util.concurrent.ExecutorService;
+import java.util.stream.IntStream;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.concurrent.ExecutorService;
-import java.util.stream.IntStream;
+import com.att.nsa.mr.client.MRConsumer;
+import com.google.gson.GsonBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")

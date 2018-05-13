@@ -20,11 +20,9 @@
 
 package org.openecomp.sdc.common.transaction.impl;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.transaction.api.RollbackHandler;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
@@ -33,6 +31,8 @@ import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnu
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fj.data.Either;
 
 public class ESRollbackHandler extends RollbackHandler {
 

@@ -20,7 +20,14 @@
 
 package org.openecomp.sdc.be.user;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -34,7 +41,6 @@ import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.UserRoleEnum;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -42,12 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 @Component("userBusinessLogic")
 public class UserBusinessLogic implements IUserBusinessLogic {

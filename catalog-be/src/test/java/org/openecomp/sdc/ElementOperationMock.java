@@ -20,7 +20,10 @@
 
 package org.openecomp.sdc;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -35,9 +38,7 @@ import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.CategoryData;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 public class ElementOperationMock implements IElementOperation {
 

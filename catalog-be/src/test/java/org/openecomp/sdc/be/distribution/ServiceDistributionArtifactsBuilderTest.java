@@ -20,6 +20,14 @@
 
 package org.openecomp.sdc.be.distribution;
 
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
@@ -29,14 +37,6 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertTrue;
 
 public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest {
 

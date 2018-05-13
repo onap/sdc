@@ -1,6 +1,9 @@
 package org.openecomp.sdc.be.components.merge;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -9,9 +12,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 @Component
 public class GlobalInputsFilteringBusinessLogic extends BaseBusinessLogic {

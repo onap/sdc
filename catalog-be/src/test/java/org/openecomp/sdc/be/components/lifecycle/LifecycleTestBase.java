@@ -20,7 +20,13 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import fj.data.Either;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+
 import org.junit.BeforeClass;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
@@ -61,11 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class LifecycleTestBase {
     private static final Logger log = LoggerFactory.getLogger(LifecycleTestBase.class);

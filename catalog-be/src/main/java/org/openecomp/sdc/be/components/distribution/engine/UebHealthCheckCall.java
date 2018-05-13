@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import java.util.concurrent.Callable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.Callable;
 
 public class UebHealthCheckCall implements Callable<Boolean> {
 

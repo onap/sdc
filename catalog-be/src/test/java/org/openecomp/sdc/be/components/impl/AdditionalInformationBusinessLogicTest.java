@@ -1,19 +1,12 @@
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
-import java.util.*;
-import org.junit.Assert;
 
 
 public class AdditionalInformationBusinessLogicTest {

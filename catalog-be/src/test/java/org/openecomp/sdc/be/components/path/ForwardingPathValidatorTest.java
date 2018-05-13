@@ -1,8 +1,13 @@
 package org.openecomp.sdc.be.components.path;
 
 
-import com.google.common.collect.Sets;
-import fj.data.Either;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.Collection;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -18,12 +23,9 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.Collection;
-import java.util.Set;
+import com.google.common.collect.Sets;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class ForwardingPathValidatorTest implements ForwardingPathTestUtils {
 

@@ -1,6 +1,8 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.merge.capability.CapabilityResolver;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
@@ -16,8 +18,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component
 public class ComponentCapabilitiesPropertiesMergeBL implements ComponentsMergeCommand {

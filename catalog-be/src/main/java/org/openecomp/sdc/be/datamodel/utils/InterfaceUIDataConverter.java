@@ -16,14 +16,14 @@
 
 package org.openecomp.sdc.be.datamodel.utils;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationParamDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.Operation;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class InterfaceUIDataConverter {
 

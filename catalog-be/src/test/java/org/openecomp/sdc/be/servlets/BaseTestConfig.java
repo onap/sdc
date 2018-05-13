@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.springframework.context.annotation.Bean;
-
-import static org.mockito.Mockito.mock;
 
 public class BaseTestConfig {
 

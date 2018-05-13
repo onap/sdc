@@ -1,28 +1,5 @@
 package org.openecomp.sdc.be.auditing.impl;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
-import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
-import org.openecomp.sdc.be.model.ConsumerDefinition;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
-import org.openecomp.sdc.be.resources.data.auditing.ConsumerEvent;
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-
-import java.util.EnumMap;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +20,29 @@ import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_ID;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.init;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.modifier;
+
+import java.util.EnumMap;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.impl.AuditingDao;
+import org.openecomp.sdc.be.model.ConsumerDefinition;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
+import org.openecomp.sdc.be.resources.data.auditing.ConsumerEvent;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditConsumerEventFuncTest {

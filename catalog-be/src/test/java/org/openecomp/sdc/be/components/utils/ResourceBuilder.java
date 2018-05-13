@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.utils;
 
+import java.util.ArrayList;
+
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
-
-import java.util.ArrayList;
 
 public class ResourceBuilder extends ComponentBuilder<Resource, ResourceBuilder> {
 

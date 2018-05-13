@@ -1,15 +1,16 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 @Component("executorFactory")
 /**
  * Allows to create next kinds of single thread executors: SingleThreadExecutor and SingleThreadScheduledExecutor
