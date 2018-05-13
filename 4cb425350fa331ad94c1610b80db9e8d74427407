@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_81ac51a0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationTypesConnectivity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-13T05:07:13Z",
+      "side": 1,
+      "message": "We can make this function shorter.\nYou can use putAll function of ImmutableMap.\nentityToEntitiesWithoutRelationship.putAll(ConsolidationEntityType.COMPUTE,ImmuableSet.of(ConsolidationEntityType.COMPUTE, ConsolidationEntityType.VOLUME, ...);",
+      "revId": "4cb425350fa331ad94c1610b80db9e8d74427407",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_c1a6d9c0",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationTypesConnectivity.java",
         "patchSetId": 2
