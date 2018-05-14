@@ -24,37 +24,15 @@ import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.EntityConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FileComputeConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FileNestedConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FilePortConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.GetAttrFuncData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.RequirementAssignmentData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.TypeComputeConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.*;
 import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -78,41 +56,41 @@ public class ConsolidationDataUtil {
    * @return the compute template consolidation data
    */
   public static ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
-      TranslationContext context,
-      ServiceTemplate serviceTemplate,
-      String computeNodeType,
-      String computeNodeTemplateId) {
+          TranslationContext context,
+          ServiceTemplate serviceTemplate,
+          String computeNodeType,
+          String computeNodeTemplateId) {
 
     ConsolidationData consolidationData = context.getConsolidationData();
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
 
     ComputeConsolidationData computeConsolidationData = consolidationData
-        .getComputeConsolidationData();
+            .getComputeConsolidationData();
 
     FileComputeConsolidationData fileComputeConsolidationData = computeConsolidationData
-        .getFileComputeConsolidationData(serviceTemplateFileName);
+            .getFileComputeConsolidationData(serviceTemplateFileName);
 
     if (fileComputeConsolidationData == null) {
       fileComputeConsolidationData = new FileComputeConsolidationData();
       computeConsolidationData.setFileComputeConsolidationData(serviceTemplateFileName,
-          fileComputeConsolidationData);
+              fileComputeConsolidationData);
     }
 
     TypeComputeConsolidationData typeComputeConsolidationData = fileComputeConsolidationData
-        .getTypeComputeConsolidationData(computeNodeType);
+            .getTypeComputeConsolidationData(computeNodeType);
     if (typeComputeConsolidationData == null) {
       typeComputeConsolidationData = new TypeComputeConsolidationData();
       fileComputeConsolidationData.setTypeComputeConsolidationData(computeNodeType,
-          typeComputeConsolidationData);
+              typeComputeConsolidationData);
     }
 
     ComputeTemplateConsolidationData computeTemplateConsolidationData =
-        typeComputeConsolidationData.getComputeTemplateConsolidationData(computeNodeTemplateId);
+            typeComputeConsolidationData.getComputeTemplateConsolidationData(computeNodeTemplateId);
     if (computeTemplateConsolidationData == null) {
       computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
       computeTemplateConsolidationData.setNodeTemplateId(computeNodeTemplateId);
       typeComputeConsolidationData.setComputeTemplateConsolidationData(computeNodeTemplateId,
-          computeTemplateConsolidationData);
+              computeTemplateConsolidationData);
     }
 
     return computeTemplateConsolidationData;
@@ -139,19 +117,19 @@ public class ConsolidationDataUtil {
     PortConsolidationData portConsolidationData = consolidationData.getPortConsolidationData();
 
     FilePortConsolidationData filePortConsolidationData = portConsolidationData
-        .getFilePortConsolidationData(serviceTemplateFileName);
+            .getFilePortConsolidationData(serviceTemplateFileName);
 
     if (filePortConsolidationData == null) {
       filePortConsolidationData = new FilePortConsolidationData();
       portConsolidationData.setFilePortConsolidationData(serviceTemplateFileName,
-          filePortConsolidationData);
+              filePortConsolidationData);
     }
 
     PortTemplateConsolidationData portTemplateConsolidationData =
-        filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId);
+            filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId);
     if (portTemplateConsolidationData == null) {
       portTemplateConsolidationData = getInitPortTemplateConsolidationData(portNodeTemplateId,
-          portResourceId, portResourceType);
+              portResourceId, portResourceType);
       filePortConsolidationData.setPortTemplateConsolidationData(portNodeTemplateId, portTemplateConsolidationData);
     }
 
@@ -159,32 +137,33 @@ public class ConsolidationDataUtil {
   }
 
   private static PortTemplateConsolidationData getInitPortTemplateConsolidationData(String portNodeTemplateId,
-                                                                             String portResourceId,
-                                                                             String portResourceType) {
+                                                                                    String portResourceId,
+                                                                                    String portResourceType) {
     PortTemplateConsolidationData portTemplateConsolidationData = new PortTemplateConsolidationData();
     portTemplateConsolidationData.setNodeTemplateId(portNodeTemplateId);
     Optional<String> portNetworkRole = HeatToToscaUtil.evaluateNetworkRoleFromResourceId(portResourceId,
-        portResourceType);
+            portResourceType);
     portNetworkRole.ifPresent(portTemplateConsolidationData::setNetworkRole);
     return portTemplateConsolidationData;
   }
 
+
   public static Optional<SubInterfaceTemplateConsolidationData> getSubInterfaceTemplateConsolidationData(
-      TranslateTo subInterfaceTo,
-      String subInterfaceNodeTemplateId) {
+          TranslateTo subInterfaceTo,
+          String subInterfaceNodeTemplateId) {
     Optional<String> parentPortNodeTemplateId =
-        HeatToToscaUtil.getSubInterfaceParentPortNodeTemplateId(subInterfaceTo);
+            HeatToToscaUtil.getSubInterfaceParentPortNodeTemplateId(subInterfaceTo);
     if (parentPortNodeTemplateId.isPresent()) {
       return Optional.ofNullable(getSubInterfaceTemplateConsolidationData(subInterfaceTo,
-         parentPortNodeTemplateId.get(), subInterfaceNodeTemplateId));
+              parentPortNodeTemplateId.get(), subInterfaceNodeTemplateId));
     }
     return Optional.empty();
   }
 
   private static SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationData(
-      TranslateTo subInterfaceTo,
-      String parentPortNodeTemplateId,
-      String subInterfaceNodeTemplateId) {
+          TranslateTo subInterfaceTo,
+          String parentPortNodeTemplateId,
+          String subInterfaceNodeTemplateId) {
 
     ConsolidationData consolidationData = subInterfaceTo.getContext().getConsolidationData();
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(subInterfaceTo.getServiceTemplate());
@@ -192,25 +171,25 @@ public class ConsolidationDataUtil {
     PortConsolidationData portConsolidationData = consolidationData.getPortConsolidationData();
 
     FilePortConsolidationData filePortConsolidationData = portConsolidationData
-        .getFilePortConsolidationData(serviceTemplateFileName);
+            .getFilePortConsolidationData(serviceTemplateFileName);
 
     if (filePortConsolidationData == null) {
       filePortConsolidationData = new FilePortConsolidationData();
       portConsolidationData.setFilePortConsolidationData(serviceTemplateFileName,
-          filePortConsolidationData);
+              filePortConsolidationData);
     }
 
     PortTemplateConsolidationData portTemplateConsolidationData =
-        filePortConsolidationData.getPortTemplateConsolidationData(parentPortNodeTemplateId);
+            filePortConsolidationData.getPortTemplateConsolidationData(parentPortNodeTemplateId);
     if (portTemplateConsolidationData == null) {
       portTemplateConsolidationData = new PortTemplateConsolidationData();
       portTemplateConsolidationData.setNodeTemplateId(parentPortNodeTemplateId);
       filePortConsolidationData.setPortTemplateConsolidationData(parentPortNodeTemplateId,
-          portTemplateConsolidationData);
+              portTemplateConsolidationData);
     }
 
     return portTemplateConsolidationData.getSubInterfaceResourceTemplateConsolidationData(subInterfaceTo.getResource(),
-        subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+            subInterfaceNodeTemplateId, parentPortNodeTemplateId);
   }
 
   /**
@@ -222,18 +201,18 @@ public class ConsolidationDataUtil {
    *                             consolidation data
    */
   public static NestedTemplateConsolidationData getNestedTemplateConsolidationData(
-      TranslationContext context,
-      ServiceTemplate serviceTemplate,
-      String nestedHeatFileName, String nestedNodeTemplateId) {
+          TranslationContext context,
+          ServiceTemplate serviceTemplate,
+          String nestedHeatFileName, String nestedNodeTemplateId) {
 
     if (isNestedResourceIdOccuresInDifferentNestedFiles(context, nestedHeatFileName,
-        nestedNodeTemplateId)) {
+            nestedNodeTemplateId)) {
       throw new CoreException(
-          new DuplicateResourceIdsInDifferentFilesErrorBuilder(nestedNodeTemplateId).build());
+              new DuplicateResourceIdsInDifferentFilesErrorBuilder(nestedNodeTemplateId).build());
     }
 
     if (isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(
-        nestedNodeTemplateId, nestedHeatFileName, context)) {
+            nestedNodeTemplateId, nestedHeatFileName, context)) {
       return null;
     }
 
@@ -241,45 +220,45 @@ public class ConsolidationDataUtil {
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
 
     NestedConsolidationData nestedConsolidationData = consolidationData
-        .getNestedConsolidationData();
+            .getNestedConsolidationData();
 
     FileNestedConsolidationData fileNestedConsolidationData = nestedConsolidationData
-        .getFileNestedConsolidationData(serviceTemplateFileName);
+            .getFileNestedConsolidationData(serviceTemplateFileName);
 
     if (fileNestedConsolidationData == null) {
       fileNestedConsolidationData = new FileNestedConsolidationData();
       nestedConsolidationData.setFileNestedConsolidationData(serviceTemplateFileName,
-          fileNestedConsolidationData);
+              fileNestedConsolidationData);
     }
 
     NestedTemplateConsolidationData nestedTemplateConsolidationData =
-        fileNestedConsolidationData.getNestedTemplateConsolidationData(nestedNodeTemplateId);
+            fileNestedConsolidationData.getNestedTemplateConsolidationData(nestedNodeTemplateId);
     if (nestedTemplateConsolidationData == null) {
       nestedTemplateConsolidationData = new NestedTemplateConsolidationData();
       nestedTemplateConsolidationData.setNodeTemplateId(nestedNodeTemplateId);
       fileNestedConsolidationData.setNestedTemplateConsolidationData(nestedNodeTemplateId,
-          nestedTemplateConsolidationData);
+              nestedTemplateConsolidationData);
     }
 
     return nestedTemplateConsolidationData;
   }
 
   public static boolean isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(String
-                                                                                      nestedNodeTemplateId,
+                                                                                          nestedNodeTemplateId,
                                                                                   String nestedHeatFileName,
                                                                                   TranslationContext context) {
 
     return context.isServiceTemplateWithoutNodeTemplatesSection(
-        FileUtils.getFileWithoutExtention(nestedHeatFileName))
-        || context.isNodeTemplateIdPointsToStWithoutNodeTemplates(nestedNodeTemplateId);
+            FileUtils.getFileWithoutExtention(nestedHeatFileName))
+            || context.isNodeTemplateIdPointsToStWithoutNodeTemplates(nestedNodeTemplateId);
   }
 
   private static boolean isNestedResourceIdOccuresInDifferentNestedFiles(TranslationContext context,
                                                                          String nestedHeatFileName,
                                                                          String nestedNodeTemplateId) {
     return Objects.nonNull(nestedHeatFileName)
-        && context.getAllTranslatedResourceIdsFromDiffNestedFiles(nestedHeatFileName)
-        .contains(nestedNodeTemplateId);
+            && context.getAllTranslatedResourceIdsFromDiffNestedFiles(nestedHeatFileName)
+            .contains(nestedNodeTemplateId);
   }
 
   /**
@@ -289,7 +268,7 @@ public class ConsolidationDataUtil {
    * @param translatedGroupId       Group id of which compute node is a part
    */
   public static void updateGroupIdInConsolidationData(EntityConsolidationData
-                                                          entityConsolidationData,
+                                                              entityConsolidationData,
                                                       String translatedGroupId) {
     if (entityConsolidationData.getGroupIds() == null) {
       entityConsolidationData.setGroupIds(new ArrayList<>());
@@ -310,12 +289,12 @@ public class ConsolidationDataUtil {
                                                            String computeNodeTemplateId,
                                                            String requirementId,
                                                            RequirementAssignment
-                                                               requirementAssignment) {
+                                                                   requirementAssignment) {
     TranslationContext translationContext = translateTo.getContext();
     ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
     ComputeTemplateConsolidationData computeTemplateConsolidationData =
-        getComputeTemplateConsolidationData(translationContext, serviceTemplate, computeType,
-            computeNodeTemplateId);
+            getComputeTemplateConsolidationData(translationContext, serviceTemplate, computeType,
+                    computeNodeTemplateId);
     computeTemplateConsolidationData.addVolume(requirementId, requirementAssignment);
   }
 
@@ -336,12 +315,12 @@ public class ConsolidationDataUtil {
     TranslationContext translationContext = translateTo.getContext();
     ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
     ComputeTemplateConsolidationData computeTemplateConsolidationData =
-        getComputeTemplateConsolidationData(translationContext, serviceTemplate, computeNodeType,
-            translateTo.getTranslatedId());
+            getComputeTemplateConsolidationData(translationContext, serviceTemplate, computeNodeType,
+                    translateTo.getTranslatedId());
     computeTemplateConsolidationData.addPort(getPortType(portNodeTemplateId), portNodeTemplateId);
     // create port in consolidation data
     getPortTemplateConsolidationData(translationContext, serviceTemplate, portResourceId,
-        portResourceType, portNodeTemplateId);
+            portResourceType, portNodeTemplateId);
   }
 
   /**
@@ -362,16 +341,16 @@ public class ConsolidationDataUtil {
     // is a consolidation entity
     if (isConsolidationEntity(consolidationEntityType.getTargetEntityType())) {
       ConsolidationDataUtil.updateNodesConnectedIn(translateTo,
-          nodeTemplateId, consolidationEntityType.getTargetEntityType(), targetResourceId,
-          requirementId, requirementAssignment);
+              nodeTemplateId, consolidationEntityType.getTargetEntityType(), targetResourceId,
+              requirementId, requirementAssignment);
     }
 
     //Add resource dependency information in nodesConnectedOut if the source node
     //is a consolidation entity
     if (isConsolidationEntity(consolidationEntityType.getSourceEntityType())) {
       ConsolidationDataUtil.updateNodesConnectedOut(translateTo,
-          requirementAssignment.getNode(), consolidationEntityType.getSourceEntityType(),
-          requirementId, requirementAssignment);
+              requirementAssignment.getNode(), consolidationEntityType.getSourceEntityType(),
+              requirementId, requirementAssignment);
 
     }
   }
@@ -395,50 +374,12 @@ public class ConsolidationDataUtil {
                                              ConsolidationEntityType consolidationEntityType,
                                              String requirementId,
                                              RequirementAssignment requirementAssignment) {
-    EntityConsolidationData entityConsolidationData = null;
     TranslationContext translationContext = translateTo.getContext();
-    ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-
     translationContext.updateRequirementAssignmentIdIndex(ToscaUtil.getServiceTemplateFileName
-        (translateTo.getServiceTemplate()), translateTo.getResourceId(), requirementId);
+            (translateTo.getServiceTemplate()), translateTo.getResourceId(), requirementId);
+    Optional<IConsolidationDataHandler> consolidationDataHandler = translationContext.getConsolidationData().getConsolidationDataHelper(consolidationEntityType);
+    consolidationDataHandler.ifPresent(handler -> handler.addNodesConnectedOut(translateTo, nodeTemplateId, requirementId, requirementAssignment));
 
-    RequirementAssignmentData requirementAssignmentData = new RequirementAssignmentData(
-        requirementId, requirementAssignment);
-
-    if (consolidationEntityType == ConsolidationEntityType.COMPUTE) {
-      String nodeType = DataModelUtil.getNodeTemplate(serviceTemplate, translateTo
-          .getTranslatedId()).getType();
-      entityConsolidationData = getComputeTemplateConsolidationData(translationContext,
-          serviceTemplate, nodeType, translateTo.getTranslatedId());
-    } else if (consolidationEntityType == ConsolidationEntityType.PORT) {
-      entityConsolidationData = getPortTemplateConsolidationData(translationContext, serviceTemplate,
-          translateTo.getResourceId(), translateTo.getResource().getType(), translateTo
-          .getTranslatedId());
-    } else if (consolidationEntityType == ConsolidationEntityType.SUB_INTERFACE
-        && Objects.nonNull(serviceTemplate.getTopology_template().getNode_templates()
-        .get(translateTo.getTranslatedId()))) {
-      Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
-          getSubInterfaceTemplateConsolidationData(translateTo, translateTo.getTranslatedId());
-      if (subInterfaceTemplateConsolidationData.isPresent()) {
-        entityConsolidationData = subInterfaceTemplateConsolidationData.get();
-      }
-    } else if (consolidationEntityType == ConsolidationEntityType.VFC_NESTED
-        || consolidationEntityType == ConsolidationEntityType.NESTED) {
-      entityConsolidationData =
-          getNestedTemplateConsolidationData(translationContext, serviceTemplate,
-              translateTo.getHeatFileName(),
-              translateTo.getTranslatedId());
-    }
-
-    if (Objects.nonNull(entityConsolidationData)) {
-      if (Objects.isNull(entityConsolidationData.getNodesConnectedOut())) {
-        entityConsolidationData.setNodesConnectedOut(new HashMap<>());
-      }
-
-      entityConsolidationData.getNodesConnectedOut()
-          .computeIfAbsent(nodeTemplateId, k -> new ArrayList<>())
-          .add(requirementAssignmentData);
-    }
   }
 
   /**
@@ -447,6 +388,7 @@ public class ConsolidationDataUtil {
    * @param translateTo             the translate to
    * @param sourceNodeTemplateId    the node template id of the source node
    * @param consolidationEntityType Entity type (compute or port)
+   * @param targetResourceId           Target Resource Id
    * @param requirementId           Requirement Id
    * @param requirementAssignment   the requirement assignment
    */
@@ -455,60 +397,13 @@ public class ConsolidationDataUtil {
                                             String targetResourceId,
                                             String requirementId,
                                             RequirementAssignment requirementAssignment) {
-    EntityConsolidationData entityConsolidationData = null;
+
+
     TranslationContext translationContext = translateTo.getContext();
-    ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-    RequirementAssignmentData requirementAssignmentData = new RequirementAssignmentData(
-        requirementId, requirementAssignment);
+    Optional<IConsolidationDataHandler> consolidationDataHandler = translationContext.getConsolidationData().getConsolidationDataHelper(consolidationEntityType);
     String dependentNodeTemplateId = requirementAssignment.getNode();
-    if (consolidationEntityType == ConsolidationEntityType.COMPUTE) {
-      NodeTemplate computeNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-          dependentNodeTemplateId);
-      String nodeType;
-      if (Objects.isNull(computeNodeTemplate)) {
-        Resource targetResource =
-            translateTo.getHeatOrchestrationTemplate().getResources().get(targetResourceId);
-        NameExtractor nodeTypeNameExtractor =
-            TranslationContext.getNameExtractorImpl(targetResource.getType());
-        nodeType =
-            nodeTypeNameExtractor.extractNodeTypeName(translateTo.getHeatOrchestrationTemplate()
-                    .getResources().get(dependentNodeTemplateId),
-                dependentNodeTemplateId, dependentNodeTemplateId);
-      } else {
-        nodeType = computeNodeTemplate.getType();
-      }
+    consolidationDataHandler.ifPresent(handler -> handler.addNodesConnectedIn(translateTo, sourceNodeTemplateId, dependentNodeTemplateId, targetResourceId, requirementId, requirementAssignment));
 
-      entityConsolidationData = getComputeTemplateConsolidationData(translationContext,
-          serviceTemplate, nodeType, dependentNodeTemplateId);
-    } else if (consolidationEntityType == ConsolidationEntityType.PORT) {
-      entityConsolidationData = getPortTemplateConsolidationData(translationContext, serviceTemplate,
-          translateTo.getResourceId(), translateTo.getResource().getType(), dependentNodeTemplateId);
-    }  else if (consolidationEntityType == ConsolidationEntityType.SUB_INTERFACE) {
-      Resource targetResource =
-          translateTo.getHeatOrchestrationTemplate().getResources().get(targetResourceId);
-      TranslateTo subInterfaceTo = new TranslateTo(translateTo.getHeatFileName(), serviceTemplate, translateTo
-          .getHeatOrchestrationTemplate(), targetResource, targetResourceId, null, translationContext);
-      Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
-          getSubInterfaceTemplateConsolidationData(subInterfaceTo, targetResourceId);
-      if (subInterfaceTemplateConsolidationData.isPresent()) {
-        entityConsolidationData = subInterfaceTemplateConsolidationData.get();
-      }
-    } else if (consolidationEntityType == ConsolidationEntityType.NESTED
-        || consolidationEntityType == ConsolidationEntityType.VFC_NESTED) {
-      entityConsolidationData = getNestedTemplateConsolidationData(translationContext,
-          serviceTemplate, translateTo.getHeatFileName(), dependentNodeTemplateId);
-    }
-
-    if (entityConsolidationData != null) {
-      if (entityConsolidationData.getNodesConnectedIn() == null) {
-        entityConsolidationData.setNodesConnectedIn(new HashMap<>());
-      }
-
-      entityConsolidationData.getNodesConnectedIn()
-          .computeIfAbsent(sourceNodeTemplateId, k -> new ArrayList<>())
-          .add(requirementAssignmentData);
-
-    }
   }
 
   /**
@@ -522,7 +417,7 @@ public class ConsolidationDataUtil {
                                           String resourceId) {
     String resourceType = heatOrchestrationTemplate.getResources().get(resourceId).getType();
     Map<String, ImplementationConfiguration> supportedComputeResources = TranslationContext
-        .getSupportedConsolidationComputeResources();
+            .getSupportedConsolidationComputeResources();
     if (supportedComputeResources.containsKey(resourceType)) {
       return supportedComputeResources.get(resourceType).isEnable();
     }
@@ -538,7 +433,7 @@ public class ConsolidationDataUtil {
   public static boolean isComputeResource(Resource resource) {
     String resourceType = resource.getType();
     Map<String, ImplementationConfiguration> supportedComputeResources = TranslationContext
-        .getSupportedConsolidationComputeResources();
+            .getSupportedConsolidationComputeResources();
     if (supportedComputeResources.containsKey(resourceType)) {
       return supportedComputeResources.get(resourceType).isEnable();
     }
@@ -556,7 +451,7 @@ public class ConsolidationDataUtil {
                                        String resourceId) {
     String resourceType = heatOrchestrationTemplate.getResources().get(resourceId).getType();
     Map<String, ImplementationConfiguration> supportedPortResources = TranslationContext
-        .getSupportedConsolidationPortResources();
+            .getSupportedConsolidationPortResources();
     if (supportedPortResources.containsKey(resourceType)) {
       return supportedPortResources.get(resourceType).isEnable();
     }
@@ -572,7 +467,7 @@ public class ConsolidationDataUtil {
   public static boolean isPortResource(Resource resource) {
     String resourceType = resource.getType();
     Map<String, ImplementationConfiguration> supportedPortResources = TranslationContext
-        .getSupportedConsolidationPortResources();
+            .getSupportedConsolidationPortResources();
     if (supportedPortResources.containsKey(resourceType)) {
       return supportedPortResources.get(resourceType).isEnable();
     }
@@ -590,8 +485,8 @@ public class ConsolidationDataUtil {
                                          String resourceId) {
     String resourceType = heatOrchestrationTemplate.getResources().get(resourceId).getType();
     return resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource())
-        || resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE
-        .getHeatResource());
+            || resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE
+            .getHeatResource());
   }
 
   /**
@@ -603,8 +498,8 @@ public class ConsolidationDataUtil {
   public static boolean isVolumeResource(Resource resource) {
     String resourceType = resource.getType();
     return resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource())
-        || resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE
-        .getHeatResource());
+            || resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE
+            .getHeatResource());
   }
 
   /**
@@ -646,7 +541,7 @@ public class ConsolidationDataUtil {
     TranslationContext context = translateTo.getContext();
     ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
     getNestedTemplateConsolidationData(
-        context, serviceTemplate, translateTo.getHeatFileName(), translateTo.getTranslatedId());
+            context, serviceTemplate, translateTo.getHeatFileName(), translateTo.getTranslatedId());
   }
 
   public static void removeSharedResource(ServiceTemplate serviceTemplate,
@@ -655,36 +550,25 @@ public class ConsolidationDataUtil {
                                           String paramName,
                                           String contrailSharedResourceId,
                                           String sharedTranslatedResourceId) {
-    if (ConsolidationDataUtil.isComputeResource(heatOrchestrationTemplate,
-        contrailSharedResourceId)) {
-      NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-          sharedTranslatedResourceId);
-      EntityConsolidationData entityConsolidationData = getComputeTemplateConsolidationData(
-          context, serviceTemplate, nodeTemplate.getType(), sharedTranslatedResourceId);
-      List<GetAttrFuncData> getAttrFuncDataList = entityConsolidationData
-          .getOutputParametersGetAttrIn();
-      removeParamNameFromAttrFuncList(paramName, getAttrFuncDataList);
-    }
-    if (ConsolidationDataUtil.isPortResource(heatOrchestrationTemplate,
-        contrailSharedResourceId)) {
-      Resource resource = heatOrchestrationTemplate.getResources().get(contrailSharedResourceId);
-      EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(context, serviceTemplate,
-          contrailSharedResourceId, resource.getType(), sharedTranslatedResourceId);
-      List<GetAttrFuncData> getAttrFuncDataList = entityConsolidationData
-          .getOutputParametersGetAttrIn();
-      removeParamNameFromAttrFuncList(paramName, getAttrFuncDataList);
-    }
+    Optional <IConsolidationDataHandler> consolidationDataHandler = ConsolidationDataUtil.
+            getConsolidationDataHandler(heatOrchestrationTemplate, context, contrailSharedResourceId);
+
+    consolidationDataHandler.ifPresent(handler->
+            handler.removeParamNameFromAttrFuncList(
+                    serviceTemplate, heatOrchestrationTemplate, context, paramName,
+                    contrailSharedResourceId, sharedTranslatedResourceId));
   }
 
-  private static void removeParamNameFromAttrFuncList(String paramName,
-                                                      List<GetAttrFuncData> getAttrFuncDataList) {
-    Iterator<GetAttrFuncData> itr = getAttrFuncDataList.iterator();
-    while (itr.hasNext()) {
-      GetAttrFuncData getAttrFuncData = itr.next();
-      if (paramName.equals(getAttrFuncData.getFieldName())) {
-        itr.remove();
-      }
-    }
+
+  public static Optional <IConsolidationDataHandler> getConsolidationDataHandler(HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                                                 TranslationContext context,
+                                                                                 String contrailSharedResourceId) {
+    Resource resource = heatOrchestrationTemplate.getResources().get(contrailSharedResourceId);
+    ConsolidationEntityType consolidationEntityType = ConsolidationEntityType.OTHER;
+    consolidationEntityType.setEntityType(resource, resource, context);
+    return context.getConsolidationData().
+            getConsolidationDataHelper(consolidationEntityType.getSourceEntityType());
+
   }
 
   public static void updateNodeGetAttributeIn(EntityConsolidationData entityConsolidationData,
@@ -708,7 +592,7 @@ public class ConsolidationDataUtil {
   }
 
   public static void updateOutputGetAttributeInConsolidationData(EntityConsolidationData
-                                                                     entityConsolidationData,
+                                                                         entityConsolidationData,
                                                                  String outputParameterName,
                                                                  String attributeName) {
 
