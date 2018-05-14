@@ -95,6 +95,8 @@ public class InterfacesOperationsToscaUtilTest {
         Assert.assertTrue(toscaRepresentation.getMainYaml().contains("resourceName:"));
         Assert.assertTrue(toscaRepresentation.getMainYaml().contains("inputs:"));
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("defaultp"));
+        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("has description"));
+        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("naming_function_"));
         Assert.assertTrue(toscaRepresentation.getMainYaml().contains("com.some.resource.or.other.resourceName"));
     }
 
@@ -123,6 +125,7 @@ public class InterfacesOperationsToscaUtilTest {
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("input_"));
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("defaultp"));
         Assert.assertTrue(toscaRepresentation.getMainYaml().contains("resourceNameNoInputs:"));
+        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("has description"));
         Assert.assertTrue(toscaRepresentation.getMainYaml().contains("com.some.resource.or.other.resourceName"));
     }
 
@@ -134,6 +137,7 @@ public class InterfacesOperationsToscaUtilTest {
         for (int i = 0; i < numOfOps; i++) {
             final OperationDataDefinition operation = new OperationDataDefinition();
             operation.setName("name_for_op_" + i);
+            operation.setDescription( "op "+i+" has description");
             final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
             implementation.setArtifactName(i + "_createBPMN.bpmn");
             operation.setImplementation(implementation);
