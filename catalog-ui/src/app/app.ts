@@ -734,6 +734,10 @@ ng1appModule.run([
                 deregisterStateChangeStartWatcher();
                 deregisterStateChangeStartWatcher = null;
             }
+            if (deregisterStateChangeSuccessWatcher) {
+                deregisterStateChangeSuccessWatcher();
+                deregisterStateChangeSuccessWatcher = null;
+            }
         };
 
         let removeLoader:Function = ():void => {
@@ -762,36 +766,14 @@ ng1appModule.run([
         let onStateChangeStart:Function = (event, toState, toParams, fromState, fromParams):void => {
             console.info((new Date()).getTime());
             console.info('$stateChangeStart', toState.name);
-            //set body class
-            $rootScope['bodyClass'] = 'default-class';
-            if (toState.data && toState.data.bodyClass) {
-                $rootScope['bodyClass'] = toState.data.bodyClass;
-            }
-
-            // Workaround in case we are entering other state then workspace (user move to catalog)
-            // remove the changeComponentCsarVersion, user should open again the VSP list and select one for update.
-            if (toState.name.indexOf('workspace') === -1) {
-                if (cacheService.contains(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
-                    cacheService.remove(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
-                }
-            }
-
-            //saving last state to params , for breadcrumbs
-            if (['dashboard', 'catalog', 'onboardVendor'].indexOf(fromState.name) > -1) {
-                toParams.previousState = fromState.name;
-            } else {
-                toParams.previousState = fromParams.previousState;
-            }
 
             if (toState.name !== 'error-403' && !userService.getLoggedinUser()) {
-                internalDeregisterStateChangeStartWatcher();
                 event.preventDefault();
 
                 userService.authorize().subscribe((userInfo:IUserProperties) => {
                     if (!doesUserHasAccess(toState, userInfo)) {
                         $state.go('error-403');
                         console.info('User has no permissions');
-                        registerStateChangeStartWatcher();
                         return;
                     }
                     userService.setLoggedinUser(userInfo);
@@ -806,7 +788,6 @@ ng1appModule.run([
                         if (userService.getLoggedinUser().role === 'ADMIN') {
                             // toState.name = "adminDashboard";
                             $state.go("adminDashboard", toParams);
-                            registerStateChangeStartWatcher();
                             return;
                         }
 
@@ -817,8 +798,6 @@ ng1appModule.run([
                             }
 
                             console.log("------$state.current.name=" + $state.current.name);
-                            console.info('-----registerStateChangeStartWatcher authorize $stateChangeStart');
-                            registerStateChangeStartWatcher();
 
                         }, 1000);
 
@@ -826,13 +805,9 @@ ng1appModule.run([
 
                 }, () => {
                     $state.go('error-403');
-
-                    console.info('registerStateChangeStartWatcher error-403 $stateChangeStart');
-                    registerStateChangeStartWatcher();
                 });
             }
             else if (userService.getLoggedinUser()) {
-                internalDeregisterStateChangeStartWatcher();
                 if (!doesUserHasAccess(toState, userService.getLoggedinUser())) {
                     event.preventDefault();
                     $state.go('error-403');
@@ -841,7 +816,7 @@ ng1appModule.run([
                 if (toState.name === "welcome") {
                     $state.go("dashboard");
                 }
-                registerStateChangeStartWatcher();
+
                 //if form is dirty and not save  - notify to user
                 if (fromState.data && fromState.data.unsavedChanges && fromParams.id != toParams.id) {
                     event.preventDefault();
@@ -849,6 +824,31 @@ ng1appModule.run([
                 }
             }
 
+        };
+
+        let onStateChangeSuccess:Function = (event, toState, toParams, fromState, fromParams):void => {
+            console.info('$stateChangeSuccess', toState.name);
+
+            //saving last state to params , for breadcrumbs
+            if (['dashboard', 'catalog', 'onboardVendor'].indexOf(fromState.name) > -1) {
+                toParams.previousState = fromState.name;
+            } else {
+                toParams.previousState = fromParams.previousState;
+            }
+
+            // Workaround in case we are entering other state then workspace (user move to catalog)
+            // remove the changeComponentCsarVersion, user should open again the VSP list and select one for update.
+            if (toState.name.indexOf('workspace') === -1) {
+                if (cacheService.contains(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
+                    cacheService.remove(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
+                }
+            }
+
+            //set body class
+            $rootScope['bodyClass'] = 'default-class';
+            if (toState.data && toState.data.bodyClass) {
+                $rootScope['bodyClass'] = toState.data.bodyClass;
+            }
         };
 
         let doesUserHasAccess:Function = (toState, user):boolean => {
@@ -860,12 +860,16 @@ ng1appModule.run([
             return isUserHasAccess;
         };
         let deregisterStateChangeStartWatcher:Function;
+        let deregisterStateChangeSuccessWatcher:Function;
 
         let registerStateChangeStartWatcher:Function = ():void => {
             internalDeregisterStateChangeStartWatcher();
             console.info('registerStateChangeStartWatcher $stateChangeStart');
             deregisterStateChangeStartWatcher = $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams):void => {
                 onStateChangeStart(event, toState, toParams, fromState, fromParams);
+            });
+            deregisterStateChangeSuccessWatcher = $rootScope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams):void => {
+                onStateChangeSuccess(event, toState, toParams, fromState, fromParams);
             });
         };
 
