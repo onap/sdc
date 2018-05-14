@@ -68,7 +68,7 @@ topology_template:
       description: IPv6 address associated with subinterfaces
   node_templates:
     contrail_vmi_subinterface:
-      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      type: org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
       properties:
         virtual_machine_interface_refs:
         - get_input: perimeta_parent_interface
@@ -129,9 +129,9 @@ topology_template:
       binding_contrail_vmi_subinterface:
       - contrail_vmi_subinterface
       - binding
-      link_contrail_vmi_subinterface:
+      subinterface_link_contrail_vmi_subinterface:
       - contrail_vmi_subinterface
-      - link
+      - subinterface_link
       dependency_contrail_vmi_subinterface:
       - contrail_vmi_subinterface
-      - dependency
+      - dependency
