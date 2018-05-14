@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_376fbf93",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/datatypes/model/HeatOrchestrationTemplateTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-14T12:53:52Z",
+      "side": 1,
+      "message": "This cast is unnecessary. Please run static analysis on all changed files.",
+      "range": {
+        "startLine": 38,
+        "startChar": 36,
+        "endLine": 38,
+        "endChar": 45
+      },
+      "revId": "77277025570a8359261409ef8635d232546e8126",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d769bb8c",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/datatypes/model/HeatOrchestrationTemplateTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-14T12:53:52Z",
+      "side": 1,
+      "message": "This will generate a static analysis violation.",
+      "range": {
+        "startLine": 103,
+        "startChar": 4,
+        "endLine": 104,
+        "endChar": 34
+      },
+      "revId": "77277025570a8359261409ef8635d232546e8126",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f764f7b3",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/external/artifact/ExternalArtifactEnricher.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-14T12:53:52Z",
+      "side": 1,
+      "message": "If you don\u0027t know how to fix this, then please open a bug.",
+      "range": {
+        "startLine": 58,
+        "startChar": 1,
+        "endLine": 65,
+        "endChar": 9
+      },
+      "revId": "77277025570a8359261409ef8635d232546e8126",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b70aefcf",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/TestUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-14T12:53:52Z",
+      "side": 1,
+      "message": "Please don\u0027t do it. Let the exception be thrown. TestNG/JUnit will mark the test a failed. \"Assert\" is used for a different purpose.",
+      "range": {
+        "startLine": 126,
+        "startChar": 1,
+        "endLine": 127,
+        "endChar": 34
+      },
+      "revId": "77277025570a8359261409ef8635d232546e8126",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_570dabe6",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/schemagenerator/SchemaGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-14T12:53:52Z",
+      "side": 1,
+      "message": "It\u0027s a good practice to add a comment that explains why the empty constructor is needed.",
+      "revId": "77277025570a8359261409ef8635d232546e8126",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
