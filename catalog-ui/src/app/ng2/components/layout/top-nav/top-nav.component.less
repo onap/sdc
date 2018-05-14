@@ -102,7 +102,6 @@
           position: absolute;
           left: 0;
           top: 40px;
-          z-index: 1;
 
           overflow-x: hidden;
           overflow-y: auto;
@@ -147,6 +146,7 @@
         &.item-click:hover ul.sub-menu,
         &.item-click:active ul.sub-menu {
           visibility: visible;
+          z-index: 100;
           max-height: 500px;
           border: 1px solid @func_color_b;
           border-radius: 2px;
