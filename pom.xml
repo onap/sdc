@@ -25,7 +25,7 @@
         <titan.version>1.0.0</titan.version>
         <sdc.titan.version>1.2.0</sdc.titan.version>
         <spring-boot.version>1.1.6.RELEASE</spring-boot.version>
-        <spring.version>4.3.13.RELEASE</spring.version>
+        <spring.version>4.3.15.RELEASE</spring.version>
         <spring.security.version>3.2.3.RELEASE</spring.security.version>
         <spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
         <jersey-bom.version>2.26</jersey-bom.version>
