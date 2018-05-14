@@ -1,81 +1,132 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import java.util.Optional;
+import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
+
 /**
  * The type Consolidation data.
  */
 public class ConsolidationData {
 
-  //Compute consolidation data
-  private ComputeConsolidationData computeConsolidationData;
+    //Compute consolidation data and handler
+    private ComputeConsolidationData computeConsolidationData;
+    private final ComputeConsolidationDataHandler computeConsolidationDataHandler;
 
-  //Port Consolidation data
-  private PortConsolidationData portConsolidationData;
+    //Port Consolidation data and handler
+    private PortConsolidationData portConsolidationData;
+    private final PortConsolidationDataHandler portConsolidationDataHandler;
+    private final SubInterfaceConsolidationDataHandler subInterfaceConsolidationDataHandler;
 
-  //Nested Consolidation data
-  private NestedConsolidationData nestedConsolidationData;
+    //Nested Consolidation data and handler
+    private NestedConsolidationData nestedConsolidationData;
+    private final NestedConsolidationDataHandler nestedConsolidationDataHandler;
 
 
-  /**
-   * Instantiates a new Consolidation data.
-   */
-  public ConsolidationData() {
-    computeConsolidationData = new ComputeConsolidationData();
-    portConsolidationData = new PortConsolidationData();
-    nestedConsolidationData = new NestedConsolidationData();
-  }
+    /**
+     * Instantiates a new Consolidation data.
+     */
+    public ConsolidationData() {
+        computeConsolidationData = new ComputeConsolidationData();
+        portConsolidationData = new PortConsolidationData();
+        nestedConsolidationData = new NestedConsolidationData();
 
-  /**
-   * Gets compute consolidation data.
-   *
-   * @return the compute consolidation data
-   */
-  public ComputeConsolidationData getComputeConsolidationData() {
-    return computeConsolidationData;
-  }
+        computeConsolidationDataHandler = new ComputeConsolidationDataHandler(this.getComputeConsolidationData());
+        portConsolidationDataHandler = new PortConsolidationDataHandler(this.getPortConsolidationData());
+        nestedConsolidationDataHandler = new NestedConsolidationDataHandler(this.getNestedConsolidationData());
+        subInterfaceConsolidationDataHandler =
+                new SubInterfaceConsolidationDataHandler(this.getPortConsolidationData());
 
-  /**
-   * Sets compute consolidation data.
-   *
-   * @param computeConsolidationData the compute consolidation data
-   */
-  public void setComputeConsolidationData(ComputeConsolidationData computeConsolidationData) {
-    this.computeConsolidationData = computeConsolidationData;
-  }
+    }
 
-  /**
-   * Gets port consolidation data.
-   *
-   * @return the port consolidation data
-   */
-  public PortConsolidationData getPortConsolidationData() {
-    return portConsolidationData;
-  }
+    /**
+     * Get Consolidation data handler.
+     */
+    public Optional<ConsolidationDataHandler> getConsolidationDataHandler(ConsolidationEntityType type) {
 
-  /**
-   * Sets port consolidation data.
-   *
-   * @param portConsolidationData the port consolidation data
-   */
-  public void setPortConsolidationData(
-      PortConsolidationData portConsolidationData) {
-    this.portConsolidationData = portConsolidationData;
-  }
+        switch (type) {
+            case COMPUTE:
+                return Optional.of(getComputeConsolidationDataHelper());
+            case PORT:
+                return Optional.of(getPortConsolidationDataHandler());
+            case SUB_INTERFACE:
+                return Optional.of(getSubInterfaceConsolidationDataHandler());
+            case NESTED:
+            case VFC_NESTED:
+                return Optional.of(getNestedConsolidationDataHandler());
+            default:
+                return Optional.empty();
+        }
 
-  /**
-   * Gets nested consolidation data.
-   *
-   * @return the nested consolidation data
-   */
-  public NestedConsolidationData getNestedConsolidationData() {
-    return nestedConsolidationData;
-  }
+    }
 
-  /**
-   * Sets nested consolidation data.
-   *
-   * @param nestedConsolidationData the nested consolidation data
-   */
-  public void setNestedConsolidationData(NestedConsolidationData nestedConsolidationData) {
-    this.nestedConsolidationData = nestedConsolidationData;
-  }
+    public ComputeConsolidationDataHandler getComputeConsolidationDataHelper() {
+        return computeConsolidationDataHandler;
+    }
+
+    public PortConsolidationDataHandler getPortConsolidationDataHandler() {
+        return portConsolidationDataHandler;
+    }
+
+    public NestedConsolidationDataHandler getNestedConsolidationDataHandler() {
+        return nestedConsolidationDataHandler;
+    }
+
+    public SubInterfaceConsolidationDataHandler getSubInterfaceConsolidationDataHandler() {
+        return subInterfaceConsolidationDataHandler;
+    }
+
+    /**
+     * Gets compute consolidation data.
+     *
+     * @return the compute consolidation data
+     */
+    public ComputeConsolidationData getComputeConsolidationData() {
+        return computeConsolidationData;
+    }
+
+    /**
+     * Sets compute consolidation data.
+     *
+     * @param computeConsolidationData the compute consolidation data
+     */
+    public void setComputeConsolidationData(ComputeConsolidationData computeConsolidationData) {
+        this.computeConsolidationData = computeConsolidationData;
+    }
+
+    /**
+     * Gets port consolidation data.
+     *
+     * @return the port consolidation data
+     */
+    public PortConsolidationData getPortConsolidationData() {
+        return portConsolidationData;
+    }
+
+    /**
+     * Sets port consolidation data.
+     *
+     * @param portConsolidationData the port consolidation data
+     */
+    public void setPortConsolidationData(PortConsolidationData portConsolidationData) {
+        this.portConsolidationData = portConsolidationData;
+    }
+
+    /**
+     * Gets nested consolidation data.
+     *
+     * @return the nested consolidation data
+     */
+    public NestedConsolidationData getNestedConsolidationData() {
+        return nestedConsolidationData;
+    }
+
+    /**
+     * Sets nested consolidation data.
+     *
+     * @param nestedConsolidationData the nested consolidation data
+     */
+    public void setNestedConsolidationData(NestedConsolidationData nestedConsolidationData) {
+        this.nestedConsolidationData = nestedConsolidationData;
+    }
+
 }
