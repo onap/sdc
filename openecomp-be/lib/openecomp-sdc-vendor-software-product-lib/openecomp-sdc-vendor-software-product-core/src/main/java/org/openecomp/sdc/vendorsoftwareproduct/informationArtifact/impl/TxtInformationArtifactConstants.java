@@ -33,13 +33,11 @@ public class TxtInformationArtifactConstants {
   public static final String DELIMITER = ":";
   public static final String FOUR_TABS = TAB + TAB + TAB + TAB;
 
-  public static final String HEADER = "AT&T Proprietary (Restricted)\n"
-      + "Only for use by authorized individuals or any above-designated team(s)\n"
-      + "within the AT&T companies and not for general distribution" + NL + NL + NL;
+  public static final String HEADER = "Proprietary information (Restricted)\n"
+      + "For use only by authorized individuals and not for general distribution." + NL + NL + NL;
 
-  public static final String FOOTER = NL + NL + NL + "AT&T Proprietary (Restricted)\n"
-      + "Only for use by authorized individuals or any above-designated team(s)\n"
-      + "within the AT&T companies and not for general distribution";
+  public static final String FOOTER = NL + NL + NL + "Proprietary information (Restricted)\n"
+      + "For use only by authorized individuals and not for general distribution.";
 
 
   public static final String TITLE = "1." + TAB + "VSP Details" + DELIMITER;
