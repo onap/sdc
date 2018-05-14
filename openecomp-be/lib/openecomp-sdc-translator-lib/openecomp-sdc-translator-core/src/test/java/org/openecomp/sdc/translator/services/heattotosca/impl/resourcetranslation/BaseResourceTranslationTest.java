@@ -34,8 +34,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -45,11 +44,9 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
@@ -64,8 +61,11 @@ import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.
 import org.togglz.testing.TestFeatureManager;
 import org.togglz.testing.TestFeatureManagerProvider;
 
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -73,7 +73,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
@@ -81,16 +80,10 @@ public class BaseResourceTranslationTest {
 
   protected String inputFilesPath;
   protected String outputFilesPath;
-  protected TranslationContext translationContext;
+  TranslationContext translationContext;
 
-  @Rule
-  public TestName name = new TestName();
-
-  private String zipFilename = "VSP.zip";
   private TranslationService translationService;
   private byte[] translatedZipFile;
-
-  private static File tempDir = new File(System.getProperty("java.io.tmpdir"));
 
   private Map<String, byte[]> expectedResultMap = new HashMap<>();
   private Set<String> expectedResultFileNameSet = new HashSet<>();
@@ -101,12 +94,7 @@ public class BaseResourceTranslationTest {
   public static void enableToggleableFeatures(){
     manager = new TestFeatureManager(ToggleableFeature.class);
     manager.enableAll();
-  }
-
-  public static void disableToggleableFeatures() {
-    manager.disableAll();
-    manager = null;
-    TestFeatureManagerProvider.setFeatureManager(null);
+    TestFeatureManagerProvider.setFeatureManager(manager);
   }
 
   @Before
@@ -136,28 +124,10 @@ public class BaseResourceTranslationTest {
       }
     }
 
-    try (ByteArrayInputStream fis = new ByteArrayInputStream(translatedZipFile); BufferedInputStream bis = new BufferedInputStream(fis);
+    try (ByteArrayInputStream fis = new ByteArrayInputStream(translatedZipFile);
+         BufferedInputStream bis = new BufferedInputStream(fis);
          ZipInputStream zis = new ZipInputStream(bis)) {
-      ZipEntry entry;
-      String name;
-      String expected;
-      String actual;
-
-      while ((entry = zis.getNextEntry()) != null) {
-
-        name = entry.getName()
-            .substring(entry.getName().lastIndexOf(File.separator) + 1, entry.getName().length());
-        if (expectedResultFileNameSet.contains(name)) {
-          expected = new String(expectedResultMap.get(name)).trim().replace("\r", "");
-          actual = new String(FileUtils.toByteArray(zis)).trim().replace("\r", "");
-          assertEquals("difference in file: " + name, expected, actual);
-
-          expectedResultFileNameSet.remove(name);
-        }
-      }
-      if (expectedResultFileNameSet.isEmpty()) {
-        expectedResultFileNameSet.forEach(System.out::println);
-      }
+      TestUtils.compareTranslatedOutput(expectedResultFileNameSet, expectedResultMap, zis);
     }
     assertEquals(0, expectedResultFileNameSet.size());
   }
@@ -172,34 +142,15 @@ public class BaseResourceTranslationTest {
         MessageContainerUtil
             .getMessageByLevel(ErrorLevel.ERROR, translatorOutput.getErrorMessages()))) {
       throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(
-          "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
+          "Error in validation " + TestUtils.getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
 
-    byte[] data = new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);
-
-    return data;
+    return new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);
   }
 
 
-  private String getErrorAsString(Map<String, List<ErrorMessage>> errorMessages) {
-    StringBuilder sb = new StringBuilder();
-    errorMessages.entrySet().forEach(
-        entry -> sb.append("File:").append(entry.getKey()).append(System.lineSeparator())
-            .append(getErrorList(entry.getValue())));
-
-    return sb.toString();
-  }
-
-  private String getErrorList(List<ErrorMessage> errors) {
-    StringBuilder sb = new StringBuilder();
-    errors.forEach(
-        error -> sb.append(error.getMessage()).append("[").append(error.getLevel()).append("]")
-            .append(System.lineSeparator()));
-    return sb.toString();
-  }
-
-  public void addFilesToTranslator(TranslationContext translationContext, String path)
+  private void addFilesToTranslator(TranslationContext translationContext, String path)
       throws IOException {
     File manifestFile = new File(path);
     File[] files = manifestFile.listFiles();
@@ -214,9 +165,10 @@ public class BaseResourceTranslationTest {
         fileContent = FileUtils.toByteArray(fis);
 
         if (file.getName().equals(MANIFEST_NAME)) {
-          addManifest(translationContext, MANIFEST_NAME, fileContent);
+          addManifest(translationContext, fileContent);
         } else {
           String validationFilename = "validationOutput.json";
+          String zipFilename = "VSP.zip";
           if (!file.getName().equals(zipFilename) && (!file.getName().equals(validationFilename))) {
             addFile(translationContext, file.getName(), fileContent);
           }
@@ -225,20 +177,20 @@ public class BaseResourceTranslationTest {
     }
   }
 
-  public static void addManifest(TranslationContext translationContext,
-                                 String name, byte[] content) {
+  private static void addManifest(TranslationContext translationContext,
+                                  byte[] content) {
     ManifestContent manifestData = JsonUtil.json2Object(new String(content), ManifestContent.class);
     ManifestFile manifest = new ManifestFile();
-    manifest.setName(name);
+    manifest.setName(MANIFEST_NAME);
     manifest.setContent(manifestData);
     translationContext.setManifest(manifest);
-    translationContext.addFile(name, content);
+    translationContext.addFile(MANIFEST_NAME, content);
     addFilesFromManifestToTranslationContextManifestFilesMap(translationContext, manifestData
         .getData());
   }
 
-  public static void addFile(TranslationContext translationContext,
-                             String name, byte[] content) {
+  private static void addFile(TranslationContext translationContext,
+                              String name, byte[] content) {
     translationContext.addFile(name, content);
   }
 
@@ -249,7 +201,7 @@ public class BaseResourceTranslationTest {
     }
   }
 
-  public void validateNodeTemplateIdInNestedConsolidationData(){
+  void validateNodeTemplateIdInNestedConsolidationData(){
     ConsolidationData consolidationData = translationContext.getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
@@ -257,9 +209,9 @@ public class BaseResourceTranslationTest {
     validateNestedConsolidationDataNodeTemplateIds(consolidationData,expectedServiceTemplateModels);
   }
 
-  public void validateComputeTemplateConsolidationData(ConsolidationDataValidationType
-                                                           validationType,
-                                                       String testName) {
+  protected void validateComputeTemplateConsolidationData(ConsolidationDataValidationType
+                                                                  validationType,
+                                                          String testName) {
     ConsolidationData consolidationData = translationContext.getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
@@ -322,19 +274,17 @@ public class BaseResourceTranslationTest {
     }
   }
 
-  public void validateGetAttribute(String testName){
+  protected void validateGetAttribute(String testName){
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
     validateGetAttr(translationContext,expectedServiceTemplateModels,testName);
   }
 
-  public void validateNestedTemplateConsolidationData(String testName){
+  protected void validateNestedTemplateConsolidationData(String testName){
     validateNestedConsolidationData(translationContext, testName);
   }
 
-  public void validatePortTemplateConsolidationData(ConsolidationDataValidationType
-                                                        validationType,
-                                                    String testName) {
+  void validatePortTemplateConsolidationData() {
     ConsolidationData consolidationData = translationContext.getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
@@ -358,7 +308,7 @@ public class BaseResourceTranslationTest {
       for(String portNodeTemplateId : portNodeTemplateIds) {
         PortTemplateConsolidationData portTemplateConsolidationData =
             filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId);
-        switch(validationType){
+        switch(ConsolidationDataValidationType.VALIDATE_CONNECTIVITY){
           case VALIDATE_CONNECTIVITY:
             validatePortConnectivityIn(portTemplateConsolidationData,expectedServiceTemplate);
             validatePortConnectivityOut(portNodeTemplateId, portTemplateConsolidationData,

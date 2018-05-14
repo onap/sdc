@@ -2,19 +2,14 @@ package org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata
 
 public class TestConstants{
 
-  public static final String MAIN_SERVICE_TEMPLATE = "MainServiceTemplate.yaml";
+  static final String MAIN_SERVICE_TEMPLATE = "MainServiceTemplate.yaml";
 
   public static final String TEST_GROUP_POSITIVE = "TestGroupsPositive";
-  public static final String TEST_GROUP_NEGATIVE = "TestGroupsNegative";
 
   public static final String TEST_VOLUME_POSITIVE = "TestVolumePositive";
   public static final String TEST_VOLUME_NEGATIVE = "TestVolumeNegative";
 
   public static final String TEST_PORT_POSITIVE = "TestPortPositive";
-  public static final String TEST_PORT_NEGATIVE = "TestPortNegative";
-
-  public static final String TEST_CONNECTIVITY_POSITIVE = "TestConnectivityPositive";
-  public static final String TEST_CONNECTIVITY_NEGATIVE = "TestConnectivityNegative";
 
   public static final String TEST_DEPENDS_ON_NODES_CONNECTED_IN = "TestDependsOnNodesConnectedIn";
   public static final String TEST_DEPENDS_ON_NODES_CONNECTED_OUT = "TestDependsOnNodesConnectedOut";

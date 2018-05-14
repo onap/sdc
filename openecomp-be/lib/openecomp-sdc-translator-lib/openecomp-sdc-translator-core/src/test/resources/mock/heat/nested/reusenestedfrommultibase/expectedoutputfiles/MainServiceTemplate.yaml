@@ -281,11 +281,6 @@ topology_template:
       properties:
         network_name:
           get_input: cps_net_name
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: server_pcm_001
-          relationship: tosca.relationships.DependsOn
     server_pcm_003:
       type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:

@@ -242,7 +242,7 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: true
+            is_required: false
         security_groups:
           get_input: perimeta_sec_groups
         fixed_ips:
@@ -278,7 +278,7 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: true
+            is_required: false
         security_groups:
           get_input: perimeta_sec_groups
         fixed_ips:
@@ -359,7 +359,7 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: true
+            is_required: false
         security_groups:
           get_input: perimeta_sec_groups
         fixed_ips:
@@ -423,7 +423,7 @@ topology_template:
           ip_count_required:
             is_required: true
           floating_ip_count_required:
-            is_required: true
+            is_required: false
         security_groups:
           get_input: perimeta_sec_groups
         fixed_ips:
@@ -869,6 +869,9 @@ topology_template:
       dependency_perimeta_ssc_a_untrusted_parent_0_port:
       - perimeta_ssc_a_untrusted_parent_0_port
       - dependency
+      subinterface_link_contrail_vmi_subinterface_perimeta_ssc_a_untrusted_0_vlan_ports:
+      - perimeta_ssc_a_untrusted_0_vlan_ports
+      - subinterface_link_contrail_vmi_subinterface
       link_perimeta_ssc_a_mgmt_1_port:
       - perimeta_ssc_a_mgmt_1_port
       - link
@@ -884,9 +887,6 @@ topology_template:
       dependency_perimeta_ssc_a_ha_0_port:
       - perimeta_ssc_a_ha_0_port
       - dependency
-      link_contrail_vmi_subinterface_perimeta_ssc_a_untrusted_0_vlan_ports:
-      - perimeta_ssc_a_untrusted_0_vlan_ports
-      - link_contrail_vmi_subinterface
       link_perimeta_ssc_a_mgmt_0_port:
       - perimeta_ssc_a_mgmt_0_port
       - link
