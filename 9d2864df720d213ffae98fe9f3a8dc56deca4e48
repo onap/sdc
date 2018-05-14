@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1c042848",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-14T10:15:58Z",
+      "side": 1,
+      "message": "There is no need to declare initial size for the Map in this use case. Initial size for collections should be used only in known performance issues.",
+      "revId": "9d2864df720d213ffae98fe9f3a8dc56deca4e48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
