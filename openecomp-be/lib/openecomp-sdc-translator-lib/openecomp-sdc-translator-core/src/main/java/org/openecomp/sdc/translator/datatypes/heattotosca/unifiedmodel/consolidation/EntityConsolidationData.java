@@ -2,10 +2,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The type Entity consolidation data.
@@ -242,4 +239,17 @@ public class EntityConsolidationData {
     this.nodesGetAttrOut.putIfAbsent(nodeTemplateId, new ArrayList<>());
     this.nodesGetAttrOut.get(nodeTemplateId).add(getAttrFuncData);
   }
+
+  public void removeParamNameFromAttrFuncList(String paramName) {
+
+    if (outputParametersGetAttrIn == null) {
+      return;
+    }
+
+    outputParametersGetAttrIn.removeIf(
+            outputParameters-> paramName.equals(outputParameters.getFieldName()));
+
+  }
+
+
 }
