@@ -1,18 +1,27 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
+
+import java.util.Optional;
+
 /**
  * The type Consolidation data.
  */
 public class ConsolidationData {
 
-  //Compute consolidation data
+  //Compute consolidation data and handler
   private ComputeConsolidationData computeConsolidationData;
+  private final ComputeConsolidationDataHandler computeConsolidationDataHandler;
 
-  //Port Consolidation data
+  //Port Consolidation data and handler
   private PortConsolidationData portConsolidationData;
+  private final PortConsolidationDataHandler portConsolidationDataHandler;
+  private final SubInterfaceConsolidationDataHandler subInterfaceConsolidationDataHandler;
 
-  //Nested Consolidation data
+  //Nested Consolidation data and handler
   private NestedConsolidationData nestedConsolidationData;
+  private final NestedConsolidationDataHandler nestedConsolidationDataHandler;
+
 
 
   /**
@@ -22,8 +31,47 @@ public class ConsolidationData {
     computeConsolidationData = new ComputeConsolidationData();
     portConsolidationData = new PortConsolidationData();
     nestedConsolidationData = new NestedConsolidationData();
+
+    computeConsolidationDataHandler = new ComputeConsolidationDataHandler(this.getComputeConsolidationData());
+    portConsolidationDataHandler = new PortConsolidationDataHandler(this.getPortConsolidationData());
+    nestedConsolidationDataHandler = new NestedConsolidationDataHandler(this.getNestedConsolidationData());
+    subInterfaceConsolidationDataHandler = new SubInterfaceConsolidationDataHandler(this.getPortConsolidationData());
   }
 
+  public Optional<IConsolidationDataHandler> getConsolidationDataHelper(ConsolidationEntityType type){
+
+    switch (type) {
+      case COMPUTE:
+        return Optional.of(computeConsolidationDataHandler);
+      case PORT:
+        return Optional.of(portConsolidationDataHandler);
+      case SUB_INTERFACE:
+        return Optional.of(subInterfaceConsolidationDataHandler);
+      case NESTED:
+      case VFC_NESTED:
+        return Optional.of(nestedConsolidationDataHandler);
+      default:
+        return Optional.empty();
+    }
+
+  }
+
+  public ComputeConsolidationDataHandler getComputeConsolidationDataHelper(){
+    return computeConsolidationDataHandler;
+  }
+
+  public PortConsolidationDataHandler getPortConsolidationDataHandler(){
+
+    return portConsolidationDataHandler;
+  }
+
+  public NestedConsolidationDataHandler getNestedConsolidationDataHandler() {
+    return nestedConsolidationDataHandler;
+  }
+
+  public SubInterfaceConsolidationDataHandler getSubInterfaceConsolidationDataHandler() {
+    return subInterfaceConsolidationDataHandler;
+  }
   /**
    * Gets compute consolidation data.
    *
@@ -78,4 +126,5 @@ public class ConsolidationData {
   public void setNestedConsolidationData(NestedConsolidationData nestedConsolidationData) {
     this.nestedConsolidationData = nestedConsolidationData;
   }
+
 }
