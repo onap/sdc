@@ -80,6 +80,16 @@
         type: tosca.datatypes.Credential
         required: false
 
+  tosca.relationships.nfv.VirtualBindsTo:
+    derived_from: tosca.relationships.DependsOn
+    valid_target_types:
+    - tosca.capabilities.nfv.VirtualBindable
+
+  tosca.relationships.nfv.VirtualLinksTo:
+    derived_from: tosca.relationships.DependsOn
+    valid_target_types:
+    - tosca.capabilities.nfv.VirtualLinkable
+
   org.openecomp.relationships.VolumeAttachesTo:
     derived_from: org.openecomp.relationships.AttachesTo
     description: This type represents an attachment relationship for associating volume
