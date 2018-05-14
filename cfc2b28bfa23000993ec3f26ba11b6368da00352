@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d7c1bb2f",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/Constants.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-14T14:15:43Z",
+      "side": 1,
+      "message": "It\u0027s a good practice to add a short comment explaining why this constructor is empty. Didn\u0027t static analysis complain about it being empty?",
+      "revId": "cfc2b28bfa23000993ec3f26ba11b6368da00352",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
