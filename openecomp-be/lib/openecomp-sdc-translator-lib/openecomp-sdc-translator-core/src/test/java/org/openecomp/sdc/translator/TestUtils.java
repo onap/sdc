@@ -16,24 +16,27 @@
 
 package org.openecomp.sdc.translator;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
-import org.openecomp.core.translator.api.HeatToToscaTranslator;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.openecomp.core.translator.api.HeatToToscaTranslator;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.common.utils.SdcCommon;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
@@ -64,6 +67,9 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class TestUtils {
   private static final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
@@ -705,4 +711,43 @@ public class TestUtils {
     return initServiceTemplate;
   }
 
+  public static void compareTranslatedOutput(Set<String> expectedResultFileNameSet,
+                                      Map<String, byte[]> expectedResultMap,
+                                      ZipInputStream zis) throws IOException {
+    ZipEntry entry;
+    String name;
+    String expected;
+    String actual;
+
+    while ((entry = zis.getNextEntry()) != null) {
+
+      name = entry.getName()
+              .substring(entry.getName().lastIndexOf(File.separator) + 1, entry.getName().length());
+      if (expectedResultFileNameSet.contains(name)) {
+        expected = new String(expectedResultMap.get(name)).trim().replace("\r", "");
+        actual = new String(FileUtils.toByteArray(zis)).trim().replace("\r", "");
+        assertEquals("difference in file: " + name, expected, actual);
+
+        expectedResultFileNameSet.remove(name);
+      }
+    }
+    if (expectedResultFileNameSet.isEmpty()) {
+      expectedResultFileNameSet.forEach(System.out::println);
+    }
+  }
+
+  public static String getErrorAsString(Map<String, List<ErrorMessage>> errorMessages) {
+    StringBuilder sb = new StringBuilder();
+    errorMessages.forEach((file, errorList) -> sb.append("File:").append(file).append(System.lineSeparator())
+            .append(getErrorList(errorList)));
+
+    return sb.toString();
+  }
+
+  private static String getErrorList(List<ErrorMessage> errors) {
+    StringBuilder sb = new StringBuilder();
+    errors.forEach(error -> sb.append(error.getMessage()).append("[").append(error.getLevel()).append("]")
+            .append(System.lineSeparator()));
+    return sb.toString();
+  }
 }

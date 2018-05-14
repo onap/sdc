@@ -17,20 +17,8 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.translator.TestUtils.getErrorAsString;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -44,18 +32,28 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
 import org.togglz.testing.TestFeatureManager;
 import org.togglz.testing.TestFeatureManagerProvider;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipInputStream;
+
 
 public class BaseFullTranslationTest {
 
-    public static final String IN_POSTFIX = "/in";
-    public static final String OUT_POSTFIX = "/out";
-
+    private static final String IN_POSTFIX = "/in";
+    private static final String OUT_POSTFIX = "/out";
 
     protected static TestFeatureManager manager;
 
@@ -64,13 +62,6 @@ public class BaseFullTranslationTest {
         manager = new TestFeatureManager(ToggleableFeature.class);
         manager.enableAll();
         TestFeatureManagerProvider.setFeatureManager(manager);
-    }
-
-
-    public static void disableToggleableFeatures() {
-        manager.disableAll();
-        manager = null;
-        TestFeatureManagerProvider.setFeatureManager(null);
     }
 
     protected void testTranslationWithInit(String path) throws IOException {
@@ -101,27 +92,9 @@ public class BaseFullTranslationTest {
         }
 
         try (ByteArrayInputStream fis = new ByteArrayInputStream(translatedZipFile);
-             BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
-            ZipEntry entry;
-            String name;
-            String expected;
-            String actual;
-
-            while ((entry = zis.getNextEntry()) != null) {
-
-                name = entry.getName()
-                            .substring(entry.getName().lastIndexOf(File.separator) + 1, entry.getName().length());
-                if (expectedResultFileNameSet.contains(name)) {
-                    expected = new String(expectedResultMap.get(name)).trim().replace("\r", "");
-                    actual = new String(FileUtils.toByteArray(zis)).trim().replace("\r", "");
-                    assertEquals("difference in file: " + name, expected, actual);
-
-                    expectedResultFileNameSet.remove(name);
-                }
-            }
-            if (expectedResultFileNameSet.isEmpty()) {
-                expectedResultFileNameSet.forEach(System.out::println);
-            }
+             BufferedInputStream bis = new BufferedInputStream(fis);
+             ZipInputStream zis = new ZipInputStream(bis)) {
+            TestUtils.compareTranslatedOutput(expectedResultFileNameSet, expectedResultMap, zis);
         }
         assertEquals(0, expectedResultFileNameSet.size());
     }
@@ -140,26 +113,7 @@ public class BaseFullTranslationTest {
                                                                       .withCategory(ErrorCategory.APPLICATION).build());
         }
 
-        byte[] data =
-                new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);
-
-        return data;
-    }
-
-    private String getErrorAsString(Map<String, List<ErrorMessage>> errorMessages) {
-        StringBuilder sb = new StringBuilder();
-        errorMessages.entrySet().forEach(
-                entry -> sb.append("File:").append(entry.getKey()).append(System.lineSeparator())
-                           .append(getErrorList(entry.getValue())));
-
-        return sb.toString();
-    }
-
-    private String getErrorList(List<ErrorMessage> errors) {
-        StringBuilder sb = new StringBuilder();
-        errors.forEach(error -> sb.append(error.getMessage()).append("[").append(error.getLevel()).append("]")
-                                  .append(System.lineSeparator()));
-        return sb.toString();
+        return new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);
     }
 
 }

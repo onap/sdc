@@ -22,11 +22,8 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
 
 import java.io.IOException;
-
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_CONNECTIVITY_POSITIVE;
 
 /**
  * @author Avrahamg
@@ -46,8 +43,7 @@ public class ResourceTranslationContrailV2VmInterfaceImplTest extends BaseResour
     outputFilesPath = "/mock/services/heattotosca/contrailv2VMinterface/oneNet/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validatePortTemplateConsolidationData(ConsolidationDataValidationType
-        .VALIDATE_CONNECTIVITY, TEST_CONNECTIVITY_POSITIVE);
+    validatePortTemplateConsolidationData();
   }
 
   @Test
@@ -57,8 +53,7 @@ public class ResourceTranslationContrailV2VmInterfaceImplTest extends BaseResour
         "/mock/services/heattotosca/contrailv2VMinterface/listNet/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validatePortTemplateConsolidationData(ConsolidationDataValidationType
-        .VALIDATE_CONNECTIVITY, TEST_CONNECTIVITY_POSITIVE);
+    validatePortTemplateConsolidationData();
   }
 
   @Test
