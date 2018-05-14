@@ -112,24 +112,6 @@ public class DistributionEngineTest{
 		return new DistributionEngine();
 	}
 
-	/*@Test(expected=ExceptionInInitializerError.class)
-	public void testMain() throws Exception {
-		String[] args = new String[] { "" };
-
-		// default test
-		DistributionEngine.main(args);
-	}*/
-
-	@Test
-	public void testIsActive() throws Exception {
-		DistributionEngine testSubject;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.isActive();
-	}
-
 	@Test(expected=NullPointerException.class)
 	public void testInit() throws Exception {
 		DistributionEngine testSubject;

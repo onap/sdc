@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,8 +61,8 @@ public class VfModuleArtifactPayload {
         vfModuleModelCustomizationUUID = group.getCustomizationUUID();
         vfModuleModelDescription = group.getDescription();
 
-        artifacts = new ArrayList<>(group.getArtifactsUuid());
-        artifacts.addAll(group.getGroupInstanceArtifactsUuid());
+        artifacts = new ArrayList<>(group.getArtifactsUuid() != null ? group.getArtifactsUuid() : new LinkedList<>());
+        artifacts.addAll(group.getGroupInstanceArtifactsUuid() != null ? group.getGroupInstanceArtifactsUuid() : new LinkedList<>());
 
         // Base Value is set from properties
         setBaseValue(group);

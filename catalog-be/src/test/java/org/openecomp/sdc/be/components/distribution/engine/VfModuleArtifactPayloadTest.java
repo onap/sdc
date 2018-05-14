@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
 
 
@@ -15,7 +16,10 @@ public class VfModuleArtifactPayloadTest {
 		return new VfModuleArtifactPayload(new GroupDefinition());
 	}
 
-	
+	@Test
+	public void testConstructor() {
+		new VfModuleArtifactPayload(new GroupInstance());
+	}
 
 	
 	@Test
@@ -59,5 +63,20 @@ public class VfModuleArtifactPayloadTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setProperties(properties);
+	}
+	
+	@Test
+	public void testcompareByGroupName() throws Exception {
+		VfModuleArtifactPayload testSubject;
+		GroupDefinition groupDefinition = new GroupDefinition();
+		groupDefinition.setName("module-1234.545");
+		VfModuleArtifactPayload vfModuleArtifactPayload1 = new VfModuleArtifactPayload(groupDefinition);
+		GroupDefinition groupDefinition2 = new GroupDefinition();
+		groupDefinition.setName("module-3424.546");
+		VfModuleArtifactPayload vfModuleArtifactPayload2 = new VfModuleArtifactPayload(groupDefinition);
+		// default test
+		testSubject = createTestSubject();
+		testSubject.compareByGroupName(vfModuleArtifactPayload1, vfModuleArtifactPayload2);
+		testSubject.compareByGroupName(vfModuleArtifactPayload1, vfModuleArtifactPayload1);
 	}
 }

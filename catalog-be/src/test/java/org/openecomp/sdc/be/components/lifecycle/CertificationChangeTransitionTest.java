@@ -23,14 +23,22 @@ package org.openecomp.sdc.be.components.lifecycle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -68,7 +76,19 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
 
         resource = createResourceObject();
     }
+    
+    @Test
+    public void testConstructor(){
+        Resource resource = createResourceVFCMTObject();
 
+        User user = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
+
+        for (LifeCycleTransitionEnum value : LifeCycleTransitionEnum.values()) {
+        	new CertificationChangeTransition(value, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
+		}
+        
+    }
+    
     @Test
     public void testVFCMTStateValidation(){
         Resource resource = createResourceVFCMTObject();
@@ -86,7 +106,7 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
         assertEquals(changeStateResult.isLeft(), true);
 
     }
-
+    
     @Test
     public void testStateValidationFail() {
 
