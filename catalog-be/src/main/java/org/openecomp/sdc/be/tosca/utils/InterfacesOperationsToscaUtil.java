@@ -64,7 +64,7 @@ public class InterfacesOperationsToscaUtil {
     public static Map<String, Object> addInterfaceTypeElement(Component component) {
         Map<String, Object> toscaInterfaceTypes = new HashMap<>();
         if ((component instanceof Service) || (component instanceof Product)) {
-            return toscaInterfaceTypes;
+            return null;
         }
 
         final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
@@ -75,8 +75,8 @@ public class InterfacesOperationsToscaUtil {
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
             Map<String, Object> toscaOperations = new HashMap<>();
 
-            for (String operationName : operations.keySet()) {
-                toscaOperations.put(operationName,
+            for (String operationId : operations.keySet()) {
+                toscaOperations.put(operations.get(operationId).getName(),
                         null); //currently not initializing any of the operations' fields as it is not needed
             }
 
@@ -114,10 +114,10 @@ public class InterfacesOperationsToscaUtil {
             toscaInterfaceDefinition.setType(toscaResourceName);
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
             Map<String, Object> toscaOperations = new HashMap<>();
-            ToscaLifecycleOperationDefinition toscaOperation = new ToscaLifecycleOperationDefinition();
 
             String operationArtifactPath;
             for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
+                ToscaLifecycleOperationDefinition toscaOperation = new ToscaLifecycleOperationDefinition();
                 if (isArtifactPresent(operationEntry)) {
                     operationArtifactPath = OperationArtifactUtil
                                                     .createOperationArtifactPath(component.getNormalizedName(),
@@ -125,7 +125,8 @@ public class InterfacesOperationsToscaUtil {
                                                             operationEntry.getValue());
                     toscaOperation.setImplementation(operationArtifactPath);
                 }
-                fillToscaOperation(operationEntry.getValue(), toscaOperation);
+                toscaOperation.setDescription(operationEntry.getValue().getDescription());
+                fillToscaOperationInputs(operationEntry.getValue(), toscaOperation);
 
                 toscaOperations.put(operationEntry.getValue().getName(), toscaOperation);
             }
@@ -141,8 +142,8 @@ public class InterfacesOperationsToscaUtil {
     }
 
     /***
-     * workaround : currently "defaultp" is not being converted to "default" by the relevant code in ToscaExportHandler
-     * any string key named "default" will have its named changed to "default"
+     * workaround for : currently "defaultp" is not being converted to "default" by the relevant code in ToscaExportHandler
+     * any string key named "defaultp" will have its named changed to "default"
      * @param operationsMap the map to update
      */
     private static void handleDefaults(Map<String, Object> operationsMap) {
@@ -173,12 +174,12 @@ public class InterfacesOperationsToscaUtil {
         return false;
     }
 
-    private static void fillToscaOperation(OperationDataDefinition operation,
+    private static void fillToscaOperationInputs(OperationDataDefinition operation,
             ToscaLifecycleOperationDefinition toscaOperation) {
         if (Objects.isNull(operation.getInputs())) {
             return;
         }
-        Map<String, ToscaProperty> inputs = new HashMap<>();
+        Map<String, ToscaProperty> toscaInputs = new HashMap<>();
 
         for (OperationInputDefinition input : operation.getInputs().getListToscaDataDefinition()) {
             ToscaProperty toscaInput = new ToscaProperty();
@@ -186,10 +187,10 @@ public class InterfacesOperationsToscaUtil {
             toscaInput.setType(DEFAULT_INPUT_TYPE);
 
             toscaInput.setDefaultp(createDefaultValue(getLastPartOfName(input.getInputId())));
-            inputs.put(input.getName(), toscaInput);
+            toscaInputs.put(input.getName(), toscaInput);
         }
 
-        toscaOperation.setInputs(inputs);
+        toscaOperation.setInputs(toscaInputs);
     }
 
     private static Map<String, List<String>> createDefaultValue(String propertyName) {
