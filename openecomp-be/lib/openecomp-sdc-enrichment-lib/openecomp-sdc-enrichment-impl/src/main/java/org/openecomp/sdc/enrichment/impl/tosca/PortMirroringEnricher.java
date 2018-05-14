@@ -51,273 +51,269 @@ import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 public class PortMirroringEnricher {
-  //Map of service template file name and map of all port node template ids, node template
-  private final Map<String, Map<String, NodeTemplate>> portNodeTemplates = new HashMap<>();
-  //Map of service template file name and map of external port node template ids, node template
-  private final Map<String, Map<String, NodeTemplate>> externalPortNodeTemplates = new HashMap<>();
-  //Map of substitution service template name and the list of ports with link requirement from the abstract
-  private final Map<String, List<String>> portNodeTemplateIdsFromAbstract = new HashMap<>();
-  private final Map<String, ServiceTemplate> globalTypesServiceTemplate =
-      GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.ZIP);
+    private static final String ABSTRACT_LINK_REQUIREMENT_ID_PREFIX = ToscaConstants.LINK_REQUIREMENT_ID + "_";
+    private static final int ABSTRACT_LINK_REQUIREMENT_ID_PREFIX_LENGTH = ABSTRACT_LINK_REQUIREMENT_ID_PREFIX.length();
+    private static final Map<String, String> nodeTypeExternalNodeType =
+            Collections.unmodifiableMap(initializeNodeTypeExternalNodeType());
+    //Map of service template file name and map of all port node template ids, node template
+    private final Map<String, Map<String, NodeTemplate>> portNodeTemplates = new HashMap<>();
+    //Map of service template file name and map of external port node template ids, node template
+    private final Map<String, Map<String, NodeTemplate>> externalPortNodeTemplates = new HashMap<>();
+    //Map of substitution service template name and the list of ports with link requirement from the abstract
+    private final Map<String, List<String>> portNodeTemplateIdsFromAbstract = new HashMap<>();
+    private final Map<String, ServiceTemplate> globalTypesServiceTemplate =
+            GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.ZIP);
 
-  private static final String ABSTRACT_LINK_REQUIREMENT_ID_PREFIX = ToscaConstants.LINK_REQUIREMENT_ID + "_";
-  private static final int ABSTRACT_LINK_REQUIREMENT_ID_PREFIX_LENGTH = ABSTRACT_LINK_REQUIREMENT_ID_PREFIX.length();
-
-  private static final Map<String, String> nodeTypeExternalNodeType =
-      Collections.unmodifiableMap(initializeNodeTypeExternalNodeType());
-
-  /**
-   * Enrich tosca for port mirroring.
-   *
-   * @param toscaServiceModel the tosca service model
-   * @return the map          Error descriptor map
-   */
-  public Map<String, List<ErrorMessage>> enrich(ToscaServiceModel toscaServiceModel) {
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
-    serviceTemplates.entrySet().stream()
-        //Skipping the service templates which do not contain topology template
-        .filter(serviceTemplateEntry -> serviceTemplateEntry.getValue()
-            .getTopology_template() != null)
-        .forEach(serviceTemplateEntry ->
-            //Collect all the ports across all the service templates
-            collectPorts(serviceTemplateEntry.getValue()));
-    //Collect External ports from the list of all ports collected above
-    filterExternalPorts();
-    //Handle external port changes
-    handleExternalPorts(toscaServiceModel);
-    return errors;
-  }
-
-  private void collectPorts(ServiceTemplate serviceTemplate) {
-    Map<String, NodeTemplate> nodeTemplates = DataModelUtil.getNodeTemplates(serviceTemplate);
-    if (Objects.isNull(nodeTemplates)) {
-      return;
+    private static Map<String, String> initializeNodeTypeExternalNodeType() {
+        Map<String, String> nodeTypeExternalNodeType = new HashMap<>();
+        nodeTypeExternalNodeType.put(ToscaNodeType.CONTRAIL_PORT, ToscaNodeType.EXTERNAL_CONTRAIL_PORT);
+        nodeTypeExternalNodeType
+                .put(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE, ToscaNodeType.EXTERNAL_VMI_PORT);
+        nodeTypeExternalNodeType.put(ToscaNodeType.NEUTRON_PORT, ToscaNodeType.EXTERNAL_NEUTRON_PORT);
+        return nodeTypeExternalNodeType;
     }
-    //Get all concrete port node templates from the service template
-    Map<String, NodeTemplate> serviceTemplatePortNodeTemplates = nodeTemplates.entrySet().stream()
-        .filter(nodeTemplateEntry -> (Objects.nonNull(nodeTemplateEntry.getValue()))
-            && (isPortNodeTemplate(nodeTemplateEntry.getValue().getType())))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-    portNodeTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-        serviceTemplatePortNodeTemplates);
-    //Get all linked internal ports from abstract node template link requirements
-    collectLinkedInternalPorts(nodeTemplates);
-  }
+    /**
+     * Enrich tosca for port mirroring.
+     *
+     * @param toscaServiceModel the tosca service model
+     * @return the map          Error descriptor map
+     */
+    public Map<String, List<ErrorMessage>> enrich(ToscaServiceModel toscaServiceModel) {
+        Map<String, List<ErrorMessage>> errors = new HashMap<>();
+        Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
+        serviceTemplates.entrySet().stream()
+                //Skipping the service templates which do not contain topology template
+                .filter(serviceTemplateEntry -> serviceTemplateEntry.getValue().getTopology_template() != null)
+                .forEach(serviceTemplateEntry ->
+                        //Collect all the ports across all the service templates
+                        collectPorts(serviceTemplateEntry.getValue()));
+        //Collect External ports from the list of all ports collected above
+        filterExternalPorts();
+        //Handle external port changes
+        handleExternalPorts(toscaServiceModel);
+        return errors;
+    }
 
-  private void collectLinkedInternalPorts(Map<String, NodeTemplate> nodeTemplates) {
-    List<String> abstractLinkedPortNodeTemplates = new ArrayList<>();
-    for (Map.Entry<String, NodeTemplate> nodeTemplateEntry : nodeTemplates.entrySet()) {
-      NodeTemplate nodeTemplate = nodeTemplateEntry.getValue();
-      if (isSubstitutableNodeTemplate(nodeTemplate)) {
-        handleSubstitutableNodeTemplate(abstractLinkedPortNodeTemplates, nodeTemplate);
-      }
-    }
-  }
-
-  private void handleSubstitutableNodeTemplate(List<String> abstractLinkedPortNodeTemplates,
-                                               NodeTemplate nodeTemplate) {
-    List<Map<String, RequirementAssignment>> requirements = nodeTemplate.getRequirements();
-    if (Objects.isNull(requirements)) {
-      return;
-    }
-    requirements.forEach(requirement -> addInternalPortToAbstractNode(requirement, abstractLinkedPortNodeTemplates));
-    if (CollectionUtils.isNotEmpty(abstractLinkedPortNodeTemplates)) {
-      //Populate a map of the substitution service templates and list of internal ports
-      addCollectedPortsToAbstractServiceTemplatePortMap(nodeTemplate,
-          abstractLinkedPortNodeTemplates);
-    }
-  }
-
-  private void addInternalPortToAbstractNode(Map<String, RequirementAssignment> requirement,
-                                             List<String> abstractLinkedPortNodeTemplates) {
-    String requirementId = requirement.keySet().iterator().next();
-    if (requirementId.startsWith(ABSTRACT_LINK_REQUIREMENT_ID_PREFIX)) {
-      //Collect port node template ids from the link requirement ids in the abstract node template
-      abstractLinkedPortNodeTemplates.add(requirementId.substring(ABSTRACT_LINK_REQUIREMENT_ID_PREFIX_LENGTH));
-    }
-  }
-
-  private void addCollectedPortsToAbstractServiceTemplatePortMap(NodeTemplate nodeTemplate,
-                                                                 List<String> abstractLinkedPortNodeTemplates) {
-    String substitutionServiceTemplateName;
-    if (Objects.isNull(nodeTemplate.getProperties())) {
-      return;
-    }
-    Map serviceTemplateFilter = (Map<String, Object>) nodeTemplate.getProperties()
-        .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
-    substitutionServiceTemplateName = (String)
-        serviceTemplateFilter.get(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME);
-    if (Objects.isNull(substitutionServiceTemplateName)) {
-      return;
-    }
-    if (portNodeTemplateIdsFromAbstract.containsKey(substitutionServiceTemplateName)) {
-      List<String> portList = portNodeTemplateIdsFromAbstract.get(substitutionServiceTemplateName);
-      portList.addAll(abstractLinkedPortNodeTemplates);
-      portNodeTemplateIdsFromAbstract.put(substitutionServiceTemplateName, portList);
-    } else {
-      portNodeTemplateIdsFromAbstract.put(substitutionServiceTemplateName, abstractLinkedPortNodeTemplates);
-    }
-  }
-
-  private void filterExternalPorts() {
-    for (Map.Entry<String, Map<String, NodeTemplate>> portNodeTemplateEntry : portNodeTemplates.entrySet()) {
-      Map<String, NodeTemplate> externalPorts = new HashMap<>();
-      String serviceTemplateFileName = portNodeTemplateEntry.getKey();
-      Map<String, NodeTemplate> portNodeTemplateMap = portNodeTemplateEntry.getValue();
-      for (Map.Entry<String, NodeTemplate> portNodeTemplate : portNodeTemplateMap.entrySet()) {
-        String nodeTemplateId = portNodeTemplate.getKey();
-        NodeTemplate nodeTemplate = portNodeTemplate.getValue();
-        if (!isInternalPort(serviceTemplateFileName, nodeTemplateId, nodeTemplate)) {
-          //External Port
-          externalPorts.putIfAbsent(nodeTemplateId, nodeTemplate);
+    private void collectPorts(ServiceTemplate serviceTemplate) {
+        Map<String, NodeTemplate> nodeTemplates = DataModelUtil.getNodeTemplates(serviceTemplate);
+        if (Objects.isNull(nodeTemplates)) {
+            return;
         }
-      }
-      externalPortNodeTemplates.putIfAbsent(serviceTemplateFileName, externalPorts);
+        //Get all concrete port node templates from the service template
+        Map<String, NodeTemplate> serviceTemplatePortNodeTemplates = nodeTemplates.entrySet().stream()
+                .filter(nodeTemplateEntry -> (Objects.nonNull(nodeTemplateEntry.getValue()))
+                        && (isPortNodeTemplate(nodeTemplateEntry.getValue().getType())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        portNodeTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
+                serviceTemplatePortNodeTemplates);
+        //Get all linked internal ports from abstract node template link requirements
+        collectLinkedInternalPorts(nodeTemplates);
     }
-  }
 
-  private void updateExternalPortNodeTemplate(NodeTemplate externalPortNodeTemplate) {
-    String currentPortNodeType = externalPortNodeTemplate.getType();
-    if (nodeTypeExternalNodeType.containsKey(currentPortNodeType)) {
-      externalPortNodeTemplate.setType(nodeTypeExternalNodeType.get(currentPortNodeType));
+    private void collectLinkedInternalPorts(Map<String, NodeTemplate> nodeTemplates) {
+        List<String> abstractLinkedPortNodeTemplates = new ArrayList<>();
+        for (Map.Entry<String, NodeTemplate> nodeTemplateEntry : nodeTemplates.entrySet()) {
+            NodeTemplate nodeTemplate = nodeTemplateEntry.getValue();
+            if (isSubstitutableNodeTemplate(nodeTemplate)) {
+                handleSubstitutableNodeTemplate(abstractLinkedPortNodeTemplates, nodeTemplate);
+            }
+        }
     }
-    addPortMirroringCapability(externalPortNodeTemplate);
-  }
 
-  private void handleExternalPorts(ToscaServiceModel toscaServiceModel) {
-    for (Map.Entry<String, Map<String, NodeTemplate>> entry : externalPortNodeTemplates.entrySet()) {
-      ServiceTemplate serviceTemplate = toscaServiceModel.getServiceTemplates().get(entry.getKey());
-      Map<String, NodeTemplate> serviceTemplateExternalPortNodeTemplates = entry.getValue();
-      if (MapUtils.isEmpty(serviceTemplateExternalPortNodeTemplates)) {
-        continue;
-      }
-      handleExternalPortNodeTemplates(serviceTemplate, serviceTemplateExternalPortNodeTemplates);
-      addGlobalTypeImport(serviceTemplate);
+    private void handleSubstitutableNodeTemplate(List<String> abstractLinkedPortNodeTemplates,
+                                                 NodeTemplate nodeTemplate) {
+        List<Map<String, RequirementAssignment>> requirements = nodeTemplate.getRequirements();
+        if (Objects.isNull(requirements)) {
+            return;
+        }
+        requirements
+                .forEach(requirement -> addInternalPortToAbstractNode(requirement, abstractLinkedPortNodeTemplates));
+        if (CollectionUtils.isNotEmpty(abstractLinkedPortNodeTemplates)) {
+            //Populate a map of the substitution service templates and list of internal ports
+            addCollectedPortsToAbstractServiceTemplatePortMap(nodeTemplate, abstractLinkedPortNodeTemplates);
+        }
     }
-  }
 
-  private void handleExternalPortNodeTemplates(ServiceTemplate serviceTemplate,
-                                               Map<String, NodeTemplate> externalPortNodeTemplates) {
-    for (Map.Entry<String, NodeTemplate> externalNodeTemplate : externalPortNodeTemplates.entrySet()) {
-      updateExternalPortNodeTemplate(externalNodeTemplate.getValue());
-      if (Objects.nonNull(DataModelUtil.getSubstitutionMappings(serviceTemplate))) {
-        //Add port mirroring capability to substitution mapping for external ports
-        addPortMirroringSubstitutionMappingCapability(serviceTemplate, externalNodeTemplate.getKey());
-      }
+    private void addInternalPortToAbstractNode(Map<String, RequirementAssignment> requirement,
+                                               List<String> abstractLinkedPortNodeTemplates) {
+        String requirementId = requirement.keySet().iterator().next();
+        if (requirementId.startsWith(ABSTRACT_LINK_REQUIREMENT_ID_PREFIX)) {
+            //Collect port node template ids from the link requirement ids in the abstract node template
+            abstractLinkedPortNodeTemplates.add(requirementId.substring(ABSTRACT_LINK_REQUIREMENT_ID_PREFIX_LENGTH));
+        }
     }
-  }
 
-  private void addPortMirroringSubstitutionMappingCapability(ServiceTemplate serviceTemplate,
-                                                             String externalPortNodeTemplateId) {
-    List<String> portMirroringCapability = new LinkedList<>();
-    portMirroringCapability.add(externalPortNodeTemplateId);
-    portMirroringCapability.add(PORT_MIRRORING_CAPABILITY_ID);
-    String substitutionMappingCapabilityId = PORT_MIRRORING_CAPABILITY_ID + "_" + externalPortNodeTemplateId;
-    DataModelUtil.addSubstitutionMappingCapability(serviceTemplate,
-        substitutionMappingCapabilityId, portMirroringCapability);
-  }
-
-  private void addPortMirroringCapability(NodeTemplate portNodeTemplate) {
-    Map<String, Object> portMirroringCapabilityProperties = new HashMap<>();
-    PortMirroringConnectionPointDescription connectionPoint = new PortMirroringConnectionPointDescription();
-    if (Objects.nonNull(portNodeTemplate.getProperties())) {
-      setConnectionPointNetworkRole(portNodeTemplate, connectionPoint);
+    private void addCollectedPortsToAbstractServiceTemplatePortMap(NodeTemplate nodeTemplate,
+                                                                   List<String> abstractLinkedPortNodeTemplates) {
+        String substitutionServiceTemplateName;
+        if (Objects.isNull(nodeTemplate.getProperties())) {
+            return;
+        }
+        Map serviceTemplateFilter = (Map<String, Object>) nodeTemplate.getProperties()
+                .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+        substitutionServiceTemplateName = (String)
+                serviceTemplateFilter.get(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME);
+        if (Objects.isNull(substitutionServiceTemplateName)) {
+            return;
+        }
+        if (portNodeTemplateIdsFromAbstract.containsKey(substitutionServiceTemplateName)) {
+            List<String> portList = portNodeTemplateIdsFromAbstract.get(substitutionServiceTemplateName);
+            portList.addAll(abstractLinkedPortNodeTemplates);
+            portNodeTemplateIdsFromAbstract.put(substitutionServiceTemplateName, portList);
+        } else {
+            portNodeTemplateIdsFromAbstract.put(substitutionServiceTemplateName, abstractLinkedPortNodeTemplates);
+        }
     }
-    if (Objects.nonNull(portNodeTemplate.getRequirements())) {
-      setConnectionPointNfcType(portNodeTemplate, connectionPoint);
+
+    private void filterExternalPorts() {
+        for (Map.Entry<String, Map<String, NodeTemplate>> portNodeTemplateEntry : portNodeTemplates.entrySet()) {
+            Map<String, NodeTemplate> externalPorts = new HashMap<>();
+            String serviceTemplateFileName = portNodeTemplateEntry.getKey();
+            Map<String, NodeTemplate> portNodeTemplateMap = portNodeTemplateEntry.getValue();
+            for (Map.Entry<String, NodeTemplate> portNodeTemplate : portNodeTemplateMap.entrySet()) {
+                String nodeTemplateId = portNodeTemplate.getKey();
+                NodeTemplate nodeTemplate = portNodeTemplate.getValue();
+                if (!isInternalPort(serviceTemplateFileName, nodeTemplateId, nodeTemplate)) {
+                    //External Port
+                    externalPorts.putIfAbsent(nodeTemplateId, nodeTemplate);
+                }
+            }
+            externalPortNodeTemplates.putIfAbsent(serviceTemplateFileName, externalPorts);
+        }
     }
-    if (!connectionPoint.isEmpty()) {
-      portMirroringCapabilityProperties.put(PORT_MIRRORING_CAPABILITY_CP_PROPERTY_NAME, connectionPoint);
-      DataModelUtil.addNodeTemplateCapability(portNodeTemplate,
-          PORT_MIRRORING_CAPABILITY_ID, portMirroringCapabilityProperties, null);
+
+    private void updateExternalPortNodeTemplate(NodeTemplate externalPortNodeTemplate) {
+        String currentPortNodeType = externalPortNodeTemplate.getType();
+        if (nodeTypeExternalNodeType.containsKey(currentPortNodeType)) {
+            externalPortNodeTemplate.setType(nodeTypeExternalNodeType.get(currentPortNodeType));
+        }
+        addPortMirroringCapability(externalPortNodeTemplate);
     }
-  }
 
-  private void setConnectionPointNfcType(NodeTemplate portNodeTemplate,
-                                         PortMirroringConnectionPointDescription connectionPoint) {
-    //Get NFC_Type from the binding requirement node
-    Optional<List<RequirementAssignment>> requirementAssignment =
-        DataModelUtil.getRequirementAssignment(portNodeTemplate.getRequirements(), ToscaConstants
-            .BINDING_REQUIREMENT_ID);
-    if (requirementAssignment.isPresent()) {
-      RequirementAssignment bindingRequirementAssignment = requirementAssignment.get().get(0);
-      String node = bindingRequirementAssignment.getNode();
-      connectionPoint.setNfc_type(node);
+    private void handleExternalPorts(ToscaServiceModel toscaServiceModel) {
+        for (Map.Entry<String, Map<String, NodeTemplate>> entry : externalPortNodeTemplates.entrySet()) {
+            ServiceTemplate serviceTemplate = toscaServiceModel.getServiceTemplates().get(entry.getKey());
+            Map<String, NodeTemplate> serviceTemplateExternalPortNodeTemplates = entry.getValue();
+            if (MapUtils.isEmpty(serviceTemplateExternalPortNodeTemplates)) {
+                continue;
+            }
+            handleExternalPortNodeTemplates(serviceTemplate, serviceTemplateExternalPortNodeTemplates);
+            addGlobalTypeImport(serviceTemplate);
+        }
     }
-  }
 
-  private void setConnectionPointNetworkRole(NodeTemplate portNodeTemplate,
-                                             PortMirroringConnectionPointDescription connectionPoint) {
-    Object networkRolePropertyValue =
-        portNodeTemplate.getProperties().get(ToscaConstants.PORT_NETWORK_ROLE_PROPERTY_NAME);
-    if (Objects.nonNull(networkRolePropertyValue)) {
-      Object portMirroringNetworkRolePropertyVal = getClonedObject(networkRolePropertyValue);
-      connectionPoint.setNetwork_role(portMirroringNetworkRolePropertyVal);
+    private void handleExternalPortNodeTemplates(ServiceTemplate serviceTemplate,
+                                                 Map<String, NodeTemplate> externalPortNodeTemplates) {
+        for (Map.Entry<String, NodeTemplate> externalNodeTemplate : externalPortNodeTemplates.entrySet()) {
+            updateExternalPortNodeTemplate(externalNodeTemplate.getValue());
+            if (Objects.nonNull(DataModelUtil.getSubstitutionMappings(serviceTemplate))) {
+                //Add port mirroring capability to substitution mapping for external ports
+                addPortMirroringSubstitutionMappingCapability(serviceTemplate, externalNodeTemplate.getKey());
+            }
+        }
     }
-  }
 
-  private void addGlobalTypeImport(ServiceTemplate serviceTemplate) {
-    List<Map<String, Import>> imports = serviceTemplate.getImports();
-    Map<String, Import> openecompIndexImport = new HashMap<>();
-    openecompIndexImport.put("openecomp_index",
-        HeatToToscaUtil.createServiceTemplateImport(globalTypesServiceTemplate
-            .get("openecomp/_index.yml")));
-    imports.add(openecompIndexImport);
-  }
-
-  private boolean isPortNodeTemplate(String nodeType) {
-    //Check if node corresponds to a concrete port node
-    Set<String> portNodeTypes = getPortNodeTypes();
-    return Objects.nonNull(nodeType) && portNodeTypes.contains(nodeType);
-  }
-
-  private Set<String> getPortNodeTypes() {
-    return new HashSet<>(Arrays.asList(ToscaNodeType.NEUTRON_PORT,
-        ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE,
-        ToscaNodeType.CONTRAIL_PORT));
-  }
-
-  private boolean isSubstitutableNodeTemplate(NodeTemplate nodeTemplate) {
-    return Objects.nonNull(nodeTemplate.getDirectives())
-        && nodeTemplate.getDirectives()
-        .contains(ToscaConstants.NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE);
-  }
-
-  private boolean isInternalPort(String serviceTemplateFileName, String nodeTemplateId,
-                                 NodeTemplate nodeTemplate) {
-    return isAbstractInternalPort(serviceTemplateFileName, nodeTemplateId)
-        || isConcreteInternalPort(nodeTemplate);
-  }
-
-  private boolean isAbstractInternalPort(String serviceTemplateFileName, String nodeTemplateId) {
-    //Check if port corresponds to an abstract internal port
-    return portNodeTemplateIdsFromAbstract.containsKey(serviceTemplateFileName)
-        && portNodeTemplateIdsFromAbstract.get(serviceTemplateFileName).contains(nodeTemplateId);
-  }
-
-
-  private boolean isConcreteInternalPort(NodeTemplate nodeTemplate) {
-    //Check if node template contains a link requirement
-    List<Map<String, RequirementAssignment>> requirements = nodeTemplate.getRequirements();
-    if (Objects.isNull(requirements)) {
-      return false;
+    private void addPortMirroringSubstitutionMappingCapability(ServiceTemplate serviceTemplate,
+                                                               String externalPortNodeTemplateId) {
+        List<String> portMirroringCapability = new LinkedList<>();
+        portMirroringCapability.add(externalPortNodeTemplateId);
+        portMirroringCapability.add(PORT_MIRRORING_CAPABILITY_ID);
+        String substitutionMappingCapabilityId = PORT_MIRRORING_CAPABILITY_ID + "_" + externalPortNodeTemplateId;
+        DataModelUtil.addSubstitutionMappingCapability(serviceTemplate,
+                substitutionMappingCapabilityId, portMirroringCapability);
     }
-    for (Map<String, RequirementAssignment> requirement : requirements) {
-      String requirementId = requirement.keySet().iterator().next();
-      if (requirementId.equals(ToscaConstants.LINK_REQUIREMENT_ID)) {
-        return true;
-      }
-    }
-    return false;
-  }
 
-  private static Map<String, String> initializeNodeTypeExternalNodeType() {
-    Map<String, String> nodeTypeExternalNodeType = new HashMap<>(3);
-    nodeTypeExternalNodeType.put(ToscaNodeType.CONTRAIL_PORT, ToscaNodeType.EXTERNAL_CONTRAIL_PORT);
-    nodeTypeExternalNodeType.put(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE, ToscaNodeType.EXTERNAL_VMI_PORT);
-    nodeTypeExternalNodeType.put(ToscaNodeType.NEUTRON_PORT, ToscaNodeType.EXTERNAL_NEUTRON_PORT);
-    return nodeTypeExternalNodeType;
-  }
+    private void addPortMirroringCapability(NodeTemplate portNodeTemplate) {
+        Map<String, Object> portMirroringCapabilityProperties = new HashMap<>();
+        PortMirroringConnectionPointDescription connectionPoint = new PortMirroringConnectionPointDescription();
+        if (Objects.nonNull(portNodeTemplate.getProperties())) {
+            setConnectionPointNetworkRole(portNodeTemplate, connectionPoint);
+        }
+        if (Objects.nonNull(portNodeTemplate.getRequirements())) {
+            setConnectionPointNfcType(portNodeTemplate, connectionPoint);
+        }
+        if (!connectionPoint.isEmpty()) {
+            portMirroringCapabilityProperties.put(PORT_MIRRORING_CAPABILITY_CP_PROPERTY_NAME, connectionPoint);
+            DataModelUtil.addNodeTemplateCapability(portNodeTemplate,
+                    PORT_MIRRORING_CAPABILITY_ID, portMirroringCapabilityProperties, null);
+        }
+    }
+
+    private void setConnectionPointNfcType(NodeTemplate portNodeTemplate,
+                                           PortMirroringConnectionPointDescription connectionPoint) {
+        //Get NFC_Type from the binding requirement node
+        Optional<List<RequirementAssignment>> requirementAssignment =
+                DataModelUtil.getRequirementAssignment(portNodeTemplate.getRequirements(), ToscaConstants
+                        .BINDING_REQUIREMENT_ID);
+        if (requirementAssignment.isPresent()) {
+            RequirementAssignment bindingRequirementAssignment = requirementAssignment.get().get(0);
+            String node = bindingRequirementAssignment.getNode();
+            connectionPoint.setNfc_type(node);
+        }
+    }
+
+    private void setConnectionPointNetworkRole(NodeTemplate portNodeTemplate,
+                                               PortMirroringConnectionPointDescription connectionPoint) {
+        Object networkRolePropertyValue =
+                portNodeTemplate.getProperties().get(ToscaConstants.PORT_NETWORK_ROLE_PROPERTY_NAME);
+        if (Objects.nonNull(networkRolePropertyValue)) {
+            Object portMirroringNetworkRolePropertyVal = getClonedObject(networkRolePropertyValue);
+            connectionPoint.setNetwork_role(portMirroringNetworkRolePropertyVal);
+        }
+    }
+
+    private void addGlobalTypeImport(ServiceTemplate serviceTemplate) {
+        List<Map<String, Import>> imports = serviceTemplate.getImports();
+        Map<String, Import> openecompIndexImport = new HashMap<>();
+        openecompIndexImport.put("openecomp_index",
+                HeatToToscaUtil.createServiceTemplateImport(globalTypesServiceTemplate
+                        .get("openecomp/_index.yml")));
+        imports.add(openecompIndexImport);
+    }
+
+    private boolean isPortNodeTemplate(String nodeType) {
+        //Check if node corresponds to a concrete port node
+        Set<String> portNodeTypes = getPortNodeTypes();
+        return Objects.nonNull(nodeType) && portNodeTypes.contains(nodeType);
+    }
+
+    private Set<String> getPortNodeTypes() {
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ToscaNodeType.NEUTRON_PORT,
+                ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE, ToscaNodeType.CONTRAIL_PORT)));
+    }
+
+    private boolean isSubstitutableNodeTemplate(NodeTemplate nodeTemplate) {
+        return Objects.nonNull(nodeTemplate.getDirectives())
+                && nodeTemplate.getDirectives()
+                .contains(ToscaConstants.NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE);
+    }
+
+    private boolean isInternalPort(String serviceTemplateFileName, String nodeTemplateId,
+                                   NodeTemplate nodeTemplate) {
+        return isAbstractInternalPort(serviceTemplateFileName, nodeTemplateId)
+                || isConcreteInternalPort(nodeTemplate);
+    }
+
+    private boolean isAbstractInternalPort(String serviceTemplateFileName, String nodeTemplateId) {
+        //Check if port corresponds to an abstract internal port
+        return portNodeTemplateIdsFromAbstract.containsKey(serviceTemplateFileName)
+                && portNodeTemplateIdsFromAbstract.get(serviceTemplateFileName).contains(nodeTemplateId);
+    }
+
+    private boolean isConcreteInternalPort(NodeTemplate nodeTemplate) {
+        //Check if node template contains a link requirement
+        List<Map<String, RequirementAssignment>> requirements = nodeTemplate.getRequirements();
+        if (Objects.isNull(requirements)) {
+            return false;
+        }
+        for (Map<String, RequirementAssignment> requirement : requirements) {
+            String requirementId = requirement.keySet().iterator().next();
+            if (requirementId.equals(ToscaConstants.LINK_REQUIREMENT_ID)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

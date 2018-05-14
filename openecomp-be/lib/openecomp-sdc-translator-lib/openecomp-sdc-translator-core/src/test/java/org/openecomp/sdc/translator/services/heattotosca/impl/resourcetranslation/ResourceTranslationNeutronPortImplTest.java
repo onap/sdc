@@ -22,11 +22,8 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
 
 import java.io.IOException;
-
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_CONNECTIVITY_POSITIVE;
 
 
 public class ResourceTranslationNeutronPortImplTest extends BaseResourceTranslationTest {
@@ -43,8 +40,7 @@ public class ResourceTranslationNeutronPortImplTest extends BaseResourceTranslat
     outputFilesPath = "/mock/services/heattotosca/neutron_port_translation/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validatePortTemplateConsolidationData(ConsolidationDataValidationType
-        .VALIDATE_CONNECTIVITY, TEST_CONNECTIVITY_POSITIVE);
+    validatePortTemplateConsolidationData();
   }
 
   @Test
@@ -54,8 +50,7 @@ public class ResourceTranslationNeutronPortImplTest extends BaseResourceTranslat
         "/mock/services/heattotosca/neutron_security_group_translation/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validatePortTemplateConsolidationData(ConsolidationDataValidationType
-        .VALIDATE_CONNECTIVITY, TEST_CONNECTIVITY_POSITIVE);
+    validatePortTemplateConsolidationData();
   }
 
   @Test
@@ -65,7 +60,6 @@ public class ResourceTranslationNeutronPortImplTest extends BaseResourceTranslat
             "/mock/services/heattotosca/neutron_dual_stacks/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validatePortTemplateConsolidationData(ConsolidationDataValidationType
-            .VALIDATE_CONNECTIVITY, TEST_CONNECTIVITY_POSITIVE);
+    validatePortTemplateConsolidationData();
   }
 }

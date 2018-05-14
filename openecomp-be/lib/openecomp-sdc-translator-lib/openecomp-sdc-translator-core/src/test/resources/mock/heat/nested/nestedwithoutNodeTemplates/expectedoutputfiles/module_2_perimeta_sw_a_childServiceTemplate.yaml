@@ -795,9 +795,6 @@ topology_template:
       dependency_perimeta_rtp_msc_a_ha_0_port:
       - perimeta_rtp_msc_a_ha_0_port
       - dependency
-      link_contrail_vmi_subinterface_perimeta_rtp_msc_a_untrusted_0_vlan_ports:
-      - perimeta_rtp_msc_a_untrusted_0_vlan_ports
-      - link_contrail_vmi_subinterface
       link_perimeta_rtp_msc_a_untrusted_parent_0_port:
       - perimeta_rtp_msc_a_untrusted_parent_0_port
       - link
@@ -807,6 +804,9 @@ topology_template:
       dependency_perimeta_rtp_msc_a_server_0:
       - perimeta_rtp_msc_a_server_0
       - dependency
+      subinterface_link_contrail_vmi_subinterface_perimeta_rtp_msc_a_untrusted_0_vlan_ports:
+      - perimeta_rtp_msc_a_untrusted_0_vlan_ports
+      - subinterface_link_contrail_vmi_subinterface
       dependency_perimeta_rtp_msc_a_trusted_0_port:
       - perimeta_rtp_msc_a_trusted_0_port
       - dependency
