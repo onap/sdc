@@ -60,7 +60,7 @@
         },
            "VnfRepo": {
              "vnfRepoPort": "8702",
-             "vnfRepoHost": "192.168.50.5"
+             "vnfRepoHost": "10.0.14.1"
            }
     },
     "override_attributes": {
