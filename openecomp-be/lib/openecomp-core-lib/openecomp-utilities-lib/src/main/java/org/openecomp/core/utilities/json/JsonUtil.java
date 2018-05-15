@@ -36,15 +36,15 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.everit.json.schema.EnumSchema;
 import org.everit.json.schema.Schema;
+import org.everit.json.schema.StringSchema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
-
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
 
 /**
@@ -157,9 +157,14 @@ public class JsonUtil {
   }
 
   private static String mapValidationExceptionToMessage(ValidationException exception) {
-    if (exception.getViolatedSchema() instanceof EnumSchema) {
+    Object schema = exception.getViolatedSchema();
+
+    if (schema instanceof EnumSchema) {
       return mapEnumViolationToMessage(exception);
+    } else if (schema instanceof StringSchema) {
+      return mapStringViolationToMessage(exception);
     }
+
     return exception.getMessage();
   }
 
@@ -171,6 +176,15 @@ public class JsonUtil {
         : String.format("value. Possible values: %s", CommonMethods
             .collectionToCommaSeparatedString(
                 possibleValues.stream().map(Object::toString).collect(Collectors.toList()))));
+  }
+
+  private static String mapStringViolationToMessage(ValidationException validationException) {
+    if (ValidationType.PATTERN.getKeyword().equals(validationException.getKeyword())) {
+      String message = validationException.getMessage();
+      String value = message.substring(message.indexOf("["), message.indexOf("]") + 1);
+      return message.replace("string " + value, value + " is not valid value. It");
+    }
+    return validationException.getMessage();
   }
 
   private static List<ValidationException> validateUsingEverit(String json, String jsonSchema) {
@@ -188,5 +202,19 @@ public class JsonUtil {
           : ve.getCausingExceptions();
     }
     return null;
+  }
+
+  private enum ValidationType {
+    PATTERN("pattern");
+
+    private String keyword;
+
+    private ValidationType(String keyword) {
+      this.keyword = keyword;
+    }
+
+    String getKeyword() {
+      return  keyword;
+    }
   }
 }

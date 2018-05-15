@@ -146,13 +146,6 @@ public class ImageManagerImpl implements ImageManager {
         getImageEntity(image.getVspId(), image.getVersion(), image.getComponentId(),
             image.getId());
 
-    if (!isManual) {
-      final Image imageCompositionData = image.getImageCompositionData();
-      final String fileName = imageCompositionData.getFileName();
-      validateHeatVspImageUpdate("fileName", fileName, retrieved.getImageCompositionData()
-          .getFileName());
-    }
-
     Collection<ImageEntity> vfcImageList = listImages(image.getVspId(),
         image.getVersion(), image.getComponentId());
 
@@ -162,7 +155,8 @@ public class ImageManagerImpl implements ImageManager {
 
 
     ImageCompositionSchemaInput schemaInput = new ImageCompositionSchemaInput();
-    schemaInput.setImage(image.getImageCompositionData());
+    schemaInput.setManual(isManual);
+    schemaInput.setImage(retrieved.getImageCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
         .validateEntity(image, SchemaTemplateContext.composition, schemaInput);

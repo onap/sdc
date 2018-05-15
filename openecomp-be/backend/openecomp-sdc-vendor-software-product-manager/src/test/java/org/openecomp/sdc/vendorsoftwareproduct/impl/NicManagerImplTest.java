@@ -350,7 +350,7 @@ public class NicManagerImplTest {
 
     CompositionEntityValidationData toBeReturned =
         new CompositionEntityValidationData(CompositionEntityType.nic, NIC1_ID);
-    toBeReturned.setErrors(Arrays.asList("error1", "error2"));
+    toBeReturned.setErrors(Arrays.asList("Field does not conform to predefined criteria:name : must match [a-zA-Z0-9_]*$"));
     doReturn(toBeReturned)
         .when(compositionEntityDataManagerMock)
         .validateEntity(anyObject(), anyObject(), anyObject());
@@ -363,13 +363,9 @@ public class NicManagerImplTest {
     nicData.setNetworkId(NETWORK1_ID);
     nicEntity.setNicCompositionData(nicData);
 
-    try {
-      nicManager.updateNic(nicEntity);
-      Assert.fail();
-    } catch (CoreException ex) {
-      Assert.assertEquals(VendorSoftwareProductErrorCodes.NIC_NAME_FORMAT_NOT_ALLOWED,
-          ex.code().id());
-    }
+    CompositionEntityValidationData output = nicManager.updateNic(nicEntity);
+    Assert.assertEquals(output.getErrors(),toBeReturned.getErrors());
+
   }
 
 
