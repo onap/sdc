@@ -11,6 +11,12 @@ services:
     VoIP_Call_Control:
       name: "VoIP Call Control"
       icons: ['call_controll']
+    E2E_Service:
+      name: "E2E Service"
+      icons: ['network_l_1-3']
+    Network_Service:
+      name: "Network Service"
+      icons: ['network_l_1-3']
 resources:
   NetworkLayer23:
     name: "Network L2-3"
@@ -81,6 +87,9 @@ resources:
       Rules:
           name: "Rules"
           icons: ['networkrules','securityrules']
+      NetworkService:
+          name: "Network Service"
+          icons: ['network']
   NetworkConnectivity:
     name: "Network Connectivity"
     subcategories:
