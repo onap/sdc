@@ -34,6 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest {
   }
 
   @Test
-  public void testGenerateNewSubInterfaceNodeTemplateId() throws IOException {
+  public void testGenerateNewSubInterfaceNodeTemplateId() throws IOException, URISyntaxException {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestInitSubInterfaceServiceTemplate(), null,
         getUnifiedCompositionDataListWithOnePortAndSubInterface(), getContext(false), null);
     Optional<String>
@@ -70,7 +71,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest {
   }
 
   @Test
-  public void testGeneratePortIdMultipleSubInterfacesOfSameTypeToOnePort() throws IOException {
+  public void testGeneratePortIdMultipleSubInterfacesOfSameTypeToOnePort() throws IOException, URISyntaxException  {
     UnifiedCompositionTo unifiedCompositionTo =
         new UnifiedCompositionTo(getTestSubInterfaceServiceTemplateMultipleVlan(), null,
             getUnifiedCompositionDataListWithTwoSubInterfacesOfSameType(), getContext(true), null);
@@ -91,7 +92,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest {
   }
 
   @Test
-  public void testGenerateInvalidOriginalNodeTemplateId() throws IOException {
+  public void testGenerateInvalidOriginalNodeTemplateId() throws IOException, URISyntaxException  {
     UnifiedCompositionTo unifiedCompositionTo = new UnifiedCompositionTo(getTestInitSubInterfaceServiceTemplate(), null,
         getUnifiedCompositionDataListWithOnePortAndSubInterface(), getContext(false), null);
     Optional<String>
@@ -100,7 +101,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest {
     Assert.assertEquals(nodeTemplateId.isPresent(), false);
   }
 
-  private ServiceTemplate getTestInitSubInterfaceServiceTemplate() throws IOException {
+  private ServiceTemplate getTestInitSubInterfaceServiceTemplate() throws IOException, URISyntaxException  {
     ToscaServiceModel serviceModel = TestUtils.loadToscaServiceModel
         ("/mock/services/heattotosca/unifiedComposition/commands/newnodetemplateidgenerator/oneportsubinterfacetype",
             null, null);
@@ -108,7 +109,7 @@ public class SubInterfaceNewNodeTemplateIdGeneratorTest {
     return serviceTemplate.get();
   }
 
-  private ServiceTemplate getTestSubInterfaceServiceTemplateMultipleVlan() throws IOException {
+  private ServiceTemplate getTestSubInterfaceServiceTemplateMultipleVlan() throws IOException, URISyntaxException  {
     ToscaServiceModel serviceModel = TestUtils.loadToscaServiceModel
         ("/mock/services/heattotosca/unifiedComposition/commands/newnodetemplateidgenerator/multiplevlansametype",
             null, null);

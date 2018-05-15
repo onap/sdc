@@ -45,6 +45,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.GetAttrFuncData;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -77,7 +78,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationValidPreCondition() throws IOException {
+  public void testConsolidationValidPreCondition() throws IOException, URISyntaxException {
 
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
@@ -120,7 +121,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationFalsePreConditionOneComputeNode() throws IOException {
+  public void testConsolidationFalsePreConditionOneComputeNode() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -155,7 +156,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationFalsePreConditionMoreThanOnePortPerType() throws IOException {
+  public void testConsolidationFalsePreConditionMoreThanOnePortPerType() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -192,7 +193,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testConsolidationFalsePreConditionDifferentPortTypesBetweenComputes()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -236,7 +237,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationResultTrueWithMoreThanTwoCompute() throws IOException {
+  public void testConsolidationResultTrueWithMoreThanTwoCompute() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -284,7 +285,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationResultFalseWithMoreThanTwoComputeOneIsDiff() throws IOException {
+  public void testConsolidationResultFalseWithMoreThanTwoComputeOneIsDiff() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -334,7 +335,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testConsolidationResultFalseForTwoTypesOfComputeWithOneInstanceEach()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName1 = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     String computeNodeTypeName2 = "org.openecomp.resource.vfc.nodes.heat.cmaui";
@@ -381,7 +382,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testConsolidationValidForTwoSimilarComputeAndFalseForSingleCompute()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName1 = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     String computeNodeTypeName2 = "org.openecomp.resource.vfc.nodes.heat.cmaui";
@@ -431,7 +432,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testValidComputeAndPortConsolidation() throws IOException {
+  public void testValidComputeAndPortConsolidation() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -478,7 +479,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testFalseComputeConsolidationForTwoSimilarImageNamesAndOneDiff() throws IOException {
+  public void testFalseComputeConsolidationForTwoSimilarImageNamesAndOneDiff() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName1 = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     String computeNodeTypeName2 = "org.openecomp.resource.vfc.nodes.heat.pd_server";
@@ -547,7 +548,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testFalseComputeConsolidationOneImageNameMissing() throws IOException {
+  public void testFalseComputeConsolidationOneImageNameMissing() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.pd_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -594,7 +595,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testFalseComputeConsolidationForTwoSimilarFlavorNamesAndOneDiff() throws IOException {
+  public void testFalseComputeConsolidationForTwoSimilarFlavorNamesAndOneDiff() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -638,7 +639,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testFalsePortConsolidationForOneDiffFixedIpsValue() throws IOException {
+  public void testFalsePortConsolidationForOneDiffFixedIpsValue() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -686,7 +687,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testFalsePortConsolidationForTwoPortsWithFixedIpsAndOneWithout() throws IOException {
+  public void testFalsePortConsolidationForTwoPortsWithFixedIpsAndOneWithout() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -730,7 +731,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testFalsePortConsolidationForTwoPortsWithAddressPairsAndOneWithout()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -773,7 +774,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testFalsePortConsolidationForTwoPortsWithMacAddressAndOneWithout()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -816,7 +817,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testValidPortConsolidationForPortsWithNoneOfTheCheckedProperties()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -871,7 +872,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testComputeRelationsSimilarBetweenComputeNodes() throws IOException {
+  public void testComputeRelationsSimilarBetweenComputeNodes() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -939,7 +940,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testNodesInRelationsDiffBetweenThreeComputes() throws IOException {
+  public void testNodesInRelationsDiffBetweenThreeComputes() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -994,7 +995,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testNodesOutRelationsDiffBetweenThreeComputes() throws IOException {
+  public void testNodesOutRelationsDiffBetweenThreeComputes() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1049,7 +1050,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testVolumeRelationsDiffBetweenThreeComputes() throws IOException {
+  public void testVolumeRelationsDiffBetweenThreeComputes() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1104,7 +1105,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testGroupRelationsDiffBetweenThreeComputes() throws IOException {
+  public void testGroupRelationsDiffBetweenThreeComputes() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1160,7 +1161,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testPortConsolidationDataRelationsSimilar() throws IOException {
+  public void testPortConsolidationDataRelationsSimilar() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1228,7 +1229,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testNodesInRelationsDiffBetweenThreePortConsolidationDatas() throws IOException {
+  public void testNodesInRelationsDiffBetweenThreePortConsolidationDatas() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1296,7 +1297,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testNodesOutRelationsDiffBetweenThreePortConsolidationDatas() throws IOException {
+  public void testNodesOutRelationsDiffBetweenThreePortConsolidationDatas() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1364,7 +1365,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testGroupIdsRelationsDiffBetweenThreePortConsolidationDatas() throws IOException {
+  public void testGroupIdsRelationsDiffBetweenThreePortConsolidationDatas() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1429,7 +1430,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testValidConsolidationForComputesWithValidGetAttr() throws IOException {
+  public void testValidConsolidationForComputesWithValidGetAttr() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1495,7 +1496,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testInvalidConsolidationForComputesWithGetAttrForEachOther() throws IOException {
+  public void testInvalidConsolidationForComputesWithGetAttrForEachOther() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1561,7 +1562,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testValidConsolidationForPortsWithValidGetAttr() throws IOException {
+  public void testValidConsolidationForPortsWithValidGetAttr() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1638,7 +1639,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testInvalidConsolidationForPortsWithGetAttrInForEachOther() throws IOException {
+  public void testInvalidConsolidationForPortsWithGetAttrInForEachOther() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1717,7 +1718,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testValidConsolidationForComputesWithSamePortTypesPointingByGetAttrIn() throws
-      IOException {
+      IOException, URISyntaxException {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1794,7 +1795,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testValidGetAttrOutFromComputes() throws IOException {
+  public void testValidGetAttrOutFromComputes() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1869,7 +1870,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testInValidGetAttrOutFromComputesPortTypeDifferent() throws IOException {
+  public void testInValidGetAttrOutFromComputesPortTypeDifferent() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -1969,7 +1970,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testValidGetAttrOutFromPorts() throws IOException {
+  public void testValidGetAttrOutFromPorts() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2069,7 +2070,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testInvalidGetAttrOutFromPorts() throws IOException {
+  public void testInvalidGetAttrOutFromPorts() throws IOException, URISyntaxException  {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2168,7 +2169,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testSubstitutionConsolidationPreConditionTrue() throws IOException {
+  public void testSubstitutionConsolidationPreConditionTrue() throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String mainSTName = "MainServiceTemplate.yaml";
     String nestedServiceTemplateName = "nested-pcm_v0.1ServiceTemplate.yaml";
@@ -2201,7 +2202,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testSubstitutionConsolidationPreConditionFalseMoreThanOneComputeType()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String mainSTName = "MainServiceTemplate.yaml";
     String nestedServiceTemplateName = "nested-pcm_v0.1ServiceTemplate.yaml";
@@ -2243,7 +2244,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testSubstitutionConsolidationPreConditionFalseMoreThanOneComputeOfSameType()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String mainSTName = "MainServiceTemplate.yaml";
     String nestedServiceTemplateName = "nested-pcm_v0.1ServiceTemplate.yaml";
@@ -2321,7 +2322,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationPreConditionFalseDiffSubportTypes() throws IOException {
+  public void testConsolidationPreConditionFalseDiffSubportTypes() throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2363,7 +2364,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationPreConditionFalseDiffSubportNumber() throws IOException {
+  public void testConsolidationPreConditionFalseDiffSubportNumber() throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2391,7 +2392,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationRuleFalseDifferentCountInResourceGroup() throws IOException {
+  public void testConsolidationRuleFalseDifferentCountInResourceGroup() throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2416,7 +2417,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testConsolidationRuleFalseDifferentNodesConnectedInToResourceGroup()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2442,7 +2443,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testConsolidationRuleFalseDifferentNodesConnectedOutFromResourceGroup()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2468,7 +2469,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testConsolidationRuleFalseGetAttrInBetweenSubInterfacesOfSameType()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2494,7 +2495,7 @@ public class ConsolidationServiceTest {
 
   @Test
   public void testConsolidationRuleFalseGetAttrOutBetweenSubInterfacesOfSameType()
-      throws IOException {
+      throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2539,7 +2540,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationRuleFalseDifferentRoleInResourceGroup() throws IOException {
+  public void testConsolidationRuleFalseDifferentRoleInResourceGroup() throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
@@ -2562,7 +2563,7 @@ public class ConsolidationServiceTest {
   }
 
   @Test
-  public void testConsolidationRuleTrueForSubInterfaces() throws IOException {
+  public void testConsolidationRuleTrueForSubInterfaces() throws IOException, URISyntaxException  {
     translationContext = new TranslationContext();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
     ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
