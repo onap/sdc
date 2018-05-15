@@ -1,7 +1,32 @@
+/*
+ * Copyright © 2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
 package org.openecomp.sdc.validation.util;
 
+import static java.util.Objects.nonNull;
 
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 import org.apache.commons.collections4.CollectionUtils;
+
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
@@ -18,16 +43,6 @@ import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.services.YamlUtil;
-
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import static java.util.Objects.nonNull;
 
 public class ValidationUtil {
   private static final Logger LOG = LoggerFactory.getLogger(ValidationUtil.class.getName());
@@ -126,7 +141,7 @@ public class ValidationUtil {
         throw new Exception("The file '" + envFileName + "' has no content");
       }
     } catch (Exception exception) {
-      LOG.debug("",exception);
+      LOG.error("Invalid envFile name : " + envFileName, exception);
       return null;
     }
     return envContent;
@@ -160,8 +175,7 @@ public class ValidationUtil {
     try {
       manifestContent = JsonUtil.json2Object(manifest.get(), ManifestContent.class);
     } catch (Exception exception) {
-      LOG.debug("",exception);
-      throw new SdcRuntimeException("Can't load manifest file for Heat Validator");
+      throw new SdcRuntimeException("Can't load manifest file for Heat Validator", exception);
     }
 
     return manifestContent;
