@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
 package org.openecomp.sdc.translator;
 
@@ -23,8 +23,6 @@ import org.junit.Assert;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
@@ -52,9 +50,9 @@ import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypes
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
@@ -69,8 +67,6 @@ public class TestUtils {
   private static final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
   private static String zipFilename = "VSP.zip";
   private static String validationFilename = "validationOutput.json";
-
-  private static Logger logger = (Logger) LoggerFactory.getLogger(TestUtils.class);
 
   private TestUtils() {
   }
@@ -107,11 +103,10 @@ public class TestUtils {
    * @param baseDirPath base directory for the tosca file
    * @return Map of <ServiceTemplateFilename, ServiceTemplate> for the files in this directory
    */
-  private static Map<String, ServiceTemplate> getServiceTemplates(String baseDirPath) {
+  private static Map<String, ServiceTemplate> getServiceTemplates(String baseDirPath) throws IOException, URISyntaxException{
     Map<String, ServiceTemplate> serviceTemplateMap = new HashMap<>();
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
     baseDirPath = "." + baseDirPath + "/";
-    try {
       String[] fileList = {};
       URL filesDirUrl = TestUtils.class.getClassLoader().getResource(baseDirPath);
       if (filesDirUrl != null && filesDirUrl.getProtocol().equals("file")) {
@@ -127,10 +122,6 @@ public class TestUtils {
 
         serviceTemplateMap.put(fileName, serviceTemplate);
       }
-    } catch (Exception e) {
-      logger.debug("", e);
-      Assert.fail(e.getMessage());
-    }
     return serviceTemplateMap;
   }
 
@@ -156,9 +147,8 @@ public class TestUtils {
   public static ToscaServiceModel loadToscaServiceModel(String serviceTemplatesPath,
                                                         String globalServiceTemplatesPath,
                                                         String entryDefinitionServiceTemplate)
-      throws IOException {
-    ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
+      throws IOException, URISyntaxException {
+    Map<String, ServiceTemplate> serviceTemplates;
     if (entryDefinitionServiceTemplate == null) {
       entryDefinitionServiceTemplate = "MainServiceTemplate.yaml";
     }
@@ -185,15 +175,6 @@ public class TestUtils {
               toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
           createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml,
               toscaExtensionYamlUtil);
-          try {
-            yamlFile.close();
-          } catch (IOException ignore) {
-            logger.debug("", ignore);
-          }
-        } catch (FileNotFoundException e) {
-          throw e;
-        } catch (IOException e) {
-          throw e;
         }
       }
     } else {
@@ -232,15 +213,6 @@ public class TestUtils {
         createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml,
             toscaExtensionYamlUtil);
         serviceTemplates.put(file.getName(), serviceTemplateFromYaml);
-        try {
-          yamlFile.close();
-        } catch (IOException ignore) {
-          logger.debug("", ignore);
-        }
-      } catch (FileNotFoundException e) {
-        throw e;
-      } catch (IOException e) {
-        throw e;
       }
     }
   }
@@ -639,8 +611,6 @@ public class TestUtils {
       nodeTemplateId) {
     List<String> entityGroups = new ArrayList<>();
     Map<String, GroupDefinition> groups = serviceTemplate.getTopology_template().getGroups();
-    Map<String, NodeTemplate> nodeTemplates =
-        serviceTemplate.getTopology_template().getNode_templates();
     for (Map.Entry<String, GroupDefinition> entry : groups.entrySet()) {
       String groupId = entry.getKey();
       GroupDefinition groupDefinition = entry.getValue();
