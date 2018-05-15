@@ -27,13 +27,7 @@ public class ConsolidationTypesConnectivity {
     }
 
     static boolean isDependsOnRelationshipValid(ConsolidationEntityType source, ConsolidationEntityType target) {
-        return !eitherSourceOrTargetIsNested(source, target)
-                       && (!entityToEntitiesWithoutRelationship.containsKey(source)
-                                   || !entityToEntitiesWithoutRelationship.containsEntry(source, target));
-    }
-
-    private static boolean eitherSourceOrTargetIsNested(ConsolidationEntityType source,
-                                                               ConsolidationEntityType target) {
-        return ConsolidationEntityType.isEntityTypeNested(source) || ConsolidationEntityType.isEntityTypeNested(target);
+        return !entityToEntitiesWithoutRelationship.containsKey(source)
+                                   || !entityToEntitiesWithoutRelationship.containsEntry(source, target);
     }
 }
