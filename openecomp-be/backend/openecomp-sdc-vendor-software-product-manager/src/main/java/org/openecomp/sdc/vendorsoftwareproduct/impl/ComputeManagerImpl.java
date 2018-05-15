@@ -32,7 +32,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.DuplicateComputeInComponentErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
@@ -194,14 +193,10 @@ public class ComputeManagerImpl implements ComputeManager {
             compute.getId());
 
     boolean manual = vspInfoDao.isManual(compute.getVspId(), compute.getVersion());
-    if (!manual) {
-      validateHeatVspComputeUpdate("Name",
-          compute.getComputeCompositionData().getName(),
-          retrieved.getComputeCompositionData().getName());
-    }
 
     ComputeCompositionSchemaInput schemaInput = new ComputeCompositionSchemaInput();
-    schemaInput.setCompute(compute.getComputeCompositionData());
+    schemaInput.setManual(manual);
+    schemaInput.setCompute(retrieved.getComputeCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
         .validateEntity(compute, SchemaTemplateContext.composition, schemaInput);
@@ -212,16 +207,6 @@ public class ComputeManagerImpl implements ComputeManager {
       computeDao.update(compute);
     }
     return validationData;
-  }
-
-  private void validateHeatVspComputeUpdate(String name, String value, String retrivedValue) {
-
-    if (value != null && !value.equals(retrivedValue)) {
-
-      final ErrorCode updateHeatComputeErrorBuilder =
-          DuplicateComputeInComponentErrorBuilder.getComputeHeatReadOnlyErrorBuilder(name);
-      throw new CoreException(updateHeatComputeErrorBuilder);
-    }
   }
 
   private ComputeEntity getComputeEntity(String vspId, Version version, String componentId,

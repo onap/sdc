@@ -34,18 +34,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.everit.json.schema.CombinedSchema;
 import org.everit.json.schema.EnumSchema;
 import org.everit.json.schema.Schema;
+import org.everit.json.schema.StringSchema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
-
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * The type Json util.
@@ -160,6 +164,9 @@ public class JsonUtil {
     if (exception.getViolatedSchema() instanceof EnumSchema) {
       return mapEnumViolationToMessage(exception);
     }
+    else if(exception.getViolatedSchema() instanceof StringSchema) {
+     return mapStrinSchemaViolationToMessage(exception);
+    }
     return exception.getMessage();
   }
 
@@ -171,6 +178,16 @@ public class JsonUtil {
         : String.format("value. Possible values: %s", CommonMethods
             .collectionToCommaSeparatedString(
                 possibleValues.stream().map(Object::toString).collect(Collectors.toList()))));
+  }
+
+  private static String mapStrinSchemaViolationToMessage(ValidationException validationException) {
+    StringSchema stringSchema = (StringSchema)validationException.getViolatedSchema();
+    if(validationException.getKeyword().equals("pattern")) {
+      Pattern pattern = stringSchema.getPattern();
+      return "Field does not conform to predefined criteria: "+validationException
+          .getPointerToViolation().replace("#/","") + " : must match " + pattern.toString();
+    }
+    return validationException.getMessage();
   }
 
   private static List<ValidationException> validateUsingEverit(String json, String jsonSchema) {

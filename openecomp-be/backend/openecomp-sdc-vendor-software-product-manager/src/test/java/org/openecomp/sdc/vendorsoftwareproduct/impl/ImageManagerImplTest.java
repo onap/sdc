@@ -184,17 +184,23 @@ public class ImageManagerImplTest {
   public void testUpdateHEATImageFileName() throws Exception {
     doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID))
         .when(imageDao).get(anyObject());
+
+    String updatedName = IMAGE1_ID +" name updated";
+    CompositionEntityValidationData toBeReturned =
+        new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID);
+
+    toBeReturned.setErrors(Arrays.asList("#/name: "+updatedName+" is not a valid value."+
+        IMAGE1_ID+"is the only possible value for this field"));
+    doReturn(toBeReturned).when(compositionEntityDataManagerMock).validateEntity(anyObject(),anyObject(),anyObject());
+
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     Image imageData = new Image();
-    imageData.setFileName(IMAGE1_ID + " name updated");
+    imageData.setFileName(updatedName);
     imageData.setDescription(IMAGE1_ID + " desc updated");
     imageEntity.setImageCompositionData(imageData);
 
-    try {
-      imageManager.updateImage(imageEntity);
-    } catch (CoreException ex) {
-      Assert.assertEquals(ex.code().id(), VendorSoftwareProductErrorCodes.UPDATE_IMAGE_NOT_ALLOWED);
-    }
+    CompositionEntityValidationData output = imageManager.updateImage(imageEntity);
+    Assert.assertEquals(output.getErrors(), toBeReturned.getErrors());
 
   }
 
