@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+*/
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
 
 import org.apache.commons.io.FileUtils;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
@@ -39,7 +33,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -54,9 +47,6 @@ import java.util.Map;
  */
 
 public class CompositionDataExtractorImplTest {
-
-  private static final Logger log = (Logger) LoggerFactory.getLogger
-      (CompositionDataExtractorImplTest.class.getName());
 
   @InjectMocks
   private static CompositionDataExtractorImpl compositionDataExtractor;
@@ -112,15 +102,6 @@ public class CompositionDataExtractorImplTest {
             toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
         serviceTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplateFromYaml),
             serviceTemplateFromYaml);
-        try {
-          yamlFile.close();
-        } catch (IOException ignore) {
-          log.debug("", ignore);
-        }
-      } catch (FileNotFoundException exception) {
-        throw exception;
-      } catch (IOException exception) {
-        throw exception;
       }
     }
   }

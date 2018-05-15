@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
 package org.openecomp.sdc.validation.impl.validators;
 
@@ -54,7 +54,7 @@ public class ContrailValidator implements Validator {
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
-      LOGGER.debug("",exception);
+      LOGGER.error("Failed to validate manifest file", exception);
       return;
     }
     Map<String, FileData.Type> fileTypeMap = ManifestUtil.getFileTypeMap(manifestContent);
@@ -120,7 +120,7 @@ public class ContrailValidator implements Validator {
       heatOrchestrationTemplate =
           new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
     } catch (Exception ignored) {
-      LOGGER.debug("",ignored);
+      LOGGER.error("Invalid file content : " + fileContent, ignored);
       // the HeatValidator should handle file that is failing to parse
       return Optional.empty();
     }
