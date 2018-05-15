@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
 package org.openecomp.sdc.validation.impl.validators;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.ErrorMessageCode;
@@ -28,12 +33,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.Validator;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 
 public class ManifestValidator implements Validator {
   private static final Logger LOGGER = LoggerFactory.getLogger(YamlValidator.class);
@@ -58,7 +57,7 @@ public class ManifestValidator implements Validator {
         throw new Exception("The manifest file '" + SdcCommon.MANIFEST_NAME + "' has no content");
       }
     } catch (Exception re) {
-      LOGGER.debug("",re);
+      LOGGER.error("Invalid manifest file", re);
       globalContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
               ErrorMessagesFormatBuilder
                       .getErrorWithParameters(ERROR_CODE_MNF_6,
