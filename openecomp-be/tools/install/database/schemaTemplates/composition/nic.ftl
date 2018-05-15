@@ -3,10 +3,17 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string",
+      <#if manual>
+        "allOf": [
+                   {"pattern":"^[a-zA-Z0-9_]*$"},
+                   {"type": "string","enum":["${nic.name}"]}
+         ],
+      </#if>
+     <#if !manual>
       "enum": [
         "${nic.name}"
       ],
+     </#if>
       "default": "${nic.name}"
     },
     "description": {
