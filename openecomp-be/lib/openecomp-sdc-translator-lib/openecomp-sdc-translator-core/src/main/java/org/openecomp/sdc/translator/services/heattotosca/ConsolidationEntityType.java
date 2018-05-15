@@ -20,11 +20,13 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDat
 import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isPortResource;
 import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isVolumeResource;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The enum Entity type.
@@ -76,6 +78,8 @@ public enum ConsolidationEntityType {
             consolidationEntityType = ConsolidationEntityType.COMPUTE;
         } else if (isPortResource(resource)) {
             consolidationEntityType = ConsolidationEntityType.PORT;
+        } else if (HeatToToscaUtil.isSubInterfaceResource(resource, context)) {
+            consolidationEntityType = ConsolidationEntityType.SUB_INTERFACE;
         } else if (isVolumeResource(resource)) {
             consolidationEntityType = ConsolidationEntityType.VOLUME;
         } else if (HeatToToscaUtil.isNestedResource(resource)) {
@@ -86,9 +90,5 @@ public enum ConsolidationEntityType {
             }
         }
         return consolidationEntityType;
-    }
-
-    public static boolean isEntityTypeNested(ConsolidationEntityType entityType) {
-        return NESTED == entityType || VFC_NESTED == entityType;
     }
 }

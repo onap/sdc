@@ -276,9 +276,7 @@ public abstract class ResourceTranslationBase {
       Resource targetResource = HeatToToscaUtil
           .getResource(heatOrchestrationTemplate, dependsOnResourceId,
               translateTo.getHeatFileName());
-      if (HeatToToscaUtil
-          .isValidDependsOnCandidate(sourceResource, targetResource,
-              ConsolidationEntityType.OTHER, translateTo.getContext())) {
+      if (isValidDependency(sourceResource, targetResource, translateTo)) {
         requirementAssignment.setNode(resourceTranslatedId.get());
         requirementAssignment.setCapability(ToscaCapabilityType.NATIVE_NODE);
         requirementAssignment.setRelationship(ToscaRelationshipType.NATIVE_DEPENDS_ON);
@@ -291,6 +289,12 @@ public abstract class ResourceTranslationBase {
                 requirementAssignment);
       }
     }
+  }
+
+  private boolean isValidDependency(Resource sourceResource, Resource targetResource, TranslateTo translateTo) {
+      return !(HeatToToscaUtil.isNestedResource(sourceResource) || HeatToToscaUtil.isNestedResource(targetResource))
+              && HeatToToscaUtil.isValidDependsOnCandidate(sourceResource, targetResource,
+              ConsolidationEntityType.OTHER, translateTo.getContext());
   }
 
   Optional<List<Map.Entry<String, Resource>>> getResourceByTranslatedResourceId(

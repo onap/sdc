@@ -33,9 +33,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidati
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
-import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
-import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
@@ -957,27 +955,6 @@ public class ConsolidationDataTestUtil {
                                                                nestedTemplateConsolidationData) {
     Assert.assertNull(nestedTemplateConsolidationData.getGroupIds());
     Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedOut());
-    //Assert.assertNull(nestedTemplateConsolidationData.getNodesGetAttrOut());
-  }
-
-  private static void validateNestedNodesConnectedInDependency(Map<String,
-                                                  List<RequirementAssignmentData>> nodesConnectedIn,
-                                                           String nestedNodeTemplateId,
-                                                           List<String> dependentNodeTemplateIds) {
-    Assert.assertNotNull(nodesConnectedIn);
-    for (String dependentNodeTemplateId : dependentNodeTemplateIds) {
-      List<RequirementAssignmentData> requirementAssignmentData =
-          nodesConnectedIn.get(dependentNodeTemplateId);
-      Assert.assertNotNull(requirementAssignmentData);
-      for (RequirementAssignmentData data : requirementAssignmentData) {
-        Assert.assertEquals(data.getRequirementId(), ToscaConstants.DEPENDS_ON_REQUIREMENT_ID);
-        Assert.assertEquals(data.getRequirementAssignment().getCapability(), ToscaCapabilityType
-            .NATIVE_NODE);
-        Assert.assertEquals(data.getRequirementAssignment().getNode(), nestedNodeTemplateId);
-        Assert.assertEquals(data.getRequirementAssignment().getRelationship(),
-            ToscaRelationshipType.NATIVE_DEPENDS_ON);
-      }
-    }
   }
 
   public static void validateNestedNodesConnectedInSecurityRuleToPort(String testName,
