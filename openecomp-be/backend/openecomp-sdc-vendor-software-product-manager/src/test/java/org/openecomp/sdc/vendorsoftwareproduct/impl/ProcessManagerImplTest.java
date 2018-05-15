@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.mockito.ArgumentCaptor;
@@ -10,8 +26,6 @@ import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
@@ -37,8 +51,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class ProcessManagerImplTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String USER1 = "processesTestUser";
   private static final String VSP_ID = "vsp";
@@ -311,7 +323,6 @@ public class ProcessManagerImplTest {
       processManager.getProcess(vspId, version, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -324,7 +335,6 @@ public class ProcessManagerImplTest {
           .updateProcess(new ProcessEntity(vspId, version, componentId, processId));
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -335,7 +345,6 @@ public class ProcessManagerImplTest {
       processManager.getProcessArtifact(vspId, version, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -349,7 +358,6 @@ public class ProcessManagerImplTest {
               vspId, version, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.error("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -360,7 +368,6 @@ public class ProcessManagerImplTest {
       processManager.deleteProcessArtifact(vspId, VERSION, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

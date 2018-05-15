@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+*/
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
@@ -27,8 +23,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
@@ -54,8 +48,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class NetworkManagerImplTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String VSP_ID = "vsp";
   private static final String USER_ID = "test_user1";
@@ -186,7 +178,6 @@ public class NetworkManagerImplTest {
       networkManager.createNetwork(network);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -197,7 +188,6 @@ public class NetworkManagerImplTest {
       networkManager.getNetwork(vspId, version, networkId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -208,7 +198,6 @@ public class NetworkManagerImplTest {
       networkManager.updateNetwork(new NetworkEntity(vspId, version, networkId));
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -218,7 +207,6 @@ public class NetworkManagerImplTest {
       networkManager.listNetworks(vspId, version);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -230,7 +218,6 @@ public class NetworkManagerImplTest {
       networkManager.deleteNetwork(vspId, version, networkId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
