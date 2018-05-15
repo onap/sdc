@@ -1,22 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+*/
 
 package org.openecomp.core.nosqldb.impl.cassandra;
 
@@ -44,7 +40,7 @@ class CassandraNoSqlDbImpl implements NoSqlDb {
     private final String keySpace;
     private final MappingManager mappingManager;
 
-    private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 
     public CassandraNoSqlDbImpl(Session session) {
@@ -71,7 +67,7 @@ class CassandraNoSqlDbImpl implements NoSqlDb {
                 .append(") values (")
                 .append(CommonMethods.duplicateStringWithDelimiter("?", ',', values.length))
                 .append(")");
-        System.out.println(sb.toString());
+        log.info(sb.toString());
         PreparedStatement prepared = session.prepare(sb.toString());
 
         BoundStatement bound;
@@ -117,7 +113,7 @@ class CassandraNoSqlDbImpl implements NoSqlDb {
                     .collect(Collectors.toSet());
             return versions.stream().collect(Collectors.joining(","));
         } catch (Exception e){
-            log.debug("",e);
+            log.error("Failed to retrieve version", e);
             return "Failed to retrieve version";
         }
     }
