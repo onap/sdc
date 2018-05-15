@@ -3,7 +3,9 @@
 "type": "object",
 "properties": {
     "fileName": {
-         "type": "string"
+         "type": "string" <#if !manual>,
+            "enum":["${image.fileName}"]
+         </#if>
     },
     "description": {
          "type": "string"
