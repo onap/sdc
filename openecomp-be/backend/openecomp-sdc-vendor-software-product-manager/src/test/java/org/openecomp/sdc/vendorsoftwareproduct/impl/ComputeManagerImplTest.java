@@ -7,7 +7,6 @@ import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -196,18 +195,24 @@ public class ComputeManagerImplTest {
   public void testUpdateHEATComputeName() throws Exception {
     doReturn(createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID))
         .when(computeDao).get(anyObject());
+
+    String updatedName = COMPUTE1_ID + " name updated";
+    CompositionEntityValidationData toBeReturned =
+        new CompositionEntityValidationData(CompositionEntityType.compute, COMPUTE1_ID);
+
+    toBeReturned.setErrors(Arrays.asList("#/name: "+updatedName+" is not a valid value."+
+        COMPUTE1_ID+"is the only possible value for this field"));
+    doReturn(toBeReturned).when(compositionEntityDataManagerMock).validateEntity(anyObject(),anyObject(),anyObject());
+
     ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
     ComputeData computeData = new ComputeData();
-    computeData.setName(COMPUTE1_ID + " name updated");
+    computeData.setName(updatedName);
     computeData.setDescription(COMPUTE1_ID + " desc updated");
     computeEntity.setComputeCompositionData(computeData);
 
-    try {
-      computeManager.updateCompute(computeEntity);
-    } catch (CoreException ex) {
-      Assert
-          .assertEquals(ex.code().id(), VendorSoftwareProductErrorCodes.UPDATE_COMPUTE_NOT_ALLOWED);
-    }
+    CompositionEntityValidationData output = computeManager.updateCompute(computeEntity);
+
+    Assert.assertEquals(output.getErrors(), toBeReturned.getErrors());
   }
 
   @Test

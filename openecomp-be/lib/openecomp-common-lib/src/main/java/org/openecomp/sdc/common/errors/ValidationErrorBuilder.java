@@ -50,6 +50,12 @@ public class ValidationErrorBuilder {
     }
   }
 
+  public ValidationErrorBuilder(String errorMessage) {
+    builder.withId(FIELD_VALIDATION_ERROR_ERR_ID);
+    builder.withCategory(ErrorCategory.APPLICATION);
+    builder.withMessage(errorMessage);
+  }
+
   public ErrorCode build() {
     return builder.build();
   }

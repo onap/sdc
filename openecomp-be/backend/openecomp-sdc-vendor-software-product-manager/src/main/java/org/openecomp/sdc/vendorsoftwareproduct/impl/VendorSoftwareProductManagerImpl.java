@@ -71,6 +71,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDataEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ComponentDependencyModelErrorBuilder;
@@ -98,6 +99,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavo
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComponentQuestionnaireSchemaInput;
+import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.VspCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.ComponentDependencyTracker;
@@ -148,6 +150,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private final ManualVspToscaManager manualVspToscaManager;
   private final UniqueValueUtil uniqueValueUtil;
   private final CandidateService candidateService;
+  private final CompositionEntityDataManager compositionEntityDataManager;
 
   public VendorSoftwareProductManagerImpl(
       VspMergeDao vspMergeDao,
@@ -168,7 +171,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       ImageDao imageDao,
       ManualVspToscaManager manualVspToscaManager,
       UniqueValueDao uniqueValueDao,
-      CandidateService candidateService) {
+      CandidateService candidateService,
+      CompositionEntityDataManager compositionEntityDataManager) {
     this.vspMergeDao = vspMergeDao;
     this.orchestrationTemplateDao = orchestrationTemplateDataDao;
     this.orchestrationTemplateCandidateManager = orchestrationTemplateCandidateManager;
@@ -188,6 +192,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     this.manualVspToscaManager = manualVspToscaManager;
     this.uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
     this.candidateService = candidateService;
+    this.compositionEntityDataManager = compositionEntityDataManager;
 
     registerToVersioning();
   }
@@ -464,16 +469,26 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
   private List<ErrorCode> validateMandatoryLicenseFields(VspDetails vspDetails) {
+
+    VspDataEntity vspDataEntity = new VspDataEntity();
+    vspDataEntity.setVlmVersion(vspDetails.getVlmVersion());
+    vspDataEntity.setLicenseAgreement(vspDetails.getLicenseAgreement());
+    vspDataEntity.setFeatureGroups(vspDetails.getFeatureGroups());
+    vspDataEntity.setCompositionDataVspDataEntity(vspDataEntity);
+
+    VspCompositionSchemaInput schemaInput = new VspCompositionSchemaInput();
+    schemaInput.setManual(vspInfoDao.isManual(vspDetails.getId(), vspDetails.getVersion()));
+    schemaInput.setVspDataEntity(vspDataEntity);
+
+    CompositionEntityValidationData validationData = compositionEntityDataManager
+        .validateEntity(vspDataEntity, SchemaTemplateContext.composition, schemaInput);
+
     List<ErrorCode> errors = new ArrayList<>();
-    if (vspDetails.getVlmVersion() == null) {
-      errors.add(createMissingMandatoryFieldError("licensing version"));
+
+    for (String error : validationData.getErrors()) {
+      errors.add(new ValidationErrorBuilder(error).build());
     }
-    if (vspDetails.getLicenseAgreement() == null) {
-      errors.add(createMissingMandatoryFieldError("license agreement"));
-    }
-    if (CollectionUtils.isEmpty(vspDetails.getFeatureGroups())) {
-      errors.add(createMissingMandatoryFieldError("feature groups"));
-    }
+
     return errors;
   }
 

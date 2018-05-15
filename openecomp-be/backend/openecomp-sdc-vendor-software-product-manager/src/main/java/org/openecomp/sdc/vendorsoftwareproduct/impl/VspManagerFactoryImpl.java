@@ -21,6 +21,7 @@ import org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory;
 import org.openecomp.core.model.dao.ServiceModelDaoFactory;
 import org.openecomp.sdc.vendorlicense.VendorLicenseArtifactServiceFactory;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
@@ -49,7 +50,8 @@ public class VspManagerFactoryImpl extends VspManagerFactory {
           ImageDaoFactory.getInstance().createInterface(),
           new ManualVspToscaManagerImpl(),
           UniqueValueDaoFactory.getInstance().createInterface(), CandidateServiceFactory
-          .getInstance().createInterface());
+          .getInstance().createInterface(),
+          CompositionEntityDataManagerFactory.getInstance().createInterface());
 
   @Override
   public VendorSoftwareProductManager createInterface() {
