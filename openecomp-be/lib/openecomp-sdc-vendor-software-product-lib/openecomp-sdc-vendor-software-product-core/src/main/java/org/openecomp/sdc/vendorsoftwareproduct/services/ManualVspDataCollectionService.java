@@ -1,4 +1,28 @@
+/*
+ * Copyright © 2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
 package org.openecomp.sdc.vendorsoftwareproduct.services;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,14 +64,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute.Compute;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.image.ImageDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 
 public class ManualVspDataCollectionService {
@@ -300,7 +316,8 @@ public class ManualVspDataCollectionService {
       computeQuestionnaire = computeDao.getQuestionnaireData(vspId, version, componentId,
           computeFlavorId);
     } catch (Exception ex) {
-      log.debug("", ex);
+      log.warn("Failed to get QuestionnaireData from computeDao," +
+              " initializing computeQuestionnaire to null", ex);
       computeQuestionnaire = null;
     }
     if (Objects.nonNull(computeQuestionnaire)) {
@@ -310,7 +327,8 @@ public class ManualVspDataCollectionService {
         try {
           compute = JsonUtil.json2Object(computeQuestionnaireData, Compute.class);
         } catch (Exception ex) {
-          log.debug("", ex);
+          log.warn("Failed to convert json value to compute object," +
+                  "initializing compute to null", ex);
           compute = null;
         }
         if (compute != null && Objects.nonNull(compute.getVmSizing())) {
@@ -370,7 +388,8 @@ public class ManualVspDataCollectionService {
             imageDetails = JsonUtil.json2Object(imageQuestionnaireDataEntity
                 .getQuestionnaireData(), ImageDetails.class);
           } catch (Exception ex) {
-            log.debug("", ex);
+            log.warn("Failed to convert json value to ImageDetails object," +
+                    "initializing imageDetails to null", ex);
             imageDetails = null;
           }
           if (Objects.nonNull(imageDetails)

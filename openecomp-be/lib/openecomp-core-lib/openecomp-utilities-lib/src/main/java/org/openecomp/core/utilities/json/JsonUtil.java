@@ -1,22 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+*/
 
 package org.openecomp.core.utilities.json;
 
@@ -25,18 +21,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.everit.json.schema.EnumSchema;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,11 +33,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.everit.json.schema.EnumSchema;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
+
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+
+
 /**
  * The type Json util.
  */
 public class JsonUtil {
-  private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
   private static final GsonBuilder gsonBuilder;
   private static final Gson gson;
 
@@ -118,21 +116,11 @@ public class JsonUtil {
    */
   public static <T> T json2Object(InputStream is, Class<T> classOfT) {
     T type;
-    try {
       try (Reader br = new BufferedReader(new InputStreamReader(is))) {
         type = new Gson().fromJson(br, classOfT);
       }
-    } catch (JsonIOException | JsonSyntaxException | IOException exception) {
+     catch (JsonIOException | JsonSyntaxException | IOException exception) {
       throw new RuntimeException(exception);
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (IOException ignore) {
-          logger.debug("",ignore);
-          //do nothing
-        }
-      }
     }
     return type;
   }
@@ -149,7 +137,7 @@ public class JsonUtil {
     try {
       return new JsonParser().parse(json).isJsonObject();
     } catch (JsonSyntaxException jse) {
-      logger.debug("",jse);
+      LOGGER.error("Invalid json, Failed to parse json", jse);
       return false;
     }
   }
@@ -186,7 +174,7 @@ public class JsonUtil {
   }
 
   private static List<ValidationException> validateUsingEverit(String json, String jsonSchema) {
-    logger.debug(
+    LOGGER.debug(
         String.format("validateUsingEverit start, json=%s, jsonSchema=%s", json, jsonSchema));
     if (json == null || jsonSchema == null) {
       throw new IllegalArgumentException("Input strings json and jsonSchema can not be null");
