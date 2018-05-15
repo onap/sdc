@@ -35,17 +35,20 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.everit.json.schema.EnumSchema;
+import org.everit.json.schema.ObjectSchema;
 import org.everit.json.schema.Schema;
+import org.everit.json.schema.StringSchema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.UtilityConstants;
 import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
-
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
+import java.util.regex.Pattern;
 
 /**
  * The type Json util.
@@ -160,6 +163,12 @@ public class JsonUtil {
     if (exception.getViolatedSchema() instanceof EnumSchema) {
       return mapEnumViolationToMessage(exception);
     }
+    else if (exception.getViolatedSchema() instanceof StringSchema) {
+      return mapStringSchemaViolationToMessage(exception);
+    }
+    else if (exception.getViolatedSchema() instanceof ObjectSchema) {
+      return mapObjectSchemaViolationToMessage(exception);
+    }
     return exception.getMessage();
   }
 
@@ -171,6 +180,26 @@ public class JsonUtil {
         : String.format("value. Possible values: %s", CommonMethods
             .collectionToCommaSeparatedString(
                 possibleValues.stream().map(Object::toString).collect(Collectors.toList()))));
+  }
+
+  private static String mapStringSchemaViolationToMessage(ValidationException validationException) {
+    StringSchema stringSchema = (StringSchema)validationException.getViolatedSchema();
+    if (validationException.getKeyword().equals(UtilityConstants.PATTERN)) {
+      Pattern pattern = stringSchema.getPattern();
+      return "Field does not conform to predefined criteria: " + validationException
+          .getPointerToViolation().replace("#/","") + " : must match " + pattern.toString();
+    }
+    return validationException.getMessage();
+  }
+
+  private static String mapObjectSchemaViolationToMessage(ValidationException validationException) {
+    if (validationException.getKeyword().equals("required")) {
+      StringBuffer errorMessage = new StringBuffer(validationException.getErrorMessage());
+      String fieldName = errorMessage.substring((errorMessage.indexOf("[") + 1),errorMessage
+          .indexOf("]"));
+      return "Field does not conform to predefined criteria: " + fieldName + " : must be supplied";
+    }
+    return validationException.getMessage();
   }
 
   private static List<ValidationException> validateUsingEverit(String json, String jsonSchema) {

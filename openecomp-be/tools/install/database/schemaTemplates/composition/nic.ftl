@@ -3,12 +3,16 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string",
-      "enum": [
-        "${nic.name}"
-      ],
-      "default": "${nic.name}"
-    },
+        "type": "string",
+         <#if manual>
+            {"pattern":"^[a-zA-Z0-9_]*$"}
+         <#else>
+            "enum": [
+             "${nic.name}"
+            ],
+           "default": "${nic.name}"
+         </#if>
+},
     "description": {
       "type": "string"
     }<#if !manual><#if nic.networkId??>,
