@@ -1,22 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+*/
 
 package org.openecomp.sdc.heat.services.tree;
 
@@ -46,7 +42,7 @@ import java.util.Set;
 
 public class HeatTreeManager {
 
-  private static Logger logger = (Logger) LoggerFactory.getLogger(HeatTreeManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(HeatTreeManager.class);
 
 
   private FileContentHandler heatContentMap = new FileContentHandler();
@@ -80,7 +76,7 @@ public class HeatTreeManager {
    */
   public void createTree() {
     if (manifest == null) {
-      logger.error("Missing manifest file in the zip.");
+      LOGGER.error("Missing manifest file in the zip.");
       return;
     }
     ManifestContent manifestData =
@@ -98,11 +94,11 @@ public class HeatTreeManager {
     candidateOrphanArtifacts.entrySet().stream()
         .forEach(entry -> tree.addArtifactToArtifactList(entry.getValue()));
     nestedFiles
-        .values().stream().filter(heatStructureTree -> tree.getHeat().contains(heatStructureTree))
-        .forEach(heatStructureTree -> tree.getHeat().remove(heatStructureTree));
+        .values().stream().filter(tree.getHeat()::contains)
+        .forEach(tree.getHeat()::remove);
 
-    heatContentMap.getFileList().stream().filter(fileName -> isNotInManifestFiles(fileName))
-        .forEach(fileName -> addTreeOther(fileName));
+    heatContentMap.getFileList().stream().filter(this::isNotInManifestFiles)
+        .forEach(this::addTreeOther);
   }
 
   private boolean isNotInManifestFiles(String fileName) {
@@ -133,8 +129,8 @@ public class HeatTreeManager {
 
       Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(fileName, hot, globalContext);
       addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
-    } catch (Exception ignore) { /* invalid yaml no need to process reference */
-      logger.debug("",ignore);
+    } catch (Exception ignore) {
+      LOGGER.debug("Invalid YAML received. No need to process content reference - ignoring", ignore);
     }
   }
 
@@ -176,10 +172,9 @@ public class HeatTreeManager {
    */
   public void addErrors(Map<String, List<ErrorMessage>> validationErrors) {
 
-    validationErrors.entrySet().stream().filter(entry -> {
+    validationErrors.entrySet().stream().filter(entry ->{
       return fileTreeRef.get(entry.getKey()) != null;
-    }).forEach(entry -> entry.getValue().stream().forEach(error ->
-        fileTreeRef.get(entry.getKey()).addErrorToErrorsList(error)));
+    }).forEach(entry -> entry.getValue().stream().forEach(fileTreeRef.get(entry.getKey())::addErrorToErrorsList));
 
     validationErrors.entrySet().stream().filter(entry -> {
       return artifactRef.get(entry.getKey()) != null;
@@ -236,7 +231,6 @@ public class HeatTreeManager {
         if (type == null) {
           parentHeatStructureTree.addOtherToOtherList(childHeatStructureTree);
         } else if (FileData.Type.HEAT_NET.equals(type)) {
-          //parentHeatStructureTree.addNetworkToNetworkList(childHeatStructureTree);
           networkFileToParent.put(childHeatStructureTree, parentHeatStructureTree);
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
@@ -244,7 +238,6 @@ public class HeatTreeManager {
           handleHeatContentReference(childHeatStructureTree, null);
 
         } else if (FileData.Type.HEAT_VOL.equals(type)) {
-          //parentHeatStructureTree.addVolumeFileToVolumeList(childHeatStructureTree);
           volumeFileToParent.put(childHeatStructureTree, parentHeatStructureTree);
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
