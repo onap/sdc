@@ -207,13 +207,6 @@ public class NicManagerImpl implements NicManager {
     schemaInput.setManual(vspInfoDao.isManual(nic.getVspId(), nic.getVersion()));
     schemaInput.setNic(retrieved.getNicCompositionData());
 
-    if (schemaInput.isManual() && !nic.getNicCompositionData().getName()
-            .matches(VendorSoftwareProductConstants.NAME_PATTERN)) {
-      ErrorCode errorCode = NicErrorBuilder
-              .getNicNameFormatErrorBuilder(VendorSoftwareProductConstants.NAME_PATTERN);
-      throw new CoreException(errorCode);
-    }
-
     CompositionEntityValidationData validationData = compositionEntityDataManager
         .validateEntity(nic, SchemaTemplateContext.composition, schemaInput);
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
