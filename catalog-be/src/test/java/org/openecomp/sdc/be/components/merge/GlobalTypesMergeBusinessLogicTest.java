@@ -47,7 +47,18 @@ public class GlobalTypesMergeBusinessLogicTest {
         assertEquals(ActionStatus.OK, actionStatus);
 
     }
+    
+    @Test
+    public void mergeInstancePropsAndInputs_mergeOldResourceNull() {
+        Resource oldResource = null;
+        Resource newResource = buildResourceWithInputs("input1", "input2", "global1", "global2");
+        List<InputDefinition> globalInputs = Arrays.asList(newResource.getInputs().get(2), newResource.getInputs().get(3));
+        when(globalInputsFilteringBusinessLogic.filterGlobalInputs(newResource)).thenReturn(Either.left(globalInputs));
+        ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
+        assertEquals(ActionStatus.OK, actionStatus);
 
+    }
+    
     @Test
     public void mergeInstancePropsAndInputs_failedToFilterGlobalInputs() throws Exception {
         Resource oldResource = buildResourceWithInputs("input1", "input2");
@@ -58,5 +69,5 @@ public class GlobalTypesMergeBusinessLogicTest {
         verifyZeroInteractions(resourceInputsMergeBLMock);
     }
 
-
+    
 }

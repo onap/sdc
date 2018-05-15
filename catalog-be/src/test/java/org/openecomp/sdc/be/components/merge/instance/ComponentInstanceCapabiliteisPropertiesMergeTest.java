@@ -16,6 +16,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -68,4 +69,12 @@ public class ComponentInstanceCapabiliteisPropertiesMergeTest {
         assertTrue(mergeResult.isRight());
     }
 
+    @Test
+    public void testSaveDataBeforeMerge() {
+        DataForMergeHolder dataHolder = new DataForMergeHolder();
+		Component containerComponent = new Resource();
+		ComponentInstance currentResourceInstance = new ComponentInstance();
+		Component originComponent = new Resource();
+		testInstance.saveDataBeforeMerge(dataHolder, containerComponent, currentResourceInstance, originComponent);
+    }
 }

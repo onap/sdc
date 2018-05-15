@@ -72,10 +72,14 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
 
         for (Map.Entry<String, ArtifactDefinition> currentArtifactDefinition :  allFilteredArtifactsToAdd.entrySet()) {
             Map<String, Object> jsonForUpdateArtifact = artifactsBusinessLogic.buildJsonForUpdateArtifact(
-                    currentArtifactDefinition.getValue().getUniqueId(), currentArtifactDefinition.getValue().getArtifactName(),
-                    currentArtifactDefinition.getValue().getArtifactType(), currentArtifactDefinition.getValue().getArtifactGroupType(),
-                    currentArtifactDefinition.getValue().getArtifactLabel(), currentArtifactDefinition.getValue().getArtifactDisplayName(),
-                    currentArtifactDefinition.getValue().getDescription(), currentArtifactDefinition.getValue().getPayloadData(),
+                    currentArtifactDefinition.getValue().getUniqueId(), 
+                    currentArtifactDefinition.getValue().getArtifactName(),
+                    currentArtifactDefinition.getValue().getArtifactType(), 
+                    currentArtifactDefinition.getValue().getArtifactGroupType(),
+                    currentArtifactDefinition.getValue().getArtifactLabel(), 
+                    currentArtifactDefinition.getValue().getArtifactDisplayName(),
+                    currentArtifactDefinition.getValue().getDescription(), 
+                    currentArtifactDefinition.getValue().getPayloadData(),
                     null, currentArtifactDefinition.getValue().getListHeatParameters());
             addEsIdToArtifactJson(jsonForUpdateArtifact, currentArtifactDefinition.getValue().getEsId());
             Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService =

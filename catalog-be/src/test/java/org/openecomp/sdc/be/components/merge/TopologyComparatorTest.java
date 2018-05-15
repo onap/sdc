@@ -50,7 +50,7 @@ public class TopologyComparatorTest {
         assertTrue(testInstance.isTopologyChanged(resourceWithNoInstances, resourceWith1Instances).left().value());
         assertTrue(testInstance.isTopologyChanged(resourceWith1Instances, resourceWith2Instances).left().value());
     }
-
+    
     @Test
     public void compareTopologies_notSameInstanceNames() throws Exception {
         Resource resource1 = ObjectGenerator.buildResourceWithComponentInstance("inst1", "inst2");

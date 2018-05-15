@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,17 @@ public class RelationsComparatorTest {
         newResource.setComponentInstances(Arrays.asList(componentInstance1, componentInstance2));
         assertFalse(testInstance.isRelationsChanged(oldResource, newResource));
     }
-
+    
+    @Test
+    public void isRelationsChanged_OldResourceNull() throws Exception {
+        Resource oldResource = ObjectGenerator.buildResourceWithRelationships();
+        oldResource.setComponentInstancesRelations(new LinkedList<>());
+        oldResource.setComponentInstances(Arrays.asList(componentInstance1, componentInstance2));
+        Resource newResource = ObjectGenerator.buildResourceWithRelationships(relation4, relation3, relation1, relation2);
+        newResource.setComponentInstances(Arrays.asList(componentInstance1, componentInstance2));
+        assertTrue(testInstance.isRelationsChanged(oldResource, newResource));
+    }
+    
     @Test
     public void isRelationsChanged_notSameAmountOfRelations()  {
         Resource oldResource = ObjectGenerator.buildResourceWithRelationships(relation1, relation2);
