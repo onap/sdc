@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
 package org.openecomp.sdc.validation.impl.validators;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
@@ -31,11 +36,6 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationUtil;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public class ForbiddenResourceGuideLineValidator implements Validator {
   private static Set<String> forbiddenResources = new HashSet<>();
@@ -75,7 +75,7 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
     try {
       manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
-      LOGGER.debug("",exception);
+      LOGGER.error("Failed to validate manifest file", exception);
       return;
     }
 
