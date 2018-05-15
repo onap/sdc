@@ -1,31 +1,25 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+*/
 
 package org.openecomp.sdc.heat.datatypes.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.services.YamlUtil;
 
+import org.onap.sdc.tosca.services.YamlUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,9 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 public class HeatOrchestrationTemplateTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
   @Test
   public void testYamlToServiceTemplateObj() throws IOException {
     YamlUtil yamlUtil = new YamlUtil();
@@ -48,7 +39,7 @@ public class HeatOrchestrationTemplateTest {
   }
 
   @Test
-  public void createHotTemplate() {
+  public void createHotTemplate() throws Exception{
     HeatOrchestrationTemplate template = new HeatOrchestrationTemplate();
     template.setHeat_template_version("2016-04-14");
     template.setDescription("test description for hot template");
@@ -100,13 +91,10 @@ public class HeatOrchestrationTemplateTest {
     YamlUtil yamlUtil = new YamlUtil();
     String yml = yamlUtil.objectToYaml(template);
     Assert.assertNotNull(yml);
-    try {
-      HeatOrchestrationTemplate heatOrchestrationTemplate =
+    HeatOrchestrationTemplate heatOrchestrationTemplate;
+       heatOrchestrationTemplate =
           yamlUtil.yamlToObject(yml, HeatOrchestrationTemplate.class);
-      Assert.assertNotNull(heatOrchestrationTemplate);
-    } catch (Exception ignored) {
-      log.debug("",ignored);
-    }
+    Assert.assertNotNull(heatOrchestrationTemplate);
   }
 
   private Map<String, Parameter> createParameters() {
