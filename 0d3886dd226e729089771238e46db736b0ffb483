@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_bd8ded7d",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T06:41:28Z",
+      "side": 1,
+      "message": "It\u0027s ok to use unmodifableMap. But I think it will be interesting to you to look at Guava ImmutableMap class.\nhttps://github.com/google/guava/wiki/ImmutableCollectionsExplained",
+      "revId": "0d3886dd226e729089771238e46db736b0ffb483",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
