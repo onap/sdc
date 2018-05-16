@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_80d52144",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ComputeManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-16T11:26:23Z",
+      "side": 1,
+      "message": "This is the error? isn\u0027t it a generic error saying the name value is not one of xyz ?...",
+      "revId": "ee269b7e801912d0624a95edf1f63af2f6f5f57a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_20c8cda6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ImageManagerImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-16T11:26:23Z",
+      "side": 1,
+      "message": "same as in compute",
+      "revId": "ee269b7e801912d0624a95edf1f63af2f6f5f57a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e0c5058e",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-16T11:26:23Z",
+      "side": 1,
+      "message": "no need",
+      "range": {
+        "startLine": 161,
+        "startChar": 63,
+        "endLine": 161,
+        "endChar": 77
+      },
+      "revId": "ee269b7e801912d0624a95edf1f63af2f6f5f57a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a0bb7d0d",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-16T11:26:23Z",
+      "side": 1,
+      "message": "It\u0027s not criteria. it\u0027s pattern.\n\"Field does not match the pattern of ...\" something like that.\nWhat\u0027s the orig message? wasn\u0027t it good enough?",
+      "revId": "ee269b7e801912d0624a95edf1f63af2f6f5f57a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e097458e",
+        "filename": "openecomp-be/tools/install/database/schemaTemplates/composition/nic.ftl",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-16T11:26:23Z",
+      "side": 1,
+      "message": "Wrong. Need to be: if manual - pattern, else - enum + default.",
+      "revId": "ee269b7e801912d0624a95edf1f63af2f6f5f57a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
