@@ -768,7 +768,9 @@ ng1appModule.run([
             console.info('$stateChangeStart', toState.name);
 
             if (toState.name !== 'error-403' && !userService.getLoggedinUser()) {
-                event.preventDefault();
+                if (toState.name !== 'welcome') {
+                    event.preventDefault();
+                }
 
                 userService.authorize().subscribe((userInfo:IUserProperties) => {
                     if (!doesUserHasAccess(toState, userInfo)) {
@@ -824,17 +826,19 @@ ng1appModule.run([
                 }
             }
 
+            // if enetering workspace, set the previousState param
+            if (toState.name.indexOf('workspace') !== -1) {
+                if (!toParams.previousState) {
+                    const tmpPreviousState1 = fromParams && fromParams.previousState;
+                    const tmpPreviousState2 = (['dashboard', 'catalog'].indexOf(fromState.name) !== -1) ? fromState.name : 'catalog';
+                    toParams.previousState = tmpPreviousState1 || tmpPreviousState2;
+                }
+            }
+
         };
 
         let onStateChangeSuccess:Function = (event, toState, toParams, fromState, fromParams):void => {
             console.info('$stateChangeSuccess', toState.name);
-
-            //saving last state to params , for breadcrumbs
-            if (['dashboard', 'catalog', 'onboardVendor'].indexOf(fromState.name) > -1) {
-                toParams.previousState = fromState.name;
-            } else {
-                toParams.previousState = fromParams.previousState;
-            }
 
             // Workaround in case we are entering other state then workspace (user move to catalog)
             // remove the changeComponentCsarVersion, user should open again the VSP list and select one for update.
