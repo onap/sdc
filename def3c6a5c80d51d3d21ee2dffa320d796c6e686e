@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_a0e29d9d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationData.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T13:45:15Z",
+      "side": 1,
+      "message": "license?",
+      "revId": "def3c6a5c80d51d3d21ee2dffa320d796c6e686e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_00d831ed",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationData.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T13:45:15Z",
+      "side": 1,
+      "message": "Import should use concrete classes.",
+      "revId": "def3c6a5c80d51d3d21ee2dffa320d796c6e686e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e003c53f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/SubInterfaceConsolidationDataHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T13:45:15Z",
+      "side": 1,
+      "message": "license",
+      "revId": "def3c6a5c80d51d3d21ee2dffa320d796c6e686e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_00ffd134",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/SubInterfaceConsolidationDataHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T13:45:15Z",
+      "side": 1,
+      "message": "checkstyle formating.",
+      "revId": "def3c6a5c80d51d3d21ee2dffa320d796c6e686e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
