@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_cc88456d",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T07:29:45Z",
+      "side": 1,
+      "message": "We create Array, then Hash Set and the unmodified collection.\nPlease reduce the size of creations.Consider using ImmutableSet. Of guava Sets class might have utilities to create a Set (instead of Arrays.asList).",
+      "revId": "2a5e399a25c3f4a3a7a5a1ce27c8e5fc7744db42",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
