@@ -16,12 +16,13 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -34,8 +35,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author KATYR
@@ -68,6 +67,10 @@ public class InterfacesOperationsToscaUtil {
         }
 
         final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
+        if ( MapUtils.isEmpty(interfaces)) {
+            return null;
+        }
+
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
             ToscaInterfaceNodeType toscaInterfaceType = new ToscaInterfaceNodeType();
             toscaInterfaceType.setDerived_from(DERIVED_FROM_STANDARD_INTERFACE);
@@ -105,7 +108,7 @@ public class InterfacesOperationsToscaUtil {
         }
 
         final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-        if (Objects.isNull(interfaces)) {
+        if ( MapUtils.isEmpty(interfaces)) {
             return;
         }
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
@@ -143,7 +146,7 @@ public class InterfacesOperationsToscaUtil {
 
     /***
      * workaround for : currently "defaultp" is not being converted to "default" by the relevant code in ToscaExportHandler
-     * any string key named "defaultp" will have its named changed to "default"
+     * so, any string Map key named "defaultp" will have its named changed to "default"
      * @param operationsMap the map to update
      */
     private static void handleDefaults(Map<String, Object> operationsMap) {
