@@ -1,4 +1,4 @@
-FROM onap/base_sdc-jetty:1.3.0
+FROM onap/base_sdc-jetty:1.3.1
 
 COPY chef-solo /root/chef-solo/
 
